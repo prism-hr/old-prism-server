@@ -65,11 +65,11 @@ public class StateChangeNotificationTaskTest {
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus)).andReturn(applicationFormList);
 		transactionOne.commit();
 
-		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate, null);
 		applicationFormDAOMock.save(applicationFormOne);
 		transactionTwo.commit();
 
-		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate, null);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
@@ -106,10 +106,10 @@ public class StateChangeNotificationTaskTest {
 				.andReturn(applicationFormList);
 
 		transactionOne.commit();
-		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate, null);
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate, null);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 

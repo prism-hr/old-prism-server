@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -88,7 +89,7 @@ public class AdminMailSenderTest {
 		EasyMock.expectLastCall().times(2);
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
-		adminMailSender.sendMailsForApplication(form, "message.code", templatename);
+		adminMailSender.sendMailsForApplication(form, "message.code", templatename, null);
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 	}
 
@@ -193,11 +194,49 @@ public class AdminMailSenderTest {
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 		String subjectMessageCode = "msgCode";
-		adminMailSender.sendMailsForApplication(form, subjectMessageCode, templatename);
+		adminMailSender.sendMailsForApplication(form, subjectMessageCode, templatename, null);
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 	}
 
+	
+	@Test
+	public void shouldSendApproveRejectReminderEmailToEachApprover() throws Exception {
+		
+		final RegisteredUser approverOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		InternetAddress adminOneAdr = new InternetAddress("bb@test.com");
+		
+		final RegisteredUser approverTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").toUser();
+		InternetAddress adminTwoAdr = new InternetAddress("cc@test.com");
+		Program program = new ProgramBuilder().title("prg").approver(approverOne, approverTwo).toProgram();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
+		final ApplicationForm form = new ApplicationFormBuilder().applicationNumber("abc").id(22).program(program).applicant(applicant).toApplicationForm();
+		
+		final String templatename = "private/approvers/mail/application_approval_reminder.ftl";
+		
+		final HashMap<String, Object> model = new HashMap<String, Object>();
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+			
+			@Override
+			Map<String, Object> createModel(ApplicationForm blabla) {
+				return model;
+			}
+			
+		};
+		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminOneAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminTwoAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
+		
+		javaMailSenderMock.send(preparatorMock);
+		EasyMock.expectLastCall().times(2);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		
+		String subjectMessageCode = "subject";
+		adminMailSender.sendMailsForApplication(form, subjectMessageCode, templatename, NotificationType.APPROVAL_REMINDER);
+		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+	}
+	
 	@Test
 	public void shouldStopIfOneReminderEmailFails() throws Exception {
 		final RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
@@ -230,7 +269,7 @@ public class AdminMailSenderTest {
 
 		String subjectMessageCode = "msgCode";
 		try {
-			adminMailSender.sendMailsForApplication(form, subjectMessageCode, templatename);
+			adminMailSender.sendMailsForApplication(form, subjectMessageCode, templatename, null);
 			Assert.fail("exception isn't falling through!");
 		} catch (Throwable thr) {
 			if (!thr.getMessage().startsWith("Aarrrggghhhhh")) {

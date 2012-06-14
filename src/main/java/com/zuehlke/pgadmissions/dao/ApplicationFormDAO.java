@@ -68,7 +68,7 @@ public class ApplicationFormDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ApplicationForm> getApplicationsDueAdminReminder(
+	public List<ApplicationForm> getApplicationsDueUserReminder(
 			NotificationType notificationType, ApplicationFormStatus status) {
 
 		Date today = Calendar.getInstance().getTime();

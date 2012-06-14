@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -37,9 +38,23 @@ public class AdminMailSender extends StateChangeMailSender {
 	}
 
 	@Override
-	public void sendMailsForApplication(ApplicationForm form, String messageCode, String templatename) {
+	public void sendMailsForApplication(ApplicationForm form, String messageCode, String templatename, NotificationType notificationType) {
 		Map<String, Object> model = createModel(form);
-		internalSend(form, messageCode, templatename, model);
+		if(notificationType == NotificationType.APPROVAL_REMINDER){
+			sendApproverApprovalReminder(form, messageCode, templatename, model);
+		}else{
+			internalSend(form, messageCode, templatename, model);
+		}
+	}
+
+	public void sendApproverApprovalReminder(ApplicationForm form, String messageCode, String templatename, Map<String, Object> model) {
+		List<RegisteredUser> programApprovers = form.getProgram().getApprovers();
+		for (RegisteredUser approver : programApprovers) {
+			InternetAddress toAddress = createAddress(approver);
+			model.put("approver", approver);
+			delegateToMailSender(toAddress, null, messageCode, templatename, model);
+		}
+		
 	}
 
 	public void sendAdminReviewNotification(ApplicationForm form, RegisteredUser reviewer) {

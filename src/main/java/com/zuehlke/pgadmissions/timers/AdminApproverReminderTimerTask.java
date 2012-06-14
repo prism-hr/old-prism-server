@@ -14,11 +14,12 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
+import com.zuehlke.pgadmissions.mail.ApproverAdminMailSender;
 
 
 
-public class AdminReminderTimerTask extends TimerTask {
-	private final Logger log = Logger.getLogger(AdminReminderTimerTask.class);
+public class AdminApproverReminderTimerTask extends TimerTask {
+	private final Logger log = Logger.getLogger(AdminApproverReminderTimerTask.class);
 	private final SessionFactory sessionFactory;
 	private final ApplicationFormDAO applicationFormDAO;
 	private final AdminMailSender adminMailSender;
@@ -29,7 +30,7 @@ public class AdminReminderTimerTask extends TimerTask {
 	private final String firstSubjectCode;
 	private final String firstEmailTemplate;
 
-	public AdminReminderTimerTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, AdminMailSender adminMailSender,
+	public AdminApproverReminderTimerTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, AdminMailSender adminMailSender,
 			NotificationType notificationType, ApplicationFormStatus status, String fisrtSubjectCode, String firstEmailTemplate,
 			String subjectCode, String emailTemplate) {
 				this.sessionFactory = sessionFactory;
@@ -49,7 +50,7 @@ public class AdminReminderTimerTask extends TimerTask {
 		log.info(notificationType +  " Reminder Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 
-		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueAdminReminder(notificationType, status);
+		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueUserReminder(notificationType, status);
 
 		transaction.commit();
 		for (ApplicationForm application : applications) {
@@ -66,7 +67,7 @@ public class AdminReminderTimerTask extends TimerTask {
 					useSubjectCode = firstSubjectCode;
 					useEmailTemplate = firstEmailTemplate;
 				}
-				adminMailSender.sendMailsForApplication(application, useSubjectCode, useEmailTemplate);
+				adminMailSender.sendMailsForApplication(application, useSubjectCode, useEmailTemplate, notificationType);
 				notificationRecord.setDate(new Date());
 				applicationFormDAO.save(application);
 				transaction.commit();

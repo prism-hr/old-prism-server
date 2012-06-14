@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
- <form id="applyForm" action="${host}/<@spring.url '/apply/new'/>" method="POST">
+ <form id="applyForm" action="${host}<@spring.url '/apply/new'/>" method="POST">
 	<p>Programme: ${(program.title?html)!}</p>
 	<p>Programme home page: ${RequestParameters.programhome!}</p>
 	<p>Project: ${RequestParameters.project!}</p>	

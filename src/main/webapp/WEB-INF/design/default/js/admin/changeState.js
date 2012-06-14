@@ -48,6 +48,7 @@ $(document).ready(function(){
 			    $('#notifyRegistryButton').removeAttr('disabled');
 			    $('#notifyRegistryButton').addClass("blue");
 				$('body').css('cursor', 'auto');
+				$('#timelineBtn').trigger('click');
 			 }
 		);
 	});

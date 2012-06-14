@@ -14,15 +14,18 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
+import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
@@ -30,7 +33,9 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 public class ApprovalServiceTest {
@@ -46,6 +51,12 @@ public class ApprovalServiceTest {
 
 	private EventFactory eventFactoryMock;
 
+	private CommentFactory commentFactoryMock;
+
+	private CommentDAO commentDAOMock;
+
+	
+
 	@Before
 	public void setUp() {
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
@@ -53,7 +64,9 @@ public class ApprovalServiceTest {
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		mailServiceMock = EasyMock.createMock(MailService.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		approvalService = new ApprovalService(applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, mailServiceMock,eventFactoryMock );
+		commentFactoryMock = EasyMock.createMock(CommentFactory.class);
+		commentDAOMock = EasyMock.createMock(CommentDAO.class);
+		approvalService = new ApprovalService(applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, mailServiceMock,eventFactoryMock, commentDAOMock, commentFactoryMock );
 	}
 
 	@Test
@@ -129,7 +142,7 @@ public class ApprovalServiceTest {
 	}
 	
 	@Test
-	public void shouldSendRequestRestartOfApprovalMail() {
+	public void shouldSendRequestRestartOfApprovalMailAndSaveAComment() {
 		Program program = new ProgramBuilder().id(321).title("lala").toProgram();
 		RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
 				.role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).toRole())//
@@ -138,9 +151,12 @@ public class ApprovalServiceTest {
 
 		mailServiceMock.sendRequestRestartApproval(applicationForm, approver);
 		EasyMock.expectLastCall();
-		EasyMock.replay(mailServiceMock);
+		Comment comment = new CommentBuilder().id(1).toComment();
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, approver, "Requested re-start of approval phase", CommentType.GENERIC)).andReturn(comment);
+		commentDAOMock.save(comment);
+		EasyMock.replay(mailServiceMock, commentFactoryMock, commentDAOMock);
 		approvalService.requestApprovalRestart(applicationForm, approver);
-		EasyMock.verify(mailServiceMock);
+		EasyMock.verify(mailServiceMock, commentDAOMock);
 	}
 
 	@Test

@@ -48,11 +48,13 @@ public class AdminMailSender extends StateChangeMailSender {
 	}
 
 	public void sendApproverApprovalReminder(ApplicationForm form, String messageCode, String templatename, Map<String, Object> model) {
+		ApplicationFormStatus previousStage = applicationService.getStageComingFrom(form);
+		String subject = resolveMessage(messageCode, form, previousStage);
 		List<RegisteredUser> programApprovers = form.getProgram().getApprovers();
 		for (RegisteredUser approver : programApprovers) {
 			InternetAddress toAddress = createAddress(approver);
 			model.put("approver", approver);
-			delegateToMailSender(toAddress, null, messageCode, templatename, model);
+			delegateToMailSender(toAddress, null, subject, templatename, model);
 		}
 		
 	}

@@ -48,21 +48,20 @@ public class TimelineService {
 		}
 	}
 
-	private TimelinePhase createTimelinePhaseForEvent(Event event, ApplicationForm applicationForm) {	
-		
+	private TimelinePhase createTimelinePhaseForEvent(Event event, ApplicationForm applicationForm) {
+
 		TimelinePhase phase = new TimelinePhase();
-		phase.setEventDate(event.getDate());			
-		phase.setStatus( ((StateChangeEvent)event).getNewStatus());
-		phase.setAuthor(event.getUser());		
-		if(event instanceof ReviewStateChangeEvent){
-			phase.setReviewRound(((ReviewStateChangeEvent)event).getReviewRound());
-		}else if(event instanceof InterviewStateChangeEvent){
-			phase.setInterview(((InterviewStateChangeEvent)event).getInterview());
+		phase.setEventDate(event.getDate());
+		phase.setStatus(((StateChangeEvent) event).getNewStatus());
+		phase.setAuthor(event.getUser());
+		if (event instanceof ReviewStateChangeEvent) {
+			phase.setReviewRound(((ReviewStateChangeEvent) event).getReviewRound());
+		} else if (event instanceof InterviewStateChangeEvent) {
+			phase.setInterview(((InterviewStateChangeEvent) event).getInterview());
+		} else if (event instanceof ApprovalStateChangeEvent) {
+			phase.setApprovalRound(((ApprovalStateChangeEvent) event).getApprovalRound());
 		}
-		else if(event instanceof ApprovalStateChangeEvent){
-			phase.setApprovalRound(((ApprovalStateChangeEvent)event).getApprovalRound());
-		}
-		if(phase.getStatus() == ApplicationFormStatus.REJECTED && event.getUser().isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())){
+		if (phase.getStatus() == ApplicationFormStatus.REJECTED && event.getUser().isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
 			phase.setRejectedByApprover(true);
 		}
 		return phase;
@@ -75,26 +74,36 @@ public class TimelineService {
 			thisPhase.setExitedPhaseDate(phases.get(i - 1).getEventDate());
 		}
 	}
-	
-
 
 	public List<TimelineObject> getTimelineObjects(ApplicationForm applicationForm) {
 		List<TimelineObject> timelineObjects = new ArrayList<TimelineObject>();
 		List<TimelinePhase> phases = new ArrayList<TimelinePhase>();
+		if (userService.getCurrentUser().equals(applicationForm.getApplicant())) {
+			phases.add(createUnsubmittedPhase(applicationForm));
+		}
 		List<Event> events = applicationForm.getEvents();
-		 
+
 		for (Event event : events) {
-			if(event instanceof StateChangeEvent){				
+			if (event instanceof StateChangeEvent) {
 				phases.add(createTimelinePhaseForEvent(event, applicationForm));
-			}else if(event instanceof ReferenceEvent){
+			} else if (event instanceof ReferenceEvent) {
 				timelineObjects.add(createTimelineReferenceFromEvent(event));
-			}			
+			}
 		}
 		setExitDates(phases);
 		addCommentsToCorrectPhase(applicationForm, phases);
 		timelineObjects.addAll(phases);
 		Collections.sort(timelineObjects);
 		return timelineObjects;
+	}
+
+	private TimelinePhase createUnsubmittedPhase(ApplicationForm applicationForm) {
+		TimelinePhase phase = new TimelinePhase();
+		phase.setEventDate(applicationForm.getApplicationTimestamp());
+		phase.setStatus(ApplicationFormStatus.UNSUBMITTED);
+		phase.setAuthor(applicationForm.getApplicant());
+		return phase;
+		
 	}
 
 	private TimelineReference createTimelineReferenceFromEvent(Event event) {

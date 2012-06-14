@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
+import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -16,6 +17,8 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
@@ -26,20 +29,24 @@ public class ApprovalService {
 	private final StageDurationDAO stageDurationDAO;
 	private final MailService mailService;
 	private final EventFactory eventFactory;
+	private final CommentDAO commentDAO;
+	private final CommentFactory commentFactory;
 
 	ApprovalService() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public ApprovalService(ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO, MailService mailService,
-			EventFactory eventFactory) {
+			EventFactory eventFactory, CommentDAO commentDAO, CommentFactory commentFactory) {
 
 		this.applicationDAO = applicationDAO;
 		this.approvalRoundDAO = approvalRoundDAO;
 		this.stageDurationDAO = stageDurationDAO;
 		this.mailService = mailService;
 		this.eventFactory = eventFactory;
+		this.commentDAO = commentDAO;
+		this.commentFactory = commentFactory;
 
 	}
 
@@ -70,6 +77,7 @@ public class ApprovalService {
 		}
 
 		mailService.sendRequestRestartApproval(application, approver);
+		commentDAO.save(commentFactory.createComment(application, approver, "Requested re-start of approval phase", CommentType.GENERIC));
 
 	}
 

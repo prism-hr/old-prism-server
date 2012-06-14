@@ -87,12 +87,19 @@
 							
 							<hr />
 				          			
+							<div id="add-info-bar-div" class="section-info-bar">
+								<div class="row">
+									<span id="add-info-bar-span" class="info-text">
+										You can optionally assign new reviewers here.
+									</span>
+								</div>
+							</div>	
+							
 							<section class="form-rows violet">
 								<div>
 									<form>
 									
 										<div id="assignReviewersToAppSection" class="row-group">			
-											<p style:"color: red;">You can optionally assign new reviewers here. </p>
 											<div class="row">
 												<label class="label">Reviewers</label>
 												<div class="field">

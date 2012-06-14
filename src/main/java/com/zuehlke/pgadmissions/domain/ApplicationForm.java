@@ -362,18 +362,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public List<Comment> getVisibleComments(RegisteredUser user) {
-		List<Comment> visibleComments = new ArrayList<Comment>();
+
 		if (user.isInRole(Authority.APPLICANT) || user.isRefereeOfApplicationForm(this)) {
-			return visibleComments;
+			return new ArrayList<Comment>();
 		}
 
-		for (Comment comment : applicationComments) {
-			if (!user.isInRole(Authority.REVIEWER) || !comment.getUser().isPastOrPresentReviewerOfApplicationForm(this) || comment.getUser().equals(user)) {
-				visibleComments.add(comment);
-			}
-		}
-		Collections.sort(visibleComments);
-		return visibleComments;
+		Collections.sort(applicationComments);
+		return applicationComments;
 	}
 
 	public boolean shouldOpenFirstSection() {

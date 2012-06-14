@@ -18,18 +18,23 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mail.RegistryMailSender;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.CommentFactory;
 
 public class EmailRegistryControllerTest {
 
@@ -37,19 +42,29 @@ public class EmailRegistryControllerTest {
 	private EmailRegistryController controller;
 	private ApplicationsService applicationServiceMock;
 	private UserService userServiceMock;
+	private CommentService commentServiceMock;
+	private CommentFactory commentFactoryMock;
 
 	@Test
 	public void shouldSendEmailToRegistryContacts() throws MalformedURLException, DocumentException, IOException {
+		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		registryMailSenderMock.sendApplicationToRegistryContacts(applicationForm);
 		applicationServiceMock.save(applicationForm);
-		EasyMock.replay(registryMailSenderMock, applicationServiceMock);
+		Comment comment = new CommentBuilder().id(4).toComment();
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUserMock, "Request for assistance in validating application details send to UCL central registry office.", CommentType.GENERIC)).andReturn(comment);
+		commentServiceMock.save(comment);
+		EasyMock.replay(userServiceMock, registryMailSenderMock, applicationServiceMock, commentFactoryMock, commentServiceMock);
+		
 		ModelAndView modelAndView = controller.sendHelpRequestToRegistryContacts(applicationForm);
+		
 		assertEquals("private/common/simpleMessage", modelAndView.getViewName());
 		assertEquals("registry.email.send", modelAndView.getModel().get("message"));
-		EasyMock.verify(registryMailSenderMock, applicationServiceMock);
+		EasyMock.verify(registryMailSenderMock, applicationServiceMock, commentServiceMock);
 		NotificationRecord notification = applicationForm.getNotificationForType(NotificationType.REGISTRY_HELP_REQUEST);
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(notification.getDate(), Calendar.DATE));
+		
 	}
 
 	@Test
@@ -133,7 +148,9 @@ public class EmailRegistryControllerTest {
 	public void setUp() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		registryMailSenderMock = EasyMock.createMock(RegistryMailSender.class);
+		commentServiceMock = EasyMock.createMock(CommentService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		controller = new EmailRegistryController(registryMailSenderMock, applicationServiceMock, userServiceMock);
+		commentFactoryMock = EasyMock.createMock(CommentFactory.class);
+		controller = new EmailRegistryController(registryMailSenderMock, applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock);
 	}
 }

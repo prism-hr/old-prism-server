@@ -55,7 +55,7 @@
 							<!-- content box -->
               	<div class="content-box">
 					<div class="content-box-inner">
-                        <input type="text" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+                        <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
                         <div id="timeline">
                         
                         </div>      

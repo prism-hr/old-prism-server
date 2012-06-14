@@ -105,6 +105,32 @@ public class TimelineServiceTest {
 		assertEquals(userOne, timelinePhaseFour.getAuthor());
 
 	}
+	
+	@Test
+	public void shouldAddCreatedPhaseIfUserIsApplicant() throws ParseException{
+		Date creationDate = format.parse("01 03 2012 14:02:03");
+		Date submissionDate = format.parse("01 04 2012 14:02:03");
+		
+		RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();		
+		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1).toEvent();
+
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).appDate(creationDate).applicant(currentUser).toApplicationForm();
+		applicationForm.getEvents().clear();
+		applicationForm.getEvents().addAll(Arrays.asList( validationPhaseEnteredEvent));
+
+		List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
+		assertEquals(2, objects.size());
+		TimelinePhase timelinePhaseTwo = (TimelinePhase) objects.get(0);
+		assertEquals(ApplicationFormStatus.VALIDATION, timelinePhaseTwo.getStatus());
+		
+		TimelinePhase timelinePhaseOne = (TimelinePhase) objects.get(1);
+		assertEquals(creationDate, timelinePhaseOne.getEventDate());
+		assertEquals(currentUser, timelinePhaseOne.getAuthor());		
+		assertEquals(ApplicationFormStatus.UNSUBMITTED, timelinePhaseOne.getStatus());
+				
+	
+	}
 
 	@Test
 	public void shouldOderObejctsByMostRecentActivity() throws ParseException {
@@ -213,7 +239,7 @@ public class TimelineServiceTest {
 		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).id(1).toEvent();
 		Event reviewPhaseEnteredEvent = new StateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).toEvent();
 
-		ApplicationForm applicationForm = EasyMock.createMock(ApplicationForm.class);
+		ApplicationForm applicationForm = EasyMock.createNiceMock(ApplicationForm.class);
 		EasyMock.expect(applicationForm.getEvents()).andReturn(Arrays.asList(validationPhaseEnteredEvent, reviewPhaseEnteredEvent));
 		EasyMock.expect(applicationForm.getVisibleComments(currentUser)).andReturn(Arrays.asList(commentThree, commentOne, commentTwo));
 		EasyMock.replay(applicationForm);

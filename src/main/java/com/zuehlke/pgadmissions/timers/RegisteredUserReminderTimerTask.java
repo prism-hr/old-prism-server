@@ -14,9 +14,6 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
-import com.zuehlke.pgadmissions.mail.ApproverAdminMailSender;
-
-
 
 public class RegisteredUserReminderTimerTask extends TimerTask {
 	private final Logger log = Logger.getLogger(RegisteredUserReminderTimerTask.class);
@@ -79,8 +76,6 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 
 		}
 		log.info(notificationType +  " Reminder Task complete");
-
-		
 	}
 
 }

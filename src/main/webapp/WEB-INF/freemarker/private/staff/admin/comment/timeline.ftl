@@ -23,10 +23,11 @@
         
             <#if timelineObject.reviewRound??>               
             <h3>Invited reviewers:</h3>                 
-            
-            <#list  timelineObject.reviewRound.reviewers as reviewer>
-            <p>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</p>
-            </#list>
+						<ul>
+							<#list timelineObject.reviewRound.reviewers as reviewer>
+							<li>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</li>
+							</#list>
+						</ul>
         
             <#elseif timelineObject.interview??>
             <h3>Interview</h3>

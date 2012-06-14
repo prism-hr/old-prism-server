@@ -31,7 +31,7 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 
 /* Timeline comments -------------------------------------------------------------------------------------- */
 #timeline-statuses { list-style: none; margin: 0; padding: 0; }
-#timeline-statuses ul { list-style: none; margin-left: 180px; }
+#timeline-statuses ul { list-style: none; margin-left: 90px; }
 
 #timeline-statuses .box { background: #CCC; margin-bottom: 10px; }
 #timeline-statuses .box .title { background: #999; font-weight: bold; line-height: 24px; overflow: hidden; padding: 5px; }

@@ -26,10 +26,10 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
-public class AdminApproverReminderTimerTaskTest {
+public class RegisteredUserReminderTimerTaskTest {
 	private SessionFactory sessionFactoryMock;
 	private Session sessionMock;
-	private AdminApproverReminderTimerTask reminderTask;
+	private RegisteredUserReminderTimerTask reminderTask;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private AdminMailSender adminMailSenderMock;
 	private String subjectMessage;
@@ -128,7 +128,7 @@ public class AdminApproverReminderTimerTaskTest {
 		notificationType = NotificationType.VALIDATION_REMINDER;
 		status = ApplicationFormStatus.VALIDATION;
 
-		reminderTask = new AdminApproverReminderTimerTask(sessionFactoryMock, applicationFormDAOMock, adminMailSenderMock,// 
+		reminderTask = new RegisteredUserReminderTimerTask(sessionFactoryMock, applicationFormDAOMock, adminMailSenderMock,// 
 				notificationType, status, firstSubjectMessage, firstEmailTemplate, subjectMessage, emailTemplate);
 	}
 }

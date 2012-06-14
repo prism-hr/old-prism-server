@@ -322,7 +322,7 @@ public class RejectApplicationControllerTest {
 		Assert.assertEquals(application, modelMap.get("application"));
 		
 		Assert.assertEquals(rejectReason, (RejectReason) modelMap.get("reason"));
-		Assert.assertEquals(ApplicationFormStatus.REVIEW, modelMap.get("stage"));
+		Assert.assertEquals(ApplicationFormStatus.REVIEW, modelMap.get("previousStage"));
 		Assert.assertNotNull(modelMap.get("host"));
 		
 		Assert.assertNotNull(modelMap.get("adminsEmails"));

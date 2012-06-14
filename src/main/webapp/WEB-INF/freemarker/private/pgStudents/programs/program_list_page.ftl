@@ -40,7 +40,7 @@
 					<td> ${program.code} </td>
 					<td> ${program.title} </td>										
 					<td id="${program.id?string("######")}_deadline"><#if program.title == "EngD Biochemical Engineering">12-Dec-2012</#if></td>										
-					<td> <button id="${program.id?string("######")}" class="apply">Apply now</button></td>
+					<td> <button id="${program.code}" class="apply">Apply now</button></td>
 				</tr>
 	      	</#list>
 	      	</table>

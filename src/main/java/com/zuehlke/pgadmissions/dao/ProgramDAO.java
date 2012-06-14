@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -36,5 +37,9 @@ public class ProgramDAO {
 
 	public void save(Program program) {
 		sessionFactory.getCurrentSession().saveOrUpdate(program);
+	}
+
+	public Program getProgramByCode(String code) {
+		return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
 	}
 }

@@ -16,7 +16,7 @@
 	</bean>
 	
 	<!-- Approval reminders -->
-	<bean id="approverApprovalReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminApproverReminderTimerTask">
+	<bean id="approverApprovalReminderTimerTask" class="com.zuehlke.pgadmissions.timers.RegisteredUserReminderTimerTask">
 		<constructor-arg index="0" ref="sessionFactoryMail" />
 		<constructor-arg index="1" ref="mailApplicationDAO" />
 		<constructor-arg index="2" ref="adminMailSender" />

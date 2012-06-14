@@ -18,8 +18,8 @@ import com.zuehlke.pgadmissions.mail.ApproverAdminMailSender;
 
 
 
-public class AdminApproverReminderTimerTask extends TimerTask {
-	private final Logger log = Logger.getLogger(AdminApproverReminderTimerTask.class);
+public class RegisteredUserReminderTimerTask extends TimerTask {
+	private final Logger log = Logger.getLogger(RegisteredUserReminderTimerTask.class);
 	private final SessionFactory sessionFactory;
 	private final ApplicationFormDAO applicationFormDAO;
 	private final AdminMailSender adminMailSender;
@@ -30,7 +30,7 @@ public class AdminApproverReminderTimerTask extends TimerTask {
 	private final String firstSubjectCode;
 	private final String firstEmailTemplate;
 
-	public AdminApproverReminderTimerTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, AdminMailSender adminMailSender,
+	public RegisteredUserReminderTimerTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, AdminMailSender adminMailSender,
 			NotificationType notificationType, ApplicationFormStatus status, String fisrtSubjectCode, String firstEmailTemplate,
 			String subjectCode, String emailTemplate) {
 				this.sessionFactory = sessionFactory;

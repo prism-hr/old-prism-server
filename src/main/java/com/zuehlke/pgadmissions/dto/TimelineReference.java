@@ -19,10 +19,7 @@ public class TimelineReference extends TimelineObject {
 		this.referee = referee;
 	}
 	public String getMessageCode() {
-		if(referee.isDeclined()){
-			return "timeline.reference.declined";
-		}
-		return "timeline.reference.uploaded";
+		return "timeline.reference.responded";
 	}
 	@Override
 	public Date getMostRecentActivityDate() {

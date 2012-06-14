@@ -26,11 +26,11 @@ public class TimelineReferenceTest {
 
 		TimelineReference timelineReference = new TimelineReference();
 		timelineReference.setReferee(referee);
-		assertEquals("timeline.reference.uploaded", timelineReference.getMessageCode());
+		assertEquals("timeline.reference.responded", timelineReference.getMessageCode());
 
 		referee.setReference(null);
 		referee.setDeclined(true);
-		assertEquals("timeline.reference.declined", timelineReference.getMessageCode());
+		assertEquals("timeline.reference.responded", timelineReference.getMessageCode());
 
 	}
 	

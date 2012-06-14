@@ -18,6 +18,9 @@
 		<option>Select...</option>
 		<option value="view">View</option>
 		<option value="print">Download</option>
+		<#if user.isInRole('APPLICANT')>
+			<option value="progress">View progress</option>
+		</#if>   
 		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
 			<option value="approve">Approve</option>
 			<option value="reject">Reject</option>

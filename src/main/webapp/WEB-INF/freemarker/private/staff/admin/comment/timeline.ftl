@@ -21,13 +21,13 @@
       
             <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p>  
         
-            <#if timelineObject.reviewRound??>               
+            <#if timelineObject.reviewRound?? && user != applicationForm.applicant>               
             <h3>Invited reviewers:</h3>                 
-						<ul>
-							<#list timelineObject.reviewRound.reviewers as reviewer>
-							<li>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</li>
-							</#list>
-						</ul>
+				<ul>
+					<#list timelineObject.reviewRound.reviewers as reviewer>
+					<li>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</li>
+					</#list>
+				</ul>
         
             <#elseif timelineObject.interview??>
             <h3>Interview</h3>
@@ -87,15 +87,16 @@
             </li>
             </#list>                       
           </ul>
-          <#elseif timelineObject.referee??>
-          <#if timelineObject.referee.declined>
-          <p>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee</p>
-          <#else>  
-          <p>
-            ${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} provided a reference:
-            <a href="<@spring.url '/download/reference?referenceId=${encrypter.encrypt(timelineObject.referee.reference.id)}'/>">${timelineObject.referee.reference.document.fileName?html}</a>
-          </p>
-          </#if>     
+          <#elseif timelineObject.referee?? && user != applicationForm.applicant>
+          	
+	          <#if timelineObject.referee.declined>
+	          <p>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee</p>
+	          <#else>  
+	          <p>
+	            ${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} provided a reference:
+	            <a href="<@spring.url '/download/reference?referenceId=${encrypter.encrypt(timelineObject.referee.reference.id)}'/>">${timelineObject.referee.reference.document.fileName?html}</a>
+	          </p>
+	          </#if>     
           </#if> 
         </li>
         </#list>

@@ -54,18 +54,7 @@ public class CommentTimelineControllerTest {
 		controller.getApplicationForm("5");
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserIsApplicant() {
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
-		EasyMock.replay(currentUser, userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm("5");
 
-	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfCurrentCannotSeeApplicationForm() {
@@ -129,6 +118,15 @@ public class CommentTimelineControllerTest {
 		assertEquals("private/staff/admin/comment/timeline", controller.getCommentsView());
 	}
 
+	@Test
+	public void shouldReturnCurrentUser() {
+		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);				
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);		
+		EasyMock.replay(userServiceMock);
+		assertEquals(currentUser, controller.getUser());
+	}
+
+	
 	@Before
 	public void setUp() {
 

@@ -46,7 +46,7 @@ public class CommentTimelineController {
 	public ApplicationForm getApplicationForm(@RequestParam String id) {
 		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
-		if (applicationForm == null || currentUser.isInRole(Authority.APPLICANT) || !currentUser.canSee(applicationForm)) {
+		if (applicationForm == null || !currentUser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
@@ -72,6 +72,11 @@ public class CommentTimelineController {
 	@ModelAttribute("homeOrOverseasOptions")
 	public HomeOrOverseas[] getHomeOrOverseasOptions() {
 		return HomeOrOverseas.values();
+	}
+
+	@ModelAttribute("user")
+	public RegisteredUser getUser() {		
+		return userService.getCurrentUser();
 	}
 
 

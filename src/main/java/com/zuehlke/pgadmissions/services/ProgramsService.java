@@ -37,4 +37,8 @@ public class ProgramsService {
 	public void save(Program program) {
 		programDAO.save(program);
 	}
+
+	public Program getProgramByCode(String code) {
+		return programDAO.getProgramByCode(code);
+	}
 }

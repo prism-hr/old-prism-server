@@ -67,8 +67,7 @@
 									</#if>
 								</div>
 								
-                <label for="searchTerm">Filter</label>
-                <input type="text" id="searchTerm" name="searchTerm" />
+                <input type="text" id="searchTerm" name="searchTerm" placeholder="Filter by..." />
                 <select name="searchCategory" id="searchCategory">
                   <option value="">Column...</option>
                   <#list searchCategories as category>

@@ -15,43 +15,67 @@
         <li class="${timelineObject.type}">
           <div class="box">
             <div class="title">
-              <span class="icon-role ${timelineObject.userCapacity}"></span>
+              <span class="icon-role ${timelineObject.userCapacity}" data-desc="${timelineObject.userCapacity}"></span>
               <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
               <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
             </div>
       
             <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p>  
         
-            <#if timelineObject.reviewRound?? && user != applicationForm.applicant>               
-            <h3>Invited reviewers:</h3>                 
-				<ul>
-					<#list timelineObject.reviewRound.reviewers as reviewer>
-					<li>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</li>
-					</#list>
-				</ul>
+            <#if timelineObject.reviewRound?? && user != applicationForm.applicant>
+						<ul>
+							<li class="${timelineObject.type}">
+								<div class="box">
+									<h3>Invited reviewers:</h3>
+									<ul>
+										<#list timelineObject.reviewRound.reviewers as reviewer>
+										<li>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</li>
+										</#list>
+									</ul>
+								</div>
+							</li>
+						</ul>
         
             <#elseif timelineObject.interview??>
-            <h3>Interview</h3>
-            <p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
-            <p>${timelineObject.interview.furtherDetails?html}</p>                  
-            <h3>Invited interviewers:</h3>
-            <ul>
-              <#list timelineObject.interview.interviewers as interviewer>
-              <li>${interviewer.user.firstName?html} ${interviewer.user.lastName?html}</li>
-              </#list>
-            </ul>
-            
+						<ul>
+							<li class="${timelineObject.type}">
+								<div class="box">
+									<h3>Interview</h3>
+									<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
+									<p>${timelineObject.interview.furtherDetails?html}</p>                  
+									<h3>Invited interviewers:</h3>
+									<ul>
+										<#list timelineObject.interview.interviewers as interviewer>
+										<li>${interviewer.user.firstName?html} ${interviewer.user.lastName?html}</li>
+										</#list>
+									</ul>
+ 								</div>
+							</li>
+						</ul>
+           
             <#elseif timelineObject.approvalRound??>
-            <h3>Selected supervisors:</h3>       
-            <ul>
-              <#list timelineObject.approvalRound.supervisors as supervisor>
-              <li>${supervisor.user.firstName?html} ${supervisor.user.lastName?html}</li>
-              </#list>
-            </ul>
+						<ul>
+							<li class="${timelineObject.type}">
+								<div class="box">
+									<h3>Selected supervisors:</h3>       
+									<ul>
+										<#list timelineObject.approvalRound.supervisors as supervisor>
+										<li>${supervisor.user.firstName?html} ${supervisor.user.lastName?html}</li>
+										</#list>
+									</ul>
+ 								</div>
+							</li>
+						</ul>
             
             <#elseif timelineObject.status?? &&   timelineObject.status == 'REJECTED'>
-            <h3>Reason:</h3>
-            <p>${applicationForm.rejection.rejectionReason.text?html}</p>                 
+						<ul>
+							<li class="${timelineObject.type}">
+								<div class="box">
+									<h3>Reason:</h3>
+									<p>${applicationForm.rejection.rejectionReason.text?html}</p>                 
+ 								</div>
+							</li>
+						</ul>
         
             </#if>                       
         
@@ -72,7 +96,7 @@
             <li>                          
               <div class="box">
                 <div class="title">
-                  <span class="icon-role ${role}"></span>
+                  <span class="icon-role ${role}" data-desc="${role}"></span>
                   <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
                   <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
                 </div>

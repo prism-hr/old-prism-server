@@ -10,7 +10,8 @@
     <div class="row-group">
     
       <ul id="timeline-statuses">
-        <#list timelineObjects as timelineObject>
+      
+        <#list timelineObjects as timelineObject>        
         <li class="${timelineObject.type}">
           <div class="box">
             <div class="title">

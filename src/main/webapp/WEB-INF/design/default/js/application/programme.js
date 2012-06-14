@@ -6,7 +6,6 @@ $(document).ready(function()
 {
 	$("#acceptTermsPDValue").val("NO");
 	$("#addSupervisorButton").show();
-	$("input[name='awareSupervisor']").val(["NO"]);
 	var unsavedSupervisors = 0;
 	
 	var progImgCount = 0;
@@ -85,7 +84,9 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	$('#addSupervisorButton').on('click', function()
 	{
+		// Hide error messages.
 		var errors = 0;
+		$("#supervisor_div span.invalid").html('').hide();
 		
 		if ($('#supervisorFirstname').val() == "")
 		{
@@ -107,7 +108,6 @@ $(document).ready(function()
 		{
 			//replaceWithLoader($(this));
 			$("#supervisors").show();
-			$("#supervisor_div span.invalid").html('').hide();
 			var isAware = $("input[name='awareSupervisor']:checked").val(); 
 			var awareState = (isAware == "YES" ? "aware" : "unaware");
 
@@ -169,7 +169,9 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	$('#updateSupervisorButton').on('click', function()
 	{
+		// Hide error messages.
 		var errors = 0;
+		$('table#supervisors span.invalid').html('').hide();
 		
 		$("#supervisors").show();
 		if ($('#supervisorFirstname').val() == "")
@@ -192,8 +194,6 @@ $(document).ready(function()
 		{
 			//replaceWithLoader($(this));
 			
-			// Hide error messages.
-			$('table#supervisors span.invalid').html('').hide();
 			/*
 			$("span[name='superFirstname']").html('');
 			$("span[name='superFirstname']").hide();
@@ -269,11 +269,7 @@ $(document).ready(function()
 			$("span[name='nonAcceptedPD']").html('');
 
 			// Check for a "dirty" supervisor form.
-			//if (!isFormEmpty('#supervisor_div'))
-			if ($('#supervisorId').val() != '' ||
-					$('#supervisorFirstname').val() != '' ||
-					$('#supervisorLastname').val() != '' ||
-					$('#supervisorEmail').val() != '')
+			if (!isFormEmpty('#supervisor_div'))
 			{
 				$('#addSupervisorButton:visible, #updateSupervisorButton:visible').trigger('click'); // either add or update will be visible
 				// If there was an error submitting the non-empty form, don't continue.

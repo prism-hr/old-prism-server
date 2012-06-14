@@ -60,9 +60,9 @@
 										<form>
 											<div class="row-group">
 												<div class="row"> 
-													<span id="email-lbl" class="plain-label">Firstname</span>
+													<span id="email-lbl" class="plain-label">First Name</span>
 													<div class="field">	
-														<input type="text" id="firstName" value="${user.firstName}" />
+														<input class="full" type="text" id="firstName" value="${user.firstName}" />
 													</div>
 													<@spring.bind "updatedUser.firstName" />
 													<#list spring.status.errorMessages as error>
@@ -73,9 +73,9 @@
 												</div>
 												
 												<div class="row"> 
-													<span id="email-lbl" class="plain-label">Lastname</span>
+													<span id="email-lbl" class="plain-label">Last Name</span>
 													<div class="field">	
-														<input type="text" id="lastName" value="${user.lastName}" />
+														<input class="full" type="text" id="lastName" value="${user.lastName}" />
 													</div>
 													<@spring.bind "updatedUser.lastName" />
 													<#list spring.status.errorMessages as error>
@@ -88,7 +88,7 @@
 												<div class="row"> 
 													<span id="email-lbl" class="plain-label">Email</span>
 													<div class="field">	
-														<input type="text" id="email" value="${user.email}" />
+														<input class="full" type="text" id="email" value="${user.email}" />
 													</div>
 													<@spring.bind "updatedUser.email" />
 													<#list spring.status.errorMessages as error>
@@ -97,7 +97,9 @@
 														</div>
 													</#list>
 												</div>
-												
+											</div>
+
+											<div class="row-group">
 												<div class="row"> 
 													<span class="plain-label">Current Password</span>
 													<div class="field">	

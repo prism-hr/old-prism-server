@@ -35,6 +35,7 @@
 								</div>
 							</li>
 						</ul>
+					</div>
         
             <#elseif timelineObject.interview??>
 						<ul>
@@ -78,8 +79,6 @@
 						</ul>
         
             </#if>                       
-        
-          </div>
           
           <#if timelineObject.comments??>
           <ul>

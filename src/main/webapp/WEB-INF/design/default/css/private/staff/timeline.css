@@ -41,6 +41,7 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses .box h3 { line-height: 1.2; margin-bottom: 0; padding: 0 10px; }
 #timeline-statuses .box label { display: inline-block; margin-right: 1em; }
 #timeline-statuses .box label input { vertical-align: middle; }
+#timeline-statuses .box ul { margin: 0 30px; padding: 10px 0; }
 
 #timeline-statuses ul .box .title { background: #AAA; }
 #timeline-statuses ul .box p { background-image: none !important; font-size: 12px; font-weight: normal; }

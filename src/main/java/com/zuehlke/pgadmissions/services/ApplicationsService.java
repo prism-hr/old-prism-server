@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 @Service("applicationsService")
 public class ApplicationsService {
 	private final int APPLICATION_BLOCK_SIZE = 25;
-	
+
 	private final ApplicationFormDAO applicationFormDAO;
 
 	ApplicationsService() {
@@ -57,7 +57,7 @@ public class ApplicationsService {
 		ApplicationForm applicationForm = newApplicationForm();
 		applicationForm.setApplicant(user);
 		applicationForm.setProgram(program);
-		if(StringUtils.isNotBlank(programDeadline)){
+		if (StringUtils.isNotBlank(programDeadline)) {
 			Date programDeadlineDate = new SimpleDateFormat("dd-MMM-yyyy").parse(programDeadline);
 			applicationForm.setBatchDeadline(programDeadlineDate);
 		}
@@ -78,47 +78,37 @@ public class ApplicationsService {
 
 	public ApplicationFormStatus getStageComingFrom(ApplicationForm application) {
 		List<StateChangeEvent> events = application.getStateChangeEventsSortedByDate();
-		StateChangeEvent previousEvent;
-		if (events.size() == 1) {
-			return events.get(0).getNewStatus();
+		if (events.isEmpty() ) {
+			return null;
 		}
-		if (events.size() == 2) {
-			if (events.get(1).getNewStatus() == ApplicationFormStatus.REJECTED) {
-				return events.get(0).getNewStatus();
+		if (ApplicationFormStatus.REJECTED == application.getStatus()) {
+			StateChangeEvent stateChangeEvent = events.get(events.size() - 2);
+			if (stateChangeEvent.getNewStatus() != ApplicationFormStatus.APPROVAL) {
+				return stateChangeEvent.getNewStatus();
 			}
-			return application.getStatus();
+			return events.get(events.size() - 3).getNewStatus();
 		}
-		if (events.size() > 2) {
-			for (int i = 0; i < events.size(); i++) {
-				if (events.get(i).getNewStatus() == ApplicationFormStatus.REJECTED) {
-					previousEvent = events.get(i - 1);
-					if (previousEvent.getNewStatus() == ApplicationFormStatus.REVIEW || previousEvent.getNewStatus() == ApplicationFormStatus.INTERVIEW) {
-						return previousEvent.getNewStatus();
-					}
-					if (previousEvent.getNewStatus() == ApplicationFormStatus.APPROVAL) {
-						StateChangeEvent previousOfApproval = events.get(i - 2);
-						if (previousOfApproval.getNewStatus() == ApplicationFormStatus.REVIEW || previousOfApproval.getNewStatus() == ApplicationFormStatus.INTERVIEW || previousOfApproval.getNewStatus() == ApplicationFormStatus.VALIDATION) {
-							return previousOfApproval.getNewStatus();
-						}
-					}
-				}
-			}
-		}
-		return events.get(events.size()-1).getNewStatus();
+		if (ApplicationFormStatus.APPROVAL == application.getStatus()) {
+			return events.get(events.size() - 2).getNewStatus();		
+		}		
+		return application.getStatus();
 	}
 
 	/**
 	 * Returns all applications matching the given parameters
+	 * 
 	 * @param user
 	 * @param searchCategory
 	 * @param term
 	 * @param sortCategory
 	 * @param sortOrder
-	 * @param blockCount number of blocks of applications which should be returned (see {@link #APPLICATION_BLOCK_SIZE}).
+	 * @param blockCount
+	 *            number of blocks of applications which should be returned (see
+	 *            {@link #APPLICATION_BLOCK_SIZE}).
 	 * @return
 	 */
 	@Transactional
-	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,// 
+	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,//
 			SearchCategory searchCategory, String term,//
 			SortCategory sortCategory, SortOrder sortOrder, int blockCount) {
 
@@ -180,13 +170,13 @@ public class ApplicationsService {
 		Collections.sort(applications, sortCategory.getComparator(sortOrder));
 		return applications;
 	}
-	
+
 	private List<ApplicationForm> reduceApplicationListSize(List<ApplicationForm> applications, int blockCount) {
-		if( blockCount < 1) {
+		if (blockCount < 1) {
 			throw new IllegalArgumentException("Number of application blocks must be greater than 0!");
 		}
 		int toIndex = blockCount * APPLICATION_BLOCK_SIZE;
-		if( toIndex > applications.size()) {
+		if (toIndex > applications.size()) {
 			return applications;
 		}
 		return applications.subList(0, toIndex);

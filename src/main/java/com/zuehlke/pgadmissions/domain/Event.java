@@ -40,6 +40,7 @@ public abstract class Event extends DomainObject<Integer> {
 	}
 
 	public void setDate(Date date) {
+		System.err.println("Event date: " +  date);
 		this.date = date;
 	}
 

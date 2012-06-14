@@ -17,7 +17,8 @@ $(document).ready(function()
 					cacheBreaker: new Date().getTime() 
 				},
 				function(data) {
-					$('#timeline').html(data);				
+					$('#timeline').html(data);			
+					addToolTips();	
 				}
 		);
 		

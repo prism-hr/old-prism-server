@@ -24,39 +24,8 @@
 	<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>	
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
-
-		<script type="text/javascript">
-			$(document).ready(function()
-			{
-				bindDatePicker('#batchdeadline');
-			 	$('#programme').change(updateBadge);
-			 	$('#project').change(updateBadge);
-			 	$('#programhome').change(updateBadge);
-			 	$('#batchdeadline').change(updateBadge);
-			 	
-			});
-				
-			function updateBadge(){
-				$.get(
-			 		"/pgadmissions/badge/html",
-					{
-						program : $('#programme').val(),	
-						project: $('#project').val(),
-						programhome: $('#programhome').val(),
-						batchdeadline: $('#batchdeadline').val(),				
-						cacheBreaker: new Date().getTime() 
-					},
-					function(data) {
-						$('#html').html(data);
-					}
-				);	
-				$('#badge').attr("src", "/pgadmissions/badge/html?program=" + $('#programme').val() 
-				+ "&project=" +$('#project').val()
-				+ "&programhome=" +$('#programhome').val()
-				+ "&batchdeadline=" +$('#batchdeadline').val());
-			};				
-			</script>
-	    
+		<script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge.js'/>"></script>
+		    
 	</head>
 	
 	<!--[if IE 9]>
@@ -122,12 +91,11 @@
 												<textarea readonly="readonly" id="html" class="max" rows="15" cols="80"></textarea>
 											</div>
 											<div class="row-group">
-												<label class="plain-label">Badge</label>
-												<iframe id="badge" width="500" height="200"></iframe>
-												
+												<label class="plain-label">Badge</label>													
+												<iframe id="badge" width="500" height="200"></iframe>											
 											</div>
 											<div class="buttons">						        		
-												<button type="reset" id="cancelBadge" value="cancel">Clear</button>				        
+												<button type="button" id="cancelBadge" value="cancel">Clear</button>				        
 											</div>
 											
 										</form>

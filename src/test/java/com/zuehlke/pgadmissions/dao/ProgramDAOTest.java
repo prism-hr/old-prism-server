@@ -45,6 +45,19 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase{
 		
 		}
 		
+
+		@Test
+		public void shouldGetProgramByCode() {
+			Program program = new ProgramBuilder().id(1).code("code1").title("another title").toProgram();
+			
+			sessionFactory.getCurrentSession().save(program);
+			flushAndClearSession();
+			
+			ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+			assertEquals(program, programDAO.getProgramByCode("code1"));
+		
+		}
+		
 		@Test
 		public void shouldSaveProgram() {
 			Program program = new ProgramBuilder().code("code1").title("another title").toProgram();

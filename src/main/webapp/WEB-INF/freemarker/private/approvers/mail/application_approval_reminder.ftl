@@ -43,6 +43,16 @@
 			      		</font>
 			      	</p>
 			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}">Approve</a>
+			      		</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/rejectApplication?applicationId=${application.applicationNumber}">Reject</a>
+			      		</font>
+			      	</p>
+			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will continue to send reminders until you respond to this request.</font>
 			      	</p>
 			      	<p>

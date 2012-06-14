@@ -1,6 +1,6 @@
 <!-- Header. -->
 <div id="header">
-  <p>Postgraduate Research Admissions Tool</p>
+  <p>LONDON'S GLOBAL UNIVERSITY</p>
 </div>
 
 <!-- Feedback toolbar/button. -->

@@ -26,10 +26,10 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
-public class AdminReminderTimerTaskTest {
+public class AdminApproverReminderTimerTaskTest {
 	private SessionFactory sessionFactoryMock;
 	private Session sessionMock;
-	private AdminReminderTimerTask reminderTask;
+	private AdminApproverReminderTimerTask reminderTask;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private AdminMailSender adminMailSenderMock;
 	private String subjectMessage;
@@ -58,14 +58,14 @@ public class AdminReminderTimerTaskTest {
 		sessionMock.refresh(applicationFormOne);
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);
-		EasyMock.expect(applicationFormDAOMock.getApplicationsDueAdminReminder(notificationType, status)).andReturn(applicationFormList);
+		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUserReminder(notificationType, status)).andReturn(applicationFormList);
 		transactionOne.commit();
 
-		adminMailSenderMock.sendMailsForApplication(applicationFormOne, firstSubjectMessage, firstEmailTemplate);
+		adminMailSenderMock.sendMailsForApplication(applicationFormOne, firstSubjectMessage, firstEmailTemplate, NotificationType.VALIDATION_REMINDER);
 		applicationFormDAOMock.save(applicationFormOne);
 		transactionTwo.commit();
 
-		adminMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate);
+		adminMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate, NotificationType.VALIDATION_REMINDER);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
@@ -94,14 +94,14 @@ public class AdminReminderTimerTaskTest {
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);
 		EasyMock.expect(//
-				applicationFormDAOMock.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER,//
+				applicationFormDAOMock.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER,//
 						ApplicationFormStatus.VALIDATION)).andReturn(applicationFormList);
 
 		transactionOne.commit();
-		adminMailSenderMock.sendMailsForApplication(applicationFormOne, firstSubjectMessage, firstEmailTemplate);
+		adminMailSenderMock.sendMailsForApplication(applicationFormOne, firstSubjectMessage, firstEmailTemplate, NotificationType.VALIDATION_REMINDER);
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		adminMailSenderMock.sendMailsForApplication(applicationFormTwo, firstSubjectMessage, firstEmailTemplate);
+		adminMailSenderMock.sendMailsForApplication(applicationFormTwo, firstSubjectMessage, firstEmailTemplate, NotificationType.VALIDATION_REMINDER);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
@@ -128,7 +128,7 @@ public class AdminReminderTimerTaskTest {
 		notificationType = NotificationType.VALIDATION_REMINDER;
 		status = ApplicationFormStatus.VALIDATION;
 
-		reminderTask = new AdminReminderTimerTask(sessionFactoryMock, applicationFormDAOMock, adminMailSenderMock,// 
+		reminderTask = new AdminApproverReminderTimerTask(sessionFactoryMock, applicationFormDAOMock, adminMailSenderMock,// 
 				notificationType, status, firstSubjectMessage, firstEmailTemplate, subjectMessage, emailTemplate);
 	}
 }

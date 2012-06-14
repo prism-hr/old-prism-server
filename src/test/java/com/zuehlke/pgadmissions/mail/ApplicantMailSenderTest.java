@@ -131,7 +131,7 @@ public class ApplicantMailSenderTest {
 
 		EasyMock.replay(applicationServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
-		applicantMailSender.sendMailsForApplication(form, "message.code", "private/pgStudents/mail/moved_to_review_notification.ftl");
+		applicantMailSender.sendMailsForApplication(form, "message.code", "private/pgStudents/mail/moved_to_review_notification.ftl", null);
 
 		EasyMock.verify(applicationServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 	}

@@ -49,7 +49,7 @@ public class StateChangeNotificationTask extends TimerTask {
 			transaction = sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().refresh(application);
 			try {
-				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplate);
+				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplate, null);
 				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(notificationType);

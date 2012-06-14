@@ -17,7 +17,7 @@
     	<select class="actionType" name="app_[${application.applicationNumber}]">
 		<option>Select...</option>
 		<option value="view">View</option>
-		<option value="print">Print</option>
+		<option value="print">Download</option>
 		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
 			<option value="approve">Approve</option>
 			<option value="reject">Reject</option>

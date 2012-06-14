@@ -129,6 +129,7 @@ function populateApplicationList(reset)
 		$('#sort-column').val('APPLICATION_DATE');
 		$('#sort-order').val('DESCENDING');
 		$('#block-index').val("1");
+		$('#searchCategory').val(['']);
 	}
 
 	options = {

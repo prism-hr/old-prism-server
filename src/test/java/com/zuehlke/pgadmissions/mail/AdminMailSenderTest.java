@@ -223,6 +223,10 @@ public class AdminMailSenderTest {
 			}
 			
 		};
+		
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("msgCode"),// 
+				EasyMock.aryEq(new Object[] { "abc", "prg", "Jane", "Smith" }), EasyMock.eq((Locale) null))).andReturn("subject");
+		
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminOneAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminTwoAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
@@ -231,7 +235,7 @@ public class AdminMailSenderTest {
 		EasyMock.expectLastCall().times(2);
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		
-		String subjectMessageCode = "subject";
+		String subjectMessageCode = "msgCode";
 		adminMailSender.sendMailsForApplication(form, subjectMessageCode, templatename, NotificationType.APPROVAL_REMINDER);
 		
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);

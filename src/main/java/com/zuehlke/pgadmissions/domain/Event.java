@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -40,6 +41,7 @@ public abstract class Event extends DomainObject<Integer> {
 	}
 
 	public void setDate(Date date) {
+		System.err.println(TimeZone.getDefault());
 		System.err.println("Event date: " +  date);
 		this.date = date;
 	}

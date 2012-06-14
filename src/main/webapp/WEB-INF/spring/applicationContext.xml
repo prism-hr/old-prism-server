@@ -112,5 +112,7 @@
 	<mvc:view-controller path="/register/complete" view-name="public/register/registration_complete"/>
 	
 	<mvc:view-controller path="/addReferences/referenceuploaded" view-name="private/referees/upload_success"/>
+	
+
 
 </beans>

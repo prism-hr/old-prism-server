@@ -40,6 +40,14 @@ public class ProgramsServiceTest {
 	}
 	
 	@Test
+	public void shouldGetProgramByCode() {
+		Program program = EasyMock.createMock(Program.class);
+		EasyMock.expect(programDAOMock.getProgramByCode("code")).andReturn(program);
+		EasyMock.replay(program, programDAOMock);
+		Assert.assertEquals(program, programsService.getProgramByCode("code"));
+	}
+	
+	@Test
 	public void shouldDelegateSaveToDAO() {
 		Program program = EasyMock.createMock(Program.class);
 		programDAOMock.save(program);

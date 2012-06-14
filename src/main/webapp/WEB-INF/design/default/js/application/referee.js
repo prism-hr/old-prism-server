@@ -174,9 +174,10 @@ function postRefereeData(messsage){
 				{
 					// Close the section only if there are no errors.
 					var errorCount = $('#referencesSection .invalid:visible').length;
-					if (errorCount == 0)
+					var referenceCount = $('#referencesSection table.existing tbody tr').length;
+					if (errorCount == 0 || referenceCount >= 3)
 					{
-						$('#references-H2').trigger('click');
+						$('#refereeCloseButton').trigger('click');
 					}
 				}
 			}

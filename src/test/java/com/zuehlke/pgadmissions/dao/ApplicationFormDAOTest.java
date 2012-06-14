@@ -157,7 +157,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -179,10 +179,62 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		assertTrue(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnOverDueApplicationInApprovalStageWithNoReminderForOneWeekReminder() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
+				.dueDate(oneMonthAgo).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 
+	@Test
+	public void shouldNotReturnApplicationsNotInApprovalStageForOneWeekReminder() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date eightDaysAgo = DateUtils.addDays(today, -8);
+		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		.program(program)
+		.applicant(user)
+		.status(ApplicationFormStatus.APPROVED)
+		.dueDate(oneMonthAgo)
+		.notificationRecords(
+				new NotificationRecordBuilder().notificationType(NotificationType.APPROVAL_REMINDER).notificationDate(eightDaysAgo)
+				.toNotificationRecord()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.VALIDATION);
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	
 	@Test
 	public void shouldNotReturnApplicationsNotInValidationStageForOneWeekReminder() {
 		ReminderInterval reminderInterval = new ReminderInterval();
@@ -209,10 +261,32 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 
+	@Test
+	public void shouldNotReturnApplicationaInApprovalStageButNotOverDueForOneWeekReminder() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date oneWeekInFuture = DateUtils.addWeeks(today, 1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
+				.dueDate(oneWeekInFuture).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL);
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	
 	@Test
 	public void shouldNotReturnApplicationaInValidationStageButNotOverDueForOneWeekReminder() {
 		ReminderInterval reminderInterval = new ReminderInterval();
@@ -231,10 +305,31 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 
+	@Test
+	public void shouldNotReturnApplicationaInApprovalStageWitDueDateTodayForAReminderOfOneWeek() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
+				.dueDate(now).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL);
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	
 	@Test
 	public void shouldNotReturnApplicationaInValidationStageWitDueDateTodayForAReminderOfOneWeek() {
 		ReminderInterval reminderInterval = new ReminderInterval();
@@ -252,7 +347,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -281,7 +376,36 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldNotReturnOverDueApplicationInApprovalStageWithReminderSixDaysWeekAgo() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date sixDaysAgo = DateUtils.addDays(today, -6);
+		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		.program(program)
+		.applicant(user)
+		.status(ApplicationFormStatus.APPROVAL)
+		.dueDate(oneMonthAgo)
+		.notificationRecords(
+				new NotificationRecordBuilder().notificationType(NotificationType.APPROVAL_REMINDER).notificationDate(sixDaysAgo)
+				.toNotificationRecord()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER, ApplicationFormStatus.APPROVAL);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -310,7 +434,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -339,7 +463,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 	
@@ -368,7 +492,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 	
@@ -397,7 +521,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 	
@@ -426,7 +550,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 	
@@ -454,7 +578,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 	
@@ -482,7 +606,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 	
@@ -511,7 +635,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 

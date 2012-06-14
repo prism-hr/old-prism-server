@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public abstract class MailSender {
 
@@ -72,4 +73,5 @@ public abstract class MailSender {
 			throw new RuntimeException(uee);
 		}
 	}
+
 }

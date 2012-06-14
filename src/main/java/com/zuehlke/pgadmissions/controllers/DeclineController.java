@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Controller
 @RequestMapping(value = { "/decline" })
@@ -45,7 +45,9 @@ public class DeclineController {
 	public String declineReview(@RequestParam Integer userId, @RequestParam String applicationId, ModelMap modelMap) {
 		RegisteredUser reviewer = getReviewer(userId);
 		ApplicationForm application = getApplicationForm(applicationId);
-		commentService.declineReview(reviewer, application);
+		if(application.getStatus() == ApplicationFormStatus.REVIEW && reviewer.isReviewerInLatestReviewRoundOfApplicationForm(application)){
+			commentService.declineReview(reviewer, application);
+		}
 		modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
 		return DECLINE_SUCCESS_VIEW_NAME;
 	}

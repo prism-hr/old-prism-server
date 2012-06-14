@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -90,21 +91,74 @@ public class DeclineControllerTest {
 	
 	@Test
 	public void shouldDeclineReviewAndReturnMessageView() {
-		final RegisteredUser reviewer = new RegisteredUserBuilder().id(5).toUser();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
+		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public RegisteredUser getReviewer(Integer userId){
-				return reviewer;
+				if(5 == userId){
+					return reviewer;
+				}
+				return null;
 			}
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId){
 				return applicationForm;
 			}
 		}; 
+		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);		
 		commentServiceMock.declineReview(reviewer, applicationForm);
-		EasyMock.replay(commentServiceMock);
-		String view = controller.declineReview(reviewer.getId(), applicationForm.getApplicationNumber(), new ModelMap());
+		EasyMock.replay(commentServiceMock, reviewer);
+		String view = controller.declineReview(5, applicationForm.getApplicationNumber(), new ModelMap());
+		EasyMock.verify(commentServiceMock);
+		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
+	}
+
+	@Test
+	public void shouldNotDeclineReviewButStillReturnMessageViewIfUserNotReviewerInLatestRoundOfReviews() {
+		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
+		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
+			@Override
+			public RegisteredUser getReviewer(Integer userId){
+				if(5 == userId){
+					return reviewer;
+				}
+				return null;
+			}
+			@Override
+			public ApplicationForm getApplicationForm(String applicationId){
+				return applicationForm;
+			}
+		}; 
+		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(false);		
+		
+		EasyMock.replay(commentServiceMock, reviewer);
+		String view = controller.declineReview(5, applicationForm.getApplicationNumber(), new ModelMap());
+		EasyMock.verify(commentServiceMock);
+		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
+	}
+	@Test
+	public void shouldNotDeclineReviewButStillReturnMessageViewIfUserApplicationNotInReview() {
+		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
+		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
+			@Override
+			public RegisteredUser getReviewer(Integer userId){
+				if(5 == userId){
+					return reviewer;
+				}
+				return null;
+			}
+			@Override
+			public ApplicationForm getApplicationForm(String applicationId){
+				return applicationForm;
+			}
+		}; 
+		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);		
+		
+		EasyMock.replay(commentServiceMock, reviewer);
+		String view = controller.declineReview(5, applicationForm.getApplicationNumber(), new ModelMap());
 		EasyMock.verify(commentServiceMock);
 		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
 	}

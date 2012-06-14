@@ -36,13 +36,13 @@
 		      		</h1>
 			      	</br>
 			      	<p>
-				      	<#if (previousStage.displayValue() = "Validation")>
+				      	<#if (previousStage.displayValue() == "Validation")>
 				      		<font face="Arial, Helvetica, sans-serif" size="2">Our admissions officer has now completed their assessment of your Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
 				      	</#if> 
-				      	<#if (previousStage.displayValue() = "Review")>
+				      	<#if (previousStage.displayValue() == "Review")>
 				      		<font face="Arial, Helvetica, sans-serif" size="2">We have completed our academic review of your Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
 				      	</#if> 
-				      	<#if (previousStage.displayValue() = "Interview")>
+				      	<#if (previousStage.displayValue() == "Interview")>
 				      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for presenting for your recent interview for your Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
 				      	</#if> 
 			      	</p>

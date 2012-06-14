@@ -43,7 +43,10 @@
 	                   		 <#list  timelineObject.approvalRound.supervisors as supervisor>
 	                   		 	<p>${supervisor.user.firstName?html} ${supervisor.user.lastName?html}</p>
 	                   		 </#list>
-	                   		 
+	                   	<#elseif timelineObject.status?? &&   timelineObject.status == 'REJECTED'>
+	                   		<h3>Reason:</h3>
+	                   		<p>${applicationForm.rejection.rejectionReason.text?html}</p>           			
+	
 	                   	</#if>                   		
                     
                     </div>

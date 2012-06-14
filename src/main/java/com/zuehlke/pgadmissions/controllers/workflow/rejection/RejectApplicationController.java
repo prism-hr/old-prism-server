@@ -84,13 +84,8 @@ public class RejectApplicationController {
 			@ModelAttribute("rejection") Rejection rejection,
 			ModelMap model) {
 
-	
-		application.setStatus(ApplicationFormStatus.REJECTED); // simulate
-																// rejection to
-																// get right
-																// stage back*/
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
-		model.put("stage", stage);
+		model.put("previousStage", stage);
 		model.put("application", application);
 		model.put("reason", rejection.getRejectionReason());
 		if(rejection.isIncludeProspectusLink()){

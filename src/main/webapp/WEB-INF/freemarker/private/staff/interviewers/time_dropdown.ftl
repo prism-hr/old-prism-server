@@ -8,7 +8,7 @@
 
  <select name="minutes" id="minutes">
 		<option value="">Minutes..</option>
-		<#list 1..59 as minute>
+		<#list 0..59 as minute>
 			<option value="${minute?string('00')}"  <#if interview.timeParts[1]?? && interview.timeParts[1]== minute?string('00')> selected = "selected"</#if>>${minute?string('00')}</option>          
 		</#list>        
 </select>	

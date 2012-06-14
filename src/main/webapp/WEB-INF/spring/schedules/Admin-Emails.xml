@@ -3,7 +3,7 @@
 <beans>
 
 	<!-- validation reminders -->
-	<bean id="adminValidationReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminReminderTimerTask">
+	<bean id="adminValidationReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminApproverReminderTimerTask">
 		<constructor-arg index="0" ref="sessionFactoryMail" />
 		<constructor-arg index="1" ref="mailApplicationDAO" />
 		<constructor-arg index="2" ref="adminMailSender" />
@@ -48,7 +48,7 @@
 		<property name="timerTask" ref="adminAssignedReviewerNotificationTimerTask" />
 	</bean>
 
-	<bean id="adminReviewReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminReminderTimerTask">
+	<bean id="adminReviewReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminApproverReminderTimerTask">
 		<constructor-arg index="0" ref="sessionFactoryMail" />
 		<constructor-arg index="1" ref="mailApplicationDAO" />
 		<constructor-arg index="2" ref="adminMailSender" />
@@ -79,7 +79,7 @@
 		<property name="timerTask" ref="adminInterviewFeedbackNotificationTimerTask" />
 	</bean>
 	
-	<bean id="adminInterviewReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminReminderTimerTask">
+	<bean id="adminInterviewReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminApproverReminderTimerTask">
 		<constructor-arg index="0" ref="sessionFactoryMail" />
 		<constructor-arg index="1" ref="mailApplicationDAO" />
 		<constructor-arg index="2" ref="adminMailSender" />

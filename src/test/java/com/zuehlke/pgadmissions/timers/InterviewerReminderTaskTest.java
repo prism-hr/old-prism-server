@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.mail.InterviewerMailSender;
 public class InterviewerReminderTaskTest {
 	private SessionFactory sessionFactoryMock;
 	private Session sessionMock;
-	private InterviewerReminderTask interviewerNotificationTask;
+	private InterviewerReminderTask interviewerReminderTask;
 	private InterviewerMailSender mailServiceMock;
 	private InterviewerDAO interviewerDAOMock;
 	
@@ -62,7 +62,7 @@ public class InterviewerReminderTaskTest {
 
 		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, interviewerDAOMock);
 
-		interviewerNotificationTask.run();
+		interviewerReminderTask.run();
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, interviewerDAOMock);
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(interviewerOne.getLastNotified(), Calendar.DATE));
@@ -97,7 +97,7 @@ public class InterviewerReminderTaskTest {
 
 		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, interviewerDAOMock);
 
-		interviewerNotificationTask.run();
+		interviewerReminderTask.run();
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, interviewerDAOMock);
 		assertNull(interviewerOne.getLastNotified());
@@ -113,7 +113,7 @@ public class InterviewerReminderTaskTest {
 
 		mailServiceMock = EasyMock.createMock(InterviewerMailSender.class);
 		interviewerDAOMock = EasyMock.createMock(InterviewerDAO.class);		
-		interviewerNotificationTask = new  InterviewerReminderTask(sessionFactoryMock, mailServiceMock, interviewerDAOMock);
+		interviewerReminderTask = new  InterviewerReminderTask(sessionFactoryMock, mailServiceMock, interviewerDAOMock);
 
 	}
 

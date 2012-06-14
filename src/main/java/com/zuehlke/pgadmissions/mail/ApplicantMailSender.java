@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -48,7 +49,7 @@ public class ApplicantMailSender extends StateChangeMailSender {
 	}
 
 	@Override
-	public void sendMailsForApplication(ApplicationForm form, String messageCode, String templatename) {
+	public void sendMailsForApplication(ApplicationForm form, String messageCode, String templatename, NotificationType notificationType) {
 		InternetAddress toAddress = createAddress(form.getApplicant());
 		String subject = resolveSubject(form, messageCode);
 

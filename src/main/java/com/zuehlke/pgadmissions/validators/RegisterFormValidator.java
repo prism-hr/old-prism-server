@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class RegisterFormValidator implements Validator {
 
 	private UserService userService;
 	private boolean shouldValidateSameEmail;
-
+	
 	RegisterFormValidator() {
 		this(null);
 	}
@@ -25,7 +26,6 @@ public class RegisterFormValidator implements Validator {
 	public RegisterFormValidator(UserService userService) {
 		this.userService = userService;
 	}
-
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -53,9 +53,17 @@ public class RegisterFormValidator implements Validator {
 		}
 
 		if(record.getPassword().length()<8){
-			errors.rejectValue("password", "user.password.notvalid");
+			errors.rejectValue("password", "user.password.small");
 		}
-
+		
+		if(record.getPassword().length()>15){
+			errors.rejectValue("password", "user.password.large");
+		}
+		
+		if(!record.getPassword().matches("[a-zA-Z0-9+]+")){
+			errors.rejectValue("password", "user.password.nonalphanumeric");
+		}
+		
 		if (shouldValidateSameEmail) {
 			List<RegisteredUser> allUsers = userService.getAllUsers();
 			for (RegisteredUser user : allUsers) {

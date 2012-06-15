@@ -97,7 +97,7 @@ public class RegisterFormValidatorTest {
 	}
 	
 	@Test
-	public void shouldRejectIfPasswordsNotValid() {
+	public void shouldRejectIfPasswordLessThan8Chars() {
 		user.setPassword("12");
 		user.setConfirmPassword("12");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
@@ -106,7 +106,59 @@ public class RegisterFormValidatorTest {
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.password.notvalid", mappingResult.getFieldError("password").getCode());
+		Assert.assertEquals("user.password.small", mappingResult.getFieldError("password").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfPasswordMoreThan15Chars() {
+		user.setPassword("1234567891234567");
+		user.setConfirmPassword("1234567891234567");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
+		userServiceMock.save(user);
+		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+		EasyMock.replay(userServiceMock);
+		recordValidator.validate(user, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.password.large", mappingResult.getFieldError("password").getCode());
+	}
+	
+	
+	@Test
+	public void shouldRejectIfContainsSpecialChars() {
+		user.setPassword(" 12o*-lala");
+		user.setConfirmPassword(" 12o*-lala");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
+		userServiceMock.save(user);
+		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+		EasyMock.replay(userServiceMock);
+		recordValidator.validate(user, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.password.nonalphanumeric", mappingResult.getFieldError("password").getCode());
+	}
+	
+	
+	@Test
+	public void shouldAcceptPasswordWithOnlyChars() {
+		user.setPassword("oooooooooo");
+		user.setConfirmPassword("oooooooooo");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
+		userServiceMock.save(user);
+		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+		EasyMock.replay(userServiceMock);
+		recordValidator.validate(user, mappingResult);
+		Assert.assertEquals(0, mappingResult.getErrorCount());
+	}
+	
+	@Test
+	public void shouldAcceptPasswordWithOnlyNumbersAndLettes() {
+		user.setPassword("ooo12ooo3oo1");
+		user.setConfirmPassword("ooo12ooo3oo1");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
+		userServiceMock.save(user);
+		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+		EasyMock.replay(userServiceMock);
+		recordValidator.validate(user, mappingResult);
+		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
 	@Test

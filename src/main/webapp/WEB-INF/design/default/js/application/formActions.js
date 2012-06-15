@@ -1,4 +1,5 @@
-$(document).ready(function(){	
+$(document).ready(function()
+{	
 	$("#acceptTermsValue").val("NO");
 	
 	// --------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ $(document).ready(function(){
 	);
 	
 	/* Personal Details. */
+	$('#personalDetailsSection').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getPersonalDetails",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -32,6 +34,7 @@ $(document).ready(function(){
 			function(data)
 			{
 				$('#personalDetailsSection').html(data);
+				$('#personalDetailsSection div.ajax').remove();
 				if ($('#personalDetailsSection .section-error-bar').length == 0)
 				{
 					$('#personalDetails-H2').trigger('click');
@@ -40,14 +43,17 @@ $(document).ready(function(){
 	);
 	
 	/* Address. */
+	$('#addressSection').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getAddress",
 			{
 				applicationId:  $('#applicationId').val(),				
 				errorCode: $('#addressError').val(),
 				cacheBreaker:  new Date().getTime() 
 			},
-			function(data) {
+			function(data)
+			{
 				$('#addressSection').html(data);
+				$('#addressSection div.ajax').remove();
 				if ($('#addressSection .section-error-bar').length == 0)
 				{
 					$('#address-H2').trigger('click');
@@ -56,14 +62,17 @@ $(document).ready(function(){
 	);
 	
 	/* Qualifications. */
+	$('#qualificationsSection').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getQualification",
 			{
 				applicationId:  $('#applicationId').val(),
 				errorCode: false,
 				cacheBreaker: new Date().getTime() 				
 			},
-			function(data) {
+			function(data)
+			{
 				$('#qualificationsSection').html(data);
+				$('#qualificationsSection div.ajax').remove();
 				if ($('#qualificationsSection .section-error-bar').length == 0)
 				{
 					$('#qualifications-H2').trigger('click');
@@ -72,14 +81,17 @@ $(document).ready(function(){
 	);
 	
 	/* (Employment) Position. */
+	$('#positionSection').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getEmploymentPosition",
 			{
 				applicationId:  $('#applicationId').val(),
 				errorCode: false,
 				cacheBreaker: new Date().getTime() 									
 			},
-			function(data) {
+			function(data)
+			{
 				$('#positionSection').html(data);
+				$('#positionSection div.ajax').remove();
 				if ($('#positionSection .section-error-bar').length == 0)
 				{
 					$('#position-H2').trigger('click');
@@ -88,14 +100,17 @@ $(document).ready(function(){
 	);
 	
 	/* Funding. */
+	$('#fundingSection').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getFunding",
 			{
 				applicationId:  $('#applicationId').val(),
 				errorCode: false,
 				cacheBreaker: new Date().getTime() 									
 			},
-			function(data) {
+			function(data)
+			{
 				$('#fundingSection').html(data);
+				$('#fundingSection div.ajax').remove();
 				if ($('#fundingSection .section-error-bar').length == 0)
 				{
 					$('#funding-H2').trigger('click');
@@ -104,14 +119,17 @@ $(document).ready(function(){
 	);
 	
 	/* Referees. */
+	$('#referencesSection').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getReferee",
 			{
 				applicationId:  $('#applicationId').val(),
 				errorCode: $('#refereesError').val(),
 				cacheBreaker: new Date().getTime() 
 			},
-			function(data) {
+			function(data)
+			{
 				$('#referencesSection').html(data);
+				$('#referencesSection div.ajax').remove();
 				if ($('#referencesSection .section-error-bar').length == 0)
 				{
 					$('#referee-H2').trigger('click');
@@ -120,14 +138,17 @@ $(document).ready(function(){
 	);
 
 	/* Documents. */
+	$('#documentSection').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getDocuments",
 			{
 				applicationId:  $('#applicationId').val(),
 				errorCode: $('#personalStatementError').val(),
 				cacheBreaker:new Date().getTime() 
 			},
-			function(data) {
+			function(data)
+			{
 				$('#documentSection').html(data);
+				$('#documentSection div.ajax').remove();
 				if ($('#documentSection .section-error-bar').length == 0)
 				{
 					$('#documents-H2').trigger('click');
@@ -136,14 +157,17 @@ $(document).ready(function(){
 	);
 	
 	/* Additional Information. */
+	$('#additionalInformationSection').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getAdditionalInformation",
 			{
 				applicationId:  $('#applicationId').val(),
 				errorCode:  $('#additionalInformationError').val(),
 				cacheBreaker: new Date().getTime() 								
 			},
-			function(data) {
+			function(data)
+			{
 				$('#additionalInformationSection').html(data);
+				$('#additionalInformationSection div.ajax').remove();
 				if ($('#additionalInformationSection .section-error-bar').length == 0)
 				{
 					$('#additional-H2').trigger('click');
@@ -156,7 +180,8 @@ $(document).ready(function(){
 			{
 				applicationId:  $('#applicationId').val()
 			},
-			function(data) {
+			function(data)
+			{
 				$('#acceptTermsSection').html(data);
 			}
 	);

@@ -1,6 +1,20 @@
 $(document).ready(function() {
 	
 	populateApplicationList(true);
+
+	// --------------------------------------------------------------------------------
+	// AJAX ACTIVITY
+	// --------------------------------------------------------------------------------
+	$('div.content-box-inner').ajaxStart(function()
+	{
+		$(this).css({ position: 'relative' })
+					 .append('<div class="ajax" />');
+	})
+	.ajaxComplete(function()
+	{
+		$('div.ajax', this).remove();
+	});
+	
 	
 	// --------------------------------------------------------------------------------
 	// TABLE SORTING
@@ -109,13 +123,13 @@ $(document).ready(function() {
 		id = id.replace('appDownload_', '');
 	
 		var currentAppList = $('#appList').val();		
-		if ($(this).attr('checked'))
+		if ($(this).is(':checked'))
 		{
 			$('#appList').val(currentAppList + id + ";");
 		}
 		else
 		{
-			$('#appList').val(currentAppList.replace(id  +";", ''));
+			$('#appList').val(currentAppList.replace(id + ";", ''));
 		}
 	});
 

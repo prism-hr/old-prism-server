@@ -27,7 +27,8 @@ public class RegisterController {
 
 	private static final String REGISTER_USERS_VIEW_NAME = "public/register/register_applicant";
 	private static final String REGISTER_INFO_VIEW_NAME = "public/register/register_info";
-//	private static final String REGISTER_COMPLETE_VIEW_NAME = "/register/complete";
+	// private static final String REGISTER_COMPLETE_VIEW_NAME =
+	// "/register/complete";
 	private static final String REGISTER_COMPLETE_VIEW_NAME = "public/register/registration_complete";
 	private final UserService userService;
 	private final RegisterFormValidator validator;
@@ -56,8 +57,8 @@ public class RegisterController {
 			if (suggestedUser == null) {
 				throw new ResourceNotFoundException();
 			}
-			if(suggestedUser.isEnabled() && suggestedUser.getDirectToUrl() != null){
-				return new ModelAndView("redirect:"+ suggestedUser.getDirectToUrl());
+			if (suggestedUser.isEnabled() && suggestedUser.getDirectToUrl() != null) {
+				return new ModelAndView("redirect:" + suggestedUser.getDirectToUrl());
 			}
 			record.setFirstName(suggestedUser.getFirstName());
 			record.setLastName(suggestedUser.getLastName());
@@ -89,8 +90,8 @@ public class RegisterController {
 		return new ModelAndView(REGISTER_COMPLETE_VIEW_NAME);
 
 	}
-	
-	@RequestMapping(method = RequestMethod.GET, value="/resendConfirmation")
+
+	@RequestMapping(method = RequestMethod.GET, value = "/resendConfirmation")
 	public String resendConfirmation(@RequestParam Integer userId, ModelMap modelMap) {
 		RegisteredUser user = userService.getUser(userId);
 		if (user == null) {
@@ -100,7 +101,6 @@ public class RegisterController {
 		modelMap.put("user", user);
 		return REGISTER_COMPLETE_VIEW_NAME;
 	}
-	
 
 	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
 	public ModelAndView activateAccountSubmit(@RequestParam String activationCode) throws ParseException {
@@ -114,13 +114,13 @@ public class RegisterController {
 		userService.save(user);
 		String redirectView = "redirect:";
 		if (user.getProgramOriginallyAppliedTo() != null) {
-			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProgramOriginallyAppliedTo(), null, null);
+			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProgramOriginallyAppliedTo(), null, null,
+					null);
 			redirectView = redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber();
 		} else {
-			if(user.getDirectToUrl() != null){
+			if (user.getDirectToUrl() != null) {
 				redirectView = redirectView + user.getDirectToUrl();
-			}
-			else{
+			} else {
 				redirectView = redirectView + "/applications";
 			}
 		}

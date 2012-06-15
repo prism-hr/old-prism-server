@@ -144,7 +144,7 @@ $(document).ready(function()
 	
 });
 
-function postRefereeData(messsage){
+function postRefereeData(message){
 	
 	var postData ={ 
 			firstname: $("#ref_firstname").val(),
@@ -159,7 +159,7 @@ function postRefereeData(messsage){
 			application:  $('#applicationId').val(),	
 			refereeId: $("#refereeId").val(),
 			phoneNumber: $("#refPhoneNumber").val(),
-			message:messsage
+			message:message
 	}
 
 	$('#referencesSection > div').append('<div class="ajax" />');

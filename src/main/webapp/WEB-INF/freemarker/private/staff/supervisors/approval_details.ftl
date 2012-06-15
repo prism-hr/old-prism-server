@@ -101,13 +101,13 @@
 													<select id="programSupervisors" class="max" multiple="multiple" size="${avaliableOptionsSize}">
 														<option value="" disabled="disabled" id="default">Default supervisors</option>
 														<#list programmeSupervisors as supervisor>
-															<option value="${applicationForm.applicationNumber}|${supervisor.id?string('#####')}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
 														</#list>
 														<option value="" disabled="disabled"></option>
 														<option value="" disabled="disabled" id="previous">Previous supervisors in this programme</option>
 														
 														<#list previousSupervisors as supervisor>
-															<option value="${applicationForm.applicationNumber}|${supervisor.id?string('#####')}" category="previous">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
 														</#list>							
 														<option value="" disabled="disabled"></option>								
 													</select>
@@ -133,17 +133,17 @@
 													</p>
 													<select id="applicationSupervisors" class="max" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 														<#list applicationSupervisors as supervisor>
-															<option value="${applicationForm.applicationNumber}|${supervisor.id?string('#####')}">
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}">
 																${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if>
 															</option>
 														</#list>
-														<#list pendingSupervisors as unsaved>									
-															<option value="${applicationForm.applicationNumber}|${unsaved.id?string('#####')}">
+														<#list pendingSupervisors as unsaved>
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(unsaved.id)}">
 																${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if> (*)
 															</option>
 														</#list>
-														<#list willingToSuperviseUsers as willingUser>									
-															<option value="${applicationForm.applicationNumber}|${willingUser.id?string('#####')}">
+														<#list willingToSuperviseUsers as willingUser>					
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(willingUser.id)}">
 																${willingUser.firstName?html} ${willingUser.lastName?html} <#if !willingUser.enabled> - Pending</#if> (*)
 															</option>
 														</#list>
@@ -205,7 +205,7 @@
 										</div>
 
 										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-										<input type="hidden" id="approvalRoundId" name="approvalRoundId" value="${(approvalRound.id?string("######"))!}"/>  
+										<input type="hidden" id="approvalRoundId" name="approvalRoundId" value="<#if approvalRound.id??>${encrypter.encrypt(approvalRound.id)}</#if>" />  
 
 								</form>
 							</div>

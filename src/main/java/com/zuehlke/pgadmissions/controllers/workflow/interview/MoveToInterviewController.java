@@ -34,8 +34,8 @@ public class MoveToInterviewController extends InterviewController {
 	public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
 			 MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
 			DatePropertyEditor datePropertyEditor, InterviewerPropertyEditor interviewerPropertyEditor) {
-		super(applicationsService, userService, validator, messageSource, interviewService, interviewValidator, datePropertyEditor, interviewerPropertyEditor);
-
+		super(applicationsService, userService, validator, messageSource, interviewService,// 
+				interviewValidator, datePropertyEditor, interviewerPropertyEditor, null);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToInterview")
@@ -52,16 +52,12 @@ public class MoveToInterviewController extends InterviewController {
 			return INTERVIEW_DETAILS_VIEW_NAME;
 		}
 		interviewService.moveApplicationToInterview(interview, applicationForm);
-		
-
 		return "redirect:/applications";
 	}
 	
-	
+	@Override
 	@ModelAttribute("interview")
 	public Interview getInterview(@RequestParam Object applicationId) {
 		return new Interview();
 	}
-
-
 }

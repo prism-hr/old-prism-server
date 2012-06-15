@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
@@ -46,7 +47,7 @@ public class RegisterControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private ProgramsService programServiceMock;
 	private ApplicationQueryStringParser qureyStringParserMock;
-	
+	encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
 	
 	@Before
 	public void setUp() {
@@ -56,7 +57,9 @@ public class RegisterControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		programServiceMock = EasyMock.createMock(ProgramsService.class);
 		qureyStringParserMock = EasyMock.createMock(ApplicationQueryStringParser.class);
-		registerController = new RegisterController(validatorMock, userServiceMock, registrationServiceMock, applicationsServiceMock, programServiceMock,qureyStringParserMock);
+		encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
+
+		registerController = new RegisterController(validatorMock, userServiceMock, registrationServiceMock, applicationsServiceMock, programServiceMock,qureyStringParserMock, encryptionHelper);
 	}
 	
 	@Test
@@ -110,19 +113,23 @@ public class RegisterControllerTest {
 	@Test
 	public void shouldResendConfirmationEmail(){
 		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("mark").lastName("euston").password("123").confirmPassword("123").toUser();
+		EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		registrationServiceMock.sendConfirmationEmail(user);
-		EasyMock.replay(userServiceMock, registrationServiceMock);
-		registerController.resendConfirmation(1, new ModelMap());
-		EasyMock.verify(userServiceMock, registrationServiceMock);
+		EasyMock.replay(userServiceMock, registrationServiceMock, encryptionHelper);
+
+		registerController.resendConfirmation("enc", new ModelMap());
+		
+		EasyMock.verify(userServiceMock, registrationServiceMock, encryptionHelper);
 	}
 	
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourveNotFoundIfUserIsNotFound(){
+		EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(2);
 		EasyMock.expect(userServiceMock.getUser(2)).andReturn(null);
-		EasyMock.replay(userServiceMock);
-		registerController.resendConfirmation(2, new ModelMap());
+		EasyMock.replay(userServiceMock, encryptionHelper);
+		registerController.resendConfirmation("enc", new ModelMap());
 		EasyMock.verify(userServiceMock);
 	}
 	

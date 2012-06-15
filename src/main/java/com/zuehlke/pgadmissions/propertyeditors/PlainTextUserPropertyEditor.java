@@ -7,20 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class PlainTextUserPropertyEditor extends PropertyEditorSupport {
 
 	private final UserService userService;
+	private final EncryptionHelper encryptionHelper;
 	
 	PlainTextUserPropertyEditor() {
-		this(null);
+		this(null, null);
 	
 	}
 	@Autowired
-	public PlainTextUserPropertyEditor(UserService userService) {
+	public PlainTextUserPropertyEditor(UserService userService, EncryptionHelper encryptionHelper) {
 		this.userService = userService;
+		this.encryptionHelper = encryptionHelper;
 	
 	}
 
@@ -30,8 +33,7 @@ public class PlainTextUserPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(userService.getUser(Integer.parseInt(strId)));
-		
+		setValue(userService.getUser(encryptionHelper.decryptToInteger(strId)));
 	}
 
 	@Override
@@ -39,7 +41,6 @@ public class PlainTextUserPropertyEditor extends PropertyEditorSupport {
 		if(getValue() == null || ((RegisteredUser)getValue()).getId() == null){
 			return null;
 		}
-		return ((RegisteredUser)getValue()).getId().toString();
+		return encryptionHelper.encrypt(((RegisteredUser)getValue()).getId());
 	}
-
 }

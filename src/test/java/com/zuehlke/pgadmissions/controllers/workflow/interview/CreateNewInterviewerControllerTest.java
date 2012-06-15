@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -36,6 +39,7 @@ public class CreateNewInterviewerControllerTest {
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
 	private InterviewService interviewServiceMock;
+	private EncryptionHelper encryptionHelper;
 
 	@Test
 	@SuppressWarnings("unchecked")
@@ -276,17 +280,23 @@ public class CreateNewInterviewerControllerTest {
 	@Test
 	public void shouldReturnInterviewIfIdGiven(){
 		Interview interview = new InterviewBuilder().id(4).toInterview();
+		EasyMock.expect(encryptionHelper.decryptToInteger("23")).andReturn(4);
 		EasyMock.expect(interviewServiceMock.getInterviewById(4)).andReturn(interview);
-		EasyMock.replay(interviewServiceMock);
-		assertEquals(interview, controller.getInterview(4));
+		EasyMock.replay(interviewServiceMock, encryptionHelper);
 		
+		assertEquals(interview, controller.getInterview(23));
+
+		EasyMock.verify(interviewServiceMock, encryptionHelper);
 	}
+
 	@Before
 	public void setup() {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		interviewServiceMock = EasyMock.createMock(InterviewService.class);
-		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null);
+		encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
+		
+		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper);
 	}
 }

@@ -56,7 +56,7 @@
 															<option value="">Please select a program</option>
 															<option value="-1">All programs</option>
 															<#list programs as program>"
-															<option value='${program.id?string("######")}' 
+															<option value='${program.code}' 
 															<#if selectedProgram?? && selectedProgram.id == program.id >
 															selected = "selected"
 															</#if>

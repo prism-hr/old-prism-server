@@ -18,8 +18,8 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -38,15 +38,16 @@ public abstract class InterviewController {
 	protected final InterviewValidator interviewValidator;
 	protected final DatePropertyEditor datePropertyEditor;
 	protected final InterviewerPropertyEditor interviewerPropertyEditor;
+	protected final EncryptionHelper encryptionHelper;
 
 	InterviewController() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public InterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
-			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator, DatePropertyEditor datePropertyEditor,
-			InterviewerPropertyEditor interviewerPropertyEditor) {
+	public InterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,//
+			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator, DatePropertyEditor datePropertyEditor,//
+			InterviewerPropertyEditor interviewerPropertyEditor, EncryptionHelper encryptionHelper) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.interviewerValidator = validator;
@@ -56,6 +57,7 @@ public abstract class InterviewController {
 		this.interviewValidator = interviewValidator;
 		this.datePropertyEditor = datePropertyEditor;
 		this.interviewerPropertyEditor = interviewerPropertyEditor;
+		this.encryptionHelper = encryptionHelper;
 	}
 
 	@InitBinder(value = "interviewer")
@@ -76,7 +78,7 @@ public abstract class InterviewController {
 	}
 
 	@ModelAttribute("programmeInterviewers")
-	public List<RegisteredUser> getProgrammeInterviewers(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingInterviewer) {
+	public List<RegisteredUser> getProgrammeInterviewers(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingInterviewer) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		Program program = application.getProgram();
 		List<RegisteredUser> availableInterviewers = new ArrayList<RegisteredUser>();
@@ -125,8 +127,8 @@ public abstract class InterviewController {
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (application == null
-				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
+		if (application == null//
+				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()//
 						.isInterviewerOfApplicationForm(application))) {
 			throw new ResourceNotFoundException();
 		}
@@ -136,11 +138,12 @@ public abstract class InterviewController {
 	public abstract Interview getInterview(@RequestParam Object id);
 
 	@ModelAttribute("pendingInterviewers")
-	public List<RegisteredUser> getPendingInterviewers(@RequestParam(required = false) List<Integer> pendingInterviewer, @RequestParam String applicationId) {
+	public List<RegisteredUser> getPendingInterviewers(@RequestParam(required = false) List<String> pendingInterviewerId, @RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
-		if (pendingInterviewer != null) {
-			for (Integer id : pendingInterviewer) {
+		if (pendingInterviewerId != null) {
+			for (String encryptedId : pendingInterviewerId) {
+				Integer id = encryptionHelper.decryptToInteger(encryptedId);
 				RegisteredUser user = userService.getUser(id);
 				if (!user.isInterviewerOfApplicationForm(applicationForm)) {
 					newUsers.add(user);
@@ -152,7 +155,7 @@ public abstract class InterviewController {
 	}
 
 	@ModelAttribute("previousInterviewers")
-	public List<RegisteredUser> getPreviousInterviewers(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingInterviewer) {
+	public List<RegisteredUser> getPreviousInterviewers(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingInterviewer) {
 		List<RegisteredUser> availablePreviousInterviewers = new ArrayList<RegisteredUser>();
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> previousInterviewersOfProgram = userService.getAllPreviousInterviewersOfProgram(applicationForm.getProgram());
@@ -160,7 +163,7 @@ public abstract class InterviewController {
 		List<RegisteredUser> pendingInterviewers = getPendingInterviewers(pendingInterviewer, applicationId);
 
 		for (RegisteredUser registeredUser : previousInterviewersOfProgram) {
-			if (!registeredUser.isInterviewerOfApplicationForm(applicationForm) && !pendingInterviewers.contains(registeredUser)
+			if (!registeredUser.isInterviewerOfApplicationForm(applicationForm) && !pendingInterviewers.contains(registeredUser)//
 					&& !applicationForm.getProgram().getInterviewers().contains(registeredUser)) {
 				availablePreviousInterviewers.add(registeredUser);
 			}
@@ -168,12 +171,10 @@ public abstract class InterviewController {
 
 		return availablePreviousInterviewers;
 	}
-	
+
 	@ModelAttribute("willingToInterviewReviewers")
 	public List<RegisteredUser> getWillingToInterviewReviewers(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		return applicationForm.getReviewersWillingToInterview();
 	}
-
-
 }

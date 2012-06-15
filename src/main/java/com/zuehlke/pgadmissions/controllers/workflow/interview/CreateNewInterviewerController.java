@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
@@ -36,14 +37,14 @@ public class CreateNewInterviewerController extends InterviewController {
 	private static final String REDIRECT_INTERVIEW_MOVE_TO_INTERVIEW = "redirect:/interview/moveToInterview";
 
 	CreateNewInterviewerController() {
-		this(null, null, null, null, null, null, null);
-
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public CreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
-			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator, DatePropertyEditor datePropertyEditor) {
-		super(applicationsService, userService, validator, messageSource, interviewService, interviewValidator, datePropertyEditor, null);
+	public CreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,//
+			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator, DatePropertyEditor datePropertyEditor,//
+			EncryptionHelper encryptionHelper) {
+		super(applicationsService, userService, validator, messageSource, interviewService, interviewValidator, datePropertyEditor, null, encryptionHelper);
 	}
 
 	@RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
@@ -120,7 +121,6 @@ public class CreateNewInterviewerController extends InterviewController {
 	}
 
 	private ModelAndView getCreateInterviewerModelAndView(ApplicationForm applicationForm, List<Integer> newUserIds, String message, String viewName) {
-
 		ModelAndView modelAndView = new ModelAndView(viewName);
 		modelAndView.getModel().put("applicationId", applicationForm.getApplicationNumber());
 		modelAndView.getModel().put("pendingInterviewer", newUserIds);
@@ -130,11 +130,10 @@ public class CreateNewInterviewerController extends InterviewController {
 
 	@Override
 	@ModelAttribute("interview")
-	public Interview getInterview(@RequestParam Object interviewId) {
-		if (interviewId == null || (interviewId instanceof String && StringUtils.isBlank(((String) interviewId)))) {
+	public Interview getInterview(@RequestParam Object encryptedInterviewId) {
+		if (encryptedInterviewId == null || (encryptedInterviewId instanceof String && StringUtils.isBlank(((String) encryptedInterviewId)))) {
 			return new Interview();
 		}
-		return interviewService.getInterviewById((Integer) interviewId);
+		return interviewService.getInterviewById(encryptionHelper.decryptToInteger(encryptedInterviewId.toString()));
 	}
-
 }

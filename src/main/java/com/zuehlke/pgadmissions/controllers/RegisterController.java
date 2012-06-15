@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
@@ -47,20 +46,22 @@ public class RegisterController {
 	private final ApplicationsService applicationsService;
 	private final ProgramsService programService;
 	private final ApplicationQueryStringParser applicationQueryStringParser;
+	protected final EncryptionHelper encryptionHelper;
 
 	RegisterController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public RegisterController(RegisterFormValidator validator, UserService userService, RegistrationService registrationService,
-			ApplicationsService applicationsService, ProgramsService programService, ApplicationQueryStringParser applicationQueryStringParser) {
+			ApplicationsService applicationsService, ProgramsService programService, ApplicationQueryStringParser applicationQueryStringParser, EncryptionHelper encryptionHelper) {
 		this.validator = validator;
 		this.userService = userService;
 		this.registrationService = registrationService;
 		this.applicationsService = applicationsService;
 		this.programService = programService;
 		this.applicationQueryStringParser = applicationQueryStringParser;
+		this.encryptionHelper = encryptionHelper;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -109,7 +110,8 @@ public class RegisterController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/resendConfirmation")
-	public String resendConfirmation(@RequestParam Integer userId, ModelMap modelMap) {
+	public String resendConfirmation(@RequestParam String encryptedUserId, ModelMap modelMap) {
+		Integer userId = encryptionHelper.decryptToInteger(encryptedUserId);
 		RegisteredUser user = userService.getUser(userId);
 		if (user == null) {
 			throw new ResourceNotFoundException();
@@ -120,7 +122,7 @@ public class RegisterController {
 	}
 
 	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
-	public ModelAndView activateAccountSubmit(@RequestParam String activationCode) throws ParseException {
+	public ModelAndView activateAccountSubmit(@RequestParam String activationCode) {
 		RegisteredUser user = registrationService.findUserForActivationCode(activationCode);
 		if (user == null) {
 			RegisterPageModel pageModel = new RegisterPageModel();

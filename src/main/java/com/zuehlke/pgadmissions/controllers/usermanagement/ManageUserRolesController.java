@@ -21,8 +21,9 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UpdateUserRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.UpdateUserRolesDTOValidator;
@@ -36,18 +37,21 @@ public class ManageUserRolesController {
 	private final PlainTextUserPropertyEditor userPropertyEditor;
 	private final ProgramPropertyEditor programPropertyEditor;
 	private final UpdateUserRolesDTOValidator updateUserRolesDTOValidator;
+	private final EncryptionHelper encryptionHelper;
 
 	ManageUserRolesController(){
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 	
 	@Autowired
-	public ManageUserRolesController(UserService userService, ProgramsService programsService, PlainTextUserPropertyEditor userPropertyEditor, ProgramPropertyEditor programPropertyEditor, UpdateUserRolesDTOValidator updateUserRolesDTOValidator) {
+	public ManageUserRolesController(UserService userService, ProgramsService programsService, PlainTextUserPropertyEditor userPropertyEditor,// 
+			ProgramPropertyEditor programPropertyEditor, UpdateUserRolesDTOValidator updateUserRolesDTOValidator, EncryptionHelper encryptionHelper) {
 		this.userService = userService;	
 		this.programsService = programsService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.programPropertyEditor = programPropertyEditor;
 		this.updateUserRolesDTOValidator = updateUserRolesDTOValidator;
+		this.encryptionHelper = encryptionHelper;
 	}
 
 	@ModelAttribute("user")
@@ -56,11 +60,11 @@ public class ManageUserRolesController {
 	}
 
 	@ModelAttribute("selectedProgram")
-	public Program getSelectedProgram(@RequestParam(required = false) Integer programId) {
-		if (programId == null) {
+	public Program getSelectedProgram(@RequestParam(required = false) String programCode) {
+		if (programCode == null) {
 			return null;
 		}
-		Program program = programsService.getProgramById(programId);
+		Program program = programsService.getProgramByCode(programCode);
 		if (program == null) {
 			throw new ResourceNotFoundException();
 		}
@@ -68,16 +72,17 @@ public class ManageUserRolesController {
 	}
 	
 	@ModelAttribute("selectedUser")
-	public RegisteredUser getSelectedUser(@RequestParam(required = false) Integer userId) {
-		if (userId == null) {
+	public RegisteredUser getSelectedUser(@RequestParam(required = false) String encryptedUserId) {
+		if (encryptedUserId == null) {
 			return null;
 		}
+		
+		Integer userId = encryptionHelper.decryptToInteger(encryptedUserId);
 		RegisteredUser user = userService.getUser(userId);
 		if (user == null) {
 			throw new ResourceNotFoundException();
 		}
 		return user;
-
 	}
 	
 	@ModelAttribute("availableUsers")
@@ -86,8 +91,8 @@ public class ManageUserRolesController {
 	}
 
 	@ModelAttribute("usersInRoles")
-	public List<RegisteredUser> getUsersInRoles(@RequestParam(required = false) Integer programId) {
-		Program selectedProgram = getSelectedProgram(programId);
+	public List<RegisteredUser> getUsersInRoles(@RequestParam(required = false) String programCode) {
+		Program selectedProgram = getSelectedProgram(programCode);
 		if(selectedProgram == null){
 			return new ArrayList<RegisteredUser>();
 		}
@@ -100,8 +105,8 @@ public class ManageUserRolesController {
 			return programsService.getAllPrograms();
 		}
 		return userService.getCurrentUser().getProgramsOfWhichAdministrator();
-
 	}
+	
 	@ModelAttribute("authorities")
 	public List<Authority> getAuthorities() {
 		if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
@@ -122,17 +127,15 @@ public class ManageUserRolesController {
 			throw new ResourceNotFoundException();
 		}
 		return ROLES_PAGE_VIEW_NAME;
-
 	}
-
 	
 	@InitBinder(value = "updateUserRolesDTO")
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.setValidator(updateUserRolesDTOValidator);
 		binder.registerCustomEditor(Program.class, programPropertyEditor);
 		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
-
 	}
+	
 	@RequestMapping(method = RequestMethod.POST, value = "/updateUserRoles")
 	public String updateUserRoles(@Valid @ModelAttribute("updateUserRolesDTO") UpdateUserRolesDTO userDTO, BindingResult result) {
 		checkPermissions();
@@ -152,8 +155,4 @@ public class ManageUserRolesController {
 			throw new ResourceNotFoundException();
 		}
 	}
-
-	
-
-	
 }

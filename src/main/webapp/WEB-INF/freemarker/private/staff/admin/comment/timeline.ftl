@@ -15,7 +15,7 @@
         <li class="${timelineObject.type}">
           <div class="box">
             <div class="title">
-              <span class="icon-role ${timelineObject.userCapacity}" data-desc="${timelineObject.userCapacity}"></span>
+              <span class="icon-role ${timelineObject.userCapacity}" data-desc="${timelineObject.userCapacity?cap_first}"></span>
               <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
               <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
             </div>
@@ -95,7 +95,7 @@
             <li>                          
               <div class="box">
                 <div class="title">
-                  <span class="icon-role ${role}" data-desc="${role}"></span>
+                  <span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
                   <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
                   <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
                 </div>

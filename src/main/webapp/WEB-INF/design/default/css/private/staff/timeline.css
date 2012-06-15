@@ -45,6 +45,14 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses .box ul { margin: 0 30px; padding: 10px 0; }
 #timeline-statuses .box ul li { margin-bottom: .25em; }
 
+#timeline-statuses .box h3.answer { padding-left: 20px; }
+#timeline-statuses .box h3.answer span { background: url(../../../images/icon_answer.png) no-repeat; display: block; height: 16px; margin-left: -20px; width: 16px; }
+#timeline-statuses .box h3.answer.unsure span { background-position: 0 0; }
+#timeline-statuses .box h3.answer.no span { background-position: -16px 0; }
+#timeline-statuses .box h3.answer.home span { background-position: -32px 0; }
+#timeline-statuses .box h3.answer.eu span { background-position: -48px 0; }
+#timeline-statuses .box h3.answer.yes span { background-position: -64px 0; }
+
 #timeline-statuses ul .box .title { background: #AAA; }
 #timeline-statuses ul .box p { background-image: none !important; font-size: 12px; font-weight: normal; padding: 10px; }
 

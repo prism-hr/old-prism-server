@@ -65,7 +65,7 @@
               <button name="commit" type="submit" value="Sign In" class="blue">Go</button>
             </form>
             
-            <a href="/pgadmissions/register?program=${program!}">&gt; Register Today...</a>
+            <a href="/pgadmissions/register">&gt; Register Today...</a>
             <a href="/pgadmissions/forgotPassword">&gt; Forgot Password</a>
             
         </section>

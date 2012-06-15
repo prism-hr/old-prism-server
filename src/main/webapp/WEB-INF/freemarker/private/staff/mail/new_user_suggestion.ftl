@@ -38,7 +38,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${admin.firstName?html} ${admin.lastName?html} has added you as a ${newRoles}<#if program??> for UCL ${program.title?html}</#if>. Register to start using UCL Elect in this role.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      		<font face="Arial, Helvetica, sans-serif" size="2"> enctyp?
 			      			<a href="${host}/pgadmissions/register?userId=${newUser.id?string('#######')}">(Continue to Application)</a>
 			      		</font>
 			      	</p>			      	

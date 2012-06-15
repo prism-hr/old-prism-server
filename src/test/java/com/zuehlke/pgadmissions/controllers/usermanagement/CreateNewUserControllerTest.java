@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.NewUserDTO;
-import com.zuehlke.pgadmissions.dto.UpdateUserRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
@@ -39,11 +38,11 @@ public class CreateNewUserControllerTest {
 	
 	@Test
 	public void shouldGetSelectedProgramfIdProvided() {
-		Program program = new ProgramBuilder().id(5).toProgram();
-		EasyMock.expect(programServiceMock.getProgramById(5)).andReturn(program);
+		Program program = new ProgramBuilder().id(5).code("ABC").toProgram();
+		EasyMock.expect(programServiceMock.getProgramByCode("ABC")).andReturn(program);
 		EasyMock.replay(programServiceMock);
 
-		assertEquals(program, controller.getSelectedProgram(5));
+		assertEquals(program, controller.getSelectedProgram("ABC"));
 	}
 
 	@Test
@@ -54,9 +53,9 @@ public class CreateNewUserControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoucnExceptionIfNoSuchProgram() {
 
-		EasyMock.expect(programServiceMock.getProgramById(5)).andReturn(null);
+		EasyMock.expect(programServiceMock.getProgramByCode("ABC")).andReturn(null);
 		EasyMock.replay(programServiceMock);
-		controller.getSelectedProgram(5);
+		controller.getSelectedProgram("ABC");
 	}
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -66,7 +65,6 @@ public class CreateNewUserControllerTest {
 	@Test
 	public void shouldReturnNewNewUserDTO(){
 		assertNotNull(controller.getNewUserDTO());
-		assertTrue(controller.getNewUserDTO() instanceof NewUserDTO);
 	}
 	
 	@Test

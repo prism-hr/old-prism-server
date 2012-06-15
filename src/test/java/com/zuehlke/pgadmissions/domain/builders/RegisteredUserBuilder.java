@@ -28,7 +28,7 @@ public class RegisteredUserBuilder {
 	private boolean accountNonLocked = true;
 	private boolean credentialsNonExpired = true;
 	private String activationCode;
-	private Program programOriginallyAppliedTo;
+	
 	private List<Referee> referees = new ArrayList<Referee>();
 	private List<Comment> comments = new ArrayList<Comment>();
 
@@ -42,6 +42,7 @@ public class RegisteredUserBuilder {
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 	private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
 	
+	private String originalApplicationQueryString;
 	
 	public RegisteredUserBuilder pendingRoleNotifications(PendingRoleNotification...pendingRoleNotifications) {
 		this.pendingRoleNotifications.addAll(Arrays.asList(pendingRoleNotifications));
@@ -88,11 +89,7 @@ public class RegisteredUserBuilder {
 		this.comments.addAll(Arrays.asList(comments));
 		return this;
 	} 
-	
-	public RegisteredUserBuilder programOriginallyAppliedTo(Program programOriginallyAppliedTo) {
-		this.programOriginallyAppliedTo = programOriginallyAppliedTo;
-		return this;
-	}
+
 	
 	public RegisteredUserBuilder role(Role role) {
 		this.roles.add(role);
@@ -114,6 +111,12 @@ public class RegisteredUserBuilder {
 	
 	public RegisteredUserBuilder directURL(String directURL) {
 		this.directURL = directURL;
+		return this;
+	}
+	
+	
+	public RegisteredUserBuilder originalApplicationQueryString(String originalApplicationQueryString) {
+		this.originalApplicationQueryString = originalApplicationQueryString;
 		return this;
 	}
 	
@@ -193,7 +196,7 @@ public class RegisteredUserBuilder {
 		user.setCredentialsNonExpired(credentialsNonExpired);
 		user.setActivationCode(activationCode);
 		user.getRoles().addAll(roles);
-		user.setProgramOriginallyAppliedTo(programOriginallyAppliedTo);
+		
 		user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
 		user.setProgramsOfWhichApprover(programsOfWhichApprover);
 		user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
@@ -205,6 +208,7 @@ public class RegisteredUserBuilder {
 		user.setNotificationRecords(notificationRecords);
 		user.setPendingRoleNotifications(pendingRoleNotifications);
 		user.setDirectToUrl(directURL);
+		user.setOriginalApplicationQueryString(originalApplicationQueryString);
 		return user;
 	}
 

@@ -5,9 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.scheduling.annotation.EnableAsync;
 
-import com.zuehlke.pgadmissions.controllers.applicantform.DeleteApplicationFormEntitiesController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -82,11 +80,15 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		Referee referee = new Referee();
 		referee.setApplication(applicationForm);
 		referee.setId(1);
-		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("lala")).andReturn(123);
+		EasyMock.expect(refereeServiceMock.getRefereeById(123)).andReturn(referee);
 		refereeServiceMock.delete(referee);
-		EasyMock.replay(refereeServiceMock);
-		String viewName = controller.deleteReferee(1);
-		EasyMock.verify(refereeServiceMock);
+		EasyMock.replay(refereeServiceMock, encryptionHelperMock);
+		
+		String viewName = controller.deleteReferee("lala");
+		
+		EasyMock.verify(refereeServiceMock, encryptionHelperMock);
 		assertEquals("redirect:/update/getReferee?applicationId=2&message=deleted",viewName);
 	}
 	@Before

@@ -44,10 +44,11 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private String confirmPassword;
 
 	@Transient
-	private Integer programId;
-	@Transient
 	private Referee currentReferee;
-
+	
+	@Column(name = "original_querystring")
+	private String originalApplicationQueryString;
+	
 	private boolean enabled;
 	private boolean accountNonExpired;
 	private boolean accountNonLocked;
@@ -77,9 +78,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@JoinColumn(name = "registered_user_id")
 	private List<Referee> referees = new ArrayList<Referee>();
 
-	@ManyToOne
-	@JoinColumn(name = "originally_program_id")
-	private Program programOriginallyAppliedTo;
+
 
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
@@ -515,21 +514,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return null;
 	}
 
-	public Program getProgramOriginallyAppliedTo() {
-		return programOriginallyAppliedTo;
-	}
-
-	public void setProgramOriginallyAppliedTo(Program programOriginallyAppliedTo) {
-		this.programOriginallyAppliedTo = programOriginallyAppliedTo;
-	}
-
-	public Integer getProgramId() {
-		return programId;
-	}
-
-	public void setProgramId(Integer programId) {
-		this.programId = programId;
-	}
+	
 
 	public List<Comment> getComments() {
 		return comments;
@@ -698,5 +683,13 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public void setNewPassword(String newPassword) {
 		this.newPassword = newPassword;
+	}
+
+	public String getOriginalApplicationQueryString() {
+		return originalApplicationQueryString;
+	}
+
+	public void setOriginalApplicationQueryString(String queryString) {
+		this.originalApplicationQueryString = queryString;
 	}
 }

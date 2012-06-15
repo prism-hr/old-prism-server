@@ -55,7 +55,7 @@
 		    
 		    	<form method="post" action= "/pgadmissions/refereeRegistration/submit">
 		      		<p>&gt; Register Today...</p>
-		            <input id="recordId" type="hidden" name="recordId"  value="${referee.id?string('#######')!}" />
+		            <input id="recordId" type="hidden" name="recordId"  value="${(encrypter.encrypt(referee.id))!}" />
         			<#if result?? && result.getFieldError('firstName')??>                    		
                     	<span class="invalid"><@spring.message  result.getFieldError('firstName').code /></span>                    		
                     </#if>
@@ -79,7 +79,7 @@
                 	<#if result?? && result.getFieldError('confirmPassword')??>                    		
                     	<span class="invalid"><@spring.message  result.getFieldError('confirmPassword').code /></span>                    		
                     </#if>
-		            <input id="currentReferee" type="hidden" name="currentReferee" value="${referee.currentReferee.id?string('#######')}"/>
+		            <input id="currentReferee" type="hidden" name="currentReferee" value="${(encrypter.encrypt(referee.currentReferee.id))}"/>
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		      	</form>
 		      	

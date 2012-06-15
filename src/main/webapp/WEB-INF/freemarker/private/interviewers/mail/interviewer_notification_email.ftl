@@ -42,7 +42,7 @@
 			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with the UCL Portal, please do so by clicking the link below:</font>
 			      		</p>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">
+				      		<font face="Arial, Helvetica, sans-serif" size="2">remove?
 				      			<a href="${host}/pgadmissions/register?userId=${interviewer.user.id?string('#######')}">Register</a>
 				      		</font>
 				      	</p>

@@ -33,7 +33,8 @@ public class AssignInterviewerController extends InterviewController {
 	public AssignInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
 			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
 			DatePropertyEditor datePropertyEditor, InterviewerPropertyEditor interviewerPropertyEditor) {
-		super(applicationsService, userService, validator,  messageSource, interviewService, interviewValidator, datePropertyEditor, interviewerPropertyEditor);
+		super(applicationsService, userService, validator,  messageSource, interviewService,//
+				interviewValidator, datePropertyEditor, interviewerPropertyEditor, null);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "assignInterviewers")

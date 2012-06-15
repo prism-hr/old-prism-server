@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -17,15 +18,18 @@ public class SupervisorPropertyEditor extends PropertyEditorSupport {
 
 	private final UserService userService;
 	private final ApplicationsService applicationsService;
+	private final EncryptionHelper encryptionHelper;
 
 	SupervisorPropertyEditor() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public SupervisorPropertyEditor(UserService userService, ApplicationsService applicationsService) {
+	public SupervisorPropertyEditor(UserService userService, ApplicationsService applicationsService,//
+			EncryptionHelper encryptionHelper) {
 		this.userService = userService;
 		this.applicationsService = applicationsService;
+		this.encryptionHelper = encryptionHelper;
 	}
 
 	@Override
@@ -44,7 +48,7 @@ public class SupervisorPropertyEditor extends PropertyEditorSupport {
 			throw new IllegalArgumentException();
 		}
 		String appId = split[0];
-		Integer userId = Integer.parseInt(split[1]);
+		Integer userId = encryptionHelper.decryptToInteger(split[1]);
 		RegisteredUser user = userService.getUser(userId);
 		if (user == null) {
 			throw new IllegalArgumentException("no such user: " + split[1]);

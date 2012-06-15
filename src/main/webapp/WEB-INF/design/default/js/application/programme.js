@@ -21,7 +21,7 @@ $(document).ready(function()
 		 while (firstDayInNextYearsOctober.getDay() !== 1) { //while not monday
 			 	firstDayInNextYearsOctober.setDate(firstDayInNextYearsOctober.getDate() + 1);
 		 }
-		 var formattedDate = firstDayInNextYearsOctober.getDate() + "-" + firstDayInNextYearsOctober.getMonth()+1 + "-" + firstDayInNextYearsOctober.getFullYear();
+		 var formattedDate = firstDayInNextYearsOctober.getDate() + "-Oct-" + firstDayInNextYearsOctober.getFullYear();
 		$("#startDate").val(formattedDate);
 	}
 	

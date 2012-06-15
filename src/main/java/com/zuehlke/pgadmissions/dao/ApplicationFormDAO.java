@@ -153,10 +153,12 @@ public class ApplicationFormDAO {
 						"applicationForm.id"));
 
 		List<ApplicationFormStatus> invalidStateList = new ArrayList<ApplicationFormStatus>();
-		invalidStateList.add(ApplicationFormStatus.APPROVED);
 		invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
 		if (!ApplicationFormStatus.REJECTED.equals(newStatus)) {
 			invalidStateList.add(ApplicationFormStatus.REJECTED);
+		}
+		if (!ApplicationFormStatus.APPROVED.equals(newStatus)) {
+			invalidStateList.add(ApplicationFormStatus.APPROVED);
 		}
 		return sessionFactory
 				.getCurrentSession()

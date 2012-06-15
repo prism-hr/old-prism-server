@@ -83,7 +83,7 @@
                   <col style="width: 40px" />
                   <col style="width: 20%" />
                   <col />
-                  <col style="width: 60px;" />
+                  <col style="width: 66px;" />
                   <col />
                   <col style="width: 90px" />
                 </colgroup>
@@ -96,14 +96,14 @@
                       <input type="hidden" id="block-index" name="block-index" value="1" />
                     </th>
                     <#if !user.isInRole('APPLICANT')>
-                    <th scope="col" id="APPLICANT_NAME" onclick="sortList(this)">Applicant</th>
+                    <th class="sortable" scope="col" id="APPLICANT_NAME" onclick="sortList(this)">Applicant</th>
                     <#else>
                     <th scope="col"">Application #</th>
                     </#if>
-                    <th scope="col" id="PROGRAMME_NAME" onclick="sortList(this)">Programme</th>          
-                    <th scope="col" id="APPLICATION_STATUS" onclick="sortList(this)" class="header-text-center">Status</th>
+                    <th class="sortable" scope="col" id="PROGRAMME_NAME" onclick="sortList(this)">Programme</th>          
+                    <th class="sortable" scope="col" id="APPLICATION_STATUS" onclick="sortList(this)" class="header-text-center">Status</th>
                     <th scope="col">Actions</th>
-                    <th scope="col" id="APPLICATION_DATE" onclick="sortList(this)">Submitted</th>                          
+                    <th class="sortable" scope="col" id="APPLICATION_DATE" onclick="sortList(this)">Submitted</th>                          
                   </tr>
                 </thead>
                 <tbody id="applicationListSection">

@@ -43,7 +43,7 @@
 							<div class="box">
 								<h3>Interview</h3>
 								<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
-								<p>${timelineObject.interview.furtherDetails?html}</p>                  
+								<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
 								<h3>Invited interviewers:</h3>
 								<ul>
 									<#list timelineObject.interview.interviewers as interviewer>
@@ -99,7 +99,7 @@
                   <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
                   <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
                 </div>
-                <p>${(comment.comment?html)!}</p>
+                <p><em>${(comment.comment?html)!}</em></p>
                 <#if comment.type == 'VALIDATION'>                                                    
                 <#include "timeline_snippets/validation_comment.ftl"/>
                 <#elseif comment.type == 'REVIEW'>

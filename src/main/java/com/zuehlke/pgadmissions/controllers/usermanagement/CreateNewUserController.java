@@ -115,11 +115,11 @@ public class CreateNewUserController {
 	}
 	
 	@ModelAttribute("selectedProgram")
-	public Program getSelectedProgram(@RequestParam(required = false) Integer programId) {
-		if (programId == null) {
+	public Program getSelectedProgram(@RequestParam(required = false) String programCode) {
+		if (programCode == null) {
 			return null;
 		}
-		Program program = programsService.getProgramById(programId);
+		Program program = programsService.getProgramByCode(programCode);
 		if (program == null) {
 			throw new ResourceNotFoundException();
 		}

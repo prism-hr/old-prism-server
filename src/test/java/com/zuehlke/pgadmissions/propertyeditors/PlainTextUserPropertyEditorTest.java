@@ -9,27 +9,35 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class PlainTextUserPropertyEditorTest {
 
 	private UserService userServiceMock;
 	private PlainTextUserPropertyEditor editor;
+	private EncryptionHelper encryptionHelperMock;
 
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
 		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-		EasyMock.replay(userServiceMock);
+
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encd")).andReturn(121);
+		EasyMock.expect(userServiceMock.getUser(121)).andReturn(user);
+		EasyMock.replay(userServiceMock, encryptionHelperMock);
 		
-		editor.setAsText("1");
+		editor.setAsText("encd");
 		assertEquals(user, editor.getValue());
 		
+		EasyMock.verify(userServiceMock, encryptionHelperMock);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){			
+	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andThrow(new IllegalArgumentException("intentional..."));
+		EasyMock.replay(encryptionHelperMock);
+		
 		editor.setAsText("bob");			
 	}
 	
@@ -56,14 +64,20 @@ public class PlainTextUserPropertyEditorTest {
 	}
 	
 	@Test	
-	public void shouldReturnIsAsString(){			
+	public void shouldReturnIsAsString(){
+		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("encd");
+		EasyMock.replay(encryptionHelperMock);
+	
 		editor.setValue(new RegisteredUserBuilder().id(5).toUser());
-		assertEquals("5", editor.getAsText());
+		assertEquals("encd", editor.getAsText());
+		
+		EasyMock.verify(encryptionHelperMock);
 	}
 	
 	@Before
 	public void setup(){
 		userServiceMock = EasyMock.createMock(UserService.class);
-		editor = new PlainTextUserPropertyEditor(userServiceMock);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		editor = new PlainTextUserPropertyEditor(userServiceMock, encryptionHelperMock);
 	}
 }

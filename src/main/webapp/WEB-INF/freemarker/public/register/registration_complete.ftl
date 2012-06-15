@@ -39,7 +39,7 @@
           <div class="content">
             <h1>Almost there...</h1>
             <p>To activate your account please check your emails and click on the activation link.</p>
-            <p class="buttons"><a class="button blue" href="/pgadmissions/register/resendConfirmation?userId=${user.id?string('#####')}">Resend email</a></p>
+            <p class="buttons"><a class="button blue" href="/pgadmissions/register/resendConfirmation?userId=${encrypter.encrypt(user.id)}">Resend email</a></p>
           </div>
         </div>
         

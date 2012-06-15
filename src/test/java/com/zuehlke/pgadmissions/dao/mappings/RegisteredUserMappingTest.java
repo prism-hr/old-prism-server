@@ -47,7 +47,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadUserWithSimpleValues() throws Exception {
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).originalApplicationQueryString("?hi&hello").toUser();
 
 		assertNull(user.getId());
 
@@ -68,6 +68,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(user.getFirstName(), reloadedUser.getFirstName());
 		assertEquals(user.getLastName(), reloadedUser.getLastName());
 		assertEquals(user.getEmail(), reloadedUser.getEmail());
+		assertEquals("?hi&hello", reloadedUser.getOriginalApplicationQueryString());
 		assertFalse(reloadedUser.isAccountNonExpired());
 		assertFalse(reloadedUser.isAccountNonLocked());
 		assertFalse(reloadedUser.isCredentialsNonExpired());
@@ -134,28 +135,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	
 	
 
-	@Test
-	public void shouldSaveAndLoadUserWithProgramOriginallyAppliedTo() throws Exception {
 
-		Program program = new ProgramBuilder().code("halloo").title("halllooo").toProgram();
-		
-		save(program);
-
-		flushAndClearSession();
-
-		RegisteredUser user = new RegisteredUserBuilder().programOriginallyAppliedTo(program).firstName("Jane").lastName("Doe").email("email@test.com")
-				.username("username").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
-
-		sessionFactory.getCurrentSession().save(user);
-		Integer id = user.getId();
-
-		flushAndClearSession();
-
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
-		assertEquals(program, reloadedUser.getProgramOriginallyAppliedTo());
-
-	}
 
 	@Test
 	public void shouldSaveAndLoadUserWithRoles() throws Exception {

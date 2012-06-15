@@ -6,13 +6,21 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @Component
 public class PersonPropertyEditor extends PropertyEditorSupport {
 	
+	private EncryptionHelper encryptionHelper;
+
+	@Autowired
+	public PersonPropertyEditor(EncryptionHelper encryptionHelper) {
+		this.encryptionHelper = encryptionHelper;
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -31,7 +39,7 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 			registryUser.setLastname(((String) properties.get("lastname")));
 			registryUser.setEmail(((String) properties.get("email")));
 			if (StringUtils.isNotBlank((String) properties.get("id"))) {
-				registryUser.setId(Integer.parseInt((String) properties.get("id")));
+				registryUser.setId(encryptionHelper.decryptToInteger((String) properties.get("id")));
 			}
 			setValue(registryUser);
 		} catch (IOException e) {
@@ -46,7 +54,7 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 		}
 		Person person = (Person) getValue();
 		return "{\"id\": \""
-				+ person.getId() + "\",\"firstname\": \""
+				+ encryptionHelper.encrypt(person.getId()) + "\",\"firstname\": \""
 				+ person.getFirstname() + "\",\"lastname\": \""
 				+ person.getLastname() + "\",\"email\": \""
 				+ person.getEmail() + "\"}";

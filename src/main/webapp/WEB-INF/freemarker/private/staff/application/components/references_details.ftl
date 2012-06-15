@@ -17,31 +17,33 @@
     <#list applicationForm.referees as referee>
     
     <!-- All hidden input - Start -->
-    <input type="hidden" id="${referee.id?string('#######')}_refereeId" value="${referee.id?string('#######')}"/>
-    <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${(referee.firstname?html)!}"/>
-    <input type="hidden" id="${referee.id?string('#######')}_phone" value="${(referee.phoneNumber?html)!}"/>
-    <#if referee.messenger??>
-    <input type="hidden" id="${referee.id?string('#######')}_messenger" value="${(referee.messenger?html)!}"/>
-    <#else>
-    <input type="hidden" id="${referee.id?string('#######')}_messenger" value=" "/>
-    </#if>
-    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${(referee.lastname?html)!}"/>                                    
-    <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>
-    <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${(referee.jobTitle?html)!}"/>
-    <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${(referee.addressLocation?html)!}"/>
+    <#assign encRefereeId = encrypter.encrypt(referee.id) />
     
-    <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.name?html)!}" </#if>/>
-    <input type="hidden" id="${referee.id?string('#######')}_lastUpdated" value="<#if referee.hasProvidedReference() > 
+    <input type="hidden" id="${encRefereeId}_refereeId" value="${encRefereeId}"/>
+    <input type="hidden" id="${encRefereeId}_firstname" value="${(referee.firstname?html)!}"/>
+    <input type="hidden" id="${encRefereeId}_phone" value="${(referee.phoneNumber?html)!}"/>
+    <#if referee.messenger??>
+    <input type="hidden" id="${encRefereeId}_messenger" value="${(referee.messenger?html)!}"/>
+    <#else>
+    <input type="hidden" id="${encRefereeId_messenger" value=" "/>
+    </#if>
+    <input type="hidden" id="${encRefereeId}_lastname" value="${(referee.lastname?html)!}"/>                                    
+    <input type="hidden" id="${encRefereeId}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>
+    <input type="hidden" id="${encRefereeId}_jobTitle" value="${(referee.jobTitle?html)!}"/>
+    <input type="hidden" id="${encRefereeId}_addressLocation" value="${(referee.addressLocation?html)!}"/>
+    
+    <input type="hidden" id="${encRefereeId}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.name?html)!}" </#if>/>
+    <input type="hidden" id="${encRefereeId}_lastUpdated" value="<#if referee.hasProvidedReference() > 
     Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
     <#else>
     Not provided
     </#if>"/>
     
-    <input type="hidden" id="${referee.id?string('#######')}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
+    <input type="hidden" id="${encRefereeId}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
     <@spring.url '/download/reference?referenceId=${encrypter.encrypt(referee.reference.id)}'/></#if>"
     />
-    <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}</#if><#else>No document uploaded</#if>" />
-    <input type="hidden" id="${referee.id?string('#######')}_email" value="${(referee.email?html)!}"/>
+    <input type="hidden" id="${encRefereeId}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}</#if><#else>No document uploaded</#if>" />
+    <input type="hidden" id="${encRefereeId}_email" value="${(referee.email?html)!}"/>
     
     <!-- All hidden input - End --> 
     

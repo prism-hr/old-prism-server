@@ -53,7 +53,7 @@ public class RegistrationService {
 
 	}
 
-	public RegisteredUser createNewUser(RegisteredUser record) {
+	public RegisteredUser createNewUser(RegisteredUser record, String queryString) {
 		record.setActivationCode(encryptionUtils.generateUUID());
 		record.setUsername(record.getEmail());
 		record.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
@@ -61,9 +61,7 @@ public class RegistrationService {
 		record.setAccountNonLocked(true);
 		record.setEnabled(false);
 		record.setCredentialsNonExpired(true);
-		if (record.getProgramId() != null) {
-			record.setProgramOriginallyAppliedTo(programDAO.getProgramById(record.getProgramId()));
-		}
+		record.setOriginalApplicationQueryString(queryString);
 		record.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
 		return record;
 	}
@@ -80,13 +78,13 @@ public class RegistrationService {
 	}
 
 	@Transactional
-	public void generateAndSaveNewUser(RegisteredUser record, Integer userIdOfSuggestedUser) {
+	public void generateAndSaveNewUser(RegisteredUser record, Integer userIdOfSuggestedUser, String queryString) {
 
 		RegisteredUser newUser;
 		if (userIdOfSuggestedUser != null) {
 			newUser = updateUser(record, userIdOfSuggestedUser);
 		} else {
-			newUser = createNewUser(record);
+			newUser = createNewUser(record, queryString);			
 		}
 		userDAO.save(newUser);
 
@@ -99,9 +97,7 @@ public class RegistrationService {
 			Map<String, Object> model = modelMap();
 			model.put("user", newUser);
 			model.put("host", Environment.getInstance().getApplicationHostName());
-			if (newUser.getProgramOriginallyAppliedTo() != null) {
-				model.put("adminsEmails", getAdminsEmailsCommaSeparatedAsString(newUser.getProgramOriginallyAppliedTo().getAdministrators()));
-			}
+			
 			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
 
 			String subject = msgSource.getMessage("registration.confirmation", null, null);

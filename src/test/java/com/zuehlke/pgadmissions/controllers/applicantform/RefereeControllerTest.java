@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -52,6 +53,7 @@ public class RefereeControllerTest {
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
 	private RefereeValidator refereeValidatorMock;
 	private EncryptionUtils encryptionUtilsMock;
+	private EncryptionHelper encryptionHelperMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -136,9 +138,14 @@ public class RefereeControllerTest {
 	@Test
 	public void shouldGetRefereeFromServiceIfIdProvided() {
 		Referee referee = new RefereeBuilder().id(1).toReferee();
+
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
 		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
-		EasyMock.replay(refereeServiceMock);
-		Referee returnedReferee = controller.getReferee(1);
+		EasyMock.replay(refereeServiceMock, encryptionHelperMock);
+		
+		Referee returnedReferee = controller.getReferee("enc");
+		EasyMock.verify(refereeServiceMock, encryptionHelperMock);
+		
 		assertEquals(referee, returnedReferee);
 	}
 
@@ -150,18 +157,16 @@ public class RefereeControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfRefereeDoesNotExist() {
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encrypted")).andReturn(1);
 		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(null);
-		EasyMock.replay(refereeServiceMock);
-		controller.getReferee(1);
-
+		EasyMock.replay(refereeServiceMock, encryptionHelperMock);
+		
+		controller.getReferee("encrypted");
 	}
-	
-	
 
 	@Test
 	public void shouldReturnMessage() {
 		assertEquals("bob", controller.getMessage("bob"));
-
 	}
 
 	@Test
@@ -259,10 +264,13 @@ public class RefereeControllerTest {
 		countryPropertyEditor = EasyMock.createMock(CountryPropertyEditor.class);
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 
 		refereeValidatorMock = EasyMock.createMock(RefereeValidator.class);
 
-		controller = new RefereeController(refereeServiceMock, countriesServiceMock, applicationsServiceMock, countryPropertyEditor, applicationFormPropertyEditorMock, refereeValidatorMock, encryptionUtilsMock);
+		controller = new RefereeController(refereeServiceMock, countriesServiceMock, applicationsServiceMock,// 
+				countryPropertyEditor, applicationFormPropertyEditorMock, refereeValidatorMock,// 
+				encryptionUtilsMock, encryptionHelperMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();

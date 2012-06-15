@@ -151,8 +151,7 @@
 
 											<!-- First registry user -->
 											<div class="row-group" id="firstRegistryUser">
-
-												<input type="hidden" name="1_regUserId" id= "1_regUserId" value="${(allRegistryUsers[0].id)!}" />
+												<input type="hidden" name="1_regUserId" id= "1_regUserId" value="<#if allRegistryUsers[0]?? && allRegistryUsers[0].id??>${encrypter.encrypt(allRegistryUsers[0].id)}</#if>" />
 												
 												<div class="row"> 
 													<span id="ru-firstname-lbl" class="plain-label">Fist Name<em>*</em></span>
@@ -181,8 +180,7 @@
 									
 											<!-- Second registry user -->
 											<div class="row-group" id="secondRegistryUser">
-	
-												<input type="hidden" name="2_regUserId" id= "2_regUserId" value="${(allRegistryUsers[1].id)!}"/>
+												<input type="hidden" name="2_regUserId" id= "2_regUserId" value="<#if allRegistryUsers[1]?? && allRegistryUsers[1].id??>${encrypter.encrypt(allRegistryUsers[1].id)}</#if>"/>
 
 												<div class="row"> 
 													<span id="ru-firstname-lbl" class="plain-label">Fist Name<em>*</em></span>
@@ -211,8 +209,7 @@
 									
 											<!-- Third registry user -->
 											<div class="row-group" id="thirdRegistryUser">
-
-												<input type="hidden" name="3_regUserId" id= "3_regUserId" value="${(allRegistryUsers[2].id)!}"/>
+												<input type="hidden" name="3_regUserId" id= "3_regUserId" value="<#if allRegistryUsers[2]?? && allRegistryUsers[2].id??>${encrypter.encrypt(allRegistryUsers[2].id)}</#if>"/>
 
 												<div class="row"> 
 													<span id="ru-firstname-lbl" class="plain-label">Fist Name<em>*</em></span>

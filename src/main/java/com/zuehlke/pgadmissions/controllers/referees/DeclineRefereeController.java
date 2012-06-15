@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
 @Controller
@@ -18,20 +19,23 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 public class DeclineRefereeController {
 	private static final String DECLINED_VIEW = "private/referees/referee_declined";
 	private final RefereeService refereeService;
+	private final EncryptionHelper encryptionHelper;
 
 	DeclineRefereeController(){
-		this(null);
+		this(null, null);
 	}
 	
 	@Autowired
-	public DeclineRefereeController(RefereeService refereeService) {
+	public DeclineRefereeController(RefereeService refereeService, EncryptionHelper encryptionHelper) {
 		this.refereeService = refereeService;
+		this.encryptionHelper = encryptionHelper;
 		
 	}
 	
 	@ModelAttribute
-	public Referee getReferee(@RequestParam Integer referee) {	
-		Referee ref = refereeService.getRefereeById(referee);
+	public Referee getReferee(@RequestParam String encryptedReferee) {
+		Integer refereeId = encryptionHelper.decryptToInteger(encryptedReferee);
+		Referee ref = refereeService.getRefereeById(refereeId);
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		if(ref == null || !currentUser.equals(ref.getUser())){
 			throw new ResourceNotFoundException();

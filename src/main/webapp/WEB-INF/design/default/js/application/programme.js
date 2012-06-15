@@ -4,6 +4,27 @@
 
 $(document).ready(function()
 {
+	
+	if ($("#startDate").val() === ""){
+		var today = new Date();
+		var mm = today.getMonth(); 
+		var yyyy = today.getFullYear();
+		var year;
+//		mm=10; uncomment to test 
+		if(mm >= 9){
+			year = yyyy +1;
+		}else{
+			year = yyyy;
+		}
+		var firstDayInNextYearsOctober = new Date();
+		firstDayInNextYearsOctober.setFullYear(year, 9, 1);
+		 while (firstDayInNextYearsOctober.getDay() !== 1) { //while not monday
+			 	firstDayInNextYearsOctober.setDate(firstDayInNextYearsOctober.getDate() + 1);
+		 }
+		 var formattedDate = firstDayInNextYearsOctober.getDate() + "-" + firstDayInNextYearsOctober.getMonth()+1 + "-" + firstDayInNextYearsOctober.getFullYear();
+		$("#startDate").val(formattedDate);
+	}
+	
 	$("#acceptTermsPDValue").val("NO");
 	$("#addSupervisorButton").show();
 	var unsavedSupervisors = 0;

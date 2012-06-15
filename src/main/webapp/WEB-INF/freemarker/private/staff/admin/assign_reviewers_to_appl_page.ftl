@@ -101,17 +101,16 @@
 												<div class="field">
 													<p><strong>Available Reviewers</strong></p>
 													<select id="programReviewers" multiple="multiple" size="${avaliableOptionsSize}">
-														<option value="" disabled="disabled" id="default">Default reviewers</option>
-														<#list programmeReviewers as reviewer>
-														<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
-														</#list>
-														<option value="" disabled="disabled"></option>
-														<option value="" disabled="disabled" id="previous">Previous reviewers in this programme</option>
-														
-														<#list previousReviewers as reviewer>
-														<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
-														</#list>							
-														<option value="" disabled="disabled"></option>								
+														<optgroup id="default" label="Default reviewers">
+															<#list programmeReviewers as reviewer>
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+															</#list>
+														</optgroup>
+														<optgroup id="previous" label="Previous reviewers in this programme">
+															<#list previousReviewers as reviewer>
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+															</#list>
+														</optgroup>
 													</select>
 												</div>
 												

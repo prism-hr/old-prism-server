@@ -175,7 +175,7 @@ function postRefereeData(message){
 					// Close the section only if there are no errors.
 					var errorCount = $('#referencesSection .invalid:visible').length;
 					var referenceCount = $('#referencesSection table.existing tbody tr').length;
-					if (errorCount == 0 || referenceCount >= 3)
+					if (errorCount == 0 && referenceCount >= 3)
 					{
 						$('#refereeCloseButton').trigger('click');
 					}

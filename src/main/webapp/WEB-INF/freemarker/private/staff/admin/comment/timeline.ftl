@@ -21,64 +21,64 @@
             </div>
       
             <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p>  
-        
-            <#if timelineObject.reviewRound?? && user != applicationForm.applicant>
-						<ul>
-							<li class="${timelineObject.type}">
-								<div class="box">
-									<h3>Invited reviewers:</h3>
-									<ul>
-										<#list timelineObject.reviewRound.reviewers as reviewer>
-										<li>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</li>
-										</#list>
-									</ul>
-								</div>
-							</li>
-						</ul>
 					</div>
         
-            <#elseif timelineObject.interview??>
-						<ul>
-							<li class="${timelineObject.type}">
-								<div class="box">
-									<h3>Interview</h3>
-									<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
-									<p>${timelineObject.interview.furtherDetails?html}</p>                  
-									<h3>Invited interviewers:</h3>
-									<ul>
-										<#list timelineObject.interview.interviewers as interviewer>
-										<li>${interviewer.user.firstName?html} ${interviewer.user.lastName?html}</li>
-										</#list>
-									</ul>
- 								</div>
-							</li>
-						</ul>
-           
-            <#elseif timelineObject.approvalRound??>
-						<ul>
-							<li class="${timelineObject.type}">
-								<div class="box">
-									<h3>Selected supervisors:</h3>       
-									<ul>
-										<#list timelineObject.approvalRound.supervisors as supervisor>
-										<li>${supervisor.user.firstName?html} ${supervisor.user.lastName?html}</li>
-										</#list>
-									</ul>
- 								</div>
-							</li>
-						</ul>
-            
-            <#elseif timelineObject.status?? &&   timelineObject.status == 'REJECTED'>
-						<ul>
-							<li class="${timelineObject.type}">
-								<div class="box">
-									<h3>Reason:</h3>
-									<p>${applicationForm.rejection.rejectionReason.text?html}</p>                 
- 								</div>
-							</li>
-						</ul>
+					<#if timelineObject.reviewRound?? && user != applicationForm.applicant>
+					<ul>
+						<li class="${timelineObject.type}">
+							<div class="box">
+								<h3>Invited reviewers:</h3>
+								<ul>
+									<#list timelineObject.reviewRound.reviewers as reviewer>
+									<li>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</li>
+									</#list>
+								</ul>
+							</div>
+						</li>
+					</ul>
         
-            </#if>                       
+					<#elseif timelineObject.interview??>
+					<ul>
+						<li class="${timelineObject.type}">
+							<div class="box">
+								<h3>Interview</h3>
+								<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
+								<p>${timelineObject.interview.furtherDetails?html}</p>                  
+								<h3>Invited interviewers:</h3>
+								<ul>
+									<#list timelineObject.interview.interviewers as interviewer>
+									<li>${interviewer.user.firstName?html} ${interviewer.user.lastName?html}</li>
+									</#list>
+								</ul>
+							</div>
+						</li>
+					</ul>
+           
+					<#elseif timelineObject.approvalRound??>
+					<ul>
+						<li class="${timelineObject.type}">
+							<div class="box">
+								<h3>Selected supervisors:</h3>       
+								<ul>
+									<#list timelineObject.approvalRound.supervisors as supervisor>
+									<li>${supervisor.user.firstName?html} ${supervisor.user.lastName?html}</li>
+									</#list>
+								</ul>
+							</div>
+						</li>
+					</ul>
+					
+					<#elseif timelineObject.status?? &&   timelineObject.status == 'REJECTED'>
+					<ul>
+						<li class="${timelineObject.type}">
+							<div class="box">
+								<h3>Reason:</h3>
+								<p>${applicationForm.rejection.rejectionReason.text?html}</p>                 
+							</div>
+						</li>
+					</ul>
+        
+					</#if>                       
           
           <#if timelineObject.comments??>
           <ul>
@@ -129,3 +129,7 @@
     </div>           
   </div>
 </section>
+
+<!-- Scripts required for tooltips. -->
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js' />"></script>

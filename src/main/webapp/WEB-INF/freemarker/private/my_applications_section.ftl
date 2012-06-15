@@ -14,10 +14,12 @@
 		<span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>
 	</td>
 	<td class="centre">
-    	<select class="actionType" name="app_[${application.applicationNumber}]">
+		<select class="actionType" name="app_[${application.applicationNumber}]">
 		<option>Select...</option>
 		<option value="view">View</option>
+		<#if !user.isInRole('APPLICANT')>
 		<option value="print">Download</option>
+		</#if>   
 		<#if user.isInRole('APPLICANT')>
 			<option value="progress">View progress</option>
 		</#if>   

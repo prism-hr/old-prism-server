@@ -98,7 +98,7 @@
                     <#if !user.isInRole('APPLICANT')>
                     <th class="sortable" scope="col" id="APPLICANT_NAME" onclick="sortList(this)">Applicant</th>
                     <#else>
-                    <th scope="col"">Application #</th>
+                    <th scope="col">Application #</th>
                     </#if>
                     <th class="sortable" scope="col" id="PROGRAMME_NAME" onclick="sortList(this)">Programme</th>          
                     <th class="sortable" scope="col" id="APPLICATION_STATUS" onclick="sortList(this)" class="header-text-center">Status</th>

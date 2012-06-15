@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -27,7 +28,6 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.timers.RegisteredUserReminderTimerTask;
 import com.zuehlke.pgadmissions.utils.ApplicationQueryStringParser;
 import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 

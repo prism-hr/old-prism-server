@@ -88,11 +88,7 @@
 							<hr />
 				          			
 							<div id="add-info-bar-div" class="section-info-bar">
-								<div class="row">
-									<span id="add-info-bar-span" class="info-text">
-										You can optionally assign new reviewers here.
-									</span>
-								</div>
+								You can optionally assign new reviewers here.
 							</div>	
 							
 							<section class="form-rows violet">

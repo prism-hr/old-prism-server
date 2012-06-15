@@ -30,6 +30,10 @@
         <div class="field">${(applicationForm.currentAddress.country.name?html)!}</div>
       </div>
       
+      </div>
+      
+      <div class="row-group">
+      
       <div class="admin_row">
         <span class="admin_row_label">Contact Address</span>    
         <div class="field">${(applicationForm.contactAddress.location?html)!}</div>

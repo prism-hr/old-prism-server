@@ -28,7 +28,7 @@ public class RegisteredUserBuilder {
 	private boolean accountNonLocked = true;
 	private boolean credentialsNonExpired = true;
 	private String activationCode;
-	private Program programOriginallyAppliedTo;
+	
 	private List<Referee> referees = new ArrayList<Referee>();
 	private List<Comment> comments = new ArrayList<Comment>();
 
@@ -89,11 +89,7 @@ public class RegisteredUserBuilder {
 		this.comments.addAll(Arrays.asList(comments));
 		return this;
 	} 
-	
-	public RegisteredUserBuilder programOriginallyAppliedTo(Program programOriginallyAppliedTo) {
-		this.programOriginallyAppliedTo = programOriginallyAppliedTo;
-		return this;
-	}
+
 	
 	public RegisteredUserBuilder role(Role role) {
 		this.roles.add(role);
@@ -200,7 +196,7 @@ public class RegisteredUserBuilder {
 		user.setCredentialsNonExpired(credentialsNonExpired);
 		user.setActivationCode(activationCode);
 		user.getRoles().addAll(roles);
-		user.setProgramOriginallyAppliedTo(programOriginallyAppliedTo);
+		
 		user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
 		user.setProgramsOfWhichApprover(programsOfWhichApprover);
 		user.setProgramsOfWhichReviewer(programsOfWhichReviewer);

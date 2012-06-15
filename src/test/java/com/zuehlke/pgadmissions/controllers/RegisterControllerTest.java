@@ -49,6 +49,7 @@ public class RegisterControllerTest {
 	private ApplicationQueryStringParser qureyStringParserMock;
 	private EncryptionHelper encryptionHelper;
 	
+	
 	@Before
 	public void setUp() {
 		validatorMock = EasyMock.createMock(RegisterFormValidator.class);		
@@ -143,7 +144,7 @@ public class RegisterControllerTest {
 		record.setEmail("emailofmarkeuston@gmail.com");
 		record.setPassword("12345678");
 		record.setConfirmPassword("12345678");
-		record.setProgramId(1);
+		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		validatorMock.shouldValidateSameEmail(true);
 		validatorMock.validate(record, errorsMock);
@@ -168,7 +169,7 @@ public class RegisterControllerTest {
 		record.setEmail("emailofmarkeuston@gmail.com");
 		record.setPassword("12345678");
 		record.setConfirmPassword("12345678");
-		record.setProgramId(1);
+		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		validatorMock.shouldValidateSameEmail(true);
 		validatorMock.validate(record, errorsMock);

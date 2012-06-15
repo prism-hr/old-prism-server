@@ -46,7 +46,7 @@ public class RegistrationServiceTest {
 
 	@Test
 	public void shouldCreateNewUserFromDTOAndQueryString() {
-		String queryString ="queryString";
+		String queryString = "queryString";
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).id(1).toRole();
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(role);
 		EasyMock.replay(roleDAOMock);
@@ -57,7 +57,7 @@ public class RegistrationServiceTest {
 		record.setEmail("meuston@gmail.com");
 		record.setPassword("1234");
 		record.setConfirmPassword("1234");
-		
+
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("5678");
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("abc");
 		EasyMock.replay(encryptionUtilsMock);
@@ -76,7 +76,7 @@ public class RegistrationServiceTest {
 		assertEquals("abc", newUser.getActivationCode());
 		assertEquals(queryString, newUser.getOriginalApplicationQueryString());
 	}
-	
+
 	@Test
 	public void shouldUpdateUser() {
 		RegisteredUser record = new RegisteredUser();
@@ -98,25 +98,19 @@ public class RegistrationServiceTest {
 		Assert.assertEquals("121", updateUser.getActivationCode());
 	}
 
-	
-
 	@Test
 	public void shouldSaveNewUserAndSendEmail() throws UnsupportedEncodingException {
 		final RegisteredUser expectedRecord = new RegisteredUser();
-			final Map<String, Object> modelMap = new HashMap<String, Object>();
+		final Map<String, Object> modelMap = new HashMap<String, Object>();
 
-		Program program = new ProgramBuilder()
-				.id(1)
-				.administrators(new RegisteredUserBuilder().id(1).email("email1@test.com").toUser(),
-						new RegisteredUserBuilder().id(1).email("email2@test.com").toUser()).toProgram();
-		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson")
-				.programOriginallyAppliedTo(program).toUser();
+
+		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock, msgSourceMock) {
 
 			@Override
 			public RegisteredUser createNewUser(RegisteredUser record, String queryString) {
-				if (expectedRecord == record && "queryString" == queryString ) {
+				if (expectedRecord == record && "queryString" == queryString) {
 					return newUser;
 				}
 				return null;
@@ -133,9 +127,9 @@ public class RegistrationServiceTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
-		
+
 		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("registration subject");
-		
+
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "registration subject",
 						"private/pgStudents/mail/registration_confirmation.ftl", modelMap, null)).andReturn(preparatorMock);
@@ -143,12 +137,12 @@ public class RegistrationServiceTest {
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
-		registrationService.generateAndSaveNewUser(expectedRecord, null,"queryString");
+		registrationService.generateAndSaveNewUser(expectedRecord, null, "queryString");
 
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		assertEquals(newUser, modelMap.get("user"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), modelMap.get("host"));
-		assertEquals("email1@test.com, email2@test.com", modelMap.get("adminsEmails"));
+
 	}
 
 	@Test
@@ -161,7 +155,7 @@ public class RegistrationServiceTest {
 
 			@Override
 			public RegisteredUser createNewUser(RegisteredUser record, String queryString) {
-				if (expectedRecord == record && "queryString" == queryString ) {
+				if (expectedRecord == record && "queryString" == queryString) {
 					return newUser;
 				}
 				return null;
@@ -195,7 +189,7 @@ public class RegistrationServiceTest {
 
 			@Override
 			public RegisteredUser createNewUser(RegisteredUser record, String queryString) {
-				if (expectedRecord == record && "queryString" == queryString ) {
+				if (expectedRecord == record && "queryString" == queryString) {
 					return newUser;
 				}
 				return null;
@@ -208,15 +202,16 @@ public class RegistrationServiceTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("reg subject");
-		
+
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("reg subject"),
-						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress)EasyMock.isNull())).andReturn(preparatorMock);
+						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull()))
+				.andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
-		registrationService.generateAndSaveNewUser(expectedRecord, null,"queryString");
+		registrationService.generateAndSaveNewUser(expectedRecord, null, "queryString");
 
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
@@ -241,7 +236,7 @@ public class RegistrationServiceTest {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-		
+
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock, msgSourceMock);
 	}

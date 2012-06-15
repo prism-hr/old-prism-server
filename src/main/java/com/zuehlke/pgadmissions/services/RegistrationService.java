@@ -97,9 +97,7 @@ public class RegistrationService {
 			Map<String, Object> model = modelMap();
 			model.put("user", newUser);
 			model.put("host", Environment.getInstance().getApplicationHostName());
-			if (newUser.getProgramOriginallyAppliedTo() != null) {
-				model.put("adminsEmails", getAdminsEmailsCommaSeparatedAsString(newUser.getProgramOriginallyAppliedTo().getAdministrators()));
-			}
+			
 			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
 
 			String subject = msgSource.getMessage("registration.confirmation", null, null);

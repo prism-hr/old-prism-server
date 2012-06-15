@@ -47,7 +47,10 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private Integer programId;
 	@Transient
 	private Referee currentReferee;
-
+	
+	@Column(name = "original_querystring")
+	private String originalApplicationQueryString;
+	
 	private boolean enabled;
 	private boolean accountNonExpired;
 	private boolean accountNonLocked;
@@ -698,5 +701,13 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public void setNewPassword(String newPassword) {
 		this.newPassword = newPassword;
+	}
+
+	public String getOriginalApplicationQueryString() {
+		return originalApplicationQueryString;
+	}
+
+	public void setOriginalApplicationQueryString(String queryString) {
+		this.originalApplicationQueryString = queryString;
 	}
 }

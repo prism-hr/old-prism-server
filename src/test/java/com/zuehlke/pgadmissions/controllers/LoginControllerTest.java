@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
-import org.springframework.ui.ModelMap;
 
 public class LoginControllerTest {
 
@@ -17,37 +16,56 @@ public class LoginControllerTest {
 
 	@Test
 	public void shouldReturnLoginPageViewName(){
-		assertEquals("public/login/login_page", loginController.getLoginPage(new MockHttpServletRequest(), new ModelMap()));
+		assertEquals("public/login/login_page", loginController.getLoginPage(new MockHttpServletRequest()));
 	}
 	
 	@Test
-	public void shouldGetProjectIdFromSavedRequestIfnewProjectRequest(){
+	public void shouldGetBadgeParametersFromRequestIfNewApplyRequest(){
 		MockHttpSession session = new MockHttpSession();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setSession(session);
 		DefaultSavedRequest defaultSavedRequestMock = EasyMock.createMock(DefaultSavedRequest.class);
 		EasyMock.expect(defaultSavedRequestMock.getRequestURL()).andReturn("/apply/new").anyTimes();
-		EasyMock.expect(defaultSavedRequestMock.getParameterValues("program")).andReturn(new String[]{"4"});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("program")).andReturn(new String[]{"code"});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programhome")).andReturn(new String[]{"programhome"});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programDeadline")).andReturn(new String[]{"programDeadline"});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("projectTitle")).andReturn(new String[]{"projectTitle"});
 		EasyMock.replay(defaultSavedRequestMock);
-		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);
-		ModelMap modelMap = new ModelMap();
-		loginController.getLoginPage(request, modelMap);
-		assertEquals("4", modelMap.get("program"));
+		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);		
+		loginController.getLoginPage(request);
+		assertEquals("program:code||programhome:programhome||bacthdeadline:programDeadline||projectTitle:projectTitle", session.getAttribute("applyRequest"));
 	}
 	
 	@Test
-	public void shouldNotFailIfNoProjectIdsProvided(){
+	public void shouldNotFailIfNoParametersProvided(){
 		MockHttpSession session = new MockHttpSession();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setSession(session);
 		DefaultSavedRequest defaultSavedRequestMock = EasyMock.createMock(DefaultSavedRequest.class);
 		EasyMock.expect(defaultSavedRequestMock.getRequestURL()).andReturn("/apply/new").anyTimes();
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("program")).andReturn(new String[]{});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programhome")).andReturn(new String[]{});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programDeadline")).andReturn(new String[]{});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("projectTitle")).andReturn(new String[]{});
 		EasyMock.replay(defaultSavedRequestMock);
-		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);
-		ModelMap modelMap = new ModelMap();
-		loginController.getLoginPage(request, modelMap);
-		assertNull( modelMap.get("program"));
+		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	
+		loginController.getLoginPage(request );
+		assertEquals("", session.getAttribute("applyRequest"));
+	}
+	
+
+	@Test
+	public void shouldSetSessionParameterToNullIfNotNewAPplicatioNRequest(){
+		MockHttpSession session = new MockHttpSession();
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setSession(session);
+		DefaultSavedRequest defaultSavedRequestMock = EasyMock.createMock(DefaultSavedRequest.class);
+		EasyMock.expect(defaultSavedRequestMock.getRequestURL()).andReturn("/bob/new").anyTimes();
+
+		EasyMock.replay(defaultSavedRequestMock);
+		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	
+		loginController.getLoginPage(request );
+		assertNull(session.getAttribute("applyRequest"));
 	}
 	@Before
 	public void setup(){

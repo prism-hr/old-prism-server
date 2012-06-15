@@ -50,7 +50,7 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses .box h3.answer.unsure span { background-position: 0 0; }
 #timeline-statuses .box h3.answer.no span { background-position: -16px 0; }
 #timeline-statuses .box h3.answer.home span { background-position: -32px 0; }
-#timeline-statuses .box h3.answer.eu span { background-position: -48px 0; }
+#timeline-statuses .box h3.answer.overseas span { background-position: -48px 0; }
 #timeline-statuses .box h3.answer.yes span { background-position: -64px 0; }
 
 #timeline-statuses ul .box .title { background: #AAA; }

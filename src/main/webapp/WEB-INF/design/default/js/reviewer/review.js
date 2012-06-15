@@ -8,8 +8,8 @@ $(document).ready(function(){
 			$("#programReviewers option[value='" + id + "']").remove();
 			$("#applicationReviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
 		});
-		$('#programReviewers').attr("size", $('#programReviewers option').size() + 1);
-		$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
+		$('#programReviewers').attr("size", $('#programReviewers option, #programReviewers optgroup').size() + 1);
+		$('#applicationReviewers').attr("size", $('#applicationReviewers option, #programReviewers optgroup').size() + 1);
 		
 		
 	});
@@ -38,8 +38,8 @@ $(document).ready(function(){
 			$("#applicationReviewers option[value='" + id + "']").remove();
 			$("#programReviewers").append('<option value="'+ id +'">'+ selText +'</option>');
 		});
-		$('#programReviewers').attr("size", $('#programReviewers option').size() + 1);
-		$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
+		$('#programReviewers').attr("size", $('#programReviewers option, #programReviewers optgroup').size() + 1);
+		$('#applicationReviewers').attr("size", $('#applicationReviewers option, #programReviewers optgroup').size() + 1);
 	});
 
 	

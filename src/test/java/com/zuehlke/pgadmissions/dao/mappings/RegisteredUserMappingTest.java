@@ -135,28 +135,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	
 	
 
-	@Test
-	public void shouldSaveAndLoadUserWithProgramOriginallyAppliedTo() throws Exception {
 
-		Program program = new ProgramBuilder().code("halloo").title("halllooo").toProgram();
-		
-		save(program);
-
-		flushAndClearSession();
-
-		RegisteredUser user = new RegisteredUserBuilder().programOriginallyAppliedTo(program).firstName("Jane").lastName("Doe").email("email@test.com")
-				.username("username").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
-
-		sessionFactory.getCurrentSession().save(user);
-		Integer id = user.getId();
-
-		flushAndClearSession();
-
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
-		assertEquals(program, reloadedUser.getProgramOriginallyAppliedTo());
-
-	}
 
 	@Test
 	public void shouldSaveAndLoadUserWithRoles() throws Exception {

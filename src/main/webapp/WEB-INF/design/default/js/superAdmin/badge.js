@@ -25,7 +25,7 @@ function updateBadge(){
 			program : $('#programme').val(),	
 			project: $('#project').val(),
 			programhome: $('#programhome').val(),
-			batchdeadline: $('#batchdeadline').val(),				
+			batchdeadline: $('#batchdeadline').val(),			
 			cacheBreaker: new Date().getTime() 
 		},
 		function(data) {
@@ -35,5 +35,6 @@ function updateBadge(){
 	$('#badge').attr("src", "/pgadmissions/badge/html?program=" + $('#programme').val() 
 	+ "&project=" +$('#project').val()
 	+ "&programhome=" +$('#programhome').val()
-	+ "&batchdeadline=" +$('#batchdeadline').val());
+	+ "&batchdeadline=" +$('#batchdeadline').val()
+	+ "&disable=true");
 };				

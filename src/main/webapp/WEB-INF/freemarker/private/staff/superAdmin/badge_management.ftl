@@ -63,37 +63,53 @@
 											<div class="row-group">
 												<div class="row">
 													<label class="plain-label">Programme</label>
-													<select name="programme" id="programme">
-														<option value="">Please select a program</option>						
-														<#list programs as program>"
-															<option value='${program.code}'>${program.title?html}</option>
-														</#list>
-													</select>				              		
+													<div class="field">
+														<select name="programme" id="programme">
+															<option value="">Please select a program</option>
+															<#list programs as program>
+																<option value="${program.code}">${program.title?html}</option>
+															</#list>
+														</select>
+													</div>
 												</div>
 										
 												<div class="row">
 													<label class="plain-label">Programme home page</label>
-													<input type="text" name="programhome" id="programhome" class="full"/>			              		
+													<div class="field">
+														<input type="text" name="programhome" id="programhome" class="full"/>
+													</div>
 												</div>		
-													
+
 												<div class="row">
 													<label class="plain-label">Project title</label>
-													<input type="text" name="project" id="project" class="full"/>			              		
+													<div class="field">
+														<input type="text" name="project" id="project" class="full"/>
+													</div>
 												</div>												
 																						
 												<div class="row">
 													<label class="plain-label">Batch deadline</label>
-													<input type="text" name="batchdeadline" id="batchdeadline" class="half date"/>			              		
+													<div class="field">
+														<input type="text" name="batchdeadline" id="batchdeadline" class="half date"/>
+													</div>
 												</div>
+												
 											</div><!-- .row-group -->
+											
 											<div class="row-group">
 												<label class="plain-label">HTML</label>
-												<textarea readonly="readonly" id="html" class="max" rows="15" cols="80"></textarea>
+												<div class="field">
+													<textarea readonly="readonly" id="html" class="max" rows="15" cols="70"></textarea>
+												</div>
 											</div>
+											
 											<div class="row-group">
 												<label class="plain-label">Badge</label>													
-												<iframe id="badge" width="500" height="200"></iframe>											
+												<div class="field">
+													<iframe id="badge" width="500" height="200"></iframe>											
+												</div>
 											</div>
+											
 											<div class="buttons">						        		
 												<button type="button" id="cancelBadge" value="cancel">Clear</button>				        
 											</div>

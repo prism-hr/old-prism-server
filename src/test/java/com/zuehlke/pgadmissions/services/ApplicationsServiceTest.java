@@ -118,7 +118,7 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldCreateAndSaveNewApplicationFormWithoutBatchDeadlineProject() throws ParseException {
+	public void shouldCreateAndSaveNewApplicationFormWithoutBatchDeadlineProjectOrResearchHomePage() throws ParseException {
 		Program program = new ProgramBuilder().code("KLOP").id(1).toProgram();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
 		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
@@ -133,7 +133,7 @@ public class ApplicationsServiceTest {
 		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23);
 		applicationFormDAOMock.save(newApplicationForm);
 		EasyMock.replay(applicationFormDAOMock);
-		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program, null, null);
+		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program, null, null, null);
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(newApplicationForm, returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
@@ -143,7 +143,7 @@ public class ApplicationsServiceTest {
 	}
 	
 	@Test
-	public void shouldCreateAndSaveNewApplicationFormWithBatchDeadlineAndProject() throws ParseException {
+	public void shouldCreateAndSaveNewApplicationFormWithBatchDeadlineProjectAndResearchHomePage() throws ParseException {
 		Program program = new ProgramBuilder().code("KLOP").id(1).toProgram();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
 		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
@@ -160,7 +160,8 @@ public class ApplicationsServiceTest {
 		EasyMock.replay(applicationFormDAOMock);
 		Date batchDeadline = new SimpleDateFormat("dd/MM/yyyy").parse("12/12/2012");
 		String projectTitle = "This is the project title";
-		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program, batchDeadline, projectTitle);
+		String researchHomePage ="researchHomePage";
+		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program, batchDeadline, projectTitle, researchHomePage);
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(newApplicationForm, returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
@@ -168,6 +169,7 @@ public class ApplicationsServiceTest {
 		assertEquals("KLOP-2012-000024", returnedForm.getApplicationNumber());
 		assertEquals(batchDeadline, returnedForm.getBatchDeadline());
 		assertEquals(projectTitle, returnedForm.getProjectTitle());
+		assertEquals(researchHomePage, returnedForm.getResearchHomePage());
 	}
 
 	@Test

@@ -25,7 +25,7 @@
     <#if referee.messenger??>
     <input type="hidden" id="${encRefereeId}_messenger" value="${(referee.messenger?html)!}"/>
     <#else>
-    <input type="hidden" id="${encRefereeId_messenger" value=" "/>
+    <input type="hidden" id="${encRefereeId}_messenger" value=" "/>
     </#if>
     <input type="hidden" id="${encRefereeId}_lastname" value="${(referee.lastname?html)!}"/>                                    
     <input type="hidden" id="${encRefereeId}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>

@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Event;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
@@ -38,6 +37,7 @@ public class ApplicationFormBuilder {
 	private RegisteredUser approver;
 	private RegisteredUser applicant;
 	private String projectTitle;
+	private String researchHomePage;
 	private Program program;
 	private Date appDate;
 	private Date submittedDate;
@@ -141,6 +141,11 @@ public class ApplicationFormBuilder {
 
 	public ApplicationFormBuilder projectTitle(String projectTitle) {
 		this.projectTitle = projectTitle;
+		return this;
+	}
+	
+	public ApplicationFormBuilder researchHomePage(String researchHomePage) {
+		this.researchHomePage = researchHomePage;
 		return this;
 	}
 
@@ -306,6 +311,7 @@ public class ApplicationFormBuilder {
 		application.setProgram(program);
 		application.setEvents(events);
 		application.setProjectTitle(projectTitle);
+		application.setResearchHomePage(researchHomePage);
 		application.setStatus(status);
 		application.setAdditionalInformation(info);
 		application.getNotificationRecords().addAll(notificationRecords);

@@ -12,8 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -35,13 +32,12 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
@@ -52,13 +48,12 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-
-import cucumber.annotation.lu.a;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
@@ -80,6 +75,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProjectTitle("bob");
 		application.setApplicationAdministrator(applicationAdmin);
 		application.setApplicationNumber("ABC");
+		application.setResearchHomePage("researchHomePage");
 		assertNotNull(application.getPersonalDetails());
 		assertNull(application.getId());
 
@@ -107,6 +103,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertNull(application.getPersonalDetails().getId());
 		assertEquals(applicationAdmin, application.getApplicationAdministrator());
 		assertEquals("ABC", application.getApplicationNumber());
+		assertEquals("researchHomePage", application.getResearchHomePage());
 	}
 
 	@Test

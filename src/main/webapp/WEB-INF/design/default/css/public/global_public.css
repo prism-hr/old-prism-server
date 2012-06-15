@@ -171,6 +171,7 @@ input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin:
 #site-message .content h1 { font-weight: bold; margin-bottom: .5em; }
 #site-message .content p { color: #666; line-height: 1.2; margin-bottom: 0.5em; }
 #site-message .content p:last-child { margin-bottom: 0; }
+#site-message .content p.buttons { line-height: 1; text-align: right; }
 
 #site-message.success .content { background-image: url(../../images/circle_lrg_grn.png); }
 #site-message.notice .content { background-image: url(../../images/circle_lrg_org.png); }
@@ -179,3 +180,4 @@ input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin:
 #site-message.success .content h1 { color: #AFBD21; }
 #site-message.notice .content h1 { color: #FFC220; }
 #site-message.error .content h1 { color: #B60050; }
+

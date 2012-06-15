@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 
-section.form-rows { margin-bottom: 10px; }
+section.form-rows { margin-bottom: 10px; position: relative; }
 
 /* SECTION HEADINGS --------------------------------------------------------------------------------------- */
 section.form-rows h2,

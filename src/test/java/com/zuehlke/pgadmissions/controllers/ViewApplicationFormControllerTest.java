@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -60,6 +61,25 @@ public class ViewApplicationFormControllerTest {
 		ModelAndView modelAndView = controller.getViewApplicationPage(view, "1", uploadErrorCode, null, null);
 		
 		assertEquals("private/pgStudents/form/main_application_page", modelAndView.getViewName());
+		assertEquals(model, modelAndView.getModel().get("model"));
+	}
+
+	@Test
+	public void shouldGetAdminApplicationFormViewWithApplicationPageModelForApplicationApplicantOfEndStateApplicationFOrm() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		String uploadErrorCode = "abc";
+		String view = "def";
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		ApplicationPageModel model = new ApplicationPageModel();
+		
+		EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
+		
+		EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock);
+
+		ModelAndView modelAndView = controller.getViewApplicationPage(view, "1", uploadErrorCode, null, null);
+		
+		assertEquals("private/staff/application/main_application_page", modelAndView.getViewName());
 		assertEquals(model, modelAndView.getModel().get("model"));
 	}
 

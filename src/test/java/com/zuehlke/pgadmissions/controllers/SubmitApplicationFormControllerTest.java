@@ -64,14 +64,19 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test
 	public void shouldReturnStudenApplicationViewOnGetForApplicant() {
-		String view = applicationController.getApplicationView(null);
+		String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().id(1).toApplicationForm());
 		assertEquals("/private/pgStudents/form/main_application_page", view);
+	}
+	@Test
+	public void shouldReturnAdminApplicationViewOnGetForApplicantForEndStateApp() {
+		String view = applicationController.getApplicationView(null,  new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(1).toApplicationForm());
+		assertEquals("/private/staff/application/main_application_page", view);
 	}
 	@Test
 	public void shouldReturnStudenApplicationViewOnGetForNonApplicant() {
 		RegisteredUser otherUser = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		authenticationToken.setDetails(otherUser);
-		String view = applicationController.getApplicationView(null);
+		String view = applicationController.getApplicationView(null,new ApplicationFormBuilder().id(1).toApplicationForm());
 		assertEquals("/private/staff/application/main_application_page", view);
 	}
 	@Test
@@ -82,7 +87,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(request.getParameter("embeddedApplication")).andReturn("true");
 		EasyMock.expect(request.getParameter("embeddedApplication")).andReturn("true");
 		EasyMock.replay(request);
-		String view = applicationController.getApplicationView(request);
+		String view = applicationController.getApplicationView(request, null);
 		assertEquals("/private/staff/application/main_application_page_without_headers", view);
 	}
 	@Test

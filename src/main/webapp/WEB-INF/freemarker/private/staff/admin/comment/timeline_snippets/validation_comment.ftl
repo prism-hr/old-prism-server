@@ -1,3 +1,16 @@
+<h3 class="answer <#if comment.qualifiedForPhd??>${comment.qualifiedForPhd?string?lower_case}</#if>">
+	<span></span> Is the applicant qualified for PhD entry to UCL?
+</h3>
+
+<h3 class="answer <#if comment.englishCompentencyOk??>${comment.englishCompentencyOk?string?lower_case}</#if>">
+	<span></span> Does the applicant meeting the minimum required standard of English Language competence?
+</h3>
+
+<h3 class="answer <#if comment.homeOrOverseas??>${comment.homeOrOverseas?string?lower_case}</#if>">
+	<span></span> What is the applicant's fee status?
+</h3>
+
+<#--
 <h3>Is the applicant qualified for PhD entry to UCL?</h3>
 <ul>                       							
 	<#list validationQuestionOptions as option>
@@ -24,3 +37,4 @@
 	</li>
 	</#list>
 </ul>
+-->

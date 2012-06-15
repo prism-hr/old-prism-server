@@ -42,6 +42,7 @@ public class RegisteredUserBuilder {
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 	private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
 	
+	private String originalApplicationQueryString;
 	
 	public RegisteredUserBuilder pendingRoleNotifications(PendingRoleNotification...pendingRoleNotifications) {
 		this.pendingRoleNotifications.addAll(Arrays.asList(pendingRoleNotifications));
@@ -114,6 +115,12 @@ public class RegisteredUserBuilder {
 	
 	public RegisteredUserBuilder directURL(String directURL) {
 		this.directURL = directURL;
+		return this;
+	}
+	
+	
+	public RegisteredUserBuilder originalApplicationQueryString(String originalApplicationQueryString) {
+		this.originalApplicationQueryString = originalApplicationQueryString;
 		return this;
 	}
 	
@@ -205,6 +212,7 @@ public class RegisteredUserBuilder {
 		user.setNotificationRecords(notificationRecords);
 		user.setPendingRoleNotifications(pendingRoleNotifications);
 		user.setDirectToUrl(directURL);
+		user.setOriginalApplicationQueryString(originalApplicationQueryString);
 		return user;
 	}
 

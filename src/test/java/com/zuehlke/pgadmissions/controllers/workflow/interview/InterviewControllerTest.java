@@ -28,9 +28,9 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -55,6 +55,7 @@ public class InterviewControllerTest {
 
 	private RegisteredUser currentUserMock;
 	private InterviewerPropertyEditor interviewerPropertyEditorMock;
+	private EncryptionHelper encryptionHelper;
 
 	@Test
 	public void shouldAddRegisteredUserValidator() {
@@ -70,7 +71,7 @@ public class InterviewControllerTest {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
-				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock) {
+				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				return applicationForm;
@@ -112,7 +113,7 @@ public class InterviewControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview).latestInterview(interview).acceptedTerms(CheckedStatus.NO)
 				.id(5).program(program).toApplicationForm();
 		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
-				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock) {
+				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId == "5") {
@@ -129,8 +130,8 @@ public class InterviewControllerTest {
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public List<RegisteredUser> getPendingInterviewers(List<Integer> pendingInterviewer, String applicationId) {
-				if (pendingInterviewer.size() == 1 && pendingInterviewer.get(0) == 3) {
+			public List<RegisteredUser> getPendingInterviewers(List<String> pendingInterviewer, String applicationId) {
+				if (pendingInterviewer.size() == 1 && pendingInterviewer.get(0).equals("enc3")) {
 					return Arrays.asList(interUser3);
 				}
 				return Collections.EMPTY_LIST;
@@ -138,7 +139,7 @@ public class InterviewControllerTest {
 
 		};
 
-		List<RegisteredUser> interviewersUsers = controller.getProgrammeInterviewers("5", Arrays.asList(3));
+		List<RegisteredUser> interviewersUsers = controller.getProgrammeInterviewers("5", Arrays.asList("enc3"));
 		assertEquals(2, interviewersUsers.size());
 	}
 
@@ -214,21 +215,24 @@ public class InterviewControllerTest {
 
 	@Test
 	public void shouldReturnPendingInterviewersAndRemoveExistingInterviewersFromList() {
-		List<Integer> ids = Arrays.asList(1, 8);
+		List<String> ids = Arrays.asList("enc1", "enc8");
 		EasyMock.reset(userServiceMock);
 		RegisteredUser newUser1 = new RegisteredUserBuilder().id(1).toUser();
 		RegisteredUser newUser2 = new RegisteredUserBuilder().id(8).toUser();
 
+		EasyMock.expect(encryptionHelper.decryptToInteger("enc1")).andReturn(1);
+		EasyMock.expect(encryptionHelper.decryptToInteger("enc8")).andReturn(8);
+		
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(newUser1);
 		EasyMock.expect(userServiceMock.getUser(8)).andReturn(newUser2);
-		EasyMock.replay(userServiceMock);
+		EasyMock.replay(userServiceMock, encryptionHelper);
 
 		String applicationNumber = "5";
 		final ApplicationForm applicationForm = new ApplicationFormBuilder()
 				.latestInterview(new InterviewBuilder().interviewers(new InterviewerBuilder().user(newUser2).toInterviewer()).toInterview()).id(5).applicationNumber(applicationNumber)
 				.toApplicationForm();
 		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
-				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock) {
+				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if ("5" == applicationId) {
@@ -243,6 +247,8 @@ public class InterviewControllerTest {
 			}
 		};
 		List<RegisteredUser> newUsers = controller.getPendingInterviewers(ids, applicationNumber);
+
+		EasyMock.verify(userServiceMock, encryptionHelper);
 		assertEquals(1, newUsers.size());
 		assertEquals(newUser1, newUsers.get(0));
 
@@ -260,7 +266,7 @@ public class InterviewControllerTest {
 		Interview interview = new InterviewBuilder().id(1).interviewers(new InterviewerBuilder().user(assignedInterviewer).toInterviewer()).toInterview();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).id(5).program(program).toApplicationForm();
 		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
-				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock) {
+				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if (applicationId == "5") {
@@ -277,8 +283,8 @@ public class InterviewControllerTest {
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public List<RegisteredUser> getPendingInterviewers(List<Integer> pendingInterviewer, String applicationId) {
-				if (pendingInterviewer.size() == 1 && pendingInterviewer.get(0) == 3) {
+			public List<RegisteredUser> getPendingInterviewers(List<String> pendingInterviewer, String applicationId) {
+				if (pendingInterviewer.size() == 1 && pendingInterviewer.get(0).equals("enc3")) {
 					return Arrays.asList(pendingInterviewerUser);
 				}
 				return Collections.EMPTY_LIST;
@@ -289,7 +295,7 @@ public class InterviewControllerTest {
 		EasyMock.expect(userServiceMock.getAllPreviousInterviewersOfProgram(program)).andReturn(
 				Arrays.asList(defaultInterviewer, interviewer, pendingInterviewerUser, assignedInterviewer));
 		EasyMock.replay(userServiceMock);
-		List<RegisteredUser> interviewersUsers = controller.getPreviousInterviewers("5", Arrays.asList(3));
+		List<RegisteredUser> interviewersUsers = controller.getPreviousInterviewers("5", Arrays.asList("enc3"));
 		assertEquals(1, interviewersUsers.size());
 		assertTrue(interviewersUsers.contains(interviewer));
 	}
@@ -308,13 +314,14 @@ public class InterviewControllerTest {
 		interviewValidator = EasyMock.createMock(InterviewValidator.class);
 		interviewerPropertyEditorMock = EasyMock.createMock(InterviewerPropertyEditor.class);
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
+		encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
 
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 
 		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock,
-				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock) {
+				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 
 			@Override
 			public Interview getInterview(Object applicationId) {

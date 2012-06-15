@@ -56,7 +56,7 @@
 															<option value="">Please select a program</option>
 															<option value="-1">All programs</option>
 															<#list programs as program>"
-															<option value='${program.id?string("######")}'<#if selectedProgram?? && selectedProgram.id == program.id >selected = "selected"</#if>>${program.title}</option>
+															<option value='${program.code}'<#if selectedProgram?? && selectedProgram.id == program.id >selected = "selected"</#if>>${program.title}</option>
 															</#list>
 														</select>				              		
 													</div>
@@ -81,19 +81,19 @@
 															<strong>Please choose a user</strong><br />
 															<select id="selectedUser" name="selectedUser">
 																<option value="">Please choose a user</option>
-																<#list availableUsers as user>						                			
-																<option value="${user.id?string("######")}"
+																<#list availableUsers as user>
+																<option value="${encrypter.encrypt(user.id)}"
 																<#if selectedUser?? && selectedUser.id == user.id >
 																 selected = "selected"
 																</#if>
 																<#if !user.enabled>class="pending"</#if>>${user.firstName?html} ${user.lastName?html} (${user.email?html})</option>      
 																</#list>
-					                		</select>
-						              	</div>
+					                						</select>
+						              					</div>
 														<div class="row">
-															or <a href="/pgadmissions/manageUsers/createNewUser<#if selectedProgram??>?programId=${selectedProgram.id?string('#####')}</#if>" >add a new user</a>
+															or <a href="/pgadmissions/manageUsers/createNewUser<#if selectedProgram??>?programId=${selectedProgram.code}</#if>" >add a new user</a>
 														</div>
-														<@spring.bind "updateUserRolesDTO.selectedUser" /> 
+														<@spring.bind "updateUserRolesDTO.selectedUser" />
 														<#list spring.status.errorMessages as error>
 														<div class="row">
 															<div class="field">
@@ -121,10 +121,8 @@
 																</div>
 															</div>
 															</#list>
-						              	</div>
-						           
+						              					</div>
 													</div>
-													
 												</div>
 												
 												<div class="buttons">
@@ -160,7 +158,7 @@
 												<td scope="col">${userInRole.email?html}</td>
 												<td scope="col">${userInRole.firstName?html} ${userInRole.lastName?html}</td>
 												<td scope="col">${userInRole.getAuthoritiesForProgramAsString(selectedProgram)}</td>
-												<td scope="col"><a href="<@spring.url '/manageUsers/showPage?programId=${selectedProgram.id?string("#######")}&userId=${userInRole.id?string("#######")}'/>">Edit</a> / <a href="#" name="removeuser" id="remove_${userInRole.id?string("#######")}">Remove</a></td>
+												<td scope="col"><a href="<@spring.url '/manageUsers/showPage?programId=${selectedProgram.code}&userId=${encrypter.encrypt(userInRole.id)}'/>">Edit</a> / <a href="#" name="removeuser" id="remove_${encrypter.encrypt(userInRole.id)}">Remove</a></td>
 											</tr>
 											</#list>			              			
 										</tbody>

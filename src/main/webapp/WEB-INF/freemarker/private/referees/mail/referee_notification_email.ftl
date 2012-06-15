@@ -59,7 +59,7 @@
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      		<font face="Arial, Helvetica, sans-serif" size="2"> encrypt
 			      			<a href="${host}/pgadmissions/decline/reference?refereeId=${referee.id?string('#######')}">Decline</a>
 			      		</font>
 			      	</p>

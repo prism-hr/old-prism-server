@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${reviewer.user.firstName?html},</font>
 		      		</h1>
 		      					      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that ${applicant.firstName?html} ${applicant.lastName?html} has submitted an Application <<ApplicationId>> for PhD study at University College London in ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that ${applicant.firstName?html} ${applicant.lastName?html} has submitted an Application ${application.applicationNumber} for PhD study at University College London in ${application.program.title}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been selected to review their application.</font>
@@ -48,7 +48,7 @@
 			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with the UCL Portal, please do so by clicking the link below:</font>
 			      		</p>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">
+				      		<font face="Arial, Helvetica, sans-serif" size="2">  encrypt
 				      			<a href="${host}/pgadmissions/register?userId=${reviewer.user.id?string('#######')}">Register</a>
 				      		</font>
 				      	</p>
@@ -59,7 +59,7 @@
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      		<font face="Arial, Helvetica, sans-serif" size="2">		encrypt
 			      			<a href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&userId=${reviewer.user.id?string('#######')}">Decline</a>
 			      		</font>
 			        <p>

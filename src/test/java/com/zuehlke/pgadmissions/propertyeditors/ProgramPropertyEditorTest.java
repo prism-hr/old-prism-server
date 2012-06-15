@@ -12,54 +12,62 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 
 public class ProgramPropertyEditorTest {
+	private ProgramPropertyEditor editor;
 
 	private ProgramsService programServiceMock;
-	private ProgramPropertyEditor editor;
 
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
 		Program program = new ProgramBuilder().id(1).toProgram();
-		EasyMock.expect(programServiceMock.getProgramById(1)).andReturn(program);
+		EasyMock.expect(programServiceMock.getProgramByCode("ABC")).andReturn(program);
 		EasyMock.replay(programServiceMock);
 		
-		editor.setAsText("1");
+		editor.setAsText("ABC");
+
+		EasyMock.verify(programServiceMock);
 		assertEquals(program, editor.getValue());
-		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){			
+	public void shouldThrowIllegalArgumentExceptionIfCodeNotLoaded(){
+		EasyMock.expect(programServiceMock.getProgramByCode("bob")).andThrow(new IllegalArgumentException("intentional.."));
+		EasyMock.replay(programServiceMock);
+		
 		editor.setAsText("bob");			
 	}
 	
 	@Test	
-	public void shouldReturNullIfIdIsNull(){			
+	public void shouldReturNullIfCodeIsNull(){			
 		editor.setAsText(null);
 		assertNull(editor.getValue());		
 	}
 	
 	@Test	
-	public void shouldReturNullIfIdIsEmptyString(){			
+	public void shouldReturNullIfCodeIsEmptyString(){			
 		editor.setAsText(" ");
 		assertNull(editor.getValue());		
 	}
 	@Test	
-	public void shouldReturnNullIfValueIsNull(){			
+	public void shouldReturnNullIfCodeIsNull(){			
 		editor.setValue(null);
 		assertNull(editor.getAsText());
 	}
 	
 	@Test	
-	public void shouldReturnNullIfValueIdIsNull(){			
+	public void shouldReturnNullIfCodeValueIsNull(){			
 		editor.setValue(new ProgramBuilder().toProgram());
 		assertNull(editor.getAsText());
 	}
 	
 	@Test	
 	public void shouldReturnIdAsString(){			
-		editor.setValue(new ProgramBuilder().id(5).toProgram());
-		assertEquals("5", editor.getAsText());
+		editor.setValue(new ProgramBuilder().id(5).code("ABC").toProgram());
+		EasyMock.replay(programServiceMock);
+		
+		assertEquals("ABC", editor.getAsText());
+		
+		EasyMock.verify(programServiceMock);
 	}
 	
 	@Before

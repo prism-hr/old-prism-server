@@ -65,7 +65,8 @@ public class DeleteApplicationFormEntitiesController {
 	}
 
 	@RequestMapping(value = "/referee", method = RequestMethod.POST)
-	public String deleteReferee(@RequestParam Integer id) {
+	public String deleteReferee(@RequestParam("id") String encrypedRefereeId) {
+		Integer id = encryptionHelper.decryptToInteger(encrypedRefereeId);
 		Referee referee = refereeService.getRefereeById(id);
 		refereeService.delete(referee);
 		return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber() + "&message=deleted";

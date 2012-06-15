@@ -8,18 +8,21 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.UserService;
 @Component
 public class InterviewerPropertyEditor extends PropertyEditorSupport {
 
 	private final UserService userService;
+	private final EncryptionHelper encryptionHelper;
 
 	InterviewerPropertyEditor(){
-		this(null);
+		this(null, null);
 	}
 	@Autowired
-	public InterviewerPropertyEditor(UserService userService) {
+	public InterviewerPropertyEditor(UserService userService, EncryptionHelper encryptionHelper) {
 		this.userService = userService;
+		this.encryptionHelper = encryptionHelper;
 	}
 
 	@Override
@@ -33,7 +36,7 @@ public class InterviewerPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		Integer userId = Integer.parseInt(strUserId);
+		Integer userId = encryptionHelper.decryptToInteger(strUserId);
 		RegisteredUser user = userService.getUser(userId);
 		if(user == null){
 			throw new IllegalArgumentException("no such user: " + strUserId);

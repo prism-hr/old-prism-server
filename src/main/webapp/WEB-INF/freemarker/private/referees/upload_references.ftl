@@ -79,9 +79,9 @@
                     <#if !reference.id?? >
 										<div class="row-group">
 											<form id="declineForm" method="POST" action="<@spring.url '/referee/decline'/>">
-												<input type="hidden" name="referee" value='${(reference.referee.id?string("#######"))!}'/>                    
+												<input type="hidden" name="referee" value='<#if reference.referee.id??>${encrypter.encrypt(reference.referee.id)}</#if>'/>                    
 												<p>If you are not able to act as a referee in this case, please let us know by clicking the "Decline" button below.</p>
-												<div class="buttons">        
+												<div class="buttons">
 													<button class="blue" type="button" id="declineReference" value="close">Decline</button>              
 				                </div>
         				      </form>

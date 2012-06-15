@@ -48,7 +48,7 @@
 			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with the UCL Portal, please do so by clicking the link below:</font>
 			      		</p>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">
+				      		<font face="Arial, Helvetica, sans-serif" size="2">   encrypt
 				      			<a href="${host}/pgadmissions/register?userId=${reviewer.user.id?string('#######')}">Register</a>
 				      		</font>
 				      	</p>
@@ -59,7 +59,7 @@
 				      		</font>
 				      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      		<font face="Arial, Helvetica, sans-serif" size="2">encrypt
 			      			<a href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&userId=${reviewer.user.id?string('#######')}">Decline</a>
 			      		</font>
 			        <p>

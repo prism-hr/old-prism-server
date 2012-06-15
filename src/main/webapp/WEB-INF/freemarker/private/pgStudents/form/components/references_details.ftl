@@ -39,8 +39,9 @@
 	                    <td><a class="row-arrow">-</a></td>
 	                    <td>${(existingReferee.firstname?html)!} ${(existingReferee.lastname?html)!} 
 	                    (${(existingReferee.email?html)!})</td>
-	                  	<#if !existingReferee.editable>		                    
-		                    <td><a name="editRefereeLink" data-desc="Show" id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">show</a></td>
+	                    <#assign encExistingRefereeId = encrypter.encrypt(existingReferee.id) />
+	                  	<#if !existingReferee.editable>
+		                    <td><a name="editRefereeLink" data-desc="Show" id="referee_${encExistingRefereeId}" class="button-edit button-hint">show</a></td>
 		                    <#if existingReferee.declined || existingReferee.hasProvidedReference()>
 		                    	<td>Responded</td>
 		                    <#else>
@@ -48,10 +49,10 @@
 		                    </#if>
 		                 <#else>
 		                	 <td>
-		                    	<a name="editRefereeLink" data-desc="Edit"id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">edit</a>
+		                    	<a name="editRefereeLink" data-desc="Edit"id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a>
 				        	</td>	
 				        	 <td>
-		                    	<a name="deleteRefereeButton" data-desc="Delete" id="referee_${existingReferee.id?string('#######')}" class="button-delete button-hint">delete</a>
+		                    	<a name="deleteRefereeButton" data-desc="Delete" id="referee_${encExistingRefereeId}" class="button-delete button-hint">delete</a>
 				        	</td>	                   
 		                 </#if> 
 	                </tr>    
@@ -60,8 +61,8 @@
       	
       	</table>
   	</#if>
-  	
-  	<input type="hidden" id="refereeId" name="refereeId" value="${(referee.id?string('#######'))!}" />
+		                    
+  	<input type="hidden" id="refereeId" name="refereeId" value="<#if referee.id??>${encrypter.encrypt(referee.id)}</#if>" />
 
   	<form>
   	

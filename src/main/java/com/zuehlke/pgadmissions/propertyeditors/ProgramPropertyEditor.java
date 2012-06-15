@@ -14,30 +14,29 @@ public class ProgramPropertyEditor extends PropertyEditorSupport {
 
 	private final ProgramsService programsService;
 
-	ProgramPropertyEditor(){
+	ProgramPropertyEditor() {
 		this(null);
 	}
-	
+
 	@Autowired
 	public ProgramPropertyEditor(ProgramsService programsService) {
 		this.programsService = programsService;
-		
 	}
+
 	@Override
 	public void setAsText(String strId) throws IllegalArgumentException {
-		if(strId == null || StringUtils.isBlank(strId)){
+		if (strId == null || StringUtils.isBlank(strId)) {
 			setValue(null);
 			return;
 		}
-		setValue(programsService.getProgramById(Integer.parseInt(strId)));
-		
+		setValue(programsService.getProgramByCode(strId));
 	}
 
 	@Override
 	public String getAsText() {
-		if(getValue() == null || ((Program)getValue()).getId() == null){
+		if (getValue() == null || ((Program) getValue()).getId() == null) {
 			return null;
 		}
-		return ((Program)getValue()).getId().toString();
+		return ((Program) getValue()).getCode();
 	}
 }

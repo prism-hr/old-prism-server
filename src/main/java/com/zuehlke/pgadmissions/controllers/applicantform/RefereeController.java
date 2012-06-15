@@ -21,10 +21,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -44,14 +44,16 @@ public class RefereeController {
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final RefereeValidator refereeValidator;
 	private final EncryptionUtils encryptionUtils;
+	private final EncryptionHelper encryptionHelper;
 
 	RefereeController() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public RefereeController(RefereeService refereeService, CountryService countryService, ApplicationsService applicationsService,
-			CountryPropertyEditor countryPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator, EncryptionUtils encryptionUtils) {
+			CountryPropertyEditor countryPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, 
+			RefereeValidator refereeValidator, EncryptionUtils encryptionUtils, EncryptionHelper encryptionHelper) {
 		this.refereeService = refereeService;
 		this.countryService = countryService;
 		this.applicationsService = applicationsService;
@@ -59,6 +61,7 @@ public class RefereeController {
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.refereeValidator = refereeValidator;
 		this.encryptionUtils = encryptionUtils;
+		this.encryptionHelper = encryptionHelper;
 	}
 
 	@RequestMapping(value = "/editReferee", method = RequestMethod.POST)
@@ -117,10 +120,11 @@ public class RefereeController {
 
 
 	@ModelAttribute
-	public Referee getReferee(@RequestParam(required=false) Integer refereeId) {
-		if (refereeId == null) {
+	public Referee getReferee(@RequestParam(required=false) String encryptedRefereeId) {
+		if (encryptedRefereeId == null) {
 			return new Referee();
 		}
+		Integer refereeId = encryptionHelper.decryptToInteger(encryptedRefereeId);
 		Referee referee = refereeService.getRefereeById(refereeId);
 		if (referee == null) {
 			throw new ResourceNotFoundException();

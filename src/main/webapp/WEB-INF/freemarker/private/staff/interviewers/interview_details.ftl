@@ -93,12 +93,12 @@
 												<select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}">
 													<option value="" disabled="disabled" id="default">Default interviewers</option>
 													<#list programmeInterviewers as interviewer>
-													<option value="${interviewer.id?string('#####')}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
+													<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
 													</#list>
 													<option value="" disabled="disabled"></option>
 													<option value="" disabled="disabled" id="previous">Previous interviewers in this programme</option>
 													<#list previousInterviewers as interviewer>
-													<option value="${interviewer.id?string('#####')}" category="previous">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
+													<option value="${encrypter.encrypt(interviewer.id)}" category="previous">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
 													</#list>							
 													<option value="" disabled="disabled"></option>								
 												</select>
@@ -121,17 +121,17 @@
 												<p><strong>Selected Interviewers</strong></p>
 												<select id="applicationInterviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 													<#list applicationInterviewers as interviewer>
-													<option value="${interviewer.id?string('#####')}">
+													<option value="${encrypter.encrypt(interviewer.id)}">
 													${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if>
 													</option>
 													</#list>
 													<#list pendingInterviewers as unsaved>									
-													<option value="${unsaved.id?string('#####')}">
+													<option value="${encrypter.encrypt(unsaved.id)}">
 													${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if> (*)
 													</option>
 													</#list>
 													<#list willingToInterviewReviewers as willingReviewer>									
-													<option value="${willingReviewer.id?string('#####')}">
+													<option value="${encrypter.encrypt(willingReviewer.id)}">
 													${willingReviewer.firstName?html} ${willingReviewer.lastName?html} <#if !willingReviewer.enabled> - Pending</#if> (*)
 													</option>
 													</#list>
@@ -247,7 +247,8 @@
 								</div>								
 								
 								<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-								<input type="hidden" id="interviewId" name="interviewId" value="${(interview.id?string("######"))!}"/> 
+								encrypt
+								<input type="hidden" id="interviewId" name="interviewId" value="<#if interview?? >${encrypter.encrypt(interview.id)}</#if>"/> 
 							</form>
 						</div>
 					</section>

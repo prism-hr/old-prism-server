@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.controllers.usermanagement;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,8 +21,9 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UpdateUserRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.UpdateUserRolesDTOValidator;
@@ -33,6 +37,7 @@ public class ManageUserRolesControllerTest {
 	private PlainTextUserPropertyEditor userPropertyEditorMock;
 	private ProgramPropertyEditor programPropertyEditorMock;
 	private UpdateUserRolesDTOValidator updateUserRolesDTOValidatorMock;
+	private EncryptionHelper encryptionHelperMock;
 	
 	@Test
 	public void shouldReturnAllProgramsForSuperAdmin() {
@@ -96,10 +101,13 @@ public class ManageUserRolesControllerTest {
 	public void shouldGetSelectedUserIfIdProvided(){
 		EasyMock.reset(userServiceMock);
 		RegisteredUser user = new RegisteredUserBuilder().id(5).toUser();
+		
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(5);
 		EasyMock.expect(userServiceMock.getUser(5)).andReturn(user);
-		EasyMock.replay(userServiceMock);
+		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
-		assertEquals(user, controller.getSelectedUser(5));
+		assertEquals(user, controller.getSelectedUser("enc"));
+		EasyMock.verify(userServiceMock, encryptionHelperMock);
 	}
 
 	@Test
@@ -110,18 +118,20 @@ public class ManageUserRolesControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoucnExceptionIfNoSuchUser() {
 		EasyMock.reset(userServiceMock);
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(5);
 		EasyMock.expect(userServiceMock.getUser(5)).andReturn(null);
-		EasyMock.replay(userServiceMock);
-		controller.getSelectedUser(5);
+		EasyMock.replay(userServiceMock, encryptionHelperMock);
+		controller.getSelectedUser("enc");
 	}
 
 	@Test
 	public void shouldGetSelectedProgramfIdProvided() {
 		Program program = new ProgramBuilder().id(5).toProgram();
-		EasyMock.expect(programsServiceMock.getProgramById(5)).andReturn(program);
+		EasyMock.expect(programsServiceMock.getProgramByCode("CODE ABC")).andReturn(program);
 		EasyMock.replay(programsServiceMock);
 
-		assertEquals(program, controller.getSelectedProgram(5));
+		assertEquals(program, controller.getSelectedProgram("CODE ABC"));
+		EasyMock.verify(programsServiceMock);
 	}
 
 	@Test
@@ -131,10 +141,10 @@ public class ManageUserRolesControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoucnExceptionIfNoSuchProgram() {
+		EasyMock.expect(programsServiceMock.getProgramByCode("ABC")).andReturn(null);
 
-		EasyMock.expect(programsServiceMock.getProgramById(5)).andReturn(null);
 		EasyMock.replay(programsServiceMock);
-		controller.getSelectedProgram(5);
+		controller.getSelectedProgram("ABC");
 	}
 	
 
@@ -169,13 +179,14 @@ public class ManageUserRolesControllerTest {
 		Program program = new ProgramBuilder().id(5).toProgram();
 		RegisteredUser userOne = new RegisteredUserBuilder().id(3).toUser();
 		RegisteredUser userTwo = new RegisteredUserBuilder().id(4).toUser();
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(5);
+		EasyMock.expect(programsServiceMock.getProgramByCode("ABC")).andReturn(program);
 		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
-		EasyMock.replay(userServiceMock);		
-		EasyMock.expect(programsServiceMock.getProgramById(5)).andReturn(program);
-		EasyMock.replay(programsServiceMock);
-		List<RegisteredUser> users = controller.getUsersInRoles(5);		
+		EasyMock.replay(programsServiceMock, userServiceMock);
+		List<RegisteredUser> users = controller.getUsersInRoles("ABC");		
 		assertEquals(2, users.size());
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
+		EasyMock.verify(programsServiceMock, userServiceMock);
 	}
 	
 	@Test(expected = ResourceNotFoundException.class)
@@ -281,7 +292,6 @@ public class ManageUserRolesControllerTest {
 		EasyMock.verify(userServiceMock);
 	}
 
-
 	@Before
 	public void setUp(){
 		userServiceMock = EasyMock.createMock(UserService.class);
@@ -290,9 +300,11 @@ public class ManageUserRolesControllerTest {
 		programPropertyEditorMock = EasyMock.createMock(ProgramPropertyEditor.class);
 		updateUserRolesDTOValidatorMock = EasyMock.createMock(UpdateUserRolesDTOValidator.class);
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);		
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		EasyMock.replay(userServiceMock);
-		controller = new ManageUserRolesController(userServiceMock, programsServiceMock, userPropertyEditorMock, programPropertyEditorMock, updateUserRolesDTOValidatorMock);
+		controller = new ManageUserRolesController(userServiceMock, programsServiceMock, userPropertyEditorMock,// 
+				programPropertyEditorMock, updateUserRolesDTOValidatorMock, encryptionHelperMock);
 	}
-
 }

@@ -46,7 +46,7 @@ public class UpdateUserRolesDTOValidatorTest {
 		user.setSelectedUser(null);
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("updateuser.selectedUser.notempty", mappingResult.getFieldError("selectedUser").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedUser").getCode());
 	}
 
 		
@@ -57,7 +57,7 @@ public class UpdateUserRolesDTOValidatorTest {
 		user.setSelectedAuthorities(Authority.REVIEWER, Authority.SUPERADMINISTRATOR);
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("updateuser.program.notempty", mappingResult.getFieldError("selectedProgram").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedProgram").getCode());
 	}
 	@Test
 	public void shouldNotRejectIfProgramIsNullAndAuthoritiesIsSuperadmin() {

@@ -17,7 +17,7 @@ public class DocumentSectionValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalStatement", "documents.personalStatement.missing");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalStatement", "file.upload.empty");
 
 	}
 

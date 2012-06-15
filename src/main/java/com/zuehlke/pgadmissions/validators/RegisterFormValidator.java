@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,8 @@ public class RegisterFormValidator implements Validator {
 
 	private UserService userService;
 	private boolean shouldValidateSameEmail;
+	private static final int MINIMUM_PASSWORD_CHARACTERS = 8;
+	private static final int MAXIMUM_PASSWORD_CHARACTERS = 15;
 	
 	RegisterFormValidator() {
 		this(null);
@@ -52,11 +53,11 @@ public class RegisterFormValidator implements Validator {
 			errors.rejectValue("confirmPassword", "user.confirmPassword.notmatch");
 		}
 
-		if(record.getPassword().length()<8){
+		if(record.getPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
 			errors.rejectValue("password", "user.password.small");
 		}
 		
-		if(record.getPassword().length()>15){
+		if(record.getPassword().length() > MAXIMUM_PASSWORD_CHARACTERS){
 			errors.rejectValue("password", "user.password.large");
 		}
 		

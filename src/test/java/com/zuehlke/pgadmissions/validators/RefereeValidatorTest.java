@@ -30,7 +30,7 @@ public class RefereeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "firstname");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.firstname.notempty", mappingResult.getFieldError("firstname").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstname").getCode());
 	}
 
 	@Test
@@ -39,7 +39,7 @@ public class RefereeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "lastname");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.lastname.notempty", mappingResult.getFieldError("lastname").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("lastname").getCode());
 	}
 
 	@Test
@@ -48,7 +48,7 @@ public class RefereeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressLocation");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.addressLocation.notempty", mappingResult.getFieldError("addressLocation").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("addressLocation").getCode());
 	}
 	
 	
@@ -58,7 +58,7 @@ public class RefereeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressCountry");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.addressCountry.notempty", mappingResult.getFieldError("addressCountry").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("addressCountry").getCode());
 	}
 	
 
@@ -68,7 +68,7 @@ public class RefereeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobEmployer");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.jobEmployer.notempty", mappingResult.getFieldError("jobEmployer").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("jobEmployer").getCode());
 	}
 	@Test
 	public void shouldRejectIfJobTitleIsEmpty() {
@@ -76,7 +76,7 @@ public class RefereeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobTitle");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.jobTitle.notempty", mappingResult.getFieldError("jobTitle").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("jobTitle").getCode());
 	}	
 		
 	@Test
@@ -85,7 +85,7 @@ public class RefereeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "email");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.email.invalid", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 	}
 	
 	@Test
@@ -94,7 +94,7 @@ public class RefereeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.phoneNumber.notempty", mappingResult.getFieldError("phoneNumber").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("phoneNumber").getCode());
 	}
 	
 	@Test

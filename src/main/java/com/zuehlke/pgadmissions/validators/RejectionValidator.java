@@ -18,7 +18,7 @@ public class RejectionValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		System.err.println("VALIDATING");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "rejectionReason", "rejection.rejectionReason.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "rejectionReason", "dropdown.radio.select.none");
 	}
 
 }

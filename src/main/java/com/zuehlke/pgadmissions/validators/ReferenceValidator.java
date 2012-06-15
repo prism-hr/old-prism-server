@@ -18,7 +18,7 @@ public class ReferenceValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "document", "reference.document.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "document", "file.upload.empty");
 
 	}
 

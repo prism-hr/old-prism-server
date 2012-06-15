@@ -21,13 +21,13 @@ public class EmploymentPositionValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		Date today = new Date();
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerName", "position.position_employer.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerAddress", "position.position_employer_address.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerCountry", "position.position_employer_country.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position", "position.position_title.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "remit", "position.position_remit.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "position.position_startDate.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "language", "position.position_language.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerAddress", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerCountry", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "remit", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "language", "dropdown.radio.select.none");
 		EmploymentPosition position = (EmploymentPosition) target;
 		
 		if (position.getEmployerAddress() != null) {
@@ -45,16 +45,16 @@ public class EmploymentPositionValidator implements Validator {
 		String startDate = position.getStartDate() == null ? "" : position.getStartDate().toString();
 		String endDate = position.getEndDate() == null ? "" : position.getEndDate().toString();
 		if (StringUtils.isNotBlank(startDate) && position.getStartDate().after(today)) {
-			errors.rejectValue("startDate", "position.position_startDate.future");
+			errors.rejectValue("startDate", "date.field.notpast");
 		}
 		if (StringUtils.isNotBlank(endDate) && position.getEndDate().after(today)) {
-			errors.rejectValue("endDate", "position.position_endDate.future");
+			errors.rejectValue("endDate", "date.field.notpast");
 		}
 		if (StringUtils.isNotBlank(startDate) && position.getEndDate() != null && position.getStartDate().after(position.getEndDate())) {
 			errors.rejectValue("startDate", "position.position_startDate.notvalid");
 		}
 		if (!position.isCurrent()  && StringUtils.isBlank(endDate)){
-			errors.rejectValue("endDate", "position.position_endDate.notempty");
+			errors.rejectValue("endDate", "text.field.empty");
 		}
 		if (position.isCurrent() && StringUtils.isNotBlank(endDate)) {
 			errors.rejectValue("endDate", "position.position_endDate.empty");

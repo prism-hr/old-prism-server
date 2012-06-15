@@ -28,11 +28,11 @@ public class InterviewValidator implements Validator {
 			errors.rejectValue("locationURL", "interview.locationURL.invalid");
 		}
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "furtherDetails", "interview.furtherDetails.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewDueDate", "interview.interviewDueDate.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewTime", "interview.interviewTime.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewDueDate", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewTime", "text.field.empty");
 		String dueDate = interview.getInterviewDueDate() == null ? "": interview.getInterviewDueDate().toString();
 		if (StringUtils.isNotBlank(dueDate) && interview.getInterviewDueDate().before(today)) {
-			errors.rejectValue("interviewDueDate", "interview.interviewDueDate.past");
+			errors.rejectValue("interviewDueDate", "date.field.notfuture");
 		}
 		if(interview.getInterviewers().isEmpty()){
 			errors.rejectValue("interviewers", "interview.interviewers.notempty");

@@ -58,7 +58,7 @@ public class ProgrammeDetailsValidatorTest {
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.programmeName.notempty", mappingResult.getFieldError("programmeName").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("programmeName").getCode());
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class ProgrammeDetailsValidatorTest {
 		EasyMock.verify(programInstanceDAOMock);
 
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.studyOption.notempty", mappingResult.getFieldError("studyOption").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("studyOption").getCode());
 	}
 
 	@Test
@@ -86,7 +86,7 @@ public class ProgrammeDetailsValidatorTest {
 		EasyMock.verify(programInstanceDAOMock);
 
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.programmeStartDate.notempty", mappingResult.getFieldError("startDate").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("startDate").getCode());
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class ProgrammeDetailsValidatorTest {
 		EasyMock.verify(programInstanceDAOMock);
 	
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.programmeStartDate.notFuture", mappingResult.getFieldError("startDate").getCode());
+		Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("startDate").getCode());
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class ProgrammeDetailsValidatorTest {
 		EasyMock.verify(programInstanceDAOMock);
 
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.programmeReferrer.notempty", mappingResult.getFieldError("referrer").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("referrer").getCode());
 	}
 
 	@Test
@@ -128,7 +128,7 @@ public class ProgrammeDetailsValidatorTest {
 		EasyMock.verify(programInstanceDAOMock);
 
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("programmeDetails.firstname.notempty", mappingResult.getFieldError("suggestedSupervisors").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("suggestedSupervisors").getCode());
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class ProgrammeDetailsValidatorTest {
 		EasyMock.verify(programInstanceDAOMock);
 
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("programmeDetails.lastname.notempty", mappingResult.getFieldError("suggestedSupervisors").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("suggestedSupervisors").getCode());
 	}
 
 	@Test

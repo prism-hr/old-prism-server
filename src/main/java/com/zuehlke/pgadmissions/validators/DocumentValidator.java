@@ -23,15 +23,15 @@ public class DocumentValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		Document document = (Document) target;
 		if (StringUtils.isBlank(document.getFileName())) {
-			errors.rejectValue("fileName", "upload.file.missing");
+			errors.rejectValue("fileName", "file.upload.empty");
 		} else {
 			
 			if (document.getFileName().indexOf(".") < 0) {
-				errors.rejectValue("fileName", "upload.file.invalidtype");
+				errors.rejectValue("fileName", "file.upload.notPDF");
 			} else {
 				String extension = document.getFileName().substring(document.getFileName().indexOf(".") + 1, document.getFileName().length());
 				if (!Arrays.asList(EXTENSION_WHITE_LIST).contains(extension)) {
-					errors.rejectValue("fileName", "upload.file.invalidtype");
+					errors.rejectValue("fileName", "file.upload.notPDF");
 				}
 
 			}
@@ -41,7 +41,7 @@ public class DocumentValidator implements Validator {
 
 		}
 		if(document.getContent() != null && document.getContent().length > 10000000){
-			errors.rejectValue("content", "upload.file.toobig");
+			errors.rejectValue("content", "file.upload.large");
 		}
 
 	}

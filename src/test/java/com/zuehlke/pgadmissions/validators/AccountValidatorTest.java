@@ -36,12 +36,12 @@ public class AccountValidatorTest {
 
 	@Before
 	public void setup(){
-		user = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa765d61d8327deb882cf99").toUser();
+		user = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
 		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		userArray = new ArrayList<RegisteredUser>();
 		userArray.add(user);
-		currentUser = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa765d61d8327deb882cf99").toUser();
+		currentUser = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
 		accountValidator = new AccountValidator(userServiceMock, encryptionUtilsMock){
 			@Override
 			public RegisteredUser getCurrentUser() {
@@ -66,7 +66,7 @@ public class AccountValidatorTest {
 		EasyMock.replay(userServiceMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("account.newPassword.notempty", mappingResult.getFieldError("newPassword").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("newPassword").getCode());
 	}
 
 	
@@ -79,7 +79,7 @@ public class AccountValidatorTest {
 		EasyMock.replay(userServiceMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("account.password.notempty", mappingResult.getFieldError("password").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("password").getCode());
 	}
 	
 	@Test
@@ -91,7 +91,7 @@ public class AccountValidatorTest {
 		EasyMock.replay(userServiceMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("account.confirmPassword.notempty", mappingResult.getFieldError("confirmPassword").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("confirmPassword").getCode());
 	}
 	
 	@Test
@@ -114,13 +114,13 @@ public class AccountValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(2, mappingResult.getErrorCount());
-		Assert.assertEquals("account.newPassword.notmatch", mappingResult.getFieldError("newPassword").getCode());
-		Assert.assertEquals("account.confirmPassword.notmatch", mappingResult.getFieldError("confirmPassword").getCode());
+		Assert.assertEquals("user.passwords.notmatch", mappingResult.getFieldError("newPassword").getCode());
+		Assert.assertEquals("user.passwords.notmatch", mappingResult.getFieldError("confirmPassword").getCode());
 	}
 	
 	@Test
@@ -130,23 +130,55 @@ public class AccountValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("1234");
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("account.newPassword.notvalid", mappingResult.getFieldError("newPassword").getCode());
+		Assert.assertEquals("user.password.small", mappingResult.getFieldError("newPassword").getCode());
 	}
+	
+	@Test
+	public void shouldRejectIfNewPasswordIsMoreThan15Chars() {
+		user.setNewPassword("1234567891234567");
+		user.setConfirmPassword("1234567891234567");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234567891234567")).andReturn("1234567891234567");
+		EasyMock.replay(userServiceMock, encryptionUtilsMock);
+		accountValidator.validate(user, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.password.large", mappingResult.getFieldError("newPassword").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfContainsSpecialChars() {
+		user.setNewPassword(" 12o*-lala");
+		user.setConfirmPassword(" 12o*-lala");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash(" 12o*-lala")).andReturn(" 12o*-lala");
+		EasyMock.replay(userServiceMock, encryptionUtilsMock);
+		accountValidator.validate(user, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.password.nonalphanumeric", mappingResult.getFieldError("newPassword").getCode());
+	}
+	
+	
 
 	@Test
 	public void shouldRejectIfNewEmailAlreadyExists() {
 		userArray.add(new RegisteredUserBuilder().id(1).username("email2@test.com").firstName("bob").lastName("bobson").
-				email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa765d61d8327deb882cf99").toUser());
+				email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser());
 		user.setEmail("email2@test.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
 		accountValidator.validate(user, mappingResult);
@@ -160,24 +192,24 @@ public class AccountValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("account.email.invalid", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 
 	}
 	
 	@Test
 	public void shouldRejectIfNewPasswordSameWithExisting() {
-		user.setNewPassword("5f4dcc3b5aa765d61d8327deb882cf99");
-		user.setConfirmPassword("5f4dcc3b5aa765d61d8327deb882cf99");
+		user.setNewPassword("5f4dcc3b5aa");
+		user.setConfirmPassword("5f4dcc3b5aa");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -190,12 +222,12 @@ public class AccountValidatorTest {
 		user.setFirstName("");
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.firstName.notempty", mappingResult.getFieldError("firstName").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstName").getCode());
 	}
 
 	@Test
@@ -204,12 +236,12 @@ public class AccountValidatorTest {
 		user.setLastName(null);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.lastName.notempty", mappingResult.getFieldError("lastName").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("lastName").getCode());
 	}
 	
 }

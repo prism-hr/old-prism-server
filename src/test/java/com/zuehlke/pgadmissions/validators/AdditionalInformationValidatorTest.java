@@ -59,7 +59,7 @@ public class AdditionalInformationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictions");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("additionalInformation.convictions.notempty", mappingResult.getFieldError("convictions").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("convictions").getCode());
 	}
 	
 	@Test
@@ -68,7 +68,7 @@ public class AdditionalInformationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "informationText");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("additionalInformation.convictionsText.notempty", mappingResult.getFieldError("convictionsText").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("convictionsText").getCode());
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class AdditionalInformationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "informationText");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("additionalInformation.convictionsText.notempty", mappingResult.getFieldError("convictionsText").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("convictionsText").getCode());
 	}
 
 	@Test

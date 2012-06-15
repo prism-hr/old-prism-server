@@ -22,15 +22,15 @@ public class NewUserDTOValidator implements Validator{
 	public void validate(Object target, Errors errors) {
 		NewUserDTO user = (NewUserDTO) target;	
 		if( !(user.getSelectedAuthorities().length == 1 && user.getSelectedAuthorities()[0] == Authority.SUPERADMINISTRATOR)){
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", "newuser.program.notempty");		
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", "dropdown.radio.select.none");		
 		}
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "user.firstName.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "user.lastName.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
 		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedAuthorities", "newuser.selectedAuthorities.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedAuthorities", "dropdown.radio.select.none");
 
 		if (!EmailValidator.getInstance().isValid(user.getEmail())) {
-			errors.rejectValue("email", "user.email.invalid");
+			errors.rejectValue("email", "text.email.notvalid");
 		}
 	}
 

@@ -25,7 +25,7 @@ public class GenericCommentValidatorTest {
 		comment.setComment("");
 		validator.validate(comment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("comment.comment.notempty", mappingResult.getFieldError("comment").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
 	}
 
 	@Before

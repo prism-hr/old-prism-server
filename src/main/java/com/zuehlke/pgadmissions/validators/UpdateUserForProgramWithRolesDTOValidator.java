@@ -17,7 +17,7 @@ public class UpdateUserForProgramWithRolesDTOValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", "selectedProgram.existingAdminUser.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedUser", "selectedUser.existingAdminUser.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedUser", "dropdown.radio.select.none");
 	}
 }

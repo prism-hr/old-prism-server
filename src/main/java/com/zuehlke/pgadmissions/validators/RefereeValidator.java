@@ -20,15 +20,15 @@ public class RefereeValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		Referee referee = (Referee) target;
 		if (!EmailValidator.getInstance().isValid(referee.getEmail())) {
-			errors.rejectValue("email", "referee.email.invalid");
+			errors.rejectValue("email", "text.email.notvalid");
 		}	
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressCountry", "referee.addressCountry.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLocation", "referee.addressLocation.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobEmployer", "referee.jobEmployer.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobTitle", "referee.jobTitle.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", "referee.phoneNumber.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", "referee.firstname.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "referee.lastname.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressCountry", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLocation", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobEmployer", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobTitle", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "text.field.empty");
 		
 		if (referee.getAddressLocation() != null) {
 			if (referee.getAddressLocation().length() > 200) {

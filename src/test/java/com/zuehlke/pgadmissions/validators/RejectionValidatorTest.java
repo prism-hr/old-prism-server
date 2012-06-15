@@ -26,7 +26,7 @@ public class RejectionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(rejection, "rejectionReason");
 		rejectionValidator.validate(rejection, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("rejection.rejectionReason.notempty", mappingResult.getFieldError("rejectionReason").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("rejectionReason").getCode());
 	}
 	@Before
 	public void setup(){

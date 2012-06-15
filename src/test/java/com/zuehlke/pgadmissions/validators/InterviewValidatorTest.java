@@ -43,7 +43,7 @@ public class InterviewValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewDueDate");
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("interview.interviewDueDate.notempty", mappingResult.getFieldError("interviewDueDate").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("interviewDueDate").getCode());
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class InterviewValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewDueDate");
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("interview.interviewDueDate.past", mappingResult.getFieldError("interviewDueDate").getCode());
+		Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("interviewDueDate").getCode());
 	}
 	
 	
@@ -73,7 +73,7 @@ public class InterviewValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewTime");
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("interview.interviewTime.notempty", mappingResult.getFieldError("interviewTime").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("interviewTime").getCode());
 	}
 	
 	@Test

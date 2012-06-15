@@ -35,10 +35,10 @@ public class ProgrammeDetailsValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", "user.programmeName.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", "user.studyOption.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "user.programmeStartDate.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "referrer", "user.programmeReferrer.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "referrer", "dropdown.radio.select.none");
 
 		ProgrammeDetails programmeDetail = (ProgrammeDetails) target;
 
@@ -49,21 +49,15 @@ public class ProgrammeDetailsValidator implements Validator {
 		}
 
 		if(programmeDetail.getStartDate() != null && programmeDetail.getStartDate().before(new Date())){
-			errors.rejectValue("startDate", "user.programmeStartDate.notFuture");
+			errors.rejectValue("startDate", "date.field.notfuture");
 		}
 		List<SuggestedSupervisor> supervisors = programmeDetail.getSuggestedSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
-			// if
-			// (!EmailValidator.getInstance().isValid(supervisors.get(i).getEmail()))
-			// {
-			// errors.rejectValue("supervisors",
-			// "programmeDetails.email.invalid");
-			// }
 			if (supervisors.get(i).getFirstname() == "" || supervisors.get(i).getFirstname() == null) {
-				errors.rejectValue("suggestedSupervisors", "programmeDetails.firstname.notempty");
+				errors.rejectValue("suggestedSupervisors", "text.field.empty");
 			}
 			if (supervisors.get(i).getLastname() == "" || supervisors.get(i).getLastname() == null) {
-				errors.rejectValue("suggestedSupervisors", "programmeDetails.lastname.notempty");
+				errors.rejectValue("suggestedSupervisors", "text.field.empty");
 			}
 		}
 	}

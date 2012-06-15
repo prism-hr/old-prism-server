@@ -33,7 +33,7 @@ public class QualificationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("qualification.institution.notempty",mappingResult.getFieldError("qualificationInstitution").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("qualificationInstitution").getCode());
 	}
 	
 	@Test
@@ -42,7 +42,7 @@ public class QualificationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("qualification.institutionCountry.notempty",mappingResult.getFieldError("institutionCountry").getCode());
+		Assert.assertEquals("dropdown.radio.select.none",mappingResult.getFieldError("institutionCountry").getCode());
 	}
 	@Test
 	public void shouldRejectIfSubjectIsEmpty(){
@@ -50,7 +50,7 @@ public class QualificationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("qualification.subject.notempty",mappingResult.getFieldError("qualificationSubject").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("qualificationSubject").getCode());
 	}
 	@Test
 	public void shouldRejectIfStartDateIsEmpty(){
@@ -58,7 +58,7 @@ public class QualificationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("qualification.start_date.notempty",mappingResult.getFieldError("qualificationStartDate").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("qualificationStartDate").getCode());
 	}
 	@Test
 	public void shouldRejectIfLanguageIsEmpty(){
@@ -66,7 +66,7 @@ public class QualificationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("qualification.language_of_study.notempty",mappingResult.getFieldError("qualificationLanguage").getCode());
+		Assert.assertEquals("dropdown.radio.select.none",mappingResult.getFieldError("qualificationLanguage").getCode());
 	}
 
 	@Test
@@ -82,8 +82,8 @@ public class QualificationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(2, mappingResult.getErrorCount());
-		Assert.assertEquals("qualification.start_date.future",mappingResult.getFieldError("qualificationStartDate").getCode());
-		Assert.assertEquals("qualification.award_date.future",mappingResult.getFieldError("qualificationAwardDate").getCode());
+		Assert.assertEquals("date.field.notpast",mappingResult.getFieldError("qualificationStartDate").getCode());
+		Assert.assertEquals("date.field.notpast",mappingResult.getFieldError("qualificationAwardDate").getCode());
 	}
 	
 	public void shouldRejectIfTypeIsEmpty(){
@@ -99,7 +99,7 @@ public class QualificationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("qualification.grade.notempty",mappingResult.getFieldError("qualificationGrade").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("qualificationGrade").getCode());
 	}
 
 	

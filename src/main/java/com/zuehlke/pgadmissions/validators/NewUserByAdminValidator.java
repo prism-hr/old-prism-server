@@ -20,11 +20,11 @@ public class NewUserByAdminValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		RegisteredUser user = (RegisteredUser) target;
 
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "user.firstName.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "user.lastName.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
 
 		if (!EmailValidator.getInstance().isValid(user.getEmail())) {
-			errors.rejectValue("email", "user.email.invalid");
+			errors.rejectValue("email", "text.email.notvalid");
 		}
 	}
 	

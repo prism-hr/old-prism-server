@@ -17,6 +17,8 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class AccountValidator implements Validator {
 
 	private static final int MINIMUM_PASSWORD_CHARACTERS = 8;
+	private static final int MAXIMUM_PASSWORD_CHARACTERS = 15;
+
 	private UserService userService;
 	private final EncryptionUtils encryptionUtils;
 
@@ -41,17 +43,17 @@ public class AccountValidator implements Validator {
 		RegisteredUser updatedUser = (RegisteredUser) target;
 		RegisteredUser existingUser = getCurrentUser();
 		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "user.firstName.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "user.lastName.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
 		
 		if(StringUtils.isBlank(updatedUser.getPassword()) && ( StringUtils.isNotBlank(updatedUser.getNewPassword()) || StringUtils.isNotBlank(updatedUser.getConfirmPassword()))){
-			errors.rejectValue("password", "account.password.notempty");
+			errors.rejectValue("password", "text.field.empty");
 		}
 		if(StringUtils.isBlank(updatedUser.getConfirmPassword()) && ( StringUtils.isNotBlank(updatedUser.getNewPassword()) || StringUtils.isNotBlank(updatedUser.getPassword()))){
-			errors.rejectValue("confirmPassword", "account.confirmPassword.notempty");
+			errors.rejectValue("confirmPassword", "text.field.empty");
 		}
 		if(StringUtils.isBlank(updatedUser.getNewPassword()) && ( StringUtils.isNotBlank(updatedUser.getConfirmPassword()) || StringUtils.isNotBlank(updatedUser.getPassword()))){
-			errors.rejectValue("newPassword", "account.newPassword.notempty");
+			errors.rejectValue("newPassword", "text.field.empty");
 		}
 		boolean passwordFieldsFilled = StringUtils.isNotBlank(updatedUser.getConfirmPassword()) && StringUtils.isNotBlank(updatedUser.getNewPassword()) && StringUtils.isNotBlank(updatedUser.getPassword());
 		if(passwordFieldsFilled && !encryptionUtils.getMD5Hash(updatedUser.getPassword()).equals(existingUser.getPassword())){
@@ -59,12 +61,20 @@ public class AccountValidator implements Validator {
 		}
 		
 		if(passwordFieldsFilled && !updatedUser.getConfirmPassword().equals(updatedUser.getNewPassword())){
-			errors.rejectValue("newPassword", "account.newPassword.notmatch");
-			errors.rejectValue("confirmPassword", "account.confirmPassword.notmatch");
+			errors.rejectValue("newPassword", "user.passwords.notmatch");
+			errors.rejectValue("confirmPassword", "user.passwords.notmatch");
 		}
 
 		if(passwordFieldsFilled && updatedUser.getNewPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
-			errors.rejectValue("newPassword", "account.newPassword.notvalid");
+			errors.rejectValue("newPassword", "user.password.small");
+		}
+		
+		if(passwordFieldsFilled && updatedUser.getNewPassword().length() > MAXIMUM_PASSWORD_CHARACTERS){
+			errors.rejectValue("newPassword", "user.password.large");
+		}
+		
+		if(passwordFieldsFilled && !updatedUser.getNewPassword().matches("[a-zA-Z0-9+]+")){
+			errors.rejectValue("newPassword", "user.password.nonalphanumeric");
 		}
 
 		if(passwordFieldsFilled && encryptionUtils.getMD5Hash(updatedUser.getNewPassword()).equals(existingUser.getPassword())){
@@ -78,7 +88,7 @@ public class AccountValidator implements Validator {
 				errors.rejectValue("email", "account.email.alreadyexists");
 		}
 		if (!EmailValidator.getInstance().isValid(updatedUser.getEmail())) {
-			errors.rejectValue("email", "account.email.invalid");
+			errors.rejectValue("email", "text.email.notvalid");
 		}
 		
 	}

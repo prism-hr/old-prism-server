@@ -112,6 +112,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "project_title")
 	private String projectTitle;
 
+
+	@Column(name = "research_home_page")
+	private String researchHomePage;
+
 	@ManyToOne
 	@JoinColumn(name = "program_id")
 	private Program program;
@@ -619,6 +623,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setBatchDeadline(Date batchDeadline) {
 		this.batchDeadline = batchDeadline;
+	}
+
+	public String getResearchHomePage() {
+		return researchHomePage;
+	}
+
+	public void setResearchHomePage(String researchHomePage) {
+		this.researchHomePage = researchHomePage;
 	}
 
 }

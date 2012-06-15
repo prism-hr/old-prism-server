@@ -1,46 +1,82 @@
 $(document).ready(function() {
 	
 	populateApplicationList(true);
+
+	// --------------------------------------------------------------------------------
+	// AJAX ACTIVITY
+	// --------------------------------------------------------------------------------
+	$('div.content-box-inner').ajaxStart(function()
+	{
+		$(this).css({ position: 'relative' })
+					 .append('<div class="ajax" />');
+	})
+	.ajaxComplete(function()
+	{
+		$('div.ajax', this).remove();
+	});
 	
-	/* up/down arrows for sorting. */
-	$('table.data thead th').prepend('<span />');
 	
-	$(document).on('change', 'select.actionType', function() {
+	// --------------------------------------------------------------------------------
+	// TABLE SORTING
+	// --------------------------------------------------------------------------------
+	// Add a SPAN tag to table headers for the arrows.
+	$('table.data thead th.sortable').prepend('<span />');
+	
+
+	// --------------------------------------------------------------------------------
+	// APPLICATION ACTIONS
+	// --------------------------------------------------------------------------------
+	$(document).on('change', 'select.actionType', function()
+	{
 		var name = this.name;
 		var id = name.substring(5).replace(']', '');
 
-		if ($(this).val() == 'view') {
-			window.location.href = "/pgadmissions/application?view=view&applicationId=" + id;
-		}else if($(this).val() == 'assignReviewer') {
-			window.location.href = "/pgadmissions/review/assignReviewers?applicationId=" + id;
-		}else if($(this).val() == 'assignInterviewer') {
-			window.location.href = "/pgadmissions/interview/assignInterviewers?applicationId=" + id;
-		}else if($(this).val() == 'approve') {
-			window.location.href = "/pgadmissions/approved/moveToApproved?applicationId=" + id;
-		}else if($(this).val() == 'reject') {
-			window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
-		}else if($(this).val() == 'restartApprovalRequest') {
-			window.location.href = "/pgadmissions/approval/requestRestart?applicationId=" + id;
-		}else if($(this).val() == 'comment') {
-			window.location.href = "/pgadmissions/comment?applicationId=" + id;
-		}else if($(this).val() == 'print') {
-			window.location.href = "/pgadmissions/print?applicationFormId=" + id;
-		}else if($(this).val() == 'reference') {
-			window.location.href = "/pgadmissions/referee/addReferences?application=" + id;
-		}else if($(this).val() == 'validate') {
-			window.location.href = "/pgadmissions/progress?application=" + id;
-		}else if($(this).val() == 'review') {
-			window.location.href = "/pgadmissions/reviewFeedback?applicationId=" + id;
-		}else if($(this).val() == 'interviewFeedback') {
-			window.location.href = "/pgadmissions/interviewFeedback?applicationId=" + id;
-		}else if($(this).val() == 'restartApproval') {
-			window.location.href = "/pgadmissions/approval/moveToApproval?applicationId=" + id;
-		}
-		else if($(this).val() == 'progress') {
-			window.location.href = "/pgadmissions/viewprogress?applicationId=" + id;
-		}
-		else if($(this).val() == 'withdraw') {
-				if(confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))
+		switch ($(this).val())
+		{
+			case 'view':
+				window.location.href = "/pgadmissions/application?view=view&applicationId=" + id;
+				break;
+			case 'assignReviewer':
+				window.location.href = "/pgadmissions/review/assignReviewers?applicationId=" + id;
+				break;
+			case 'assignInterviewer':
+				window.location.href = "/pgadmissions/interview/assignInterviewers?applicationId=" + id;
+				break;
+			case 'approve':
+				window.location.href = "/pgadmissions/approved/moveToApproved?applicationId=" + id;
+				break;
+			case 'reject':
+				window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
+				break;
+			case 'restartApprovalRequest':
+				window.location.href = "/pgadmissions/approval/requestRestart?applicationId=" + id;
+				break;
+			case 'comment':
+				window.location.href = "/pgadmissions/comment?applicationId=" + id;
+				break;
+			case 'print':
+				window.location.href = "/pgadmissions/print?applicationFormId=" + id;
+				break;
+			case 'reference':
+				window.location.href = "/pgadmissions/referee/addReferences?application=" + id;
+				break;
+			case 'validate':
+				window.location.href = "/pgadmissions/progress?application=" + id;
+				break;
+			case 'review':
+				window.location.href = "/pgadmissions/reviewFeedback?applicationId=" + id;
+				break;
+			case 'interviewFeedback':
+				window.location.href = "/pgadmissions/interviewFeedback?applicationId=" + id;
+				break;
+			case 'restartApproval':
+				window.location.href = "/pgadmissions/approval/moveToApproval?applicationId=" + id;
+				break;
+			case 'progress':
+				window.location.href = "/pgadmissions/viewprogress?applicationId=" + id;
+				break;
+			case 'withdraw':
+				if (confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))
 				{
 					$.post("/pgadmissions/withdraw",
 					{
@@ -48,14 +84,15 @@ $(document).ready(function() {
 					}, 
 					function(data) {
 						window.location.href = "/pgadmissions/applications";
-					}
-				);
+					});
 				}
-			}
+		}
 	});
 	
 	
-	/* Search functionality. */
+	// --------------------------------------------------------------------------------
+	// SEARCH / FILTERING
+	// --------------------------------------------------------------------------------
 	$('#search-go').click(function()
 	{
 		$('#search-box span.invalid').remove();
@@ -77,28 +114,28 @@ $(document).ready(function() {
 	});
 	
 
-	$('#manageUsersButton').click(function(){
-		window.location.href = "/pgadmissions/manageUsers/showPage";
-	});
-	
-	$('#configuration').click(function(){
-		window.location.href = "/pgadmissions/configuration";
-	});
-
-	$(document).on('click', "input[name*='appDownload']", function(){		
+	// --------------------------------------------------------------------------------
+	// SELECT ALL/NO APPLICATIONS
+	// --------------------------------------------------------------------------------
+	$(document).on('click', "input[name*='appDownload']", function()
+	{		
 		var id = this.id;
 		id = id.replace('appDownload_', '');
 	
 		var currentAppList = $('#appList').val();		
-		if ($(this).attr('checked')){
+		if ($(this).is(':checked'))
+		{
 			$('#appList').val(currentAppList + id + ";");
-		} else {
-			$('#appList').val(currentAppList.replace(id  +";", ''));
 		}
-	
-		
+		else
+		{
+			$('#appList').val(currentAppList.replace(id + ";", ''));
+		}
 	});
 
+	// --------------------------------------------------------------------------------
+	// DOWNLOAD SELECTED APPLICATIONS
+	// --------------------------------------------------------------------------------
 	$('#downloadAll').click(function()
 	{
 		var appListValue = $('#appList').val();
@@ -111,13 +148,10 @@ $(document).ready(function() {
 			window.location.href = "/pgadmissions/print/all?appList="+$('#appList').val();
 		}
 	});
-	
-	$('#myAccount').click(function()
-	{
-		window.location.href = "/pgadmissions/myAccount";
-	});
 
 });
+
+
 
 function populateApplicationList(reset)
 {

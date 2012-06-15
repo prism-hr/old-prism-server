@@ -1,0 +1,42 @@
+package com.zuehlke.pgadmissions.utils;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+
+@Component
+public class UserFactory {
+
+	private final RoleDAO roleDAO;
+
+	UserFactory(){
+		this(null);
+	}
+	
+	@Autowired
+	public UserFactory(RoleDAO roleDAO) {
+		this.roleDAO = roleDAO;
+	}
+
+	public RegisteredUser createNewUserInRoles(String firstname, String lastname, String email, Authority... authorities) {
+		RegisteredUser user = new RegisteredUser();
+
+		user.setFirstName(firstname);
+		user.setLastName(lastname);
+		user.setUsername(email);
+		user.setEmail(email);
+		user.setAccountNonExpired(true);
+		user.setAccountNonLocked(true);
+		user.setEnabled(false);
+		user.setCredentialsNonExpired(true);
+		for (Authority authority : authorities) {
+			user.getRoles().add(roleDAO.getRoleByAuthority(authority));	
+		}
+		
+		return user;
+	}
+
+}

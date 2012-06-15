@@ -20,14 +20,14 @@ public class FundingValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		Date today = new Date();
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "type", "user.fundingType.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "user.fundingDescription.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "value", "user.fundingValue.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "awardDate", "user.fundingAwardDate.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "document", "user.fundingDocument.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "type", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "value", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "awardDate", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "document", "file.upload.empty");
 		Funding fund = (Funding) target;
 		if (fund.getAwardDate() != null && fund.getAwardDate().after(today)) {
-			errors.rejectValue("awardDate", "funding.fundingAwardDate.future");
+			errors.rejectValue("awardDate", "date.field.notpast");
 		}
 		
 		if (fund.getDescription() != null) {

@@ -22,13 +22,13 @@ public class QualificationValidator  implements Validator{
 	@Override
 	public void validate(Object target, Errors errors) {
 		Date today = new Date();
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "qualification.institution.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", "qualification.subject.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationStartDate", "qualification.start_date.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLanguage", "qualification.language_of_study.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", "qualification.institutionCountry.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "qualification.type.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "qualification.grade.notempty");		
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationStartDate", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLanguage", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "text.field.empty");		
 		Qualification qualification = (Qualification) target;
 		String startDate = qualification.getQualificationStartDate() == null ? "": qualification.getQualificationStartDate().toString();
 		String awardDate = qualification.getQualificationAwardDate() == null ? "": qualification.getQualificationAwardDate().toString();
@@ -36,16 +36,16 @@ public class QualificationValidator  implements Validator{
 			errors.rejectValue("qualificationStartDate", "qualification.start_date.notvalid");
 		}
 		if (StringUtils.isNotBlank(startDate) && qualification.getQualificationStartDate().after(today)) {
-			errors.rejectValue("qualificationStartDate", "qualification.start_date.future");
+			errors.rejectValue("qualificationStartDate", "date.field.notpast");
 		}
 		if (StringUtils.isNotBlank(awardDate) && qualification.getQualificationAwardDate().after(today)) {
-			errors.rejectValue("qualificationAwardDate", "qualification.award_date.future");
+			errors.rejectValue("qualificationAwardDate", "date.field.notpast");
 		}
 		if (qualification.getCompleted()== CheckedStatus.YES && StringUtils.isBlank(awardDate)){
-			errors.rejectValue("qualificationAwardDate", "qualification.award_date.notempty");
+			errors.rejectValue("qualificationAwardDate", "text.field.empty");
 		}
 		if (qualification.getCompleted() == CheckedStatus.NO && StringUtils.isNotBlank(awardDate)){
-			errors.rejectValue("qualificationAwardDate", "qualification.award_date.empty");
+			errors.rejectValue("qualificationAwardDate", "text.field.empty");
 		}
 	}
 

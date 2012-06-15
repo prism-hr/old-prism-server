@@ -26,12 +26,12 @@ public class AdditionalInformationValidator implements Validator {
 
 		Boolean hasConvictions = info.getConvictions();
 		if (hasConvictions == null) {
-			errors.rejectValue("convictions", "additionalInformation.convictions.notempty");
+			errors.rejectValue("convictions", "dropdown.radio.select.none");
 		} else {
 			if (hasConvictions) {
 				String convictionsText = info.getConvictionsText();
 				if (convictionsText == null || !StringUtils.hasText(convictionsText)) {
-					errors.rejectValue("convictionsText", "additionalInformation.convictionsText.notempty");
+					errors.rejectValue("convictionsText", "text.field.empty");
 				} else {
 					if (convictionsText.length() > 5000) {
 						errors.rejectValue("convictionsText", "additionalInformation.convictionsText.notvalid");

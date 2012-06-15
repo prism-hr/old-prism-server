@@ -29,7 +29,7 @@ public class FeedbackCommentValidatorTest {
 		reviewComment.setComment("");
 		validator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.comment.notempty", mappingResult.getFieldError("comment").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
 	}
 	
 	@Test
@@ -38,7 +38,7 @@ public class FeedbackCommentValidatorTest {
 		reviewComment.setWillingToInterview(null);
 		validator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.willingToInterview.notempty", mappingResult.getFieldError("willingToInterview").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToInterview").getCode());
 	}
 	
 	@Test
@@ -47,7 +47,7 @@ public class FeedbackCommentValidatorTest {
 		reviewComment.setWillingToInterview(null);
 		validator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.willingToInterview.notempty", mappingResult.getFieldError("willingToInterview").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToInterview").getCode());
 	}
 
 	
@@ -68,7 +68,7 @@ public class FeedbackCommentValidatorTest {
 		interviewComment.setComment("");
 		validator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.comment.notempty", mappingResult.getFieldError("comment").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
 	}
 	
 	@Test
@@ -77,7 +77,7 @@ public class FeedbackCommentValidatorTest {
 		interviewComment.setWillingToSupervise(null);
 		validator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.willingToSupervice.notempty", mappingResult.getFieldError("willingToSupervise").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToSupervise").getCode());
 	}
 	
 	@Test
@@ -86,7 +86,7 @@ public class FeedbackCommentValidatorTest {
 		interviewComment.setWillingToSupervise(null);
 		validator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.willingToSupervice.notempty", mappingResult.getFieldError("willingToSupervise").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToSupervise").getCode());
 	}
 	
 	

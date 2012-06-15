@@ -31,7 +31,7 @@ public class DocumentSectionValidatorTest {
 		
 		validator.validate(applicationForm, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("documents.personalStatement.missing",mappingResult.getFieldError("personalStatement").getCode());
+		Assert.assertEquals("file.upload.empty",mappingResult.getFieldError("personalStatement").getCode());
 	}
 	@Before
 	public void setup() {

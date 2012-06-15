@@ -38,7 +38,7 @@ public class NewUserByAdminValidatorTest {
 		user.setFirstName("");
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.firstName.notempty", mappingResult.getFieldError("firstName").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstName").getCode());
 	}
 
 	@Test
@@ -47,7 +47,7 @@ public class NewUserByAdminValidatorTest {
 		user.setLastName(null);
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.lastName.notempty", mappingResult.getFieldError("lastName").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("lastName").getCode());
 	}
 
 	@Test
@@ -56,6 +56,6 @@ public class NewUserByAdminValidatorTest {
 		user.setEmail("");
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.email.invalid", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 	}
 }

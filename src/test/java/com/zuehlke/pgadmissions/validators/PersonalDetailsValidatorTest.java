@@ -36,7 +36,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "firstName");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.firstName.notempty", mappingResult.getFieldError("firstName").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstName").getCode());
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "lastName");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.lastName.notempty", mappingResult.getFieldError("lastName").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("lastName").getCode());
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "email");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.email.notempty", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("email").getCode());
 	}
 
 	
@@ -64,7 +64,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "email");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.email.invalid", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 	}
 
 	@Test
@@ -73,7 +73,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "gender");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.gender.notempty", mappingResult.getFieldError("gender").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("gender").getCode());
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "dateOfBirth");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.dateOfBirth.notempty", mappingResult.getFieldError("dateOfBirth").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("dateOfBirth").getCode());
 	}
 
 	@Test
@@ -91,7 +91,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "country");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.country.notempty", mappingResult.getFieldError("country").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("country").getCode());
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "residenceCountry");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.residenceCountry.notempty", mappingResult.getFieldError("residenceCountry").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("residenceCountry").getCode());
 	}
 
 	@Test
@@ -109,7 +109,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "application");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.application.notempty", mappingResult.getFieldError("application").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("application").getCode());
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "candidateNationalities");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.candidateNationalities.notempty", mappingResult.getFieldError("candidateNationalities").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("candidateNationalities").getCode());
 	}
 
 	@Test
@@ -131,7 +131,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "dateOfBirth");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.dateOfBirth.future", mappingResult.getFieldError("dateOfBirth").getCode());
+		Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("dateOfBirth").getCode());
 	}
 
 	@Test
@@ -140,7 +140,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "phoneNumber");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.phoneNumber.notempty", mappingResult.getFieldError("phoneNumber").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("phoneNumber").getCode());
 	}
 
 	@Test
@@ -149,7 +149,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "disability");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.disability.notempty", mappingResult.getFieldError("disability").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("disability").getCode());
 	}
 
 	@Test
@@ -158,7 +158,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "ethnicity");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.ethnicity.notempty", mappingResult.getFieldError("ethnicity").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("ethnicity").getCode());
 	}
 	
 	@Test
@@ -167,7 +167,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "requiresVisa");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.requiresVisa.notempty", mappingResult.getFieldError("requiresVisa").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("requiresVisa").getCode());
 	}
 	
 	@Test
@@ -176,7 +176,7 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "englishFirstLanguage");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.englishFirstLanguage.notempty", mappingResult.getFieldError("englishFirstLanguage").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("englishFirstLanguage").getCode());
 	}
 	@Before
 	public void setup() {

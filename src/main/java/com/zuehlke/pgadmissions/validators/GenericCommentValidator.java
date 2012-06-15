@@ -17,7 +17,7 @@ public class GenericCommentValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "comment.comment.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
 		
 	}
 

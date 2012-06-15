@@ -24,24 +24,24 @@ public class FeedbackCommentValidator implements Validator{
 			ReviewComment comment = (ReviewComment) target;
 			if(!comment.isDecline() ){
 				if(comment.getSuitableCandidate() == null ){
-					errors.rejectValue("suitableCandidate", "feedbackComment.suitableCandidate.notempty");
+					errors.rejectValue("suitableCandidate", "dropdown.radio.select.none");
 				}
 				if(comment.getWillingToInterview() == null){
-					errors.rejectValue("willingToInterview", "feedbackComment.willingToInterview.notempty");
+					errors.rejectValue("willingToInterview", "dropdown.radio.select.none");
 				}
-				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "feedbackComment.comment.notempty");
+				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
 			}
 		}
 		else if (target instanceof InterviewComment) {
 			InterviewComment comment = (InterviewComment) target;
 			if(!comment.isDecline() ){
 				if(comment.getSuitableCandidate() == null ){
-					errors.rejectValue("suitableCandidate", "feedbackComment.suitableCandidate.notempty");
+					errors.rejectValue("suitableCandidate", "dropdown.radio.select.none");
 				}
 				if(comment.getWillingToSupervise() == null){
-					errors.rejectValue("willingToSupervise", "feedbackComment.willingToSupervice.notempty");
+					errors.rejectValue("willingToSupervise", "dropdown.radio.select.none");
 				}
-				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "feedbackComment.comment.notempty");
+				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
 			}
 		}
 		

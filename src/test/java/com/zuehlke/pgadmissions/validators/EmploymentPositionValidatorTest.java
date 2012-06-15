@@ -34,7 +34,7 @@ public class EmploymentPositionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_employer_address.notempty",mappingResult.getFieldError("employerAddress").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("employerAddress").getCode());
 	}
 	
 	
@@ -44,7 +44,7 @@ public class EmploymentPositionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_employer_country.notempty",mappingResult.getFieldError("employerCountry").getCode());
+		Assert.assertEquals("dropdown.radio.select.none",mappingResult.getFieldError("employerCountry").getCode());
 	}
 	
 	
@@ -54,7 +54,7 @@ public class EmploymentPositionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_employer.notempty",mappingResult.getFieldError("employerName").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("employerName").getCode());
 	}
 	
 	
@@ -71,8 +71,8 @@ public class EmploymentPositionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(2, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_startDate.future",mappingResult.getFieldError("startDate").getCode());
-		Assert.assertEquals("position.position_endDate.future",mappingResult.getFieldError("endDate").getCode());
+		Assert.assertEquals("date.field.notpast",mappingResult.getFieldError("startDate").getCode());
+		Assert.assertEquals("date.field.notpast",mappingResult.getFieldError("endDate").getCode());
 	}
 	
 	@Test
@@ -81,7 +81,7 @@ public class EmploymentPositionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_startDate.notempty",mappingResult.getFieldError("startDate").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("startDate").getCode());
 	}
 	
 	@Test
@@ -90,7 +90,7 @@ public class EmploymentPositionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_endDate.notempty",mappingResult.getFieldError("endDate").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("endDate").getCode());
 	}
 	
 	@Test
@@ -108,7 +108,7 @@ public class EmploymentPositionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_language.notempty",mappingResult.getFieldError("language").getCode());
+		Assert.assertEquals("dropdown.radio.select.none",mappingResult.getFieldError("language").getCode());
 	}
 	
 	@Test
@@ -117,7 +117,7 @@ public class EmploymentPositionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_remit.notempty",mappingResult.getFieldError("remit").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("remit").getCode());
 	}
 	
 	@Test
@@ -126,7 +126,7 @@ public class EmploymentPositionValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_title.notempty",mappingResult.getFieldError("position").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("position").getCode());
 	}
 	
 	@Test

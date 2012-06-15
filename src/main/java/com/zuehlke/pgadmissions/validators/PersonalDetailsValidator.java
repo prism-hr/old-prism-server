@@ -23,35 +23,35 @@ public class PersonalDetailsValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		PersonalDetails personalDetail = (PersonalDetails) target;
 		Date today = new Date();
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "personalDetails.firstName.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "personalDetails.lastName.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "personalDetails.gender.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "personalDetails.email.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", "personalDetails.phoneNumber.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", "text.field.empty");
 		
 		validateCandidateNationalities(target, errors);
 		
 		if (!errors.hasFieldErrors("email") && !EmailValidator.getInstance().isValid(((PersonalDetails)target).getEmail())) {
-			errors.rejectValue("email", "personalDetails.email.invalid");
+			errors.rejectValue("email", "text.email.notvalid");
 		}
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "personalDetails.country.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", "personalDetails.residenceCountry.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", "personalDetails.dateOfBirth.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", "text.field.empty");
 		String dob = personalDetail.getDateOfBirth() == null ? "": personalDetail.getDateOfBirth().toString();
 		if (StringUtils.isNotBlank(dob) && personalDetail.getDateOfBirth().after(today)) {
-			errors.rejectValue("dateOfBirth", "personalDetails.dateOfBirth.future");
+			errors.rejectValue("dateOfBirth", "date.field.notpast");
 		}
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "disability", "personalDetails.disability.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ethnicity", "personalDetails.ethnicity.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "disability", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ethnicity", "dropdown.radio.select.none");
 		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "personalDetails.application.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", "personalDetails.englishFirstLanguage.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", "personalDetails.requiresVisa.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", "dropdown.radio.select.none");
 	}
 
 	private void validateCandidateNationalities(Object target, Errors errors) {
 		if(((PersonalDetails)target).getCandidateNationalities().isEmpty()){
-			errors.rejectValue("candidateNationalities", "personalDetails.candidateNationalities.notempty");
+			errors.rejectValue("candidateNationalities", "dropdown.radio.select.none");
 		}
 	}
 

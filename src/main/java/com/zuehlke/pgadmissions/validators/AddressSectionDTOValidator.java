@@ -17,10 +17,10 @@ public class AddressSectionDTOValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressLocation", "user.location.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressCountry", "user.country.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressLocation", "user.location.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressCountry", "user.country.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressLocation", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressCountry", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressLocation", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressCountry", "dropdown.radio.select.none");
 
 		AddressSectionDTO address = (AddressSectionDTO) target;
 

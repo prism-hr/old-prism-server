@@ -33,7 +33,7 @@ public class DocumentValidatorTest {
 			
 		documentValidator.validate(document, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("upload.file.toobig",mappingResult.getFieldError("content").getCode());
+		Assert.assertEquals("file.upload.large",mappingResult.getFieldError("content").getCode());
 	}
 	
 	@Test
@@ -43,7 +43,7 @@ public class DocumentValidatorTest {
 			
 		documentValidator.validate(document, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("upload.file.missing",mappingResult.getFieldError("fileName").getCode());
+		Assert.assertEquals("file.upload.empty",mappingResult.getFieldError("fileName").getCode());
 	}
 	
 	@Test
@@ -66,7 +66,7 @@ public class DocumentValidatorTest {
 		document.setFileName("bob.exe");			
 		documentValidator.validate(document, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("upload.file.invalidtype",mappingResult.getFieldError("fileName").getCode());
+		Assert.assertEquals("file.upload.notPDF",mappingResult.getFieldError("fileName").getCode());
 		
 		mappingResult = new DirectFieldBindingResult(document, "document");
 		document.setFileName("bob");			

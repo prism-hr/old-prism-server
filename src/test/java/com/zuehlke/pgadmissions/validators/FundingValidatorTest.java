@@ -87,7 +87,7 @@ public class FundingValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "awardDate");
 		validator.validate(funding, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("funding.fundingAwardDate.future", mappingResult.getFieldError("awardDate").getCode());
+		Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("awardDate").getCode());
 	}
 	
 	@Test

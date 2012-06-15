@@ -47,7 +47,7 @@ public class NewUserDTOValidatorTest {
 		user.setFirstName("");
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.firstName.notempty", mappingResult.getFieldError("firstName").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstName").getCode());
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class NewUserDTOValidatorTest {
 		user.setLastName(null);
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.lastName.notempty", mappingResult.getFieldError("lastName").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("lastName").getCode());
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class NewUserDTOValidatorTest {
 		user.setEmail("");
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.email.invalid", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 	}
 	
 	
@@ -76,7 +76,7 @@ public class NewUserDTOValidatorTest {
 		user.setSelectedAuthorities(Authority.REVIEWER, Authority.SUPERADMINISTRATOR);
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("newuser.program.notempty", mappingResult.getFieldError("selectedProgram").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedProgram").getCode());
 	}
 	@Test
 	public void shouldNotRejectIfProgramIsNullAndAuthoritiesIsSuperadmin() {
@@ -95,6 +95,6 @@ public class NewUserDTOValidatorTest {
 		user.setSelectedAuthorities((Authority[])null);
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("newuser.selectedAuthorities.notempty", mappingResult.getFieldError("selectedAuthorities").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedAuthorities").getCode());
 	}
 }

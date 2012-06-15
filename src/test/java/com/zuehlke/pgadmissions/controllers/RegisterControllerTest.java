@@ -47,7 +47,7 @@ public class RegisterControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private ProgramsService programServiceMock;
 	private ApplicationQueryStringParser qureyStringParserMock;
-	encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
+	private EncryptionHelper encryptionHelper;
 	
 	@Before
 	public void setUp() {

@@ -1,6 +1,12 @@
 $(document).ready(function(){	
 	$("#acceptTermsValue").val("NO");
 	
+	// --------------------------------------------------------------------------------
+	// LOAD APPLICATION FORM SECTIONS
+	// --------------------------------------------------------------------------------
+	
+	/* Programme Details. */
+	$('#programmeDetailsSection').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getProgrammeDetails",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -9,10 +15,14 @@ $(document).ready(function(){
 				programError: $('#programError').val(),
 				cacheBreaker: new Date().getTime() 
 			},
-			function(data) {
+			function(data)
+			{
 				$('#programmeDetailsSection').html(data);
+				$('#programmeDetailsSection div.ajax').remove();
 			}
 	);
+	
+	/* Personal Details. */
 	$.get("/pgadmissions/update/getPersonalDetails",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -28,6 +38,8 @@ $(document).ready(function(){
 				}
 			}
 	);
+	
+	/* Address. */
 	$.get("/pgadmissions/update/getAddress",
 			{
 				applicationId:  $('#applicationId').val(),				
@@ -42,6 +54,8 @@ $(document).ready(function(){
 				}
 			}
 	);
+	
+	/* Qualifications. */
 	$.get("/pgadmissions/update/getQualification",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -56,6 +70,8 @@ $(document).ready(function(){
 				}
 			}
 	);
+	
+	/* (Employment) Position. */
 	$.get("/pgadmissions/update/getEmploymentPosition",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -70,6 +86,8 @@ $(document).ready(function(){
 				}
 			}
 	);
+	
+	/* Funding. */
 	$.get("/pgadmissions/update/getFunding",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -84,6 +102,8 @@ $(document).ready(function(){
 				}
 			}
 	);
+	
+	/* Referees. */
 	$.get("/pgadmissions/update/getReferee",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -99,6 +119,7 @@ $(document).ready(function(){
 			}
 	);
 
+	/* Documents. */
 	$.get("/pgadmissions/update/getDocuments",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -114,6 +135,7 @@ $(document).ready(function(){
 			}
 	);
 	
+	/* Additional Information. */
 	$.get("/pgadmissions/update/getAdditionalInformation",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -128,6 +150,8 @@ $(document).ready(function(){
 				}
 			}
 	);
+	
+	/* Terms and conditions. */
 	$.get("/pgadmissions/acceptTerms/getTermsAndConditions",
 			{
 				applicationId:  $('#applicationId').val()
@@ -171,17 +195,20 @@ $(document).ready(function(){
 		
 	});
 	
-	/*
-	 * Submit application form on click of submit button.
-	 */ 
-	$('#submitAppButton').click(function(){
-		if( $("#acceptTermsValue").val() =='NO'){ 
-			//$("span[name='nonAccepted']").html('You must agree to the terms and conditions');
+	// --------------------------------------------------------------------------------
+	// SUBMIT APPLICATION FORM
+	// --------------------------------------------------------------------------------
+	$('#submitAppButton').click(function()
+	{
+		if ($("#acceptTermsValue").val() == 'NO')
+		{ 
 			$("#acceptTermsSection .row-group").css({borderColor: 'red'});
 			$('.terms-label').css({color: 'red'});
 		}
-		else{
+		else
+		{
 			$("span[name='nonAccepted']").html('');
+			$('div.content-box-inner').append('<div class="ajax" />');
 			$('#submitApplicationForm').submit();
 		}
 	});

@@ -114,7 +114,7 @@ public class RegisterController {
 		userService.save(user);
 		String redirectView = "redirect:";
 		if (user.getProgramOriginallyAppliedTo() != null) {
-			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProgramOriginallyAppliedTo(), null);
+			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProgramOriginallyAppliedTo(), null, null);
 			redirectView = redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber();
 		} else {
 			if(user.getDirectToUrl() != null){

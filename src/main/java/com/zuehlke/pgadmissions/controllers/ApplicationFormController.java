@@ -4,9 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -50,18 +49,36 @@ public class ApplicationFormController {
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public ModelAndView createNewApplicationForm(@RequestParam String program, @RequestParam String programDeadline, @RequestParam String projectTitle) {
+	public ModelAndView createNewApplicationForm(@RequestParam String program, @RequestParam String programDeadline, @RequestParam String projectTitle, @RequestParam String programhome) {
 		Date batchDeadline = parseBatchDeadline(programDeadline);
+		String researchHomePage =parseResearchHomePage(programhome);
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
 		Program prog = programDAO.getProgramByCode(program);
 		if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()) {
 			return new ModelAndView(PROGRAM_DOES_NOT_EXIST);
 		}		
-		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, batchDeadline, projectTitle);
+		
+		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, batchDeadline, projectTitle, researchHomePage);
 
 		return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
 
+	}
+
+	private String parseResearchHomePage(String programhome) {
+		String researchHomePage = null;
+		if(StringUtils.isBlank(programhome)){
+			return null;
+		}
+		if( !programhome.startsWith("http://") && !programhome.startsWith("https://")){
+			researchHomePage = "http://" +  programhome;
+		}else{
+			researchHomePage = programhome;
+		}
+		if(!UrlValidator.getInstance().isValid(researchHomePage)){
+			throw new InvalidParameterFormatException(programhome + " is not a valid URL");
+		}
+		return researchHomePage;
 	}
 
 	private Date parseBatchDeadline(String programDeadline) {

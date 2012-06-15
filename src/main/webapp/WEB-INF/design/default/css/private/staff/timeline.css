@@ -45,8 +45,8 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses .box ul { margin: 0 30px; padding: 10px 0; }
 #timeline-statuses .box ul li { margin-bottom: .25em; }
 
-#timeline-statuses .box h3.answer { padding-left: 20px; }
-#timeline-statuses .box h3.answer span { background: url(../../../images/icon_answer.png) no-repeat; display: block; height: 16px; margin-left: -20px; width: 16px; }
+#timeline-statuses .box h3.answer { line-height: 1; margin-top: 0; padding-bottom: 10px; padding-left: 40px; }
+#timeline-statuses .box h3.answer span { background: url(../../../images/icon_answers.png) no-repeat; display: inline-block; height: 16px; margin: 0 10px 0 -30px; vertical-align: text-top; width: 16px; }
 #timeline-statuses .box h3.answer.unsure span { background-position: 0 0; }
 #timeline-statuses .box h3.answer.no span { background-position: -16px 0; }
 #timeline-statuses .box h3.answer.home span { background-position: -32px 0; }

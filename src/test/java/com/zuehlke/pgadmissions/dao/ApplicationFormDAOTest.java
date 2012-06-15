@@ -768,6 +768,21 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
+	public void shouldReturnApplicationFormDueApprovedNotificationIfApprovedAndNewStatusIsApproved() {
+		Date now = Calendar.getInstance().getTime();
+		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED)
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.APPROVED).toEvent()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueApplicantApprovedNotification = applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICATION_MOVED_TO_APPROVED_NOTIFICATION, ApplicationFormStatus.APPROVED);
+		assertTrue(applicationsDueApplicantApprovedNotification.contains(applicationForm));
+		
+	}
+	
+	@Test
 	public void shouldNotReturnApplicationFormDueReviewNotificationIfApproved() {
 		Date now = Calendar.getInstance().getTime();
 		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);

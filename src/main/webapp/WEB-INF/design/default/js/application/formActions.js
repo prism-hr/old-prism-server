@@ -18,7 +18,7 @@ $(document).ready(function()
 			},
 			function(data)
 			{
-				$('#programmeDetailsSection').html(data);
+				$('#programmeDetailsSection').prepend(data);
 				$('#programmeDetailsSection div.ajax').remove();
 			}
 	);
@@ -33,7 +33,7 @@ $(document).ready(function()
 			},
 			function(data)
 			{
-				$('#personalDetailsSection').html(data);
+				$('#personalDetailsSection').prepend(data);
 				$('#personalDetailsSection div.ajax').remove();
 				if ($('#personalDetailsSection .section-error-bar').length == 0)
 				{
@@ -52,7 +52,7 @@ $(document).ready(function()
 			},
 			function(data)
 			{
-				$('#addressSection').html(data);
+				$('#addressSection').prepend(data);
 				$('#addressSection div.ajax').remove();
 				if ($('#addressSection .section-error-bar').length == 0)
 				{
@@ -71,7 +71,7 @@ $(document).ready(function()
 			},
 			function(data)
 			{
-				$('#qualificationsSection').html(data);
+				$('#qualificationsSection').prepend(data);
 				$('#qualificationsSection div.ajax').remove();
 				if ($('#qualificationsSection .section-error-bar').length == 0)
 				{
@@ -90,7 +90,7 @@ $(document).ready(function()
 			},
 			function(data)
 			{
-				$('#positionSection').html(data);
+				$('#positionSection').prepend(data);
 				$('#positionSection div.ajax').remove();
 				if ($('#positionSection .section-error-bar').length == 0)
 				{
@@ -109,7 +109,7 @@ $(document).ready(function()
 			},
 			function(data)
 			{
-				$('#fundingSection').html(data);
+				$('#fundingSection').prepend(data);
 				$('#fundingSection div.ajax').remove();
 				if ($('#fundingSection .section-error-bar').length == 0)
 				{
@@ -128,7 +128,7 @@ $(document).ready(function()
 			},
 			function(data)
 			{
-				$('#referencesSection').html(data);
+				$('#referencesSection').prepend(data);
 				$('#referencesSection div.ajax').remove();
 				if ($('#referencesSection .section-error-bar').length == 0)
 				{
@@ -147,7 +147,7 @@ $(document).ready(function()
 			},
 			function(data)
 			{
-				$('#documentSection').html(data);
+				$('#documentSection').prepend(data);
 				$('#documentSection div.ajax').remove();
 				if ($('#documentSection .section-error-bar').length == 0)
 				{
@@ -166,7 +166,7 @@ $(document).ready(function()
 			},
 			function(data)
 			{
-				$('#additionalInformationSection').html(data);
+				$('#additionalInformationSection').prepend(data);
 				$('#additionalInformationSection div.ajax').remove();
 				if ($('#additionalInformationSection .section-error-bar').length == 0)
 				{

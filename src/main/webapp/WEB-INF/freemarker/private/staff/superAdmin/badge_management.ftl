@@ -76,21 +76,21 @@
 												<div class="row">
 													<label class="plain-label">Programme home page</label>
 													<div class="field">
-														<input type="text" name="programhome" id="programhome" class="full"/>
+														<input type="text" name="programhome" id="programhome" class="max" />
 													</div>
 												</div>		
 
 												<div class="row">
 													<label class="plain-label">Project title</label>
 													<div class="field">
-														<input type="text" name="project" id="project" class="full"/>
+														<input type="text" name="project" id="project" class="max" />
 													</div>
 												</div>												
 																						
 												<div class="row">
 													<label class="plain-label">Batch deadline</label>
 													<div class="field">
-														<input type="text" name="batchdeadline" id="batchdeadline" class="half date"/>
+														<input type="text" name="batchdeadline" id="batchdeadline" class="half date" />
 													</div>
 												</div>
 												
@@ -99,14 +99,14 @@
 											<div class="row-group">
 												<label class="plain-label">HTML</label>
 												<div class="field">
-													<textarea readonly="readonly" id="html" class="max" rows="15" cols="70"></textarea>
+													<textarea readonly="readonly" id="html" rows="15" cols="70"></textarea>
 												</div>
 											</div>
 											
 											<div class="row-group">
 												<label class="plain-label">Badge</label>													
 												<div class="field">
-													<iframe id="badge" width="500" height="200"></iframe>											
+													<iframe id="badge" width="535" height="200"></iframe>											
 												</div>
 											</div>
 											

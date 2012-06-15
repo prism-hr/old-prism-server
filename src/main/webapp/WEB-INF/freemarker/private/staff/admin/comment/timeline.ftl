@@ -24,7 +24,7 @@
 					</div>
         
 					<#if timelineObject.reviewRound?? && user != applicationForm.applicant>
-					<ul>
+					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">
 								<h3>Invited reviewers:</h3>
@@ -38,7 +38,7 @@
 					</ul>
         
 					<#elseif timelineObject.interview??>
-					<ul>
+					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">
 								<h3>Interview</h3>
@@ -55,7 +55,7 @@
 					</ul>
            
 					<#elseif timelineObject.approvalRound??>
-					<ul>
+					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">
 								<h3>Selected supervisors:</h3>       
@@ -69,7 +69,7 @@
 					</ul>
 					
 					<#elseif timelineObject.status?? &&   timelineObject.status == 'REJECTED'>
-					<ul>
+					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">
 								<h3>Reason:</h3>

@@ -51,7 +51,7 @@ public class ApplicationsService {
 	}
 
 	@Transactional
-	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Program program, Date programDeadline, String projectTitle)  {
+	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Program program, Date programDeadline, String projectTitle, String researchHomePage)  {
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
 		ApplicationForm applicationForm = newApplicationForm();
 		applicationForm.setApplicant(user);
@@ -59,6 +59,7 @@ public class ApplicationsService {
 		applicationForm.setBatchDeadline(programDeadline);
 		
 		applicationForm.setProjectTitle(projectTitle);
+		applicationForm.setResearchHomePage(researchHomePage);
 		int runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
 		applicationForm.setApplicationNumber(program.getCode() + "-" + thisYear + "-" + String.format("%06d", ++runningCount));
 		applicationFormDAO.save(applicationForm);

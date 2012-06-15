@@ -179,7 +179,7 @@ public class RegisterControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).programOriginallyAppliedTo(program).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(user);		
 		userServiceMock.save(user);
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, program, null, null)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, program, null, null, null)).andReturn(applicationForm);
 		EasyMock.replay(registrationServiceMock, applicationsServiceMock);
 		ModelAndView modelAndView = registerController.activateAccountSubmit(activationCode);		
 		EasyMock.verify(registrationServiceMock);

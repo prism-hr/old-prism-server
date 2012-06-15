@@ -3,7 +3,9 @@
 #programReviewers, #programSupervisors,
 #applicationReviewers, #applicationSupervisors { width: 400px; }
 #programReviewers option, #programSupervisors option,
-#applicationReviewers option, #applicationSupervisors option { border-bottom: 1px solid #999; padding: 5px; }
+#applicationReviewers option, #applicationSupervisors option,
+#programReviewers optgroup, #programSupervisors optgroup,
+#applicationReviewers optgroup, #applicationSupervisors optgroup { font-style: normal; padding: 5px; }
 #programReviewers option:last-child, #programSupervisors option:last-child,
 #applicationReviewers option:last-child, #applicationSupervisors option:last-child { border-bottom: none; }
 

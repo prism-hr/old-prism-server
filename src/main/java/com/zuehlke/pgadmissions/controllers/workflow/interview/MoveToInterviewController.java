@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -27,15 +28,15 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 public class MoveToInterviewController extends InterviewController {
 
 	MoveToInterviewController() {
-		this(null, null, null, null, null, null, null,  null);
+		this(null, null, null, null, null, null, null,  null, null);
 	}
 
 	@Autowired
 	public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
 			 MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
-			DatePropertyEditor datePropertyEditor, InterviewerPropertyEditor interviewerPropertyEditor) {
+			DatePropertyEditor datePropertyEditor, InterviewerPropertyEditor interviewerPropertyEditor, EncryptionHelper encryptionHelper) {
 		super(applicationsService, userService, validator, messageSource, interviewService,// 
-				interviewValidator, datePropertyEditor, interviewerPropertyEditor, null);
+				interviewValidator, datePropertyEditor, interviewerPropertyEditor, encryptionHelper);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToInterview")

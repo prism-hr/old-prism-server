@@ -143,6 +143,8 @@ public abstract class InterviewController {
 		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
 		if (pendingInterviewerId != null) {
 			for (String encryptedId : pendingInterviewerId) {
+				System.err.println(encryptedId);
+				System.err.println(encryptionHelper);
 				Integer id = encryptionHelper.decryptToInteger(encryptedId);
 				RegisteredUser user = userService.getUser(id);
 				if (!user.isInterviewerOfApplicationForm(applicationForm)) {

@@ -173,6 +173,6 @@ public class CreateNewSupervisorControllerTest {
 		supervisorProertyEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
 		approvalroundValidator = EasyMock.createMock(ApprovalRoundValidator.class);
 		
-		controller = new CreateNewSupervisorController(null, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock);
+		controller = new CreateNewSupervisorController(null, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null);
 		}
 }

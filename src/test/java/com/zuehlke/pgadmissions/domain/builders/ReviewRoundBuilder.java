@@ -8,6 +8,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 
 public class ReviewRoundBuilder {
 	
@@ -30,6 +31,8 @@ public class ReviewRoundBuilder {
 		return this;
 	}
 	
+
+	
 	public ReviewRoundBuilder application(ApplicationForm application){
 		this.application = application;
 		return this;
@@ -45,7 +48,7 @@ public class ReviewRoundBuilder {
 		reviewRound.setId(id);
 		reviewRound.setReviewers(reviewers);
 		reviewRound.setApplication(application);
-		reviewRound.setCreatedDate(createdDate);
+		reviewRound.setCreatedDate(createdDate);		
 		return reviewRound;
 	}
 }

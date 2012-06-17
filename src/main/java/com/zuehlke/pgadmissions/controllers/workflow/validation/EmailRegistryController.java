@@ -62,7 +62,7 @@ public class EmailRegistryController {
 			notificationRecord.setDate(new Date());
 			applicationsService.save(applicationForm);
 			commentService.save(commentFactory.createComment(applicationForm, getCurrentUser(),
-					"Request for assistance in validating application details send to UCL central registry office.", CommentType.GENERIC));
+					"Request for assistance in validating application details send to UCL central registry office.", CommentType.GENERIC, null));
 			modelAndView.getModel().put("message", "registry.email.send");
 		} catch (Throwable e) {
 			log.error("Send email to registry contacts failed:", e);

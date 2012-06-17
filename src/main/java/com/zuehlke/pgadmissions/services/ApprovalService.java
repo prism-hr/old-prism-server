@@ -77,7 +77,7 @@ public class ApprovalService {
 		}
 
 		mailService.sendRequestRestartApproval(application, approver);
-		commentDAO.save(commentFactory.createComment(application, approver, "Requested re-start of approval phase", CommentType.GENERIC));
+		commentDAO.save(commentFactory.createComment(application, approver, "Requested re-start of approval phase", CommentType.GENERIC, null));
 
 	}
 

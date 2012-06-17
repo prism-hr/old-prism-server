@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -35,14 +36,14 @@ public class CreateNewSupervisorController extends ApprovalController {
 
 
 	CreateNewSupervisorController() {
-		 this(null, null, null, null, null, null, null);
+		 this(null, null, null, null, null, null, null, null);
 	
 	}
 
 	@Autowired
 	public CreateNewSupervisorController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator, ApprovalRoundValidator approvalRoundValidator,
-			ApprovalService approvalService, MessageSource messageSource, SupervisorPropertyEditor supervisorPropertyEditor) {
-		super(applicationsService, userService, reviewerValidator, approvalRoundValidator, approvalService, messageSource, supervisorPropertyEditor);
+			ApprovalService approvalService, MessageSource messageSource, SupervisorPropertyEditor supervisorPropertyEditor, EncryptionHelper encryptionHelper) {
+		super(applicationsService, userService, reviewerValidator, approvalRoundValidator, approvalService, messageSource, supervisorPropertyEditor, encryptionHelper);
 
 	}
 

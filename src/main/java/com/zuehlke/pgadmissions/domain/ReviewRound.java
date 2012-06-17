@@ -36,6 +36,7 @@ public class ReviewRound extends DomainObject<Integer> {
 	@JoinColumn(name = "application_form_id")	
 	private ApplicationForm application;	
 	
+	
 	@Column(name = "created_date", insertable = false)
 	@Generated(GenerationTime.INSERT)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -77,5 +78,6 @@ public class ReviewRound extends DomainObject<Integer> {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
+
 
 }

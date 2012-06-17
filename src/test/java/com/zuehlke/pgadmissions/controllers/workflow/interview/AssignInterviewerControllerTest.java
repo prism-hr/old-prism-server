@@ -116,7 +116,7 @@ public class AssignInterviewerControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 		
-		controller = new AssignInterviewerController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock);
+		controller = new AssignInterviewerController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null);
 		
 		
 	}

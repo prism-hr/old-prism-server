@@ -49,6 +49,8 @@
       	<form id="applyForm" action="<@spring.url '/apply/new'/>" method="POST">
       		<input type="hidden" id="program" name="program" value=""/>
       		<input type="hidden" id="programDeadline" name="programDeadline" value=""/>
+      		<input type="hidden" id="programhome" name="programhome" value=""/>
+      		<input type="hidden" id="projectTitle" name="projectTitle" value=""/>
       	</form>
 	</body>
 </html>

@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -84,7 +83,7 @@ public class MoveToInterviewControllerTest {
 		final ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
-				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock) {
+				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				return application;
@@ -106,7 +105,7 @@ public class MoveToInterviewControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
-				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock) {
+				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				return applicationForm;
@@ -140,7 +139,7 @@ public class MoveToInterviewControllerTest {
 		EasyMock.replay(bindingResultMock);
 
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
-				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock);
+				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null);
 
 	}
 

@@ -152,7 +152,7 @@ public class ApprovalServiceTest {
 		mailServiceMock.sendRequestRestartApproval(applicationForm, approver);
 		EasyMock.expectLastCall();
 		Comment comment = new CommentBuilder().id(1).toComment();
-		EasyMock.expect(commentFactoryMock.createComment(applicationForm, approver, "Requested re-start of approval phase", CommentType.GENERIC)).andReturn(comment);
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, approver, "Requested re-start of approval phase", CommentType.GENERIC, null)).andReturn(comment);
 		commentDAOMock.save(comment);
 		EasyMock.replay(mailServiceMock, commentFactoryMock, commentDAOMock);
 		approvalService.requestApprovalRestart(applicationForm, approver);

@@ -49,8 +49,10 @@ public class ReviewRoundMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(reviewerUser, reviewer.getUser());
 		assertEquals(reloadedReviewRound, reviewer.getReviewRound());
 		assertNotNull(reloadedReviewRound.getCreatedDate());
+		
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),DateUtils.truncate(reloadedReviewRound.getCreatedDate(), Calendar.DATE));
 	}
+	
 	
 	@Before
 	public void setup() {

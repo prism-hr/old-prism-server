@@ -248,7 +248,7 @@
 								
 								<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 								encrypt
-								<input type="hidden" id="interviewId" name="interviewId" value="<#if interview?? >${encrypter.encrypt(interview.id)}</#if>"/> 
+								<input type="hidden" id="interviewId" name="interviewId" value="<#if interview?? && interview.id?? >${encrypter.encrypt(interview.id)}</#if>"/> 
 							</form>
 						</div>
 					</section>

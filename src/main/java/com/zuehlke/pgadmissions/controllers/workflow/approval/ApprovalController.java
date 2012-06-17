@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -35,14 +36,16 @@ public abstract class ApprovalController {
 	protected final ApprovalRoundValidator approvalroundValidator;
 	protected final ApprovalService approvalService;
 	protected final SupervisorPropertyEditor supervisorPropertyEditor;
+	private final EncryptionHelper encryptionHelper;
 
 	ApprovalController() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public ApprovalController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
-			ApprovalRoundValidator approvalroundValidator, ApprovalService approvalService, MessageSource messageSource, SupervisorPropertyEditor supervisorPropertyEditor) {
+			ApprovalRoundValidator approvalroundValidator, ApprovalService approvalService, MessageSource messageSource,
+			SupervisorPropertyEditor supervisorPropertyEditor, EncryptionHelper encryptionHelper) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.supervisorValidator = validator;
@@ -51,6 +54,7 @@ public abstract class ApprovalController {
 
 		this.messageSource = messageSource;
 		this.supervisorPropertyEditor = supervisorPropertyEditor;
+		this.encryptionHelper = encryptionHelper;
 	}
 
 	@InitBinder(value = "supervisor")
@@ -70,7 +74,7 @@ public abstract class ApprovalController {
 	}
 
 	@ModelAttribute("programmeSupervisors")
-	public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingSupervisors) {
+	public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingSupervisors) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		Program program = application.getProgram();
 		List<RegisteredUser> availableSupervisors = new ArrayList<RegisteredUser>();
@@ -120,10 +124,8 @@ public abstract class ApprovalController {
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		RegisteredUser currentUser = userService.getCurrentUser();
 		if (application == null
-				|| (!currentUser.hasAdminRightsOnApplication(application) 
-						&& !currentUser.isSupervisorOfApplicationForm(application)
-						&& !currentUser.isInRoleInProgram(Authority.APPROVER, application.getProgram())
-					)) {
+				|| (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isSupervisorOfApplicationForm(application) && !currentUser
+						.isInRoleInProgram(Authority.APPROVER, application.getProgram()))) {
 			throw new ResourceNotFoundException();
 		}
 		return application;
@@ -132,21 +134,21 @@ public abstract class ApprovalController {
 	public abstract ApprovalRound getApprovalRound(@RequestParam String applicationId);
 
 	@ModelAttribute("pendingSupervisors")
-	public List<RegisteredUser> getPendingSupervisors(@RequestParam(required = false) List<Integer> pendingSupervisors, @RequestParam String applicationId) {
+	public List<RegisteredUser> getPendingSupervisors(@RequestParam(required = false) List<String> pendingSupervisors, @RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
 		if (pendingSupervisors != null) {
-			for (Integer id : pendingSupervisors) {
-				RegisteredUser user = userService.getUser(id);
+			for (String encryptedSupervisorId : pendingSupervisors) {
+				RegisteredUser user = userService.getUser(encryptionHelper.decryptToInteger(encryptedSupervisorId));
 				if (!user.isSupervisorOfApplicationForm(applicationForm)) {
 					newUsers.add(user);
 				}
 			}
+		
 		}
-
 		return newUsers;
 	}
-	
+
 	@ModelAttribute("willingToSuperviseUsers")
 	public List<RegisteredUser> getWillingToSuperviseusers(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
@@ -154,7 +156,7 @@ public abstract class ApprovalController {
 	}
 
 	@ModelAttribute("previousSupervisors")
-	public List<RegisteredUser> getPreviousSupervisors(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingSupervisors) {
+	public List<RegisteredUser> getPreviousSupervisors(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingSupervisors) {
 		List<RegisteredUser> availablePreviousSupervisors = new ArrayList<RegisteredUser>();
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> previousSupervisorsOfProgram = userService.getAllPreviousSupervisorsOfProgram(applicationForm.getProgram());

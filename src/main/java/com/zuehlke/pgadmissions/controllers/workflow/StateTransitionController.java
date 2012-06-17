@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -24,30 +25,31 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
+import com.zuehlke.pgadmissions.utils.StateTransitionViewResolver;
 
 @Controller
 @RequestMapping("/progress")
 public class StateTransitionController {
 
-	private static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
-	private static final String SIMPLE_MESSAGE_VIEW = "private/common/simpleMessage";
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
 	private final CommentService commentService;
 	private final CommentFactory commentFactory;
+	private final StateTransitionViewResolver stateTransitionViewResolver;
 
 	StateTransitionController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 
 	}
 
 	@Autowired
 	public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			CommentFactory commentFactory) {
+			CommentFactory commentFactory, StateTransitionViewResolver stateTransitionViewResolver) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.commentService = commentService;
 		this.commentFactory = commentFactory;
+		this.stateTransitionViewResolver = stateTransitionViewResolver;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -71,8 +73,8 @@ public class StateTransitionController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getStateTransitionView() {
-		return STATE_TRANSITION_VIEW;
+	public String getStateTransitionView(@ModelAttribute ApplicationForm applicationForm) {
+		return stateTransitionViewResolver.resolveView(applicationForm);
 	}
 
 	@ModelAttribute("user")
@@ -82,19 +84,25 @@ public class StateTransitionController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @ModelAttribute("user") RegisteredUser user,
-			@RequestParam CommentType type, @RequestParam String comment, @RequestParam(required = false) ValidationQuestionOptions qualifiedForPhd,
+			@RequestParam CommentType type, @RequestParam String comment,@RequestParam ApplicationFormStatus nextStatus,  @RequestParam(required = false) ValidationQuestionOptions qualifiedForPhd,
 			@RequestParam(required = false) ValidationQuestionOptions englishCompentencyOk, @RequestParam(required = false) HomeOrOverseas homeOrOverseas) {
 		if (StringUtils.isNotBlank(comment)) {
-			Comment newComment = commentFactory.createComment(applicationForm, user, comment, type);
+			Comment newComment = commentFactory.createComment(applicationForm, user, comment, type,nextStatus);
 			if(newComment instanceof ValidationComment){
 				((ValidationComment) newComment).setEnglishCompentencyOk(englishCompentencyOk);
 				((ValidationComment) newComment).setQualifiedForPhd(qualifiedForPhd);
 				((ValidationComment) newComment).setHomeOrOverseas(homeOrOverseas);
 				
 			}
+			if(newComment instanceof ReviewEvaluationComment){
+				((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());
+			}
+			if(newComment instanceof InterviewEvaluationComment){
+				((InterviewEvaluationComment) newComment).setInterview(applicationForm.getLatestInterview());
+			}
 			commentService.save(newComment);
 		}
-		return SIMPLE_MESSAGE_VIEW;
+		return stateTransitionViewResolver.resolveView(applicationForm);
 	}
 
 	@ModelAttribute("reviewersWillingToInterview")

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -26,12 +27,14 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 public class MoveToApprovalController extends ApprovalController {
 
 	MoveToApprovalController() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public MoveToApprovalController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator, ApprovalRoundValidator approvalroundValidator, ApprovalService approvalService, MessageSource messageSource, SupervisorPropertyEditor supervisorPropertyEditor) {
-		super(applicationsService, userService, supervisorValidator, approvalroundValidator, approvalService, messageSource, supervisorPropertyEditor);
+	public MoveToApprovalController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator,
+			ApprovalRoundValidator approvalroundValidator, ApprovalService approvalService, MessageSource messageSource,
+			SupervisorPropertyEditor supervisorPropertyEditor, EncryptionHelper encryptionHelper) {
+		super(applicationsService, userService, supervisorValidator, approvalroundValidator, approvalService, messageSource, supervisorPropertyEditor, encryptionHelper);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
@@ -41,7 +44,8 @@ public class MoveToApprovalController extends ApprovalController {
 	}
 
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
-	public String moveToApproval(@RequestParam String applicationId, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, BindingResult bindingResult) {
+	public String moveToApproval(@RequestParam String applicationId, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
+			BindingResult bindingResult) {
 
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		if (bindingResult.hasErrors()) {
@@ -56,7 +60,7 @@ public class MoveToApprovalController extends ApprovalController {
 	public String requestRestart(@ModelAttribute("applicationForm") ApplicationForm applicationForm, ModelMap modelMap) {
 		approvalService.requestApprovalRestart(applicationForm, getUser());
 
-		modelMap.put("message", String.format("An e-mail requesting the restart of the approval phase " +//
+		modelMap.put("message", String.format("An e-mail requesting the restart of the approval phase " + //
 				"for application %s was sent to the administrator!", applicationForm.getApplicationNumber()));
 		return "redirect:/applications";
 	}

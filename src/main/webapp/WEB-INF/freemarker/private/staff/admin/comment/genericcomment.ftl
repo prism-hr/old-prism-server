@@ -23,6 +23,9 @@
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js' />"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
+    
 	    
 	    
 	</head>
@@ -70,13 +73,16 @@
 															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 														</div>
 													</div>
-								
+													
+											         <#include "documents_snippet.ftl"/>
+											         
 													<div class="buttons">						        		
 														<button type="reset" value="cancel">Cancel</button>
 														<button class="blue" type="submit" value="Submit">Submit</button>						        
 													</div>
 												</div>
 											</form>
+											
 										</div>
 									</section>
 			  				<#else>

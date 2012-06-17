@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -32,18 +34,20 @@ public class InterviewCommentController {
 	private final UserService userService;
 	private final FeedbackCommentValidator feedbackCommentValidator;
 	private final CommentService commentService;
+	private final DocumentPropertyEditor documentPropertyEditor;
 
 	InterviewCommentController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public InterviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			FeedbackCommentValidator reviewFeedbackValidator) {
+			FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.commentService = commentService;
 		this.feedbackCommentValidator = reviewFeedbackValidator;
+		this.documentPropertyEditor = documentPropertyEditor;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -83,6 +87,7 @@ public class InterviewCommentController {
 	@InitBinder(value = "comment")
 	public void registerBinders(WebDataBinder binder) {
 		binder.setValidator(feedbackCommentValidator);
+		binder.registerCustomEditor(Document.class, documentPropertyEditor);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)

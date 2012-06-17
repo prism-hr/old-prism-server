@@ -100,6 +100,11 @@
                   <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
                 </div>
                 <p><em>${(comment.comment?html)!}</em></p>
+                <ul>                
+                <#list comment.documents as document>
+                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
+                </#list>
+                </ul>
                 <#if comment.type == 'VALIDATION'>                                                    
                 <#include "timeline_snippets/validation_comment.ftl"/>
                 <#elseif comment.type == 'REVIEW'>

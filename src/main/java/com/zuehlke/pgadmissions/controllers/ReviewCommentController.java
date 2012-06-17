@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -32,18 +34,20 @@ public class ReviewCommentController {
 	private final UserService userService;
 	private final FeedbackCommentValidator reviewFeedbackValidator;
 	private final CommentService commentService;
+	private final DocumentPropertyEditor documentPropertyEditor;
 
 	ReviewCommentController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			FeedbackCommentValidator reviewFeedbackValidator) {
+			FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.commentService = commentService;
 		this.reviewFeedbackValidator = reviewFeedbackValidator;
+		this.documentPropertyEditor = documentPropertyEditor;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -83,6 +87,7 @@ public class ReviewCommentController {
 	@InitBinder(value = "comment")
 	public void registerBinders(WebDataBinder binder) {
 		binder.setValidator(reviewFeedbackValidator);
+		binder.registerCustomEditor(Document.class, documentPropertyEditor);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)

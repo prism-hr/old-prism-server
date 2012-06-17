@@ -23,6 +23,10 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/admin/changeState.js' />"></script> 
 
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
+
 
 </head>
 
@@ -74,7 +78,7 @@
 									</div>
 									
 								</div>
-
+   								<#include "comment/documents_snippet.ftl"/>
 							</div><!-- close .row-group -->
 
 							<#if applicationForm.isInState('VALIDATION')>

@@ -13,6 +13,7 @@
 		
 		<!-- Styles for Application List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
 				<!-- Styles for Application List Page -->
 
@@ -22,6 +23,9 @@
 	
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/comment/interviewComment.js' />"></script> 
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
 	    
 	    
 	</head>
@@ -55,62 +59,70 @@
 				         <#include "/private/common/parts/application_info.ftl"/>
 				       	 <!--	if user is reviewer in program and haven't already declined-->	
 				       	 	<#if !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)  >			        		
-							
-							    <h1>Interview feedback</h1>
-							    <br/>
+							<section class="form-rows">
+							    <h3>Interview feedback</h3>
+						
 							   <p style="color:red;">Please note that once you submit your feedback you cannot re-submit or edit it.</p> 
+							   <div>
 							  	<form id ="interviewForm" method="POST" action= "<@spring.url '/interviewFeedback'/>"/>
 							   
 							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 			            			<div class="row-group">
 											<div class="row">
-												<label class="plain-label">Decline</label>
+												<span class="plain-label">Decline</span>
 												<div class="field">        
 													<input type="checkbox" name="decline" id="decline"/>	           								
 												</div>
 											</div>
-										</div>
-	   								<div class="row"> 
-			           					<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>
-			            				<div class="field">		            				
-			            					<textarea name="comment" id="interview-comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
-			            					<@spring.bind "comment.comment" /> 
-	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-			            				</div>
 									</div>
-									<div class="row">
-										<span id="supervise-lbl" class="plain-label">Willing to supervise?<em>*</em></span>
-										<div class="field">
-											<label><input type="radio" name="willingToSupervise" value="true" id="willingRB_true"
-											<#if comment.willingToSuperviseSet && comment.willingToSupervise> checked="checked"</#if> 
-											/> Yes</label> 
-											<label><input type="radio" name="willingToSupervise" value="false" id="willingRB_false"
-											<#if comment.willingToSuperviseSet && !comment.willingToSupervise> checked="checked"</#if>
-											/> No</label> 
-											<@spring.bind "comment.willingToSupervise" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+									<div class="row-group">
+		   								<div class="row"> 
+				           					<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>
+				            				<div class="field">		            				
+				            					<textarea name="comment" id="interview-comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+				            					<@spring.bind "comment.comment" /> 
+		                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+				            				</div>
 										</div>
-									</div>
+									
+								
+										<#include "/private/staff/admin/comment/documents_snippet.ftl"/>
+										
+										<div class="row">
+											<span id="supervise-lbl" class="plain-label">Willing to supervise?<em>*</em></span>
+											<div class="field">
+												<label><input type="radio" name="willingToSupervise" value="true" id="willingRB_true"
+												<#if comment.willingToSuperviseSet && comment.willingToSupervise> checked="checked"</#if> 
+												/> Yes</label> 
+												<label><input type="radio" name="willingToSupervise" value="false" id="willingRB_false"
+												<#if comment.willingToSuperviseSet && !comment.willingToSupervise> checked="checked"</#if>
+												/> No</label> 
+												<@spring.bind "comment.willingToSupervise" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											</div>
+										</div>
 
-									<div class="row">
-										<span id="suitable-lbl" class="plain-label">Is candidate suitable for UCL?<em>*</em></span>
-										<div class="field">
-											<label><input type="radio"  name="suitableCandidate" value="true" id="suitableRB_true"
-											<#if comment.suitableCandidateSet && comment.suitableCandidate> checked="checked"</#if>
-											/> Yes</label> 
-											<label><input type="radio"  name="suitableCandidate" value="false" id="suitableRB_false"
-											<#if comment.suitableCandidateSet && !comment.suitableCandidate> checked="checked"</#if>
-											/> No</label> 
-											<@spring.bind "comment.suitableCandidate" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+										<div class="row">
+											<span id="suitable-lbl" class="plain-label">Is candidate suitable for UCL?<em>*</em></span>
+											<div class="field">
+												<label><input type="radio"  name="suitableCandidate" value="true" id="suitableRB_true"
+												<#if comment.suitableCandidateSet && comment.suitableCandidate> checked="checked"</#if>
+												/> Yes</label> 
+												<label><input type="radio"  name="suitableCandidate" value="false" id="suitableRB_false"
+												<#if comment.suitableCandidateSet && !comment.suitableCandidate> checked="checked"</#if>
+												/> No</label> 
+												<@spring.bind "comment.suitableCandidate" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											</div>
 										</div>
-									</div>
-			    
+				    				</div>
 			            			<div class="buttons">						        		
 			            				<button type="button" id="cancelInterviewFeedbackBtn" value="cancel">Cancel</button>
 							       		<button class="blue" id="submitInterviewFeedback" type="button" value="Submit">Submit</button>						        
 									</div>
 									</form>
+								</div>							
+							</section>
 			  					<hr/>
 			  				<#else>
 			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>

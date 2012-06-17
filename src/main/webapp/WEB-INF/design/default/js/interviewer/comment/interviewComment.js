@@ -13,13 +13,13 @@ $(document).ready(function(){
 			$('#interviewForm').append("<input type='hidden' name='decline' value='true'/>");			
 		}
 		
-		if ($('input:radio[name=willingToSupervise]:checked').length > 0) {
+		/*if ($('input:radio[name=willingToSupervise]:checked').length > 0) {
 			
 			$('#interviewForm').append("<input type='hidden' name='willingToSupervise' value='"+ $('input:radio[name=willingToSupervise]:checked').val() +"'/>");
 		}
 		if ($('input:radio[name=suitableCandidate]:checked').length > 0) {				
 			$('#interviewForm').append("<input type='hidden' name='suitableCandidate' value='"+ $('input:radio[name=suitableCandidate]:checked').val() +"'/>");
-		}
+		}*/
 		
 		$('#interviewForm').submit();
 	});	

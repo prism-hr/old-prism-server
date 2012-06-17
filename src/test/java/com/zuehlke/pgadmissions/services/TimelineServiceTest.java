@@ -227,7 +227,7 @@ public class TimelineServiceTest {
 		Date submissionDate = format.parse("01 04 2012 14:02:03");
 		Date validatedDate = format.parse("03 04 2012 09:14:12");
 
-		Date commentDateOne = format.parse("01 04 2012 16:02:03");
+		Date commentDateOne = submissionDate;
 		Comment commentOne = new CommentBuilder().date(commentDateOne).id(1).toComment();
 
 		Date commentDateTwo = format.parse("02 04 2012 11:52:46");

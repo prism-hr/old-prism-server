@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -12,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -32,6 +35,10 @@ public class Comment extends DomainObject<Integer> implements Comparable<Comment
 	@Generated(GenerationTime.INSERT)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
+	
+	@OneToMany
+	@JoinColumn(name = "comment_id")
+	private List<Document> documents = new ArrayList<Document>(); 
 	
 	private String comment;
 	
@@ -96,6 +103,14 @@ public class Comment extends DomainObject<Integer> implements Comparable<Comment
 	@Override
 	public int compareTo(Comment otherComment) {
 		return otherComment.getDate().compareTo(this.date);
+	}
+
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
 	}	
 
 }

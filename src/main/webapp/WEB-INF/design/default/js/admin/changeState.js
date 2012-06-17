@@ -71,6 +71,12 @@ function saveComment() {
 						+ $('input:radio[name=homeOrOverseas]:checked').val()
 						+ '"/>');
 	}
+	$('input[name="documents"]').each(function(){
+		$('#stateChangeForm').append(
+				'<input type="hidden" name="documents" value="'
+						+ $(this).val()
+						+ '"/>');
+	});
 	 $('#stateChangeForm').submit();
 
 }

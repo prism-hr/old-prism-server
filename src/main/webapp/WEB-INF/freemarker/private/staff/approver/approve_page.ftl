@@ -22,7 +22,9 @@
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/approver/approve_page.js'/>"></script>
-
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
 
 </head>
 
@@ -53,30 +55,33 @@
 			<div class="content-box">
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
-					<input type="hidden" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
+				
 					
 					<section class="form-rows">
 						<div>
-							<div class="row-group">
-							
-								<h3>Recommend Application As Approved</h3>
-
-								<div class="row">
-									<span class="plain-label">Comment</span>
-									<div class="field">		            				
-										<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+							<form method="POST" action= "<@spring.url '/approved/move'/>">
+								<div class="row-group">
+								<input type="hidden" id="applicationId" name = 'applicationId' value =  "${(applicationForm.applicationNumber)!}"/>
+						
+									<h3>Recommend Application As Approved</h3>
+	
+									<div class="row">
+										<span class="plain-label">Comment</span>
+										<div class="field">		            				
+											<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+										</div>
+								
 									</div>
-									<input type="hidden" id="commentType" value="APPROVAL"/>
+									
+									<#include "/private/staff/admin/comment/documents_snippet.ftl"/>
+								</div><!-- close .row-group -->
+
+	
+								<div class="buttons">						        		
+									<button id="cancelApproved" value="cancel">Cancel</button>
+									<button type="submit" id="approveButton" class="blue">Approve application</button>		        
 								</div>
-
-							</div><!-- close .row-group -->
-
-
-							<div class="buttons">						        		
-								<button id="cancelApproved" value="cancel">Cancel</button>
-								<button type="button" id="approveButton" class="blue">Approve application</button>		        
-							</div>
-
+							</form>
 						</div>
 					</section>
 

@@ -21,8 +21,10 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.StateTransitionViewResolver;
@@ -36,20 +38,25 @@ public class StateTransitionController {
 	private final CommentService commentService;
 	private final CommentFactory commentFactory;
 	private final StateTransitionViewResolver stateTransitionViewResolver;
+	private final EncryptionHelper encryptionHelper;
+	private final DocumentService documentService;
 
 	StateTransitionController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 
 	}
 
 	@Autowired
 	public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			CommentFactory commentFactory, StateTransitionViewResolver stateTransitionViewResolver) {
+			CommentFactory commentFactory, StateTransitionViewResolver stateTransitionViewResolver, EncryptionHelper encryptionHelper,
+			DocumentService documentService) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.commentService = commentService;
 		this.commentFactory = commentFactory;
 		this.stateTransitionViewResolver = stateTransitionViewResolver;
+		this.encryptionHelper = encryptionHelper;
+		this.documentService = documentService;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -84,21 +91,27 @@ public class StateTransitionController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @ModelAttribute("user") RegisteredUser user,
-			@RequestParam CommentType type, @RequestParam String comment,@RequestParam ApplicationFormStatus nextStatus,  @RequestParam(required = false) ValidationQuestionOptions qualifiedForPhd,
+			@RequestParam CommentType type, @RequestParam String comment, @RequestParam ApplicationFormStatus nextStatus,
+			@RequestParam(required = false) List<String> documents, @RequestParam(required = false) ValidationQuestionOptions qualifiedForPhd,
 			@RequestParam(required = false) ValidationQuestionOptions englishCompentencyOk, @RequestParam(required = false) HomeOrOverseas homeOrOverseas) {
 		if (StringUtils.isNotBlank(comment)) {
-			Comment newComment = commentFactory.createComment(applicationForm, user, comment, type,nextStatus);
-			if(newComment instanceof ValidationComment){
+			Comment newComment = commentFactory.createComment(applicationForm, user, comment, type, nextStatus);
+			if (newComment instanceof ValidationComment) {
 				((ValidationComment) newComment).setEnglishCompentencyOk(englishCompentencyOk);
 				((ValidationComment) newComment).setQualifiedForPhd(qualifiedForPhd);
 				((ValidationComment) newComment).setHomeOrOverseas(homeOrOverseas);
-				
+
 			}
-			if(newComment instanceof ReviewEvaluationComment){
+			if (newComment instanceof ReviewEvaluationComment) {
 				((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());
 			}
-			if(newComment instanceof InterviewEvaluationComment){
+			if (newComment instanceof InterviewEvaluationComment) {
 				((InterviewEvaluationComment) newComment).setInterview(applicationForm.getLatestInterview());
+			}
+			if (documents != null) {
+				for (String encryptedId : documents) {
+					newComment.getDocuments().add(documentService.getDocumentById(encryptionHelper.decryptToInteger(encryptedId)));
+				}
 			}
 			commentService.save(newComment);
 		}
@@ -113,11 +126,12 @@ public class StateTransitionController {
 		}
 		return null;
 	}
+
 	@ModelAttribute("validationQuestionOptions")
 	public ValidationQuestionOptions[] getValidationQuestionOptions() {
 		return ValidationQuestionOptions.values();
 	}
-	
+
 	@ModelAttribute("homeOrOverseasOptions")
 	public HomeOrOverseas[] getHomeOrOverseasOptions() {
 		return HomeOrOverseas.values();

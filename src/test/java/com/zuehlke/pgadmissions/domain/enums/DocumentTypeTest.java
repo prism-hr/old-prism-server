@@ -12,5 +12,6 @@ public class DocumentTypeTest {
 		Assert.assertEquals("Personal Statement", DocumentType.PERSONAL_STATEMENT.getDisplayValue());
 		Assert.assertEquals("Reference", DocumentType.REFERENCE.getDisplayValue());
 		Assert.assertEquals("Supporting documentation for funding", DocumentType.SUPPORTING_FUNDING.getDisplayValue());
+		
 	}
 }

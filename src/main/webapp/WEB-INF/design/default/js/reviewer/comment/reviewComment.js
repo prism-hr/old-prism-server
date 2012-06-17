@@ -14,13 +14,7 @@ $(document).ready(function(){
 				$('#reviewForm').append("<input type='hidden' name='decline' value='true'/>");
 				
 			}
-			if ($('input:radio[name=willingToInterview]:checked').length > 0) {
-				
-				$('#reviewForm').append("<input type='hidden' name='willingToInterview' value='"+ $('input:radio[name=willingToInterview]:checked').val() +"'/>");
-			}
-			if ($('input:radio[name=suitableCandidate]:checked').length > 0) {				
-				$('#reviewForm').append("<input type='hidden' name='suitableCandidate' value='"+ $('input:radio[name=suitableCandidate]:checked').val() +"'/>");
-			}
+
 			
 			$('#reviewForm').submit();
 	});	

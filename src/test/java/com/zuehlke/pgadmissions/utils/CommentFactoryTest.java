@@ -63,6 +63,13 @@ public class CommentFactoryTest {
 		assertEquals("bob", comment.getComment());
 		assertEquals(user,comment.getUser());
 		
+		comment = commentFactory.createComment(applicationForm, user, strComment, CommentType.APPROVAL, ApplicationFormStatus.APPROVED);
+		assertEquals(StateChangeComment.class, comment.getClass());
+		assertEquals(applicationForm, comment.getApplication());
+		assertEquals("bob", comment.getComment());
+		assertEquals(user,comment.getUser());
+		assertEquals(ApplicationFormStatus.APPROVED, ((StateChangeComment)comment).getNextStatus());
+		
 	}
 	
 	

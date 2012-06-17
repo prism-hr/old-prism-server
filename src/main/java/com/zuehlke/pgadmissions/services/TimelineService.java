@@ -40,7 +40,7 @@ public class TimelineService {
 		List<Comment> visibleComments = applicationForm.getVisibleComments(userService.getCurrentUser());
 		for (Comment comment : visibleComments) {
 			for (TimelinePhase phase : phases) {
-				if (comment.getDate().after(phase.getEventDate())
+				if (comment.getDate().compareTo(phase.getEventDate()) >= 0 
 						&& (phase.getExitedPhaseDate() == null || comment.getDate().before(phase.getExitedPhaseDate()))) {
 					phase.getComments().add(comment);
 				}

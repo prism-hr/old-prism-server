@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -31,18 +33,20 @@ public class GenericCommentController {
 	private final UserService userService;
 	private final GenericCommentValidator genericCommentValidator;
 	private final CommentService commentService;
+	private final DocumentPropertyEditor documentPropertyEditor;
 
 	GenericCommentController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public GenericCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			GenericCommentValidator genericCommentValidator) {
+			GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.commentService = commentService;
 		this.genericCommentValidator = genericCommentValidator;
+		this.documentPropertyEditor = documentPropertyEditor;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -77,6 +81,7 @@ public class GenericCommentController {
 	@InitBinder(value = "comment")
 	public void registerBinders(WebDataBinder binder) {
 		binder.setValidator(genericCommentValidator);
+		binder.registerCustomEditor(Document.class, documentPropertyEditor);
 
 	}
 

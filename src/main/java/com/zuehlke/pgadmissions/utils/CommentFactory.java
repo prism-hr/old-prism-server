@@ -8,6 +8,7 @@ import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -29,9 +30,21 @@ public class CommentFactory {
 		if(commentType == CommentType.REVIEW){
 			return createReviewComment(applicationForm, user, strComment, commentType);
 		}
+		if(commentType == CommentType.APPROVAL){
+			return creatStateChangeComment(applicationForm, user, strComment, commentType, nextStatus);
+		}
+		
 		return createGenericComment(applicationForm, user, strComment);		
 	}
-
+	private Comment creatStateChangeComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType, ApplicationFormStatus nextStatus) {
+		StateChangeComment stateChangeComment = new StateChangeComment();
+		stateChangeComment.setApplication(applicationForm);
+		stateChangeComment.setUser(user);
+		stateChangeComment.setComment(strComment);
+		stateChangeComment.setType(commentType);
+		stateChangeComment.setNextStatus(nextStatus);
+		return stateChangeComment;
+	}
 	private Comment createGenericComment(ApplicationForm applicationForm, RegisteredUser user, String strComment) {
 		Comment comment = new Comment();
 		comment.setApplication(applicationForm);

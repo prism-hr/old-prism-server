@@ -60,11 +60,11 @@ public class ManageUserRolesController {
 	}
 
 	@ModelAttribute("selectedProgram")
-	public Program getSelectedProgram(@RequestParam(required = false) String programCode) {
-		if (programCode == null) {
+	public Program getSelectedProgram(@RequestParam(required = false) String programId) {
+		if (programId == null) {
 			return null;
 		}
-		Program program = programsService.getProgramByCode(programCode);
+		Program program = programsService.getProgramByCode(programId);
 		if (program == null) {
 			throw new ResourceNotFoundException();
 		}
@@ -91,8 +91,8 @@ public class ManageUserRolesController {
 	}
 
 	@ModelAttribute("usersInRoles")
-	public List<RegisteredUser> getUsersInRoles(@RequestParam(required = false) String programCode) {
-		Program selectedProgram = getSelectedProgram(programCode);
+	public List<RegisteredUser> getUsersInRoles(@RequestParam(required = false) String programId) {
+		Program selectedProgram = getSelectedProgram(programId);
 		if(selectedProgram == null){
 			return new ArrayList<RegisteredUser>();
 		}

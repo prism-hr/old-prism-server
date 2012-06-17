@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -36,6 +38,7 @@ public class InterviewCommentControllerTest {
 	private InterviewCommentController controller;
 	private FeedbackCommentValidator reviewFeedbackValidatorMock;
 	private CommentService commentServiceMock;
+	private DocumentPropertyEditor documentPropertyEditorMock;
 
 	
 	@Test
@@ -119,7 +122,7 @@ public class InterviewCommentControllerTest {
 		Interviewer interviewer = new InterviewerBuilder().id(5).toInterviewer();
 		EasyMock.expect(currentUser.getInterviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(interviewer));
 		EasyMock.replay(userServiceMock, currentUser);
-		controller = new  InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock){
+		controller = new  InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock, documentPropertyEditorMock){
 
 			@Override
 			public ApplicationForm getApplicationForm(String id) {
@@ -148,6 +151,7 @@ public class InterviewCommentControllerTest {
 	public void shouldRegisterValidator(){
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(reviewFeedbackValidatorMock);
+		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerBinders(binderMock);
 		EasyMock.verify(binderMock);
@@ -191,7 +195,8 @@ public class InterviewCommentControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		reviewFeedbackValidatorMock = EasyMock.createMock(FeedbackCommentValidator.class);
 		commentServiceMock = EasyMock.createMock(CommentService.class);
-		controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock);
+		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+		controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock, documentPropertyEditorMock);
 
 	}
 }

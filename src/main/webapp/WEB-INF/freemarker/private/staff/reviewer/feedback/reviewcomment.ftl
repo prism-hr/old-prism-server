@@ -23,6 +23,10 @@
 	
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/reviewer/comment/reviewComment.js' />"></script> 
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
+	    
 	    
 	    
 	</head>
@@ -84,6 +88,8 @@
 													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 												</div>
 											</div>
+											
+											<#include "/private/staff/admin/comment/documents_snippet.ftl"/>
 											
 											<div class="row">
 												<span id="supervise-lbl" class="plain-label">Willing to interview?<em>*</em></span>

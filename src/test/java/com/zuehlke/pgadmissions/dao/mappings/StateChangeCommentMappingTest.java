@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class StateChangeCommentMappingTest extends AutomaticRollbackTestCase {
@@ -39,29 +40,31 @@ public class StateChangeCommentMappingTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		StateChangeComment validationComment = new StateChangeComment();
-		validationComment.setType(CommentType.REVIEW_EVALUATION);
-		validationComment.setComment("This is a validationComment");
-		validationComment.setUser(reviewer);
+		StateChangeComment stateChangeComment = new StateChangeComment();
+		stateChangeComment.setType(CommentType.REVIEW_EVALUATION);
+		stateChangeComment.setComment("This is a validationComment");
+		stateChangeComment.setUser(reviewer);
+		stateChangeComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
 
-		validationComment.setApplication(applicationForm);
+		stateChangeComment.setApplication(applicationForm);
 
-		save(validationComment);
+		save(stateChangeComment);
 
-		assertNotNull(validationComment.getId());
-		Integer id = validationComment.getId();
+		assertNotNull(stateChangeComment.getId());
+		Integer id = stateChangeComment.getId();
 		StateChangeComment reloadedComment = (StateChangeComment) sessionFactory.getCurrentSession().get(StateChangeComment.class, id);
-		assertSame(validationComment, reloadedComment);
+		assertSame(stateChangeComment, reloadedComment);
 
 		flushAndClearSession();
 
 		reloadedComment = (StateChangeComment) sessionFactory.getCurrentSession().get(StateChangeComment.class, id);
-		assertNotSame(validationComment, reloadedComment);
-		assertEquals(validationComment, reloadedComment);
+		assertNotSame(stateChangeComment, reloadedComment);
+		assertEquals(stateChangeComment, reloadedComment);
 
 		assertEquals(reviewer, reloadedComment.getUser());
 		assertEquals("This is a validationComment", reloadedComment.getComment());
 		assertEquals(CommentType.REVIEW_EVALUATION, reloadedComment.getType());
+		assertEquals(ApplicationFormStatus.INTERVIEW, reloadedComment.getNextStatus());
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE),
 				DateUtils.truncate(reloadedComment.getDate(), Calendar.DATE));
 

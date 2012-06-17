@@ -53,7 +53,7 @@ public class EmailRegistryControllerTest {
 		registryMailSenderMock.sendApplicationToRegistryContacts(applicationForm);
 		applicationServiceMock.save(applicationForm);
 		Comment comment = new CommentBuilder().id(4).toComment();
-		EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUserMock, "Request for assistance in validating application details send to UCL central registry office.", CommentType.GENERIC)).andReturn(comment);
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, currentUserMock, "Request for assistance in validating application details send to UCL central registry office.", CommentType.GENERIC, null)).andReturn(comment);
 		commentServiceMock.save(comment);
 		EasyMock.replay(userServiceMock, registryMailSenderMock, applicationServiceMock, commentFactoryMock, commentServiceMock);
 		

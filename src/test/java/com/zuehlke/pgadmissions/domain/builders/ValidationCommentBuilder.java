@@ -5,6 +5,7 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -20,7 +21,12 @@ public class ValidationCommentBuilder {
 	private Date date;	
 	private String comment;	
 	private Integer id;
-	
+	private ApplicationFormStatus nextStatus;
+
+	public ValidationCommentBuilder nextStatus(ApplicationFormStatus nextStatus){
+		this.nextStatus = nextStatus;
+		return this;
+	}
 	
 	public ValidationCommentBuilder user(RegisteredUser user){
 		this.user = user;
@@ -80,6 +86,7 @@ public class ValidationCommentBuilder {
 		validationComment.setQualifiedForPhd(qualifiedForPhd);
 		validationComment.setType(type);
 		validationComment.setUser(user);
+		validationComment.setNextStatus(nextStatus);
 		return validationComment;
 	}
 }

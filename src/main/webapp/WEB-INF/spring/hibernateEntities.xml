@@ -52,6 +52,8 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Person</value>
 	     		<value>com.zuehlke.pgadmissions.domain.SuggestedSupervisor</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ValidationComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReviewEvaluationComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.InterviewEvaluationComment</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

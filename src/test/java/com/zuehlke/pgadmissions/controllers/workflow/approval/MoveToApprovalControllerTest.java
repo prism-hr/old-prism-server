@@ -74,7 +74,7 @@ public class MoveToApprovalControllerTest {
 		ApprovalRound approvalround = new ApprovalRoundBuilder().id(4).toApprovalRound();
 		final ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 		
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
+		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				return application;
@@ -95,7 +95,7 @@ public class MoveToApprovalControllerTest {
 	public void shouldNotSaveReviewRoundAndReturnToReviewRoundPageIfHasErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
+		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				Assert.assertEquals("1", applicationId);
@@ -116,7 +116,7 @@ public class MoveToApprovalControllerTest {
 		final RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
 
 		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock,// 
-				userValidatorMock, null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock) {
+				userValidatorMock, null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				Assert.assertEquals("121", applicationId);
@@ -154,7 +154,7 @@ public class MoveToApprovalControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock);
+		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null);
 	}
 
 }

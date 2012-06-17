@@ -53,7 +53,7 @@
 			<div class="content-box">
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
-					<input type="hidden" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
+					
 					
 					<section class="form-rows">
 						<div>
@@ -72,13 +72,7 @@
 									<div class="field">		            				
 										<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 									</div>
-									<#if applicationForm.isInState('VALIDATION')>
-									<input type="hidden" id="commentType" value="VALIDATION"/>
-									<#elseif applicationForm.isInState('REVIEW')>
-									<input type="hidden" id="commentType" value="REVIEW_EVALUATION"/>
-									<#elseif applicationForm.isInState('INTERVIEW')>
-									<input type="hidden" id="commentType" value="INTERVIEW_EVALUATION"/>
-									</#if>
+									
 								</div>
 
 							</div><!-- close .row-group -->
@@ -135,20 +129,20 @@
 									</div>
 								</div>
 								<#if reviewersWillingToInterview??>		            			
-								<div class="row">
-									<label class="plain-label">Delegate interview management to</label>
-									<div class="field">		   
-										<form id="delegateForm" method ="POST" action="<@spring.url '/delegate' />">   
-											<input type="hidden" name = "applicationId" value =  "${(applicationForm.applicationNumber)!}"/>     				
-											<select class="max" name="applicationAdministrator" id="appliationAdmin" disabled="disabled">
-												<option value="">Select...</option>
-												<#list reviewersWillingToInterview as reviewerWillingToInterview>
-												<option value="${encrypter.encrypt(reviewerWillingToInterview.id)}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
-												</#list>
-											</select>	
-										</form>
+									<div class="row">
+										<label class="plain-label">Delegate interview management to</label>
+										<div class="field">		   
+											<form id="delegateForm" method ="POST" action="<@spring.url '/delegate' />">   
+												<input type="hidden" name = "applicationId" value =  "${(applicationForm.applicationNumber)!}"/>     				
+												<select class="max" name="applicationAdministrator" id="appliationAdmin" disabled="disabled">
+													<option value="">Select...</option>
+													<#list reviewersWillingToInterview as reviewerWillingToInterview>
+													<option value="${encrypter.encrypt(reviewerWillingToInterview.id)}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
+													</#list>
+												</select>	
+											</form>
+										</div>
 									</div>
-								</div>
 								</#if>
 								
 							</div><!-- close .row-group -->
@@ -157,7 +151,18 @@
 								<button type="reset" value="cancel">Cancel</button>
 								<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
 							</div>
-
+						 	<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress' />">
+						 		 <input type="hidden" id="applicationId" name ="application" value =  "${(applicationForm.applicationNumber)!}"/>
+						 		 <input type="hidden" id="commentField" name="comment" value=""/>				
+						 		 <input type="hidden" id="nextStatus" name="nextStatus"  value=""/>
+						 		 <#if applicationForm.isInState('VALIDATION')>
+									<input type="hidden" id="commentType" name="type" value="VALIDATION"/>
+									<#elseif applicationForm.isInState('REVIEW')>
+									<input type="hidden" id="commentType" name="type" value="REVIEW_EVALUATION"/>
+									<#elseif applicationForm.isInState('INTERVIEW')>
+									<input type="hidden" id="commentType" name="type" value="INTERVIEW_EVALUATION"/>
+								</#if>
+						 	</form>
 						</div>
 					</section>
 

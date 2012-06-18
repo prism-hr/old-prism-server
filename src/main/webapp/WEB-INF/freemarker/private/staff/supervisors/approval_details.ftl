@@ -94,6 +94,7 @@
 										<div class="row-group" id="assignSupervisorsToAppSection">			
 											<div class="row">
 												<label class="label">Supervisors</label>
+												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<p>
 														<strong>Available Supervisors</strong>
@@ -168,6 +169,7 @@
 											
 											<div class="row">
 												<label class="label normal">Supervisor First Name<em>*</em></label> 
+												<span class="hint" data-desc=""></span>
 													<div class="field">
 														<input class="full" type="text" name="newSupervisorFirstName" id="newSupervisorFirstName" value="${(supervisor.firstName?html)!}"/>
 													</div>
@@ -177,6 +179,7 @@
 											
 											<div class="row">
 												<label class="label normal">Supervisor Last Name<em>*</em></label>
+												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<input class="full" type="text" name="newSupervisorLastName" id="newSupervisorLastName" value="${(supervisor.lastName?html)!}"/>			                                      
 												</div>
@@ -186,6 +189,7 @@
 											
 											<div class="row">
 												<label class="label normal">Email<em>*</em></label>
+												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<input class="full" type="text"  name="newSupervisorEmail" id="newSupervisorEmail" value="${(supervisor.email?html)!}"/>			                                         
 												</div>

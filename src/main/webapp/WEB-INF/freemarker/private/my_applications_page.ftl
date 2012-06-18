@@ -63,7 +63,7 @@
               <div id="search-box"> 
 								<div class="downloads">
 									<#if (applications?size > 0)>
-									<a class="button blue" name="downloadAll" id="downloadAll">Download</a>
+									<a target="_blank" class="button blue" name="downloadAll" id="downloadAll">Download</a>
 									</#if>
 								</div>
 								

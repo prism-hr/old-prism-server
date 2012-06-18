@@ -111,17 +111,17 @@ $(document).ready(function()
 		
 		if ($('#supervisorFirstname').val() == "")
 		{
-			$("span[name='superFirstname']").html('First name cannot be empty.').show();
+			$("span[name='superFirstname']").html('You must make an entry.').show();
 			errors++;
 		}		
 		if ($('#supervisorLastname').val() == "")
 		{
-			$("span[name='superLastname']").html('Last name cannot be empty.').show();
+			$("span[name='superLastname']").html('You must make an entry.').show();
 			errors++;
 		}		
 		if (!validateEmail($('#supervisorEmail').val()))
 		{
-			$("span[name='superEmail']").html('Email is not valid.').show();
+			$("span[name='superEmail']").html('You must enter a valid email address.').show();
 			errors++;
 		}
 		

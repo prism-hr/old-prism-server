@@ -84,7 +84,7 @@ function validateReminderInterval() {
 		var reminderIntervalDuration = $('#reminderIntervalDuration').val();
 		var reminderIntervalUnit = $('#reminderUnit').val();
 		if(isNaN(reminderIntervalDuration) || reminderIntervalDuration == ""){
-			$("span[name='invalidDurationInterval']").html('Please specify the duration amount as a number.');
+			$("span[name='invalidDurationInterval']").html('You must enter a whole number greater that 0.');
 			$("span[name='invalidDurationInterval']").show();
 			validationErrors = true;
 		}
@@ -93,7 +93,7 @@ function validateReminderInterval() {
 			$("span[name='invalidDurationInterval']").hide();
 		}
 		if(reminderIntervalUnit == ""){
-			$("span[name='invalidUnitInterval']").html('Please select a duration unit from the dropdown.');
+			$("span[name='invalidUnitInterval']").html('You must make a selection.');
 			$("span[name='invalidUnitInterval']").show();
 			
 			validationErrors = true;
@@ -112,7 +112,7 @@ function appendStagesJSON() {
 	    var stageDuration = $('#' + stageName + '_duration').val();
 	    var stageUnit = $('#'+ stageName + '_unit').val();
 	    if(isNaN(stageDuration) || stageDuration == ""){
-	    	$("span[name='"+stageName+"_invalidDuration']").html('Please specify the duration amount as a number.');
+	    	$("span[name='"+stageName+"_invalidDuration']").html('You must enter a whole number greater that 0.');
 			$("span[name='"+stageName+"_invalidDuration']").show();
 	    	validationErrors = true;
 	    }
@@ -121,7 +121,7 @@ function appendStagesJSON() {
 	    	$("span[name='"+stageName+"_invalidDuration']").hide();
 	    }
 	    if(stageUnit == ""){
-	    	$("span[name='"+stageName+"_invalidUnit']").html('Please select a duration unit from the dropdown.');
+	    	$("span[name='"+stageName+"_invalidUnit']").html('You must make a selection.');
 			$("span[name='"+stageName+"_invalidUnit']").show();
 
 	    	validationErrors = true;
@@ -148,10 +148,10 @@ function appendRegistryUsersJSON() {
 	}
 	else{
 		if(!validateEmail($('#1_regUserEmail').val())){
-			$("span[name='firstuserInvalid']").html("Email is not valid.");
+			$("span[name='firstuserInvalid']").html("You must enter a valid email address.");
 		}
 		if($('#1_regUserfirstname').val() == "" || $('#1_regUserLastname').val() ==""){
-			$("span[name='firstuserInvalid']").html('Please specify firstname lastname and email.');
+			$("span[name='firstuserInvalid']").html('You must make an entry.');
 		}
 		$("span[name='firstuserInvalid']").show();
 		validationErrors = true;
@@ -165,10 +165,10 @@ function appendRegistryUsersJSON() {
 		}
 		else{
 			if(!validateEmail($('#2_regUserEmail').val())){
-				$("span[name='seconduserInvalid']").html("Email is not valid.");
+				$("span[name='seconduserInvalid']").html("You must enter a valid email address.");
 			}
 			if($('#2_regUserfirstname').val() == "" || $('#2_regUserLastname').val() ==""){
-				$("span[name='seconduserInvalid']").html('Please specify firstname lastname and email.');
+				$("span[name='seconduserInvalid']").html('You must make an entry.');
 			}
 			$("span[name='seconduserInvalid']").show();
 			validationErrors = true;
@@ -183,10 +183,10 @@ function appendRegistryUsersJSON() {
 		}
 		else{
 			if(!validateEmail($('#3_regUserEmail').val())){
-				$("span[name='thirduserInvalid']").html("Email is not valid.");
+				$("span[name='thirduserInvalid']").html("You must enter a valid email address.");
 			}
 			if($('#3_regUserfirstname').val() == "" || $('#3_regUserLastname').val() ==""){
-				$("span[name='thirduserInvalid']").html('Please specify firstname lastname and email.');
+				$("span[name='thirduserInvalid']").html('Please specify all entries. ');
 			}
 			$("span[name='thirduserInvalid']").show();
 			validationErrors = true;

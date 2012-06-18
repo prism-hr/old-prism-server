@@ -100,17 +100,16 @@
 														<strong>Available Supervisors</strong>
 													</p>
 													<select id="programSupervisors" class="max" multiple="multiple" size="${avaliableOptionsSize}">
-														<option value="" disabled="disabled" id="default">Default supervisors</option>
+														<optgroup id="default" label="Default supervisors">
 														<#list programmeSupervisors as supervisor>
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
 														</#list>
-														<option value="" disabled="disabled"></option>
-														<option value="" disabled="disabled" id="previous">Previous supervisors in this programme</option>
-														
+														</optgroup>
+														<optgroup id="previous" label="Previous supervisors in this programme">
 														<#list previousSupervisors as supervisor>
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
-														</#list>							
-														<option value="" disabled="disabled"></option>								
+														</#list>
+														</optgroup>
 													</select>
 												</div>
 											</div>

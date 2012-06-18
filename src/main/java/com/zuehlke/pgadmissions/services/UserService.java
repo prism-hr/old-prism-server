@@ -240,11 +240,16 @@ public class UserService {
 			throw new IllegalStateException(String.format("user with email: %s already exists!", email));
 		}
 		newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authority);
+		setDirectURLAndSaveUser(directURL, application, newUser);
+		return newUser;
+	}
+
+	public void setDirectURLAndSaveUser(DirectURLsEnum directURL,
+			ApplicationForm application, RegisteredUser newUser) {
 		if(directURL != null && application != null){
 			newUser.setDirectToUrl(directURL.displayValue() + application.getApplicationNumber());
 		}
 		userDAO.save(newUser);
-		return newUser;
 	}
 
 	@Transactional

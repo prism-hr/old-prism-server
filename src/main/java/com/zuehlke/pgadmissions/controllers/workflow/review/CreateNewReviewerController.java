@@ -100,13 +100,16 @@ public class CreateNewReviewerController extends ReviewController {
 				return getCreateReviewerModelAndView(applicationForm, newUserIds,
 						getCreateReviewerMessage("assignReviewer.user.alreadyInProgramme", existingUser), viewName);
 			}
-
+			
 			newUserIds.add(encryptionHelper.encrypt(existingUser.getId()));
+			userService.updateUserWithNewRoles(existingUser, applicationForm.getProgram(), Authority.REVIEWER);
 			return getCreateReviewerModelAndView(applicationForm, newUserIds, getCreateReviewerMessage("assignReviewer.user.added", existingUser), viewName);
 
 		}
-
-		RegisteredUser newUser = userService.createNewUserInRole(reviewer.getFirstName(), reviewer.getLastName(), reviewer.getEmail(), Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, applicationForm);
+		RegisteredUser newUser = userService.createNewUserForProgramme(reviewer.getFirstName(), reviewer.getLastName(), reviewer.getEmail(), applicationForm.getProgram(),
+				Authority.REVIEWER);
+		userService.setDirectURLAndSaveUser(DirectURLsEnum.ADD_REVIEW, applicationForm, newUser);
+//		RegisteredUser newUser = userService.createNewUserInRole(reviewer.getFirstName(), reviewer.getLastName(), reviewer.getEmail(), Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, applicationForm);
 		newUserIds.add(encryptionHelper.encrypt(newUser.getId()));
 		return getCreateReviewerModelAndView(applicationForm, newUserIds, getCreateReviewerMessage("assignReviewer.user.created", newUser), viewName);
 	}

@@ -51,7 +51,7 @@
       <!-- Start date -->
       <div class="admin_row">
         <label class="admin_row_label">Start Date</label>
-        <div class="field">${(applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}</div>
+        <div class="field">${(applicationForm.programmeDetails.startDate?string('dd MMM yyyy'))!}</div>
       </div>
       
       <!-- Referrer -->

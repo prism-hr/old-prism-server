@@ -67,6 +67,7 @@
 	
 									<div class="row">
 										<span class="plain-label">Comment</span>
+										<span class="hint" data-desc=""></span>
 										<div class="field">		            				
 											<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 										</div>

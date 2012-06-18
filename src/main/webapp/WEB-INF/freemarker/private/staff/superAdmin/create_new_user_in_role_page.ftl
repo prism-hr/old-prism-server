@@ -43,106 +43,92 @@
 		        
 									<form id ="createNewUser" name="createNewUser" action="/pgadmissions/manageUsers/createNewUser" method="POST">
 							
-										<h1>Add New programme users and assign roles</h1>
-										<p>Please create a new user to administer the programme.</p>
-			            
+										<h1>Manage Users</h1>
+										
+										<div class="section-info-bar">
+											Manage programme roles. You can also manage superadministrators.
+										</div>
+										
 										<section class="form-rows">
 											<div>
 											
 												<div class="row-group">
+												
 													<div class="row programme">
-														<label>Select programme</label>
-														<select name="selectedProgram" id="selectedProgramForNewUser">
-															<option value="">Please select a program</option>
-															<option value="-1">All programs</option>
-															<#list programs as program>"
-															<option value='${program.code}' 
-															<#if selectedProgram?? && selectedProgram.id == program.id >
-															selected = "selected"
-															</#if>
-															>${program.title?html}</option>               
+														<label class="plain-label">Programme</label>
+														<span class="hint" data-desc=""></span>
+														<div class="field">
+															<select name="selectedProgram" id="selectedProgramForNewUser">
+																<option value="">Please select a program</option>
+																<option value="-1">All programs</option>
+																<#list programs as program>"
+																<option value='${program.code}' 
+																<#if selectedProgram?? && selectedProgram.id == program.id>selected="selected"</#if>
+																>${program.title?html}</option>               
+																</#list>
+															</select>
+															
+															<@spring.bind "newUserDTO.selectedProgram" /> 
+															<#list spring.status.errorMessages as error>
+															<span class="invalid">${error}</span>
 															</#list>
-														</select>				              		
-													</div>
-													<@spring.bind "newUserDTO.selectedProgram" /> 
-													<#list spring.status.errorMessages as error>
-														<div class="row">
-															<div class="field">
-																<span class="invalid">${error}</span>
-															</div>
 														</div>
-													</#list>
+														
+													</div>
 												</div>
 											
 												<div class="row-group">
 													
-						          	<div class="left-column">
-					            
 													<div class="row">
 														<label class="label">First Name<em>*</em></label>
+														<span class="hint" data-desc=""></span>
 														<div class="field">
 															<input class="full" type="text"  value="${(newUserDTO.firstName?html)!}" name="firstName" id="firstName"/>			                                  
+															<@spring.bind "newUserDTO.firstName" /> 
+															<#list spring.status.errorMessages as error>
+															<span class="invalid">${error}</span>
+															</#list>			                             
 														</div>
-														<@spring.bind "newUserDTO.firstName" /> 
-													<#list spring.status.errorMessages as error>
-														<div class="row">
-															<div class="field">
-																<span class="invalid">${error}</span>
-															</div>
-														</div>
-													</#list>			                             
 													</div>
 
 													<div class="row">
 														<label class="label">Last Name<em>*</em></label>
+														<span class="hint" data-desc=""></span>
 														<div class="field">
 															<input class="full" type="text" value="${(newUserDTO.lastName?html)!}"  name="lastName" id="lastName"/>
+															<@spring.bind "newUserDTO.lastName" /> 
+															<#list spring.status.errorMessages as error>
+															<span class="invalid">${error}</span>
+															</#list>
 														</div>
-														<@spring.bind "newUserDTO.lastName" /> 
-														<#list spring.status.errorMessages as error>
-														<div class="row">
-															<div class="field">
-																<span class="invalid">${error}</span>
-															</div>
-														</div>
-														</#list>
 													</div>
                                 
 													<div class="row">
 														<label class="label">Email<em>*</em></label>
+														<span class="hint" data-desc=""></span>
 														<div class="field">
 															<input class="full" type="text" value="${(newUserDTO.email?html)!}"  name="email" id="email"/>
+															<@spring.bind "newUserDTO.email" /> 
+															<#list spring.status.errorMessages as error>
+															<span class="invalid">${error}</span>
+															</#list>
 														</div>
-														<@spring.bind "newUserDTO.email" /> 
-														<#list spring.status.errorMessages as error>
-														<div class="row">
-															<div class="field">
-																<span class="invalid">${error}</span>
-															</div>
-														</div>
-														</#list>
 													</div>
                                 
-						            </div>
-												
-												<!-- Right side -->
-												<div class="right-column">
-					            
 													<div class="row">
-					                	<label>Role(s) in application process</label>
-					                	<select multiple size="6" id="roles" name="selectedAuthorities" >
-														<#list authorities as authority>
-															<option value="${authority}">${authority}</option>
-														</#list>
-														</select>
-														<@spring.bind "newUserDTO.selectedAuthorities" /> 
-													<#list spring.status.errorMessages as error>
-														<div class="row">
-															<div class="field">
-																<span class="invalid">${error}</span>
-															</div>
+					                	<label>Roles</label>
+														<span class="hint" data-desc=""></span>
+														<div class="field">
+															<select multiple size="6" id="roles" name="selectedAuthorities" >
+															<#list authorities as authority>
+																<option value="${authority}">${authority}</option>
+															</#list>
+															</select>
+															<@spring.bind "newUserDTO.selectedAuthorities" /> 
+															<#list spring.status.errorMessages as error>
+															<span class="invalid">${error}</span>
+															</#list>
 														</div>
-													</#list>
 					              	</div>
 					            
 											</div>

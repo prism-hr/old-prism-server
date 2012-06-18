@@ -217,7 +217,7 @@
 				<span class="plain-label">Start Date<em>*</em></span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.startDate'/>"></span>
 				<div class="field">                    
-					<input id="qualificationStartDate" class="half date" type="text" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if> />
+					<input id="qualificationStartDate" class="half date" type="text" value="${(qualification.qualificationStartDate?string('dd MMM yyyy'))!}" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if> />
 				</div>
 			</div>
 			<@spring.bind "qualification.qualificationStartDate" />         	
@@ -278,7 +278,7 @@
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 				
 				<div class="field" id="awardDateField">
-					<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="<#if qualification.isQualificationCompleted()>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</#if>"
+					<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="<#if qualification.isQualificationCompleted()>${(qualification.qualificationAwardDate?string('dd MMM yyyy'))!}</#if>"
 					<#if !qualification.isQualificationCompleted() || applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> />
 				</div>
 			</div>

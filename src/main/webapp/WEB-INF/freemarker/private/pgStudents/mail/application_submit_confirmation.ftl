@@ -38,7 +38,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your application for UCL ${application.program.title}. Your application number is ${application.applicationNumber}. Please quote this number in all correspondence.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">An admissions officer will now make a preliminary assessment of your suitability. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMMM yyyy")}.
+			      		<font face="Arial, Helvetica, sans-serif" size="2">An admissions officer will now make a preliminary assessment of your suitability. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

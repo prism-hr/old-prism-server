@@ -43,7 +43,7 @@
               ${existingFunding.type.displayValue} (&pound;${(existingFunding.value?html)!})
             </a>
           </td>
-          <td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
+          <td>${existingFunding.awardDate?string('dd MMM yyyy')}</td>
           <td>                                                  
             <a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-edit button-hint">edit</a>
             <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
@@ -146,7 +146,7 @@
         <span class="plain-label">Award Date<em>*</em></span>
         <span class="hint"  data-desc="<@spring.message 'fundingDetails.award.awardDate'/>"></span>
         <div class="field">
-          <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(funding.awardDate?string('dd-MMM-yyyy'))!}"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if> />
+          <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(funding.awardDate?string('dd MMM yyyy'))!}"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if> />
           <@spring.bind "funding.awardDate" />
           <#list spring.status.errorMessages as error>
           <span class="invalid">${error}</span>

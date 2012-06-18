@@ -196,9 +196,9 @@
 											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
-												<input class="half date" disabled="disabled" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
+												<input class="half date" disabled="disabled" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd MMM yyyy'))!}" />
 												<#else>
-												<input class="half date" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
+												<input class="half date" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd MMM yyyy'))!}" />
 												</#if>
 												<@spring.bind "interview.interviewDueDate" /> 
 												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>

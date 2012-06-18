@@ -111,7 +111,7 @@
 													<span class="plain-label">Current Password</span>
 													<span class="hint" data-desc=""></span>
 													<div class="field">	
-														<input id="currentPassword" type="password" />
+														<input class="full" id="currentPassword" type="password" />
 													</div>
 													<@spring.bind "updatedUser.password" />
 													<#list spring.status.errorMessages as error>
@@ -125,7 +125,7 @@
 													<span class="plain-label">New Password</span>
 													<span class="hint" data-desc=""></span>
 													<div class="field">	
-														<input id="newPassword" type="password"  />
+														<input class="full" id="newPassword" type="password"  />
 													</div>
 													<@spring.bind "updatedUser.newPassword" />
 													<#list spring.status.errorMessages as error>
@@ -139,7 +139,7 @@
 													<span class="plain-label">Confirm New Password</span>
 													<span class="hint" data-desc=""></span>
 													<div class="field">	
-														<input id="confirmNewPass" type="password"  />
+														<input class="full" id="confirmNewPass" type="password"  />
 													</div>
 													<@spring.bind "updatedUser.confirmPassword" />
 													<#list spring.status.errorMessages as error>

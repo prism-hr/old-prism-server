@@ -88,6 +88,7 @@
 								
 										<div class="row" id="assignInterviewersToAppSection">
 											<label class="label">Interviewers</label>
+											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<p><strong>Available Interviewers</strong></p>
 												<select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}">
@@ -153,6 +154,7 @@
 
 										<div class="row">
 											<label class="label normal">Interviewer First Name<em>*</em></label> 
+											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  value="${(interviewer.firstName?html)!}"/>
 												<@spring.bind "interviewer.firstName" /> 
@@ -162,6 +164,7 @@
 										
 										<div class="row">
 											<label class="label normal">Interviewer Last Name<em>*</em></label>
+											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<input class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName" value="${(interviewer.lastName?html)!}"/>			                                      
 												<@spring.bind "interviewer.lastName" /> 
@@ -171,6 +174,7 @@
 			
 										<div class="row">
 											<label class="label normal">Email<em>*</em></label>
+											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<input class="full" type="text"  name="newInterviewerEmail" id="newInterviewerEmail" value="${(interviewer.email?html)!}"/>			                                         
 												<@spring.bind "interviewer.email" /> 
@@ -188,57 +192,61 @@
 									<div class="row-group">
 										<p><strong>Interview Details</strong></p>
 										<div class="row">
-										<label class="label normal">Interview Date<em>*</em></label>
-										<div class="field">
-											<#if assignOnly?? && assignOnly>
-											<input class="half date" disabled="disabled" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
-											<#else>
-											<input class="half date" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
-											</#if>
-											<@spring.bind "interview.interviewDueDate" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											<label class="label normal">Interview Date<em>*</em></label>
+											<span class="hint" data-desc=""></span>
+											<div class="field">
+												<#if assignOnly?? && assignOnly>
+												<input class="half date" disabled="disabled" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
+												<#else>
+												<input class="half date" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
+												</#if>
+												<@spring.bind "interview.interviewDueDate" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											</div>
 										</div>
-									</div>
 									
-									<div class="row">
-										<label class="label normal">Interview Time<em>*</em></label>
-										<div class="field">
-											<#if assignOnly?? && assignOnly>
-											<input disabled="disabled" type="text" value="${(interview.interviewTime)!}" />
-											<#else>
-											<#include "/private/staff/interviewers/time_dropdown.ftl"/>
-											<span class="invalid" name="timeInvalid" style="display:none;"></span>
-											<@spring.bind "interview.interviewTime" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-											</#if>
+										<div class="row">
+											<label class="label normal">Interview Time<em>*</em></label>
+											<span class="hint" data-desc=""></span>
+											<div class="field">
+												<#if assignOnly?? && assignOnly>
+												<input disabled="disabled" type="text" value="${(interview.interviewTime)!}" />
+												<#else>
+												<#include "/private/staff/interviewers/time_dropdown.ftl"/>
+												<span class="invalid" name="timeInvalid" style="display:none;"></span>
+												<@spring.bind "interview.interviewTime" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+												</#if>
+											</div>
 										</div>
-									</div>
 									
-									<div class="row">
-										<label class="label normal">Further Details<em>*</em></label>
-										<div class="field">
-											<#if assignOnly?? && assignOnly>
-											<textarea id="furtherDetails" readonly="readonly" disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
-											<#else>
-											<textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
-											</#if>
-											<@spring.bind "interview.furtherDetails" /> 
-											<#list spring.status.errorMessages as error><br /><span class="invalid">${error}</span></#list>
+										<div class="row">
+											<label class="label normal">Further Details<em>*</em></label>
+											<span class="hint" data-desc=""></span>
+											<div class="field">
+												<#if assignOnly?? && assignOnly>
+												<textarea id="furtherDetails" readonly="readonly" disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
+												<#else>
+												<textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
+												</#if>
+												<@spring.bind "interview.furtherDetails" /> 
+												<#list spring.status.errorMessages as error><br /><span class="invalid">${error}</span></#list>
+											</div>
 										</div>
-									</div>
 		
-									<div class="row">
-										<label class="label normal">Location (Link)<em>*</em></label>
-										<div class="field">
-											<#if assignOnly?? && assignOnly>
-											<textarea id="interviewLocation" readonly="readonly" disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>
-											<#else>
-											<textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength="5000" placeholder="(example: http://www.somewhere.com)">${(interview.locationURL?html)!}</textarea>
-											</#if>				                                            
-											<@spring.bind "interview.locationURL" /> 
-											<#list spring.status.errorMessages as error><br /><span class="invalid">${error}</span></#list>
+										<div class="row">
+											<label class="label normal">Location (Link)<em>*</em></label>
+											<span class="hint" data-desc=""></span>
+											<div class="field">
+												<#if assignOnly?? && assignOnly>
+												<textarea id="interviewLocation" readonly="readonly" disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>
+												<#else>
+												<textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength="5000" placeholder="(example: http://www.somewhere.com)">${(interview.locationURL?html)!}</textarea>
+												</#if>				                                            
+												<@spring.bind "interview.locationURL" /> 
+												<#list spring.status.errorMessages as error><br /><span class="invalid">${error}</span></#list>
+											</div>
 										</div>
-									</div>
 									
 								</div>
 								

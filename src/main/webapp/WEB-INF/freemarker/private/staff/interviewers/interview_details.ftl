@@ -92,16 +92,16 @@
 											<div class="field">
 												<p><strong>Available Interviewers</strong></p>
 												<select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}">
-													<option value="" disabled="disabled" id="default">Default interviewers</option>
-													<#list programmeInterviewers as interviewer>
-													<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
-													</#list>
-													<option value="" disabled="disabled"></option>
-													<option value="" disabled="disabled" id="previous">Previous interviewers in this programme</option>
-													<#list previousInterviewers as interviewer>
-													<option value="${encrypter.encrypt(interviewer.id)}" category="previous">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
-													</#list>							
-													<option value="" disabled="disabled"></option>								
+													<optgroup id="default" label="Default interviewers">
+														<#list programmeInterviewers as interviewer>
+														<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
+														</#list>
+													</optgroup>
+													<optgroup id="previous" label="Previous interviewers in this programme">
+														<#list previousInterviewers as interviewer>
+														<option value="${encrypter.encrypt(interviewer.id)}" category="previous">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
+														</#list>
+													</optgroup>
 												</select>
 											</div>
 										</div>

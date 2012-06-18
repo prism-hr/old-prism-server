@@ -73,6 +73,7 @@
 
 								<div class="row">
 									<span class="plain-label">Comment</span>
+									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 									</div>
@@ -86,6 +87,7 @@
 							
 								<div class="row">
 									<label class="plain-label">Is the applicant qualified for PhD entry to UCL?</label>
+									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<#list validationQuestionOptions as option>
 										<label><input type="radio" name="qualifiedForPhd" value="${option}"/> ${option.displayValue}</label>
@@ -95,6 +97,7 @@
 
 								<div class="row">
 									<label class="plain-label">Does the applicant meeting the minimum required standard of English Language competence?</label>
+									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<#list validationQuestionOptions as option>
 										<label><input type="radio" name="englishCompentencyOk" value="${option}"/> ${option.displayValue}</label>
@@ -104,6 +107,7 @@
 
 								<div class="row">
 									<label class="plain-label">What is the applicant's fee status?</label>
+									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<#list homeOrOverseasOptions as option>
 										<label><input type="radio" name="homeOrOverseas" value="${option}"/> ${option.displayValue}</label>
@@ -123,6 +127,7 @@
 							<div class="row-group">
 								<div class="row">
 									<label class="plain-label">Next stage</label>
+									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<select class="max" name="status" id="status">
 											<option value="">Select...</option>
@@ -135,6 +140,7 @@
 								<#if reviewersWillingToInterview??>		            			
 									<div class="row">
 										<label class="plain-label">Delegate interview management to</label>
+										<span class="hint" data-desc=""></span>
 										<div class="field">		   
 											<form id="delegateForm" method ="POST" action="<@spring.url '/delegate' />">   
 												<input type="hidden" name = "applicationId" value =  "${(applicationForm.applicationNumber)!}"/>     				

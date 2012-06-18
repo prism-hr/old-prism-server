@@ -56,6 +56,9 @@
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
 				
+					<div class="section-info-bar">
+						Confirm your approval of the applicant. Their application will be passed to admissions to generate an offer.
+					</div>
 					
 					<section class="form-rows">
 						<div>

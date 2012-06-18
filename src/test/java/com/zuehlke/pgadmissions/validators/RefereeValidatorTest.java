@@ -100,7 +100,7 @@ public class RefereeValidatorTest {
 	@Test
 	public void shouldRejectIfAddressTooLong() {
 		StringBuilder addressLoc = new StringBuilder();
-		for (int i = 0; i <=200; i++) {
+		for (int i = 0; i <=500; i++) {
 			addressLoc.append("a");
 		}
 		referee.setAddressLocation(addressLoc.toString());

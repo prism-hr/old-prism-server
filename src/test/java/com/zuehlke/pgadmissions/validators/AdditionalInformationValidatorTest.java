@@ -81,16 +81,6 @@ public class AdditionalInformationValidatorTest {
 	}
 
 	@Test
-	public void shouldRejectIfNoCovictionsButConvictionTextProvided() {
-		info.setConvictions(false);
-		info.setConvictionsText("lalala");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "informationText");
-		infoValidator.validate(info, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("additionalInformation.convictionsText.noTextExpected", mappingResult.getFieldError("convictionsText").getCode());
-	}
-
-	@Test
 	public void shouldRejectIfTooMuchAddtionalInfo() {
 		StringBuilder addnInfo = new StringBuilder();
 		for (int i = 0; i <= 5000; i++) {

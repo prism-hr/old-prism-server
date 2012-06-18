@@ -43,14 +43,14 @@ public class RegisterFormValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "user.firstName.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "user.lastName.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "user.password.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", "user.confirmPassword.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", "text.field.empty");
 		RegisteredUser record = (RegisteredUser) target;
 		if(record.getConfirmPassword()!=null && record.getPassword() !=null && !record.getConfirmPassword().equals(record.getPassword())){
-			errors.rejectValue("password", "user.password.notmatch");
-			errors.rejectValue("confirmPassword", "user.confirmPassword.notmatch");
+			errors.rejectValue("password", "user.passwords.notmatch");
+			errors.rejectValue("confirmPassword", "user.passwords.notmatch");
 		}
 
 		if(record.getPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
@@ -73,7 +73,7 @@ public class RegisterFormValidator implements Validator {
 			}
 		}
 		if (!EmailValidator.getInstance().isValid(record.getEmail())) {
-			errors.rejectValue("email", "user.email.invalid");
+			errors.rejectValue("email", "text.email.notvalid");
 		}
 	}
 

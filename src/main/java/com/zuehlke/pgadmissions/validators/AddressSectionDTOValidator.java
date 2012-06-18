@@ -10,6 +10,8 @@ import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 @Component
 public class AddressSectionDTOValidator implements Validator {
 
+	private static final int MAXIMUM_CHARS = 500;
+
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return AddressSectionDTO.class.equals(clazz);
@@ -25,13 +27,13 @@ public class AddressSectionDTOValidator implements Validator {
 		AddressSectionDTO address = (AddressSectionDTO) target;
 
 		if (address.getCurrentAddressLocation() != null) {
-			if (address.getCurrentAddressLocation().length() > 2000) {
+			if (address.getCurrentAddressLocation().length() > MAXIMUM_CHARS) {
 				errors.rejectValue("currentAddressLocation", "user.addressLength.exceeded");
 			}
 		}
 
 		if (address.getContactAddressLocation() != null) {
-			if (address.getContactAddressLocation().length() > 2000) {
+			if (address.getContactAddressLocation().length() > MAXIMUM_CHARS) {
 				errors.rejectValue("contactAddressLocation", "user.addressLength.exceeded");
 			}
 		}

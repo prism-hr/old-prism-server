@@ -94,15 +94,6 @@ public class EmploymentPositionValidatorTest {
 	}
 	
 	@Test
-	public void shouldRejectIfEndDateIsSetForNotCompletedEmploymentPosition(){
-		position.setCurrent(true);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
-		positionValidator.validate(position, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_endDate.empty",mappingResult.getFieldError("endDate").getCode());
-	}
-	
-	@Test
 	public void shouldRejectIfLanguageIsEmpty(){
 		position.setLanguage(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");

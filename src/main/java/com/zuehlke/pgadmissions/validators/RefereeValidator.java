@@ -11,6 +11,8 @@ import com.zuehlke.pgadmissions.domain.Referee;
 @Service
 public class RefereeValidator implements Validator {
 
+	private static final int MAXIMUM_ADDRESS_CHARS = 500;
+
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return Referee.class.equals(clazz);
@@ -31,7 +33,7 @@ public class RefereeValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "text.field.empty");
 		
 		if (referee.getAddressLocation() != null) {
-			if (referee.getAddressLocation().length() > 200) {
+			if (referee.getAddressLocation().length() > MAXIMUM_ADDRESS_CHARS) {
 				errors.rejectValue("addressLocation", "user.refereeAddressLength.exceeded");
 			}
 		}

@@ -37,12 +37,7 @@ public class AdditionalInformationValidator implements Validator {
 						errors.rejectValue("convictionsText", "additionalInformation.convictionsText.notvalid");
 					}
 				}
-			} else {
-				String convictionsText = info.getConvictionsText();
-				if (convictionsText != null && StringUtils.hasText(convictionsText)) {
-					errors.rejectValue("convictionsText", "additionalInformation.convictionsText.noTextExpected");
-				}
-			}
+			} 
 		}
 	}
 }

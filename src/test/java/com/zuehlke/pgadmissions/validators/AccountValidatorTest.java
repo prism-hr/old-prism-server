@@ -183,7 +183,7 @@ public class AccountValidatorTest {
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
 		accountValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("account.email.alreadyexists", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("user.email.alreadyexists", mappingResult.getFieldError("email").getCode());
 	}
 	
 	@Test
@@ -201,20 +201,6 @@ public class AccountValidatorTest {
 
 	}
 	
-	@Test
-	public void shouldRejectIfNewPasswordSameWithExisting() {
-		user.setNewPassword("5f4dcc3b5aa");
-		user.setConfirmPassword("5f4dcc3b5aa");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
-		EasyMock.replay(userServiceMock, encryptionUtilsMock);
-		accountValidator.validate(user, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("account.newPassword.same", mappingResult.getFieldError("newPassword").getCode());
-	}
 	
 	@Test
 	public void shouldRejectIfFirstNameEmpty() {

@@ -56,8 +56,5 @@ public class EmploymentPositionValidator implements Validator {
 		if (!position.isCurrent()  && StringUtils.isBlank(endDate)){
 			errors.rejectValue("endDate", "text.field.empty");
 		}
-		if (position.isCurrent() && StringUtils.isNotBlank(endDate)) {
-			errors.rejectValue("endDate", "position.position_endDate.empty");
-		}
 	}
 }

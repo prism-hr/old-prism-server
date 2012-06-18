@@ -76,16 +76,12 @@ public class AccountValidator implements Validator {
 		if(passwordFieldsFilled && !updatedUser.getNewPassword().matches("[a-zA-Z0-9+]+")){
 			errors.rejectValue("newPassword", "user.password.nonalphanumeric");
 		}
-
-		if(passwordFieldsFilled && encryptionUtils.getMD5Hash(updatedUser.getNewPassword()).equals(existingUser.getPassword())){
-			errors.rejectValue("newPassword", "account.newPassword.same");
-		}
 		
 		List<RegisteredUser> allUsers = userService.getAllUsers();
 		allUsers.remove(existingUser);
 		for (RegisteredUser user : allUsers) {
 			if(user.getUsername().equals(updatedUser.getEmail()))
-				errors.rejectValue("email", "account.email.alreadyexists");
+				errors.rejectValue("email", "user.email.alreadyexists");
 		}
 		if (!EmailValidator.getInstance().isValid(updatedUser.getEmail())) {
 			errors.rejectValue("email", "text.email.notvalid");

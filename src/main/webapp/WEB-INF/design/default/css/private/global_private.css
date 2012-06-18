@@ -258,6 +258,7 @@ div.buttons { text-align: right; }
 
 #tools li.icon-pdf a { background-image: url(../../images/icon_pdf.gif); padding-left: 25px; }
 #tools li.icon-print a { background-image: url(../../images/icon_print.gif); padding-left: 25px; }
+#tools li.icon-feedback a { background-image: url(../../images/send_feedback_dark.png); padding-left: 25px; }
 #tools li.icon-progress a { background-image: url(../../images/icon_progress.png); padding-left: 30px; }
 #tools li.icon-application a { background-image: url(../../images/icon_clipboard.png); background-position: 10px center !important; padding-left: 30px; }
 

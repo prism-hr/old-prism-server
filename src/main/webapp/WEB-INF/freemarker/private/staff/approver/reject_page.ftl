@@ -82,6 +82,11 @@
 					        </#if>
 						</div>
 						<hr />
+						
+						<div class="section-info-bar">
+							Reject the applicant. They will be prevented from reapplying for their chosen study programme in the current academic year.
+						</div>
+						
 						<@spring.bind "applicationForm.*" />
 						<@spring.bind "availableReasons.*" />
 						<section class="form-rows violet">
@@ -91,6 +96,7 @@
 										
 										<div class="row">
 											<label class="label">Reasons for rejections<em>*</em></label>
+											<span class="hint" data-desc=""></span>
 											<div id="reasonList" class="field">
 												<ul>
 													<#list availableReasons as reason>
@@ -110,7 +116,8 @@
 
 									<div class="row-group">					
 										<div class="row">
-											<label class="label">Include link to UCL prospectus?</label>
+											<label class="label">Include a link to the UCL Postgraduate Prospectus in the rejection message?</label>
+											<span class="hint" data-desc=""></span>
 											<div class="field">					      
 												<input type="checkbox" name="includeProspectusLink" id="includeProspectusLink" class="reason"/>											
 											</div>

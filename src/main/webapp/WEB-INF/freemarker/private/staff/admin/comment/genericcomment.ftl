@@ -73,13 +73,15 @@
 															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 														</div>
 													</div>
-													
-											         <#include "documents_snippet.ftl"/>
+												</div>
+												
+												<div class="row-group">													
+													<#include "documents_snippet.ftl"/>
+												</div>
 											         
-													<div class="buttons">						        		
-														<button type="reset" value="cancel">Cancel</button>
-														<button class="blue" type="submit" value="Submit">Submit</button>						        
-													</div>
+												<div class="buttons">						        		
+													<button type="reset" value="cancel">Cancel</button>
+													<button class="blue" type="submit" value="Submit">Submit</button>						        
 												</div>
 											</form>
 											

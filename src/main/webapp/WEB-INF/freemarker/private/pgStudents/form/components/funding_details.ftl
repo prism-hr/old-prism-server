@@ -110,7 +110,7 @@
         <span class="hint" data-desc="<@spring.message 'fundingDetails.award.description'/>"></span>
         <div class="field">
           <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>    
-          <textarea id="fundingDescription" name="fundingDescription" class="max" cols="70" rows="6" maxlength='2000'>${(funding.description?html)!}</textarea>
+          <textarea id="fundingDescription" name="fundingDescription" class="max" cols="70" rows="6">${(funding.description?html)!}</textarea>
           <#else>
           <textarea id="fundingDescription" name="fundingDescription" class="full" readonly="readonly">${(funding.description?html)!}</textarea>
           </#if>

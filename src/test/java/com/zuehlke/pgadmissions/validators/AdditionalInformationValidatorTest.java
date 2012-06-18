@@ -90,7 +90,7 @@ public class AdditionalInformationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "informationText");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("additionalInformation.informationText.notvalid", mappingResult.getFieldError("informationText").getCode());
+		Assert.assertEquals("additionalInformation.text.notvalid", mappingResult.getFieldError("informationText").getCode());
 	}
 
 	@Test
@@ -103,6 +103,6 @@ public class AdditionalInformationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictionsText");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("additionalInformation.convictionsText.notvalid", mappingResult.getFieldError("convictionsText").getCode());
+		Assert.assertEquals("additionalInformation.text.notvalid", mappingResult.getFieldError("convictionsText").getCode());
 	}
 }

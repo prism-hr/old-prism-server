@@ -55,6 +55,10 @@
 						<div class="content-box">
 							<div class="content-box-inner">
 							
+								<div class="section-info-bar">
+									Configure your 'apply now' badge. You embed this on external web pages to enable your programme to accept applications.
+								</div>
+
 								<section id="configuration" class="form-rows">
 									<h2>Programme badge</h2>
 									<div>
@@ -63,6 +67,7 @@
 											<div class="row-group">
 												<div class="row">
 													<label class="plain-label">Programme</label>
+													<span class="hint" data-desc=""></span>
 													<div class="field">
 														<select name="programme" id="programme">
 															<option value="">Please select a program</option>
@@ -75,13 +80,15 @@
 										
 												<div class="row">
 													<label class="plain-label">Programme home page</label>
+													<span class="hint" data-desc=""></span>
 													<div class="field">
-														<input type="text" name="programhome" id="programhome" class="max" />
+														<input type="text" name="programhome" id="programhome" class="max" placeholder="e.g. http://www.ucl.ac.uk" />
 													</div>
 												</div>		
 
 												<div class="row">
 													<label class="plain-label">Project title</label>
+													<span class="hint" data-desc=""></span>
 													<div class="field">
 														<input type="text" name="project" id="project" class="max" />
 													</div>
@@ -89,6 +96,7 @@
 																						
 												<div class="row">
 													<label class="plain-label">Batch deadline</label>
+													<span class="hint" data-desc=""></span>
 													<div class="field">
 														<input type="text" name="batchdeadline" id="batchdeadline" class="half date" />
 													</div>
@@ -98,6 +106,7 @@
 											
 											<div class="row-group">
 												<label class="plain-label">HTML</label>
+												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<textarea readonly="readonly" id="html" rows="15" cols="70"></textarea>
 												</div>
@@ -105,6 +114,7 @@
 											
 											<div class="row-group">
 												<label class="plain-label">Badge</label>													
+												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<iframe id="badge" width="535" height="200"></iframe>											
 												</div>

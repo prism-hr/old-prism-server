@@ -40,7 +40,7 @@
 					</#if>
         
 					<#elseif timelineObject.interview??>
-					<#if timelineObject.reviewRound.reviewers??>
+					<#if timelineObject.interview.interviewers??>
 					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">

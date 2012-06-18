@@ -7,7 +7,7 @@ $(document).ready(function()
 	// --------------------------------------------------------------------------------
 	
 	/* Programme Details. */
-	$('#programmeDetailsSection').append('<div class="ajax" />');
+	$('#programmeDetailsSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getProgrammeDetails",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -24,7 +24,7 @@ $(document).ready(function()
 	);
 	
 	/* Personal Details. */
-	$('#personalDetailsSection').append('<div class="ajax" />');
+	$('#personalDetailsSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getPersonalDetails",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -43,7 +43,7 @@ $(document).ready(function()
 	);
 	
 	/* Address. */
-	$('#addressSection').append('<div class="ajax" />');
+	$('#addressSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getAddress",
 			{
 				applicationId:  $('#applicationId').val(),				
@@ -62,7 +62,7 @@ $(document).ready(function()
 	);
 	
 	/* Qualifications. */
-	$('#qualificationsSection').append('<div class="ajax" />');
+	$('#qualificationsSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getQualification",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -81,7 +81,7 @@ $(document).ready(function()
 	);
 	
 	/* (Employment) Position. */
-	$('#positionSection').append('<div class="ajax" />');
+	$('#positionSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getEmploymentPosition",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -100,7 +100,7 @@ $(document).ready(function()
 	);
 	
 	/* Funding. */
-	$('#fundingSection').append('<div class="ajax" />');
+	$('#fundingSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getFunding",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -119,7 +119,7 @@ $(document).ready(function()
 	);
 	
 	/* Referees. */
-	$('#referencesSection').append('<div class="ajax" />');
+	$('#referencesSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getReferee",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -138,7 +138,7 @@ $(document).ready(function()
 	);
 
 	/* Documents. */
-	$('#documentSection').append('<div class="ajax" />');
+	$('#documentSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getDocuments",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -157,7 +157,7 @@ $(document).ready(function()
 	);
 	
 	/* Additional Information. */
-	$('#additionalInformationSection').append('<div class="ajax" />');
+	$('#additionalInformationSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getAdditionalInformation",
 			{
 				applicationId:  $('#applicationId').val(),

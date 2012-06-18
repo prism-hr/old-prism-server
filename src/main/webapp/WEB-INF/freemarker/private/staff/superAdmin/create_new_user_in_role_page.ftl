@@ -48,7 +48,7 @@
 								<div class="row-group">
 								
 									<div class="row programme">
-										<label class="plain-label">Programme</label>
+										<span class="plain-label">Programme</span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
 											<select name="selectedProgram" id="selectedProgramForNewUser">
@@ -73,7 +73,7 @@
 								<div class="row-group">
 								
 									<div class="row">
-										<label class="plain-label">First Name<em>*</em></label>
+										<span class="plain-label">First Name<em>*</em></span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
 											<input class="full" type="text"  value="${(newUserDTO.firstName?html)!}" name="firstName" id="firstName"/>			                                  
@@ -85,7 +85,7 @@
 									</div>
 			
 									<div class="row">
-										<label class="plain-label">Last Name<em>*</em></label>
+										<span class="plain-label">Last Name<em>*</em></span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
 											<input class="full" type="text" value="${(newUserDTO.lastName?html)!}"  name="lastName" id="lastName"/>
@@ -97,7 +97,7 @@
 									</div>
 			
 									<div class="row">
-										<label class="plain-label">Email<em>*</em></label>
+										<span class="plain-label">Email<em>*</em></span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
 											<input class="full" type="text" value="${(newUserDTO.email?html)!}"  name="email" id="email"/>
@@ -109,7 +109,7 @@
 									</div>
 		
 									<div class="row">
-										<label class="plain-label">Roles</label>
+										<span class="plain-label">Roles</span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
 											<select multiple size="6" id="roles" name="selectedAuthorities" class="max">

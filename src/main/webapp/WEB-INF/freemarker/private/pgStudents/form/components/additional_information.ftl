@@ -37,7 +37,7 @@
     		<span class="hint" data-desc="<@spring.message 'additionalInformation.infotext'/>"></span>
     		<div class="field">
       		 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-        		<textarea id="informationText" name="informationText" class="max" rows="6" cols="80" maxlength='5000'>${(additionalInformation.informationText?html)!}</textarea>
+        		<textarea id="informationText" name="informationText" class="max" rows="6" cols="80" >${(additionalInformation.informationText?html)!}</textarea>
             <#else>
 						<textarea readonly="readonly" id="informationText" name="informationText" class="max" rows="10" cols=80">${(additionalInformation.informationText?html)!}</textarea>
             </#if>
@@ -86,7 +86,7 @@
 						<#if !applicationForm.isDecided()>
 						<textarea id="convictionsText" name="convictionsText" 
 						<#if additionalInformation.convictions?? && !additionalInformation.convictions> disabled="disabled"</#if>
-						class="max" rows="6" cols="80" maxlength='5000'>${(additionalInformation.convictionsText?html)!}</textarea>
+						class="max" rows="6" cols="80" >${(additionalInformation.convictionsText?html)!}</textarea>
 						<#else>
 						<textarea readonly="readonly" id="convictionsText" name="convictionsText" class="max" rows="10" cols=80" >${(additionalInformation.convictionsText?html)!}</textarea>
 						</#if>

@@ -80,7 +80,7 @@
 												<div class="row-group">
 													
 													<div class="row">
-														<label class="label">First Name<em>*</em></label>
+														<label class="plain-label">First Name<em>*</em></label>
 														<span class="hint" data-desc=""></span>
 														<div class="field">
 															<input class="full" type="text"  value="${(newUserDTO.firstName?html)!}" name="firstName" id="firstName"/>			                                  
@@ -92,7 +92,7 @@
 													</div>
 
 													<div class="row">
-														<label class="label">Last Name<em>*</em></label>
+														<label class="plain-label">Last Name<em>*</em></label>
 														<span class="hint" data-desc=""></span>
 														<div class="field">
 															<input class="full" type="text" value="${(newUserDTO.lastName?html)!}"  name="lastName" id="lastName"/>
@@ -104,7 +104,7 @@
 													</div>
                                 
 													<div class="row">
-														<label class="label">Email<em>*</em></label>
+														<label class="plain-label">Email<em>*</em></label>
 														<span class="hint" data-desc=""></span>
 														<div class="field">
 															<input class="full" type="text" value="${(newUserDTO.email?html)!}"  name="email" id="email"/>
@@ -116,10 +116,10 @@
 													</div>
                                 
 													<div class="row">
-					                	<label>Roles</label>
+					                	<label class="plain-label">Roles</label>
 														<span class="hint" data-desc=""></span>
 														<div class="field">
-															<select multiple size="6" id="roles" name="selectedAuthorities" >
+															<select multiple size="6" id="roles" name="selectedAuthorities" class="max">
 															<#list authorities as authority>
 																<option value="${authority}">${authority}</option>
 															</#list>

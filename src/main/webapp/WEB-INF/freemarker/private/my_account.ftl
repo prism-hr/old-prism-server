@@ -61,6 +61,7 @@
 											<div class="row-group">
 												<div class="row"> 
 													<span id="email-lbl" class="plain-label">First Name</span>
+													<span class="hint" data-desc=""></span>
 													<div class="field">	
 														<input class="full" type="text" id="firstName" value="${user.firstName}" />
 													</div>
@@ -74,6 +75,7 @@
 												
 												<div class="row"> 
 													<span id="email-lbl" class="plain-label">Last Name</span>
+													<span class="hint" data-desc=""></span>
 													<div class="field">	
 														<input class="full" type="text" id="lastName" value="${user.lastName}" />
 													</div>
@@ -87,6 +89,7 @@
 												
 												<div class="row"> 
 													<span id="email-lbl" class="plain-label">Email</span>
+													<span class="hint" data-desc=""></span>
 													<div class="field">	
 														<input class="full" type="text" id="email" value="${user.email}" />
 													</div>
@@ -102,6 +105,7 @@
 											<div class="row-group">
 												<div class="row"> 
 													<span class="plain-label">Current Password</span>
+													<span class="hint" data-desc=""></span>
 													<div class="field">	
 														<input id="currentPassword" type="password" />
 													</div>
@@ -115,6 +119,7 @@
 												
 												<div class="row"> 
 													<span class="plain-label">New Password</span>
+													<span class="hint" data-desc=""></span>
 													<div class="field">	
 														<input id="newPassword" type="password"  />
 													</div>
@@ -127,7 +132,8 @@
 												</div>
 												
 												<div class="row"> 
-													<span  class="plain-label">Confirm New Password</span>
+													<span class="plain-label">Confirm New Password</span>
+													<span class="hint" data-desc=""></span>
 													<div class="field">	
 														<input id="confirmNewPass" type="password"  />
 													</div>

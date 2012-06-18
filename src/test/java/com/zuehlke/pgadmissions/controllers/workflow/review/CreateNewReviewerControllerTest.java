@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -45,7 +46,9 @@ public class CreateNewReviewerControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.REVIEWER)).andReturn(user);
+		userServiceMock.setDirectURLAndSaveUser(DirectURLsEnum.ADD_REVIEW, application, user);
+		
 		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		EasyMock.expect(
@@ -70,7 +73,9 @@ public class CreateNewReviewerControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.REVIEWER)).andReturn(user);
+		userServiceMock.setDirectURLAndSaveUser(DirectURLsEnum.ADD_REVIEW, application, user);
+		
 		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		EasyMock.expect(
@@ -100,7 +105,9 @@ public class CreateNewReviewerControllerTest {
 		EasyMock.expect(encryptionHelperMock.encrypt(2)).andReturn("cd");
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("ef");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.REVIEWER)).andReturn(user);
+		userServiceMock.setDirectURLAndSaveUser(DirectURLsEnum.ADD_REVIEW, application, user);
+		
 		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		ModelAndView modelAndView = controller.createReviewerForNewReviewRound(user, bindingResultMock, application, pedningReviewers, Collections.EMPTY_LIST);
@@ -224,15 +231,18 @@ public class CreateNewReviewerControllerTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void shouldAddExistingUserToPendingIfUserExistsAndIsNewToAppAndProgram() {
+	public void shouldAddExistingUserToDefaultIfUserExistsAndIsNewToAppAndProgram() {
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().toProgram()).toApplicationForm();
+		Program program = new ProgramBuilder().id(3).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().id(3).program(program).id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingUser);
+		userServiceMock.updateUserWithNewRoles(existingUser, application.getProgram(), Authority.REVIEWER);
 		EasyMock.replay(userServiceMock,encryptionHelperMock);
 
+		
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignReviewer.user.added"), EasyMock.aryEq(new Object[] { "Robert Bobson", "bobson@bob.com" }),
 						EasyMock.isNull(Locale.class))).andReturn("message");

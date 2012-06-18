@@ -110,7 +110,7 @@ public class ReviewControllerTest {
 	}
 
 	@Test
-	public void shouldGetProgrammeReviewersAndRemovePendingAndAssignedReviewersUsers() {
+	public void shouldGetProgrammeReviewers() {
 		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
 		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
 		final RegisteredUser interUser3 = new RegisteredUserBuilder().id(8).toUser();
@@ -149,9 +149,8 @@ public class ReviewControllerTest {
 
 		};
 
-
 		List<RegisteredUser> reviewersUsers = controller.getProgrammeReviewers("5", Arrays.asList("3"));
-		assertEquals(2, reviewersUsers.size());
+		assertEquals(3, reviewersUsers.size());
 	}
 
 	@Test

@@ -24,7 +24,6 @@ $(document).ready(function(){
 	
 	
 	$('#createInterviewer').click(function() {
-
 		$('#applicationInterviewers option').each(function(){
 			$('#postInterviewerForm').append("<input name='pendingInterviewer' type='hidden' value='" +  $(this).val() + "'/>");	
 		});
@@ -33,9 +32,7 @@ $(document).ready(function(){
 		$('#postInterviewerForm').append("<input name='firstName' type='hidden' value='" +  $('#newInterviewerFirstName').val() + "'/>");
 		$('#postInterviewerForm').append("<input name='lastName' type='hidden' value='" +  $('#newInterviewerLastName').val() + "'/>");
 		$('#postInterviewerForm').append("<input name='email' type='hidden' value='" +  $('#newInterviewerEmail').val() + "'/>");		
-		
 		$('#postInterviewerForm').submit();
-		
 	});
 	
 	$('#removeInterviewerBtn').click(function() {

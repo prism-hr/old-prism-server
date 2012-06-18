@@ -130,11 +130,6 @@
                           ${reviewer.firstName?html} ${reviewer.lastName?html}
                         </option>
                         </#list>
-                        <#list pendingReviewers as unsaved>                  
-                        <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(unsaved.id)}">
-                          ${unsaved.firstName?html} ${unsaved.lastName?html}
-                        </option>
-                        </#list>
                       </select>
                       <@spring.bind "reviewRound.reviewers" /> 
                       <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>

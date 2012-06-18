@@ -95,7 +95,7 @@
 									<div class="row-group">
 										
 										<div class="row">
-											<label class="label">Reasons for rejections<em>*</em></label>
+											<label class="plain-label">Reasons for rejections<em>*</em></label>
 											<span class="hint" data-desc=""></span>
 											<div id="reasonList" class="field">
 												<ul>
@@ -116,7 +116,7 @@
 
 									<div class="row-group">					
 										<div class="row">
-											<label class="label">Include a link to the UCL Postgraduate Prospectus in the rejection message?</label>
+											<label class="plain-label">Include a link to the UCL Postgraduate Prospectus in the rejection message?</label>
 											<span class="hint" data-desc=""></span>
 											<div class="field">					      
 												<input type="checkbox" name="includeProspectusLink" id="includeProspectusLink" class="reason"/>											

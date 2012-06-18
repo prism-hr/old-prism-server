@@ -154,7 +154,7 @@ iframe { border: 2px inset #999; font-family: Arial, Helvetica, sans-serif; }
 div#search-box { background: #FFF; border: 1px solid #AAA; margin-bottom: 15px; padding: 9px; position: relative; text-align: right; }
 div#search-box label { font-weight: bold; }
 div#search-box input, div#search-box select { border: 1px solid #CCC; margin-left: 1em; }
-div#search-box input { padding: 3px; width: 295px; }
+div#search-box input { padding: 3px; width: 300px; }
 div#search-box select { margin: 0 10px; padding: 2px; width: 170px; }
 div#search-box button { margin-top: -2px; }
 div#search-box .invalid { display: block; margin-left: 190px; margin-top: 5px; padding: 3px; text-align: left; }

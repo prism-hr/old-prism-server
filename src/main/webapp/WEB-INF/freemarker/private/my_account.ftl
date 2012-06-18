@@ -139,7 +139,7 @@
 													<span class="plain-label">Confirm New Password</span>
 													<span class="hint" data-desc=""></span>
 													<div class="field">	
-														<input class="full" id="confirmNewPass" type="password"  />
+														<input class="full" id="confirmNewPass" type="password" />
 													</div>
 													<@spring.bind "updatedUser.confirmPassword" />
 													<#list spring.status.errorMessages as error>

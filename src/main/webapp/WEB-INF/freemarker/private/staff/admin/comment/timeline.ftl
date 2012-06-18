@@ -24,6 +24,7 @@
 					</div>
         
 					<#if timelineObject.reviewRound?? && user != applicationForm.applicant>
+					<#if timelineObject.reviewRound.reviewers??>
 					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">
@@ -36,8 +37,10 @@
 							</div>
 						</li>
 					</ul>
+					</#if>
         
 					<#elseif timelineObject.interview??>
+					<#if timelineObject.reviewRound.reviewers??>
 					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">
@@ -53,8 +56,10 @@
 							</div>
 						</li>
 					</ul>
+					</#if>
            
 					<#elseif timelineObject.approvalRound??>
+					<#if timelineObject.approvalRound.supervisors??>
 					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">
@@ -67,6 +72,7 @@
 							</div>
 						</li>
 					</ul>
+					</#if>
 					
 					<#elseif timelineObject.status?? &&   timelineObject.status == 'REJECTED'>
 					<ul class="status-info">
@@ -100,11 +106,13 @@
                   <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
                 </div>
                 <p><em>${(comment.comment?html)!}</em></p>
+								<#if comment.documents??>
                 <ul>                
                 <#list comment.documents as document>
                 	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
                 </#list>
                 </ul>
+								</#if>
                 <#if comment.type == 'VALIDATION'>                                                    
                 <#include "timeline_snippets/validation_comment.ftl"/>
                 <#elseif comment.type == 'REVIEW'>

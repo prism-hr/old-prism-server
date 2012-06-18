@@ -106,7 +106,7 @@
                   <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
                 </div>
                 <p><em>${(comment.comment?html)!}</em></p>
-								<#if comment.documents?? && comment.documents?size > 0>
+								<#if comment.documents??>
                 <ul>                
                 <#list comment.documents as document>
                 	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>

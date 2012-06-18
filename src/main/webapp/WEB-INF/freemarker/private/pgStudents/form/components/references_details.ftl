@@ -215,7 +215,7 @@
 			        		<span class="plain-label">Address<em>*</em></span>
 			        		<span class="hint" data-desc="<@spring.message 'referee.address'/>"></span>
 	        				<div class="field">
-		        				<textarea class="max" rows="6" cols="70" maxlength='200' id="ref_address_location" 
+		        				<textarea class="max" rows="6" cols="70" id="ref_address_location" 
 	          						name="ref_address_location">${(referee.addressLocation?html)!}</textarea> 
 		        			</div>
 		        		</div>          

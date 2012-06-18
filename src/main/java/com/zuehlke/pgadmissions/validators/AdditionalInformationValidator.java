@@ -10,6 +10,8 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 @Component
 public class AdditionalInformationValidator implements Validator {
 
+	private static final int MAXIMUM_CHARS = 5000;
+
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return AdditionalInformation.class.equals(clazz);
@@ -19,8 +21,8 @@ public class AdditionalInformationValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		AdditionalInformation info = (AdditionalInformation) target;
 		if (info.getInformationText() != null) {
-			if (info.getInformationText().length() > 5000) {
-				errors.rejectValue("informationText", "additionalInformation.informationText.notvalid");
+			if (info.getInformationText().length() > MAXIMUM_CHARS) {
+				errors.rejectValue("informationText", "additionalInformation.text.notvalid");
 			}
 		}
 
@@ -33,8 +35,8 @@ public class AdditionalInformationValidator implements Validator {
 				if (convictionsText == null || !StringUtils.hasText(convictionsText)) {
 					errors.rejectValue("convictionsText", "text.field.empty");
 				} else {
-					if (convictionsText.length() > 5000) {
-						errors.rejectValue("convictionsText", "additionalInformation.convictionsText.notvalid");
+					if (convictionsText.length() > MAXIMUM_CHARS) {
+						errors.rejectValue("convictionsText", "additionalInformation.text.notvalid");
 					}
 				}
 			} 

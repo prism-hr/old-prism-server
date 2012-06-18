@@ -58,7 +58,16 @@
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
 					
-					
+					<div class="section-info-bar">
+					<#if applicationForm.isInState('VALIDATION')>
+						Validate the application here. You may <a href="#" id="notifyRegistryButton">refer the application to admissions</a> if you feel unable to assess the Applicant's eligbility.
+					<#elseif applicationForm.isInState('REVIEW')>
+						Evaluate the reviewers' comments and decide which stage to progress the application to.
+					<#elseif applicationForm.isInState('INTERVIEW')>
+						Evaluate the interviewers' comments and decide which stage to progress the application to.
+					</#if>
+					</div>
+
 					<section class="form-rows">
 						<div>
 							<div class="row-group">
@@ -115,12 +124,13 @@
 									</div>
 								</div>
 
+<#--
 								<div class="row">
 									<div class="registry"><#if applicationForm.getNotificationForType('REGISTRY_HELP_REQUEST')?? >The registry was last contacted on ${applicationForm.getNotificationForType('REGISTRY_HELP_REQUEST').date?string('dd-MMM-yyyy HH:mm')}.</#if></div>
 									<button class="blue registry" type="button" id="notifyRegistryButton">Request registry assistance</button>
 									<div id="emailMessage"  class="registry"></div>
 								</div>
-								
+-->								
 							</div><!-- close .row-group -->
 							</#if>
 

@@ -38,7 +38,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to confirm the arrangements for your interview for Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${application.latestInterview.interviewTime} on ${application.latestInterview.interviewDueDate?string("dd MMMM yyyy")}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${application.latestInterview.interviewTime} on ${application.latestInterview.interviewDueDate?string("dd MMM yyyy")}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The details of the interview are as follows:</font>

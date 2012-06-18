@@ -246,7 +246,7 @@
                 <span class="plain-label">Start Date<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.startDate'/>"></span>
                 <div class="field">
-                  	<input class="half date" type="text" id="position_startDate" name="position_startDate" value="${(employmentPosition.startDate?string('dd-MMM-yyyy'))!}"  <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>
+                  	<input class="half date" type="text" id="position_startDate" name="position_startDate" value="${(employmentPosition.startDate?string('dd MMM yyyy'))!}"  <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>
                           
                   
                 			
@@ -276,7 +276,7 @@
                 <span id="posi-end-date-lb" class="plain-label<#if employmentPosition.current> grey-label</#if>">End Date<#if !employmentPosition.current><em>*</em></#if></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.endDate'/>"></span>
                 <div class="field" id="endDateField">
-                  	<input class="half date" id="position_endDate" name="position_endDate" value="${(employmentPosition.endDate?string('dd-MMM-yyyy'))!}" <#if employmentPosition.current ||  applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>/>                  	
+                  	<input class="half date" id="position_endDate" name="position_endDate" value="${(employmentPosition.endDate?string('dd MMM yyyy'))!}" <#if employmentPosition.current ||  applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>/>                  	
                  
                 					
                 </div>

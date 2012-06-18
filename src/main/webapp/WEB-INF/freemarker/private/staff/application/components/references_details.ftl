@@ -34,7 +34,7 @@
     
     <input type="hidden" id="${encRefereeId}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.name?html)!}" </#if>/>
     <input type="hidden" id="${encRefereeId}_lastUpdated" value="<#if referee.hasProvidedReference() > 
-    Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
+    Provided ${(referee.reference.lastUpdated?string('dd MMM yyyy'))!}
     <#else>
     Not provided
     </#if>"/>
@@ -126,7 +126,7 @@
       <div class="admin_row">              
         <span class="admin_row_label">Uploaded date</span>
         <#if referee.hasProvidedReference() >
-        <div class="field">${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}</div>
+        <div class="field">${(referee.reference.lastUpdated?string('dd MMM yyyy'))!}</div>
         <#else> 
         <div class="field" id="referenceUpdated">Not Provided</div> 
         </#if>

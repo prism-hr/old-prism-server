@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been advanced to approval stage. We aim to be back in contact with the outcome of that phase by close of business on ${application.dueDate?string("dd MMMM yyyy")}.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been advanced to approval stage. We aim to be back in contact with the outcome of that phase by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

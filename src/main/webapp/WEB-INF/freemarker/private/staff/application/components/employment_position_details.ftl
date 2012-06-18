@@ -62,7 +62,7 @@
       <!-- Start date -->
       <div class="admin_row">
         <span class="admin_row_label">Start Date</span>
-        <div class="field" id="emp_startDate">${(position.startDate?string('dd-MMM-yyyy'))!"Not Provided"}</div>
+        <div class="field" id="emp_startDate">${(position.startDate?string('dd MMM yyyy'))!"Not Provided"}</div>
       </div>
 
       <!-- Current position? -->
@@ -74,7 +74,7 @@
       <!-- End date -->
       <div class="admin_row">
         <span class="admin_row_label">End date</span>
-        <div class="field" id="emp_endDate">${(position.endDate?string('dd-MMM-yyyy'))!"Not Provided"}</div>
+        <div class="field" id="emp_endDate">${(position.endDate?string('dd MMM yyyy'))!"Not Provided"}</div>
       </div>
       
     </div>

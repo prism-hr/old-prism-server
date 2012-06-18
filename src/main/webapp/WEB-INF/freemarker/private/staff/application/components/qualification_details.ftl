@@ -59,7 +59,7 @@
       <!-- Start date -->
       <div class="admin_row">
         <span class="admin_row_label">Start Date</span>
-        <div class="field" id="qualificationStartDate">${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!"Not Provided"}</div>
+        <div class="field" id="qualificationStartDate">${(qualification.qualificationStartDate?string('dd MMM yyyy'))!"Not Provided"}</div>
       </div>
       
       <!-- Has qualification been awarded? -->
@@ -77,7 +77,7 @@
       <!-- Award date -->
       <div class="admin_row">
         <span class="admin_row_label">Award Date</span>
-        <div class="field" id="qualificationAwardDate">${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!"Not Provided"}</div>
+        <div class="field" id="qualificationAwardDate">${(qualification.qualificationAwardDate?string('dd MMM yyyy'))!"Not Provided"}</div>
       </div>
       
       <!-- Attachment / supporting document  -->

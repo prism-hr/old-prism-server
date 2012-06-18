@@ -47,7 +47,7 @@
       
       <div class="admin_row">
         <label class="admin_row_label">Date of Birth</label>
-        <div class="field">${(applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!"Not Provided"}</div>
+        <div class="field">${(applicationForm.personalDetails.dateOfBirth?string('dd MMM yyyy'))!"Not Provided"}</div>
       </div>
       
       <!-- Country -->

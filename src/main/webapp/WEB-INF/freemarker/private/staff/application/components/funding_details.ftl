@@ -47,7 +47,7 @@
       <!-- Award date -->
       <div class="admin_row">
         <span class="admin_row_label">Award Date</span>
-        <div class="field" id="fundingAwardDate">${funding.awardDate?string('dd-MMM-yyyy')!"Not Provided"}</div>
+        <div class="field" id="fundingAwardDate">${funding.awardDate?string('dd MMM yyyy')!"Not Provided"}</div>
       </div>
       
       <!-- Award date -->

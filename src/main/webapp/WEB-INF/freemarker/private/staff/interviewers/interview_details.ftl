@@ -105,6 +105,11 @@
 														<#list previousInterviewers as interviewer>
 														<option value="${encrypter.encrypt(interviewer.id)}" category="previous">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
 														</#list>
+														<#list applicationInterviewers as interviewer>
+														<option value="${encrypter.encrypt(interviewer.id)}" disabled="disabled" class="selected">
+															${interviewer.firstName?html} ${interviewer.lastName?html}
+														</option>
+														</#list>
 													</optgroup>
 												</select>
 											</div>
@@ -126,17 +131,17 @@
 												<select id="applicationInterviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 													<#list applicationInterviewers as interviewer>
 													<option value="${encrypter.encrypt(interviewer.id)}">
-													${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if>
+														${interviewer.firstName?html} ${interviewer.lastName?html}
 													</option>
 													</#list>
 													<#list pendingInterviewers as unsaved>									
 													<option value="${encrypter.encrypt(unsaved.id)}">
-													${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if> (*)
+														${unsaved.firstName?html} ${unsaved.lastName?html}
 													</option>
 													</#list>
 													<#list willingToInterviewReviewers as willingReviewer>									
 													<option value="${encrypter.encrypt(willingReviewer.id)}">
-													${willingReviewer.firstName?html} ${willingReviewer.lastName?html} <#if !willingReviewer.enabled> - Pending</#if> (*)
+														${willingReviewer.firstName?html} ${willingReviewer.lastName?html}
 													</option>
 													</#list>
 												</select>

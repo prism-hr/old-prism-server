@@ -1,23 +1,37 @@
-$(document).ready(function(){
+$(document).ready(function()
+{
 	
-	$('#addSupervisorBtn').click(function() {
+	// -----------------------------------------------------------------------------------------
+	// Add supervisor
+	// -----------------------------------------------------------------------------------------
+	$('#addSupervisorBtn').click(function()
+	{
 		var selectedSupervisors = $('#programSupervisors').val();
-		selectedSupervisors.forEach(function(id) {			
-			var selText = $("#programSupervisors option[value='" + id + "']").text();
-			var category = $("#programSupervisors option[value='" + id + "']").attr("category");
-			$("#programSupervisors option[value='" + id + "']").remove();
-			$("#applicationSupervisors").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
-		});
-		$('#programSupervisors').attr("size", $('#programSupervisors option').size() + 1);
-		$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
-		
-		
+		if (selectedSupervisors)
+		{
+			selectedSupervisors.forEach(function(id)
+			{
+				var $option = $("#programSupervisors option[value='" + id + "']");
+	
+				if (!$option.hasClass('selected'))
+				{
+					var selText = $option.text();
+					var category = $option.attr("category");
+					$("#programSupervisors option[value='" + id + "']").addClass('selected')
+																													 .removeAttr('selected')
+																													 .attr('disabled', 'disabled');
+					$("#applicationSupervisors").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
+				}
+			});
+			$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
+		}
 	});
 	
 	
 	$('#createSupervisor').click(function() {
 
-		$('#applicationSupervisors option').each(function(){
+		$('#applicationSupervisors option').each(function()
+		{
 			var ids = $(this).val();
 		 	var user = ids.substring(ids.indexOf("|") + 1);
 			$('#postSupervisorForm').append("<input name='pendingSupervisor' type='hidden' value='" + user + "'/>");	
@@ -32,15 +46,24 @@ $(document).ready(function(){
 		
 	});
 	
-	$('#removeSupervisorBtn').click(function() {
+
+	// -----------------------------------------------------------------------------------------
+	// Remove supervisor
+	// -----------------------------------------------------------------------------------------
+	$('#removeSupervisorBtn').click(function()
+	{
 		var selectedSupervisors = $('#applicationSupervisors').val();
-		selectedSupervisors.forEach(function(id) {
-			var selText = $("#applicationSupervisors option[value='" + id + "']").text().replace(' (*)', '');
-			$("#applicationSupervisors option[value='" + id + "']").remove();
-			$("#programSupervisors").append('<option value="'+ id +'">'+ selText +'</option>');
-		});
-		$('#programSupervisors').attr("size", $('#programSupervisors option').size() + 1);
-		$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
+		if (selectedSupervisors)
+		{
+			selectedSupervisors.forEach(function(id)
+			{
+				var selText = $("#applicationSupervisors option[value='" + id + "']").text().replace(' (*)', '');
+				$("#applicationSupervisors option[value='" + id + "']").remove();
+				$("#programSupervisors option[value='" + id + "']").removeClass('selected')
+																												 .removeAttr('disabled');
+			});
+			$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
+		}
 	});
 
 	

@@ -44,7 +44,8 @@ function bindDatePicker(selector)
 }
 
 function limitTextArea(){
-	$('textarea[maxlength]').keyup(function(){  
+	$('textarea[maxlength]').keyup(function()
+	{  
 		//get the limit from maxlength attribute  
 		var limit = parseInt($(this).attr('maxlength'));  
 		//get the current text inside the textarea  
@@ -53,14 +54,18 @@ function limitTextArea(){
 		var chars = text.length;  
 
 		//check if there are more characters than allowed  
-		if(chars > limit){  
+		if(chars > limit)
+		{  
 			//and if there are use substr to get the text before the limit  
 			var new_text = text.substr(0, limit);  
 
 			//and change the current text with the new text  
 			$(this).val(new_text);
-		} else if (chars == limit){
-			alert('You have entered the maximum allowed characters for this field: '+ limit);
+		}
+		else if (chars == limit)
+		{
+			//alert('You have entered the maximum allowed characters for this field: '+ limit);
+			return false;
 		}  
 	});
 }

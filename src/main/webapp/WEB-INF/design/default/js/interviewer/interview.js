@@ -15,22 +15,25 @@ $(document).ready(function()
 	$('#addInterviewerBtn').click(function()
 	{
 		var selectedReviewers = $('#programInterviewers').val();
-		selectedReviewers.forEach(function(id)
+		if (selectedReviewers)
 		{
-			var $option = $("#programInterviewers option[value='" + id + "']");
-
-			if (!$option.hasClass('selected'))
+			selectedReviewers.forEach(function(id)
 			{
-				var selText = $option.text();
-				var category = $option.attr("category");
-				$("#programInterviewers option[value='" + id + "']").addClass('selected')
-																														.removeAttr('selected')
-																														.attr('disabled', 'disabled');
-				$("#applicationInterviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
-			}
-		});
-		//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
-		$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+				var $option = $("#programInterviewers option[value='" + id + "']");
+	
+				if (!$option.hasClass('selected'))
+				{
+					var selText = $option.text();
+					var category = $option.attr("category");
+					$("#programInterviewers option[value='" + id + "']").addClass('selected')
+																															.removeAttr('selected')
+																															.attr('disabled', 'disabled');
+					$("#applicationInterviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
+				}
+			});
+			//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
+			$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+		}
 	});
 	
 	
@@ -53,16 +56,19 @@ $(document).ready(function()
 	$('#removeInterviewerBtn').click(function()
 	{
 		var selectedReviewers = $('#applicationInterviewers').val();
-		selectedReviewers.forEach(function(id)
+		if (selectedReviewers)
 		{
-			var selText = $("#applicationInterviewers option[value='" + id + "']").text().replace(' (*)', '');
-			$("#applicationInterviewers option[value='" + id + "']").remove();
-			//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
-			$("#programInterviewers option[value='" + id + "']'").removeClass('selected')
-																													 .removeAttr('disabled');
-		});
-		//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
-		$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+			selectedReviewers.forEach(function(id)
+			{
+				var selText = $("#applicationInterviewers option[value='" + id + "']").text().replace(' (*)', '');
+				$("#applicationInterviewers option[value='" + id + "']").remove();
+				//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
+				$("#programInterviewers option[value='" + id + "']'").removeClass('selected')
+																														 .removeAttr('disabled');
+			});
+			//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
+			$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+		}
 	});
 
 	

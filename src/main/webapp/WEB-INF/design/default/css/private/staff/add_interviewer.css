@@ -1,7 +1,7 @@
 /* CSS Document */
 
 #programInterviewers, #applicationInterviewers { width: 400px; }
-#programInterviewers optgroup { font-style: normal; min-height: 2em; }
+#programInterviewers optgroup { font-style: normal; min-height: 3em; }
 #programInterviewers option, #applicationInterviewers option { padding: 5px; }
 #programInterviewers option:last-child, #applicationInterviewers option:last-child { border-bottom: none; }
 #programInterviewers option.selected { color: #CCC; }

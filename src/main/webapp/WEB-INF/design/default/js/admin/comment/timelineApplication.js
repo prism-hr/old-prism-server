@@ -17,7 +17,9 @@ $(document).ready(function()
 					cacheBreaker: new Date().getTime() 
 				},
 				function(data) {
-					$('#timeline').html(data);			
+					$('#timeline').html(data);	
+					// Scroll to the tab.
+					window.scrollTo(0, $('#timeline').position().top);		
 					addToolTips();	
 				}
 		);

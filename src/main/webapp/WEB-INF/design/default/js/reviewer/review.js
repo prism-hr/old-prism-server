@@ -1,23 +1,37 @@
-$(document).ready(function(){
-	
-	$('#addReviewerBtn').click(function() {
+$(document).ready(function()
+{
+
+	// -----------------------------------------------------------------------------------------
+	// Add reviewer
+	// -----------------------------------------------------------------------------------------
+	$('#addReviewerBtn').click(function()
+	{
 		var selectedReviewers = $('#programReviewers').val();
-		selectedReviewers.forEach(function(id) {			
-			var selText = $("#programReviewers option[value='" + id + "']").text();
-			var category = $("#programReviewers option[value='" + id + "']").attr("category");
-			$("#programReviewers option[value='" + id + "']").remove();
-			$("#applicationReviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
-		});
-		$('#programReviewers').attr("size", $('#programReviewers option, #programReviewers optgroup').size() + 1);
-		$('#applicationReviewers').attr("size", $('#applicationReviewers option, #programReviewers optgroup').size() + 1);
-		
-		
+		if (selectedReviewers)
+		{
+			selectedReviewers.forEach(function(id)
+			{
+				var $option = $("#programReviewers option[value='" + id + "']");
+	
+				if (!$option.hasClass('selected'))
+				{
+					var selText = $option.text();
+					var category = $option.attr("category");
+					$("#programReviewers option[value='" + id + "']").addClass('selected')
+																													 .removeAttr('selected')
+																													 .attr('disabled', 'disabled');
+					$("#applicationReviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
+				}
+			});
+			$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
+		}
 	});
 	
 	
-	$('#createReviewer').click(function() {
-
-		$('#applicationReviewers option').each(function(){
+	$('#createReviewer').click(function()
+	{
+		$('#applicationReviewers option').each(function()
+		{
 			var ids = $(this).val();
 		 	var user = ids.substring(ids.indexOf("|") + 1);
 			$('#postReviewerForm').append("<input name='pendingReviewer' type='hidden' value='" + user + "'/>");	
@@ -31,15 +45,25 @@ $(document).ready(function(){
 		
 	});
 	
-	$('#removeReviewerBtn').click(function() {
+
+	// -----------------------------------------------------------------------------------------
+	// Remove reviewer
+	// -----------------------------------------------------------------------------------------
+	$('#removeReviewerBtn').click(function()
+	{
 		var selectedReviewers = $('#applicationReviewers').val();
-		selectedReviewers.forEach(function(id) {
-			var selText = $("#applicationReviewers option[value='" + id + "']").text().replace(' (*)', '');
-			$("#applicationReviewers option[value='" + id + "']").remove();
-			$("#programReviewers").append('<option value="'+ id +'">'+ selText +'</option>');
-		});
-		$('#programReviewers').attr("size", $('#programReviewers option, #programReviewers optgroup').size() + 1);
-		$('#applicationReviewers').attr("size", $('#applicationReviewers option, #programReviewers optgroup').size() + 1);
+		if (selectedReviewers)
+		{
+			selectedReviewers.forEach(function(id)
+			{
+				var selText = $("#applicationReviewers option[value='" + id + "']").text().replace(' (*)', '');
+				$("#applicationReviewers option[value='" + id + "']").remove();
+				//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
+				$("#programReviewers option[value='" + id + "']").removeClass('selected')
+																													.removeAttr('disabled');
+			});
+			$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
+		}
 	});
 
 	

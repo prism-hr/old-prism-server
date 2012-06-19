@@ -63,7 +63,7 @@ $(document).ready(function()
 				var selText = $("#applicationInterviewers option[value='" + id + "']").text().replace(' (*)', '');
 				$("#applicationInterviewers option[value='" + id + "']").remove();
 				//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
-				$("#programInterviewers option[value='" + id + "']'").removeClass('selected')
+				$("#programInterviewers option[value='" + id + "']").removeClass('selected')
 																														 .removeAttr('disabled');
 			});
 			//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);

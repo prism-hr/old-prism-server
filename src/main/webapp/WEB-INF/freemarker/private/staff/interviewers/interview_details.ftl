@@ -92,7 +92,7 @@
 											<div class="field">
 												<p><strong>Available Interviewers</strong></p>
 												<#-- <select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}"> -->
-												<select id="programInterviewers" multiple="multiple" size="10">
+												<select id="programInterviewers" multiple="multiple" size="8">
 													<optgroup id="default" label="Default interviewers">
 														<#list programmeInterviewers as interviewer>
 														<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>

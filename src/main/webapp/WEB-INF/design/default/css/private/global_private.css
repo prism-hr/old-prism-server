@@ -22,7 +22,7 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; /*position: absolute;*/ }
 .row { overflow: visible; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */
-#wrapper { background: url(../../images/bg_wrapper.jpg) no-repeat 0 55px; margin: 0 auto; width: 950px; }
+#wrapper { background: url(../../images/bg_wrapper.jpg) no-repeat 0 10px; margin: 0 auto; width: 950px; }
 
 
 /* HEADER ------------------------------------------------------------------------------------------------- */

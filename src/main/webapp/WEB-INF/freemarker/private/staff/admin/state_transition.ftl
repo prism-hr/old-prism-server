@@ -72,6 +72,7 @@
 						<div>
 							<div class="row-group">
 							
+<#--
 								<#if applicationForm.isInState('VALIDATION')>
 								<h3>Validate application</h3>
 								<#elseif applicationForm.isInState('REVIEW')>
@@ -79,9 +80,9 @@
 								<#elseif applicationForm.isInState('INTERVIEW')>
 								<h3>Evaluate interview feedback</h3>
 								</#if>
-
+-->
 								<div class="row">
-									<span class="plain-label">Comments</span>
+									<span class="plain-label">Comments<em>*</em></span>
 									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>

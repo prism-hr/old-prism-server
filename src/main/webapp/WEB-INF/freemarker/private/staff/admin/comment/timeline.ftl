@@ -59,7 +59,7 @@
 					</#if>
            
 					<#elseif timelineObject.approvalRound??>
-					<#if timelineObject.approvalRound.supervisors??>
+					<#if timelineObject.approvalRound.supervisors?? && timelineObject.approvalRound.supervisors?size &gt; 0>
 					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">

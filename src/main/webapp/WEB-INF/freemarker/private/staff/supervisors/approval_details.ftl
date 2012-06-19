@@ -109,6 +109,21 @@
 														<#list previousSupervisors as supervisor>
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
 														</#list>
+														<#list applicationSupervisors as supervisor>
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" class="selected" disabled="disabled">
+																${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if>
+															</option>
+														</#list>
+														<#list pendingSupervisors as unsaved>
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(unsaved.id)}" class="selected" disabled="disabled">
+																${unsaved.firstName?html} ${unsaved.lastName?html}
+															</option>
+														</#list>
+														<#list willingToSuperviseUsers as willingUser>					
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(willingUser.id)}" class="selected" disabled="disabled">
+																${willingUser.firstName?html} ${willingUser.lastName?html}
+															</option>
+														</#list>
 														</optgroup>
 													</select>
 												</div>

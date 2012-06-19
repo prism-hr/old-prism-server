@@ -1,5 +1,5 @@
 <div class="row">
-	<label class="plain-label" for="file">Upload file</label>
+	<label class="plain-label" for="file">Attach Document</label>
 	<span class="hint" data-desc=""></span>
 	<div class="field uploaded" id="uploadFields">
 		<span id="commentUploadedDocument">

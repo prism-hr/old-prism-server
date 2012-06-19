@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +30,6 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -81,9 +79,9 @@ public class PdfDocumentBuilder {
 
 		programmeHeader = new Chunk(application.getProgram().getTitle(), smallerFont);
 		applicationHeader = new Chunk(application.getApplicationNumber(), smallerFont);
-		if(application.getSubmittedDate() != null){
+		if (application.getSubmittedDate() != null) {
 			submittedDateHeader = new Chunk(new SimpleDateFormat("dd MMMM yyyy").format(application.getSubmittedDate()), smallerFont);
-		}else{
+		} else {
 			submittedDateHeader = new Chunk("", smallerFont);
 		}
 
@@ -117,6 +115,10 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 
+		addDocumentsSection(application, document);
+
+		addSectionSeparators(document);
+
 		addAdditionalInformationSection(application, document);
 
 		addSectionSeparators(document);
@@ -135,87 +137,79 @@ public class PdfDocumentBuilder {
 		document.add(new Paragraph(" "));
 	}
 
-	private void addCorrectOutputDependingOnNull(Document document, String fieldValue, String fieldLabel) throws DocumentException {
-		if (StringUtils.isBlank(fieldValue)) {
-			document.add(new Paragraph(createMessage(fieldLabel.toLowerCase())));
-		} else {
-			document.add(new Paragraph(fieldLabel + ": " + fieldValue));
-		}
-	}
-
 	private void addProgrammeSection(ApplicationForm application, Document document) throws DocumentException {
-		PdfPTable table = new PdfPTable(1);	
+		PdfPTable table = new PdfPTable(1);
 		table.setWidthPercentage(100f);
 		table.addCell(newTableCell("PROGRAMME", boldFont, BaseColor.GRAY));
 		document.add(table);
 		document.add(new Paragraph(" "));
 
 		table = new PdfPTable(2);
-		table.setWidthPercentage(100f);		
+		table.setWidthPercentage(100f);
 		table.addCell(newTableCell("Programme", smallBoldFont));
 		table.addCell(newTableCell(application.getProgram().getTitle(), smallFont));
-		
-		table.addCell(newTableCell("Study Option", smallBoldFont));	
-		if(application.getProgrammeDetails().getStudyOption() != null){
+
+		table.addCell(newTableCell("Study Option", smallBoldFont));
+		if (application.getProgrammeDetails().getStudyOption() != null) {
 			table.addCell(newTableCell(application.getProgrammeDetails().getStudyOption().displayValue(), smallFont));
-		}else{
+		} else {
 			table.addCell(newTableCell("Not Provided", smallGrayFont));
 		}
-				
+
 		table.addCell(newTableCell("Project", smallBoldFont));
-		if(!StringUtils.isBlank(application.getProgrammeDetails().getProjectName())){
-			table.addCell(newTableCell(application.getProgrammeDetails().getProjectName(), smallFont));			
-		}else{
+		if (!StringUtils.isBlank(application.getProgrammeDetails().getProjectName())) {
+			table.addCell(newTableCell(application.getProgrammeDetails().getProjectName(), smallFont));
+		} else {
 			table.addCell(newTableCell("Not Provided", smallGrayFont));
 		}
-				
-		table.addCell(newTableCell("Start Date", smallBoldFont));	
-		if(application.getProgrammeDetails().getStartDate() != null){
+
+		table.addCell(newTableCell("Start Date", smallBoldFont));
+		if (application.getProgrammeDetails().getStartDate() != null) {
 			table.addCell(newTableCell(simpleDateFormat.format(application.getProgrammeDetails().getStartDate()), smallFont));
-		}else{
+		} else {
 			table.addCell(newTableCell("Not Provided", smallGrayFont));
 		}
-		
+
 		table.addCell(newTableCell("How did you find us?", smallBoldFont));
-		if(application.getProgrammeDetails().getReferrer() != null){
+		if (application.getProgrammeDetails().getReferrer() != null) {
 			table.addCell(newTableCell(application.getProgrammeDetails().getReferrer().displayValue(), smallFont));
-		}else{
+		} else {
 			table.addCell(newTableCell("Not Provided", smallGrayFont));
 		}
-		
+
 		document.add(table);
 		document.add(new Paragraph(" "));
 
 		if (application.getProgrammeDetails().getSuggestedSupervisors().isEmpty()) {
-			table = new PdfPTable(2);	
+			table = new PdfPTable(2);
 			table.setWidthPercentage(100f);
 			table.addCell(newTableCell("Supervisor", smallBoldFont));
 			table.addCell(newTableCell("Not Provided", smallGrayFont));
 			document.add(table);
 			document.add(new Paragraph(" "));
-		} else {			
-		
+		} else {
+
 			int counter = 1;
 			for (SuggestedSupervisor supervisor : application.getProgrammeDetails().getSuggestedSupervisors()) {
-				table = new PdfPTable(2);	
+				table = new PdfPTable(2);
 				table.setWidthPercentage(100f);
 				PdfPCell headerCell = newTableCell("Supervisor (" + counter++ + ")", smallBoldFont);
 				headerCell.setColspan(2);
 				table.addCell(headerCell);
-				
+
 				table.addCell(newTableCell("Supervisor First Name", smallerBoldFont));
 				table.addCell(newTableCell(supervisor.getFirstname(), smallerFont));
-				
+
 				table.addCell(newTableCell("Supervisor Last Name", smallerBoldFont));
 				table.addCell(newTableCell(supervisor.getLastname(), smallerFont));
-				
+
 				table.addCell(newTableCell("Supervisor Email", smallerBoldFont));
 				table.addCell(newTableCell(supervisor.getEmail(), smallerFont));
-		
-				table.addCell(newTableCell("Is this supervisor aware of your application?", smallerBoldFont));	
-			
+
+				table.addCell(newTableCell("Is this supervisor aware of your application?", smallerBoldFont));
+
 				if (supervisor.isAware()) {
-					table.addCell(newTableCell("Yes", smallerFont));			
+					table.addCell(newTableCell("Yes", smallerFont));
 				} else {
 					table.addCell(newTableCell("No", smallerFont));
 				}
@@ -224,42 +218,42 @@ public class PdfDocumentBuilder {
 
 			}
 
-			
 		}
 	}
 
-	private PdfPCell newTableCell(String content , Font font) {
+	private PdfPCell newTableCell(String content, Font font) {
 
-		PdfPCell cell =null;
-		if(StringUtils.isNotBlank(content)){
+		PdfPCell cell = null;
+		if (StringUtils.isNotBlank(content)) {
 			cell = new PdfPCell(new Phrase(content, font));
-		}else{
+		} else {
 			cell = new PdfPCell(new Phrase("Not Provided", smallGrayFont));
 		}
 		cell.setPaddingBottom(5);
 		cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-	
+
 		return cell;
 	}
-	
-	private PdfPCell newTableCell(String content , Font font, BaseColor backgrounColor) {
+
+	private PdfPCell newTableCell(String content, Font font, BaseColor backgrounColor) {
 
 		PdfPCell c1 = newTableCell(content, font);
 		c1.setBackgroundColor(grayColor);
 		return c1;
 	}
+
 	private void addPersonalDetailsSection(ApplicationForm application, Document document) throws DocumentException {
-		PdfPTable table = new PdfPTable(1);	
+		PdfPTable table = new PdfPTable(1);
 		table.setWidthPercentage(100f);
 		table.addCell(newTableCell("PERSONAL DETAILS", boldFont, BaseColor.GRAY));
 		document.add(table);
 		document.add(new Paragraph(" "));
 
-		table = new PdfPTable(2);		
-		table.setWidthPercentage(100f);		
+		table = new PdfPTable(2);
+		table.setWidthPercentage(100f);
 		table.addCell(newTableCell("First Name", smallBoldFont));
 		table.addCell(newTableCell(application.getPersonalDetails().getFirstName(), smallFont));
-		
+
 		table.addCell(newTableCell("Last Name", smallBoldFont));
 		table.addCell(newTableCell(application.getPersonalDetails().getLastName(), smallFont));
 
@@ -267,9 +261,9 @@ public class PdfDocumentBuilder {
 		if (application.getPersonalDetails().getGender() == null) {
 			table.addCell(newTableCell(null, smallFont));
 		} else {
-			table.addCell(newTableCell( application.getPersonalDetails().getGender().getDisplayValue(), smallFont));
+			table.addCell(newTableCell(application.getPersonalDetails().getGender().getDisplayValue(), smallFont));
 		}
-		
+
 		table.addCell(newTableCell("Date of Birth", smallBoldFont));
 		if (application.getPersonalDetails().getDateOfBirth() == null) {
 			table.addCell(newTableCell(null, smallFont));
@@ -277,192 +271,188 @@ public class PdfDocumentBuilder {
 			table.addCell(newTableCell(simpleDateFormat.format(application.getPersonalDetails().getDateOfBirth()), smallFont));
 		}
 		table.addCell(newTableCell("Country of Birth", smallBoldFont));
-		if(application.getPersonalDetails().getCountry() == null){
+		if (application.getPersonalDetails().getCountry() == null) {
 			table.addCell(newTableCell(null, smallFont));
-		}else{
-			table.addCell(newTableCell(application.getPersonalDetails().getCountry().getName(), smallFont));	
+		} else {
+			table.addCell(newTableCell(application.getPersonalDetails().getCountry().getName(), smallFont));
 		}
-		
+
 		table.addCell(newTableCell("Nationality", smallBoldFont));
 		StringBuilder sb = new StringBuilder();
 		for (Country country : application.getPersonalDetails().getCandidateNationalities()) {
-			if(sb.length() > 0){
-				sb.append(", ");				
+			if (sb.length() > 0) {
+				sb.append(", ");
 			}
 			sb.append(country.getName());
 		}
 		table.addCell(newTableCell(sb.toString(), smallFont));
-		
+
 		table.addCell(newTableCell("Mother's Nationality", smallBoldFont));
 		sb = new StringBuilder();
 		for (Country country : application.getPersonalDetails().getMaternalGuardianNationalities()) {
-			if(sb.length() > 0){
-				sb.append(", ");				
+			if (sb.length() > 0) {
+				sb.append(", ");
 			}
 			sb.append(country.getName());
 		}
 		table.addCell(newTableCell(sb.toString(), smallFont));
-		
+
 		table.addCell(newTableCell("Father's Nationality", smallBoldFont));
 		sb = new StringBuilder();
 		for (Country country : application.getPersonalDetails().getPaternalGuardianNationalities()) {
-			if(sb.length() > 0){
-				sb.append(", ");				
+			if (sb.length() > 0) {
+				sb.append(", ");
 			}
 			sb.append(country.getName());
 		}
 		table.addCell(newTableCell(sb.toString(), smallFont));
-		
+
 		table.addCell(newTableCell("Is English your first language?", smallBoldFont));
-		if(application.getPersonalDetails().getEnglishFirstLanguage() == null){
-			table.addCell(newTableCell(null, smallFont));	
-		}else{
-			if(application.getPersonalDetails().getEnglishFirstLanguage()){
+		if (application.getPersonalDetails().getEnglishFirstLanguage() == null) {
+			table.addCell(newTableCell(null, smallFont));
+		} else {
+			if (application.getPersonalDetails().getEnglishFirstLanguage()) {
 				table.addCell(newTableCell("Yes", smallFont));
-			}else{
+			} else {
 				table.addCell(newTableCell("No", smallFont));
 			}
 		}
 
 		table.addCell(newTableCell("Country of Residence", smallBoldFont));
-		if(application.getPersonalDetails().getResidenceCountry() == null){
+		if (application.getPersonalDetails().getResidenceCountry() == null) {
 			table.addCell(newTableCell(null, smallFont));
-		}else{
-			table.addCell(newTableCell(application.getPersonalDetails().getResidenceCountry().getName(), smallFont));	
+		} else {
+			table.addCell(newTableCell(application.getPersonalDetails().getResidenceCountry().getName(), smallFont));
 		}
-		
+
 		table.addCell(newTableCell("Do you Require a Visa to Study in the UK?", smallBoldFont));
-		if(application.getPersonalDetails().getRequiresVisa() == null){
-			table.addCell(newTableCell(null, smallFont));	
-		}else{
-			if(application.getPersonalDetails().getRequiresVisa()){
+		if (application.getPersonalDetails().getRequiresVisa() == null) {
+			table.addCell(newTableCell(null, smallFont));
+		} else {
+			if (application.getPersonalDetails().getRequiresVisa()) {
 				table.addCell(newTableCell("Yes", smallFont));
-			}else{
+			} else {
 				table.addCell(newTableCell("No", smallFont));
 			}
 		}
 
-		
 		table.addCell(newTableCell("Email", smallBoldFont));
 		table.addCell(newTableCell(application.getPersonalDetails().getEmail(), smallFont));
 
 		table.addCell(newTableCell("Telephone", smallBoldFont));
 		table.addCell(newTableCell(application.getPersonalDetails().getPhoneNumber(), smallFont));
-		
+
 		table.addCell(newTableCell("Skype", smallBoldFont));
 		table.addCell(newTableCell(application.getPersonalDetails().getMessenger(), smallFont));
 		document.add(table);
 	}
 
-
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
-		PdfPTable table = new PdfPTable(1);	
+		PdfPTable table = new PdfPTable(1);
 		table.setWidthPercentage(100f);
 		table.addCell(newTableCell("ADDRESS", boldFont, BaseColor.GRAY));
 		document.add(table);
 		document.add(new Paragraph(" "));
-		table = new PdfPTable(2);		
-		table.setWidthPercentage(100f);		
-		
+		table = new PdfPTable(2);
+		table.setWidthPercentage(100f);
+
 		table.addCell(newTableCell("Current Address", smallBoldFont));
-		if(application.getCurrentAddress() == null){
+		if (application.getCurrentAddress() == null) {
 			table.addCell(newTableCell(null, smallFont));
-		}else{
+		} else {
 			table.addCell(newTableCell(application.getCurrentAddress().getLocation(), smallFont));
 		}
-		
 
 		table.addCell(newTableCell("Country", smallBoldFont));
-		if(application.getCurrentAddress() == null){
+		if (application.getCurrentAddress() == null) {
 			table.addCell(newTableCell(null, smallFont));
-		}else{
+		} else {
 			table.addCell(newTableCell(application.getCurrentAddress().getCountry().getName(), smallFont));
 		}
 
 		table.addCell(newTableCell("Contact Address", smallBoldFont));
-		if(application.getContactAddress() == null){
+		if (application.getContactAddress() == null) {
 			table.addCell(newTableCell(null, smallFont));
-		}else{
+		} else {
 			table.addCell(newTableCell(application.getContactAddress().getLocation(), smallFont));
 		}
-		
 
 		table.addCell(newTableCell("Country", smallBoldFont));
-		if(application.getContactAddress() == null){
+		if (application.getContactAddress() == null) {
 			table.addCell(newTableCell(null, smallFont));
-		}else{
+		} else {
 			table.addCell(newTableCell(application.getContactAddress().getCountry().getName(), smallFont));
 		}
 		document.add(table);
 	}
 
 	private void addQualificationSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
-		PdfPTable table = new PdfPTable(1);	
+		PdfPTable table = new PdfPTable(1);
 		table.setWidthPercentage(100f);
 		table.addCell(newTableCell("QUALIFICATIONS", boldFont, BaseColor.GRAY));
 		document.add(table);
 		document.add(new Paragraph(" "));
-		
-		if(application.getQualifications().isEmpty()){
+
+		if (application.getQualifications().isEmpty()) {
 			table = new PdfPTable(2);
-			table.setWidthPercentage(100f);		
+			table.setWidthPercentage(100f);
 			table.addCell(newTableCell("Qualification", smallBoldFont));
 			table.addCell(newTableCell(null, smallFont));
 			document.add(table);
-		}else{
+		} else {
 			int counter = 1;
-			for (Qualification  qualification : application.getQualifications()) {
+			for (Qualification qualification : application.getQualifications()) {
 				table = new PdfPTable(2);
-				table.setWidthPercentage(100f);		
-				PdfPCell headerCell = newTableCell("Qualification (" +  counter++ + ")", smallBoldFont);
+				table.setWidthPercentage(100f);
+				PdfPCell headerCell = newTableCell("Qualification (" + counter++ + ")", smallBoldFont);
 				headerCell.setColspan(2);
 				table.addCell(headerCell);
 				table.addCell(newTableCell("Institution Country", smallBoldFont));
 				table.addCell(newTableCell(qualification.getInstitutionCountry().getName(), smallFont));
-				
+
 				table.addCell(newTableCell("Institution/Provider Name", smallBoldFont));
 				table.addCell(newTableCell(qualification.getQualificationInstitution(), smallFont));
-				
+
 				table.addCell(newTableCell("Qualification Type", smallBoldFont));
 				table.addCell(newTableCell(qualification.getQualificationType(), smallFont));
-				
+
 				table.addCell(newTableCell("Title/Subject", smallBoldFont));
 				table.addCell(newTableCell(qualification.getQualificationSubject(), smallFont));
-				
+
 				table.addCell(newTableCell("Language of Study", smallBoldFont));
 				table.addCell(newTableCell(qualification.getQualificationLanguage().getName(), smallFont));
-				
+
 				table.addCell(newTableCell("Start Date", smallBoldFont));
 				table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationStartDate()), smallFont));
-				
+
 				table.addCell(newTableCell("Has this Qualification been awarded", smallBoldFont));
-				if(qualification.isQualificationCompleted()){
+				if (qualification.isQualificationCompleted()) {
 					table.addCell(newTableCell("Yes", smallFont));
-				}else{
+				} else {
 					table.addCell(newTableCell("No", smallFont));
 				}
-				
-				if(qualification.isQualificationCompleted()){
+
+				if (qualification.isQualificationCompleted()) {
 					table.addCell(newTableCell("Grade/Result/GPA", smallBoldFont));
-				}else{
-					table.addCell(newTableCell("Expected Grade/Result/GPA", smallBoldFont));	
+				} else {
+					table.addCell(newTableCell("Expected Grade/Result/GPA", smallBoldFont));
 				}
 				table.addCell(newTableCell(qualification.getQualificationInstitution(), smallFont));
-				
+
 				table.addCell(newTableCell("Award Date", smallBoldFont));
-				if(qualification.getQualificationAwardDate() == null){
+				if (qualification.getQualificationAwardDate() == null) {
 					table.addCell(newTableCell("Not Awarded", smallGrayFont));
-				}else{
+				} else {
 					table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationAwardDate()), smallFont));
 				}
-				
+
 				table.addCell(newTableCell("Proof Of Award", smallBoldFont));
-				if(qualification.isQualificationCompleted()){
+				if (qualification.isQualificationCompleted()) {
 					table.addCell(newTableCell("LINK to appear here", smallFont));
-				}else{
+				} else {
 					table.addCell(newTableCell("Not Awarded", smallGrayFont));
-				}				
-				
+				}
+
 				document.add(table);
 				document.add(new Paragraph(" "));
 			}
@@ -471,145 +461,197 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addEmploymentSection(ApplicationForm application, Document document) throws DocumentException {
-		PdfPTable table = new PdfPTable(1);	
+		PdfPTable table = new PdfPTable(1);
 		table.setWidthPercentage(100f);
 		table.addCell(newTableCell("EMPLOYMENT", boldFont, BaseColor.GRAY));
 		document.add(table);
 		document.add(new Paragraph(" "));
-		
-		if(application.getEmploymentPositions().isEmpty()){
+
+		if (application.getEmploymentPositions().isEmpty()) {
 			table = new PdfPTable(2);
-			table.setWidthPercentage(100f);		
+			table.setWidthPercentage(100f);
 			table.addCell(newTableCell("Position", smallBoldFont));
 			table.addCell(newTableCell(null, smallFont));
 			document.add(table);
-		}else{
+		} else {
 			int counter = 1;
-			for (EmploymentPosition  position : application.getEmploymentPositions()) {
+			for (EmploymentPosition position : application.getEmploymentPositions()) {
 				table = new PdfPTable(2);
-				table.setWidthPercentage(100f);		
-				PdfPCell headerCell = newTableCell("Position (" +  counter++ + ")", smallBoldFont);
+				table.setWidthPercentage(100f);
+				PdfPCell headerCell = newTableCell("Position (" + counter++ + ")", smallBoldFont);
 				headerCell.setColspan(2);
 				table.addCell(headerCell);
 				table.addCell(newTableCell("Country", smallBoldFont));
 				table.addCell(newTableCell(position.getEmployerCountry().getName(), smallFont));
-				
+
 				table.addCell(newTableCell("Employer Name", smallBoldFont));
 				table.addCell(newTableCell(position.getEmployerName(), smallFont));
-				
+
 				table.addCell(newTableCell("Employer Address", smallBoldFont));
 				table.addCell(newTableCell(position.getEmployerAddress(), smallFont));
-				
+
 				table.addCell(newTableCell("Roles and Responsibilities", smallBoldFont));
 				table.addCell(newTableCell(position.getRemit(), smallFont));
-				
+
 				table.addCell(newTableCell("Language of Work", smallBoldFont));
 				table.addCell(newTableCell(position.getLanguage().getName(), smallFont));
-				
+
 				table.addCell(newTableCell("Start Date", smallBoldFont));
 				table.addCell(newTableCell(simpleDateFormat.format(position.getStartDate()), smallFont));
-				
+
 				table.addCell(newTableCell("Is this your Current Position", smallBoldFont));
-				if(position.isCurrent()){
+				if (position.isCurrent()) {
 					table.addCell(newTableCell("Yes", smallFont));
-				}else{
+				} else {
 					table.addCell(newTableCell("No", smallFont));
 				}
-				
 
 				table.addCell(newTableCell("End Date", smallBoldFont));
-				
-				if(position.getEndDate() == null){
+
+				if (position.getEndDate() == null) {
 					table.addCell(newTableCell(null, smallGrayFont));
-				}else{
+				} else {
 					table.addCell(newTableCell(simpleDateFormat.format(position.getEndDate()), smallFont));
-				}										
-				
+				}
+
 				document.add(table);
 				document.add(new Paragraph(" "));
 			}
-		
+
 		}
 
 	}
 
 	private void addFundingSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
-		PdfPTable table = new PdfPTable(1);	
+		PdfPTable table = new PdfPTable(1);
 		table.setWidthPercentage(100f);
 		table.addCell(newTableCell("FUNDING", boldFont, BaseColor.GRAY));
 		document.add(table);
 		document.add(new Paragraph(" "));
-		
-		if(application.getFundings().isEmpty()){
+
+		if (application.getFundings().isEmpty()) {
 			table = new PdfPTable(2);
-			table.setWidthPercentage(100f);		
+			table.setWidthPercentage(100f);
 			table.addCell(newTableCell("Source", smallBoldFont));
 			table.addCell(newTableCell(null, smallFont));
 			document.add(table);
-		}else{
+		} else {
 			int counter = 1;
-			for (Funding  funding : application.getFundings()) {
+			for (Funding funding : application.getFundings()) {
 				table = new PdfPTable(2);
-				table.setWidthPercentage(100f);		
-				PdfPCell headerCell = newTableCell("Source (" +  counter++ + ")", smallBoldFont);
+				table.setWidthPercentage(100f);
+				PdfPCell headerCell = newTableCell("Source (" + counter++ + ")", smallBoldFont);
 				headerCell.setColspan(2);
 				table.addCell(headerCell);
 				table.addCell(newTableCell("Funding Type", smallBoldFont));
 				table.addCell(newTableCell(funding.getType().getDisplayValue(), smallFont));
-				
+
 				table.addCell(newTableCell("Description", smallBoldFont));
 				table.addCell(newTableCell(funding.getDescription(), smallFont));
-				
+
 				table.addCell(newTableCell("Value of Award (GBP)", smallBoldFont));
 				table.addCell(newTableCell(funding.getValue(), smallFont));
-			
+
 				table.addCell(newTableCell("Award Date", smallBoldFont));
 				table.addCell(newTableCell(simpleDateFormat.format(funding.getAwardDate()), smallFont));
 
-				table.addCell(newTableCell("Proof Of Award", smallBoldFont));				
+				table.addCell(newTableCell("Proof Of Award", smallBoldFont));
 				table.addCell(newTableCell("LINK to appear here", smallFont));
-				
+
 				document.add(table);
 				document.add(new Paragraph(" "));
 			}
-		
+
 		}
 	}
 
 	private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {
 
-		document.add(new Paragraph("References                                                                                           ", grayFont));
+		PdfPTable table = new PdfPTable(1);
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("REFERENCES", boldFont, BaseColor.GRAY));
+		document.add(table);
+		document.add(new Paragraph(" "));
 
 		if (application.getReferees().isEmpty()) {
-			document.add(new Paragraph(createMessage("references information")));
+			table = new PdfPTable(2);
+			table.setWidthPercentage(100f);
+			table.addCell(newTableCell("Reference", smallBoldFont));
+			table.addCell(newTableCell(null, smallFont));
+			document.add(table);
 		} else {
+			int counter = 1;
+			for (Referee referee : application.getReferees()) {
+				table = new PdfPTable(2);
+				table.setWidthPercentage(100f);
+				PdfPCell headerCell = newTableCell("Reference (" + counter++ + ")", smallBoldFont);
+				headerCell.setColspan(2);
+				table.addCell(headerCell);
+				table.addCell(newTableCell("First Name", smallBoldFont));
+				table.addCell(newTableCell(referee.getFirstname(), smallFont));
 
-			for (Referee reference : application.getReferees()) {
-				document.add(new Paragraph("First Name: " + reference.getFirstname()));
-				document.add(new Paragraph("Last Name: " + reference.getLastname()));
+				table.addCell(newTableCell("Last Name", smallBoldFont));
+				table.addCell(newTableCell(referee.getLastname(), smallFont));
 
-				addCorrectOutputDependingOnNull(document, reference.getJobEmployer(), "Employer");
-				addCorrectOutputDependingOnNull(document, reference.getJobTitle(), "Position");
+				table.addCell(newTableCell("Employer", smallBoldFont));
+				table.addCell(newTableCell(referee.getJobEmployer(), smallFont));
 
-				document.add(new Paragraph("Contact Details", smallBoldFont));
-				addCorrectOutputDependingOnNull(document, reference.getAddressLocation(), "Address");
+				table.addCell(newTableCell("Position", smallBoldFont));
+				table.addCell(newTableCell(referee.getJobTitle(), smallFont));
 
-				if (reference.getAddressCountry() != null) {
-					document.add(new Paragraph("Country: " + reference.getAddressCountry().getName()));
-				} else {
-					document.add(new Paragraph(createMessage("country")));
+				table.addCell(newTableCell("Country", smallBoldFont));
+				table.addCell(newTableCell(referee.getAddressCountry().getName(), smallFont));
+
+				table.addCell(newTableCell("Email", smallBoldFont));
+				table.addCell(newTableCell(referee.getEmail(), smallFont));
+
+				table.addCell(newTableCell("Telephone", smallBoldFont));
+				table.addCell(newTableCell(referee.getPhoneNumber(), smallFont));
+
+				table.addCell(newTableCell("Skype", smallBoldFont));
+				table.addCell(newTableCell(referee.getMessenger(), smallFont));
+
+				RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+				if (!currentUser.isInRole(Authority.APPLICANT) && !currentUser.isRefereeOfApplicationForm(application)) {
+					table.addCell(newTableCell("Reference", smallBoldFont));
+					if (referee.getReference() != null) {
+						table.addCell(newTableCell("Add link here", smallFont));
+					} else {
+						table.addCell(newTableCell(null, smallFont));
+					}
 				}
 
-				document.add(new Paragraph("Contact Details", smallBoldFont));
-				document.add(new Paragraph("Email: " + reference.getEmail()));
-				document.add(new Paragraph("Telephone: " + reference.getPhoneNumber()));
-				addCorrectOutputDependingOnNull(document, reference.getMessenger(), "Skype Name");
-				if (reference.isDeclined()) {
-					document.add(new Paragraph("This referee has declined"));
-				}
+				document.add(table);
 				document.add(new Paragraph(" "));
 			}
 		}
+	}
+
+	private void addDocumentsSection(ApplicationForm application, Document document) throws DocumentException {
+		PdfPTable table = new PdfPTable(1);
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("DOCUMENTS", boldFont, BaseColor.GRAY));
+		document.add(table);
+		document.add(new Paragraph(" "));
+
+		table = new PdfPTable(2);
+		table.setWidthPercentage(100f);
+		
+		table.addCell(newTableCell("Personal Statement", smallBoldFont));
+		if(application.getPersonalStatement() == null){
+			table.addCell(newTableCell(null, smallFont));
+		}else{
+			table.addCell(newTableCell("Add link here", smallFont));
+		}
+			
+
+		table.addCell(newTableCell("CV/Resume", smallBoldFont));
+		if(application.getCv() == null){
+			table.addCell(newTableCell(null, smallFont));
+		}else{
+			table.addCell(newTableCell("Add link here", smallFont));
+		}		
+		document.add(table);
 
 	}
 

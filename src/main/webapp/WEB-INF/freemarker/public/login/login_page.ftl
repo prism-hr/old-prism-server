@@ -43,7 +43,6 @@
         
         <!-- Blurb. -->
         <aside id="blurb">
-          <h2>Welcome to your new gateway to<br />UCL Postgraduate Research programmes<br />in Engineering Sciences.</h2>
           <p>Welcome to <b>UCL Prism</b>, the gateway to postgraduate research opportunities in UCL Engineering.</p>
         </aside>
     

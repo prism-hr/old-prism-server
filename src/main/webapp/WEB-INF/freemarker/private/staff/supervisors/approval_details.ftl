@@ -119,7 +119,7 @@
 											<div class="row addremove-buttons">
 												<div class="field">
 													<span>
-														<button class="blue" type="button" id="addSupervisorBtn">Add <span class="icon-down"></span></button>
+														<button class="blue" type="button" id="addSupervisorBtn"><span class="icon-down"></span> Add</button>
 														<button type="button" id="removeSupervisorBtn"><span class="icon-up"></span> Remove</button>
 													</span>
 												</div>

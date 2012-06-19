@@ -60,7 +60,7 @@ $(document).ready(function()
 				$("#applicationReviewers option[value='" + id + "']").remove();
 				//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
 				$("#programReviewers option[value='" + id + "']").removeClass('selected')
-																													.removeAttr('disabled');
+																												 .removeAttr('disabled');
 			});
 			$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
 		}

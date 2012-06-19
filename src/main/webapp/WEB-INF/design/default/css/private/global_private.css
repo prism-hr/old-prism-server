@@ -45,7 +45,7 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; /*position: absolute;*/ }
 }
 
 #middle > header .logo { float: left; margin-right: 30px; }
-#middle > header .tagline { color: #727272; float: left; font-size: 18pt; font-weight: bold; margin-top: 10px; width: 300px; }
+#middle > header .tagline { color: #1E448B; float: left; font-size: 18pt; font-weight: bold; margin-top: 12px; width: 350px; }
 
 #middle > header nav { clear: both; height: 29px; line-height: 29px; overflow: hidden; padding-top: 25px; }
 #middle > header nav ul { float: left; list-style: none; overflow: hidden; }

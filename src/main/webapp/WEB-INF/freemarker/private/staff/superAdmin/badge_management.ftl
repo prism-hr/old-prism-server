@@ -109,7 +109,7 @@
 												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<textarea readonly="readonly" id="html" rows="15" cols="70"></textarea>
-													<br />
+													<br /><br />
 													<iframe id="badge" width="535" height="200"></iframe>											
 												</div>
 											</div>

@@ -107,6 +107,7 @@
 											</div>
 
 											<div class="row-group">
+												<h3>Change Password</h3>
 												<div class="row"> 
 													<span class="plain-label">Current Password</span>
 													<span class="hint" data-desc=""></span>

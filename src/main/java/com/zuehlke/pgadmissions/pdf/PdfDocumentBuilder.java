@@ -534,27 +534,46 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addFundingSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
-		document.add(new Paragraph("Funding                                                                                                ", grayFont));
+		PdfPTable table = new PdfPTable(1);	
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("FUNDING", boldFont, BaseColor.GRAY));
+		document.add(table);
+		document.add(new Paragraph(" "));
+		
+		if(application.getFundings().isEmpty()){
+			table = new PdfPTable(2);
+			table.setWidthPercentage(100f);		
+			table.addCell(newTableCell("Source", smallBoldFont));
+			table.addCell(newTableCell(null, smallFont));
+			document.add(table);
+		}else{
+			int counter = 1;
+			for (Funding  funding : application.getFundings()) {
+				table = new PdfPTable(2);
+				table.setWidthPercentage(100f);		
+				PdfPCell headerCell = newTableCell("Source (" +  counter++ + ")", smallBoldFont);
+				headerCell.setColspan(2);
+				table.addCell(headerCell);
+				table.addCell(newTableCell("Funding Type", smallBoldFont));
+				table.addCell(newTableCell(funding.getType().getDisplayValue(), smallFont));
+				
+				table.addCell(newTableCell("Description", smallBoldFont));
+				table.addCell(newTableCell(funding.getDescription(), smallFont));
+				
+				table.addCell(newTableCell("Value of Award (GBP)", smallBoldFont));
+				table.addCell(newTableCell(funding.getValue(), smallFont));
+			
+				table.addCell(newTableCell("Award Date", smallBoldFont));
+				table.addCell(newTableCell(simpleDateFormat.format(funding.getAwardDate()), smallFont));
 
-		if (application.getFundings().isEmpty()) {
-			document.add(new Paragraph(createMessage("funding information")));
-		} else {
-
-			for (Funding funding : application.getFundings()) {
-				document.add(new Paragraph("Funding Type: " + funding.getType().getDisplayValue()));
-				document.add(new Paragraph("Description:" + funding.getDescription()));
-				document.add(new Paragraph("Value of Award: " + funding.getValue()));
-				document.add(new Paragraph("Award Date: " + funding.getAwardDate().toString()));
-
-				document.newPage();
-				document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));
-				readPdf(document, funding.getDocument(), writer);
-				document.newPage();
-
+				table.addCell(newTableCell("Proof Of Award", smallBoldFont));				
+				table.addCell(newTableCell("LINK to appear here", smallFont));
+				
+				document.add(table);
 				document.add(new Paragraph(" "));
 			}
+		
 		}
-
 	}
 
 	private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {

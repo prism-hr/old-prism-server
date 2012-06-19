@@ -149,17 +149,17 @@
 													<select id="applicationSupervisors" class="max" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 														<#list applicationSupervisors as supervisor>
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}">
-																${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if>
+																${supervisor.firstName?html} ${supervisor.lastName?html}
 															</option>
 														</#list>
 														<#list pendingSupervisors as unsaved>
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(unsaved.id)}">
-																${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if> (*)
+																${unsaved.firstName?html} ${unsaved.lastName?html}
 															</option>
 														</#list>
 														<#list willingToSuperviseUsers as willingUser>					
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(willingUser.id)}">
-																${willingUser.firstName?html} ${willingUser.lastName?html} <#if !willingUser.enabled> - Pending</#if> (*)
+																${willingUser.firstName?html} ${willingUser.lastName?html}
 															</option>
 														</#list>
 													</select>

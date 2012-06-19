@@ -30,20 +30,24 @@ $(document).ready(
 				}
 			});
 
-			$('#notifyRegistryButton').click(function() {
+			$('#notifyRegistryButton').click(function()
+			{
 				$('#notifyRegistryButton').attr('disabled', 'disabled');
 				$('#notifyRegistryButton').removeClass("blue");
 				$('body').css('cursor', 'wait');
 				$.post("/pgadmissions/registryHelpRequest", {
 					applicationId : $('#applicationId').val()
 
-				}, function(data) {
+				}, function(data)
+				{
 					$('#emailMessage').html(data);
 					$('#notifyRegistryButton').removeAttr('disabled');
 					$('#notifyRegistryButton').addClass("blue");
 					$('body').css('cursor', 'auto');
 					$('#timelineBtn').trigger('click');
 				});
+				
+				return false;
 			});
 		});
 

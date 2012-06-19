@@ -23,7 +23,7 @@ $(document).ready(function()
 			{
 				var selText = $option.text();
 				var category = $option.attr("category");
-				$("#programInterviewers option[value='" + id + "']").addClass('selected');
+				$("#programInterviewers option[value='" + id + "']").addClass('selected').removeAttr('selected');
 				$("#applicationInterviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
 			}
 		});

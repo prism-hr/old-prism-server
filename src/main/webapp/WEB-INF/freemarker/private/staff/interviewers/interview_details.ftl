@@ -91,7 +91,8 @@
 											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<p><strong>Available Interviewers</strong></p>
-												<select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}">
+												<#-- <select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}"> -->
+												<select id="programInterviewers" multiple="multiple" size="10">
 													<optgroup id="default" label="Default interviewers">
 														<#list programmeInterviewers as interviewer>
 														<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
@@ -110,8 +111,8 @@
 										<div class="row interviewer-buttons">
 											<div class="field">
 												<span>
-													<button class="blue" type="button" id="addInterviewerBtn">Add <span class="icon-up"></span></button>
-													<button type="button" id="removeInterviewerBtn"><span class="icon-down"></span> Remove</button>
+													<button class="blue" type="button" id="addInterviewerBtn">Add <span class="icon-down"></span></button>
+													<button type="button" id="removeInterviewerBtn"><span class="icon-up"></span> Remove</button>
 												</span>
 											</div>
 										</div>

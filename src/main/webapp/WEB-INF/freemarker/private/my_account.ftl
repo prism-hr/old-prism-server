@@ -136,7 +136,7 @@
 												</div>
 												
 												<div class="row"> 
-													<span class="plain-label">Confirm New Password</span>
+													<span class="plain-label">Re-enter new Password</span>
 													<span class="hint" data-desc=""></span>
 													<div class="field">	
 														<input class="full" id="confirmNewPass" type="password" />

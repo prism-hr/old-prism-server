@@ -28,7 +28,7 @@ $(document).ready(function()
 					$("#programInterviewers option[value='" + id + "']").addClass('selected')
 																															.removeAttr('selected')
 																															.attr('disabled', 'disabled');
-					$("#applicationInterviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
+					$("#applicationInterviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + '</option>');
 				}
 			});
 			//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
@@ -60,7 +60,7 @@ $(document).ready(function()
 		{
 			selectedReviewers.forEach(function(id)
 			{
-				var selText = $("#applicationInterviewers option[value='" + id + "']").text().replace(' (*)', '');
+				var selText = $("#applicationInterviewers option[value='" + id + "']").text();
 				$("#applicationInterviewers option[value='" + id + "']").remove();
 				//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
 				$("#programInterviewers option[value='" + id + "']").removeClass('selected')

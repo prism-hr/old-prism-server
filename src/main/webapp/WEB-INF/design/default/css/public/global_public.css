@@ -21,25 +21,25 @@ label input { vertical-align: middle; }
 #header p { padding: 30px 0 0 30px; }
 
 /* MIDDLE ------------------------------------------------------------------------------------------------- */
-#middle { background: transparent; height: 685px; position: relative; }
+#middle { background: transparent; height: 580px; position: relative; }
 
 
 /* MIDDLE header ------------------------------------------------------------------------------------------ */
 #middle > header { background: none; filter: none; left: 35px; padding: 0; position: absolute; top: 35px; width: 40%; }
 #middle > header .logo { margin-right: 30px; }
-#middle > header .tagline { color: #FFF; float: none; font-size: 18pt; font-weight: bold; line-height: 1.2; margin-top: 10px; text-shadow: #333 0 0 5px; }
+#middle > header .tagline { color: #FFF; float: none; font-size: 24pt; line-height: 1.2; margin-top: 30px; text-shadow: #333 0 0 5px; }
 
 
 /* FOOTER ------------------------------------------------------------------------------------------------- */
-#footer { background: #58595B; color: #BABBBE; font-size: 9pt; text-transform: uppercase; }
+#footer { background: #6D6E71; border-top: 14px solid #000; color: #BCBEC0; font-size: 9pt; text-transform: uppercase; }
 #footer ul { list-style: none; margin: 0 20px; overflow: hidden; }
 #footer ul li { float: left; margin: 0 10px; }
 #footer ul li a { color: #BABBBE; display: block; font-weight: bold; line-height: 42px; }
 
 
 /* Blurb -------------------------------------------------------------------------------------------------- */
-#blurb { bottom: 70px; color: #27AAE1; font-size: 13pt; font-weight: bold; left: 35px; line-height: 1.2; position: absolute; width: 40%; }
-#blurb b { color: #FFF; }
+#blurb { bottom: 60px; color: #27AAE1; font-size: 13pt; font-weight: bold; left: 35px; line-height: 1.2; position: absolute; width: 35%; }
+#blurb b { color: #FFF; font-weight: normal; }
 
 
 /* BUTTONS / INDICATORS ----------------------------------------------------------------------------------- */

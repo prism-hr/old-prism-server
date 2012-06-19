@@ -23,7 +23,9 @@ $(document).ready(function()
 			{
 				var selText = $option.text();
 				var category = $option.attr("category");
-				$("#programInterviewers option[value='" + id + "']").addClass('selected').removeAttr('selected');
+				$("#programInterviewers option[value='" + id + "']").addClass('selected')
+																														.removeAttr('selected')
+																														.attr('disabled', 'disabled');
 				$("#applicationInterviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
 			}
 		});
@@ -56,7 +58,8 @@ $(document).ready(function()
 			var selText = $("#applicationInterviewers option[value='" + id + "']").text().replace(' (*)', '');
 			$("#applicationInterviewers option[value='" + id + "']").remove();
 			//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
-			$("#programInterviewers option[value='" + id + "']'").removeClass('selected');
+			$("#programInterviewers option[value='" + id + "']'").removeClass('selected')
+																													 .removeAttr('disabled');
 		});
 		//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
 		$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);

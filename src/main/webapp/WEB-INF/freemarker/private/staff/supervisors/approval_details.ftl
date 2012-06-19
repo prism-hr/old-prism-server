@@ -243,21 +243,14 @@
 
 	</div>
 
-	<!-- Footer. -->
-	<div id="footer">
-		<ul>
-			<li><a href="#">Privacy</a></li>
-			<li><a href="#">Terms &amp; conditions</a></li>
-			<li><a href="#">Contact us</a></li>
-			<li><a href="#">Glossary</a></li>
-		</ul>
-	</div>
+	<#include "/private/common/global_footer.ftl"/>
 
-	</div>
+</div>
 
-	<script type="text/javascript"	src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	<script type="text/javascript"	src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-	<script type="text/javascript"	src="<@spring.url '/design/default/js/supervisor/approval.js'/>"></script>
+<script type="text/javascript"	src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script type="text/javascript"	src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript"	src="<@spring.url '/design/default/js/application/common.js'/>"></script>
+<script type="text/javascript"	src="<@spring.url '/design/default/js/supervisor/approval.js'/>"></script>
 </body>
 </html>
 </section>

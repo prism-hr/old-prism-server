@@ -79,7 +79,7 @@
 												</div>
 										
 												<div class="row">
-													<label class="plain-label">Programme home page</label>
+													<label class="plain-label">Programme Homepage</label>
 													<span class="hint" data-desc=""></span>
 													<div class="field">
 														<input type="text" name="programhome" id="programhome" class="max" placeholder="e.g. http://www.ucl.ac.uk" />
@@ -87,7 +87,7 @@
 												</div>		
 
 												<div class="row">
-													<label class="plain-label">Project title</label>
+													<label class="plain-label">Project Title</label>
 													<span class="hint" data-desc=""></span>
 													<div class="field">
 														<input type="text" name="project" id="project" class="max" />
@@ -95,7 +95,7 @@
 												</div>												
 																						
 												<div class="row">
-													<label class="plain-label">Batch deadline</label>
+													<label class="plain-label">Closing Date</label>
 													<span class="hint" data-desc=""></span>
 													<div class="field">
 														<input type="text" name="batchdeadline" id="batchdeadline" class="half date" />
@@ -105,17 +105,11 @@
 											</div><!-- .row-group -->
 											
 											<div class="row-group">
-												<label class="plain-label">HTML</label>
+												<label class="plain-label">Badge HTML</label>
 												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<textarea readonly="readonly" id="html" rows="15" cols="70"></textarea>
-												</div>
-											</div>
-											
-											<div class="row-group">
-												<label class="plain-label">Badge</label>													
-												<span class="hint" data-desc=""></span>
-												<div class="field">
+													<br />
 													<iframe id="badge" width="535" height="200"></iframe>											
 												</div>
 											</div>

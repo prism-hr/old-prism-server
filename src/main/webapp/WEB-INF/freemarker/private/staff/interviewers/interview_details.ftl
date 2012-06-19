@@ -93,10 +93,9 @@
 								<div class="row-group">			
 								
 										<div class="row" id="assignInterviewersToAppSection">
-											<label class="label">Interviewers</label>
+											<span class="plain-label">Assign Interviewers</span>
 											<span class="hint" data-desc=""></span>
 											<div class="field">
-												<p><strong>Available Interviewers</strong></p>
 												<#-- <select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}"> -->
 												<select id="programInterviewers" multiple="multiple" size="8">
 													<optgroup id="default" label="Default interviewers">
@@ -126,7 +125,6 @@
 										<!-- Already interviewers of this application -->
 										<div class="row">
 											<div class="field">
-												<p><strong>Selected Interviewers</strong></p>
 												<select id="applicationInterviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 													<#list applicationInterviewers as interviewer>
 													<option value="${encrypter.encrypt(interviewer.id)}">
@@ -180,7 +178,7 @@
 										</div>
 			
 										<div class="row">
-											<label class="label normal">Email<em>*</em></label>
+											<label class="label normal">Interviewer Email Address<em>*</em></label>
 											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<input class="full" type="text"  name="newInterviewerEmail" id="newInterviewerEmail" value="${(interviewer.email?html)!}"/>			                                         
@@ -197,7 +195,7 @@
 									</div>
 		
 									<div class="row-group">
-										<p><strong>Interview Details</strong></p>
+										<p><strong>Interview Arrangements</strong></p>
 										<div class="row">
 											<label class="label normal">Interview Date<em>*</em></label>
 											<span class="hint" data-desc=""></span>
@@ -213,7 +211,7 @@
 										</div>
 									
 										<div class="row">
-											<label class="label normal">Interview Time<em>*</em></label>
+											<label class="label normal">Interview Time (GMT/BST)<em>*</em></label>
 											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
@@ -228,7 +226,7 @@
 										</div>
 									
 										<div class="row">
-											<label class="label normal">Further Details<em>*</em></label>
+											<label class="label normal">Interview Instructions<em>*</em></label>
 											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
@@ -242,13 +240,13 @@
 										</div>
 		
 										<div class="row">
-											<label class="label normal">Location (Link)<em>*</em></label>
+											<label class="label normal">Interviewer Location<em>*</em></label>
 											<span class="hint" data-desc=""></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
 												<textarea id="interviewLocation" readonly="readonly" disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>
 												<#else>
-												<textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength="5000" placeholder="(example: http://www.somewhere.com)">${(interview.locationURL?html)!}</textarea>
+												<textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength="5000" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/">${(interview.locationURL?html)!}</textarea>
 												</#if>				                                            
 												<@spring.bind "interview.locationURL" /> 
 												<#list spring.status.errorMessages as error><br /><span class="invalid">${error}</span></#list>

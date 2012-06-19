@@ -2,6 +2,8 @@ $(document).ready(function(){
 
 	$('#referenceUploadFields').on('change','#referenceDocument', function(event)
 	{	
+		$('#referenceUploadFields span.invalid').remove();
+		
 		if (this.files[0].size < 10485760)
 		{
 			referenceDelete();

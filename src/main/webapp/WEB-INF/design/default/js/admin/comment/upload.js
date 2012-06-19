@@ -2,6 +2,8 @@ $(document).ready(function(){
 
 	$('#uploadFields').on('change','#commentDocument', function(event)
 	{	
+		$('#uploadFields span.invalid').remove();
+		
 		if (this.files[0].size < 10485760)
 		{
 			$('#commentDocumentProgress').html("uploading file...");

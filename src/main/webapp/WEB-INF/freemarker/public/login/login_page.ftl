@@ -43,7 +43,9 @@
         
         <!-- Blurb. -->
         <aside id="blurb">
-          <p>Welcome to <b>UCL Prism</b>, the gateway to postgraduate research opportunities in UCL Engineering.</p>
+          <p>Welcome to <b>UCL Prism</b>, the gateway<br />
+					to postgraduate research opportunities<br />
+					in UCL Engineering.</p>
         </aside>
     
         <!-- Login form. -->

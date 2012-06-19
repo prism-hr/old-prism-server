@@ -59,7 +59,7 @@
 								</div>
 
 								<section id="configuration" class="form-rows">
-									<h2>Service Levels</h2>
+									<h2>Service Level Commitments</h2>
 									<div>
 										<form>
 										
@@ -110,13 +110,13 @@
 
 								<!-- Configure Reminder Interval -->
 								<section class="form-rows">
-									<h2>Reminder Interval</h2>
+									<h2>Task Notifications</h2>
 									<div>
 										<form>
 											<div class="row-group">
 
 												<div class="row">
-													<span id="reminder-lbl" class="plain-label">Reminder Interval Duration<em>*</em></span>
+													<span id="reminder-lbl" class="plain-label">Reminder Frequency<em>*</em></span>
 													<span class="hint" data-desc=""></span>
 													<div class="field">	
 														<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
@@ -150,7 +150,7 @@
 
 								<!-- Add Registry Users -->
 								<section class="form-rows">
-									<h2>Registry Contacts</h2>
+									<h2>Admissions Contacts</h2>
 									<div>
 										<form id="addRegistryForm">
 											<span class="invalid" name="threeMaxMessage"></span>

@@ -149,7 +149,7 @@
 								</div>
 								<#if reviewersWillingToInterview??>		            			
 									<div class="row">
-										<label class="plain-label">Delegate interview management to</label>
+										<label class="plain-label">Delegate Application Processing</label>
 										<span class="hint" data-desc=""></span>
 										<div class="field">		   
 											<form id="delegateForm" method ="POST" action="<@spring.url '/delegate' />">   

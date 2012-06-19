@@ -31,8 +31,8 @@ label input { vertical-align: middle; }
 
 
 /* FOOTER ------------------------------------------------------------------------------------------------- */
-#footer { background: #6D6E71 url(../../images/logo_ucl_engineering.png) no-repeat 100% center; border-top: 14px solid #000; color: #BCBEC0; font-size: 9pt; padding: 20px 35px; }
-#footer ul { list-style: none; margin: 0 0 20px; overflow: hidden; }
+#footer { background: #6D6E71 url(../../images/logo_ucl_engineering.png) no-repeat 670px center; border-top: 14px solid #000; color: #BCBEC0; font-size: 9pt; padding: 20px 300px 20px 35px; }
+#footer ul { list-style: none; margin: 0 0 18px; overflow: hidden; }
 #footer ul li { background: url(../../images/bg_footer_sep.png) no-repeat 100% center; float: left; margin: 0 10px 0 0; padding-right: 10px; }
 #footer ul li:last-child { background: none; }
 #footer ul li a { color: #FFF; display: block; font-weight: bold; }

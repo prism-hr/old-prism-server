@@ -219,22 +219,7 @@ $(document).ready(function(){
 	addToolTips();
 	
   // Generic file upload solution...
-	watchUpload($('#proofOfAward'));
-	
-  /*
-	$('#uploadFields').on('change','#proofOfAward', function(event){	
-		if(this.files[0].size < 10485760){
-			ajaxProofOfAwardDelete();
-			$('#progress').html("uploading file...");
-			$('#proofOfAward').attr("readonly", "readonly");
-			ajaxProofOfAwardUpload();
-			$('#proofOfAward').removeAttr("readonly");
-		}else{
-			 alert("Sorry, document must be at most 10MB.");
-		 }
-	});
-  */
-	
+	watchUpload($('#proofOfAward'));	
 	
 	/* Show the upload field if edit button is clicked. */
 	$(document).on('click','a.button-edit', function()

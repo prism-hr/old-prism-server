@@ -25,22 +25,18 @@ $(document).ready(function()
 
 	$('a#popup-ok-button').click(function()
 	{
-		//alert("you have pressed ok - enter");
 		$.post("/pgadmissions/withdraw",
 			{ applicationId:  $('#wapplicationFormId').val() }, 
 			function(data) {}
 		);
 	
 		$('#dialog-overlay, #dialog-box').hide();
-		//alert("you have pressed ok - exit");
 		return false;
 	});
 	
 	$('a#popup-cancel-button').click(function()
 	{
-		//alert("you have pressed cancel - enter");
 		$('#dialog-overlay, #dialog-box').hide();
-		//alert("you have pressed cancel - exite");
 		return false;
 	});
 
@@ -77,28 +73,4 @@ function positionPopup()
 	
 	$('#dialog-box').css({ marginLeft: -offset_x, marginTop: -offset_y })
 									.show();
-	/*
-	// get the screen height and width  
-	var maskHeight = $(document).height();
-	var maskWidth = $(document).width();
-	
-	// calculate the values for center alignment
-	var dialogTop =  (maskHeight/2) - ($('#dialog-box').height()) + 100; 
-	
-	if(dialogTop <= 0)
-	{
-		dialogTop = (maskHeight - $('#dialog-box').height()) / 2;
-		if(dialogTop < 0)
-		{
-			dialogTop = 0;
-			maskHeight = $('#dialog-box').height();
-		}
-	}
-
-	var dialogLeft = (maskWidth/2) - ($('#dialog-box').width()/2); 
-
-	// assign values to the overlay and dialog box
-	$('#dialog-overlay').css({height:maskHeight, width:maskWidth}).show();
-	$('#dialog-box').css({top:dialogTop, left:dialogLeft}).show();
-	*/
 }

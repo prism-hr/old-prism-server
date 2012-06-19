@@ -140,11 +140,7 @@ $(document).ready(function() {
 	$('#downloadAll').click(function()
 	{
 		var appListValue = $('#appList').val();
-		if (appListValue == '')
-		{
-			alert("At least one application must be selected for download!");
-		}
-		else
+		if (appListValue != '')
 		{
 			window.location.href = "/pgadmissions/print/all?appList="+$('#appList').val();
 		}

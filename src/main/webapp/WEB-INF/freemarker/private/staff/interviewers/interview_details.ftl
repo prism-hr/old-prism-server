@@ -79,6 +79,12 @@
 					</div>
 		
 					<hr />
+					
+					<h1>Assign reviewers</h1>
+					
+					<div class="section-info-bar">
+						Assign interviewers to the application here. You may also create new interviewers.
+					</div>
 		
 					<section class="form-rows">
 						<div>

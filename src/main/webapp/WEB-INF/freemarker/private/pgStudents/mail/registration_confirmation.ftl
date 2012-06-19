@@ -14,12 +14,12 @@
 		    	</td>
 		  	</tr>
 		  	<tr>
-			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
+			    <td width="50" bgcolor="#1A171B" style="background-color: #1A171B;">
 			    	<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" />
 			    </td>
-			    <td width="500" bgcolor="#141215" style="background-color: #141215;">			    	
+			    <td width="500" bgcolor="#1A171B" style="background-color: #1A171B;">			    	
 			    </td>
-			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
+			    <td width="50" bgcolor="#1A171B" style="background-color: #1A171B;">
 			    	<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" />
 			    </td>
 		  	</tr>
@@ -53,13 +53,13 @@
 		    	<td colspan="3"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" /></td>
 		  	</tr>
 		  	<tr>
-		    	<td width="50" bgcolor="#141215" style="background-color: #141215;">
+		    	<td width="50" bgcolor="#1A171B" style="background-color: #1A171B;">
 		    		<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" />
 		    	</td>
-		    	<td width="500" bgcolor="#A2A3A5" style="background-color: #A2A3A5;">
+		    	<td width="500" bgcolor="#1A171B" style="background-color: #1A171B;">
 		    		<img src="${host}/pgadmissions/design/default/images/email/logo_ucl.gif" width="80" height="30" alt="UCL" />
 		    	</td>
-		    	<td width="50" bgcolor="#A2A3A5" style="background-color: #A2A3A5;">
+		    	<td width="50" bgcolor="#1A171B" style="background-color: #1A171B;">
 		    		<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" />
 		    	</td>
 		  	</tr>

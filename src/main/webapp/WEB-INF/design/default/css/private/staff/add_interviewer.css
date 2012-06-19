@@ -2,7 +2,7 @@
 
 #programInterviewers, #applicationInterviewers { width: 400px; }
 #programInterviewers optgroup { min-height: 3em; }
-#programInterviewers optgroup, #applicationInterviewers option { border-bottom: 1px solid #999; padding: 5px; }
+#programInterviewers optgroup, #applicationInterviewers option { padding: 5px; }
 #programInterviewers option:last-child, #applicationInterviewers option:last-child { border-bottom: none; }
 #applicationInterviewers option.selected { color: #CCC; }
 

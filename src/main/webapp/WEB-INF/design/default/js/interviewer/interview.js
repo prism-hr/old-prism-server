@@ -16,11 +16,16 @@ $(document).ready(function()
 	{
 		var selectedReviewers = $('#programInterviewers').val();
 		selectedReviewers.forEach(function(id)
-		{			
-			var selText = $("#programInterviewers option[value='" + id + "']").text();
-			var category = $("#programInterviewers option[value='" + id + "']").attr("category");
-			$("#programInterviewers option[value='" + id + "']").addClass('selected');
-			$("#applicationInterviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
+		{
+			var $option = $("#programInterviewers option[value='" + id + "']");
+
+			if (!$option.hasClass('selected'))
+			{
+				var selText = $option.text();
+				var category = $option.attr("category");
+				$("#programInterviewers option[value='" + id + "']").addClass('selected');
+				$("#applicationInterviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
+			}
 		});
 		//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
 		$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);

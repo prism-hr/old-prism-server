@@ -1,15 +1,19 @@
 $(document).ready(function(){
 
-	$('#referenceUploadFields').on('change','#referenceDocument', function(event){	
-		if(this.files[0].size < 10485760){
+	$('#referenceUploadFields').on('change','#referenceDocument', function(event)
+	{	
+		if (this.files[0].size < 10485760)
+		{
 			referenceDelete();
 			$('#referenceDocumentProgress').html("uploading file...");
 			$('#referenceDocument').attr("readonly", "readonly");
 			referenceUpload();
 			$('#referenceDocument').removeAttr("readonly");
-		}else{
-			 alert("Sorry, document must be at most 10MB.");
-		 }
+		}
+		else
+		{
+			$('#referenceUploadFields').append('<span class="invalid">Document must be at most 10MB.</span>');
+		}
 	});
 	
 	$('#declineReference').click(function(){

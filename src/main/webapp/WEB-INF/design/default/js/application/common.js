@@ -101,7 +101,7 @@ function watchUpload($field)
 		 }
      else
      {
-			 alert("Sorry, document must be at most 10MB.");
+			 $container.append('<span class="invalid">Document must be at most 10MB.</span>');
 		 }
   });
 }

@@ -1,6 +1,6 @@
-$(document).ready(function(){
+$(document).ready(function()
+{
 	
-
 	$('#interviewDate').attr("readonly", "readonly");	
 	$('#interviewDate').datepicker({
 		dateFormat: 'dd-M-yy',
@@ -8,18 +8,22 @@ $(document).ready(function(){
 		changeYear: true,
 		yearRange: '1900:c+20' });
 
-	$('#addInterviewerBtn').click(function() {
+
+	// -----------------------------------------------------------------------------------------
+	// Add interviewer
+	// -----------------------------------------------------------------------------------------
+	$('#addInterviewerBtn').click(function()
+	{
 		var selectedReviewers = $('#programInterviewers').val();
-		selectedReviewers.forEach(function(id) {			
+		selectedReviewers.forEach(function(id)
+		{			
 			var selText = $("#programInterviewers option[value='" + id + "']").text();
 			var category = $("#programInterviewers option[value='" + id + "']").attr("category");
-			$("#programInterviewers option[value='" + id + "']").remove();
+			$("#programInterviewers option[value='" + id + "']").addClass('selected');
 			$("#applicationInterviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
 		});
-		$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
+		//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
 		$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
-		
-		
 	});
 	
 	
@@ -35,20 +39,28 @@ $(document).ready(function(){
 		$('#postInterviewerForm').submit();
 	});
 	
-	$('#removeInterviewerBtn').click(function() {
+	
+	// -----------------------------------------------------------------------------------------
+	// Remove interviewer
+	// -----------------------------------------------------------------------------------------
+	$('#removeInterviewerBtn').click(function()
+	{
 		var selectedReviewers = $('#applicationInterviewers').val();
-		selectedReviewers.forEach(function(id) {
+		selectedReviewers.forEach(function(id)
+		{
 			var selText = $("#applicationInterviewers option[value='" + id + "']").text().replace(' (*)', '');
 			$("#applicationInterviewers option[value='" + id + "']").remove();
-			$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
+			//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
+			$("#programInterviewers option[value='" + id + "']'").removeClass('selected');
 		});
-		$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
+		//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
 		$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
 	});
 
 	
 	
-	$('#moveToInterviewBtn').click(function() {
+	$('#moveToInterviewBtn').click(function()
+	{
 	
 			var timeErrors = false;
 			if($('#hours').val() == "" || $('#minutes').val() == "" || $('#format').val() == ""){
@@ -79,11 +91,14 @@ $(document).ready(function(){
 	});
 });
 
-function getAssignedInterviewerIdString() {
+function getAssignedInterviewerIdString()
+{
 	var assignedInterviewers = document.getElementById("applicationInterviewers").options;
 	var revIds = "";
-	for(i = 0; i < assignedInterviewers.length; i = i + 1) {
-		if( i != 0) {
+	for (i = 0; i < assignedInterviewers.length; i = i + 1)
+	{
+		if( i != 0)
+		{
 			revIds += "|";
 		}
 		revIds += assignedInterviewers.item(i).value;

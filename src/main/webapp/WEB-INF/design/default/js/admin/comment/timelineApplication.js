@@ -19,7 +19,7 @@ $(document).ready(function()
 				function(data) {
 					$('#timeline').html(data);	
 					// Scroll to the tab.
-					window.scrollTo(0, $('#timeline').position().top);		
+					window.scrollTo(0, $('#timeline').offset().top);		
 					addToolTips();	
 				}
 		);

@@ -35,20 +35,16 @@
         <!-- Middle. -->
         <div id="middle">
       
+				<!-- App logo and tagline -->
         <header>
-    
-          <!-- App logo and tagline -->
           <div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
-    
-          <div class="tagline">Your Gateway to<br />Research Opportunities</div>
-    
+          <div class="tagline">A Spectrum of Postgraduate Research Opportunities</div>
         </header>
-        
         
         <!-- Blurb. -->
         <aside id="blurb">
           <h2>Welcome to your new gateway to<br />UCL Postgraduate Research programmes<br />in Engineering Sciences.</h2>
-          <p>Register today and begin your application to join some of the world's most highly regarded researchers and academics at the frontiers of discovery.</p>
+          <p>Welcome to <b>UCL Prism</b>, the gateway to postgraduate research opportunities in UCL Engineering.</p>
         </aside>
     
         <!-- Login form. -->

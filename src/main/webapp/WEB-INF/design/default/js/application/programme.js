@@ -150,7 +150,9 @@ $(document).ready(function()
 			addToolTips();
 		
 			$('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
-			$("input[name='awareSupervisor']").val(["NO"]);
+			 $("input[name='awareSupervisor']").each(function(){				 
+				 $(this).prop('checked', false);
+			 });
 		}
 	});
 
@@ -244,7 +246,7 @@ $(document).ready(function()
 			
 			currentRel = 0;
 
-      addToolTips();			
+			addToolTips();			
 		
 			/*
 			$("input[name='sFN']").val($('#supervisorFirstname').val());
@@ -262,7 +264,9 @@ $(document).ready(function()
 			$('#updateSupervisorButton').hide();
 			$('#addSupervisorButton').show();
 		}
-		$("input[name='awareSupervisor']").val(["NO"]);
+		 $("input[name='awareSupervisor']").each(function(){				 
+			 $(this).prop('checked', false);
+		 });
 	});
 
 

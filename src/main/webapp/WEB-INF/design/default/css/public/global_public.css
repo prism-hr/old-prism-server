@@ -38,9 +38,8 @@ label input { vertical-align: middle; }
 
 
 /* Blurb -------------------------------------------------------------------------------------------------- */
-#blurb { bottom: 70px; font-weight: bold; left: 35px; line-height: 1.2; position: absolute; width: 40%; }
-#blurb h2 { color: #024389; font-size: 13pt; margin-bottom: 0.5em; }
-#blurb p { font-size: 10.5pt; }
+#blurb { bottom: 70px; color: #27AAE1; font-size: 13pt; font-weight: bold; left: 35px; line-height: 1.2; position: absolute; width: 40%; }
+#blurb b { color: #FFF; }
 
 
 /* BUTTONS / INDICATORS ----------------------------------------------------------------------------------- */

@@ -81,7 +81,7 @@
 								</#if>
 
 								<div class="row">
-									<span class="plain-label">Comment</span>
+									<span class="plain-label">Comments</span>
 									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
@@ -95,7 +95,7 @@
 							<div class="row-group">
 							
 								<div class="row">
-									<label class="plain-label">Is the applicant qualified for PhD entry to UCL?</label>
+									<label class="plain-label">Is the applicant qualified for postgraduate study at UCL?<em>*</em></label>
 									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<#list validationQuestionOptions as option>
@@ -105,7 +105,7 @@
 								</div>
 
 								<div class="row">
-									<label class="plain-label">Does the applicant meeting the minimum required standard of English Language competence?</label>
+									<label class="plain-label">Does the applicant meet the required level of English language competence?<em>*</em></label>
 									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<#list validationQuestionOptions as option>
@@ -115,7 +115,7 @@
 								</div>
 
 								<div class="row">
-									<label class="plain-label">What is the applicant's fee status?</label>
+									<label class="plain-label">What is the applicant's fee status?<em>*</em></label>
 									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<#list homeOrOverseasOptions as option>
@@ -136,7 +136,7 @@
 
 							<div class="row-group">
 								<div class="row">
-									<label class="plain-label">Next stage</label>
+									<label class="plain-label">Next Stage<em>*</em></label>
 									<span class="hint" data-desc=""></span>
 									<div class="field">		            				
 										<select class="max" name="status" id="status">

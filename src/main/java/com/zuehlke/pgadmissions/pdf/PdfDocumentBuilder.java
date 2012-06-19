@@ -356,26 +356,44 @@ public class PdfDocumentBuilder {
 
 
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Address                                                                                                ", grayFont));
+		PdfPTable table = new PdfPTable(1);	
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("ADDRESS", boldFont, BaseColor.GRAY));
+		document.add(table);
+		document.add(new Paragraph(" "));
+		table = new PdfPTable(2);		
+		table.setWidthPercentage(100f);		
+		
+		table.addCell(newTableCell("Current Address", smallBoldFont));
+		if(application.getCurrentAddress() == null){
+			table.addCell(newTableCell(null, smallFont));
+		}else{
+			table.addCell(newTableCell(application.getCurrentAddress().getLocation(), smallFont));
+		}
+		
 
-		Address currentAddress = application.getCurrentAddress();
-		if (currentAddress != null) {
-			document.add(new Paragraph("Current Address", smallBoldFont));
-			document.add(new Paragraph("Address: " + currentAddress.getLocation()));
-			document.add(new Paragraph("Country: " + currentAddress.getCountry().getName()));
-
-			document.add(new Paragraph(" "));
+		table.addCell(newTableCell("Country", smallBoldFont));
+		if(application.getCurrentAddress() == null){
+			table.addCell(newTableCell(null, smallFont));
+		}else{
+			table.addCell(newTableCell(application.getCurrentAddress().getCountry().getName(), smallFont));
 		}
 
-		Address contactAddress = application.getContactAddress();
-		if (contactAddress != null) {
-			document.add(new Paragraph("Contact Address", smallBoldFont));
-			document.add(new Paragraph("Address: " + contactAddress.getLocation()));
-			document.add(new Paragraph("Country: " + contactAddress.getCountry().getName()));
-
-			document.add(new Paragraph(" "));
+		table.addCell(newTableCell("Contact Address", smallBoldFont));
+		if(application.getContactAddress() == null){
+			table.addCell(newTableCell(null, smallFont));
+		}else{
+			table.addCell(newTableCell(application.getContactAddress().getLocation(), smallFont));
 		}
+		
 
+		table.addCell(newTableCell("Country", smallBoldFont));
+		if(application.getContactAddress() == null){
+			table.addCell(newTableCell(null, smallFont));
+		}else{
+			table.addCell(newTableCell(application.getContactAddress().getCountry().getName(), smallFont));
+		}
+		document.add(table);
 	}
 
 	private void addQualificationSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {

@@ -8,7 +8,6 @@ $(document).ready(function(){
 	
 	$(".half,.multiples").each(function(){
 		
-		//alert($(this).text());
 		$(this).css('display','inline');
 		
 	});

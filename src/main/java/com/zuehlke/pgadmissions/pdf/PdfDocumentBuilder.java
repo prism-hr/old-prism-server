@@ -461,8 +461,7 @@ public class PdfDocumentBuilder {
 					table.addCell(newTableCell("LINK to appear here", smallFont));
 				}else{
 					table.addCell(newTableCell("Not Awarded", smallGrayFont));
-				}
-				
+				}				
 				
 				document.add(table);
 				document.add(new Paragraph(" "));
@@ -472,31 +471,64 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addEmploymentSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Employment                                                                                         ", grayFont));
-		if (application.getEmploymentPositions().isEmpty()) {
-			document.add(new Paragraph(createMessage("employment information")));
-		} else {
-			for (EmploymentPosition employment : application.getEmploymentPositions()) {
-				document.add(new Paragraph("Country: " + employment.getEmployerCountry().getName()));
-				document.add(new Paragraph("Employer Name: " + employment.getEmployerName()));
-				document.add(new Paragraph("Employer Address: " + employment.getEmployerAddress()));
-				document.add(new Paragraph("Position: " + employment.getPosition()));
-				document.add(new Paragraph("Roles and Resposibilities: " + employment.getRemit()));
-				document.add(new Paragraph("Language of work: " + employment.getLanguage().getName()));
-				document.add(new Paragraph("Start Date: " + employment.getStartDate().toString()));
-				if (employment.isCurrent()) {
-					document.add(new Paragraph("Is this your current position? yes."));
-				} else {
-					document.add(new Paragraph("Is this your current position? no."));
+		PdfPTable table = new PdfPTable(1);	
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("EMPLOYMENT", boldFont, BaseColor.GRAY));
+		document.add(table);
+		document.add(new Paragraph(" "));
+		
+		if(application.getEmploymentPositions().isEmpty()){
+			table = new PdfPTable(2);
+			table.setWidthPercentage(100f);		
+			table.addCell(newTableCell("Position", smallBoldFont));
+			table.addCell(newTableCell(null, smallFont));
+			document.add(table);
+		}else{
+			int counter = 1;
+			for (EmploymentPosition  position : application.getEmploymentPositions()) {
+				table = new PdfPTable(2);
+				table.setWidthPercentage(100f);		
+				PdfPCell headerCell = newTableCell("Position (" +  counter++ + ")", smallBoldFont);
+				headerCell.setColspan(2);
+				table.addCell(headerCell);
+				table.addCell(newTableCell("Country", smallBoldFont));
+				table.addCell(newTableCell(position.getEmployerCountry().getName(), smallFont));
+				
+				table.addCell(newTableCell("Employer Name", smallBoldFont));
+				table.addCell(newTableCell(position.getEmployerName(), smallFont));
+				
+				table.addCell(newTableCell("Employer Address", smallBoldFont));
+				table.addCell(newTableCell(position.getEmployerAddress(), smallFont));
+				
+				table.addCell(newTableCell("Roles and Responsibilities", smallBoldFont));
+				table.addCell(newTableCell(position.getRemit(), smallFont));
+				
+				table.addCell(newTableCell("Language of Work", smallBoldFont));
+				table.addCell(newTableCell(position.getLanguage().getName(), smallFont));
+				
+				table.addCell(newTableCell("Start Date", smallBoldFont));
+				table.addCell(newTableCell(simpleDateFormat.format(position.getStartDate()), smallFont));
+				
+				table.addCell(newTableCell("Is this your Current Position", smallBoldFont));
+				if(position.isCurrent()){
+					table.addCell(newTableCell("Yes", smallFont));
+				}else{
+					table.addCell(newTableCell("No", smallFont));
 				}
-				if (employment.getEndDate() == null) {
-					document.add(new Paragraph(createMessage("end date")));
-				} else {
-					document.add(new Paragraph("End Date: " + employment.getEndDate().toString()));
-				}
+				
 
+				table.addCell(newTableCell("End Date", smallBoldFont));
+				
+				if(position.getEndDate() == null){
+					table.addCell(newTableCell(null, smallGrayFont));
+				}else{
+					table.addCell(newTableCell(simpleDateFormat.format(position.getEndDate()), smallFont));
+				}										
+				
+				document.add(table);
 				document.add(new Paragraph(" "));
 			}
+		
 		}
 
 	}

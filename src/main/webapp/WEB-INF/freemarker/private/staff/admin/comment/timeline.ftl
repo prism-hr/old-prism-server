@@ -24,7 +24,7 @@
 					</div>
         
 					<#if timelineObject.reviewRound?? && user != applicationForm.applicant>
-					<#if timelineObject.reviewRound.reviewers??>
+					<#if timelineObject.reviewRound.reviewers?? && timelineObject.reviewRound.reviewers?size &gt; 0>
 					<ul class="status-info">
 						<li class="${timelineObject.type}">
 							<div class="box">

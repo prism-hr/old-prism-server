@@ -50,6 +50,8 @@ $(document).ready(function()
 				{
 					$('#application').html(data);
 
+					window.scrollTo(0, $('#timeline').offset().top);		
+
 					// Toggle grey-label class where you find instances of "Not Provided" text.
 					$('#application .field').each(function()
 					{
@@ -67,6 +69,10 @@ $(document).ready(function()
 
 				}
 			);
+		}
+		else
+		{
+			window.scrollTo(0, $('#timeline').offset().top);		
 		}
 
 		return false;

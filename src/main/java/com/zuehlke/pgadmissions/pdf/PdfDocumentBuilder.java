@@ -397,31 +397,74 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addQualificationSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
-		document.add(new Paragraph("Qualification                                                                                         ", grayFont));
-		if (application.getQualifications().isEmpty()) {
-			document.add(new Paragraph(createMessage("qualification information")));
-		} else {
-
-			for (Qualification qualification : application.getQualifications()) {
-				document.add(new Paragraph("Institution Country: " + qualification.getInstitutionCountry().getName()));
-				document.add(new Paragraph("Institution / Provider Name: " + qualification.getQualificationInstitution()));
-				document.add(new Paragraph("Qualification Type: " + qualification.getQualificationType()));
-				document.add(new Paragraph("Title / Subject: " + qualification.getQualificationSubject()));
-				document.add(new Paragraph("Language of Study: " + qualification.getQualificationLanguage().getName()));
-				document.add(new Paragraph("Start Date: " + qualification.getQualificationStartDate().toString()));
-				document.add(new Paragraph("Has this qualification been awarded? " + qualification.getCompleted().displayValue()));
-				document.add(new Paragraph("Grade / Result / GPA: " + qualification.getQualificationGrade()));
-				if (qualification.getQualificationAwardDate() != null) {
-					document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
+		PdfPTable table = new PdfPTable(1);	
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("QUALIFICATIONS", boldFont, BaseColor.GRAY));
+		document.add(table);
+		document.add(new Paragraph(" "));
+		
+		if(application.getQualifications().isEmpty()){
+			table = new PdfPTable(2);
+			table.setWidthPercentage(100f);		
+			table.addCell(newTableCell("Qualification", smallBoldFont));
+			table.addCell(newTableCell(null, smallFont));
+			document.add(table);
+		}else{
+			int counter = 1;
+			for (Qualification  qualification : application.getQualifications()) {
+				table = new PdfPTable(2);
+				table.setWidthPercentage(100f);		
+				PdfPCell headerCell = newTableCell("Qualification (" +  counter++ + ")", smallBoldFont);
+				headerCell.setColspan(2);
+				table.addCell(headerCell);
+				table.addCell(newTableCell("Institution Country", smallBoldFont));
+				table.addCell(newTableCell(qualification.getInstitutionCountry().getName(), smallFont));
+				
+				table.addCell(newTableCell("Institution/Provider Name", smallBoldFont));
+				table.addCell(newTableCell(qualification.getQualificationInstitution(), smallFont));
+				
+				table.addCell(newTableCell("Qualification Type", smallBoldFont));
+				table.addCell(newTableCell(qualification.getQualificationType(), smallFont));
+				
+				table.addCell(newTableCell("Title/Subject", smallBoldFont));
+				table.addCell(newTableCell(qualification.getQualificationSubject(), smallFont));
+				
+				table.addCell(newTableCell("Language of Study", smallBoldFont));
+				table.addCell(newTableCell(qualification.getQualificationLanguage().getName(), smallFont));
+				
+				table.addCell(newTableCell("Start Date", smallBoldFont));
+				table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationStartDate()), smallFont));
+				
+				table.addCell(newTableCell("Has this Qualification been awarded", smallBoldFont));
+				if(qualification.isQualificationCompleted()){
+					table.addCell(newTableCell("Yes", smallFont));
+				}else{
+					table.addCell(newTableCell("No", smallFont));
 				}
-
-				if (qualification.getProofOfAward() != null) {
-					document.newPage();
-					document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));
-					readPdf(document, qualification.getProofOfAward(), writer);
-					document.newPage();
+				
+				if(qualification.isQualificationCompleted()){
+					table.addCell(newTableCell("Grade/Result/GPA", smallBoldFont));
+				}else{
+					table.addCell(newTableCell("Expected Grade/Result/GPA", smallBoldFont));	
 				}
-
+				table.addCell(newTableCell(qualification.getQualificationInstitution(), smallFont));
+				
+				table.addCell(newTableCell("Award Date", smallBoldFont));
+				if(qualification.getQualificationAwardDate() == null){
+					table.addCell(newTableCell("Not Awarded", smallGrayFont));
+				}else{
+					table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationAwardDate()), smallFont));
+				}
+				
+				table.addCell(newTableCell("Proof Of Award", smallBoldFont));
+				if(qualification.isQualificationCompleted()){
+					table.addCell(newTableCell("LINK to appear here", smallFont));
+				}else{
+					table.addCell(newTableCell("Not Awarded", smallGrayFont));
+				}
+				
+				
+				document.add(table);
 				document.add(new Paragraph(" "));
 			}
 		}
@@ -630,15 +673,15 @@ public class PdfDocumentBuilder {
 				c1.setHorizontalAlignment(Element.ALIGN_LEFT);
 				table.addCell(c1);
 
-				table.writeSelectedRows(0, -1, document.left(), document.top() + 50f, writer.getDirectContent());
+				table.writeSelectedRows(0, -1, document.left(), document.top() + 55f, writer.getDirectContent());
 
 				Image image = Image.getInstance(this.getClass().getResource("/logo.jpg"));
 				image.scalePercent(30f);
 
-				image.setAbsolutePosition(document.right() - image.getWidth() * 0.3f, document.top());
+				image.setAbsolutePosition(document.right() - image.getWidth() * 0.3f, document.top() + 10f);
 				document.add(image);
 				LineSeparator lineSeparator = new LineSeparator();
-				lineSeparator.drawLine(writer.getDirectContent(), document.left(), document.right(), document.top() + 5f);
+				lineSeparator.drawLine(writer.getDirectContent(), document.left(), document.right(), document.top() + 10f);
 
 				lineSeparator.drawLine(writer.getDirectContent(), document.left(), document.right(), document.bottom() - 5f);
 				Phrase footerPhrase = new Phrase("Page " + document.getPageNumber(), smallerFont);

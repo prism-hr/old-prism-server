@@ -20,7 +20,7 @@ $(document).ready(function()
 					$("#programSupervisors option[value='" + id + "']").addClass('selected')
 																													 .removeAttr('selected')
 																													 .attr('disabled', 'disabled');
-					$("#applicationSupervisors").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
+					$("#applicationSupervisors").append('<option value="'+ id +'" category="' + category + '">'+ selText + '</option>');
 				}
 			});
 			$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
@@ -57,7 +57,7 @@ $(document).ready(function()
 		{
 			selectedSupervisors.forEach(function(id)
 			{
-				var selText = $("#applicationSupervisors option[value='" + id + "']").text().replace(' (*)', '');
+				var selText = $("#applicationSupervisors option[value='" + id + "']").text();
 				$("#applicationSupervisors option[value='" + id + "']").remove();
 				$("#programSupervisors option[value='" + id + "']").removeClass('selected')
 																												 .removeAttr('disabled');

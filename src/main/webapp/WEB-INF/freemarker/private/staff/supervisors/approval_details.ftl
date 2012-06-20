@@ -98,12 +98,9 @@
 									
 										<div class="row-group" id="assignSupervisorsToAppSection">			
 											<div class="row">
-												<label class="label">Supervisors</label>
+												<span class="plain-label">Assign Supervisors<em>*</em></span>
 												<span class="hint" data-desc=""></span>
 												<div class="field">
-													<p>
-														<strong>Available Supervisors</strong>
-													</p>
 													<select id="programSupervisors" class="max" multiple="multiple" size="${avaliableOptionsSize}">
 														<optgroup id="default" label="Default supervisors">
 														<#list programmeSupervisors as supervisor>
@@ -148,9 +145,6 @@
 											<!-- Already supervisors of this application -->
 											<div class="row">
 												<div class="field">
-													<p>
-														<strong>Selected Supervisors</strong>
-													</p>
 													<select id="applicationSupervisors" class="max" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 														<#list applicationSupervisors as supervisor>
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}">

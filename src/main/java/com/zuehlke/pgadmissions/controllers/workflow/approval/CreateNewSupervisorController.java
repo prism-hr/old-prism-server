@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -110,7 +111,9 @@ public class CreateNewSupervisorController extends ApprovalController {
 
 			}
 
-			RegisteredUser newUser = userService.createNewUserInRole(supervisor.getFirstName(), supervisor.getLastName(), supervisor.getEmail(), Authority.SUPERVISOR, null, null);
+			RegisteredUser newUser = userService.createNewUserForProgramme(supervisor.getFirstName(), supervisor.getLastName(), supervisor.getEmail(), applicationForm.getProgram(),
+					Authority.SUPERVISOR);
+		
 			newUserIds.add(newUser.getId());
 			return getCreateSupervisorModelAndView(applicationForm, newUserIds, getCreateSupervisorMessage("assignSupervisor.user.created", newUser), viewName);
 		}

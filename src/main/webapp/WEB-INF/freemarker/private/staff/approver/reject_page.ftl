@@ -83,19 +83,21 @@
 						</div>
 						<hr />
 						
-						<div class="section-info-bar">
-							Reject the applicant. They will be prevented from reapplying for their chosen study programme in the current academic year.
-						</div>
-						
 						<@spring.bind "applicationForm.*" />
 						<@spring.bind "availableReasons.*" />
 						<section class="form-rows violet">
+							<h2>Reject Applicant</h2>
 							<div>
 								<form method="POST" action="<@spring.url '/rejectApplication/moveApplicationToReject'/>">
+
+									<div class="section-info-bar">
+										Reject the applicant. They will be prevented from reapplying for their chosen study programme in the current academic year.
+									</div>
+									
 									<div class="row-group">
 										
 										<div class="row">
-											<label class="plain-label">Reasons for rejections<em>*</em></label>
+											<label class="plain-label">Reasons for Rejection<em>*</em></label>
 											<span class="hint" data-desc=""></span>
 											<div id="reasonList" class="field">
 												<ul>

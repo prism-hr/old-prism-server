@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
@@ -43,10 +44,11 @@ public class CreateNewSupervisorControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewApprovalRoundForNewSupervisorUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(2).applicationNumber("bob").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, null)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.SUPERVISOR)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -67,10 +69,11 @@ public class CreateNewSupervisorControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewApprovalRoundForExistingSupervisorUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(2).applicationNumber("bob").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, null)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.SUPERVISOR)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -94,10 +97,11 @@ public class CreateNewSupervisorControllerTest {
 		List<RegisteredUser> pedningSupervisors = new ArrayList<RegisteredUser>(Arrays.asList(new RegisteredUserBuilder().id(1).toUser(),
 				new RegisteredUserBuilder().id(2).toUser()));
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(2).applicationNumber("bob").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, null)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.SUPERVISOR)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		ModelAndView modelAndView = controller.createSupervisorForNewApprovalRound(user, bindingResultMock, application, pedningSupervisors, Collections.EMPTY_LIST);

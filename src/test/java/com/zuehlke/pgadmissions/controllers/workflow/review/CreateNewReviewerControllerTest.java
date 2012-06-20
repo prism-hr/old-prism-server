@@ -239,7 +239,6 @@ public class CreateNewReviewerControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingUser);
-		userServiceMock.updateUserWithNewRoles(existingUser, application.getProgram(), Authority.REVIEWER);
 		EasyMock.replay(userServiceMock,encryptionHelperMock);
 
 		
@@ -256,6 +255,20 @@ public class CreateNewReviewerControllerTest {
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.contains("bob"));
 		assertEquals("message", modelAndView.getModel().get("message"));
+	}
+	
+	@Test
+	public void shouldAddReviewerRoleToExistingUserNotInProgrammeNotInAnyReviewRound(){
+		RegisteredUser user = new RegisteredUserBuilder().id(1).email("jo@jo.com").toUser();
+		Program program = new ProgramBuilder().reviewers(new RegisteredUserBuilder().id(17).toUser()).id(3).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(3).toApplicationForm();
+		List<RegisteredUser> pendingUsers = new ArrayList<RegisteredUser>();
+		List<RegisteredUser> previousUsers = new ArrayList<RegisteredUser>();
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jo@jo.com")).andReturn(user);
+		userServiceMock.updateUserWithNewRoles(user, program, Authority.REVIEWER);
+		EasyMock.replay(userServiceMock);
+		controller.createReviewerForNewReviewRound(user, bindingResultMock, application, pendingUsers, previousUsers);
+		
 	}
 
 	@Test

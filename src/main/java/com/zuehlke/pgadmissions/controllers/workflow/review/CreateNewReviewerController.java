@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.review;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -78,7 +80,6 @@ public class CreateNewReviewerController extends ReviewController {
 
 		RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(reviewer.getEmail());
 		if (existingUser != null) {
-
 			if (existingUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)) {
 				return getCreateReviewerModelAndView(applicationForm, newUserIds,
 						getCreateReviewerMessage("assignReviewer.user.alreadyExistsInTheApplication", existingUser), viewName);
@@ -102,14 +103,11 @@ public class CreateNewReviewerController extends ReviewController {
 			}
 			
 			newUserIds.add(encryptionHelper.encrypt(existingUser.getId()));
-			userService.updateUserWithNewRoles(existingUser, applicationForm.getProgram(), Authority.REVIEWER);
 			return getCreateReviewerModelAndView(applicationForm, newUserIds, getCreateReviewerMessage("assignReviewer.user.added", existingUser), viewName);
-
 		}
 		RegisteredUser newUser = userService.createNewUserForProgramme(reviewer.getFirstName(), reviewer.getLastName(), reviewer.getEmail(), applicationForm.getProgram(),
 				Authority.REVIEWER);
 		userService.setDirectURLAndSaveUser(DirectURLsEnum.ADD_REVIEW, applicationForm, newUser);
-//		RegisteredUser newUser = userService.createNewUserInRole(reviewer.getFirstName(), reviewer.getLastName(), reviewer.getEmail(), Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, applicationForm);
 		newUserIds.add(encryptionHelper.encrypt(newUser.getId()));
 		return getCreateReviewerModelAndView(applicationForm, newUserIds, getCreateReviewerMessage("assignReviewer.user.created", newUser), viewName);
 	}

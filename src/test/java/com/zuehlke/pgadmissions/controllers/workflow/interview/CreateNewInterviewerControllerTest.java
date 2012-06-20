@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
@@ -45,10 +46,12 @@ public class CreateNewInterviewerControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewInterviewForNewInterviewUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.INTERVIEWER)).andReturn(user);
+		userServiceMock.setDirectURLAndSaveUser(DirectURLsEnum.ADD_INTERVIEW, application, user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -69,10 +72,12 @@ public class CreateNewInterviewerControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewInterviewForExistingInterviewUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.INTERVIEWER)).andReturn(user);
+		userServiceMock.setDirectURLAndSaveUser(DirectURLsEnum.ADD_INTERVIEW, application, user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -96,10 +101,12 @@ public class CreateNewInterviewerControllerTest {
 		List<RegisteredUser> pedningInterviewers = new ArrayList<RegisteredUser>(Arrays.asList(new RegisteredUserBuilder().id(1).toUser(),
 				new RegisteredUserBuilder().id(2).toUser()));
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.INTERVIEWER)).andReturn(user);
+		userServiceMock.setDirectURLAndSaveUser(DirectURLsEnum.ADD_INTERVIEW, application, user);
 		EasyMock.replay(userServiceMock);
 
 		ModelAndView modelAndView = controller.createInterviewerForNewInterview(user, bindingResultMock, application, pedningInterviewers, Collections.EMPTY_LIST);

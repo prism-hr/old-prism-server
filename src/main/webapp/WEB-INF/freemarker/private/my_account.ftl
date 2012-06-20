@@ -54,14 +54,15 @@
 						<div class="content-box">
 							<div class="content-box-inner">
 							
-								<div class="section-info-bar">
-									Edit your account details.
-								</div>
-							
 								<section id="configuration" class="form-rows">
 									<h2>Account Details</h2>
 									<div>
 										<form>
+										
+											<div class="section-info-bar">
+												Edit your account details.
+											</div>
+										
 											<div class="row-group">
 												<div class="row"> 
 													<span id="email-lbl" class="plain-label">First Name</span>

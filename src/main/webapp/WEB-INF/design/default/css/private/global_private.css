@@ -143,7 +143,7 @@ table.existing .button-edit, table.existing .button-delete { margin: 3px 0; }
 
 
 /* FORM ELEMENTS ----------------------------------------------------------------------------------------- */
-form input, form select, form textarea { border: 1px solid #999; font-family: Arial, Helvetica, sans-serif; }
+form input, form select, form textarea { border: 1px solid #999; font-family: Arial, Helvetica, sans-serif !important; }
 form input { padding: 1px 3px; }
 form input.date, form input.hasDatepicker { background: url(../../images/calendar.png) no-repeat right center; padding-right: 24px; width: 80px !important; }
 form textarea { padding: 3px; resize: none; }

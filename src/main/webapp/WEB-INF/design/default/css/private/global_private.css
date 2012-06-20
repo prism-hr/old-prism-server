@@ -224,6 +224,8 @@ section.form-rows div.section-info-bar {
 	margin-bottom: 5px;
 	padding: 10px;
 }
+section.form-rows form > div.section-info-bar { padding-left: 35px; }
+
 section.folding form > div.section-info-bar .row,
 section.folding form > div.section-info-bar .info-text { background: none; margin-bottom: 0; }
 section.folding form > div.section-info-bar .info-text { line-height: 1.3; padding-left: 30px; }

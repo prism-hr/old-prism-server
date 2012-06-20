@@ -296,6 +296,7 @@
 					<instrumentation>
 						<excludes>
 							<exclude>com/zuehlke/pgadmissions/cucumber/**/*.class</exclude>
+							<exclude>com/zuehlke/pgadmissions/pdf/PdfDocumentBuilder.class</exclude>
 						</excludes>
 					</instrumentation>
 				</configuration>

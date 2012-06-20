@@ -60,12 +60,12 @@
 						<h2>Approve Applicant</h2>
 						<div>
 							<form method="POST" action= "<@spring.url '/approved/move'/>">
+								<div class="section-info-bar">
+									Confirm your approval of the applicant. Their application will be passed to admissions to generate an offer.
+								</div>
+								
 								<div class="row-group">
 								
-									<div class="section-info-bar">
-										Confirm your approval of the applicant. Their application will be passed to admissions to generate an offer.
-									</div>
-									
 									<input type="hidden" id="applicationId" name = 'applicationId' value =  "${(applicationForm.applicationNumber)!}"/>
 						
 									<div class="row">

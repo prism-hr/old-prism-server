@@ -54,15 +54,15 @@
 						<div class="content-box">
 							<div class="content-box-inner">
 							
-								<div class="section-info-bar">
-									Configure your 'apply now' badge. You embed this on external web pages to enable your programme to accept applications.
-								</div>
-
 								<section id="configuration" class="form-rows">
 									<h2>Programme badge</h2>
 									<div>
 										<form>
 										
+											<div class="section-info-bar">
+												Configure your 'apply now' badge. You embed this on external web pages to enable your programme to accept applications.
+											</div>
+			
 											<div class="row-group">
 												<div class="row">
 													<label class="plain-label">Programme<em>*</em></label>

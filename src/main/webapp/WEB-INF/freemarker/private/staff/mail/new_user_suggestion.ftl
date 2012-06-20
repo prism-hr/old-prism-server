@@ -14,9 +14,6 @@
 		    	</td>
 		  	</tr>
 		  	<tr>
-		    	<td colspan="3"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" /></td>
-		  	</tr>
-		  	<tr>
 		    	<td width="50">
 		    		<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" />
 		    	</td>

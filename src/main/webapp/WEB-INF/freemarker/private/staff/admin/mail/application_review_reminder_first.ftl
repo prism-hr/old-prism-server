@@ -14,19 +14,6 @@
 		    	</td>
 		  	</tr>
 		  	<tr>
-			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
-			    	<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" />
-			    </td>
-			    <td width="500" bgcolor="#141215" style="background-color: #141215;">			    	
-			    </td>
-			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
-			    	<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" />
-			    </td>
-		  	</tr>
-		  	<tr>
-		    	<td colspan="3"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" /></td>
-		  	</tr>
-		  	<tr>
 		    	<td width="50">
 		    		<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" />
 		    	</td>

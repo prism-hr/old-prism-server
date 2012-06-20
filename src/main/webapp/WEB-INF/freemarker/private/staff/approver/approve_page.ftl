@@ -66,7 +66,7 @@
 								
 								<div class="row-group">
 								
-									<input type="hidden" id="applicationId" name = 'applicationId' value =  "${(applicationForm.applicationNumber)!}"/>
+									<input type="hidden" id="applicationId" name='applicationId' value="${(applicationForm.applicationNumber)!}"/>
 						
 									<div class="row">
 										<span class="plain-label">Comment</span>

@@ -60,10 +60,10 @@
 				        
 				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) >
 									<section class="form-rows">
+										<h2>Add comment</h2>
 										<div>
 											<form method="POST" action= "<@spring.url '/comment'/>">
 												<div class="row-group">
-													<h3>Add comment</h3>
 													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 													<div class="row">
 														<span class="plain-label">Comment<em>*</em></span>

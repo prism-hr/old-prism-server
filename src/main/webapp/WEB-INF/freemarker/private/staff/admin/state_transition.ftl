@@ -58,18 +58,29 @@
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
 					
-					<div class="section-info-bar">
-					<#if applicationForm.isInState('VALIDATION')>
-						Validate the application here. You may <a href="#" id="notifyRegistryButton">refer the application to admissions</a> if you feel unable to assess the Applicant's eligbility.
-					<#elseif applicationForm.isInState('REVIEW')>
-						Evaluate the reviewers' comments and decide which stage to progress the application to.
-					<#elseif applicationForm.isInState('INTERVIEW')>
-						Evaluate the interviewers' comments and decide which stage to progress the application to.
-					</#if>
-					</div>
-
 					<section class="form-rows">
+						<h2>
+						<#if applicationForm.isInState('VALIDATION')>
+							Validate Application
+						<#elseif applicationForm.isInState('REVIEW')>
+							Review Application
+						<#elseif applicationForm.isInState('INTERVIEW')>
+							Evaluate Interview Outcomes
+						</#if>
+						</h2>
+		
 						<div>
+
+							<div class="section-info-bar">
+							<#if applicationForm.isInState('VALIDATION')>
+								Validate the application here. You may <a href="#" id="notifyRegistryButton">refer the application to admissions</a> if you feel unable to assess the Applicant's eligbility.
+							<#elseif applicationForm.isInState('REVIEW')>
+								Evaluate the reviewers' comments and decide which stage to progress the application to.
+							<#elseif applicationForm.isInState('INTERVIEW')>
+								Evaluate the interviewers' comments and decide which stage to progress the application to.
+							</#if>
+							</div>
+		
 							<div class="row-group">
 							
 <#--

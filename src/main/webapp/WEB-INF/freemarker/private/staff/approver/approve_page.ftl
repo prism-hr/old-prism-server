@@ -56,18 +56,18 @@
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
 				
-					<div class="section-info-bar">
-						Confirm your approval of the applicant. Their application will be passed to admissions to generate an offer.
-					</div>
-					
 					<section class="form-rows">
+						<h2>Approve Applicant</h2>
 						<div>
 							<form method="POST" action= "<@spring.url '/approved/move'/>">
 								<div class="row-group">
-								<input type="hidden" id="applicationId" name = 'applicationId' value =  "${(applicationForm.applicationNumber)!}"/>
+								
+									<div class="section-info-bar">
+										Confirm your approval of the applicant. Their application will be passed to admissions to generate an offer.
+									</div>
+									
+									<input type="hidden" id="applicationId" name = 'applicationId' value =  "${(applicationForm.applicationNumber)!}"/>
 						
-									<h3>Recommend Application As Approved</h3>
-	
 									<div class="row">
 										<span class="plain-label">Comment</span>
 										<span class="hint" data-desc=""></span>

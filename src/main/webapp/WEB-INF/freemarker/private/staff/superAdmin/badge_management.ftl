@@ -68,7 +68,7 @@
 													<label class="plain-label">Programme<em>*</em></label>
 													<span class="hint" data-desc=""></span>
 													<div class="field">
-														<select name="programme" id="programme">
+														<select name="programme" id="programme" class="max">
 															<option value="">Please select a program</option>
 															<#list programs as program>
 																<option value="${program.code}">${program.title?html}</option>

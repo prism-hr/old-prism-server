@@ -101,7 +101,7 @@
 														<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
 														</#list>
 													</optgroup>
-													<optgroup id="previous" label="Previous interviewers in this programme">
+													<optgroup id="previous" label="Previous interviewers">
 														<#list previousInterviewers as interviewer>
 														<option value="${encrypter.encrypt(interviewer.id)}" category="previous">${interviewer.firstName?html} ${interviewer.lastName?html}</option>
 														</#list>

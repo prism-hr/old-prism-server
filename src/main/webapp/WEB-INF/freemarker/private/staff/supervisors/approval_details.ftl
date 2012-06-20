@@ -102,16 +102,16 @@
 													<select id="programSupervisors" class="max" multiple="multiple" size="${avaliableOptionsSize}">
 														<optgroup id="default" label="Default supervisors">
 														<#list programmeSupervisors as supervisor>
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html}</option>
 														</#list>
 														</optgroup>
-														<optgroup id="previous" label="Previous supervisors in this programme">
+														<optgroup id="previous" label="Previous supervisors">
 														<#list previousSupervisors as supervisor>
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous">${supervisor.firstName?html} ${supervisor.lastName?html}</option>
 														</#list>
 														<#list applicationSupervisors as supervisor>
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" class="selected" disabled="disabled">
-																${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if>
+																${supervisor.firstName?html} ${supervisor.lastName?html}
 															</option>
 														</#list>
 														<#list pendingSupervisors as unsaved>

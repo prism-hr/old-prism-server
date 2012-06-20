@@ -281,7 +281,6 @@ div.buttons { text-align: right; }
 #tools li.icon-application a { background-image: url(../../images/icon_clipboard.png); background-position: 10px center !important; padding-left: 30px; }
 
 
-
 /* TABLES ------------------------------------------------------------------------------------------------ */
 table.multiples { border-spacing: 0 4px; width: 70%; margin-top: 1em; }
 table.multiples .align-left { text-align: left; }
@@ -854,4 +853,3 @@ div.ajax {
 
 #view-toolbar { top: 140px; }
 #view-toolbar li.tool-button a { background: #444; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
-

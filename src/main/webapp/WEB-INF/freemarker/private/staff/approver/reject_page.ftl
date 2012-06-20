@@ -124,13 +124,6 @@
 										</div>
 									</div>
 
-									<div class="row-group">
-										<div class="row">
-											<label class="label"> Content of the e-mail for the applicant</label>
-											<div id="emailText"></div> 
-										</div>
-									</div>
-									
 									<div class="buttons">
 										<button type="submit" id="rejectButton" class="blue">Reject application</button>
 									</div>

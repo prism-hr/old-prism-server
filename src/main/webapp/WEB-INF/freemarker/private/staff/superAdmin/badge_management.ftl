@@ -65,7 +65,7 @@
 										
 											<div class="row-group">
 												<div class="row">
-													<label class="plain-label">Programme</label>
+													<label class="plain-label">Programme<em>*</em></label>
 													<span class="hint" data-desc=""></span>
 													<div class="field">
 														<select name="programme" id="programme">
@@ -108,8 +108,6 @@
 												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<textarea readonly="readonly" id="html" rows="15" cols="70"></textarea>
-													<br /><br />
-													<iframe id="badge" width="535" height="200"></iframe>											
 												</div>
 											</div>
 											

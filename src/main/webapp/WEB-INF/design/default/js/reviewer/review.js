@@ -20,7 +20,7 @@ $(document).ready(function()
 					$("#programReviewers option[value='" + id + "']").addClass('selected')
 																													 .removeAttr('selected')
 																													 .attr('disabled', 'disabled');
-					$("#applicationReviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + ' (*)</option>');
+					$("#applicationReviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + '</option>');
 				}
 			});
 			$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
@@ -56,7 +56,7 @@ $(document).ready(function()
 		{
 			selectedReviewers.forEach(function(id)
 			{
-				var selText = $("#applicationReviewers option[value='" + id + "']").text().replace(' (*)', '');
+				var selText = $("#applicationReviewers option[value='" + id + "']").text();
 				$("#applicationReviewers option[value='" + id + "']").remove();
 				//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
 				$("#programReviewers option[value='" + id + "']").removeClass('selected')

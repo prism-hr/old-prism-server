@@ -105,6 +105,11 @@
                           <#list previousReviewers as reviewer>
                           <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
                           </#list>
+													<#list applicationReviewers as reviewer>
+													<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" class="selected" disabled="disabled">
+														${reviewer.firstName?html} ${reviewer.lastName?html}
+													</option>
+													</#list>
                         </optgroup>
                       </select>
                     </div>
@@ -114,7 +119,7 @@
                   <div class="row reviewer-buttons">
                     <div class="field">
                       <span>
-                        <button class="blue" type="button" id="addReviewerBtn">Add <span class="icon-down"></span></button>
+                        <button class="blue" type="button" id="addReviewerBtn"><span class="icon-down"></span> Add</button>
                         <button type="button" id="removeReviewerBtn"><span class="icon-up"></span> Remove</button>
                       </span>
                     </div>

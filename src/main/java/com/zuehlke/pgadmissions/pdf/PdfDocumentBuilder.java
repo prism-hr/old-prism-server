@@ -1,9 +1,14 @@
 package com.zuehlke.pgadmissions.pdf;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,14 +27,16 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -44,19 +51,21 @@ import com.zuehlke.pgadmissions.exceptions.PDFException;
 @Component
 public class PdfDocumentBuilder {
 
-	private Font grayFont = new Font(FontFamily.HELVETICA, 14, Font.BOLD | Font.UNDERLINE, BaseColor.DARK_GRAY);
-	private static Font boldFont = new Font(FontFamily.HELVETICA, 14, Font.BOLD);
-	private static Font smallBoldFont = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
-	private static Font smallFont = new Font(FontFamily.HELVETICA, 12, Font.NORMAL);
-	private static Font smallGrayFont = new Font(FontFamily.HELVETICA, 12, Font.NORMAL, BaseColor.LIGHT_GRAY);
-	private static Font smallerBoldFont = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
-	private static Font smallerFont = new Font(FontFamily.HELVETICA, 10, Font.NORMAL);
+	private static Font boldFont = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
+	private static Font smallBoldFont = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+	private static Font smallFont = new Font(FontFamily.HELVETICA, 10, Font.NORMAL);
+	private static Font smallGrayFont = new Font(FontFamily.HELVETICA, 10, Font.NORMAL, BaseColor.LIGHT_GRAY);
+	private static Font smallerBoldFont = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
+	private static Font smallerFont = new Font(FontFamily.HELVETICA, 8, Font.NORMAL);
+	private static Font linkFont = new Font(FontFamily.HELVETICA, 10, Font.UNDERLINE, BaseColor.BLUE);
 
 	private final BaseColor grayColor = new BaseColor(220, 220, 220);
 	private Chunk programmeHeader;
 	private Chunk applicationHeader;
 	private Chunk submittedDateHeader;
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
+	private HashMap<Integer, com.zuehlke.pgadmissions.domain.Document> bookmarkMap;
+	private int appendixCounter = 1;
 
 	public byte[] buildPdf(ApplicationForm... applications) {
 		try {
@@ -76,7 +85,8 @@ public class PdfDocumentBuilder {
 	}
 
 	private void buildDocument(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
-
+		bookmarkMap = new HashMap<Integer, com.zuehlke.pgadmissions.domain.Document>();
+		appendixCounter = 1;
 		programmeHeader = new Chunk(application.getProgram().getTitle(), smallerFont);
 		applicationHeader = new Chunk(application.getApplicationNumber(), smallerFont);
 		if (application.getSubmittedDate() != null) {
@@ -240,6 +250,20 @@ public class PdfDocumentBuilder {
 		PdfPCell c1 = newTableCell(content, font);
 		c1.setBackgroundColor(grayColor);
 		return c1;
+	}
+
+	private PdfPCell newTableCell(String content, Font font, Integer appendixNumber) {
+
+		PdfPCell cell = null;
+		if (StringUtils.isNotBlank(content)) {
+			cell = new PdfPCell(new Phrase(new Chunk(content, font).setLocalGoto(appendixNumber.toString())));
+		} else {
+			cell = new PdfPCell(new Phrase("Not Provided", smallGrayFont));
+		}
+		cell.setPaddingBottom(5);
+		cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+		return cell;
 	}
 
 	private void addPersonalDetailsSection(ApplicationForm application, Document document) throws DocumentException {
@@ -636,72 +660,70 @@ public class PdfDocumentBuilder {
 
 		table = new PdfPTable(2);
 		table.setWidthPercentage(100f);
-		
+
 		table.addCell(newTableCell("Personal Statement", smallBoldFont));
-		if(application.getPersonalStatement() == null){
+		if (application.getPersonalStatement() == null) {
 			table.addCell(newTableCell(null, smallFont));
-		}else{
-			table.addCell(newTableCell("Add link here", smallFont));
+		} else {
+			table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
+			bookmarkMap.put(appendixCounter++, application.getPersonalStatement());
+
 		}
-			
 
 		table.addCell(newTableCell("CV/Resume", smallBoldFont));
-		if(application.getCv() == null){
+		if (application.getCv() == null) {
 			table.addCell(newTableCell(null, smallFont));
-		}else{
-			table.addCell(newTableCell("Add link here", smallFont));
-		}		
+		} else {
+			table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
+			bookmarkMap.put(appendixCounter++, application.getCv());
+		}
 		document.add(table);
 
 	}
 
 	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Additional Information                                                                        ", grayFont));
-		AdditionalInformation addInfo = application.getAdditionalInformation();
-		if (addInfo != null) {
-			document.add(new Paragraph(addInfo.getInformationText()));
-			if (addInfo.getConvictions() != null && addInfo.getConvictions()) {
-				document.add(new Paragraph("Convictions", smallBoldFont));
-				document.add(new Paragraph("Details of convictions: " + addInfo.getConvictionsText()));
-			}
+		PdfPTable table = new PdfPTable(1);
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("ADDITIONAL INFORMATION", boldFont, BaseColor.GRAY));
+		document.add(table);
+		document.add(new Paragraph(" "));
+
+		table = new PdfPTable(2);
+		table.setWidthPercentage(100f);
+
+		table.addCell(newTableCell("Additional Information", smallBoldFont));
+		table.addCell(newTableCell(application.getAdditionalInformation().getInformationText(), smallFont));
+		document.add(table);
+		document.add(new Paragraph(" "));
+
+		table = new PdfPTable(2);
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", smallBoldFont));
+		if (application.getAdditionalInformation().getConvictions() == null) {
+			table.addCell(newTableCell(null, smallFont));
 		} else {
-			document.add(new Paragraph(createMessage("additional information")));
+			if (application.getAdditionalInformation().getConvictions()) {
+				table.addCell(newTableCell("Yes", smallFont));
+			} else {
+				table.addCell(newTableCell("No", smallFont));
+			}
 		}
+		table.addCell(newTableCell("Description", smallBoldFont));
+		table.addCell(newTableCell(application.getAdditionalInformation().getConvictionsText(), smallFont));
+		document.add(table);
 	}
 
 	private void addSupportingDocuments(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException,
 			IOException {
 
-		com.zuehlke.pgadmissions.domain.Document doc = application.getCv();
-		if (doc != null) {
+		Set<Integer> keySet = bookmarkMap.keySet();
+		for (Integer integer : keySet) {
 			document.newPage();
-			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
-			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg")
-					|| doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
-				Image image = Image.getInstance(doc.getContent());
-				document.add(image);
-			} else if (doc.getFileName().endsWith(".txt")) {
-				String content = new String(doc.getContent());
-				document.add(new Chunk(content));
-			} else if (doc.getFileName().endsWith(".pdf")) {
-				readPdf(document, doc, writer);
-			}
+			com.zuehlke.pgadmissions.domain.Document doc = bookmarkMap.get(integer);
+			document.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
+			readPdf(document, doc, writer);
 		}
-		doc = application.getPersonalStatement();
-		if (doc != null) {
-			document.newPage();
-			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
-			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg")
-					|| doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
-				Image image = Image.getInstance(doc.getContent());
-				document.add(image);
-			} else if (doc.getFileName().endsWith(".txt")) {
-				String content = new String(doc.getContent());
-				document.add(new Chunk(content));
-			} else if (doc.getFileName().endsWith(".pdf")) {
-				readPdf(document, doc, writer);
-			}
-		}
+
 	}
 
 	private void addUploadedReferences(ApplicationForm application, Document document, PdfWriter writer) throws IOException, DocumentException {
@@ -722,12 +744,7 @@ public class PdfDocumentBuilder {
 			PdfImportedPage page = writer.getImportedPage(pdfReader, i);
 			cb.addTemplate(page, 0, 0);
 		}
-	}
-
-	private String createMessage(String fieldName) {
-		return "No " + fieldName + " has been specified.";
-	}
-
+	} 
 	private class HeaderEvent extends PdfPageEventHelper {
 		@Override
 		public void onEndPage(PdfWriter writer, Document document) {

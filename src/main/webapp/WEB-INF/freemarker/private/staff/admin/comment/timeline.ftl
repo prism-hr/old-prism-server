@@ -142,7 +142,3 @@
     </div>           
   </div>
 </section>
-
-<!-- Scripts required for tooltips. -->
-<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>

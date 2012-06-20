@@ -20,11 +20,10 @@
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 	
-	   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-	<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>	
-	<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge.js'/>"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>	
+    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge.js'/>"></script>
 		    
 	</head>
 	

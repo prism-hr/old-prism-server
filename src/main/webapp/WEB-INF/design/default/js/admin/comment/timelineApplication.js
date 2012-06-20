@@ -1,6 +1,8 @@
 $(document).ready(function()
 {
 
+	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
+	
 	// Timeline tab.	
 	$('#timelineBtn').click(function()
 	{
@@ -19,7 +21,11 @@ $(document).ready(function()
 				function(data) {
 					$('#timeline').html(data);	
 					// Scroll to the tab.
-					window.scrollTo(0, $('#timeline').offset().top);		
+					if (jumpToTimeline)
+					{
+						window.scrollTo(0, $('#timeline').offset().top);
+						jumpToTimeline = true;
+					}
 					addToolTips();	
 				}
 		);

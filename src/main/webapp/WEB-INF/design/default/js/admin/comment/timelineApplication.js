@@ -18,7 +18,8 @@ $(document).ready(function()
 					id:  $('#applicationId').val(),				
 					cacheBreaker: new Date().getTime() 
 				},
-				function(data) {
+				function(data)
+				{
 					$('#timeline').html(data);	
 					// Scroll to the tab.
 					if (jumpToTimeline)

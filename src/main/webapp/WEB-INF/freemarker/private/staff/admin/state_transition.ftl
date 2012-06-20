@@ -150,11 +150,11 @@
 								</div>
 								<#if reviewersWillingToInterview??>		            			
 									<div class="row">
-										<label class="plain-label">Delegate Application Processing</label>
+										<label class="plain-label grey-label">Delegate Application Processing</label>
 										<span class="hint" data-desc=""></span>
 										<div class="field">		   
-											<form id="delegateForm" method ="POST" action="<@spring.url '/delegate' />">   
-												<input type="hidden" name = "applicationId" value =  "${(applicationForm.applicationNumber)!}"/>     				
+											<form id="delegateForm" method="POST" action="<@spring.url '/delegate' />">   
+												<input type="hidden" name="applicationId" value="${(applicationForm.applicationNumber)!}"/>     				
 												<select class="max" name="applicationAdministrator" id="appliationAdmin" disabled="disabled">
 													<option value="">Select...</option>
 													<#list reviewersWillingToInterview as reviewerWillingToInterview>

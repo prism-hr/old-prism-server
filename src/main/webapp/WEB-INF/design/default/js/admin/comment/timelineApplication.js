@@ -25,6 +25,9 @@ $(document).ready(function()
 					if (jumpToTimeline)
 					{
 						window.scrollTo(0, $('#timeline').offset().top);
+					}
+					else
+					{
 						jumpToTimeline = true;
 					}
 					addToolTips();	

@@ -88,8 +88,13 @@
 						<br />
 							
 							<section class="form-rows">
+								<h2>Assign Supervisors</h2>
 								<div>
 									<form>
+									
+										<div class="section-info-bar">
+											Assign supervisors to the application here. You may also create new supervisors.
+										</div>
 									
 										<div class="row-group" id="assignSupervisorsToAppSection">			
 											<div class="row">

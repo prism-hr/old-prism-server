@@ -1,5 +1,7 @@
 /* CSS Document */
 
+#applicationInterviewers { min-height: 60px; }
+
 #programInterviewers, #applicationInterviewers { width: 400px; }
 #programInterviewers optgroup { font-style: normal; min-height: 3em; }
 #programInterviewers option, #applicationInterviewers option { padding: 5px; }

@@ -3,6 +3,8 @@
 #programReviewers, #programSupervisors,
 #applicationReviewers, #applicationSupervisors { width: 400px; }
 
+#applicationReviewers, #applicationSupervisors { min-height: 60px; }
+
 #programSupervisors optgroup { font-style: normal; min-height: 3em; }
 #programSupervisors option, #applicationSupervisors option { padding: 5px; }
 #programSupervisors option:last-child, #applicationSupervisors option:last-child { border-bottom: none; }

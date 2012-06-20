@@ -2,7 +2,8 @@ $(document).ready(function()
 {
 	bindDatePicker('#batchdeadline');
 	
-	$('#cancelBadge').click(function(){
+	$('#cancelBadge').click(function()
+	{
 		$('#programme').val('');
 		$('#project').val('');
 		$('#programhome').val('');
@@ -28,13 +29,14 @@ function updateBadge(){
 			batchdeadline: $('#batchdeadline').val(),			
 			cacheBreaker: new Date().getTime() 
 		},
-		function(data) {
+		function(data)
+		{
 			$('#html').html(data);
 		}
 	);	
 	$('#badge').attr("src", "/pgadmissions/badge/html?program=" + $('#programme').val() 
-	+ "&project=" +$('#project').val()
-	+ "&programhome=" +$('#programhome').val()
-	+ "&batchdeadline=" +$('#batchdeadline').val()
-	+ "&disable=true");
+		+ "&project=" +$('#project').val()
+		+ "&programhome=" +$('#programhome').val()
+		+ "&batchdeadline=" +$('#batchdeadline').val()
+		+ "&disable=true");
 };				

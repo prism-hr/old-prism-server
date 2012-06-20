@@ -6,25 +6,12 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------------------
 	$('#addReviewerBtn').click(function()
 	{
-		var selectedReviewers = $('#programReviewers').val();
-		if (selectedReviewers)
-		{
-			selectedReviewers.forEach(function(id)
+			$("#programReviewers option").each(function()
 			{
-				var $option = $("#programReviewers option[value='" + id + "']");
-	
-				if (!$option.hasClass('selected'))
-				{
-					var selText = $option.text();
-					var category = $option.attr("category");
-					$("#programReviewers option[value='" + id + "']").addClass('selected')
-																													 .removeAttr('selected')
-																													 .attr('disabled', 'disabled');
-					$("#applicationReviewers").append('<option value="'+ id +'" category="' + category + '">'+ selText + '</option>');
-				}
+					$("#programReviewers option[value='" + $(this).val() + "']").addClass('selected').attr('disabled', 'disabled');
+					$("#applicationReviewers").append('<option value="'+ $(this).val() +'" category="' + $(this).attr("category") + '">'+ $(this).html() + '</option>');
 			});
 			$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
-		}
 	});
 	
 	
@@ -51,19 +38,12 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------------------
 	$('#removeReviewerBtn').click(function()
 	{
-		var selectedReviewers = $('#applicationReviewers').val();
-		if (selectedReviewers)
-		{
-			selectedReviewers.forEach(function(id)
-			{
-				var selText = $("#applicationReviewers option[value='" + id + "']").text();
-				$("#applicationReviewers option[value='" + id + "']").remove();
-				//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');
-				$("#programReviewers option[value='" + id + "']").removeClass('selected')
-																												 .removeAttr('disabled');
-			});
+		$("#applicationReviewers option").each(function()
+				{
+						$("#applicationReviewers option[value='" + $(this).val() + "']").remove();
+						$("#programReviewers option[value='" + $(this).val() + "']").removeClass('selected');
+				});
 			$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
-		}
 	});
 
 	

@@ -101,7 +101,7 @@
                           <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
                           </#list>
                         </optgroup>
-                        <optgroup id="previous" label="Previous reviewers in this programme">
+                        <optgroup id="previous" label="Previous reviewers">
                           <#list previousReviewers as reviewer>
                           <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
                           </#list>

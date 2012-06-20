@@ -321,6 +321,7 @@ function doUpload($upload_field)
     data:           { type: $upload_field.attr('data-type') },
     success: function (data)
     {		
+			$container.removeClass('posting');
 			if ($(data).find('span.invalid').length > 0)
 			{
         // There was an uploading error.
@@ -340,7 +341,6 @@ function doUpload($upload_field)
 				$('a.button-delete', $hfParent).attr({ 'data-desc': 'Delete ' + doc_type })
                                      .qtip(tooltipSettings);
 			}
-			$container.removeClass('posting');
     }
   });
 }

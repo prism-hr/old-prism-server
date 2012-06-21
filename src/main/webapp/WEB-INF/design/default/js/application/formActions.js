@@ -6,8 +6,11 @@ $(document).ready(function()
 	// LOAD APPLICATION FORM SECTIONS
 	// --------------------------------------------------------------------------------
 	
+	var sections = 9;
+	$('.content-box-inner').append('<div class="ajax" />');
+	
+	
 	/* Programme Details. */
-	$('#programmeDetailsSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getProgrammeDetails",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -19,12 +22,11 @@ $(document).ready(function()
 			function(data)
 			{
 				$('#programmeDetailsSection').prepend(data);
-				$('#programmeDetailsSection div.ajax').remove();
+				checkLoadedSections();
 			}
 	);
 	
 	/* Personal Details. */
-	$('#personalDetailsSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getPersonalDetails",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -34,7 +36,7 @@ $(document).ready(function()
 			function(data)
 			{
 				$('#personalDetailsSection').prepend(data);
-				$('#personalDetailsSection div.ajax').remove();
+				checkLoadedSections();
 				if ($('#personalDetailsSection .section-error-bar').length == 0)
 				{
 					$('#personalDetails-H2').trigger('click');
@@ -43,7 +45,6 @@ $(document).ready(function()
 	);
 	
 	/* Address. */
-	$('#addressSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getAddress",
 			{
 				applicationId:  $('#applicationId').val(),				
@@ -53,7 +54,7 @@ $(document).ready(function()
 			function(data)
 			{
 				$('#addressSection').prepend(data);
-				$('#addressSection div.ajax').remove();
+				checkLoadedSections();
 				if ($('#addressSection .section-error-bar').length == 0)
 				{
 					$('#address-H2').trigger('click');
@@ -62,7 +63,6 @@ $(document).ready(function()
 	);
 	
 	/* Qualifications. */
-	$('#qualificationsSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getQualification",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -72,7 +72,7 @@ $(document).ready(function()
 			function(data)
 			{
 				$('#qualificationsSection').prepend(data);
-				$('#qualificationsSection div.ajax').remove();
+				checkLoadedSections();
 				if ($('#qualificationsSection .section-error-bar').length == 0)
 				{
 					$('#qualifications-H2').trigger('click');
@@ -81,7 +81,6 @@ $(document).ready(function()
 	);
 	
 	/* (Employment) Position. */
-	$('#positionSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getEmploymentPosition",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -91,7 +90,7 @@ $(document).ready(function()
 			function(data)
 			{
 				$('#positionSection').prepend(data);
-				$('#positionSection div.ajax').remove();
+				checkLoadedSections();
 				if ($('#positionSection .section-error-bar').length == 0)
 				{
 					$('#position-H2').trigger('click');
@@ -100,7 +99,6 @@ $(document).ready(function()
 	);
 	
 	/* Funding. */
-	$('#fundingSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getFunding",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -110,7 +108,7 @@ $(document).ready(function()
 			function(data)
 			{
 				$('#fundingSection').prepend(data);
-				$('#fundingSection div.ajax').remove();
+				checkLoadedSections();
 				if ($('#fundingSection .section-error-bar').length == 0)
 				{
 					$('#funding-H2').trigger('click');
@@ -119,7 +117,6 @@ $(document).ready(function()
 	);
 	
 	/* Referees. */
-	$('#referencesSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getReferee",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -129,7 +126,7 @@ $(document).ready(function()
 			function(data)
 			{
 				$('#referencesSection').prepend(data);
-				$('#referencesSection div.ajax').remove();
+				checkLoadedSections();
 				if ($('#referencesSection .section-error-bar').length == 0)
 				{
 					$('#referee-H2').trigger('click');
@@ -138,7 +135,6 @@ $(document).ready(function()
 	);
 
 	/* Documents. */
-	$('#documentSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getDocuments",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -148,7 +144,7 @@ $(document).ready(function()
 			function(data)
 			{
 				$('#documentSection').prepend(data);
-				$('#documentSection div.ajax').remove();
+				checkLoadedSections();
 				if ($('#documentSection .section-error-bar').length == 0)
 				{
 					$('#documents-H2').trigger('click');
@@ -157,7 +153,6 @@ $(document).ready(function()
 	);
 	
 	/* Additional Information. */
-	$('#additionalInformationSection.folding').append('<div class="ajax" />');
 	$.get("/pgadmissions/update/getAdditionalInformation",
 			{
 				applicationId:  $('#applicationId').val(),
@@ -167,7 +162,7 @@ $(document).ready(function()
 			function(data)
 			{
 				$('#additionalInformationSection').prepend(data);
-				$('#additionalInformationSection div.ajax').remove();
+				checkLoadedSections();
 				if ($('#additionalInformationSection .section-error-bar').length == 0)
 				{
 					$('#additional-H2').trigger('click');
@@ -186,25 +181,12 @@ $(document).ready(function()
 			}
 	);
 	
-	// Moved to withdraw_modal_window.js
-//	$('#withdrawButton1').click(function(){
-//		if(confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))
-//		{
-//			$.post("/pgadmissions/withdraw",
-//			{
-//				applicationId:  $('#wapplicationFormId').val()
-//			}, 
-//			function(data) {
-//			}	
-//		);
-//		}
-//	});
-
 	
 	/*
 	 * Submit commnet on click of comment submit button.
 	 */ 
-	$('#commentSubmitButton').click(function(){
+	$('#commentSubmitButton').click(function()
+	{
 		$('#commentField').val($('#comment').val());
 		$('#commentForm').submit();
 	});
@@ -249,19 +231,25 @@ $(document).ready(function()
 	
 	/* 1.1 Show / Hide the whole Comment Box */
 	
-	if(viewType == "comments"){
+	if (viewType == "comments")
+	{
 		$('div#show-comment-button-div').hide();
 		$('#commentForm').show();
 	
 		var commentCount = $('#prev-comment-div').val();
 		
-		if(commentCount > 0){
+		if (commentCount > 0)
+		{
 			$('.comment').show();
-		}else{
+		}
+		else
+		{
 			$('.comment').hide();
 		}
 		
-	}else{
+	}
+	else
+	{
 		$('div#show-comment-button-div').show();
 		$('#commentForm').hide();
 	}
@@ -272,7 +260,8 @@ $(document).ready(function()
 	 * Box
 	 */
 	
-	$('#comment-close-button').click(function(){
+	$('#comment-close-button').click(function()
+	{
 		// $('#comment').css("display", "none");
 		$('div#show-comment-button-div').show();
 		$('#commentForm').hide();
@@ -283,33 +272,43 @@ $(document).ready(function()
 	 * Comment Box and hide the comment button
 	 */
 	
-	$('#comment-button').click(function(){
+	$('#comment-button').click(function()
+	{
 		
 		$('div#show-comment-button-div').hide();
 		$('#commentForm').show();
 		
 		var commentCount = $('#prev-comment-div').val();
 		
-		if(commentCount > 0){
+		if (commentCount > 0)
+		{
 			$('.comment').show();
-		}else{
+		}
+		else
+		{
 			$('.comment').hide();
 		}
 		
 	});
-
-
-
-
 });
 
-function closeSections(){
-	if($("input#form-display-state").val() == "close"){
+function closeSections()
+{
+	if ($("input#form-display-state").val() == "close")
+	{
 		// close everything
 		$('section.folding:not(.error) > div').removeClass("open").hide();
 		$('section.folding:not(.error) > h2').removeClass("open");
-		
+	}
+}
 
+
+function checkLoadedSections()
+{
+	section--;
+	if (sections <= 0)
+	{
+		$('.content-box-inner div.ajax').remove();
 	}
 }
 

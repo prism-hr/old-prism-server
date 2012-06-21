@@ -274,7 +274,7 @@ function watchUpload($field)
 		var ref		= $field.attr('data-reference');
 		var type	= $field.attr('data-type');
 		$field.replaceWith('<input class="full" type="file" name="file" id="' + id +'" data-reference="' + ref + '" data-type="' + type + '" />');
-		watchUpload('#'+id);
+		watchUpload($('#'+id));
   });
 
   $container.on('change', $field, function()

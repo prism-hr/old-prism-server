@@ -13,16 +13,12 @@
 	
 		<#if errorCode?? && errorCode=="true">
 		<div class="section-error-bar">
-				<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
-				<span class="invalid-info-text">
-					<@spring.message 'documentsDetails.sectionInfo'/>
-				</span>
+			<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
+			<@spring.message 'documentsDetails.sectionInfo'/>
 		</div>
 		<#else>
 		<div id="doc-info-bar-div" class="section-info-bar">
-			<span id="doc-info-bar-span" class="info-text">
-				<@spring.message 'documentsDetails.sectionInfo'/> 
-			</span>
+			<@spring.message 'documentsDetails.sectionInfo'/> 
 		</div>	
 		</#if>
 		

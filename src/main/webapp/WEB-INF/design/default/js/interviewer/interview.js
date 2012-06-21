@@ -1,6 +1,5 @@
 $(document).ready(function()
 {
-	
 	$('#interviewDate').attr("readonly", "readonly");	
 	$('#interviewDate').datepicker({
 		dateFormat: 'dd-M-yy',

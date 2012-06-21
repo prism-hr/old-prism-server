@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -40,13 +41,14 @@ public class CreateNewInterviewerControllerTest {
 	private BindingResult bindingResultMock;
 	private InterviewService interviewServiceMock;
 	private EncryptionHelper encryptionHelper;
+	private ApplicationsService applicationsServiceMock;
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewInterviewForNewInterviewUserIfUserDoesNotExists() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encrypted5");
-		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+		controller = new CreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -60,11 +62,11 @@ public class CreateNewInterviewerControllerTest {
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application)).andReturn(user);
 		EasyMock.replay(userServiceMock);
-
+		interviewServiceMock.createInterviewerInNewInterview(application, user);
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignInterviewer.user.created"), EasyMock.aryEq(new Object[] { "bob bobson", "bobson@bob.com" }),
 						EasyMock.isNull(Locale.class))).andReturn("message");
-		EasyMock.replay(messageSourceMock);
+		EasyMock.replay(messageSourceMock, interviewServiceMock);
 		ModelAndView modelAndView = controller.createInterviewerForNewInterview(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/interview/moveToInterview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
@@ -80,7 +82,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldCreateNewInterviewForExistingInterviewUserIfUserDoesNotExists() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encrypted5");
-		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+		controller = new CreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -366,12 +368,13 @@ public class CreateNewInterviewerControllerTest {
 
 	@Before
 	public void setup() {
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		interviewServiceMock = EasyMock.createMock(InterviewService.class);
 		encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
 		
-		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper);
+		controller = new CreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper);
 	}
 }

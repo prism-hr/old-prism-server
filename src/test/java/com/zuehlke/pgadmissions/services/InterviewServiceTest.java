@@ -13,12 +13,19 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.InterviewDAO;
+import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
@@ -28,6 +35,10 @@ public class InterviewServiceTest {
 	private InterviewService interviewService;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private EventFactory eventFactoryMock;
+	private InterviewerDAO interviewerDAO;
+	private Interview interview;
+	private Interviewer interviewer;
+
 	
 	@Test
 	public void shouldGetInterviewById() {
@@ -103,12 +114,52 @@ public class InterviewServiceTest {
 		interviewService.moveApplicationToInterview(interview, applicationForm);
 	}
 	
+	@Test
+	public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull(){
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		interviewerDAO.save(interviewer);
+		EasyMock.replay(interviewerDAO);
+		interviewService.createInterviewerInNewInterview(application, interviewerUser);
+		Assert.assertEquals(interviewerUser, interviewer.getUser());
+		Assert.assertTrue(interview.getInterviewers().contains(interviewer));
+		
+	}
+	
+	@Test
+	public void shouldCreateNewInterviewerInLatestInterviewRoundIfLatestRoundIsNotNull(){
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		Interview latestInterview = new InterviewBuilder().toInterview();
+		ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		interviewerDAO.save(interviewer);
+		EasyMock.replay(interviewerDAO);
+		interviewService.createInterviewerInNewInterview(application, interviewerUser);
+		Assert.assertEquals(interviewerUser, interviewer.getUser());
+		Assert.assertTrue(latestInterview.getInterviewers().contains(interviewer));
+		
+	}
+	
 	@Before
 	public void setUp() {
+		interviewer = new InterviewerBuilder().id(1).toInterviewer();
+		interview = new InterviewBuilder().id(1).toInterview();
+		interviewerDAO = EasyMock.createMock(InterviewerDAO.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		interviewDAOMock = EasyMock.createMock(InterviewDAO.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		interviewService = new InterviewService(interviewDAOMock, applicationFormDAOMock, eventFactoryMock);
+		interviewService = new InterviewService(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, interviewerDAO){
+			@Override
+			public Interview newInterview() {
+				return interview;
+			}
+			
+			@Override
+			public Interviewer newInterviewer() {
+				return interviewer;
+			}
+		};
 	}
 	
 }

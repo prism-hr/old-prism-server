@@ -8,8 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.InterviewDAO;
+import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
@@ -19,16 +22,18 @@ public class InterviewService {
 	private final InterviewDAO interviewDAO;
 	private final ApplicationFormDAO applicationFormDAO;
 	private final EventFactory eventFactory;
+	private final InterviewerDAO interviewerDAO;
 	
 	InterviewService() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 	
 	@Autowired
-	public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory){
+	public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO){
 		this.interviewDAO = interviewDAO;
 		this.applicationFormDAO = applicationFormDAO;
 		this.eventFactory = eventFactory;
+		this.interviewerDAO = interviewerDAO;
 	}
 	
 	@Transactional
@@ -67,6 +72,35 @@ public class InterviewService {
 		default:
 			throw new IllegalStateException(String.format("Application in invalid status: '%s'!", status));
 		}
+	}
+
+	public void createInterviewerInNewInterview(
+			ApplicationForm applicationForm, RegisteredUser newUser) {
+		Interviewer inter = newInterviewer();
+		inter.setUser(newUser);
+		interviewerDAO.save(inter);
+		Interview latestInterview = applicationForm.getLatestInterview();
+		if (latestInterview == null){
+			Interview interview = newInterview();
+			interview.getInterviewers().add(inter);
+			interview.setApplication(applicationForm);
+			save(interview);
+			applicationForm.setLatestInterview(interview);
+		}
+		else{
+			latestInterview.getInterviewers().add(inter);
+			save(latestInterview);
+		}
+		
+	}
+	
+	public Interviewer newInterviewer() {
+		return new Interviewer();
+	}
+
+	public Interview newInterview() {
+		Interview interview = new Interview();
+		return interview;
 	}
 
 }

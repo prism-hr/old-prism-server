@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.dao.InterviewDAO;
+import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
@@ -113,10 +117,12 @@ public class CreateNewInterviewerController extends InterviewController {
 					viewName);
 
 		}
-
+		
 		RegisteredUser newUser = userService.createNewUserInRole(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail(),
 				Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, applicationForm);
 		newUserIds.add(newUser.getId());
+		interviewService.createInterviewerInNewInterview(applicationForm, newUser); //to be added in previous list
+		applicationsService.save(applicationForm);
 		return getCreateInterviewerModelAndView(applicationForm, newUserIds, getCreateInterviewerMessage("assignInterviewer.user.created", newUser), viewName);
 	}
 
@@ -124,7 +130,6 @@ public class CreateNewInterviewerController extends InterviewController {
 		List<String> encryptedIds = getEncryptedUserIds(newUserIds);
 		ModelAndView modelAndView = new ModelAndView(viewName);
 		modelAndView.getModel().put("applicationId", applicationForm.getApplicationNumber());
-		modelAndView.getModel().put("pendingInterviewer", newUserIds);
 		modelAndView.getModel().put("pendingInterviewer", encryptedIds);
 		modelAndView.getModel().put("message", message);
 		return modelAndView;

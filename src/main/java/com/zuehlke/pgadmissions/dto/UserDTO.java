@@ -3,11 +3,12 @@ package com.zuehlke.pgadmissions.dto;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
-public class NewUserDTO {
+public class UserDTO {
 
 	private String firstName;
 	private String lastName;
 	private String email;
+	private boolean newUser= true;
 	
 	private Program selectedProgram;
 	private Authority[] selectedAuthorities;
@@ -44,6 +45,22 @@ public class NewUserDTO {
 	}
 	public void setSelectedAuthorities(Authority... authorities) {
 		this.selectedAuthorities = authorities;
+	}
+	
+	public boolean isInAuthority(Authority authority){
+		for (Authority selectedAuthority : getSelectedAuthorities()) {
+			if(selectedAuthority == authority){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	public boolean isNewUser() {
+		return newUser;
+	}
+	public void setNewUser(boolean newUser) {
+		this.newUser = newUser;
 	}
 
 }

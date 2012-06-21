@@ -37,7 +37,7 @@
 				<div class="field<#if applicationForm.personalStatement?? && applicationForm.personalStatement.fileName??> uploaded</#if>" id="psUploadFields">        	
 					<input id="psDocument" class="full" data-type="PERSONAL_STATEMENT" data-reference="Personal Statement" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="psUploadedDocument">
-						<input type="hidden" id="document_PERSONAL_STATEMENT" value="${(encrypter.encrypt(applicationForm.personalStatement.id))!}"/>
+						<input type="hidden" class="file" id="document_PERSONAL_STATEMENT" value="${(encrypter.encrypt(applicationForm.personalStatement.id))!}"/>
 						<input type="hidden" name="MAX_FILE_SIZE" value="500" />
 						<a class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.personalStatement.id))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a>
 						<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
@@ -62,7 +62,7 @@
 				<div class="field<#if applicationForm.cv??> uploaded</#if>" id="cvUploadFields">        	
 					<input id="cvDocument" class="full" type="file" data-type="CV" data-reference="CV" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="cvUploadedDocument">
-						<input type="hidden" id="document_CV" value="${(encrypter.encrypt(applicationForm.cv.id))!}"/>
+						<input type="hidden" class="file" id="document_CV" value="${(encrypter.encrypt(applicationForm.cv.id))!}"/>
 						<a class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.cv.id))!}'/>">${(applicationForm.cv.fileName)!}</a>
 						<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 						<a data-desc="Change CV" class="button-delete button-hint">delete</a>

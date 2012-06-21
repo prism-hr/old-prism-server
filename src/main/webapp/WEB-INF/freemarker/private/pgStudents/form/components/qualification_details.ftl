@@ -299,7 +299,7 @@
 				<div class="field <#if qualification.proofOfAward??>uploaded</#if>" id="uploadFields">         		       	
 					<input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if !qualification.isQualificationCompleted() || applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="qualUploadedDocument">
-						<input type="hidden" id="document_PROOF_OF_AWARD" value="${(encrypter.encrypt(qualification.proofOfAward.id))!}"/>
+						<input type="hidden" class="file" id="document_PROOF_OF_AWARD" value="${(encrypter.encrypt(qualification.proofOfAward.id))!}"/>
 						<#if qualification.proofOfAward??> 
 						<a class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>" target="_blank">
 						${(qualification.proofOfAward.fileName?html)!}</a>

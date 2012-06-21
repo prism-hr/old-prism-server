@@ -92,7 +92,7 @@
   
                   <div class="row">
                     <label class="label">Reviewers</label>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'assignReviewer.defaultReviewers'/>"></span>
                     <div class="field">
                       <p><strong>Available Reviewers</strong></p>
                       <select id="programReviewers" multiple="multiple" size="${avaliableOptionsSize}">
@@ -158,7 +158,7 @@
     
                   <div class="row">
                     <label class="label normal">Reviewer First Name<em>*</em></label> 
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'assignReviewer.firstName'/>"></span>
                     <div class="field">
                       <input class="full" type="text" name="newReviewerFirstName" id="newReviewerFirstName" value="${(reviewer.firstName?html)!}"/>
                       <@spring.bind "reviewer.firstName" /> 
@@ -168,7 +168,7 @@
                   
                   <div class="row">
                     <label class="label normal">Reviewer Last Name<em>*</em></label>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'assignReviewer.lastName'/>"></span>
                     <div class="field">
                       <input class="full" type="text" name="newReviewerLastName" id="newReviewerLastName" value="${(reviewer.lastName?html)!}"/>                                            
                       <@spring.bind "reviewer.lastName" /> 
@@ -178,7 +178,7 @@
     
                   <div class="row">
                     <label class="label normal">Email<em>*</em></label>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'assignReviewer.email'/>"></span>
                     <div class="field">
                       <input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail" value="${(reviewer.email?html)!}"/>                                               
                       <@spring.bind "reviewer.email" /> 

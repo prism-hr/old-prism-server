@@ -44,7 +44,9 @@ $(document).ready(
 					$('#notifyRegistryButton').removeAttr('disabled');
 					$('#notifyRegistryButton').addClass("blue");
 					$('body').css('cursor', 'auto');
-					$('#timelineBtn').trigger('click');
+					//$('#timelineBtn').trigger('click');
+					// Go to application list.
+					window.location = '/applications';
 				});
 				
 				return false;

@@ -75,8 +75,14 @@ span.icon-status.validation { background-position: 0 -150px; }
 span.icon-status.not-submitted { background-position: 0 -175px; }
 span.icon-status.approval { background-position: 0 -200px; }
 
+/* Table bar, containing download button and search bar. --------------------------------------------- */
+#table-bar { margin-bottom: 10px; position: relative; }
+
+/* Download button. */
+#table-bar #downloadAll { background: url(../../images/button_download.png) no-repeat; border: none; bottom: 0; box-shadow: none; height: 44px; left: 0; position: absolute; width: 48px; }
+
 /* Search bar. --------------------------------------------------------------------------------------- */
-#search-applications { background: #FFF; border: 1px solid #999; margin-bottom: 10px; padding: 10px; }
+#search-applications { background: #FFF; border: 1px solid #999; margin-left: 52px; padding: 10px; }
 #search-applications input, #search-applications select { padding: 3px; }
 #search-applications label { display: inline-block; font-weight: bold; width: 8em; }
 #search-applications #searchTerm { width: 15em; }

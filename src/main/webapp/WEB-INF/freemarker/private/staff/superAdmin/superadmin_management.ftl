@@ -1,8 +1,3 @@
-<#if usersInRoles?has_content>
-	<#assign hasUsers = true>
-<#else>
-	<#assign hasUsers = false>
-</#if> 
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
@@ -35,47 +30,25 @@
 			<div class="content-box">
 				<div class="content-box-inner">
 					<div id="existingUsers">
+						<ul>
+						<#list superadmins as superadmin>
+							<li>${(superadmin.firstName?html)!} ${(superadmin.lastName?html)!} (${(superadmin.email?html)!} )</li>
+						</#list>
+						</ul>
 					</div>
-					<form id ="removeForm"  action="/pgadmissions/manageUsers/remove" method="POST">
-						<input type="hidden" id="deleteFromUser" name="user" value=""/>						
-						<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
-					</form>
-					<form id ="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
+
+					<form id ="editRoles" name="editRoles" action="/pgadmissions/manageUsers/superadmins" method="POST">
 							                                
 						<h1>Manage Users</h1>
 						<div class="section-info-bar">
-							Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')>You can also <a href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
+							Manage superadministrators. You can also <a href="<@spring.url '/manageUsers/edit'/>">manage programme roles.</a>
 						</div>
-						
 						
 		
 						<section class="form-rows">
 							<div>
 							
-								<div class="row-group">
-								
-									<div class="row programme">
-										<span class="plain-label">Programme</span>
-										<span class="hint" data-desc=""></span>
-										<div class="field">
-											<select name="selectedProgram" id="programs">
-												<option value="">Please select a program</option>
-												<#list programs as program>"
-												<option value='${program.code}' 
-												<#if userDTO.selectedProgram?? && userDTO.selectedProgram.id == program.id >selected="selected"</#if>
-												>${program.title?html}</option>               
-												</#list>
-											</select>
-		
-											<@spring.bind "userDTO.selectedProgram" /> 
-											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
-											</#list>
-										</div>
-									</div>
-									
-								</div>
-		
+
 								<div class="row-group">
 								
 									<div class="row">
@@ -114,28 +87,13 @@
 										</div>
 									</div>
 		
-									<div class="row">
-										<span class="plain-label">Roles</span>
-										<span class="hint" data-desc=""></span>
-										<div class="field">
-											<select multiple size="5" id="roles" name="selectedAuthorities" class="max">
-												<#list authorities as authority>
-												<option value="${authority}" <#if userDTO.isInAuthority(authority)>selected="selected"</#if>>${authority}</option>
-												</#list>
-											</select>
-											<@spring.bind "userDTO.selectedAuthorities" /> 
-											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
-											</#list>
-										</div>
-									</div>
 																		
 									<button type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
 			
 								</div>
 								
 								<div class="buttons">
-									<button type="button" id="clear" >Clear</button>
+									<button type="reset" id="clear">Clear</button>
 									<button type="submit" >Submit</button>
 								</div>
 							</div>
@@ -157,7 +115,6 @@
 
 <!-- Scripts -->
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/roles.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>

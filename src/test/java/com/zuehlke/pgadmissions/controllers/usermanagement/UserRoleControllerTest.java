@@ -68,7 +68,7 @@ public class UserRoleControllerTest {
 	}
 
 	@Test
-	public void shouldReturnNewUserDTOIfNoUserIdProvided() {
+	public void shouldReturnNewUserDTO() {
 		String programCode="DEF";
 		Program program = new ProgramBuilder().id(1).toProgram();
 		EasyMock.expect(programServiceMock.getProgramByCode(programCode)).andReturn(program);

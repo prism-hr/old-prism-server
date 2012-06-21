@@ -62,5 +62,6 @@ public class UserDTO {
 	public void setNewUser(boolean newUser) {
 		this.newUser = newUser;
 	}
-
+	
+	
 }

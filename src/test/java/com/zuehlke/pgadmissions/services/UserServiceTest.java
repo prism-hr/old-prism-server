@@ -332,19 +332,7 @@ public class UserServiceTest {
 		
 	}
 	
-	@Test
-	public void shouldRemoveSuperadminRoleIfNotInNewListAndUserIsSuperadmin() {
-		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
-		EasyMock.replay(currentUserMock);
-		Role role= new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
-		RegisteredUser selectedUser = new RegisteredUserBuilder().role(role).id(1).toUser();		
 	
-		Program selectedProgram = new ProgramBuilder().id(3).toProgram();
-		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
-		assertFalse(selectedUser.isInRole(Authority.SUPERADMINISTRATOR));
-	}
-	
-
 	
 	@Test
 	public void shouldNotRemoveSuperadminRoleIfNotInNewListAndUserIsNotSuperadmin() {

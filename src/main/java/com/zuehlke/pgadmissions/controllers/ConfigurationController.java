@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
@@ -14,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -27,6 +26,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.services.PersonService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping("/configuration")
@@ -38,19 +38,21 @@ public class ConfigurationController {
 	private final ReminderIntervalDAO reminderIntervalDAO;
 	private final PersonService registryUserService;
 	private final PersonPropertyEditor registryPropertyEditor;
+	private final UserService userService;
 	
 	ConfigurationController(){
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 	
 	@Autowired
 	public ConfigurationController(StageDurationDAO stateDurationDao, StageDurationPropertyEditor stageDurationPropertyEditor, ReminderIntervalDAO reminderIntervalDAO, PersonService registryUserService,
-			PersonPropertyEditor registryPropertyEditor) {
+			PersonPropertyEditor registryPropertyEditor, UserService userService) {
 		this.stateDurationDao = stateDurationDao;
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
 		this.reminderIntervalDAO = reminderIntervalDAO;
 		this.registryUserService = registryUserService;
 		this.registryPropertyEditor = registryPropertyEditor;
+		this.userService = userService;
 	}
 	
 	@InitBinder
@@ -66,7 +68,7 @@ public class ConfigurationController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getAssignStagesDurationStage(ModelMap modelMap) {
-		if (!getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
 		populateModelMap(modelMap);
@@ -75,7 +77,7 @@ public class ConfigurationController {
 	
 	@RequestMapping(value="/submit", method = RequestMethod.POST)
 	public String submitStagesDurations(StageDurationDTO stageDurationDTO, ModelMap modelMap) {
-		if (!getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
 		List<StageDuration> stagesDuration = stageDurationDTO.getStagesDuration();
@@ -88,7 +90,7 @@ public class ConfigurationController {
 	
 	@RequestMapping(value="/submitReminderInterval", method = RequestMethod.POST)
 	public String submitReminderInterval(ReminderInterval reminderInterval, ModelMap modelMap) {
-		if (!getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
 		
@@ -100,7 +102,7 @@ public class ConfigurationController {
 	
 	@RequestMapping(value="/submitRegistryUsers", method = RequestMethod.POST)
 	public String submitregistryUsers(@ModelAttribute("registryDTO") RegistryUserDTO registryUserDTO, ModelMap modelMap) {
-		if (!getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
 		List<Person> registryUsers = registryUserDTO.getRegistryUsers();
@@ -111,9 +113,7 @@ public class ConfigurationController {
 		return CONFIGURATION_VIEW_NAME;
 	}
 	
-	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-	}
+
 	
 	@ModelAttribute("stages")
 	public ApplicationFormStatus[] getConfigurableStages() {
@@ -126,6 +126,11 @@ public class ConfigurationController {
 		modelMap.put("durationDAO", stateDurationDao);
 		modelMap.put("intervalDAO", reminderIntervalDAO);
 		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
+	}
+
+	@ModelAttribute("user")
+	public RegisteredUser getUser() {
+		return userService.getCurrentUser();
 	}
 	
 }

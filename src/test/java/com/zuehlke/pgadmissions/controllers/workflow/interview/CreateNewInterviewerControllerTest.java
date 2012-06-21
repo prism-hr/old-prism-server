@@ -62,7 +62,7 @@ public class CreateNewInterviewerControllerTest {
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application)).andReturn(user);
 		EasyMock.replay(userServiceMock);
-		interviewServiceMock.createInterviewerInNewInterview(application, user);
+		interviewServiceMock.addInterviewerInPreviousInterview(application, user);
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignInterviewer.user.created"), EasyMock.aryEq(new Object[] { "bob bobson", "bobson@bob.com" }),
 						EasyMock.isNull(Locale.class))).andReturn("message");
@@ -291,7 +291,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldAddExistingUserToPendingIfUserExistsAndIsNewToAppAndProgram() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encryptedEight");
-		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+		controller = new CreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -308,7 +308,9 @@ public class CreateNewInterviewerControllerTest {
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignInterviewer.user.added"), EasyMock.aryEq(new Object[] { "Robert Bobson", "bobson@bob.com" }),
 						EasyMock.isNull(Locale.class))).andReturn("message");
-		EasyMock.replay(messageSourceMock);
+		interviewServiceMock.addInterviewerInPreviousInterview(application, existingUser);
+		applicationsServiceMock.save(application);
+		EasyMock.replay(messageSourceMock, applicationsServiceMock, interviewServiceMock);
 
 		ModelAndView modelAndView = controller.createInterviewerForNewInterview(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/interview/moveToInterview", modelAndView.getViewName());

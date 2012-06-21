@@ -75,7 +75,7 @@ public class InterviewService {
 	}
 
 	@Transactional
-	public void createInterviewerInNewInterview(
+	public void addInterviewerInPreviousInterview(
 			ApplicationForm applicationForm, RegisteredUser newUser) {
 		Interviewer inter = newInterviewer();
 		inter.setUser(newUser);

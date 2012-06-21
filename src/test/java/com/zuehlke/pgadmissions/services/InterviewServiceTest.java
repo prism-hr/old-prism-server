@@ -121,7 +121,7 @@ public class InterviewServiceTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		interviewerDAO.save(interviewer);
 		EasyMock.replay(interviewerDAO);
-		interviewService.createInterviewerInNewInterview(application, interviewerUser);
+		interviewService.addInterviewerInPreviousInterview(application, interviewerUser);
 		Assert.assertEquals(interviewerUser, interviewer.getUser());
 		Assert.assertTrue(interview.getInterviewers().contains(interviewer));
 		
@@ -135,7 +135,7 @@ public class InterviewServiceTest {
 		ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		interviewerDAO.save(interviewer);
 		EasyMock.replay(interviewerDAO);
-		interviewService.createInterviewerInNewInterview(application, interviewerUser);
+		interviewService.addInterviewerInPreviousInterview(application, interviewerUser);
 		Assert.assertEquals(interviewerUser, interviewer.getUser());
 		Assert.assertTrue(latestInterview.getInterviewers().contains(interviewer));
 		

@@ -97,8 +97,8 @@ public class ManageUserRolesController {
 			return new ArrayList<RegisteredUser>();
 		}
 		return userService.getAllUsersForProgram(selectedProgram);
+
 	}
-	
 	@ModelAttribute("programs")
 	public List<Program> getPrograms() {
 		if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {

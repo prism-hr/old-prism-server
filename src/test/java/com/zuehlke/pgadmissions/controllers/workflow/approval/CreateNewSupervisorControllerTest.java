@@ -96,7 +96,7 @@ public class CreateNewSupervisorControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, application)).andReturn(user);
-		approvalServiceMock.createSupervisorInNewApprovalRound(application, user);
+		approvalServiceMock.addSupervisorInPreviousReviewRound(application, user);
 		applicationsServiceMock.save(application);
 		EasyMock.replay(userServiceMock, approvalServiceMock, applicationsServiceMock);
 

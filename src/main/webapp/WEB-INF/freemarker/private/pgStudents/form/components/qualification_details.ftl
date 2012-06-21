@@ -84,22 +84,14 @@
 
 		<#if errorCode?? && errorCode=="true">
 		<div class="section-error-bar">
-			<div class="row">
-				<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
-				<span class="invalid-info-text">
-					<@spring.message 'education.qualifications.sectionInfo'/>
-					<b><@spring.message 'education.qualifications.sectionInfoBold'/></b> 
-				</span>
-			</div>
+			<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
+			<@spring.message 'education.qualifications.sectionInfo'/>
+			<b><@spring.message 'education.qualifications.sectionInfoBold'/></b> 
 		</div>
 		<#else>
 		<div id="qual-info-bar-div" class="section-info-bar">
-			<div class="row">
-				<span id="qual-info-bar-span" class="info-text">
-					<@spring.message 'education.qualifications.sectionInfo'/>
-					<b><@spring.message 'education.qualifications.sectionInfoBold'/></b> 
-				</span>
-			</div>
+			<@spring.message 'education.qualifications.sectionInfo'/>
+			<b><@spring.message 'education.qualifications.sectionInfoBold'/></b> 
 		</div>	
 		</#if>
 

@@ -62,16 +62,15 @@
       <div id="tools">
         <ul class="left">
           <li class="icon-print"><a target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
-          
           <li class="icon-feedback"><a title="Send Feedback" href="https://docs.google.com/spreadsheet/viewform?formkey=dDNPWWt4MTJ2TzBTTzQzdUx6MlpvWVE6MQ&amp;entry_2=/pgadmissions/application&amp;entry_3=undefined&amp;entry_4=undefined&amp;entry_5=undefined&amp;entry_6=undefined">Send Feedback</a></li>
-          
         </ul>
       </div>
       
       <!-- FLOATING TOOLBAR -->
       <ul id="view-toolbar" class="toolbar">
         <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-        <li class="print"><a  target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" >Print</a></li>
+        <li class="print"><a target="_blank" title="Print" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Print</a></li>
+        <li class="download"><a target="_blank" title="Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download</a></li>
       </ul>
       
       <!-- content box -->

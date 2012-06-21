@@ -412,15 +412,3 @@
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>
-            
-<#--
- <@spring.bind "referee.*" /> 
- 
-<#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>	
-<script type="text/javascript">
-	$(document).ready(function(){
-		$('#referee-H2').trigger('click');
-	});
-</script>
-</#if>
--->

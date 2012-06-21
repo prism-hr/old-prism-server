@@ -105,11 +105,16 @@
                           <#list previousReviewers as reviewer>
                           <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
                           </#list>
-													<#list applicationReviewers as reviewer>
-													<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" class="selected" disabled="disabled">
-														${reviewer.firstName?html} ${reviewer.lastName?html}
-													</option>
-													</#list>
+						=<#list applicationReviewers as reviewer>
+							<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" class="selected" disabled="disabled">
+							${reviewer.firstName?html} ${reviewer.lastName?html}
+						</option>
+						</#list>
+						<#list pendingReviewers as unsaved>									
+														<option value="${encrypter.encrypt(unsaved.id)}" class="selected" disabled="disabled">
+															${unsaved.firstName?html} ${unsaved.lastName?html}
+														</option>
+						</#list>
                         </optgroup>
                       </select>
                     </div>
@@ -135,6 +140,11 @@
                           ${reviewer.firstName?html} ${reviewer.lastName?html}
                         </option>
                         </#list>
+                        <#list pendingReviewers as unsaved>									
+														<option value="${encrypter.encrypt(unsaved.id)}" class="selected" disabled="disabled">
+															${unsaved.firstName?html} ${unsaved.lastName?html}
+														</option>
+						</#list>
                       </select>
                       <@spring.bind "reviewRound.reviewers" /> 
                       <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>

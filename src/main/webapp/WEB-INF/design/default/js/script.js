@@ -395,7 +395,7 @@ function markSectionError(section_id)
 	// Change the info bar.
 	var $infobar = $('.section-info-bar', $section);
 	$infobar.removeClass('section-info-bar').addClass('section-error-bar');
-	if ($('.error-hint', $infobar).length == 0)
+	if ($infobar.children('.error-hint').length < 1)
 	{
 		$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
 		addToolTips();

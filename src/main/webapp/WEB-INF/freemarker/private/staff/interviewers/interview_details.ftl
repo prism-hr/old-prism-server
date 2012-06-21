@@ -80,14 +80,15 @@
 		
 					<hr />
 					
-					<div class="section-info-bar">
-						Assign interviewers to the application here. You may also create new interviewers.
-					</div>
-		
 					<section class="form-rows">
+						<h2>Assign Interviewers</h2>
 						<div>
 							<form>
 							
+								<div class="section-info-bar">
+									Assign interviewers to the application here. You may also create new interviewers.
+								</div>
+					
 								<div class="row-group">			
 								
 										<div class="row" id="assignInterviewersToAppSection">

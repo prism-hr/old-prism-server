@@ -79,10 +79,31 @@ span.icon-status.approval { background-position: 0 -200px; }
 #table-bar { margin-bottom: 10px; position: relative; }
 
 /* Download button. */
-#table-bar #downloadAll { background: url(../../images/button_download.png) no-repeat; border: none; bottom: 0; box-shadow: none; height: 44px; left: 0; position: absolute; width: 48px; }
+#table-bar #downloadAll {
+	background: url(../../images/button_download.png) no-repeat;
+	bottom: 0;
+	height: 44px;
+	left: 0; 
+	position: absolute;
+	text-indent: 50px;
+	white-space: nowrap;
+	width: 48px;
+}
 
-/* Search bar. --------------------------------------------------------------------------------------- */
-#search-applications { background: #FFF; border: 1px solid #999; margin-left: 52px; padding: 10px; }
+/* Search bar. */
+/*#search-applications { background: #FFF; border: 1px solid #999; padding: 10px; }
 #search-applications input, #search-applications select { padding: 3px; }
 #search-applications label { display: inline-block; font-weight: bold; width: 8em; }
-#search-applications #searchTerm { width: 15em; }
+#search-applications #searchTerm { width: 15em; }*/
+
+/* Keyword/search box */
+div#search-box { background: #FFF; border: 1px solid #AAA; margin-left: 52px; padding: 9px; position: relative; text-align: right; }
+div#search-box label { font-weight: bold; }
+div#search-box input, div#search-box select { border: 1px solid #CCC; margin-left: 1em; }
+div#search-box input { padding: 3px; width: 300px; }
+div#search-box select { margin: 0 10px; padding: 2px; width: 170px; }
+div#search-box button { margin-top: -2px; }
+div#search-box .invalid { display: block; margin-left: 195px; margin-top: 5px; padding: 3px; text-align: left; }
+
+div#search-box .downloads { bottom: 10px; left: 10px; position: absolute; text-align: left; }
+

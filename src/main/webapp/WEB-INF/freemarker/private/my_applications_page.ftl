@@ -62,7 +62,7 @@
 							
 								<!-- Download button. -->
 								<#if (applications?size > 0)>
-								<a target="_blank" class="button blue" name="downloadAll" id="downloadAll">Download</a>
+								<a target="_blank" name="downloadAll" id="downloadAll">Download</a>
 								</#if>
 
 								<!-- Search/filter box. -->

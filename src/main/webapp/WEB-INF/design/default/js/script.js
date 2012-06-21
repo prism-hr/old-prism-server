@@ -347,7 +347,7 @@ function doUpload($upload_field)
 				$container.addClass('uploaded');
 				var doc_type = $upload_field.attr('data-reference');
 				$('a.button-delete', $hfParent).attr({ 'data-desc': 'Delete ' + doc_type })
-                                     .qtip(tooltipSettings);
+                                       .qtip(tooltipSettings);
 			}
     }
   });

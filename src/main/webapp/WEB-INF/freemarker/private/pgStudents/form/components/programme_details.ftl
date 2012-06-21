@@ -15,16 +15,12 @@
   <form>
     <#if errorCode?? && errorCode=="true">
     <div class="section-error-bar">
-      <div class="row">
-        <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>               
-        <span class="invalid-info-text"><@spring.message 'programmeDetails.project'/></span>
-      </div>
+			<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>               
+			<span class="invalid-info-text"><@spring.message 'programmeDetails.project'/></span>
     </div>
     <#else>
     <div id="prog-info-bar-div" class="section-info-bar">
-      <div class="row">
-        <span id="prog-info-bar-span" class="info-text"><@spring.message 'programmeDetails.project'/></span>
-      </div>
+      <@spring.message 'programmeDetails.project'/>
     </div>  
     </#if>
   

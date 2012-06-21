@@ -405,7 +405,7 @@ createUploadIframe: function(id, uri)
 {
 //create frame
 var frameId = 'jUploadFrame' + id;
-var iframeHtml = '';
+var iframeHtml = '<iframe id="' + frameId + '" name="' + frameId + '" style="position:absolute; top:-9999px; left:-9999px"';
 jQuery(iframeHtml).appendTo(document.body);
 
 return jQuery('#' + frameId).get(0);         
@@ -415,7 +415,8 @@ createUploadForm: function(id, fileElementId, data)
 //create form   
 var formId = 'jUploadForm' + id;
 var fileId = 'jUploadFile' + id;
-var form = jQuery('');   
+var form = jQuery('<form  action="" method="POST" name="' + formId + '" id="' + formId + '" enctype="multipart/form-data"></form>');	
+//var form = jQuery('');   
 if(data)
 {
 for(var i in data)

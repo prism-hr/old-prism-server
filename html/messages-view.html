@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Shell template</title>
+
+<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<!-- Let Internet Explorer 8 and below recognise HTML5 tags. -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<link type="text/css" rel="stylesheet" href="css/private/global_private.css" />
+<link type="text/css" rel="stylesheet" href="css/messages.css" />
+</head>
+
+<!-- UPDATED: using conditional comments for IE to add a class to the body tag, based on the IE version number. -->
+<!--[if IE 9]>
+<body class="ie9">
+<![endif]-->
+<!--[if lt IE 9]>
+<body class="old-ie">
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<body>
+<!--<![endif]-->
+
+<div id="wrapper">
+
+  <!-- Header. -->
+  <div id="header">
+    <p>Postgraduate Research Admissions Tool</p>
+  </div>
+  
+  <!-- Middle. -->
+  <div id="middle">
+  
+    <header>
+      <!-- App logo and tagline. -->
+      <div class="logo"><img src="images/ph_logo_login.png" alt="" /></div>
+      <div class="tagline">Your Gateway to<br />Research Opportunities</div>
+    </header>
+    
+    <!-- Main content area. -->
+    <article id="content" role="main">
+          
+      <!-- Options -->
+      <div id="message-options">
+        <ul class="left">
+          <li class="compose"><a href="">Compose</a></li>
+          <li class="back"><a href="">Back</a></li>
+          <li class="reply"><a href="">Reply</a></li>
+          <li class="send"><a href="">Send</a></li>
+        </ul>
+        <ul class="right">
+          <li>Show me</li>
+          <li class="alerts"><a href="">Alerts</a></li>
+          <li class="messages"><a href="">Messages</a></li>
+          <li class="all current"><a href="">All</a></li>
+        </ul>
+      </div>
+      
+      <!-- Message section -->
+      <div class="content-box">
+        <div class="content-box-inner">
+        
+          <table class="messages">
+            <colgroup>
+              <col style="width: 30px;" />
+              <col style="width: 200px;" />
+              <col style="width: auto;" />
+              <col style="width: 145px;" />
+              <col style="width: 50px;" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>&nbsp;</th>
+                <th>From</th>
+                <th>Subject</th>
+                <th>Received</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tfoot>
+            	<tr>
+              	<td colspan="5"><!-- space at bottom --></td>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr class="alert unread">
+                <td><img src="images/alert.png" alt="Alert" width="14" height="13" /></td>
+                <td>USAR Admin</td>
+                <td>Referee details</td>
+                <td>10/12/10</td>
+                <td><a class="delete-button" href="#">delete</a></td>
+              </tr>
+              <tr class="message-body">
+                <td colspan="5">
+                	<h1>Referee details</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nec   lacus neque, ac vehicula sem. Ut egestas condimentum venenatis. Donec in   nisl arcu, nec pharetra risus. Praesent tristique congue enim, eget   varius ante ornare id. Nullam a elit lectus, ac consequat lacus. Duis   interdum erat sit amet quam varius vitae suscipit purus ultrices. Cras   ac dolor nibh. </p></td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <!-- Pagination -->
+          <div id="pagination">
+            <div class="page-number">Page 15 of 106</div>
+            <div class="previous"><a href="#">Previous</a></div>
+            <ul class="pages">
+              <li><a href="#">10</a></li>
+              <li><a href="#">11</a></li>
+              <li><a href="#">12</a></li>
+              <li><a href="#">13</a></li>
+              <li><a href="#">14</a></li>
+              <li class="current"><a href="#">15</a></li>
+              <li><a href="#">16</a></li>
+              <li><a href="#">17</a></li>
+              <li><a href="#">18</a></li>
+              <li><a href="#">19</a></li>
+              <li><a href="#">20</a></li>
+            </ul>
+            <div class="next"><a href="#">Next</a></div>
+            <div class="show-number">Show <a href="#">10</a> / <a href="#">20</a> / <a href="#">30</a> / <a href="#">All</a></div>
+          </div>
+          
+        </div><!-- .content-box-inner -->  
+      </div><!-- .content-box -->
+
+		</article>
+            
+  </div>
+  
+  <!-- Footer. -->
+  <div id="footer">
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms &amp; conditions</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Glossary</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/libraries.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>

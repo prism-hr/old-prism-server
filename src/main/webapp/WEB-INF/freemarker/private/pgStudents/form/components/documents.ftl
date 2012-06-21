@@ -5,7 +5,7 @@
 <a name="documents-details"></a>
 <h2 id="documents-H2" class="empty open">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
-    Documents<em>*</em>
+	Documents<em>*</em>
 </h2>
 
 <div>      
@@ -13,20 +13,16 @@
 	
 		<#if errorCode?? && errorCode=="true">
 		<div class="section-error-bar">
-			<div class="row">
 				<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
 				<span class="invalid-info-text">
 					<@spring.message 'documentsDetails.sectionInfo'/>
 				</span>
-			</div>
 		</div>
 		<#else>
 		<div id="doc-info-bar-div" class="section-info-bar">
-			<div class="row">
-				<span id="doc-info-bar-span" class="info-text">
-					<@spring.message 'documentsDetails.sectionInfo'/> 
-				</span>
-			</div>
+			<span id="doc-info-bar-span" class="info-text">
+				<@spring.message 'documentsDetails.sectionInfo'/> 
+			</span>
 		</div>	
 		</#if>
 		

@@ -42,9 +42,9 @@ public class CreateNewSupervisorController extends ApprovalController {
 	}
 
 	@Autowired
-	public CreateNewSupervisorController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator, ApprovalRoundValidator approvalRoundValidator,
+	public CreateNewSupervisorController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator, ApprovalRoundValidator approvalRoundValidator,
 			ApprovalService approvalService, MessageSource messageSource, SupervisorPropertyEditor supervisorPropertyEditor, EncryptionHelper encryptionHelper) {
-		super(applicationsService, userService, reviewerValidator, approvalRoundValidator, approvalService, messageSource, supervisorPropertyEditor, encryptionHelper);
+		super(applicationsService, userService, supervisorValidator, approvalRoundValidator, approvalService, messageSource, supervisorPropertyEditor, encryptionHelper);
 
 	}
 
@@ -111,24 +111,33 @@ public class CreateNewSupervisorController extends ApprovalController {
 
 			}
 
-			RegisteredUser newUser = userService.createNewUserForProgramme(supervisor.getFirstName(), supervisor.getLastName(), supervisor.getEmail(), applicationForm.getProgram(),
-					Authority.SUPERVISOR);
-		
+			RegisteredUser newUser = userService.createNewUserInRole(supervisor.getFirstName(), supervisor.getLastName(), supervisor.getEmail(),
+					Authority.SUPERVISOR, null, applicationForm);
 			newUserIds.add(newUser.getId());
+			approvalService.createSupervisorInNewApprovalRound(applicationForm, newUser);
+			applicationsService.save(applicationForm);
+
 			return getCreateSupervisorModelAndView(applicationForm, newUserIds, getCreateSupervisorMessage("assignSupervisor.user.created", newUser), viewName);
 		}
 
 	
 		private ModelAndView getCreateSupervisorModelAndView(ApplicationForm applicationForm, List<Integer> newUserIds, String message, String viewName) {
-
+			List<String> encryptedIds = getEncryptedUserIds(newUserIds);
 			ModelAndView modelAndView = new ModelAndView(viewName);
 			modelAndView.getModel().put("applicationId", applicationForm.getApplicationNumber());
-			modelAndView.getModel().put("pendingSupervisors", newUserIds);
+			modelAndView.getModel().put("pendingSupervisors", encryptedIds);
 			modelAndView.getModel().put("message", message);
 			return modelAndView;
 		}
 
-
+	public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
+		List<String> encryptedIds = new ArrayList<String>();
+		for (Integer id : newUserIds) {
+			encryptedIds.add(encryptionHelper.encrypt(id));
+		}
+		return encryptedIds;
+	}
+	
 	@Override
 	@ModelAttribute("approvalRound")
 	public ApprovalRound getApprovalRound(String applicationId) {	

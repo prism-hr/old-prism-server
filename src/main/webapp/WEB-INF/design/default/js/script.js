@@ -262,16 +262,24 @@ function watchUpload($field)
 {
   var $container  = $field.parent('div.field');
   
+	/* Delete button functionality. */
   $container.on('click', '.button-delete', function()
   {
+    var $hidden  = $container.find('input.file');
+		$hidden.val(''); // clear field value.
 	  $container.removeClass('uploaded');
-		$field.val('');
+		
+		// Replace the file field with a fresh copy (that's the only way we can set its value to empty).
+		var id		= $field.attr('id');
+		var ref		= $field.attr('data-reference');
+		var type	= $field.attr('data-type');
+		$field.replaceWith('<input class="full" type="file" name="file" id="' + id +'" data-reference="' + ref + '" data-type="' + type + '" />');
   });
 
   $container.on('change', $field, function()
   {
     var input    = this.children[0];
-    var $hidden  = $container.find('span input');
+    var $hidden  = $container.find('input.file');
 		if (input.files[0].size < 10485760) // 10MB in bytes
     {
 			deleteUploadedFile($hidden);

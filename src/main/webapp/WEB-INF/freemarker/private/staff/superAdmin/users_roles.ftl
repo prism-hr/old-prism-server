@@ -20,6 +20,13 @@
 			<td>&nbsp;</td>
 			<td scope="col">${userInRole.firstName?html} ${userInRole.lastName?html} (${userInRole.email?html})</td>
 			<td scope="col">
+				<div class="role-icons <#list userInRole.getAuthoritiesForProgram(selectedProgram) as authority>${authority?lower_case} </#list>">
+					<span class="is-admin"></span>
+					<span class="is-interviewer"></span>
+					<span class="is-reviewer"></span>
+					<span class="is-supervisor"></span>
+					<span class="is-approver"></span>
+				</div>
 				<#list userInRole.getAuthoritiesForProgram(selectedProgram) as authority>${authority} - </#list>
 			</td>
 			<td scope="col">

@@ -305,7 +305,7 @@ function closeSections()
 
 function checkLoadedSections()
 {
-	section--;
+	sections--;
 	if (sections <= 0)
 	{
 		$('.content-box-inner div.ajax').remove();

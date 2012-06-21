@@ -162,7 +162,7 @@
 								<#if reviewersWillingToInterview??>		            			
 									<div class="row">
 										<label class="plain-label grey-label">Delegate Application Processing</label>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'validateApp.delegate'/>"></span>
 										<div class="field">		   
 											<form id="delegateForm" method="POST" action="<@spring.url '/delegate' />">   
 												<input type="hidden" name="applicationId" value="${(applicationForm.applicationNumber)!}"/>     				

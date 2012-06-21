@@ -62,14 +62,17 @@
 							<#if !user.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)>			        		
 					
 							<section class="form-rows">
-							
-								<h3>Review feedback</h3>
-								<p style="color:red;">Please note that once you submit your feedback you cannot re-submit or edit it.</p>
-								
+								<h2>Review Application</h2>
 								<div>
 									<form id ="reviewForm" method="POST" action= "<@spring.url '/reviewFeedback'/>"/>
+									
 										<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
+										
+										<div class="section-info-bar">
+											Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme.
+										</div>
 	
+<#--
 										<div class="row-group">
 											<div class="row">
 												<label class="plain-label">Decline</label>
@@ -79,6 +82,7 @@
 												</div>
 											</div>
 										</div>
+-->
 											
 										<div class="row-group">
 											<div class="row"> 
@@ -90,11 +94,29 @@
 													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 												</div>
 											</div>
+										</div>
 											
+										<div class="row-group">
 											<#include "/private/staff/admin/comment/documents_snippet.ftl"/>
+											<h3>Applicant Suitability</h3>
 											
 											<div class="row">
-												<span id="supervise-lbl" class="plain-label">Willing to interview?<em>*</em></span>
+												<span id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></span>
+												<span class="hint" data-desc=""></span>
+												<div class="field">
+													<label><input type="radio" name="suitableCandidate" value="true" id="suitableRB_true"
+													<#if comment.suitableCandidateSet && comment.suitableCandidate> checked="checked"</#if>
+													/> Yes</label> 
+													<label><input type="radio" name="suitableCandidate" value="false" id="suitableRB_false"
+													<#if comment.suitableCandidateSet && !comment.suitableCandidate> checked="checked"</#if>
+													/> No</label> 
+													<@spring.bind "comment.suitableCandidate" /> 
+													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+												</div>
+											</div>
+											
+											<div class="row">
+												<span id="supervise-lbl" class="plain-label">Would you like to interview the applicant with a view to working with them?<em>*</em></span>
 												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<label><input type="radio" name="willingToInterview" value="true" id="willingRB_true"
@@ -108,20 +130,6 @@
 												</div>
 											</div>
 	
-											<div class="row">
-												<span id="suitable-lbl" class="plain-label">Is candidate suitable for UCL?<em>*</em></span>
-												<span class="hint" data-desc=""></span>
-												<div class="field">
-													<label><input type="radio"  name="suitableCandidate" value="true" id="suitableRB_true"
-													<#if comment.suitableCandidateSet && comment.suitableCandidate> checked="checked"</#if>
-													/> Yes</label> 
-													<label><input type="radio"  name="suitableCandidate" value="false" id="suitableRB_false"
-													<#if comment.suitableCandidateSet && !comment.suitableCandidate> checked="checked"</#if>
-													/> No</label> 
-													<@spring.bind "comment.suitableCandidate" /> 
-													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-												</div>
-											</div>
 										</div>
 	
 										<div class="buttons">						        		

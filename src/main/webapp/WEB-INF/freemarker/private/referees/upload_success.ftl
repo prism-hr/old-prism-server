@@ -27,6 +27,7 @@
 		  	<!-- Middle. -->
 		  	<div id="middle">
 		  	  	 <#include "/private/common/parts/nav_with_user_info.ftl"/>
+		  	  	        <@header/>
 		    	<!-- Main content area. -->
 		    	<article id="content" role="main">
 		      

@@ -129,12 +129,14 @@
 											</#list>
 										</div>
 									</div>
+																		
+									<button type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
 			
 								</div>
 								
 								<div class="buttons">
 									<button type="button" id="clear" >Clear</button>
-									<button type="submit" value="createuser"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+									<button type="submit" >Submit</button>
 								</div>
 							</div>
 			

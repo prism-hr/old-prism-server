@@ -150,9 +150,9 @@ public class UserService {
 
 	@Transactional
 	public void updateUserWithNewRoles(RegisteredUser selectedUser, Program selectedProgram, Authority... newAuthorities) {
-		if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-			removeFromSuperadminRoleIfRequired(selectedUser, newAuthorities);
-		}
+		//Please note:
+		//it is a deliberate decision to never remove people from SUPERADMIN role.
+	
 		for (Authority authority : Authority.values()) {
 			addToRoleIfRequired(selectedUser, newAuthorities, authority);
 		}
@@ -174,12 +174,6 @@ public class UserService {
 		}
 	}
 
-	private void removeFromSuperadminRoleIfRequired(RegisteredUser selectedUser, Authority[] newAuthorities) {
-		if (!newAuthoritiesContains(newAuthorities, Authority.SUPERADMINISTRATOR)) {
-			Role superAdminRole = selectedUser.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
-			selectedUser.getRoles().remove(superAdminRole);
-		}
-	}
 
 	private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
 		if (newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && !selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {

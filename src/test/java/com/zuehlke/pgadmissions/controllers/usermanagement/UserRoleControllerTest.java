@@ -192,10 +192,10 @@ public class UserRoleControllerTest {
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserForProgramme("Jane", "Doe", "jane.doe@test.com", program, Authority.REVIEWER, Authority.ADMINISTRATOR))
 				.andReturn(new RegisteredUserBuilder().id(4).toUser());
-		EasyMock.expect(encryptionHelperMock.encrypt(4)).andReturn("encryptedId");
-		EasyMock.replay(currentUserMock, userServiceMock, encryptionHelperMock);
 
-		assertEquals("redirect:/manageUsers/edit?programCode=ABC&user=encryptedId", controller.handleEditUserRoles(newUserDTO, errorsMock));
+		EasyMock.replay(currentUserMock, userServiceMock);
+
+		assertEquals("redirect:/manageUsers/edit?programCode=ABC", controller.handleEditUserRoles(newUserDTO, errorsMock));
 
 		EasyMock.verify(userServiceMock);
 	}
@@ -222,10 +222,10 @@ public class UserRoleControllerTest {
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
 		userServiceMock.updateUserWithNewRoles(existingUser, program, Authority.REVIEWER, Authority.ADMINISTRATOR);
-		EasyMock.expect(encryptionHelperMock.encrypt(7)).andReturn("encryptedId");
-		EasyMock.replay(currentUserMock, userServiceMock, encryptionHelperMock);
+	
+		EasyMock.replay(currentUserMock, userServiceMock);
 
-		assertEquals("redirect:/manageUsers/edit?programCode=ABC&user=encryptedId", controller.handleEditUserRoles(newUserDTO, errorsMock));
+		assertEquals("redirect:/manageUsers/edit?programCode=ABC", controller.handleEditUserRoles(newUserDTO, errorsMock));
 
 		EasyMock.verify(userServiceMock);
 	}
@@ -251,10 +251,10 @@ public class UserRoleControllerTest {
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
 		userServiceMock.updateUserWithNewRoles(existingUser, null, Authority.REVIEWER, Authority.ADMINISTRATOR);
-		EasyMock.expect(encryptionHelperMock.encrypt(7)).andReturn("encryptedId");
-		EasyMock.replay(currentUserMock, userServiceMock, encryptionHelperMock);
+		
+		EasyMock.replay(currentUserMock, userServiceMock);
 
-		assertEquals("redirect:/manageUsers/edit?user=encryptedId", controller.handleEditUserRoles(newUserDTO, errorsMock));
+		assertEquals("redirect:/manageUsers/edit", controller.handleEditUserRoles(newUserDTO, errorsMock));
 
 		EasyMock.verify(userServiceMock);
 	}

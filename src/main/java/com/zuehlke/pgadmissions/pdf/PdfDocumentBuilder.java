@@ -131,9 +131,11 @@ public class PdfDocumentBuilder {
 
 		addSupportingDocuments(application, document, writer);
 
-
+	
 		
 	}
+
+	
 
 	private void addSectionSeparators(Document document) throws DocumentException {
 		document.add(new Paragraph(" "));
@@ -774,7 +776,7 @@ public class PdfDocumentBuilder {
 			try {
 				if (addHeaderAndFooter) {
 					addHeaderToPage(writer, document);			
-					//addFooterToPage(writer, document);
+					addFooterToPage(writer, document);
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);

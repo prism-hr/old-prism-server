@@ -58,24 +58,27 @@
               <div class="section-info-bar">${(message?html)!}</div>
               </#if>
             
-              <!-- Search/filter box. -->
-              <div id="search-box"> 
-								<div class="downloads">
-									<#if (applications?size > 0)>
-									<a target="_blank" class="button blue" name="downloadAll" id="downloadAll">Download</a>
-									</#if>
+							<div id="table-bar">
+							
+								<!-- Download button. -->
+								<#if (applications?size > 0)>
+								<a target="_blank" class="button blue" name="downloadAll" id="downloadAll">Download</a>
+								</#if>
+
+								<!-- Search/filter box. -->
+								<div id="search-box"> 
+									<input type="text" id="searchTerm" name="searchTerm" placeholder="Filter by..." />
+									<select name="searchCategory" id="searchCategory">
+										<option value="">Column...</option>
+										<#list searchCategories as category>
+										<option value="${category}">${category.displayValue()}</option>               
+										</#list>
+									</select>
+									<button class="blue" type="button" id="search-go">Go</button>
+									<button type="button" id="search-reset">Clear</button>
 								</div>
 								
-                <input type="text" id="searchTerm" name="searchTerm" placeholder="Filter by..." />
-                <select name="searchCategory" id="searchCategory">
-                  <option value="">Column...</option>
-                  <#list searchCategories as category>
-                  <option value="${category}">${category.displayValue()}</option>               
-                  </#list>
-                </select>
-                <button class="blue" type="button" id="search-go">Go</button>
-                <button type="button" id="search-reset">Clear</button>
-              </div>
+							</div>
             
               <table class="data" border="0" >
                 <colgroup>

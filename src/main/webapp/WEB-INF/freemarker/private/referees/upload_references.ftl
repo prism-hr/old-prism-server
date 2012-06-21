@@ -53,6 +53,14 @@
 
 											<div class="row-group">
 												<div class="row">
+												<span class="plain-label">Comments<em>*</em></span>
+												<span class="hint" data-desc="<@spring.message 'reference.comment'/>"></span>
+												<div class="field">		            				
+													<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+												</div>
+											</div>
+											
+												<div class="row">
 											
 													<input type="hidden" name="application" value ='${applicationForm.applicationNumber}'/>           
 													<div class="field" id="referenceUploadFields">          

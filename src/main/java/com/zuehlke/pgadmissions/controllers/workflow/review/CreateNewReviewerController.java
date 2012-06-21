@@ -103,6 +103,8 @@ public class CreateNewReviewerController extends ReviewController {
 			}
 			
 			newUserIds.add(encryptionHelper.encrypt(existingUser.getId()));
+			reviewService.createReviewerInNewReviewRound(applicationForm, existingUser);
+			applicationsService.save(applicationForm);
 			return getCreateReviewerModelAndView(applicationForm, newUserIds, getCreateReviewerMessage("assignReviewer.user.added", existingUser), viewName);
 		}
 		

@@ -106,7 +106,7 @@ public class ApprovalServiceTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		supervisorDAOMock.save(supervisor);
 		EasyMock.replay(supervisorDAOMock);
-		approvalService.createSupervisorInNewApprovalRound(application, supervisorUser);
+		approvalService.addSupervisorInPreviousReviewRound(application, supervisorUser);
 		Assert.assertEquals(supervisorUser, supervisor.getUser());
 		Assert.assertTrue(approvalRound.getSupervisors().contains(supervisor));
 		
@@ -120,7 +120,7 @@ public class ApprovalServiceTest {
 		ApplicationForm application = new ApplicationFormBuilder().latestApprovalRound(latestApprovalRound).id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		supervisorDAOMock.save(supervisor);
 		EasyMock.replay(supervisorDAOMock);
-		approvalService.createSupervisorInNewApprovalRound(application, supervisorUser);
+		approvalService.addSupervisorInPreviousReviewRound(application, supervisorUser);
 		Assert.assertEquals(supervisorUser, supervisor.getUser());
 		Assert.assertTrue(latestApprovalRound.getSupervisors().contains(supervisor));
 		

@@ -93,7 +93,7 @@
 								
 										<div class="row" id="assignInterviewersToAppSection">
 											<span class="plain-label">Assign Interviewers</span>
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'assignInterviewer.assign'/>"></span>
 											<div class="field">
 												<#-- <select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}"> -->
 												<select id="programInterviewers" multiple="multiple" size="8">
@@ -173,7 +173,7 @@
 
 										<div class="row">
 											<label class="label normal">Interviewer First Name<em>*</em></label> 
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'assignInterviewer.firstName'/>"></span>
 											<div class="field">
 												<input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  value="${(interviewer.firstName?html)!}"/>
 												<@spring.bind "interviewer.firstName" /> 
@@ -183,7 +183,7 @@
 										
 										<div class="row">
 											<label class="label normal">Interviewer Last Name<em>*</em></label>
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'assignInterviewer.lastName'/>"></span>
 											<div class="field">
 												<input class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName" value="${(interviewer.lastName?html)!}"/>			                                      
 												<@spring.bind "interviewer.lastName" /> 
@@ -193,7 +193,7 @@
 			
 										<div class="row">
 											<label class="label normal">Interviewer Email Address<em>*</em></label>
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'assignInterviewer.email'/>"></span>
 											<div class="field">
 												<input class="full" type="text"  name="newInterviewerEmail" id="newInterviewerEmail" value="${(interviewer.email?html)!}"/>			                                         
 												<@spring.bind "interviewer.email" /> 
@@ -212,7 +212,7 @@
 										<p><strong>Interview Arrangements</strong></p>
 										<div class="row">
 											<label class="label normal">Interview Date<em>*</em></label>
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
 												<input class="half date" disabled="disabled" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd MMM yyyy'))!}" />
@@ -226,7 +226,7 @@
 									
 										<div class="row">
 											<label class="label normal">Interview Time (GMT/BST)<em>*</em></label>
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewTime'/>"></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
 												<input disabled="disabled" type="text" value="${(interview.interviewTime)!}" />
@@ -241,7 +241,7 @@
 									
 										<div class="row">
 											<label class="label normal">Interview Instructions<em>*</em></label>
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'assignInterviewer.instructions'/>"></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
 												<textarea id="furtherDetails" readonly="readonly" disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
@@ -255,7 +255,7 @@
 		
 										<div class="row">
 											<label class="label normal">Interviewer Location<em>*</em></label>
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
 												<textarea id="interviewLocation" readonly="readonly" disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>

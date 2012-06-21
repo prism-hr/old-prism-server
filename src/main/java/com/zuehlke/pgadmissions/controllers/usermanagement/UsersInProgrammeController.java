@@ -47,7 +47,14 @@ public class UsersInProgrammeController {
 		if(selectedProgram == null){
 			return new ArrayList<RegisteredUser>();
 		}
-		return userService.getAllUsersForProgram(selectedProgram);
+		List<RegisteredUser> allUsersForProgram = userService.getAllUsersForProgram(selectedProgram);
+		List<RegisteredUser> allUserWhoAreNotSuperadminsOnly = new ArrayList<RegisteredUser>();
+		for (RegisteredUser registeredUser : allUsersForProgram) {
+			if( !registeredUser.getAuthoritiesForProgram(selectedProgram).isEmpty()){
+				allUserWhoAreNotSuperadminsOnly.add(registeredUser);
+			}
+		}
+		return allUserWhoAreNotSuperadminsOnly;
 
 	}
 

@@ -66,7 +66,7 @@
 											<div class="row-group">
 												<div class="row"> 
 													<span id="email-lbl" class="plain-label">First Name</span>
-													<span class="hint" data-desc=""></span>
+													<span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
 													<div class="field">	
 														<input class="full" type="text" id="firstName" value="${user.firstName}" />
 													</div>
@@ -80,7 +80,7 @@
 												
 												<div class="row"> 
 													<span id="email-lbl" class="plain-label">Last Name</span>
-													<span class="hint" data-desc=""></span>
+													<span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
 													<div class="field">	
 														<input class="full" type="text" id="lastName" value="${user.lastName}" />
 													</div>
@@ -94,7 +94,7 @@
 												
 												<div class="row"> 
 													<span id="email-lbl" class="plain-label">Email</span>
-													<span class="hint" data-desc=""></span>
+													<span class="hint" data-desc="<@spring.message 'myaccount.email'/>"></span>
 													<div class="field">	
 														<input class="full" type="text" id="email" value="${user.email}" />
 													</div>
@@ -111,7 +111,7 @@
 												<h3>Change Password</h3>
 												<div class="row"> 
 													<span class="plain-label">Current Password</span>
-													<span class="hint" data-desc=""></span>
+													<span class="hint" data-desc="<@spring.message 'myaccount.currentPw'/>"></span>
 													<div class="field">	
 														<input class="full" id="currentPassword" type="password" />
 													</div>
@@ -125,7 +125,7 @@
 												
 												<div class="row"> 
 													<span class="plain-label">New Password</span>
-													<span class="hint" data-desc=""></span>
+													<span class="hint" data-desc="<@spring.message 'myaccount.newPw'/>"></span>
 													<div class="field">	
 														<input class="full" id="newPassword" type="password"  />
 													</div>
@@ -139,7 +139,7 @@
 												
 												<div class="row"> 
 													<span class="plain-label">Re-enter new Password</span>
-													<span class="hint" data-desc=""></span>
+													<span class="hint" data-desc="<@spring.message 'myaccount.confirmPw'/>"></span>
 													<div class="field">	
 														<input class="full" id="confirmNewPass" type="password" />
 													</div>

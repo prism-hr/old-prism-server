@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.easymock.EasyMock;
@@ -37,18 +38,37 @@ public class UsersInProgrammeControllerTest {
 
 	
 	@Test
-	public void shouldReturnAllUsersForProgram() {
+	public void shouldReturnUsersForProgram() {
 		
 		Program program = new ProgramBuilder().id(5).toProgram();
-		RegisteredUser userOne = new RegisteredUserBuilder().id(3).toUser();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(4).toUser();
+		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userOne.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
+		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userTwo.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
 		
 		EasyMock.expect(programsServiceMock.getProgramByCode("enc")).andReturn(program);
 		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
-		EasyMock.replay(programsServiceMock, userServiceMock);
+		EasyMock.replay(userOne, userTwo, programsServiceMock, userServiceMock);
 		List<RegisteredUser> users = controller.getUsersInProgram("enc");		
 		assertEquals(2, users.size());
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
+		
+	}
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldExcludeUsersWhoAreSuperadminsOnly() {
+		
+		Program program = new ProgramBuilder().id(5).toProgram();
+		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userOne.getAuthoritiesForProgram(program)).andReturn(Collections.EMPTY_LIST).anyTimes();
+		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userTwo.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
+		EasyMock.expect(programsServiceMock.getProgramByCode("enc")).andReturn(program);
+		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
+		EasyMock.replay(userOne, userTwo, programsServiceMock, userServiceMock);
+		List<RegisteredUser> users = controller.getUsersInProgram("enc");		
+		assertEquals(1, users.size());
+		assertTrue(users.containsAll(Arrays.asList(userTwo)));
 		
 	}
 	

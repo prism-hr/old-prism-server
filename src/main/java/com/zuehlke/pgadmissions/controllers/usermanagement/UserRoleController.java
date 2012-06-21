@@ -120,9 +120,9 @@ public class UserRoleController {
 					userDTO.getSelectedAuthorities());
 		}
 		if(userDTO.getSelectedProgram() == null){
-			return "redirect:/manageUsers/edit?user=" + encryptionHelper.encrypt(existingUser.getId());
+			return "redirect:/manageUsers/edit";
 		}
-		return "redirect:/manageUsers/edit?programCode="  + userDTO.getSelectedProgram().getCode() + "&user=" + encryptionHelper.encrypt(existingUser.getId());
+		return "redirect:/manageUsers/edit?programCode="  + userDTO.getSelectedProgram().getCode();
 	}
 	
 	private void checkPermissions() {

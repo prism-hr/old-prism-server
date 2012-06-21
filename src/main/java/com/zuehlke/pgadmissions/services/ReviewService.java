@@ -36,7 +36,8 @@ public class ReviewService {
 	}
 
 	@Autowired
-	public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO, StageDurationDAO stageDurationDAO, EventFactory eventFactory, ReviewerDAO reviewerDAO) {
+	public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO, StageDurationDAO stageDurationDAO, EventFactory eventFactory,
+			ReviewerDAO reviewerDAO) {
 
 		this.applicationDAO = applicationDAO;
 		this.reviewRoundDAO = reviewRoundDAO;
@@ -76,26 +77,24 @@ public class ReviewService {
 	}
 
 	@Transactional
-	public void createReviewerInNewReviewRound(ApplicationForm applicationForm,
-			RegisteredUser newUser) {
+	public void createReviewerInNewReviewRound(ApplicationForm applicationForm, RegisteredUser newUser) {
 		Reviewer reviewer = newReviewer();
 		reviewer.setUser(newUser);
 		reviewerDAO.save(reviewer);
 		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
-		if (latestReviewRound == null){
+		if (latestReviewRound == null) {
 			ReviewRound reviewRound = newReviewRound();
 			reviewRound.getReviewers().add(reviewer);
 			reviewRound.setApplication(applicationForm);
 			save(reviewRound);
 			applicationForm.setLatestReviewRound(reviewRound);
-		}
-		else{
+		} else {
 			latestReviewRound.getReviewers().add(reviewer);
 			save(latestReviewRound);
 		}
-		
+
 	}
-	
+
 	public Reviewer newReviewer() {
 		return new Reviewer();
 	}
@@ -104,6 +103,5 @@ public class ReviewService {
 		ReviewRound reviewRound = new ReviewRound();
 		return reviewRound;
 	}
-
 
 }

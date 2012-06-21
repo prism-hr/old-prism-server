@@ -94,7 +94,7 @@
 -->
 								<div class="row">
 									<span class="plain-label">Comments<em>*</em></span>
-									<span class="hint" data-desc=""></span>
+									<span class="hint" data-desc="<@spring.message 'validateApp.comment'/>"></span>
 									<div class="field">		            				
 										<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 									</div>
@@ -108,7 +108,7 @@
 							
 								<div class="row">
 									<label class="plain-label">Is the applicant qualified for postgraduate study at UCL?<em>*</em></label>
-									<span class="hint" data-desc=""></span>
+									<span class="hint" data-desc="<@spring.message 'validateApp.qualified'/>"></span>
 									<div class="field">		            				
 										<#list validationQuestionOptions as option>
 										<label><input type="radio" name="qualifiedForPhd" value="${option}"/> ${option.displayValue}</label>
@@ -118,7 +118,7 @@
 
 								<div class="row">
 									<label class="plain-label">Does the applicant meet the required level of English language competence?<em>*</em></label>
-									<span class="hint" data-desc=""></span>
+									<span class="hint" data-desc="<@spring.message 'validateApp.english'/>"></span>
 									<div class="field">		            				
 										<#list validationQuestionOptions as option>
 										<label><input type="radio" name="englishCompentencyOk" value="${option}"/> ${option.displayValue}</label>
@@ -128,7 +128,7 @@
 
 								<div class="row">
 									<label class="plain-label">What is the applicant's fee status?<em>*</em></label>
-									<span class="hint" data-desc=""></span>
+									<span class="hint" data-desc="<@spring.message 'validateApp.feeStatus'/>"></span>
 									<div class="field">		            				
 										<#list homeOrOverseasOptions as option>
 										<label><input type="radio" name="homeOrOverseas" value="${option}"/> ${option.displayValue}</label>
@@ -149,7 +149,7 @@
 							<div class="row-group">
 								<div class="row">
 									<label class="plain-label">Next Stage<em>*</em></label>
-									<span class="hint" data-desc=""></span>
+									<span class="hint" data-desc="<@spring.message 'validateApp.nextStage'/>"></span>
 									<div class="field">		            				
 										<select class="max" name="status" id="status">
 											<option value="">Select...</option>

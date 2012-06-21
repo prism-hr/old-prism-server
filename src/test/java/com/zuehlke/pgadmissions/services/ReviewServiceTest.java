@@ -15,13 +15,22 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
+import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -33,19 +42,59 @@ public class ReviewServiceTest {
 
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ReviewRoundDAO reviewRoundDAOMock;
-
+	private ReviewerDAO reviewerDAO;
 	private StageDurationDAO stageDurationDAOMock;
-
+	private ReviewRound reviewRound;
+	private Reviewer reviewer;
 	private EventFactory eventFactoryMock;
 
 	@Before
 	public void setUp() {
-
+		reviewer = new ReviewerBuilder().id(1).toReviewer();
+		reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
+		reviewerDAO = EasyMock.createMock(ReviewerDAO.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		reviewRoundDAOMock = EasyMock.createMock(ReviewRoundDAO.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock, eventFactoryMock);
+		reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock, eventFactoryMock, reviewerDAO){
+			@Override
+			public ReviewRound newReviewRound() {
+				return reviewRound;
+			}
+			
+			@Override
+			public Reviewer newReviewer() {
+				return reviewer;
+			}
+		};
+	}
+	
+	@Test
+	public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull(){
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		reviewerDAO.save(reviewer);
+		EasyMock.replay(reviewerDAO);
+		reviewService.createReviewerInNewReviewRound(application, reviewerUser);
+		Assert.assertEquals(reviewerUser, reviewer.getUser());
+		Assert.assertTrue(reviewRound.getReviewers().contains(reviewer));
+		
+	}
+	
+	@Test
+	public void shouldCreateNewInterviewerInLatestInterviewRoundIfLatestRoundIsNotNull(){
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		ReviewRound latestReviewRound = new ReviewRoundBuilder().toReviewRound();
+		ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(latestReviewRound).id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		reviewerDAO.save(reviewer);
+		EasyMock.replay(reviewerDAO);
+		reviewService.createReviewerInNewReviewRound(application, reviewerUser);
+		Assert.assertEquals(reviewerUser, reviewer.getUser());
+		Assert.assertTrue(latestReviewRound.getReviewers().contains(reviewer));
+		
 	}
 
 	@Test

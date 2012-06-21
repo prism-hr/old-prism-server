@@ -36,7 +36,7 @@ public abstract class ApprovalController {
 	protected final ApprovalRoundValidator approvalroundValidator;
 	protected final ApprovalService approvalService;
 	protected final SupervisorPropertyEditor supervisorPropertyEditor;
-	private final EncryptionHelper encryptionHelper;
+	protected final EncryptionHelper encryptionHelper;
 
 	ApprovalController() {
 		this(null, null, null, null, null, null, null, null);

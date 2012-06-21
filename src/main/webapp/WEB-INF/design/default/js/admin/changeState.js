@@ -46,7 +46,7 @@ $(document).ready(
 					$('body').css('cursor', 'auto');
 					//$('#timelineBtn').trigger('click');
 					// Go to application list.
-					window.location.href = '/applications';
+					window.location.href = '/pgadmissions/applications';
 				});
 				
 				return false;

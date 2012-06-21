@@ -143,7 +143,7 @@ public class ApprovalService {
 		
 	}
 	@Transactional
-	public void createSupervisorInNewApprovalRound(ApplicationForm applicationForm, RegisteredUser newUser) {
+	public void addSupervisorInPreviousReviewRound(ApplicationForm applicationForm, RegisteredUser newUser) {
 		Supervisor supervisor = newSupervisor();
 		supervisor.setUser(newUser);
 		supervisorDAO.save(supervisor);

@@ -11,17 +11,17 @@ import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.NewUserDTO;
+import com.zuehlke.pgadmissions.dto.UserDTO;
 
-public class NewUserDTOValidatorTest {
+public class UserDTOValidatorTest {
 
-	private NewUserDTOValidator validator;
-	private NewUserDTO user;
+	private UserDTOValidator validator;
+	private UserDTO user;
 
 	@Before
 	public void setup() {
-		validator = new  NewUserDTOValidator();
-		user = new NewUserDTO();
+		validator = new  UserDTOValidator();
+		user = new UserDTO();
 		user.setFirstName("bob");
 		user.setLastName("Smith");
 		user.setEmail("email@test.com");
@@ -31,7 +31,7 @@ public class NewUserDTOValidatorTest {
 
 	@Test
 	public void shouldSupportNewUserDTO() {
-		assertTrue(validator.supports(NewUserDTO.class));
+		assertTrue(validator.supports(UserDTO.class));
 	}
 
 	@Test
@@ -93,6 +93,15 @@ public class NewUserDTOValidatorTest {
 	public void shouldRejectIfSelectedAuthoritiesAreNull() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "selectedAuthorities");
 		user.setSelectedAuthorities((Authority[])null);
+		validator.validate(user, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedAuthorities").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfSelectedAuthoritiesAreEmpyt() {
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "selectedAuthorities");
+		user.setSelectedAuthorities(new Authority[]{});
 		validator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedAuthorities").getCode());

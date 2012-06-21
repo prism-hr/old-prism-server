@@ -113,6 +113,9 @@ public class CreateNewInterviewerController extends InterviewController {
 			}
 
 			newUserIds.add(existingUser.getId());
+			interviewService.addInterviewerInPreviousInterview(applicationForm, existingUser); 
+			applicationsService.save(applicationForm);
+			
 			return getCreateInterviewerModelAndView(applicationForm, newUserIds, getCreateInterviewerMessage("assignInterviewer.user.added", existingUser),
 					viewName);
 
@@ -121,7 +124,7 @@ public class CreateNewInterviewerController extends InterviewController {
 		RegisteredUser newUser = userService.createNewUserInRole(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail(),
 				Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, applicationForm);
 		newUserIds.add(newUser.getId());
-		interviewService.createInterviewerInNewInterview(applicationForm, newUser); //to be added in previous list
+		interviewService.addInterviewerInPreviousInterview(applicationForm, newUser); //to be added in previous list
 		applicationsService.save(applicationForm);
 		return getCreateInterviewerModelAndView(applicationForm, newUserIds, getCreateInterviewerMessage("assignInterviewer.user.created", newUser), viewName);
 	}

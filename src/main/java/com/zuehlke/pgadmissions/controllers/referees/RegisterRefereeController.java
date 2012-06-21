@@ -28,7 +28,8 @@ public class RegisterRefereeController {
 	private final UserService userService;
 	private final RegisterFormValidator validator;
 	private static final String REGISTER_REFEREE_VIEW_NAME = "private/referees/register_referee";
-	private static final String REGISTER_COMPLETE_VIEW_NAME = "/register/complete";
+//	private static final String REGISTER_COMPLETE_VIEW_NAME = "/register/complete";
+	private static final String REGISTER_COMPLETE_VIEW_NAME = "public/register/registration_complete";
 	private final EncryptionUtils encryptionUtils;
 	private final RefereePropertyEditor refereeproperrtyEditor;
 	private final EncryptionHelper encryptionHelper;
@@ -66,7 +67,7 @@ public class RegisterRefereeController {
 		refereeUser.setAccountNonLocked(true);
 		refereeUser.setCredentialsNonExpired(true);
 		userService.saveAndEmailRegisterConfirmationToReferee(refereeUser);
-		return new ModelAndView("redirect:" + REGISTER_COMPLETE_VIEW_NAME);
+		return new ModelAndView(REGISTER_COMPLETE_VIEW_NAME);
 	}
 
 	@ModelAttribute

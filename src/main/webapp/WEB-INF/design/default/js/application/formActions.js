@@ -1,3 +1,7 @@
+
+var sections = 9;  // as in sections to load.
+
+
 $(document).ready(function()
 {	
 	$("#acceptTermsValue").val("NO");
@@ -6,7 +10,6 @@ $(document).ready(function()
 	// LOAD APPLICATION FORM SECTIONS
 	// --------------------------------------------------------------------------------
 	
-	var sections = 9;
 	$('.content-box-inner').append('<div class="ajax" />');
 	
 	

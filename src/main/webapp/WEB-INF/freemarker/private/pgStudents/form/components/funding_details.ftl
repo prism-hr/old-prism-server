@@ -162,7 +162,7 @@
         <div class="field<#if funding.document??> uploaded</#if>" id="fundingUploadFields">          
           <input id="fundingDocument" data-type="SUPPORTING_FUNDING" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>          
           <span id="fundingUploadedDocument">
-            <input type="hidden" id="document_SUPPORTING_FUNDING" value="${(encrypter.encrypt(funding.document.id))!}"/>
+            <input type="hidden" class="file" id="document_SUPPORTING_FUNDING" value="${(encrypter.encrypt(funding.document.id))!}"/>
           <#if funding.document??>
             <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(funding.document.id)}" data-desc="Proof of Award" class="uploaded-filename" target="_blank">${funding.document.fileName}</a>
             <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>

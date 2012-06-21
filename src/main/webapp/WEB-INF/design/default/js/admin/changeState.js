@@ -46,7 +46,7 @@ $(document).ready(
 					$('body').css('cursor', 'auto');
 					//$('#timelineBtn').trigger('click');
 					// Go to application list.
-					window.location = '/applications';
+					window.location.href = '/applications';
 				});
 				
 				return false;

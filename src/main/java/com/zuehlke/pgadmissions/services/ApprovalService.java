@@ -13,11 +13,15 @@ import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
+import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -38,14 +42,15 @@ public class ApprovalService {
 	private final EncryptionHelper encryptionHelper;
 	private final UserService userService;
 	private final DocumentDAO documentDAO;
+	private final SupervisorDAO supervisorDAO;
 
 	ApprovalService() {
-		this(null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO, MailService mailService,
-			EventFactory eventFactory, CommentDAO commentDAO, DocumentDAO documentDAO, CommentFactory commentFactory, EncryptionHelper encryptionHelper) {
+			EventFactory eventFactory, CommentDAO commentDAO, DocumentDAO documentDAO, CommentFactory commentFactory, EncryptionHelper encryptionHelper, SupervisorDAO supervisorDAO) {
 
 		this.userService = userService;
 		this.applicationDAO = applicationDAO;
@@ -57,6 +62,7 @@ public class ApprovalService {
 		this.documentDAO = documentDAO;
 		this.commentFactory = commentFactory;
 		this.encryptionHelper = encryptionHelper;
+		this.supervisorDAO = supervisorDAO;
 
 	}
 
@@ -135,6 +141,34 @@ public class ApprovalService {
 		}
 		commentDAO.save(approvalComment);
 		
+	}
+	@Transactional
+	public void createSupervisorInNewApprovalRound(ApplicationForm applicationForm, RegisteredUser newUser) {
+		Supervisor supervisor = newSupervisor();
+		supervisor.setUser(newUser);
+		supervisorDAO.save(supervisor);
+		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+		if (latestApprovalRound == null){
+			ApprovalRound approvalRound = newApprovalRound();
+			approvalRound.getSupervisors().add(supervisor);
+			approvalRound.setApplication(applicationForm);
+			save(approvalRound);
+			applicationForm.setLatestApprovalRound(approvalRound);
+		}
+		else{
+			latestApprovalRound.getSupervisors().add(supervisor);
+			save(latestApprovalRound);
+		}
+		
+	}
+	
+	public Supervisor newSupervisor() {
+		return new Supervisor();
+	}
+
+	public ApprovalRound newApprovalRound() {
+		ApprovalRound approvalRound = new ApprovalRound();
+		return approvalRound;
 	}
 
 }

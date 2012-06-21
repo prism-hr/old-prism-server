@@ -20,14 +20,18 @@ import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
+import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
@@ -35,9 +39,11 @@ import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -52,25 +58,23 @@ public class ApprovalServiceTest {
 
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApprovalRoundDAO approvalRoundDAOMock;
-
 	private StageDurationDAO stageDurationDAOMock;
-
 	private MailService mailServiceMock;
-
 	private EventFactory eventFactoryMock;
-
 	private CommentFactory commentFactoryMock;
-
 	private CommentDAO commentDAOMock;
-
 	private EncryptionHelper encryptionHelperMock;
-
 	private DocumentDAO documentDAOMock;
-
 	private UserService userServiceMock;
-
+	private SupervisorDAO supervisorDAOMock;
+	private ApprovalRound approvalRound;
+	private Supervisor supervisor;
+	
 	@Before
 	public void setUp() {
+		supervisor = new SupervisorBuilder().id(1).toSupervisor();
+		approvalRound = new ApprovalRoundBuilder().id(1).toApprovalRound();
+		supervisorDAOMock = EasyMock.createMock(SupervisorDAO.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		approvalRoundDAOMock = EasyMock.createMock(ApprovalRoundDAO.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
@@ -82,7 +86,44 @@ public class ApprovalServiceTest {
 		documentDAOMock = EasyMock.createMock(DocumentDAO.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		approvalService = new ApprovalService(userServiceMock, applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, mailServiceMock,
-				eventFactoryMock, commentDAOMock, documentDAOMock, commentFactoryMock, encryptionHelperMock);
+				eventFactoryMock, commentDAOMock, documentDAOMock, commentFactoryMock, encryptionHelperMock, supervisorDAOMock){
+			@Override
+			public ApprovalRound newApprovalRound() {
+				return approvalRound;
+			}
+			
+			@Override
+			public Supervisor newSupervisor() {
+				return supervisor;
+			}
+		};
+	}
+	
+	@Test
+	public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull(){
+		RegisteredUser supervisorUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		supervisorDAOMock.save(supervisor);
+		EasyMock.replay(supervisorDAOMock);
+		approvalService.createSupervisorInNewApprovalRound(application, supervisorUser);
+		Assert.assertEquals(supervisorUser, supervisor.getUser());
+		Assert.assertTrue(approvalRound.getSupervisors().contains(supervisor));
+		
+	}
+	
+	@Test
+	public void shouldCreateNewInterviewerInLatestInterviewRoundIfLatestRoundIsNotNull(){
+		RegisteredUser supervisorUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().toApprovalRound();
+		ApplicationForm application = new ApplicationFormBuilder().latestApprovalRound(latestApprovalRound).id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		supervisorDAOMock.save(supervisor);
+		EasyMock.replay(supervisorDAOMock);
+		approvalService.createSupervisorInNewApprovalRound(application, supervisorUser);
+		Assert.assertEquals(supervisorUser, supervisor.getUser());
+		Assert.assertTrue(latestApprovalRound.getSupervisors().contains(supervisor));
+		
 	}
 
 	@Test

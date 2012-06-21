@@ -6,21 +6,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
 @Component
 public class RefereePropertyEditor extends PropertyEditorSupport {
 
 	private final RefereeService refereeService;
+	private final EncryptionHelper encryptionHelper;
 	
 
 	RefereePropertyEditor() {
-		this(null);
+		this(null, null);
 	}
 	
 	@Autowired
-	public RefereePropertyEditor(RefereeService refereeService) {
+	public RefereePropertyEditor(RefereeService refereeService, EncryptionHelper encryptionHelper) {
 		this.refereeService = refereeService;
+		this.encryptionHelper = encryptionHelper;
 	}
 
 	@Override
@@ -29,7 +32,7 @@ public class RefereePropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(refereeService.getRefereeById(Integer.parseInt(strId)));
+		setValue(refereeService.getRefereeById(Integer.parseInt(encryptionHelper.decrypt(strId))));
 
 	}
 

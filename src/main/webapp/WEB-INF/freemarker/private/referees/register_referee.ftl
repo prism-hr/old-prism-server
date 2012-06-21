@@ -55,7 +55,7 @@
 		    
 		    	<form method="post" action= "/pgadmissions/refereeRegistration/submit">
 		      		<p>&gt; Register Today...</p>
-		            <input id="recordId" type="hidden" name="recordId"  value="${(encrypter.encrypt(referee.id))!}" />
+		            <input id="encryptedRecordId" type="hidden" name="encryptedRecordId"  value="${(encrypter.encrypt(referee.id))!}" />
         			<#if result?? && result.getFieldError('firstName')??>                    		
                     	<span class="invalid"><@spring.message  result.getFieldError('firstName').code /></span>                    		
                     </#if>

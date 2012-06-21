@@ -113,19 +113,29 @@ public class CreateNewInterviewerController extends InterviewController {
 					viewName);
 
 		}
-		RegisteredUser newUser = userService.createNewUserForProgramme(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail(), applicationForm.getProgram(),
-				Authority.INTERVIEWER);
-		userService.setDirectURLAndSaveUser(DirectURLsEnum.ADD_INTERVIEW, applicationForm, newUser);
+
+		RegisteredUser newUser = userService.createNewUserInRole(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail(),
+				Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, applicationForm);
 		newUserIds.add(newUser.getId());
 		return getCreateInterviewerModelAndView(applicationForm, newUserIds, getCreateInterviewerMessage("assignInterviewer.user.created", newUser), viewName);
 	}
 
 	private ModelAndView getCreateInterviewerModelAndView(ApplicationForm applicationForm, List<Integer> newUserIds, String message, String viewName) {
+		List<String> encryptedIds = getEncryptedUserIds(newUserIds);
 		ModelAndView modelAndView = new ModelAndView(viewName);
 		modelAndView.getModel().put("applicationId", applicationForm.getApplicationNumber());
 		modelAndView.getModel().put("pendingInterviewer", newUserIds);
+		modelAndView.getModel().put("pendingInterviewer", encryptedIds);
 		modelAndView.getModel().put("message", message);
 		return modelAndView;
+	}
+
+	public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
+		List<String> encryptedIds = new ArrayList<String>();
+		for (Integer id : newUserIds) {
+			encryptedIds.add(encryptionHelper.encrypt(id));
+		}
+		return encryptedIds;
 	}
 
 	@Override

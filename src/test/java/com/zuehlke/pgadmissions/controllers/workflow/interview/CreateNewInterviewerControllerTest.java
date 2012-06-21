@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
@@ -45,13 +44,21 @@ public class CreateNewInterviewerControllerTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewInterviewForNewInterviewUserIfUserDoesNotExists() {
+		final List<String> encryptedList = new ArrayList<String>();
+		encryptedList.add("encrypted5");
+		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+			@Override
+			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
+				return encryptedList;
+			}
+		};
+		
+		
 		EasyMock.reset(userServiceMock);
-		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm application = new ApplicationFormBuilder().program(program).id(2).applicationNumber("ABC").toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.INTERVIEWER)).andReturn(user);
-		userServiceMock.setDirectURLAndSaveUser(DirectURLsEnum.ADD_INTERVIEW, application, user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -64,20 +71,27 @@ public class CreateNewInterviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(5)));
+		assertTrue(newUser.containsAll(encryptedList));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewInterviewForExistingInterviewUserIfUserDoesNotExists() {
+		final List<String> encryptedList = new ArrayList<String>();
+		encryptedList.add("encrypted5");
+		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+			@Override
+			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
+				return encryptedList;
+			}
+		};
+		
 		EasyMock.reset(userServiceMock);
-		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm application = new ApplicationFormBuilder().program(program).id(2).applicationNumber("ABC").toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.INTERVIEWER)).andReturn(user);
-		userServiceMock.setDirectURLAndSaveUser(DirectURLsEnum.ADD_INTERVIEW, application, user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -90,7 +104,7 @@ public class CreateNewInterviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(5)));
+		assertTrue(newUser.containsAll(encryptedList));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
@@ -101,13 +115,14 @@ public class CreateNewInterviewerControllerTest {
 		List<RegisteredUser> pedningInterviewers = new ArrayList<RegisteredUser>(Arrays.asList(new RegisteredUserBuilder().id(1).toUser(),
 				new RegisteredUserBuilder().id(2).toUser()));
 		EasyMock.reset(userServiceMock);
-		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm application = new ApplicationFormBuilder().program(program).id(2).applicationNumber("ABC").toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserForProgramme("bob", "bobson", "bobson@bob.com", application.getProgram(), Authority.INTERVIEWER)).andReturn(user);
-		userServiceMock.setDirectURLAndSaveUser(DirectURLsEnum.ADD_INTERVIEW, application, user);
-		EasyMock.replay(userServiceMock);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application)).andReturn(user);
+		EasyMock.expect(encryptionHelper.encrypt(1)).andReturn("encryptedOne");
+		EasyMock.expect(encryptionHelper.encrypt(2)).andReturn("encryptedTwo");
+		EasyMock.expect(encryptionHelper.encrypt(5)).andReturn("encryptedFive");
+		EasyMock.replay(userServiceMock, encryptionHelper);
 
 		ModelAndView modelAndView = controller.createInterviewerForNewInterview(user, bindingResultMock, application, pedningInterviewers, Collections.EMPTY_LIST);
 
@@ -116,7 +131,22 @@ public class CreateNewInterviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(3, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(1, 2, 5)));
+		assertTrue(newUser.containsAll(Arrays.asList("encryptedOne", "encryptedTwo", "encryptedFive")));
+	}
+	
+	@Test
+	public void shouldGetEncryptedIds(){
+		List<Integer> newUserIds = new ArrayList<Integer>();
+		newUserIds.add(1);
+		newUserIds.add(5);
+		newUserIds.add(10);
+		EasyMock.expect(encryptionHelper.encrypt(1)).andReturn("encryptedOne");
+		EasyMock.expect(encryptionHelper.encrypt(5)).andReturn("encryptedFive");
+		EasyMock.expect(encryptionHelper.encrypt(10)).andReturn("encryptedTen");
+		EasyMock.replay(encryptionHelper);
+		List<String> encryptedUserIds = controller.getEncryptedUserIds(newUserIds);
+		assertEquals(3, encryptedUserIds.size());
+		assertTrue(encryptedUserIds.containsAll(Arrays.asList("encryptedOne", "encryptedFive", "encryptedTen")));
 	}
 
 	@Test
@@ -148,6 +178,16 @@ public class CreateNewInterviewerControllerTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void shouldDoNothingIfUserExistsAndIsAlreadyPedningInterviewerOfApp() {
+		final List<String> encryptedList = new ArrayList<String>();
+		encryptedList.add("encryptedOne");
+		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+			@Override
+			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
+				return encryptedList;
+			}
+		};
+		
+		
 		RegisteredUser existingPendingInterviewer = new RegisteredUserBuilder().id(1).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		List<RegisteredUser> pedningInterviewers = new ArrayList<RegisteredUser>(Arrays.asList(existingPendingInterviewer));
 		EasyMock.reset(userServiceMock);
@@ -169,13 +209,23 @@ public class CreateNewInterviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
-		assertEquals((Integer) 1, newUser.get(0));
+		assertEquals("encryptedOne", newUser.get(0));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void shouldAddUserToPendingInterviewersIfExistingUserInPreviousInterviewerOfProgram() {
+		final List<String> encryptedList = new ArrayList<String>();
+		encryptedList.add("encryptedEight");
+		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+			@Override
+			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
+				return encryptedList;
+			}
+		};
+		
+		
 		RegisteredUser existingPreviousInterviewer = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
 		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
@@ -195,13 +245,22 @@ public class CreateNewInterviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(8)));
+		assertTrue(newUser.containsAll(encryptedList));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void shouldAddUserToPendingInterviewersIfExistingUserIsDefaultInterviewOfProgram() {
+		final List<String> encryptedList = new ArrayList<String>();
+		encryptedList.add("encryptedEight");
+		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+			@Override
+			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
+				return encryptedList;
+			}
+		};
+		
 		RegisteredUser existingDefaultInterviewer = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
 		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().interviewers(existingDefaultInterviewer).toProgram())
@@ -221,13 +280,22 @@ public class CreateNewInterviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(8)));
+		assertTrue(newUser.containsAll(encryptedList));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void shouldAddExistingUserToPendingIfUserExistsAndIsNewToAppAndProgram() {
+		final List<String> encryptedList = new ArrayList<String>();
+		encryptedList.add("encryptedEight");
+		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+			@Override
+			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
+				return encryptedList;
+			}
+		};
+		
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
 		ApplicationForm application = new ApplicationFormBuilder().applicationNumber("ABC").id(2).program(new ProgramBuilder().toProgram()).toApplicationForm();
@@ -246,7 +314,7 @@ public class CreateNewInterviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(8)));
+		assertTrue(newUser.containsAll(encryptedList));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 

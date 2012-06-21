@@ -42,7 +42,7 @@ $(document).ready(function()
 			$('#postInterviewerForm').append("<input name='pendingInterviewer' type='hidden' value='" +  $(this).val() + "'/>");	
 		});
 		$('#postInterviewerForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
-		$('#postInterviewerForm').append("<input name='interviewId' type='hidden' value='" +  $('#interviewId').val() + "'/>");
+		$('#postInterviewerForm').append("<input name='encryptedInterviewId' type='hidden' value='" +  $('#interviewId').val() + "'/>");
 		$('#postInterviewerForm').append("<input name='firstName' type='hidden' value='" +  $('#newInterviewerFirstName').val() + "'/>");
 		$('#postInterviewerForm').append("<input name='lastName' type='hidden' value='" +  $('#newInterviewerLastName').val() + "'/>");
 		$('#postInterviewerForm').append("<input name='email' type='hidden' value='" +  $('#newInterviewerEmail').val() + "'/>");		

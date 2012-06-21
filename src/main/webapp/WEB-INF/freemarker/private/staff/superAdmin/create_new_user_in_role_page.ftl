@@ -34,28 +34,31 @@
 		
 			<div class="content-box">
 				<div class="content-box-inner">
-					<div id="existingUsers">
-					</div>
-					<form id ="removeForm"  action="/pgadmissions/manageUsers/remove" method="POST">
-						<input type="hidden" id="deleteFromUser" name="user" value=""/>						
-						<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
-					</form>
-					<form id ="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
-							                                
-						<h1>Manage Users</h1>
-						<div class="section-info-bar">
-							Manage programme roles. You can also manage superadministrators.
+					
+					
+					<section class="form-rows">
+																								
+						<h2>Manage Users</h2>
+
+						<div id="existingUsers">
 						</div>
+						<form id="removeForm"  action="/pgadmissions/manageUsers/remove" method="POST">
+							<input type="hidden" id="deleteFromUser" name="user" value=""/>						
+							<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
+						</form>
 						
-						
-		
-						<section class="form-rows">
-							<div>
+						<div>
 							
+							<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
+
+								<div class="section-info-bar">
+									Manage programme roles. You can also manage <a href="#">superadministrators</a>.
+								</div>
+
 								<div class="row-group">
 								
 									<div class="row programme">
-										<span class="plain-label">Programme</span>
+										<span class="plain-label">Programme<em>*</em></span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
 											<select name="selectedProgram" id="programs">
@@ -78,6 +81,8 @@
 		
 								<div class="row-group">
 								
+									<h3><#if userDTO.newUser>Add New User<#else>Edit User Roles</#if></h3>
+									
 									<div class="row">
 										<span class="plain-label">First Name<em>*</em></span>
 										<span class="hint" data-desc=""></span>
@@ -130,19 +135,25 @@
 										</div>
 									</div>
 																		
-									<button type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+									<div class="row">
+										<div class="field">
+											<button type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+										</div>
+									</div>
 			
 								</div>
 								
 								<div class="buttons">
-									<button type="button" id="clear" >Clear</button>
-									<button type="submit" >Submit</button>
+									<button type="button" id="clear">Clear</button>
+									<button type="submit" class="blue">Submit</button>
 								</div>
-							</div>
-			
-						</section>
+								
+							</form>
+								
+						</div>
+		
+					</section>
 				
-					</form>
 			
 				</div><!-- .content-box-inner -->
 			</div><!-- .content-box -->
@@ -160,7 +171,6 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/roles.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>
 
 </body>
 </html>

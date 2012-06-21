@@ -1,0 +1,263 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title></title>
+		
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+  		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+	  	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+
+
+		<style type="text/css">
+
+			#dialog-overlay {
+
+				/* set it to fill the whil screen */
+				width:100%; 
+				height:100%;
+	
+				/* transparency for different browsers */
+				filter:alpha(opacity=50); 
+				-moz-opacity:0.5; 
+				-khtml-opacity: 0.5; 
+				opacity: 0.5; 
+				background:#000; 
+
+				/* make sure it appear behind the dialog box but above everything else */
+				position:absolute; 
+				top:0; left:0; 
+				z-index:3000; 
+
+				/* hide it by default */
+				display:none;
+			}
+
+
+			#dialog-box {
+	
+				/* css3 drop shadow */
+				-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+				-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+		
+				/* styling of the dialog box, i have a fixed dimension for this demo */ 
+				width: 350px;
+				background:#e2e4e3;	
+
+				/* make sure it has the highest z-index */
+				position:absolute; 
+				z-index:5000; 
+
+				/* hide it by default */
+				display:none;
+			}
+
+			#dialog-box .dialog-content {
+				
+				/* style the content */
+				text-align:left; 
+	 
+				font-family:10pt/1 Arial,Helvetica,sans-serif;
+				font-size:100%;
+	 
+				font-weight:normal;
+				height:auto;
+				
+				background:#e2e4e3;	
+
+			}
+
+			#dialog-box #dialog-message {
+				
+				padding: 20px 0 10px 15px;
+    			text-align: justify;
+    			width: 72%;
+				float: left;
+			}
+			
+			#dialog-icon{
+			
+   			 	min-height: 44px;
+			    min-width: 44px;
+    			background: url("images/large_tick.png") no-repeat scroll left center transparent;
+				float: right;
+				margin-right: 20px;
+			}
+			
+			#dialog-box #dialog-row {
+				
+				padding: 10px 15px 10px;
+				line-height: 24px;
+
+			}
+
+			#dialog-box #dialog-actions {
+				
+    			text-align: right;
+
+			}
+
+			
+			#dialog-box #dialog-header {
+				
+			    padding: 10px 0 5px 15px;				
+				background: -moz-linear-gradient(center top , #AFB1B1 0%, #D9DCDB 
+				50%, #AFB1B1 100%) repeat scroll 0 0 transparent;
+				
+			}
+
+			a{
+				text-decoration: none;
+			}
+			
+			a.button{
+				display: inline-block;
+				
+				border: 2px solid #FFFFFF;
+			    border-radius: 11px 11px 11px 11px;
+    			box-shadow: 0 0 3px 0 #999999;
+			    color: #FFFFFF;
+			    cursor: pointer;
+			    font: bold 8.5pt/16px Arial,Helvetica,sans-serif;
+			    padding: 2px 10px;
+			  
+			  	/*Default bg*/
+				background: -moz-linear-gradient(center top , #00BCF1 0%, #0098D8 50%, 
+				#0073BD 51%, #008FD5 100%) repeat scroll 0 0 transparent;
+				
+			  	text-align: center;
+			    vertical-align: middle;
+				
+			}
+			
+			#horizontal-separator{
+				background: none repeat scroll 0 0 #999999;
+			    border: medium none;
+			    color: #999999;
+			    height: 2px;
+			    margin: 0 15px;
+			    clear: left;
+			}
+						
+		</style>		
+
+		<script type="text/javascript">
+
+			$(document).ready(function () {
+
+				// if user clicked on button, the overlay layer or the dialogbox, close the dialog	
+				$('a#popup-open-button').click(function (e) {		
+					
+					e.preventDefault();
+					
+					positionPopup();
+					
+					setPopupText("I understand that in accepting this declaration I am confirming that " +
+					"the information contained in this application is true and accurate. I am " +
+					"aware that any subsequent offer of study may be retracted at any time if " +
+					"any of the information contained is found to be misleading or false.");
+					
+					$('#dialog-overlay, #dialog-box').show();
+					
+					return false;
+				});
+	
+				// if user resize the window, call the same function again
+				// to make sure the overlay fills the screen and dialogbox aligned to center	
+				$(window).resize(function () {
+		
+					//only do it if the dialog box is not hidden
+					if (!$('#dialog-box').is(':hidden')){
+						positionPopup();
+					}
+					
+				});	
+	
+				$('a#popup-ok-button').click(function () {		
+					$('#dialog-overlay, #dialog-box').hide();		
+					return false;
+				});
+
+				$('a#popup-cancel-button').click(function () {		
+					$('#dialog-overlay, #dialog-box').hide();		
+					return false;
+				});
+
+				$(document).keypress(function(e){  
+					if( e.keyCode == 27 ){  
+						$('#dialog-overlay, #dialog-box').hide();		
+						return false;
+					}  
+				});	
+	
+			});
+
+			//Popup dialog
+			function setPopupText(message) {
+		
+				// display the message
+				$('#dialog-message').html(message);
+				$('#dialog-header').html("Please Confirm!");
+				
+				positionIcon($('#dialog-message').height());
+			
+			}
+			
+			function positionIcon(maxHeight){
+			
+				var iconMarginTop = 20 + (maxHeight / 2) - 22;
+				$('#dialog-icon').css({marginTop:iconMarginTop});
+			
+			}
+			
+			function positionPopup(){
+				
+				// get the screen height and width  
+				var maskHeight = $(window).height();  
+				var maskWidth = $(window).width();
+			
+				// calculate the values for center alignment
+				var dialogTop =  (maskHeight/3) - ($('#dialog-box').height()); 
+				
+				if(dialogTop <= 0){
+					dialogTop =  (maskHeight - $('#dialog-box').height()) / 2;
+					if(dialogTop < 0){
+						dialogTop = 0;
+						maskHeight = $('#dialog-box').height();
+					}
+				}
+				
+				var dialogLeft = (maskWidth/2) - ($('#dialog-box').width()/2); 
+	
+				// assign values to the overlay and dialog box
+				$('#dialog-overlay').css({height:maskHeight, width:maskWidth}).show();
+				$('#dialog-box').css({top:dialogTop, left:dialogLeft}).show();
+			
+			}
+
+		</script>
+
+	</head>
+	<body>
+
+		<a id="popup-open-button" href="#">Popup!</a>
+
+			<div id="dialog-overlay"></div>
+		
+			<div id="dialog-box">
+				<div class="dialog-content">
+					<div id="dialog-header"></div>
+					<div id="dialog-message"></div>
+					<div id="dialog-icon"></div>
+					<div id="horizontal-separator"></div>
+					<div id="dialog-row">
+						<div id="dialog-actions">
+							<a href="#" class="button" id="popup-ok-button">OK</a>
+							<a href="#" class="button" id="popup-cancel-button">Cancel</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+	</body>
+</html>

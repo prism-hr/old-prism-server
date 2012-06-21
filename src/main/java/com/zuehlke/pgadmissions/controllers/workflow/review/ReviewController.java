@@ -85,11 +85,11 @@ public abstract class ReviewController {
 				availableReviewers.add(registeredUser);
 			}
 		}
-//		for (RegisteredUser registeredUser : getPendingReviewers(pendingReviewer, applicationId)) {
-//			if (availableReviewers.contains(registeredUser)) {
-//				availableReviewers.remove(registeredUser);
-//			}
-//		}
+		for (RegisteredUser registeredUser : getPendingReviewers(pendingReviewer, applicationId)) {
+			if (availableReviewers.contains(registeredUser)) {
+				availableReviewers.remove(registeredUser);
+			}
+		}
 
 		return availableReviewers;
 	}

@@ -74,6 +74,7 @@ public class InterviewService {
 		}
 	}
 
+	@Transactional
 	public void createInterviewerInNewInterview(
 			ApplicationForm applicationForm, RegisteredUser newUser) {
 		Interviewer inter = newInterviewer();

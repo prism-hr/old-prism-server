@@ -28,6 +28,7 @@ function loadUsersForProgram(){
 			function(data)
 			{
 				$('#existingUsers').html(data);
+				addToolTips();
 			}
 		);	
 }

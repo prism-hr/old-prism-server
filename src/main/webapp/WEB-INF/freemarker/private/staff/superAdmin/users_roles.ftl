@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring />
 <table class="data" border="0">
 	<colgroup>
-		<col style="width: 60px;" />
+		<col style="width: 20px;" />
 		<col style="width: auto;" />
 		<col style="width: 200px;" />
 		<col style="width: 100px;" />
@@ -27,7 +27,7 @@
 					<span class="is-supervisor" data-desc="Supervisor"></span>
 					<span class="is-approver" data-desc="Approver"></span>
 				</div>
-				<#list userInRole.getAuthoritiesForProgram(selectedProgram) as authority>${authority} - </#list>
+				<#-- list userInRole.getAuthoritiesForProgram(selectedProgram) as authority>${authority} - </#list -->
 			</td>
 			<td scope="col">
 				<a class="button-edit" data-desc="Edit" href="<@spring.url '/manageUsers/edit?programCode=${selectedProgram.code}&user=${encrypter.encrypt(userInRole.id)}'/>">Edit</a>

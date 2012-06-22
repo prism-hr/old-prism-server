@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LoginController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public String getLoginPage(HttpServletRequest request) {
+	public String getLoginPage(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		DefaultSavedRequest attribute = (DefaultSavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
 		if (attribute != null && attribute.getRequestURL() != null && attribute.getRequestURL().endsWith("/apply/new")) {
@@ -21,7 +22,7 @@ public class LoginController {
 		} else {
 			session.setAttribute("applyRequest", null);
 		}
-
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		return "public/login/login_page";
 	}
 

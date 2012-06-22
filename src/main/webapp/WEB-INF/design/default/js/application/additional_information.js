@@ -12,16 +12,24 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="informationCancelButton"]').click(function(){
-		$.get("/pgadmissions/update/getAdditionalInformation",
-				{
+
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			  url: "/pgadmissions/update/getAdditionalInformation",
+			  data:{
 					applicationId:  $('#applicationId').val(),
 					message: 'cancel',					
 					cacheBreaker: new Date().getTime() 
-				},
-				function(data) {
+				}, 
+			  success: function(data) {
 					$('#additionalInformationSection').html(data);
-				}
-		);
+				}	
+		});
 	});
 	
 	$("input[name$='convictionRadio']").click(function()

@@ -13,12 +13,19 @@ $(document).ready(function()
 		$('#application').hide();
 		$('#timeline').show();
 		
-		$.get("/pgadmissions/comments/view",
-				{
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			  url: "/pgadmissions/comments/view",
+			  data:{
 					id:  $('#applicationId').val(),				
 					cacheBreaker: new Date().getTime() 
-				},
-				function(data)
+				}, 
+			  success:	function(data)
 				{
 					$('#timeline').html(data);	
 					// Scroll to the tab.
@@ -31,8 +38,9 @@ $(document).ready(function()
 						jumpToTimeline = true;
 					}
 					addToolTips();	
-				}
-		);
+				},			
+		});
+		
 		
 		return false;
 	});
@@ -47,38 +55,49 @@ $(document).ready(function()
 		$('#timeline').html("").hide();
 		$('#application').show();
 		
+		// Only fetch the application form if it hasn't been fetched already.
 		if ($('#application').html()=="")
 		{
-			// Only fetch the application form if it hasn't been fetched already.
-			$.get("/pgadmissions/application?view=view",
-				{
-					embeddedApplication: "true",				
-					applicationId:  $('#applicationId').val(),				
-					cacheBreaker: new Date().getTime() 
-				},
-				function(data)
-				{
-					$('#application').html(data);
 
-					window.scrollTo(0, $('#timeline').offset().top);		
-
-					// Toggle grey-label class where you find instances of "Not Provided" text.
-					$('#application .field').each(function()
+			$.ajax({
+				 type: 'GET',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				  url: "/pgadmissions/application?view=view",
+				  data:{
+						embeddedApplication: "true",				
+						applicationId:  $('#applicationId').val(),				
+						cacheBreaker: new Date().getTime() 
+					}, 
+				  success:	function(data)
 					{
-						 var strValue = $(this).text();
-						 if (strValue.match("Not Provided"))
-						 {
-							 $(this).toggleClass('grey-label');
-							 var labelValue = $(this).prev().text();
-							 if (labelValue.match("Additional Information"))
-							 {
-								 $(this).prev().css("font-weight","bold");
-							 }
-						 }
-					});
+						$('#application').html(data);
 
-				}
-			);
+						window.scrollTo(0, $('#timeline').offset().top);		
+
+						// Toggle grey-label class where you find instances of "Not Provided" text.
+						$('#application .field').each(function()
+						{
+							 var strValue = $(this).text();
+							 if (strValue.match("Not Provided"))
+							 {
+								 $(this).toggleClass('grey-label');
+								 var labelValue = $(this).prev().text();
+								 if (labelValue.match("Additional Information"))
+								 {
+									 $(this).prev().css("font-weight","bold");
+								 }
+							 }
+						});
+
+					}		
+			});
+			
+		
+		
 		}
 		else
 		{

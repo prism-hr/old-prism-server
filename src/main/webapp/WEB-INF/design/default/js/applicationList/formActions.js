@@ -174,14 +174,21 @@ function populateApplicationList(reset)
 	
 	$('#search-box span.invalid').remove();
 
-	$.get("/pgadmissions/applications/section",
-		options,
-		function(data)
-		{
-			$('#applicationListSection').html(data);
-			addToolTips();
-		}
-	);
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		  url: "/pgadmissions/applications/section",
+		  data:options, 
+		  success: function(data)
+			{
+				$('#applicationListSection').html(data);
+				addToolTips();
+			}			
+	});
 }
 
 function sortList(column)

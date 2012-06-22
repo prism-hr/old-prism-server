@@ -401,3 +401,4 @@ function markSectionError(section_id)
 		addToolTips();
 	}
 }
+

@@ -3,10 +3,13 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 
@@ -15,8 +18,10 @@ public class LoginControllerTest {
 	private LoginController loginController;
 
 	@Test
-	public void shouldReturnLoginPageViewName(){
-		assertEquals("public/login/login_page", loginController.getLoginPage(new MockHttpServletRequest()));
+	public void shouldReturnLoginPageViewNameAndSetNotAuthorizedResponseCode(){
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		assertEquals("public/login/login_page", loginController.getLoginPage(new MockHttpServletRequest(), response));
+		assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
 	}
 	
 	@Test
@@ -32,7 +37,7 @@ public class LoginControllerTest {
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("projectTitle")).andReturn(new String[]{"projectTitle"});
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);		
-		loginController.getLoginPage(request);
+		loginController.getLoginPage(request, new MockHttpServletResponse());
 		assertEquals("program:code||programhome:programhome||bacthdeadline:programDeadline||projectTitle:projectTitle", session.getAttribute("applyRequest"));
 	}
 	
@@ -49,7 +54,7 @@ public class LoginControllerTest {
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("projectTitle")).andReturn(new String[]{});
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	
-		loginController.getLoginPage(request );
+		loginController.getLoginPage(request, new MockHttpServletResponse() );
 		assertEquals("", session.getAttribute("applyRequest"));
 	}
 	
@@ -64,7 +69,7 @@ public class LoginControllerTest {
 
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	
-		loginController.getLoginPage(request );
+		loginController.getLoginPage(request , new MockHttpServletResponse());
 		assertNull(session.getAttribute("applyRequest"));
 	}
 	@Before

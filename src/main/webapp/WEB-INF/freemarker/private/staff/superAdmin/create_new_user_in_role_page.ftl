@@ -48,8 +48,8 @@
 							<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
 						</form>
 						
-						<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
-							<div>
+						<div>
+							<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
 							
 								<div class="section-info-bar">
 									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
@@ -87,7 +87,7 @@
 										<span class="plain-label">First Name<em>*</em></span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
-											<input class="full" type="text" value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>readonly="readonly"</#if>/>			                                  
+											<input class="max" type="text" value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>readonly="readonly"</#if>/>			                                  
 											<@spring.bind "userDTO.firstName" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>
@@ -99,7 +99,7 @@
 										<span class="plain-label">Last Name<em>*</em></span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
-											<input class="full" type="text" value="${(userDTO.lastName?html)!}"  name="lastName" id="lastName"  <#if !userDTO.newUser>readonly="readonly"</#if>/>
+											<input class="max" type="text" value="${(userDTO.lastName?html)!}"  name="lastName" id="lastName"  <#if !userDTO.newUser>readonly="readonly"</#if>/>
 											<@spring.bind "userDTO.lastName" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>
@@ -111,7 +111,7 @@
 										<span class="plain-label">Email<em>*</em></span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
-											<input class="full" type="text" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>readonly="readonly"</#if>/>
+											<input class="max" type="text" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>readonly="readonly"</#if>/>
 											<@spring.bind "userDTO.email" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>
@@ -140,16 +140,14 @@
 											<button type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
 										</div>
 									</div>
+								</div>
 			
-									<div class="buttons">
-										<button type="button" id="clear">Clear</button>
-										<button type="submit" class="blue">Submit</button>
-									</div>
-								
+								<div class="buttons">
+									<button type="button" id="clear">Clear</button>
+									<button type="submit" class="blue">Submit</button>
 								</div>
 								
 							</form>
-								
 						</div>
 		
 					</section>

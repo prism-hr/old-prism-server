@@ -60,7 +60,7 @@
 					<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/superadmins" method="POST">
 		
 						<section class="form-rows">
-							<h2>Manage Users</h2>
+							<h2>Manage Superadministrators</h2>
 							<div>
 							
 								<div class="section-info-bar">

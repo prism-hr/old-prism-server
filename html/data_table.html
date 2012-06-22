@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Shell template</title>
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+		<!-- Let Internet Explorer 8 and below recognise HTML5 tags. -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+	</head>
+
+	<body id="bg">
+
+	<table class="data-table">
+
+		<colgroup>
+    	<col />
+    	<col style="width: 80px;" />
+    	<col style="width: 80px;" />
+    	<col style="width: 120px;" />
+    </colgroup>
+
+		<thead>
+			<tr>
+				<th>Email</th>
+				<th>Primary</th>
+				<th>Aware</th>
+				<th></th>
+			</tr>
+		</thead>
+
+	<tfoot>
+		<tr>
+			<td>
+				<input type="text" placeholder="Email Address" name="email"/>
+			</td>
+			<td>
+				<input type="radio" name="isPrimary"/>
+			</td>
+			<td>
+				<input type="checkbox" name="isAware"/>
+			</td>	
+			<td>
+				<button type="button" name="add">Add Another</button>
+			</td>
+		</tr>	
+	</tfoot>
+	
+	<tbody>
+	</tbody>
+	
+</table>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+	
+		$('table.data-table button').click(function(){
+		
+			var $copiedRow = $(this).parent().parent().clone();
+		
+			$('table.data-table tbody').append($copiedRow);
+			
+			return false;
+		
+		});
+	
+	});
+
+</script>
+
+	</body>
+</html>

@@ -22,3 +22,20 @@ div.left-column .field { margin-left: 100px !important; }
 
 .pending{ color: #999999;}
 
+
+#existingUsers { border: none; margin-bottom: 10px; padding: 0; }
+
+/* User's roles as icons. */
+#existingUsers .role-icons { background: url(../../../images/icon_roles.png) no-repeat; display: inline-block; height: 22px; margin-right: 4px; width: 22px; }
+
+#existingUsers .role-icons .is-supervisor { background-position: 0 -22px; }
+#existingUsers .role-icons .is-admin { background-position: -22px -22px; }
+#existingUsers .role-icons .is-interviewer { background-position: -44px -22px; }
+#existingUsers .role-icons .is-reviewer { background-position: -66px -22px; }
+#existingUsers .role-icons .is-approver { background-position: -88px -22px; }
+
+#existingUsers .role-icons.supervisor .is-supervisor { background-position: 0 -22px; }
+#existingUsers .role-icons.administrator .is-admin { background-position: -22px -22px; }
+#existingUsers .role-icons.interviewer .is-interviewer { background-position: -44px -22px; }
+#existingUsers .role-icons.reviewer .is-reviewer { background-position: -66px -22px; }
+#existingUsers .role-icons.approver .is-approver { background-position: -88px -22px; }

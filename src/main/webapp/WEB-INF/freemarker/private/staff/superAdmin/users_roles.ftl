@@ -21,11 +21,11 @@
 			<td scope="col">${userInRole.firstName?html} ${userInRole.lastName?html} (${userInRole.email?html})</td>
 			<td scope="col">
 				<div class="role-icons <#list userInRole.getAuthoritiesForProgram(selectedProgram) as authority>${authority?lower_case} </#list>">
-					<span class="is-admin"></span>
-					<span class="is-interviewer"></span>
-					<span class="is-reviewer"></span>
-					<span class="is-supervisor"></span>
-					<span class="is-approver"></span>
+					<span class="is-admin" data-desc="Administrator"></span>
+					<span class="is-interviewer" data-desc="Interviewer"></span>
+					<span class="is-reviewer" data-desc="Reviewer"></span>
+					<span class="is-supervisor" data-desc="Supervisor"></span>
+					<span class="is-approver" data-desc="Approver"></span>
 				</div>
 				<#list userInRole.getAuthoritiesForProgram(selectedProgram) as authority>${authority} - </#list>
 			</td>

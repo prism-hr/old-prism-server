@@ -171,7 +171,7 @@ $(document).ready(function(){
 					  window.location.reload();
 				  }
 			  },
-			  url: /pgadmissions/update/getEmploymentPosition",
+			  url: "/pgadmissions/update/getEmploymentPosition",
 			  data:	{
 					applicationId:  $('#applicationId').val(),
 					message: 'cancel',					

@@ -237,9 +237,10 @@ section.form-rows h2 {
 	background: -ms-linear-gradient(top,  #6b6b6b 0%,#595959 50%,#424242 51%,#707070 100%); /* IE10+ */
 	background: linear-gradient(top,  #6b6b6b 0%,#595959 50%,#424242 51%,#707070 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6b6b6b', endColorstr='#707070',GradientType=0 ); /* IE6-8 */
+	padding-left: 10px;
 }
 
-section.folding h2 { cursor: pointer; }
+section.folding h2 { cursor: pointer; padding-left: 5px; }
 
 
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }

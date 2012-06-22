@@ -5,7 +5,7 @@ section.form-rows { margin-bottom: 10px; position: relative; }
 
 /* SECTION HEADINGS --------------------------------------------------------------------------------------- */
 section.form-rows h2,
-#view-toolbar li.tool-button a { border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
+#view-toolbar li.tool-button a { border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; }
 section.form-rows h2 .left { background: url(../../images/bg_expand_arrow.png) no-repeat; float: left; height: 11px; margin: 5px 4px 0 0; width: 11px; }
 section.form-rows h2.open .left { background-position: 0 -11px; }
 section.form-rows h2 .status { 

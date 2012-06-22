@@ -371,7 +371,7 @@ function isFormEmpty($container)
 {
 	var filled = 0;
 	// DO NOT check hidden fields!
-	$('input[type!="hidden"], select, textarea', $container).each(function()
+	$('input[type!="hidden"], select, textarea, input.file', $container).each(function()
 	{
 		var $field = $(this);
 		// Don't check terms checkboxes.

@@ -79,12 +79,20 @@ $(document).ready(function() {
 			case 'withdraw':
 				if (confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))
 				{
-					$.post("/pgadmissions/withdraw",
-					{
-						applicationId: id
-					}, 
-					function(data) {
-						window.location.href = "/pgadmissions/applications";
+					$.ajax({
+						type: 'POST',
+						 statusCode: {
+							  401: function() {
+								  window.location.reload();
+							  }
+						  },
+						url:"/pgadmissions/withdraw",
+						data:{
+							applicationId: id
+						}, 
+						success:function(data) {
+							window.location.href = "/pgadmissions/applications";
+						}
 					});
 				}
 		}

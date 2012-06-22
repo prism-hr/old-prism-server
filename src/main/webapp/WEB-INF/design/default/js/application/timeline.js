@@ -1,15 +1,22 @@
 $(document).ready(function()
 {
 	
-	$.get("/pgadmissions/comments/view",
-			{
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+			url:"/pgadmissions/comments/view",
+			data:{
 				id:  $('#applicationId').val(),				
 				cacheBreaker: new Date().getTime() 
 			},
-			function(data) {
+			success:function(data) {
 				$('#timeline').html(data);				
 			}
-	);
+	});
 		
 	
 });

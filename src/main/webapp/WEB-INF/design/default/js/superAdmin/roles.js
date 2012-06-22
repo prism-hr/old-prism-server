@@ -22,16 +22,22 @@ function loadUsersForProgram()
 {
 	$('#existingUsers').append('<div class="ajax" />');
 	
-	$.get(
-		"/pgadmissions/manageUsers/program",
-		{
-			programCode : $('#programs').val(),						
-			cacheBreaker: new Date().getTime() 
-		},
-		function(data)
-		{
-			$('#existingUsers').html(data);
-			addToolTips();
-		}
-	);	
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+	 		url:"/pgadmissions/manageUsers/program",
+			data:{
+				programCode : $('#programs').val(),						
+				cacheBreaker: new Date().getTime() 
+			},
+			success: function(data)
+			{
+				$('#existingUsers').html(data);
+				addToolTips();
+			}
+	});	
 }

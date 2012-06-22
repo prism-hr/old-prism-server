@@ -35,18 +35,27 @@ $(document).ready(
 				$('#notifyRegistryButton').attr('disabled', 'disabled');
 				$('#notifyRegistryButton').removeClass("blue");
 				$('body').css('cursor', 'wait');
-				$.post("/pgadmissions/registryHelpRequest", {
-					applicationId : $('#applicationId').val()
-
-				}, function(data)
-				{
-					$('#emailMessage').html(data);
-					$('#notifyRegistryButton').removeAttr('disabled');
-					$('#notifyRegistryButton').addClass("blue");
-					$('body').css('cursor', 'auto');
-					//$('#timelineBtn').trigger('click');
-					// Go to application list.
-					window.location.href = '/pgadmissions/applications';
+				$.ajax({
+					type: 'POST',
+					 statusCode: {
+						  401: function() {
+							  window.location.reload();
+						  }
+					  },
+					url:"/pgadmissions/registryHelpRequest",
+					data:{
+						applicationId : $('#applicationId').val()
+					},
+					success:function(data)
+					{
+						$('#emailMessage').html(data);
+						$('#notifyRegistryButton').removeAttr('disabled');
+						$('#notifyRegistryButton').addClass("blue");
+						$('body').css('cursor', 'auto');
+						//$('#timelineBtn').trigger('click');
+						// Go to application list.
+						window.location.href = '/pgadmissions/applications';
+					}
 				});
 				
 				return false;

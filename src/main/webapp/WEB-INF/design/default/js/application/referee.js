@@ -14,16 +14,23 @@ $(document).ready(function()
 	
 	$('a[name="deleteRefereeButton"]').click( function(){	
 				var id = $(this).attr("id").replace("referee_", "");
-				$.post("/pgadmissions/deleteentity/referee",
-				{
-					id: id	
-				}, 
-				
-				function(data) {
-					$('#referencesSection').html(data);
-				}	
+				$.ajax({
+					type: 'POST',
+					 statusCode: {
+						  401: function() {
+							  window.location.reload();
+						  }
+					  },
+					url:"/pgadmissions/deleteentity/referee",
+					data:{
+						id: id	
+					}, 
 					
-			);
+					success:function(data) {
+						$('#referencesSection').html(data);
+					}	
+					
+				});
 	});
 	
 	$("input[name*='acceptTermsRDCB']").click(function() {
@@ -40,11 +47,19 @@ $(document).ready(function()
 			*/
 			refImgCount = 0;
 			
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationId").val(), 
-				acceptedTerms: $("#acceptTermsRDValue").val()
-			},
-			function(data) {
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/acceptTerms",
+				data:{  
+					applicationId: $("#applicationId").val(), 
+					acceptedTerms: $("#acceptTermsRDValue").val()
+				},
+				success:function(data) {}
 			});
 		}
 		});
@@ -109,32 +124,46 @@ $(document).ready(function()
 
 	
 	$('a[name="refereeCancelButton"]').click(function(){
-		$.get("/pgadmissions/update/getReferee",
-				{
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+				url:"/pgadmissions/update/getReferee",
+				data:{
 					applicationId:  $('#applicationId').val(),
 					message: 'cancel',					
 					cacheBreaker: new Date().getTime()
 				},
-				function(data) {
+				success: function(data) {
 					$('#referencesSection').html(data);
 				}
-		);
+		});
 	});
 	
 	$('a[name="editRefereeLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('referee_', '');	
-		$.get("/pgadmissions/update/getReferee",
-				{
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+				url:"/pgadmissions/update/getReferee",
+				data:{
 					applicationId:  $('#applicationId').val(),
 					refereeId: id,
 					message: 'edit',					
 					cacheBreaker: new Date().getTime()
 				},
-				function(data) {
+				success: function(data) {
 					$('#referencesSection').html(data);
 				}
-		);
+		});
 	});
 	
 	addToolTips();
@@ -164,8 +193,16 @@ function postRefereeData(message){
 
 	$('#referencesSection > div').append('<div class="ajax" />');
 
-	$.post( "/pgadmissions/update/editReferee" , $.param(postData),			
-			function(data) {
+	$.ajax({
+		type: 'POST',
+		statusCode: {
+			401: function() {
+				window.location.reload();
+			 }
+		 },
+		url:"/pgadmissions/update/editReferee" , 
+		data: $.param(postData),			
+		success:function(data) {
 				$('#referencesSection').html(data);
 				$('#referencesSection div.ajax').remove();
 				markSectionError('#referencesSection');
@@ -181,5 +218,5 @@ function postRefereeData(message){
 					}
 				}
 			}
-	);
+	});
 }

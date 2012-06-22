@@ -59,12 +59,21 @@ $(document).ready(function()
 
 			progImgCount = 0;
 			
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationId").val(), 
-				acceptedTerms: $("#acceptTermsPDValue").val()
-			},
-			function(data) {}
-			);
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/acceptTerms",
+				data:
+				{  
+					applicationId: $("#applicationId").val(), 
+					acceptedTerms: $("#acceptTermsPDValue").val()
+				},
+				success: function(data) {}
+			});
 		}
 	});
 	
@@ -336,15 +345,22 @@ $(document).ready(function()
 	$('#programmeCancelButton').click(function(){
 		$("#addSupervisorButton").show();
 		$("#updateSupervisorButton").hide();
-		$.get("/pgadmissions/update/getProgrammeDetails",
-				{
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+				url:"/pgadmissions/update/getProgrammeDetails",
+				data:{
 					applicationId:  $('#applicationId').val(),					
 					cacheBreaker: new Date().getTime()					
 				},
-				function(data) {
+				success: function(data) {
 					$('#programmeDetailsSection').html(data);
 				}
-		);
+		});
 	});
 	
 
@@ -373,23 +389,30 @@ function postProgrammeData(message)
 
 	$('#programmeDetailsSection > div').append('<div class="ajax" />');
 		
-	$.post(
-		"/pgadmissions/update/editProgrammeDetails",
-		$.param(postData) + "&" + $('[input[name="suggestedSupervisors"]').serialize(),
-		function(data)
-		{
-			$('#programmeDetailsSection').html(data);
-			$('#programmeDetailsSection div.ajax').remove();
-			markSectionError('#programmeDetailsSection');
-			
-			if (message == 'close')
+	$.ajax({
+		type: 'POST',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/update/editProgrammeDetails",
+		data:$.param(postData) + "&" + $('[input[name="suggestedSupervisors"]').serialize(),
+		success: function(data)
 			{
-				// Close the section only if there are no errors.
-				var errorCount = $('#programmeDetailsSection .invalid:visible').length;
-				if (errorCount == 0)
+				$('#programmeDetailsSection').html(data);
+				$('#programmeDetailsSection div.ajax').remove();
+				markSectionError('#programmeDetailsSection');
+				
+				if (message == 'close')
 				{
-					$('#programme-H2').trigger('click');
+					// Close the section only if there are no errors.
+					var errorCount = $('#programmeDetailsSection .invalid:visible').length;
+					if (errorCount == 0)
+					{
+						$('#programme-H2').trigger('click');
+					}
 				}
 			}
-		});
+	});
 }

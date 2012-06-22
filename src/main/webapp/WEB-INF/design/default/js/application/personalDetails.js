@@ -20,15 +20,22 @@ $(document).ready(function(){
 	
 	$('#personalDetailsCancelButton').click(function()
 	{
-		$.get("/pgadmissions/update/getPersonalDetails",
-				{
+		$.ajax({
+			 	type: 'GET',
+			 	statusCode: {
+			 		401: function() {
+			 			window.location.reload();
+			 		}
+			 	},
+				url:"/pgadmissions/update/getPersonalDetails",
+				data:{
 					applicationId:  $('#applicationId').val(),					
 					cacheBreaker: new Date().getTime()					
 				},
-				function(data) {
+				success: function(data) {
 					$('#personalDetailsSection').html(data);
 				}
-		);
+		});
 	});
 	
 
@@ -154,11 +161,20 @@ $(document).ready(function(){
 			*/
 			persImgCount = 0;
 			
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationId").val(), 
-				acceptedTerms: $("#acceptTermsPEDValue").val()
-			},
-			function(data) {
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/acceptTerms", 
+				data:{  
+					applicationId: $("#applicationId").val(), 
+					acceptedTerms: $("#acceptTermsPEDValue").val()
+				},
+				success:function(data) {
+				}
 			});
 		}
 		});
@@ -305,13 +321,20 @@ function postPersonalDetailsData(message){
 	//do the post!
 	$('#personalDetailsSection > div').append('<div class="ajax" />');
 
-	$.post( "/pgadmissions/update/editPersonalDetails" ,
-			$.param(postData) + 
+	$.ajax({ 
+		type: 'POST',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+			url:"/pgadmissions/update/editPersonalDetails" ,
+			data:$.param(postData) + 
 			"&" + $('input[name="candidateNationalities"]').serialize()+
 			"&" + $('input[name="maternalGuardianNationalities"]').serialize()+
 			"&" + $('input[name="paternalGuardianNationalities"]').serialize(),
 			
-			 function(data)
+			 success: function(data)
 			 {
 			    $('#personalDetailsSection').html(data);
 					$('#personalDetailsSection div.ajax').remove();
@@ -327,6 +350,6 @@ function postPersonalDetailsData(message){
 						}
 					}
 			  }
-	);
+	});
 	
 }

@@ -33,21 +33,27 @@ $(document).ready(function()
       hasConvictions = false;
     }
 
-    $.post(
-      "/pgadmissions/update/editAdditionalInformation",
-      { 
-        informationText: $("#informationText").val(),
-        convictions:     hasConvictions,
-        convictionsText: $("#convictionsText").val(),
-        applicationId:   $('#applicationId').val(),
-        application:     $('#applicationId').val(),
-        message:         'close'
-      },
-      function(data)
-      {
-        $('#additionalInformationSection').html(data);
-      }
-    );
+    $.ajax({
+    	type: 'POST',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+	      url:"/pgadmissions/update/editAdditionalInformation",
+	      data:{ 
+	        informationText: $("#informationText").val(),
+	        convictions:     hasConvictions,
+	        convictionsText: $("#convictionsText").val(),
+	        applicationId:   $('#applicationId').val(),
+	        application:     $('#applicationId').val(),
+	        message:         'close'
+	      },
+	      success:function(data)
+	      {
+	        $('#additionalInformationSection').html(data);
+	      }
+    });
   });
   
   /*

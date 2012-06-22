@@ -13,12 +13,19 @@ $(document).ready(function() {
 			postData.includeProspectusLink = false;
 		}
 		
-		$.post("/pgadmissions/rejectApplication/rejectionText", 
-				$.param(postData),
-				function(data) {
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+				url:"/pgadmissions/rejectApplication/rejectionText", 
+				data:$.param(postData),
+				success:function(data) {
 					$('#emailText').html(data);
 				}
-		);
+		});
 	});
 	
 	$('#includeProspectusLink').click(function() {
@@ -38,12 +45,19 @@ $(document).ready(function() {
 			postData.includeProspectusLink = false;
 		}
 		
-		$.post("/pgadmissions/rejectApplication/rejectionText", 
-				$.param(postData),
-				function(data) {
+		$.ajax({
+				type: 'POST',
+				statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/rejectApplication/rejectionText", 
+				data:$.param(postData),
+				success: function(data) {
 					$('#emailText').html(data);
 				}
-		);
+		});
 	});
 	
 

@@ -71,16 +71,23 @@ $(document).ready(function(){
 	$('a[name="deleteQualificationButton"]').click( function(){
 
 			var id = $(this).attr("id").replace("qualification_", "");
-			$.post("/pgadmissions/deleteentity/qualification",
-					{
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/deleteentity/qualification",
+				data:	{
 						id: id	
 					}, 
 					
-					function(data) {
+				success:	function(data) {
 						$('#qualificationsSection').html(data);
 					}	
 					
-				);
+			});
 	});
 	
 	$("input[name*='acceptTermsQDCB']").click(function() {
@@ -97,11 +104,19 @@ $(document).ready(function(){
 			*/
 			qualImgCount = 0;
 			
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationId").val(), 
-				acceptedTerms: $("#acceptTermsQDValue").val()
-			},
-			function(data) {
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/acceptTerms",
+				data:{  
+					applicationId: $("#applicationId").val(), 
+					acceptedTerms: $("#acceptTermsQDValue").val()
+				},
+				success: function(data) {}
 			});
 		}
 		});
@@ -164,14 +179,21 @@ $(document).ready(function(){
 	$('a[name="editQualificationLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('qualification_', '');	
-		$.get("/pgadmissions/update/getQualification",
-				{
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+				url:"/pgadmissions/update/getQualification",
+				data:{
 					applicationId:  $('#applicationId').val(),
 					qualificationId: id,
 					message: 'edit',					
 					cacheBreaker: new Date().getTime()
 				},
-				function(data) {
+				success: function(data) {
 					$('#qualificationsSection').html(data);
 					
 					if($("#currentQualificationCB").is(":checked")){
@@ -198,20 +220,27 @@ $(document).ready(function(){
 					}
 					
 				}
-		);
+		});
 	});
 	
 	$('a[name="qualificationCancelButton"]').click(function(){
-		$.get("/pgadmissions/update/getQualification",
-				{
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+				url:"/pgadmissions/update/getQualification",
+				data:{
 					applicationId:  $('#applicationId').val(),
 					message: 'cancel',					
 					cacheBreaker: new Date().getTime()
 				},
-				function(data) {
+				success:function(data) {
 					$('#qualificationsSection').html(data);
 				}
-		);
+		});
 	});
 	
 	bindDatePicker('#qualificationStartDate');
@@ -235,35 +264,44 @@ function postQualificationData(message)
 {
 	$('#qualificationsSection > div').append('<div class="ajax" />');
 
-	$.post("/pgadmissions/update/editQualification", {  
-		qualificationSubject: $("#qualificationSubject").val(), 
-		qualificationInstitution: $("#qualificationInstitution").val(), 
-		qualificationType: $("#qualificationType").val(),
-		qualificationGrade: $("#qualificationGrade").val(),
-		qualificationScore: $("#qualificationScore").val(),
-		qualificationStartDate: $("#qualificationStartDate").val(),
-		qualificationLanguage: $("#qualificationLanguage").val(),
-		qualificationAwardDate: $("#qualificationAwardDate").val(),
-		completed: $("#currentQualification").val(),			
-		qualificationId: $("#qualificationId").val(),
-		applicationId:  $('#applicationId').val(),
-		application:  $('#applicationId').val(),
-		institutionCountry: $('#institutionCountry').val(),
-		proofOfAward: $('#document_PROOF_OF_AWARD').val(),
-		message:message
-	},
-	function(data) {
-		$('#qualificationsSection').html(data);
-		$('#qualificationsSection div.ajax').remove();
-		markSectionError('#qualificationsSection');
-
-		if (message == 'close')
-		{
-			// Close the section only if there are no errors.
-			var errorCount = $('#qualificationsSection .invalid:visible').length;
-			if (errorCount == 0)
+	$.ajax({
+		type: 'POST',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/update/editQualification",
+		data:{  
+			qualificationSubject: $("#qualificationSubject").val(), 
+			qualificationInstitution: $("#qualificationInstitution").val(), 
+			qualificationType: $("#qualificationType").val(),
+			qualificationGrade: $("#qualificationGrade").val(),
+			qualificationScore: $("#qualificationScore").val(),
+			qualificationStartDate: $("#qualificationStartDate").val(),
+			qualificationLanguage: $("#qualificationLanguage").val(),
+			qualificationAwardDate: $("#qualificationAwardDate").val(),
+			completed: $("#currentQualification").val(),			
+			qualificationId: $("#qualificationId").val(),
+			applicationId:  $('#applicationId').val(),
+			application:  $('#applicationId').val(),
+			institutionCountry: $('#institutionCountry').val(),
+			proofOfAward: $('#document_PROOF_OF_AWARD').val(),
+			message:message
+		},
+		success:function(data) {
+			$('#qualificationsSection').html(data);
+			$('#qualificationsSection div.ajax').remove();
+			markSectionError('#qualificationsSection');
+	
+			if (message == 'close')
 			{
-				$('#qualifications-H2').trigger('click');
+				// Close the section only if there are no errors.
+				var errorCount = $('#qualificationsSection .invalid:visible').length;
+				if (errorCount == 0)
+				{
+					$('#qualifications-H2').trigger('click');
+				}
 			}
 		}
 	});
@@ -271,12 +309,18 @@ function postQualificationData(message)
 function ajaxProofOfAwardDelete(){
 	
 	if($('#profOfAwardId') && $('#profOfAwardId').val() && $('#profOfAwardId').val() != ''){
-		$.post("/pgadmissions/delete/asyncdelete",
-			{
-				documentId: $('#profOfAwardId').val()
-				
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/delete/asyncdelete",
+			data:{
+				documentId: $('#profOfAwardId').val()				
 			}				
-		);
+		});
 
 	}
 }

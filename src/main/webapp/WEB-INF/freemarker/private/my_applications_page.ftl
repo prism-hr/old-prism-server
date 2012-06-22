@@ -77,7 +77,7 @@
 					</select>
 					<button class="blue" type="button" id="search-go">Go</button>
 					<button type="button" id="search-reset">Clear</button>
-					       <button type="button" onclick='populateApplicationList();'>Go on, click me!</button>
+		
 				</div>
 				
 			</div>

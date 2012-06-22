@@ -205,17 +205,24 @@ $(document).ready(function(){
 		}
 		
 		//do the post!
-		$.post( "/pgadmissions/personalDetails" ,
-				$.param(postData) + 
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/personalDetails" ,
+			data:	$.param(postData) + 
 				"&" + $('input[name="languageProficiencies"]').serialize()+ 
 				"&" + $('input[name="candidateNationalities"]').serialize()+
 				"&" + $('input[name="maternalGuardianNationalities"]').serialize()+
 				"&" + $('input[name="paternalGuardianNationalities"]').serialize()+
 				"&" + $('#personal_details_phonenumbers input[name="phoneNumbers"]').serialize(),
-				 function(data) {
+			success: function(data) {
 				    $('#personalDetailsSection').html(data);
 				  }
-		);
+		});
 });
 	
 

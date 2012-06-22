@@ -45,9 +45,18 @@ $(document).ready(function(){
 			supervisors: ""
 		}
 		
-		$.post( "/pgadmissions/programme" ,$.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),
-		function(data) {
-			$('#programmeDetailsSection').html(data);
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/programme" ,
+			data: $.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),
+			success:function(data) {
+				$('#programmeDetailsSection').html(data);
+			}
 		});
 	});
 	

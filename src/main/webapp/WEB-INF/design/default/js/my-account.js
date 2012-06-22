@@ -9,12 +9,19 @@ $(document).ready(function(){
 				newPassword : $('#newPassword').val(),
 				confirmPassword : $('#confirmNewPass').val()
 		};
-		$.post("/pgadmissions/myAccount/submit", 
-				$.param(postData),
-				function(data) {
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/myAccount/submit", 
+			data:$.param(postData),
+			success:	function(data) {
 					$('#my_account_section').html(data);
 				}
-			);
+		});
 	});
 	
 });

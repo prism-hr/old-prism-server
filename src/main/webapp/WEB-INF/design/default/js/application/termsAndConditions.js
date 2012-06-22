@@ -5,11 +5,19 @@ $("input[name*='acceptTermsCB']").click(function() {
 		$("#acceptTermsValue").val("NO");
 	} else {	
 		$("#acceptTermsValue").val("YES");
-		$.post("/pgadmissions/acceptTerms", {  
-			applicationId: $("#ATapplicationFormId").val(), 
-			acceptedTerms: $("#acceptTermsValue").val()
-		},
-		function(data) {
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/acceptTerms", 
+			data:{  
+				applicationId: $("#ATapplicationFormId").val(), 
+				acceptedTerms: $("#acceptTermsValue").val()
+			},
+			success: function(data) {}
 		});
 	}
 	});

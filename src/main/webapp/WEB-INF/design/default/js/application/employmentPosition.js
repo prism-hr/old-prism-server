@@ -30,15 +30,22 @@ $(document).ready(function(){
 	
 	$('a[name="deleteEmploymentButton"]').click( function(){	
 			var id = $(this).attr("id").replace("position_", "");
-			$.post("/pgadmissions/deleteentity/employment",
-					{
-						id: id	
-					}, 				
-					function(data) {
-						$('#positionSection').html(data);
-					}	
+			$.ajax({
+				type: 'POST',
+				statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+				},
+				url:"/pgadmissions/deleteentity/employment",
+				data:{
+					id: id	
+				}, 				
+				success:function(data) {
+					$('#positionSection').html(data);
+				}	
 					
-				);
+			});
 	});
 	
 	$("input[name*='acceptTermsEPCB']").click(function() {
@@ -55,11 +62,19 @@ $(document).ready(function(){
 			*/
 			empImgCount = 0;
 			
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationId").val(), 
-				acceptedTerms: $("#acceptTermsEPValue").val()
-			},
-			function(data) {
+			$.ajax({
+				type: 'POST',
+				statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				},
+				url:"/pgadmissions/acceptTerms", 
+				data:{  
+					applicationId: $("#applicationId").val(), 
+					acceptedTerms: $("#acceptTermsEPValue").val()
+				},
+				success:function(data) {}
 			});
 		}
 		});
@@ -121,36 +136,52 @@ $(document).ready(function(){
 	$('a[name="positionEditButton"]').click(function(){
 		var id = this.id;
 		id = id.replace('position_', '');	
-		$.get("/pgadmissions/update/getEmploymentPosition",
-			{
-				applicationId:  $('#applicationId').val(), 
-				employmentId: id,
-				message: 'edit',					
-				cacheBreaker: new Date().getTime()
-			},
-			function(data) {								
-				$('#positionSection').html(data);
-				var curruntPos = $('#current').is(':checked');
-				if(curruntPos == true){
-					$('#position_endDate').attr('disabled','disabled');
-					$('#posi-end-date-lb').addClass('grey-label');
-					$('#posi-end-date-lb em').hide();
+
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			  url: "/pgadmissions/update/getEmploymentPosition",
+			  data:	{
+					applicationId:  $('#applicationId').val(), 
+					employmentId: id,
+					message: 'edit',					
+					cacheBreaker: new Date().getTime()
+				}, 
+			  success:function(data) {								
+					$('#positionSection').html(data);
+					var curruntPos = $('#current').is(':checked');
+					if(curruntPos == true){
+						$('#position_endDate').attr('disabled','disabled');
+						$('#posi-end-date-lb').addClass('grey-label');
+						$('#posi-end-date-lb em').hide();
+					}
 				}
-			}
-		);
+		});
 	});
 
 	$('a[name="positionCancelButton"]').click(function(){
-		$.get("/pgadmissions/update/getEmploymentPosition",
-			{
-				applicationId:  $('#applicationId').val(),
-				message: 'cancel',					
-				cacheBreaker: new Date().getTime()
-			},
-			function(data) {
-				$('#positionSection').html(data);
-			}
-		);
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			  url: /pgadmissions/update/getEmploymentPosition",
+			  data:	{
+					applicationId:  $('#applicationId').val(),
+					message: 'cancel',					
+					cacheBreaker: new Date().getTime()
+				}, 
+			  success:function(data) {
+					$('#positionSection').html(data);
+				}
+		});		
+		
 	});
 
 
@@ -168,35 +199,43 @@ function postEmploymentData(message){
 
 	$('#positionSection > div').append('<div class="ajax" />');
 
-	$.post("/pgadmissions/update/editEmploymentPosition",
-	{ 
-		position: $("#position_title").val(),
-		startDate: $("#position_startDate").val(), 
-		endDate: $("#position_endDate").val(), 
-		remit: $("#position_remit").val(), 
-		language: $("#position_language").val(), 
-		employerCountry: $("#position_country").val(),
-		employerName: $("#position_employer_name").val(),
-		employerAddress: $("#position_employer_address").val(),
-		current: current,
-		application: $("#applicationId").val(),
-		applicationId: $("#applicationId").val(),		 
-		employmentId: $("#positionId").val(), 
-		message:message
-	},
-   function(data) {
-			$('#positionSection').html(data);
-			$('#positionSection div.ajax').remove();
-			markSectionError('#positionSection');
-
-			if (message == 'close')
-			{
-				// Close the section only if there are no errors.
-				var errorCount = $('#positionSection .invalid:visible').length;
-				if (errorCount == 0)
+	$.ajax({
+		type: 'POST',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/update/editEmploymentPosition",
+		data:{ 
+			position: $("#position_title").val(),
+			startDate: $("#position_startDate").val(), 
+			endDate: $("#position_endDate").val(), 
+			remit: $("#position_remit").val(), 
+			language: $("#position_language").val(), 
+			employerCountry: $("#position_country").val(),
+			employerName: $("#position_employer_name").val(),
+			employerAddress: $("#position_employer_address").val(),
+			current: current,
+			application: $("#applicationId").val(),
+			applicationId: $("#applicationId").val(),		 
+			employmentId: $("#positionId").val(), 
+			message:message
+		},
+	   success: function(data) {
+				$('#positionSection').html(data);
+				$('#positionSection div.ajax').remove();
+				markSectionError('#positionSection');
+	
+				if (message == 'close')
 				{
-					$('#position-H2').trigger('click');
+					// Close the section only if there are no errors.
+					var errorCount = $('#positionSection .invalid:visible').length;
+					if (errorCount == 0)
+					{
+						$('#position-H2').trigger('click');
+					}
 				}
-			}
-   });
+	   		}
+	});
 }

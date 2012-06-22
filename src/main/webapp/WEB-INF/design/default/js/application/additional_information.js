@@ -68,11 +68,19 @@ $(document).ready(function(){
 			*/
 			addImgCount = 0;
 			
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationId").val(), 
-				acceptedTerms: $("#acceptTermsAIDValue").val()
-			},
-			function(data) {
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/acceptTerms", data:
+					{  
+					applicationId: $("#applicationId").val(), 
+					acceptedTerms: $("#acceptTermsAIDValue").val()
+				},
+				success: function(data) {}
 			});
 		}
 		});
@@ -109,26 +117,35 @@ $(document).ready(function(){
 			$("span[name='nonAcceptedAID']").html('');
 			$('#additionalInformationSection > div').append('<div class="ajax" />');
 
-			$.post("/pgadmissions/update/editAdditionalInformation", { 
-				informationText: $("#informationText").val(),
-				convictions: hasConvictions,
-				convictionsText: $("#convictionsText").val(),
-				applicationId:  $('#applicationId').val(),
-				application:  $('#applicationId').val(),
-				message:'close'
-			},
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/update/editAdditionalInformation",
+				data:{ 
+					informationText: $("#informationText").val(),
+					convictions: hasConvictions,
+					convictionsText: $("#convictionsText").val(),
+					applicationId:  $('#applicationId').val(),
+					application:  $('#applicationId').val(),
+					message:'close'
+				},
 			
-			function(data)
-			{
-				$('#additionalInformationSection').html(data);
-				$('#additionalInformationSection div.ajax').remove();
-				markSectionError('#additionalInformationSection');
-
-				// Close the section only if there are no errors.
-				var errorCount = $('#additionalInformationSection .invalid:visible').length;
-				if (errorCount == 0)
+				success:function(data)
 				{
-					$('#additional-H2').trigger('click');
+					$('#additionalInformationSection').html(data);
+					$('#additionalInformationSection div.ajax').remove();
+					markSectionError('#additionalInformationSection');
+	
+					// Close the section only if there are no errors.
+					var errorCount = $('#additionalInformationSection .invalid:visible').length;
+					if (errorCount == 0)
+					{
+						$('#additional-H2').trigger('click');
+					}
 				}
 			});
 		}

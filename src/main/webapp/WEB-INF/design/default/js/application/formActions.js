@@ -14,29 +14,45 @@ $(document).ready(function()
 	
 	
 	/* Programme Details. */
-	$.get("/pgadmissions/update/getProgrammeDetails",
-			{
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		  url: "/pgadmissions/update/getProgrammeDetails",
+		  data:{
 				applicationId:  $('#applicationId').val(),
 				errorCode: $('#programDetailsError').val(),
 				studyOptionError: $('#studyOptionError').val(),
 				programError: $('#programError').val(),
 				cacheBreaker: new Date().getTime() 
-			},
-			function(data)
+			}, 
+		  success: function(data)
 			{
 				$('#programmeDetailsSection').prepend(data);
 				checkLoadedSections();
-			}
-	);
+			}	
+	});
+	
+	
 	
 	/* Personal Details. */
-	$.get("/pgadmissions/update/getPersonalDetails",
-			{
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+			url:"/pgadmissions/update/getPersonalDetails",
+			data:{
 				applicationId:  $('#applicationId').val(),
 				errorCode: $('#personalDetailsError').val(),
 				cacheBreaker: new Date().getTime() 
 			},
-			function(data)
+			success: function(data)
 			{
 				$('#personalDetailsSection').prepend(data);
 				checkLoadedSections();
@@ -45,16 +61,23 @@ $(document).ready(function()
 					$('#personalDetails-H2').trigger('click');
 				}
 			}
-	);
+	});
 	
 	/* Address. */
-	$.get("/pgadmissions/update/getAddress",
-			{
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+			url:"/pgadmissions/update/getAddress",
+			data:{
 				applicationId:  $('#applicationId').val(),				
 				errorCode: $('#addressError').val(),
 				cacheBreaker:  new Date().getTime() 
 			},
-			function(data)
+			success:function(data)
 			{
 				$('#addressSection').prepend(data);
 				checkLoadedSections();
@@ -63,16 +86,23 @@ $(document).ready(function()
 					$('#address-H2').trigger('click');
 				}
 			}
-	);
+	});
 	
 	/* Qualifications. */
-	$.get("/pgadmissions/update/getQualification",
-			{
+	$.ajax({
+			type: 'GET',
+			statusCode: {
+				401: function() {
+					window.location.reload();
+				}
+			},
+			url:"/pgadmissions/update/getQualification",
+			data:{
 				applicationId:  $('#applicationId').val(),
 				errorCode: false,
 				cacheBreaker: new Date().getTime() 				
 			},
-			function(data)
+			success: function(data)
 			{
 				$('#qualificationsSection').prepend(data);
 				checkLoadedSections();
@@ -81,16 +111,23 @@ $(document).ready(function()
 					$('#qualifications-H2').trigger('click');
 				}
 			}
-	);
+	});
 	
 	/* (Employment) Position. */
-	$.get("/pgadmissions/update/getEmploymentPosition",
-			{
+	$.ajax({
+			type: 'GET',
+			statusCode: {
+				401: function() {
+					window.location.reload();
+				}
+			},
+			url:"/pgadmissions/update/getEmploymentPosition",
+			data:{
 				applicationId:  $('#applicationId').val(),
 				errorCode: false,
 				cacheBreaker: new Date().getTime() 									
 			},
-			function(data)
+			success: function(data)
 			{
 				$('#positionSection').prepend(data);
 				checkLoadedSections();
@@ -99,16 +136,23 @@ $(document).ready(function()
 					$('#position-H2').trigger('click');
 				}
 			}
-	);
+	});
 	
 	/* Funding. */
-	$.get("/pgadmissions/update/getFunding",
-			{
+	$.ajax({
+			type: 'GET',
+			statusCode: {
+				401: function() {
+					window.location.reload();
+				}
+			},
+			url:"/pgadmissions/update/getFunding",
+			data:{
 				applicationId:  $('#applicationId').val(),
 				errorCode: false,
 				cacheBreaker: new Date().getTime() 									
 			},
-			function(data)
+			success:function(data)
 			{
 				$('#fundingSection').prepend(data);
 				checkLoadedSections();
@@ -117,16 +161,23 @@ $(document).ready(function()
 					$('#funding-H2').trigger('click');
 				}
 			}
-	);
+	});
 	
 	/* Referees. */
-	$.get("/pgadmissions/update/getReferee",
-			{
+	$.ajax({
+			type: 'GET',
+			statusCode: {
+				401: function() {
+					window.location.reload();
+				}
+			},
+			url:"/pgadmissions/update/getReferee",
+			data:{
 				applicationId:  $('#applicationId').val(),
 				errorCode: $('#refereesError').val(),
 				cacheBreaker: new Date().getTime() 
 			},
-			function(data)
+			success:function(data)
 			{
 				$('#referencesSection').prepend(data);
 				checkLoadedSections();
@@ -135,16 +186,23 @@ $(document).ready(function()
 					$('#referee-H2').trigger('click');
 				}
 			}
-	);
+	});
 
 	/* Documents. */
-	$.get("/pgadmissions/update/getDocuments",
-			{
+	$.ajax({
+			type: 'GET',
+			statusCode: {
+				401: function() {
+					window.location.reload();
+				}
+			},
+			url:"/pgadmissions/update/getDocuments",
+			data:{
 				applicationId:  $('#applicationId').val(),
 				errorCode: $('#personalStatementError').val(),
 				cacheBreaker:new Date().getTime() 
 			},
-			function(data)
+			success:function(data)
 			{
 				$('#documentSection').prepend(data);
 				checkLoadedSections();
@@ -153,16 +211,23 @@ $(document).ready(function()
 					$('#documents-H2').trigger('click');
 				}
 			}
-	);
+	});
 	
 	/* Additional Information. */
-	$.get("/pgadmissions/update/getAdditionalInformation",
-			{
+	$.ajax({
+			type: 'GET',
+			statusCode: {
+				401: function() {
+					window.location.reload();
+				}
+			},
+			url:"/pgadmissions/update/getAdditionalInformation",
+			data:{
 				applicationId:  $('#applicationId').val(),
 				errorCode:  $('#additionalInformationError').val(),
 				cacheBreaker: new Date().getTime() 								
 			},
-			function(data)
+			success: function(data)
 			{
 				$('#additionalInformationSection').prepend(data);
 				checkLoadedSections();
@@ -171,18 +236,25 @@ $(document).ready(function()
 					$('#additional-H2').trigger('click');
 				}
 			}
-	);
+	});
 	
 	/* Terms and conditions. */
-	$.get("/pgadmissions/acceptTerms/getTermsAndConditions",
-			{
+	$.ajax({
+			type: 'GET',
+			statusCode: {
+				401: function() {
+					window.location.reload();
+				}
+			},
+			url:"/pgadmissions/acceptTerms/getTermsAndConditions",
+			data:{
 				applicationId:  $('#applicationId').val()
 			},
-			function(data)
+			success: function(data)
 			{
 				$('#acceptTermsSection').html(data);
 			}
-	);
+	});
 	
 	
 	/*

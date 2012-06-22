@@ -15,39 +15,57 @@ $(document).ready(function(){
 	}
 	
 	$('#addressSaveAndAddButton').click(function(){
-		$.post("/pgadmissions/update/editAddress", { 
-			addressLocation: $("#addressLocation").val(),
-			addressPostCode: $("#addressPostCode").val(), 
-			addressCountry: $("#addressCountry").val(), 
-			addressStartDate: $("#addressStartDate").val(),
-			addressEndDate: $("#addressEndDate").val(), 
-			addressPurpose: $("#addressPurpose").val(), 
-			addressContactAddress: $("#addressContactAddress").val(),
-			id: $("#id").val(), 
-			appId: $("#appId").val(),
-			addressId: $("#addressId").val(),
-			add:"Add"
-		},
-		function(data) {
-			$('#addressSection').html(data);
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/update/editAddress",
+			data:{ 
+				addressLocation: $("#addressLocation").val(),
+				addressPostCode: $("#addressPostCode").val(), 
+				addressCountry: $("#addressCountry").val(), 
+				addressStartDate: $("#addressStartDate").val(),
+				addressEndDate: $("#addressEndDate").val(), 
+				addressPurpose: $("#addressPurpose").val(), 
+				addressContactAddress: $("#addressContactAddress").val(),
+				id: $("#id").val(), 
+				appId: $("#appId").val(),
+				addressId: $("#addressId").val(),
+				add:"Add"
+			},
+			success: function(data) {
+				$('#addressSection').html(data);
+			}
 		});
 	});
 	
 	$('#addressSaveAndCloseButton').click(function(){
-		$.post("/pgadmissions/update/editAddress", { 
-			addressLocation: $("#addressLocation").val(),
-			addressPostCode: $("#addressPostCode").val(), 
-			addressCountry: $("#addressCountry").val(), 
-			addressStartDate: $("#addressStartDate").val(),
-			addressEndDate: $("#addressEndDate").val(), 
-			addressPurpose: $("#addressPurpose").val(), 
-			addressContactAddress: $("#addressContactAddress").val(),
-			id: $("#id").val(), 
-			appId: $("#appId").val(),
-			addressId: $("#addressId").val()
-		},
-		function(data) {
-			$('#addressSection').html(data);
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/update/editAddress", 
+			data:{ 
+				addressLocation: $("#addressLocation").val(),
+				addressPostCode: $("#addressPostCode").val(), 
+				addressCountry: $("#addressCountry").val(), 
+				addressStartDate: $("#addressStartDate").val(),
+				addressEndDate: $("#addressEndDate").val(), 
+				addressPurpose: $("#addressPurpose").val(), 
+				addressContactAddress: $("#addressContactAddress").val(),
+				id: $("#id").val(), 
+				appId: $("#appId").val(),
+				addressId: $("#addressId").val()
+			},
+			success:function(data) {
+				$('#addressSection').html(data);
+			}
 		});
 	});
 	

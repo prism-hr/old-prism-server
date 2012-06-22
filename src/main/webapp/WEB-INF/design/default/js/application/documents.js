@@ -9,15 +9,23 @@ $(document).ready(function(){
 	});
 	
 	$('#documentsCancelButton').click(function(){
-		$.get("/pgadmissions/update/getDocuments",
-				{
+
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			  url: "/pgadmissions/update/getDocuments",
+			  data:	{
 					applicationId:  $('#applicationId').val(),
 					message: 'cancel'
-				},
-				function(data) {
+				}, 
+			  success:function(data) {
 					$('#documentSection').html(data);
 				}
-		);
+		});
 	});
 	
 	$("input[name*='acceptTermsDDCB']").click(function() {
@@ -34,11 +42,19 @@ $(document).ready(function(){
 			*/
 			addImgCount = 0;
 			
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationId").val(), 
-				acceptedTerms: $("#acceptTermsDDValue").val()
-			},
-			function(data) {
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url: "/pgadmissions/acceptTerms", 
+				data:{  
+					applicationId: $("#applicationId").val(), 
+					acceptedTerms: $("#acceptTermsDDValue").val()
+				},
+				success: function(data) {}
 			});
 		}
 		});
@@ -81,14 +97,21 @@ function postDocumentData(message)
 
 	$('#documentSection > div').append('<div class="ajax" />');
 	
-	$.post("/pgadmissions/update/editDocuments",
-		{ 	
+	$.ajax({
+		type: 'POST',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/update/editDocuments",
+		data:{ 	
 			applicationId:  $('#applicationId').val(),	
 			cv: $('#document_CV').val(),
 			personalStatement: $('#document_PERSONAL_STATEMENT').val(),
 			message:message
 		},
-		function(data)
+		success:function(data)
 		{
 			$('#documentSection').html(data);
 			$('#documentSection div.ajax').remove();
@@ -104,7 +127,7 @@ function postDocumentData(message)
 				}
 			}
 		}
-	);
+	});
 }
 
 
@@ -112,12 +135,19 @@ function postDocumentData(message)
 function cvDelete(){
 	
 	if($('#document_CV') && $('#document_CV').val() && $('#document_CV').val() != ''){
-		$.post("/pgadmissions/delete/asyncdelete",
-			{
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/delete/asyncdelete",
+			data:{
 				documentId: $('#document_CV').val()
 				
 			}				
-		);
+		});
 
 	}
 }
@@ -157,12 +187,19 @@ function cvUpload()
 function psDelete(){
 	
 	if($('#document_PERSONAL_STATEMENT') && $('#document_PERSONAL_STATEMENT').val() && $('#document_PERSONAL_STATEMENT').val() != ''){
-		$.post("/pgadmissions/delete/asyncdelete",
-			{
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/delete/asyncdelete",
+			data:{
 				documentId: $('#document_PERSONAL_STATEMENT').val()
 				
 			}				
-		);
+		});
 
 	}
 }

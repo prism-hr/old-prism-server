@@ -23,14 +23,21 @@ $(document).ready(function(){
 
 function commentDocumentDelete(){
 	 var id = $(this).attr("id");
-	$.post("/pgadmissions/delete/asyncdelete",
-		{
+	$.ajax({
+		type: 'POST',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		 url:"/pgadmissions/delete/asyncdelete",
+		data:{
 			documentId: id
 		},
-		function(data) {			
+		success: function(data) {			
 			$('#' +id).parent().remove()
 		}
-	);
+	});
 
 	
 }

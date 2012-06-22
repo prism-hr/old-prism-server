@@ -25,10 +25,17 @@ $(document).ready(function()
 
 	$('a#popup-ok-button').click(function()
 	{
-		$.post("/pgadmissions/withdraw",
-			{ applicationId:  $('#wapplicationFormId').val() }, 
-			function(data) {}
-		);
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/withdraw",
+			data:{ applicationId:  $('#wapplicationFormId').val() }, 
+			success:function(data) {}
+		});
 	
 		$('#dialog-overlay, #dialog-box').hide();
 		return false;

@@ -28,12 +28,18 @@ $(document).ready(function(){
 function referenceDelete(){
 	
 	if($('#document_REFERENCE') && $('#document_REFERENCE').val() && $('#document_REFERENCE').val() != ''){
-		$.post("/pgadmissions/delete/asyncdelete",
-			{
-				documentId: $('#document_REFERENCE').val()
-				
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			  url:"/pgadmissions/delete/asyncdelete",
+			data:{
+				documentId: $('#document_REFERENCE').val()				
 			}				
-		);
+		});
 
 	}
 }

@@ -53,11 +53,20 @@ $(document).ready(function(){
 			*/
 			addrImgCount = 0;
 
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationId").val(), 
-				acceptedTerms: $("#acceptTermsADValue").val()
-			},
-			function(data) {
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/acceptTerms", 
+				data:{  
+					applicationId: $("#applicationId").val(), 
+					acceptedTerms: $("#acceptTermsADValue").val()
+				},
+				success: function(data) {
+				}
 			});
 		}
 		});
@@ -117,15 +126,23 @@ $(document).ready(function(){
 	
 
 	$('a[name="addressCancelButton"]').click(function(){
-		$.get("/pgadmissions/update/getAddress",
-				{
+
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			  url: "/pgadmissions/update/getAddress",
+			  data:{
 					applicationId:  $('#applicationId').val(),					
 					cacheBreaker: new Date().getTime()					
-				},
-				function(data) {
+				}, 
+			  success: function(data) {
 					$('#addressSection').html(data);
-				}
-		);
+				}	
+		});
 	});
 	
 	addToolTips();
@@ -136,26 +153,35 @@ function postAddressData(message)
 {
 	$('#addressSection > div').append('<div class="ajax" />');
 
-	$.post("/pgadmissions/update/editAddress", { 
-		currentAddressLocation: $("#currentAddressLocation").val(),
-		currentAddressCountry: $("#currentAddressCountry").val(),
-		contactAddressLocation: $("#contactAddressLocation").val(),
-		contactAddressCountry: $("#contactAddressCountry").val(),
-		applicationId:  $('#applicationId').val(),
-		message:message
-	},
-	function(data) {
-		$('#addressSection').html(data);
-		$('#addressSection div.ajax').remove();
-		markSectionError('#addressSection');
-
-		if (message == 'close')
-		{
-			// Close the section only if there are no errors.
-			var errorCount = $('#addressSection .invalid:visible').length;
-			if (errorCount == 0)
+	$.ajax({
+		type: 'POST',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/update/editAddress",
+		data:{ 
+			currentAddressLocation: $("#currentAddressLocation").val(),
+			currentAddressCountry: $("#currentAddressCountry").val(),
+			contactAddressLocation: $("#contactAddressLocation").val(),
+			contactAddressCountry: $("#contactAddressCountry").val(),
+			applicationId:  $('#applicationId').val(),
+			message:message
+		},
+		success: function(data) {
+			$('#addressSection').html(data);
+			$('#addressSection div.ajax').remove();
+			markSectionError('#addressSection');
+	
+			if (message == 'close')
 			{
-				$('#address-H2').trigger('click');
+				// Close the section only if there are no errors.
+				var errorCount = $('#addressSection .invalid:visible').length;
+				if (errorCount == 0)
+				{
+					$('#address-H2').trigger('click');
+				}
 			}
 		}
 	});

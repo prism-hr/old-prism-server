@@ -304,7 +304,16 @@ function deleteUploadedFile($hidden_field)
 {
 	if ($hidden_field && $hidden_field.val() != '')
   {
-		$.post("/pgadmissions/delete/asyncdelete", { documentId: $hidden_field.val() });
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/delete/asyncdelete",
+			data: { documentId: $hidden_field.val() }
+		});
 	}
 }
 

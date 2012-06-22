@@ -35,16 +35,23 @@ $(document).ready(function(){
 	// Delete existing funding.
 	$('a[name="deleteFundingButton"]').click( function(){	
 			var id = $(this).attr("id").replace("funding_", "");
-			$.post("/pgadmissions/deleteentity/funding",
-					{
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/deleteentity/funding",
+				data:	{
 						id: id	
 					}, 
 					
-					function(data) {
+				success:	function(data) {
 						$('#fundingSection').html(data);
 					}	
 					
-				);
+			});
 	});
 	
 	$("input[name*='acceptTermsFDCB']").click(function() {
@@ -61,11 +68,20 @@ $(document).ready(function(){
 			*/
 			fundImgCount = 0;
 			
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationId").val(), 
-				acceptedTerms: $("#acceptTermsFDValue").val()
-			},
-			function(data) {
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/acceptTerms",
+				data:{  
+					applicationId: $("#applicationId").val(), 
+					acceptedTerms: $("#acceptTermsFDValue").val()
+				},
+				success:function(data) {
+				}
 			});
 		}
 		});
@@ -111,30 +127,44 @@ $(document).ready(function(){
 	$('a[name="editFundingLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('funding_', '');	
-		$.get("/pgadmissions/update/getFunding",
-				{
+		$.ajax({
+			 	type: 'GET',
+			 	statusCode: {
+			 		401: function() {
+			 			window.location.reload();
+			 		}
+			 	},
+				url:"/pgadmissions/update/getFunding",
+				data:{
 					applicationId:  $('#applicationId').val(),
 					fundingId: id,
 					message: 'edit',					
 					cacheBreaker: new Date().getTime()
 				},
-				function(data) {
+				success:function(data) {
 					$('#fundingSection').html(data);
 				}
-		);
+		});
 	});
 	
 	$('a[name="fundingCancelButton"]').click(function(){
-		$.get("/pgadmissions/update/getFunding",
-				{
+		$.ajax({
+				type: 'GET',
+				statusCode: {
+					401: function() {
+						window.location.reload();
+					}
+				},
+				url:"/pgadmissions/update/getFunding",
+				data:{
 					applicationId:  $('#applicationId').val(),
 					message: 'cancel',					
 					cacheBreaker: new Date().getTime()
 				},
-				function(data) {
+				success: function(data) {
 					$('#fundingSection').html(data);
 				}
-		);
+		});
 	});
 	
 	bindDatePicker('#fundingAwardDate');
@@ -150,31 +180,39 @@ function postFundingData(message)
 {
 	$('#fundingSection > div').append('<div class="ajax" />');
 
-	$.post("/pgadmissions/update/editFunding",
-	{  
-		description: $("#fundingDescription").val(),
-		value: $("#fundingValue").val(),
-		awardDate: $("#fundingAwardDate").val(),
-		type: $("#fundingType").val(),
-		fundingId: $("#fundingId").val(),
-		applicationId:  $('#applicationId').val(),
-		application:  $('#applicationId').val(),	
-		document: $('#document_SUPPORTING_FUNDING').val(),
-		message:message
-	},
-	function(data)
-	{
-		$('#fundingSection').html(data);
-		$('#fundingSection div.ajax').remove();
-		markSectionError('#fundingSection');
-
-		if (message == 'close')
+	$.ajax({
+		type: 'POST',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/update/editFunding",
+		data:{  
+			description: $("#fundingDescription").val(),
+			value: $("#fundingValue").val(),
+			awardDate: $("#fundingAwardDate").val(),
+			type: $("#fundingType").val(),
+			fundingId: $("#fundingId").val(),
+			applicationId:  $('#applicationId').val(),
+			application:  $('#applicationId').val(),	
+			document: $('#document_SUPPORTING_FUNDING').val(),
+			message:message
+		},
+		success: function(data)
 		{
-			// Close the section only if there are no errors.
-			var errorCount = $('#fundingSection .invalid:visible').length;
-			if (errorCount == 0)
+			$('#fundingSection').html(data);
+			$('#fundingSection div.ajax').remove();
+			markSectionError('#fundingSection');
+	
+			if (message == 'close')
 			{
-				$('#funding-H2').trigger('click');
+				// Close the section only if there are no errors.
+				var errorCount = $('#fundingSection .invalid:visible').length;
+				if (errorCount == 0)
+				{
+					$('#funding-H2').trigger('click');
+				}
 			}
 		}
 	});
@@ -184,12 +222,19 @@ function postFundingData(message)
 function fundingDocumentDelete(){
 	
 	if($('#document_SUPPORTING_FUNDING') && $('#document_SUPPORTING_FUNDING').val() && $('#document_SUPPORTING_FUNDING').val() != ''){
-		$.post("/pgadmissions/delete/asyncdelete",
-			{
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/delete/asyncdelete",
+			data:{
 				documentId: $('#document_SUPPORTING_FUNDING').val()
 				
 			}				
-		);
+		});
 
 	}
 }

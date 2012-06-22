@@ -31,12 +31,19 @@ $(document).ready(function() {
 			unsavedReviewersRaw : idString
 		};
 		
-		$.post("/pgadmissions/review/createReviewer", 
-			$.param(postData),
-			function(data) {
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/review/createReviewer", 
+			data:$.param(postData),
+			success:function(data) {
 				$('#assignReviewersToAppSection').html(data);
 			}
-		);
+		});
 		return false;
 	});
 	
@@ -52,11 +59,19 @@ $(document).ready(function() {
 				unsavedReviewersRaw : idString
 			};
 			
-		$.post( "/pgadmissions/review/moveApplicationToReview" , $.param(postData),
-			function(data) {
-			   window.location.href = "/pgadmissions/applications";
-			}
-		);
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			  url:"/pgadmissions/review/moveApplicationToReview" , 
+			  data:$.param(postData),
+			  success: function(data) {
+				   window.location.href = "/pgadmissions/applications";
+				}
+		});
 	});
 });
 

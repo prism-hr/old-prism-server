@@ -20,20 +20,26 @@ $(document).ready(function()
 });
 	
 function updateBadge(){
-	$.get(
- 		"/pgadmissions/badge/html",
-		{
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+ 		url:"/pgadmissions/badge/html",
+		data:{
 			program : $('#programme').val(),	
 			project: $('#project').val(),
 			programhome: $('#programhome').val(),
 			batchdeadline: $('#batchdeadline').val(),			
 			cacheBreaker: new Date().getTime() 
 		},
-		function(data)
+		success:function(data)
 		{
 			$('#html').html(data);
 		}
-	);	
+	});	
 	$('#badge').attr("src", "/pgadmissions/badge/html?program=" + $('#programme').val() 
 		+ "&project=" +$('#project').val()
 		+ "&programhome=" +$('#programhome').val()

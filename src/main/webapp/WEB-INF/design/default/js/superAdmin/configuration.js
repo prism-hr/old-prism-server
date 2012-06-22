@@ -26,13 +26,20 @@ $(document).ready(function()
 		var stages = $('[input[name="stagesDuration"]');
 		if (!validationErrors)
 		{
-			$.post("/pgadmissions/configuration/submit", 
-				stages.serialize(),
-				function(data)
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/configuration/submit", 
+				data:stages.serialize(),
+				success:function(data)
 				{
 					window.location.href = "/pgadmissions/applications";
 				}
-			);
+			});
 		}
 	});
 	
@@ -64,13 +71,20 @@ $(document).ready(function()
 			};
 		if (!validationErrors)
 		{
-			$.post("/pgadmissions/configuration/submitReminderInterval", 
-				$.param(postData),
-				function(data)
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/configuration/submitReminderInterval", 
+				data:$.param(postData),
+				sucess:function(data)
 				{
 					window.location.href = "/pgadmissions/applications";
 				}
-			);
+			});
 		}
 	});
 	
@@ -81,13 +95,20 @@ $(document).ready(function()
 		var registryUsers = $('[input[name="registryUsers"]');
 		if (!validationErrors)
 		{
-			$.post("/pgadmissions/configuration/submitRegistryUsers", 
-				registryUsers.serialize(),
-				function(data)
+			$.ajax({
+				type: 'POST',
+				 statusCode: {
+					  401: function() {
+						  window.location.reload();
+					  }
+				  },
+				url:"/pgadmissions/configuration/submitRegistryUsers", 
+				data:registryUsers.serialize(),
+				success:function(data)
 				{
 					window.location.href = "/pgadmissions/applications";
 				}
-			);
+			});
 		}
 	});
 });

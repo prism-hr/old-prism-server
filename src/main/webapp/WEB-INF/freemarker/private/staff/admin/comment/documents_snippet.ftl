@@ -1,6 +1,6 @@
 <div class="row">
 	<label class="plain-label" for="file">Attach Document</label>
-	<span class="hint" data-desc=""></span>
+	<span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
 	<div class="field uploaded" id="uploadFields">
 		<span id="commentUploadedDocument">
 			<#if comment??>

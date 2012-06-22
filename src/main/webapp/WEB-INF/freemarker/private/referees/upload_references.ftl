@@ -34,7 +34,7 @@
           
 						<div class="content-box">
 							<div class="content-box-inner">
-                
+                				 <#include "/private/common/parts/application_info.ftl"/>
                 
 								<!---------- Reference -------------->
 								<section class="form-rows">
@@ -61,7 +61,8 @@
 											
 											<div class="row-group">
 												<#include "/private/staff/admin/comment/documents_snippet.ftl"/>
-											
+											</div>
+											<div class="row-group">
 												<h3>Applicant Suitability</h3>
 											
 												<div class="row">
@@ -78,7 +79,6 @@
 															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 														</div>
 												</div>
-											
 											<div class="row">
 												<span id="supervise-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
 												<span class="hint" data-desc=""></span>
@@ -93,32 +93,18 @@
 													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 												</div>
 											</div>
-	
-										</div>
+									   </div>
 												
 												<div class="buttons">
 													<button type="reset" value="cancel">Cancel</button>
 													<button class="blue" type="submit" id="referenceSaveButton" value="close">Submit</button>              
 												</div>                      
-											</div>
 										</form>
                     <!---------- End Reference -------------->
                   
-                    <#if !comment.id?? >
-										<div class="row-group">
-											<form id="declineForm" method="POST" action="<@spring.url '/referee/decline'/>">
-												<input type="hidden" name="referee" value='<#if comment.referee?? && comment.referee.id??>${encrypter.encrypt(comment.referee.id)}</#if>'/>                    
-												<p>If you are not able to act as a referee in this case, please let us know by clicking the "Decline" button below.</p>
-												<div class="buttons">
-													<button class="blue" type="button" id="declineReference" value="close">Decline</button>              
-				                </div>
-        				      </form>
-										</div>
-                    </#if>
-                    
-									</div>
-								</section>
-                    
+				</div>
+				</section>
+                    <#include "/private/staff/admin/comment/timeline_application.ftl"/>
 							</div><!-- .content-box-inner -->
 						</div><!-- .content-box -->
           

@@ -10,7 +10,10 @@ $(document).ready(function()
 	// LOAD APPLICATION FORM SECTIONS
 	// --------------------------------------------------------------------------------
 	
-	$('.content-box-inner').append('<div class="ajax" />');
+	if ($('section.folding').length > 0)
+	{
+		$('.content-box-inner').append('<div class="ajax" />');
+	}
 	
 	
 	/* Programme Details. */

@@ -135,14 +135,14 @@ input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin:
 }
 #site-message .header {
 	height: 60px;
-	left: 180px;
+	left: 130px;
 	position: absolute;
 	right: 20px;
 	top: 20px;
 }
 #site-message .header .logo {
 	bottom: 0;
-	height: 54px;
+	height: 43px;
 	overflow: hidden;
 	position: absolute;
 }
@@ -152,7 +152,7 @@ input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin:
 	color: #999;
 	font-size: 12pt;
 	font-weight: bold;
-	left: 175px;
+	left: 230px;
 	line-height: 1.2;
 	position: absolute;
 }

@@ -48,12 +48,11 @@
 							<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
 						</form>
 						
-						<div>
+						<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
+							<div>
 							
-							<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
-
 								<div class="section-info-bar">
-							Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')>You can also <a href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
+									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
 								</div>
 
 								<div class="row-group">
@@ -88,7 +87,7 @@
 										<span class="plain-label">First Name<em>*</em></span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
-											<input class="full" type="text"  value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>readonly="readonly"</#if>/>			                                  
+											<input class="full" type="text" value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>readonly="readonly"</#if>/>			                                  
 											<@spring.bind "userDTO.firstName" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>
@@ -142,11 +141,11 @@
 										</div>
 									</div>
 			
-								</div>
+									<div class="buttons">
+										<button type="button" id="clear">Clear</button>
+										<button type="submit" class="blue">Submit</button>
+									</div>
 								
-								<div class="buttons">
-									<button type="button" id="clear">Clear</button>
-									<button type="submit" class="blue">Submit</button>
 								</div>
 								
 							</form>

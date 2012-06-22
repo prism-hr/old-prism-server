@@ -80,18 +80,19 @@
             
           <hr />
     
-          <div id="add-info-bar-div" class="section-info-bar">
-            You can optionally assign new reviewers here.
-          </div>  
-    
           <section class="form-rows violet">
+						<h2>Assign Reviewers</h2>
             <div>
               <form>
               
+								<div id="add-info-bar-div" class="section-info-bar">
+									You can optionally assign new reviewers here.
+								</div>  
+					
                 <div id="assignReviewersToAppSection" class="row-group">
   
                   <div class="row">
-                    <label class="label">Assign Reviewers</label>
+                    <span class="plain-label">Assign Reviewers<#if !user.isInRole('REVIWER')><em>*</em></#if></span>
 										<span class="hint" data-desc="<@spring.message 'assignReviewer.defaultReviewers'/>"></span>
                     <div class="field">
                       <select id="programReviewers" multiple="multiple" size="${avaliableOptionsSize}">

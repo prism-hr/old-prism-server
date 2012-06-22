@@ -18,17 +18,20 @@ $(document).ready(function(){
 	});
 });
 
-function loadUsersForProgram(){
+function loadUsersForProgram()
+{
+	$('#existingUsers').append('<div class="ajax" />');
+	
 	$.get(
-	 		"/pgadmissions/manageUsers/program",
-			{
-				programCode : $('#programs').val(),						
-				cacheBreaker: new Date().getTime() 
-			},
-			function(data)
-			{
-				$('#existingUsers').html(data);
-				addToolTips();
-			}
-		);	
+		"/pgadmissions/manageUsers/program",
+		{
+			programCode : $('#programs').val(),						
+			cacheBreaker: new Date().getTime() 
+		},
+		function(data)
+		{
+			$('#existingUsers').html(data);
+			addToolTips();
+		}
+	);	
 }

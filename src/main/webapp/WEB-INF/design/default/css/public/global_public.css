@@ -146,7 +146,7 @@ input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin:
 	overflow: hidden;
 	position: absolute;
 }
-#site-message .header .logo img { height: 60px; }
+#site-message .header .logo img { height: 41px; }
 #site-message .header .tagline {
 	bottom: 0;
 	color: #999;

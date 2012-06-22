@@ -48,7 +48,7 @@ div.left-column .field { margin-left: 100px !important; }
 div.tableContainer {
 	clear: both;
 	border: 1px solid #963;
-	height: 285px;
+	height: 180px;
 	overflow: auto;
 	width: 756px
 }
@@ -78,11 +78,11 @@ html>body tbody.scrollContent { display: block; height: 180px; overflow: auto; w
 
 /* Column widths. (Do not use COLGROUP!) */
 html>body thead.fixedHeader th { width: 20px }
-html>body thead.fixedHeader th + th { width: auto }
+html>body thead.fixedHeader th + th { width: 472px }
 html>body thead.fixedHeader th + th + th { width: 240px }
 html>body thead.fixedHeader th + th + th + th { width: 70px }
 
 html>body tbody.scrollContent td { width: 20px }
-html>body tbody.scrollContent td + td { width: auto }
+html>body tbody.scrollContent td + td { width: 472px }
 html>body tbody.scrollContent td + td + td { width: 240px }
 html>body tbody.scrollContent td + td + td + td { width: 70px }

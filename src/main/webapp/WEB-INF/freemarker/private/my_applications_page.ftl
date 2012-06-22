@@ -63,7 +63,7 @@
 			
 				<!-- Download button. -->
 				<#if (applications?size > 0)>
-				<a target="_blank" name="downloadAll" id="downloadAll">Download</a>
+				<a target="_blank" name="downloadAll" id="downloadAll" data-desc="Download selected">Download</a>
 				</#if>
 
 				<!-- Search/filter box. -->
@@ -84,7 +84,7 @@
             
               <table class="data" border="0" >
                 <colgroup>
-                  <col style="width: 48px" />
+                  <col style="width: 46px" />
                   <col style="width: 20%" />
                   <col />
                   <col style="width: 66px;" />
@@ -94,7 +94,7 @@
                 <thead>
                   <tr>
                     <th class="centre" scope="col">
-                      <input type="checkbox" name="select-all" title="Select to download all" id="select-all" />
+                      <input type="checkbox" name="select-all" data-desc="Select to download all" id="select-all" />
                       <input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" />
                       <input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" />
                       <input type="hidden" id="block-index" name="block-index" value="1" />

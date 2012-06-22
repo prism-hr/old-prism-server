@@ -1,0 +1,42 @@
+
+h1 { font-size: 14pt; margin-bottom: 1em; }
+
+div.row { margin-bottom: 10px; overflow: hidden; }
+div.row label { font-weight: bold; }
+
+form { overflow: hidden; }
+form label { display: block; margin-bottom: 0.5em; }
+form input[type=text], form select, form textarea { width: 300px; }
+form select[multiple] { padding: 3px; width: 100% }
+
+div.programme label { float: left; width: 150px; }
+div.programme select { width: 300px; }
+
+table.data tbody td { background: #EEE; padding: 4px; }
+
+div.left-column { float: left; width: 380px; }
+div.right-column { float: left; text-align: left; width: 380px; }
+
+div.left-column label { width: 90px !important; }
+div.left-column .field { margin-left: 100px !important; }
+
+.pending{ color: #999999;}
+
+/* Table of existing users. */
+#existingUsers { border: none; margin-bottom: 10px; padding: 0; }
+#existingUsers .arrow { background: url(../../../images/button_arrow.png) no-repeat; display: inline-block; height: 20px; width: 20px; }
+
+/* User's roles as icons. */
+#existingUsers .role-icons span { background: url(../../../images/icon_roles.png) no-repeat; display: inline-block; height: 22px; margin-right: 4px; width: 22px; }
+
+#existingUsers .role-icons .is-supervisor { background-position: 0 -22px; }
+#existingUsers .role-icons .is-admin { background-position: -22px -22px; }
+#existingUsers .role-icons .is-interviewer { background-position: -44px -22px; }
+#existingUsers .role-icons .is-reviewer { background-position: -66px -22px; }
+#existingUsers .role-icons .is-approver { background-position: -88px -22px; }
+
+#existingUsers .role-icons.supervisor .is-supervisor { background-position: 0 -22px; }
+#existingUsers .role-icons.administrator .is-admin { background-position: -22px -22px; }
+#existingUsers .role-icons.interviewer .is-interviewer { background-position: -44px -22px; }
+#existingUsers .role-icons.reviewer .is-reviewer { background-position: -66px -22px; }
+#existingUsers .role-icons.approver .is-approver { background-position: -88px -22px; }

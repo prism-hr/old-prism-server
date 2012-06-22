@@ -17,7 +17,7 @@ import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
-@Entity(name = "REFERENCE")
+@Entity(name = "REFERENCE_COMMENT")
 @Access(AccessType.FIELD)
 public class ReferenceComment extends Comment {
 

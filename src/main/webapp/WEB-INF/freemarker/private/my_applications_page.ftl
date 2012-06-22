@@ -84,7 +84,7 @@
             
               <table class="data" border="0" >
                 <colgroup>
-                  <col style="width: 40px" />
+                  <col style="width: 48px" />
                   <col style="width: 20%" />
                   <col />
                   <col style="width: 66px;" />

@@ -38,7 +38,7 @@
 
 							<div id="site-message" class="error">
 								<div class="header">
-									<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png' />" alt="" /></div>
+									<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_message.png' />" alt="" /></div>
 									<div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
 								</div>
 								<div class="content">

@@ -91,10 +91,9 @@
                 <div id="assignReviewersToAppSection" class="row-group">
   
                   <div class="row">
-                    <label class="label">Reviewers</label>
+                    <label class="label">Assign Reviewers</label>
 										<span class="hint" data-desc="<@spring.message 'assignReviewer.defaultReviewers'/>"></span>
                     <div class="field">
-                      <p><strong>Available Reviewers</strong></p>
                       <select id="programReviewers" multiple="multiple" size="${avaliableOptionsSize}">
                         <optgroup id="default" label="Default reviewers">
                           <#list programmeReviewers as reviewer>
@@ -133,7 +132,6 @@
                   <!-- Already reviewers of this application -->
                   <div class="row">
                     <div class="field">
-                      <p><strong>Selected Reviewers</strong></p>
                       <select id="applicationReviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
                         <#list applicationReviewers as reviewer>
                         <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}">

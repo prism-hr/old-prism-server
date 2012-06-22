@@ -22,16 +22,16 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your registration for UCL Elect. To login and continue, please verify your registration. You will be asked to provide your username and password.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your registration for UCL Prism. To login and continue, please verify your registration. You will be asked to provide your username and password.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}">(Continue to Portal)</a>
+			      			<a href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}">(Continue to UCL Prism)</a>
 			      		</font>
 			      	</p>
 					      	
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

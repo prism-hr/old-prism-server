@@ -30,7 +30,7 @@
 
 			      	<#if !supervisor.user?? || !supervisor.user.enabled >
 			      		<p>
-			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with the UCL Portal, please do so by clicking the link below:</font>
+			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with UCL Prism, please do so by clicking the link below:</font>
 			      		</p>
 				      	<p>
 				      		<font face="Arial, Helvetica, sans-serif" size="2">	encrypt?
@@ -40,7 +40,7 @@
 			      	</#if>
 				      	
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

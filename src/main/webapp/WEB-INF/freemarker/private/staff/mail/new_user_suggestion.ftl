@@ -22,7 +22,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${newUser.firstName?html},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">${admin.firstName?html} ${admin.lastName?html} has added you as a ${newRoles}<#if program??> for UCL ${program.title?html}</#if>. Register to start using UCL Elect in this role.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${admin.firstName?html} ${admin.lastName?html} has added you as a ${newRoles}<#if program??> for UCL ${program.title?html}</#if>. Register to start using UCL Prism in this role.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2"> enctyp?
@@ -30,7 +30,7 @@
 			      		</font>
 			      	</p>			      	
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

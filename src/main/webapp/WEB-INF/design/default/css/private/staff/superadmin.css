@@ -26,7 +26,7 @@ div.left-column .field { margin-left: 100px !important; }
 #existingUsers { border: none; margin-bottom: 10px; padding: 0; }
 
 /* User's roles as icons. */
-#existingUsers .role-icons { background: url(../../../images/icon_roles.png) no-repeat; display: inline-block; height: 22px; margin-right: 4px; width: 22px; }
+#existingUsers .role-icons span { background: url(../../../images/icon_roles.png) no-repeat; display: inline-block; height: 22px; margin-right: 4px; width: 22px; }
 
 #existingUsers .role-icons .is-supervisor { background-position: 0 -22px; }
 #existingUsers .role-icons .is-admin { background-position: -22px -22px; }

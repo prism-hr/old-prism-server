@@ -3,7 +3,18 @@
 #applicationInterviewers { min-height: 60px; }
 
 #programInterviewers, #applicationInterviewers { width: 400px; }
-#programInterviewers optgroup { font-style: normal; min-height: 3em; }
+#programInterviewers optgroup {
+	background: #DDD;
+	font-style: normal;
+	font-weight: normal;
+	margin-bottom: 5px;
+	padding: 5px;
+}
+#programInterviewers option {
+	background: #FFF;
+	margin: 5px -5px -5px;
+	padding-left: 20px;
+}
 #programInterviewers option, #applicationInterviewers option { padding: 5px; }
 #programInterviewers option:last-child, #applicationInterviewers option:last-child { border-bottom: none; }
 #programInterviewers option.selected { color: #CCC; }

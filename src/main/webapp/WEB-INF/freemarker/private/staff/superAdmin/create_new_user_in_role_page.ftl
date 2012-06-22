@@ -41,7 +41,7 @@
 																								
 						<h2>Manage Users</h2>
 
-						<div id="existingUsers">
+						<div id="existingUsers" class="tableContainer">
 						</div>
 						<form id="removeForm"  action="/pgadmissions/manageUsers/remove" method="POST">
 							<input type="hidden" id="deleteFromUser" name="user" value=""/>						

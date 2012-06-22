@@ -3,18 +3,18 @@
 	<colgroup>
 		<col style="width: 20px;" />
 		<col style="width: auto;" />
-		<col style="width: 200px;" />
-		<col style="width: 100px;" />
+		<col style="width: 240px;" />
+		<col style="width: 70px;" />
 	</colgroup>
-	<thead>
+	<thead class="fixedHeader">
 		<tr>
 			<th scope="col">&nbsp;</th>
 			<th scope="col">Name</th>
 			<th scope="col">Role(s)</th>
-			<th scope="col">Action</th>
+			<th scope="col">&nbsp;</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody class="scrollContent">
 		<#list usersInRoles as userInRole>
 		<tr <#if !userInRole.enabled>class="pending"</#if>>
 			<td><span class="arrow">&nbsp;</span></td>

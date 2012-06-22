@@ -6,8 +6,6 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -15,23 +13,15 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Entity(name = "REFERENCE")
 @Access(AccessType.FIELD)
-public class Reference extends DomainObject<Integer> {
-
+public class ReferenceComment extends Comment {
 
 	private static final long serialVersionUID = 5269362387094590530L;
-	
-	@OneToOne(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "document_id")
-	private Document document;
-	
-	@OneToOne(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "comment_id")
-	private Comment comment;
 	
 	@Column(name="suitable_for_UCL")
 	private Boolean suitableForUCL;
@@ -39,37 +29,36 @@ public class Reference extends DomainObject<Integer> {
 	@Column(name="suitable_for_Programme")
 	private Boolean suitableForProgramme;
 	
-	@OneToOne(mappedBy ="reference")
+	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "referee_id")
 	private Referee referee;
-	
 	
 	@Column(name = "updated_time_stamp", insertable = false)
 	@Generated(GenerationTime.ALWAYS)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdated;
 	
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-		
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CommentTypeEnumUserType")
+	@Column(name="comment_type")
+	private CommentType type;
+
+	public CommentType getType() {
+		return type;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
-	public Integer getId() {
-		return id;
+	public void setType(CommentType type) {
+		this.type = type;
 	}
 
-	public Document getDocument() {
-		return document;
+	public boolean isSuitableForUCLSet() {
+		return suitableForUCL != null;
 	}
-
-	public void setDocument(Document document) {
-		this.document = document;
+	
+	public boolean isSuitableForProgrammeSet() {
+		return suitableForProgramme != null;
 	}
-
+	
 	public Referee getReferee() {
 		return referee;
 	}
@@ -81,14 +70,6 @@ public class Reference extends DomainObject<Integer> {
 
 	public Date getLastUpdated() {
 		return lastUpdated;
-	}
-
-	public Comment getComment() {
-		return comment;
-	}
-
-	public void setComment(Comment comment) {
-		this.comment = comment;
 	}
 
 	public Boolean getSuitableForUCL() {

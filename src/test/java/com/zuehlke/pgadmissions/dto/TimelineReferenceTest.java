@@ -8,9 +8,9 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 
 public class TimelineReferenceTest {
 
@@ -21,7 +21,7 @@ public class TimelineReferenceTest {
 
 	@Test
 	public void shouldReurnCorrectMessageCode() {
-		Reference reference = new ReferenceBuilder().id(4).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(4).toReferenceComment();
 		Referee referee = new RefereeBuilder().reference(reference).toReferee();
 
 		TimelineReference timelineReference = new TimelineReference();

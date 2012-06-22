@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.dao.ReferenceDAO;
-import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 
 @Service
 public class ReferenceService {
@@ -20,7 +20,7 @@ public class ReferenceService {
 		this.referenceDAO = referenceDAO;
 	}
 
-	public Reference getReferenceById(Integer id) {
+	public ReferenceComment getReferenceById(Integer id) {
 		return referenceDAO.getReferenceById(id);
 	}
 

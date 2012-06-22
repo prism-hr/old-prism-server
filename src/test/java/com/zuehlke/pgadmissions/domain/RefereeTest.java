@@ -15,7 +15,7 @@ public class RefereeTest {
 	public void shouldReturnTrueIfReferenceProvided(){
 		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm()).toReferee();
 		assertFalse(referee.hasProvidedReference());
-		referee.setReference(new Reference());		
+		referee.setReference(new ReferenceComment());		
 		assertTrue(referee.hasProvidedReference());
 	}
 	
@@ -23,7 +23,7 @@ public class RefereeTest {
 	public void shouldReturnEditableTrueIfReferenceNotProvided(){
 		Referee referee = new RefereeBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm()).toReferee();		
 		assertTrue(referee.isEditable());
-		referee.setReference(new Reference());		
+		referee.setReference(new ReferenceComment());		
 		assertFalse(referee.isEditable());
 	}
 	

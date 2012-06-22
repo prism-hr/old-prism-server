@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -77,11 +77,11 @@ public class ReferenceController {
 	}
 
 	@ModelAttribute
-	public Reference getReference(@RequestParam String application) {
+	public ReferenceComment getReference(@RequestParam String application) {
 		Referee referee = getCurrentUser().getRefereeForApplicationForm(getApplicationForm(application));
 		if (referee.getReference() == null) {
 			
-			Reference reference = new Reference();
+			ReferenceComment reference = new ReferenceComment();
 			reference.setReferee(referee);
 			return reference;
 		}
@@ -96,7 +96,7 @@ public class ReferenceController {
 	}
 	
 	@RequestMapping(value = "/submitReference", method = RequestMethod.POST)
-	public String handleReferenceSubmission(@Valid Reference reference, BindingResult bindingResult) {
+	public String handleReferenceSubmission(@Valid ReferenceComment reference, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()){
 			return ADD_REFERENCES_VIEW_NAME;
 		}

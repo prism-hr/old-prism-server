@@ -4,7 +4,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 
 @Repository
 public class ReferenceDAO {
@@ -20,8 +20,8 @@ public class ReferenceDAO {
 		this.sessionFactory = sessionFactory;		
 	}
 
-	public Reference getReferenceById(Integer id) {
-		return (Reference) sessionFactory.getCurrentSession().get(Reference.class, id);
+	public ReferenceComment getReferenceById(Integer id) {
+		return (ReferenceComment) sessionFactory.getCurrentSession().get(ReferenceComment.class, id);
 	}
 
 }

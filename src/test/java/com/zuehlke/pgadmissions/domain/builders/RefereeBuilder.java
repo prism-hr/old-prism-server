@@ -5,7 +5,7 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class RefereeBuilder {
@@ -22,7 +22,7 @@ public class RefereeBuilder {
 
 	private String activationCode;
 	private Country addressCountry;
-	private Reference reference;
+	private ReferenceComment reference;
 	private String email;
 	private String messenger;
 	private RegisteredUser user;
@@ -62,7 +62,7 @@ public class RefereeBuilder {
 		return this;
 	}
 
-	public RefereeBuilder reference(Reference reference) {
+	public RefereeBuilder reference(ReferenceComment reference) {
 		this.reference = reference;
 		return this;
 	}

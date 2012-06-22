@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ReferenceDAO;
-import com.zuehlke.pgadmissions.domain.Reference;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 
 public class ReferenceServiceTest {
 
@@ -17,10 +17,10 @@ public class ReferenceServiceTest {
 
 	@Test
 	public void shouldGetReferenceFromDAO() {
-		Reference reference = new ReferenceBuilder().id(1).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).toReferenceComment();
 		EasyMock.expect(referenceDAOMock.getReferenceById(1)).andReturn(reference);
 		EasyMock.replay(referenceDAOMock);
-		Reference returnedReference = referenceService.getReferenceById(1);
+		ReferenceComment returnedReference = referenceService.getReferenceById(1);
 		assertEquals(reference, returnedReference);
 	}
 

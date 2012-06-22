@@ -152,7 +152,7 @@ input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin:
 	color: #999;
 	font-size: 12pt;
 	font-weight: bold;
-	left: 215px;
+	left: 175px;
 	line-height: 1.2;
 	position: absolute;
 }

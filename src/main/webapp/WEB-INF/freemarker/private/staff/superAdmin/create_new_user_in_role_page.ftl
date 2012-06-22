@@ -63,7 +63,7 @@
 										<span class="plain-label">Programme<em>*</em></span>
 										<span class="hint" data-desc=""></span>
 										<div class="field">
-											<select name="selectedProgram" id="programs">
+											<select class="max" name="selectedProgram" id="programs">
 												<option value="">Please select a program</option>
 												<#list programs as program>"
 												<option value='${program.code}' 

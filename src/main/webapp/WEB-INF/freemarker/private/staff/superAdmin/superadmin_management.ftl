@@ -31,24 +31,41 @@
 			<div class="content-box">
 				<div class="content-box-inner">
 					<div id="existingUsers">
-						<ul>
-						<#list superadmins as superadmin>
-							<li>${(superadmin.firstName?html)!} ${(superadmin.lastName?html)!} (${(superadmin.email?html)!} )</li>
-						</#list>
-						</ul>
+						<table class="data" border="0">
+							<thead class="fixedHeader">
+								<tr>
+									<th scope="col">&nbsp;</th>
+									<th scope="col">Name</th>
+									<th scope="col">Role(s)</th>
+									<th scope="col">&nbsp;</th>
+								</tr>
+							</thead>
+							<tbody class="scrollContent">
+								<#list superadmins as superadmin>
+								<tr>
+									<td><span class="arrow">&nbsp;</span></td>
+									<td scope="col">${(superadmin.firstName?html)!} ${(superadmin.lastName?html)!} (${(superadmin.email?html)!} )</td>
+									<td scope="col">
+<#--
+										<a class="button-edit" data-desc="Edit" href="<@spring.url '/manageUsers/edit?programCode=${selectedProgram.code}&user=${encrypter.encrypt(userInRole.id)}'/>">Edit</a>
+										<a class="button-delete" data-desc="Remove" href="#" name="removeuser" id="remove_${encrypter.encrypt(userInRole.id)}">Remove</a>
+-->
+									</td>
+								</tr>
+								</#list>
+							</tbody>
+						</table>
 					</div>
 
-					<form id ="editRoles" name="editRoles" action="/pgadmissions/manageUsers/superadmins" method="POST">
-							                                
-						<h1>Manage Users</h1>
-						<div class="section-info-bar">
-							Manage superadministrators. You can also <a href="<@spring.url '/manageUsers/edit'/>">manage programme roles.</a>
-						</div>
-						
+					<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/superadmins" method="POST">
 		
 						<section class="form-rows">
+							<h2>Manage Users</h2>
 							<div>
 							
+								<div class="section-info-bar">
+									Manage superadministrators. You can also <a href="<@spring.url '/manageUsers/edit'/>">manage programme roles.</a>
+								</div>
 
 								<div class="row-group">
 								
@@ -88,8 +105,9 @@
 										</div>
 									</div>
 		
-																		
-									<button type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+									<div class="buttons">
+										<button type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+									</div>
 			
 								</div>
 								

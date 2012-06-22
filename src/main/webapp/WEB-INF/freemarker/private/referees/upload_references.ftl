@@ -42,7 +42,7 @@
 									<div>
 										<form id="documentUploadForm" method="POST" action="<@spring.url '/referee/submitReference'/>">
 										
-											<div class="section-info-box">
+											<div class="section-info-bar">
 												Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme.
 											</div>
 

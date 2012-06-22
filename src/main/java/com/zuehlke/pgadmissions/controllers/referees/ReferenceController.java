@@ -18,11 +18,15 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 import com.zuehlke.pgadmissions.validators.ReferenceValidator;
 
 @Controller
@@ -32,26 +36,29 @@ public class ReferenceController {
 	private static final String EXPIRED_VIEW_NAME = "private/referees/upload_references_expired";
 	private final ApplicationsService applicationsService;
 	private final DocumentPropertyEditor documentPropertyEditor;
-	private final ReferenceValidator referenceValidator;
+	private final FeedbackCommentValidator referenceValidator;
 	private final RefereeService refereeService;
 	private final UserService userService;
+	private final CommentService commentService;
 
 	ReferenceController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService, DocumentPropertyEditor documentPropertyEditor, ReferenceValidator referenceValidator) {
+	public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
+			DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService) {
 		this.applicationsService = applicationsService;
 		this.refereeService = refereeService;
 		this.userService = userService;
 		this.documentPropertyEditor = documentPropertyEditor;
 		this.referenceValidator = referenceValidator;
+		this.commentService = commentService;
 	}
 
-	@ModelAttribute
-	public ApplicationForm getApplicationForm(@RequestParam String application) {
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(application);
+	@ModelAttribute("applicationForm")
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (applicationForm == null || !getCurrentUser().isRefereeOfApplicationForm(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
@@ -62,7 +69,7 @@ public class ReferenceController {
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		return userService.getUser(currentUser.getId());
 	}
-
+	
 	@ModelAttribute("user")
 	public RegisteredUser getUser() {				
 		return getCurrentUser();
@@ -76,33 +83,39 @@ public class ReferenceController {
 		return ADD_REFERENCES_VIEW_NAME;
 	}
 
-	@ModelAttribute
-	public ReferenceComment getReference(@RequestParam String application) {
-		Referee referee = getCurrentUser().getRefereeForApplicationForm(getApplicationForm(application));
-		if (referee.getReference() == null) {
-			
-			ReferenceComment reference = new ReferenceComment();
-			reference.setReferee(referee);
-			return reference;
+	@ModelAttribute("comment")
+	public ReferenceComment getComment(@RequestParam String applicationId) {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		RegisteredUser currentUser = getCurrentUser();
+		Referee refereeForApplicationForm = currentUser.getRefereeForApplicationForm(applicationForm);
+		Referee referee = refereeForApplicationForm;
+		if (referee == null || referee.getReference() == null) {
+			ReferenceComment referenceComment = new ReferenceComment();
+			referenceComment.setApplication(applicationForm);
+			referenceComment.setUser(currentUser);
+			referenceComment.setComment("");
+			referenceComment.setType(CommentType.REFERENCE);
+			referenceComment.setReferee(refereeForApplicationForm);
+			return referenceComment;
 		}
 		return referee.getReference();
 	}
 	
-	@InitBinder(value = "reference")
+	@InitBinder("comment")
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.setValidator(referenceValidator);
 		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-
 	}
 	
 	@RequestMapping(value = "/submitReference", method = RequestMethod.POST)
-	public String handleReferenceSubmission(@Valid ReferenceComment reference, BindingResult bindingResult) {
+	public String handleReferenceSubmission(@Valid @ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()){
 			return ADD_REFERENCES_VIEW_NAME;
 		}
-		Referee referee = reference.getReferee();
-		referee.setReference(reference);
-		refereeService.saveReferenceAndSendMailNotifications(referee);
+		commentService.save(comment);		
+//		Referee referee = reference.getReferee();
+//		referee.setReference(reference);
+		refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
 		return "redirect:/addReferences/referenceuploaded";
 	}
 

@@ -25,60 +25,65 @@ public class DeclineController {
 	private final ApplicationsService applicationsService;
 	private static final String DECLINE_SUCCESS_VIEW_NAME = "/private/reviewers/decline_success_confirmation";
 	private final RefereeService refereeService;
-	
-	
+
 	DeclineController() {
 		this(null, null, null, null);
 	}
 
 	@Autowired
-	public DeclineController(UserService userService, CommentService commentService, ApplicationsService applicationsService,
-			RefereeService refereeService) {
+	public DeclineController(UserService userService, CommentService commentService, ApplicationsService applicationsService, RefereeService refereeService) {
 		this.userService = userService;
 		this.commentService = commentService;
 		this.applicationsService = applicationsService;
 		this.refereeService = refereeService;
-		
+
 	}
-	
-	@RequestMapping(value="/review", method = RequestMethod.GET)
-	public String declineReview(@RequestParam Integer userId, @RequestParam String applicationId, ModelMap modelMap) {
-		RegisteredUser reviewer = getReviewer(userId);
+
+	@RequestMapping(value = "/review", method = RequestMethod.GET)
+	public String declineReview(@RequestParam String activationCode, @RequestParam String applicationId, ModelMap modelMap) {
+		RegisteredUser reviewer = getReviewer(activationCode);
 		ApplicationForm application = getApplicationForm(applicationId);
-		if(application.getStatus() == ApplicationFormStatus.REVIEW && reviewer.isReviewerInLatestReviewRoundOfApplicationForm(application)){
+		if (application.getStatus() == ApplicationFormStatus.REVIEW && reviewer.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
 			commentService.declineReview(reviewer, application);
 		}
 		modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
 		return DECLINE_SUCCESS_VIEW_NAME;
 	}
-	
-	public Referee getReferee(@RequestParam Integer refereeId) {	
-		Referee referee = refereeService.getRefereeById(refereeId);
-		if(referee == null){
+
+	public Referee getReferee(String activationCode, ApplicationForm applicationForm) {
+		RegisteredUser user = userService.getUserByActivationCode(activationCode);
+		if (user == null) {
+			throw new ResourceNotFoundException();
+		}
+		Referee referee = user.getRefereeForApplicationForm(applicationForm);
+		if (referee == null) {
 			throw new ResourceNotFoundException();
 		}
 		return referee;
+
 	}
 
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)
-	public String declineReference(@RequestParam Integer refereeId, ModelMap modelMap) {
-		Referee referee = getReferee(refereeId);	
+	public String declineReference(@RequestParam String activationCode, @RequestParam String applicationId, ModelMap modelMap) {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		Referee referee = getReferee(activationCode, applicationForm);
+
 		refereeService.declineToActAsRefereeAndNotifiyApplicant(referee);
 		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
 		return DECLINE_SUCCESS_VIEW_NAME;
 	}
-	
-	public RegisteredUser getReviewer(Integer userId) {
-		RegisteredUser reviewer = userService.getUser(userId);
-		if (reviewer == null){
+
+	public RegisteredUser getReviewer(String activationCode) {
+		RegisteredUser reviewer = userService.getUserByActivationCode(activationCode);
+		if (reviewer == null) {
 			throw new ResourceNotFoundException();
 		}
 		return reviewer;
 	}
-	
+
 	public ApplicationForm getApplicationForm(String applicationId) {
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null){
+		if (applicationForm == null) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;

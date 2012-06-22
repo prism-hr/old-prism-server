@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -33,18 +34,18 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldGetReviewerFromId() {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(5).toUser();
-		EasyMock.expect(userServiceMock.getUser(5)).andReturn(reviewer);
+		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(reviewer);
 		EasyMock.replay(userServiceMock);
-		RegisteredUser returnedReviewer = controller.getReviewer(5);
+		RegisteredUser returnedReviewer = controller.getReviewer("5");
 		assertEquals(reviewer, returnedReviewer);
 	}
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUsernotFound() {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(5).toUser();
-		EasyMock.expect(userServiceMock.getUser(5)).andReturn(null);
+		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(null);
 		EasyMock.replay(userServiceMock);
-		RegisteredUser returnedReviewer = controller.getReviewer(5);
+		RegisteredUser returnedReviewer = controller.getReviewer("5");
 		assertEquals(reviewer, returnedReviewer);
 	}
 
@@ -71,22 +72,33 @@ public class DeclineControllerTest {
 	
 	
 	@Test
-	public void shouldGetRefereeFromId() {
+	public void shouldGetRefereeFromActivationCodeAndApplicationForm() {
+		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
 		Referee referee = new RefereeBuilder().id(5).toReferee();
-		EasyMock.expect(refereeServiceMock.getRefereeById(5)).andReturn(referee);
-		EasyMock.replay(refereeServiceMock);
-		Referee returnedReferee = controller.getReferee(5);
+		EasyMock.expect(userMock.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
+		EasyMock.replay(userServiceMock, userMock);
+		Referee returnedReferee = controller.getReferee("5", applicationForm);
 		assertEquals(referee, returnedReferee);
 	}
 	
-	
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfUserDoesNotExists() {		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(null);
+		EasyMock.replay(userServiceMock);
+		controller.getReferee("5", applicationForm);
+
+	}
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfRefereeNotExists() {
-		Referee referee = new RefereeBuilder().id(5).toReferee();
-		EasyMock.expect(refereeServiceMock.getRefereeById(5)).andReturn(null);
-		EasyMock.replay(refereeServiceMock);
-		Referee returnedReferee = controller.getReferee(5);
-		assertEquals(referee, returnedReferee);
+		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
+		EasyMock.expect(userMock.getRefereeForApplicationForm(applicationForm)).andReturn(null);
+		EasyMock.replay(userServiceMock, userMock);
+		controller.getReferee("5", applicationForm);		
 	}
 	
 	@Test
@@ -95,21 +107,24 @@ public class DeclineControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
-			public RegisteredUser getReviewer(Integer userId){
-				if(5 == userId){
+			public RegisteredUser getReviewer(String activationCode){
+				if("5" == activationCode){
 					return reviewer;
 				}
 				return null;
 			}
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId){
-				return applicationForm;
+				if(applicationId == "ABC"){
+					return applicationForm;
+				}
+				return null;
 			}
 		}; 
 		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);		
 		commentServiceMock.declineReview(reviewer, applicationForm);
 		EasyMock.replay(commentServiceMock, reviewer);
-		String view = controller.declineReview(5, applicationForm.getApplicationNumber(), new ModelMap());
+		String view = controller.declineReview("5", applicationForm.getApplicationNumber(), new ModelMap());
 		EasyMock.verify(commentServiceMock);
 		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
 	}
@@ -120,21 +135,24 @@ public class DeclineControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
-			public RegisteredUser getReviewer(Integer userId){
-				if(5 == userId){
+			public RegisteredUser getReviewer(String activationCode){
+				if("5" == activationCode){
 					return reviewer;
 				}
 				return null;
 			}
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId){
-				return applicationForm;
+				if(applicationId == "ABC"){
+					return applicationForm;
+				}
+				return null;
 			}
 		}; 
 		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(false);		
 		
 		EasyMock.replay(commentServiceMock, reviewer);
-		String view = controller.declineReview(5, applicationForm.getApplicationNumber(), new ModelMap());
+		String view = controller.declineReview("5", applicationForm.getApplicationNumber(), new ModelMap());
 		EasyMock.verify(commentServiceMock);
 		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
 	}
@@ -144,21 +162,24 @@ public class DeclineControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
-			public RegisteredUser getReviewer(Integer userId){
-				if(5 == userId){
+			public RegisteredUser getReviewer(String activationCode){
+				if("5" == activationCode){
 					return reviewer;
 				}
 				return null;
 			}
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId){
-				return applicationForm;
+				if(applicationId == "ABC"){
+					return applicationForm;
+				}
+				return null;
 			}
 		}; 
 		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);		
 		
 		EasyMock.replay(commentServiceMock, reviewer);
-		String view = controller.declineReview(5, applicationForm.getApplicationNumber(), new ModelMap());
+		String view = controller.declineReview("5", "ABC", new ModelMap());
 		EasyMock.verify(commentServiceMock);
 		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
 	}
@@ -166,12 +187,22 @@ public class DeclineControllerTest {
 	
 	@Test
 	public void shouldDeclineReferenceAndReturnMessageView() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).toApplicationForm();
 		final Referee referee = new RefereeBuilder().application(applicationForm).id(5).toReferee();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
-			public Referee getReferee(Integer refereeId){
-				return referee;
+			public Referee getReferee(String activationCode, ApplicationForm app) {
+				if("5" == activationCode && applicationForm == app){
+					return referee;
+				}
+				return null;
+			}
+			@Override
+			public ApplicationForm getApplicationForm(String applicationId){
+				if(applicationId == "ABC"){
+					return applicationForm;
+				}
+				return null;
 			}
 		}; 
 		
@@ -179,7 +210,7 @@ public class DeclineControllerTest {
 		
 		EasyMock.replay(refereeServiceMock);
 		
-		String view = controller.declineReference(referee.getId(), new ModelMap());
+		String view = controller.declineReference("5","ABC", new ModelMap());
 		
 		EasyMock.verify(refereeServiceMock);
 		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);

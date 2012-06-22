@@ -46,8 +46,8 @@
 				      		</font>
 				      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">encrypt
-			      			<a href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&userId=${reviewer.user.id?string('#######')}">Decline</a>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}">Decline</a>
 			      		</font>
 			        <p>
 			      	</p>

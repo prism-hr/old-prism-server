@@ -81,7 +81,6 @@ public class RefereeServiceTest {
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
-		refereeDAOMock.save(referee);
 		ReferenceEvent event = new ReferenceEventBuilder().id(4).toEvent();
 		EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
 		applicationFormDAOMock.save(form);
@@ -142,7 +141,6 @@ public class RefereeServiceTest {
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
-		refereeDAOMock.save(referee);
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request"),// 
 				EasyMock.aryEq(new Object[] { "xyz", "program title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
@@ -162,21 +160,6 @@ public class RefereeServiceTest {
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 	}
 
-	@Test
-	public void shouldNotSendEmailIfSaveFails() {
-		refereeDAOMock.save(null);
-		EasyMock.expectLastCall().andThrow(new RuntimeException("aaaaaaaaaaargh"));
-
-		EasyMock.replay(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
-		try {
-			refereeService.saveReferenceAndSendMailNotifications(null);
-		} catch (RuntimeException e) {
-			// expected...ignore
-		}
-
-		EasyMock.verify(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
@@ -193,7 +176,6 @@ public class RefereeServiceTest {
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
-		refereeDAOMock.save(referee);
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");

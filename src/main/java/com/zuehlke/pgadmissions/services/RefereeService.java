@@ -78,7 +78,7 @@ public class RefereeService {
 
 	@Transactional
 	public void saveReferenceAndSendMailNotifications(Referee referee) {
-		save(referee);		
+//		save(referee);		
 		addReferenceEventToApplication(referee);
 		sendMailToApplicant(referee);
 		sendMailToAdministrators(referee);

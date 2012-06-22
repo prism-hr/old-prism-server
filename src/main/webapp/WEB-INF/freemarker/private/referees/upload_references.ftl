@@ -42,43 +42,26 @@
 									<div>
 										<form id="documentUploadForm" method="POST" action="<@spring.url '/referee/submitReference'/>">
 										
+										<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 											<div class="section-info-bar">
 												Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme.
 											</div>
 
 											<div class="row-group">
-												<div class="row">
-													<span class="plain-label">Comments<em>*</em></span>
-												<span class="hint"/>"></span>
-													
-													<div class="field">		            				
-														<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
-													</div>
-												<@spring.bind "reference.comment" /> 
-															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											<div class="row"> 
+												<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>
+												<span class="hint" data-desc=""></span>
+												<div class="field">		            				
+													<textarea name="comment" id="comment" class="max" rows="6" cols="80" >${(comment.comment?html)!}</textarea>
+													<@spring.bind "comment.comment" /> 
+													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 												</div>
+											</div>
 											</div>
 											
 											<div class="row-group">
-												<div class="row">
+												<#include "/private/staff/admin/comment/documents_snippet.ftl"/>
 											
-													<input type="hidden" name="application" value ='${applicationForm.applicationNumber}'/>           
-													<div class="field" id="referenceUploadFields">          
-														<label for="file">Attach Document</label>
-														<input id="referenceDocument" class="full" type="file" name="file" value=""/>          
-														<span id="referenceUploadedDocument" ><input type="hidden" id="document_REFERENCE" value = "${(encrypter.encrypt(reference.document.id))!}" name="document"/>
-															<@spring.bind "reference.document" /> 
-															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                                  
-														</span>
-														<span id="referenceDocumentProgress" style="display: none;" ></span>          
-														<#if reference.id??>
-														<br />
-														<div>Previous File: <a href="<@spring.url '/download/reference?referenceId=${encrypter.encrypt(reference.id)}'/>">${reference.document.fileName?html}</a></div>
-														</#if>
-													</div>  
-												</div>
-												
-											<div class="row-group">
 												<h3>Applicant Suitability</h3>
 											
 												<div class="row">
@@ -86,12 +69,12 @@
 													<span class="hint" data-desc=""></span>
 													<div class="field">
 														<label><input type="radio" name="suitableForUCL" value="true" id="suitableRB_true"
-														<#if reference.isSuitableForUCLSet() && reference.suitableForUCL> checked="checked"</#if>
+														<#if comment.isSuitableForUCLSet() && comment.suitableForUCL> checked="checked"</#if>
 														/> Yes</label> 
 														<label><input type="radio" name="suitableForUCL" value="false" id="suitableRB_false"
-														<#if reference.isSuitableForUCLSet() && !reference.suitableForUCL> checked="checked"</#if>
+														<#if comment.isSuitableForUCLSet() && !comment.suitableForUCL> checked="checked"</#if>
 														/> No</label> 
-														<@spring.bind "reference.suitableForUCL" /> 
+														<@spring.bind "comment.suitableForUCL" /> 
 															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 														</div>
 												</div>
@@ -101,19 +84,17 @@
 												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<label><input type="radio" name="suitableForProgramme" value="true" id="willingRB_true"
-													<#if reference.isSuitableForProgrammeSet() && reference.suitableForProgramme> checked="checked"</#if> 
+													<#if comment.isSuitableForProgrammeSet() && comment.suitableForProgramme> checked="checked"</#if> 
 													/> Yes</label> 
 													<label><input type="radio" name="suitableForProgramme" value="false" id="willingRB_false"
-													<#if reference.isSuitableForProgrammeSet() && !reference.suitableForProgramme> checked="checked"</#if>
+													<#if comment.isSuitableForProgrammeSet() && !comment.suitableForProgramme> checked="checked"</#if>
 													/> No</label> 
-													<@spring.bind "reference.suitableForProgramme" /> 
+													<@spring.bind "comment.suitableForProgramme" /> 
 													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 												</div>
 											</div>
 	
 										</div>
-												
-												
 												
 												<div class="buttons">
 													<button type="reset" value="cancel">Cancel</button>
@@ -123,10 +104,10 @@
 										</form>
                     <!---------- End Reference -------------->
                   
-                    <#if !reference.id?? >
+                    <#if !comment.id?? >
 										<div class="row-group">
 											<form id="declineForm" method="POST" action="<@spring.url '/referee/decline'/>">
-												<input type="hidden" name="referee" value='<#if reference.referee.id??>${encrypter.encrypt(reference.referee.id)}</#if>'/>                    
+												<input type="hidden" name="referee" value='<#if comment.referee?? && comment.referee.id??>${encrypter.encrypt(comment.referee.id)}</#if>'/>                    
 												<p>If you are not able to act as a referee in this case, please let us know by clicking the "Decline" button below.</p>
 												<div class="buttons">
 													<button class="blue" type="button" id="declineReference" value="close">Decline</button>              
@@ -155,6 +136,6 @@
     <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
-    <script type="text/javascript" src="<@spring.url '/design/default/js/referee/reference.js'/>"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
   </body>
 </html>

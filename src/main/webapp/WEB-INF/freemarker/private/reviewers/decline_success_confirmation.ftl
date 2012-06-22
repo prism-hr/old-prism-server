@@ -33,7 +33,7 @@
         <div id="site-message" class="success">
           <div class="header">
             <div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
-            <div class="tagline">Your Gateway to<br />Research Opportunities</div>
+            <div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
           </div>
           <div class="content">          
             <h1>Declined</h1>

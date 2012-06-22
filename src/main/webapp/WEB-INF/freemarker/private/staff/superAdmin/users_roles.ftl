@@ -1,11 +1,5 @@
 <#import "/spring.ftl" as spring />
 <table class="data" border="0">
-	<colgroup>
-		<col style="width: 20px;" />
-		<col style="width: auto;" />
-		<col style="width: 240px;" />
-		<col style="width: 70px;" />
-	</colgroup>
 	<thead class="fixedHeader">
 		<tr>
 			<th scope="col">&nbsp;</th>

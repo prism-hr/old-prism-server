@@ -61,7 +61,7 @@
 								
 									<div class="row programme">
 										<span class="plain-label">Programme<em>*</em></span>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'manageUsers.programme'/>"></span>
 										<div class="field">
 											<select class="max" name="selectedProgram" id="programs">
 												<option value="">Please select a program</option>
@@ -87,7 +87,7 @@
 									
 									<div class="row">
 										<span class="plain-label">First Name<em>*</em></span>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>readonly="readonly"</#if>/>			                                  
 											<@spring.bind "userDTO.firstName" /> 
@@ -99,7 +99,7 @@
 			
 									<div class="row">
 										<span class="plain-label">Last Name<em>*</em></span>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.lastName?html)!}"  name="lastName" id="lastName"  <#if !userDTO.newUser>readonly="readonly"</#if>/>
 											<@spring.bind "userDTO.lastName" /> 
@@ -111,7 +111,7 @@
 			
 									<div class="row">
 										<span class="plain-label">Email<em>*</em></span>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>readonly="readonly"</#if>/>
 											<@spring.bind "userDTO.email" /> 
@@ -123,7 +123,7 @@
 		
 									<div class="row">
 										<span class="plain-label">Roles</span>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'manageUsers.roles'/>"></span>
 										<div class="field">
 											<select multiple size="5" id="roles" name="selectedAuthorities" class="max">
 												<#list authorities as authority>

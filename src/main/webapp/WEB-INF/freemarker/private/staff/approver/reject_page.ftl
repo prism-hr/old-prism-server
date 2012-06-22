@@ -98,7 +98,7 @@
 										
 										<div class="row">
 											<label class="plain-label">Reasons for Rejection<em>*</em></label>
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'rejection.reason'/>"></span>
 											<div id="reasonList" class="field">
 												<ul>
 													<#list availableReasons as reason>
@@ -119,7 +119,7 @@
 									<div class="row-group">					
 										<div class="row">
 											<label class="plain-label">Include a link to the UCL Postgraduate Prospectus in the rejection message?</label>
-											<span class="hint" data-desc=""></span>
+											<span class="hint" data-desc="<@spring.message 'rejection.uclLink'/>"></span>
 											<div class="field">					      
 												<input type="checkbox" name="includeProspectusLink" id="includeProspectusLink" class="reason"/>											
 											</div>

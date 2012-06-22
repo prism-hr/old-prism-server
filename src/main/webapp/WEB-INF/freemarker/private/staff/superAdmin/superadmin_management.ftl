@@ -71,7 +71,7 @@
 								
 									<div class="row">
 										<span class="plain-label">First Name<em>*</em></span>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
 										<div class="field">
 											<input class="full" type="text"  value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>readonly="readonly"</#if>/>			                                  
 											<@spring.bind "userDTO.firstName" /> 
@@ -83,7 +83,7 @@
 			
 									<div class="row">
 										<span class="plain-label">Last Name<em>*</em></span>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
 										<div class="field">
 											<input class="full" type="text" value="${(userDTO.lastName?html)!}"  name="lastName" id="lastName"  <#if !userDTO.newUser>readonly="readonly"</#if>/>
 											<@spring.bind "userDTO.lastName" /> 
@@ -95,7 +95,7 @@
 			
 									<div class="row">
 										<span class="plain-label">Email<em>*</em></span>
-										<span class="hint" data-desc=""></span>
+										<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
 										<div class="field">
 											<input class="full" type="text" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>readonly="readonly"</#if>/>
 											<@spring.bind "userDTO.email" /> 

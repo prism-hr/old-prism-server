@@ -114,7 +114,9 @@
 													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 												</div>
 											</div>
+										</div>
 											
+										<div class="row-group">
 											<div class="row">
 												<span id="supervise-lbl" class="plain-label">Would you like to interview the applicant with a view to working with them?<em>*</em></span>
 												<span class="hint" data-desc=""></span>

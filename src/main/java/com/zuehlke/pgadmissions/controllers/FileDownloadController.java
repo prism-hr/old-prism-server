@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -56,12 +56,12 @@ public class FileDownloadController {
 
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)
 	public void downloadReferenceDocument(@RequestParam("referenceId") String encryptedReferenceId, HttpServletResponse response) throws IOException {
-		Reference reference = referenceService.getReferenceById(encryptionHelper.decryptToInteger(encryptedReferenceId));
+		ReferenceComment reference = referenceService.getReferenceById(encryptionHelper.decryptToInteger(encryptedReferenceId));
 		RegisteredUser currentUser =userService.getCurrentUser();
-		if (reference == null || reference.getDocument() == null || !currentUser.canSeeReference(reference)) {
+		if (reference == null || reference.getDocuments() == null || !currentUser.canSeeReference(reference)) {
 			throw new ResourceNotFoundException();
 		}
-		Document document = reference.getDocument();
+		Document document = reference.getDocuments().get(0);
 
 		sendDocument(response, document);
 

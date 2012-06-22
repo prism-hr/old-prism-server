@@ -21,16 +21,17 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 public class RefereeDAOTest extends AutomaticRollbackTestCase {
@@ -154,7 +155,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);
 		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").toDocument();
-		Reference reference = new ReferenceBuilder().document(document).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().user(user).comment("comment").application(application).document(document).toReferenceComment();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").reference(reference).user(user).toReferee();			
@@ -201,10 +202,18 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
 	
 		save(referee);
+		System.out.println("application " + referee.getApplication());
+		System.out.println("reference " + referee.getReference());
+		System.out.println("is declined " + referee.isDeclined());
+		System.out.println("user " + referee.getUser());
+		System.out.println("app status " + referee.getApplication().getStatus());
+		System.out.println("last notified " + referee.getLastNotified());
 		
 		flushAndClearSession();
+		assertEquals(referee, refereeDAO.getRefereeById(referee.getId()));
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
+		System.out.println(referees);
 		assertTrue(referees.contains(referee));		
 
 	}
@@ -380,28 +389,44 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application2 = new ApplicationFormBuilder().id(21).applicant(user).status(ApplicationFormStatus.REJECTED).toApplicationForm();
 		save(application, application2);
 		flushAndClearSession();
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
 		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").toDocument();
-		Reference reference = new ReferenceBuilder().document(document).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().document(document).commentType(CommentType.REFERENCE)
+				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(application)
+				.toReferenceComment();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee hasRefInApp = new RefereeBuilder().id(1).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("errwe.fs").firstname("sdsd").jobEmployer("sdfsdf").jobTitle("fssd").lastname("fsdsdf").phoneNumber("halliallo").reference(reference).toReferee();			
+		save(hasRefInApp);
 		
+		reference.setReferee(hasRefInApp);
 		Referee noRefInApp = new RefereeBuilder().id(2).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("rrwe.fsd").firstname("df").jobEmployer("df").jobTitle("fsdsd").lastname("dsdf").phoneNumber("hahallo").toReferee();			
 		
 		Referee noRefNoApp = new RefereeBuilder().id(3).application(application2).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("erwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdf").phoneNumber("halliho").toReferee();			
 		
+		ReferenceComment referenceOne = new ReferenceCommentBuilder().document(document).commentType(CommentType.REFERENCE)
+				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(application)
+				.toReferenceComment();
 		Referee hasRefInApp1 = new RefereeBuilder().id(4).application(application).addressCountry(countriesDAO.getCountryById(2)).addressLocation("sdfsdf")
 				.email("rrwe.fsd").firstname("ssdf").jobEmployer("sdfsdf").jobTitle("fssd").lastname("fsdsdf").phoneNumber("hallihallo").reference(reference).toReferee();			
-		
+		save(hasRefInApp1);
+
+		referenceOne.setReferee(hasRefInApp1);
 		Referee noRefInApp2 = new RefereeBuilder().id(6).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
-				.email("rrwe.fsd").firstname("df").jobEmployer("df").jobTitle("fsdsd").lastname("dsdf").phoneNumber("hahallo").toReferee();			
+				.email("rrwe.fsd").firstname("dfe").jobEmployer("df").jobTitle("fsdsd").lastname("dsdf").phoneNumber("hahallo").toReferee();			
 		
+		
+		ReferenceComment referenceTwo = new ReferenceCommentBuilder().document(document).commentType(CommentType.REFERENCE)
+				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(application2)
+				.toReferenceComment();
 		Referee hasRefButNotInApp = new RefereeBuilder().id(5).application(application2).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("errwesd").firstname("sdf").jobEmployer("sdf").jobTitle("fssd").lastname("fsdsdf").phoneNumber("hallihallo").reference(reference).toReferee();			
+		save(hasRefButNotInApp);
+		referenceTwo.setReferee(hasRefButNotInApp);
 		
-		save(document, reference,hasRefInApp, noRefInApp, noRefNoApp, hasRefButNotInApp, hasRefInApp1, noRefInApp2);
+		save(document, reference, referenceOne, referenceTwo,  noRefNoApp,noRefInApp, noRefInApp2);
 		
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesWhoDidntProvideReferenceYet(application);
@@ -474,14 +499,20 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	public void shouldNotReturnRefereesForNotifiationIfReferenceProvided() {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		save(application);		
+		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
 		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").toDocument();
-		Reference reference = new ReferenceBuilder().document(document).toReference();
+		save(document);
+		ReferenceComment reference = new ReferenceCommentBuilder().document(document).commentType(CommentType.REFERENCE)
+				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(application)
+				.toReferenceComment();
 		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").declined(false).reference(reference).toReferee();			
 	
 		save(referee);
+		reference.setReferee(referee);
+		save(reference);
 		
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();

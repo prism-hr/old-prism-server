@@ -7,6 +7,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
@@ -15,7 +16,7 @@ public class FeedbackCommentValidator implements Validator{
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(ReviewComment.class) || clazz.isAssignableFrom(InterviewComment.class);
+		return clazz.isAssignableFrom(ReviewComment.class) || clazz.isAssignableFrom(InterviewComment.class) || clazz.isAssignableFrom(ReferenceComment.class);
 	}
 
 	@Override
@@ -43,6 +44,11 @@ public class FeedbackCommentValidator implements Validator{
 				}
 				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
 			}
+		}
+		else if (target instanceof ReferenceComment) {
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", "dropdown.radio.select.none");
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", "dropdown.radio.select.none");
 		}
 		
 		

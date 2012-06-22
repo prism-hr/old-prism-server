@@ -30,10 +30,8 @@ public class Referee extends DomainObject<Integer> {
 	@JoinColumn(name = "registered_user_id")
 	private RegisteredUser user;
 
-	@OneToOne(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "reference_id")
-	private Reference reference;
+	@OneToOne(mappedBy = "referee")
+	private ReferenceComment reference;
 
 	@ManyToOne
 	@JoinColumn(name = "application_form_id")
@@ -162,11 +160,11 @@ public class Referee extends DomainObject<Integer> {
 		return reference != null;
 	}
 
-	public Reference getReference() {
+	public ReferenceComment getReference() {
 		return reference;
 	}
 
-	public void setReference(Reference reference) {
+	public void setReference(ReferenceComment reference) {
 		this.reference = reference;
 	}
 

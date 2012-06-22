@@ -492,7 +492,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return getRefereeForApplicationForm(form) != null;
 	}
 
-	public boolean canSeeReference(Reference reference) {
+	public boolean canSeeReference(ReferenceComment reference) {
 		if (this.isInRole(Authority.APPLICANT)) {
 			return false;
 		}

@@ -49,10 +49,13 @@
 											<div class="row-group">
 												<div class="row">
 													<span class="plain-label">Comments<em>*</em></span>
-													<span class="hint" data-desc="<@spring.message 'reference.comment'/>"></span>
+												<span class="hint"/>"></span>
+													
 													<div class="field">		            				
 														<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 													</div>
+												<@spring.bind "reference.comment" /> 
+															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 												</div>
 											</div>
 											
@@ -74,6 +77,43 @@
 														</#if>
 													</div>  
 												</div>
+												
+											<div class="row-group">
+												<h3>Applicant Suitability</h3>
+											
+												<div class="row">
+													<span id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></span>
+													<span class="hint" data-desc=""></span>
+													<div class="field">
+														<label><input type="radio" name="suitableForUCL" value="true" id="suitableRB_true"
+														<#if reference.isSuitableForUCLSet() && reference.suitableForUCL> checked="checked"</#if>
+														/> Yes</label> 
+														<label><input type="radio" name="suitableForUCL" value="false" id="suitableRB_false"
+														<#if reference.isSuitableForUCLSet() && !reference.suitableForUCL> checked="checked"</#if>
+														/> No</label> 
+														<@spring.bind "reference.suitableForUCL" /> 
+															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+														</div>
+												</div>
+											
+											<div class="row">
+												<span id="supervise-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
+												<span class="hint" data-desc=""></span>
+												<div class="field">
+													<label><input type="radio" name="suitableForProgramme" value="true" id="willingRB_true"
+													<#if reference.isSuitableForProgrammeSet() && reference.suitableForProgramme> checked="checked"</#if> 
+													/> Yes</label> 
+													<label><input type="radio" name="suitableForProgramme" value="false" id="willingRB_false"
+													<#if reference.isSuitableForProgrammeSet() && !reference.suitableForProgramme> checked="checked"</#if>
+													/> No</label> 
+													<@spring.bind "reference.suitableForProgramme" /> 
+													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+												</div>
+											</div>
+	
+										</div>
+												
+												
 												
 												<div class="buttons">
 													<button type="reset" value="cancel">Cancel</button>

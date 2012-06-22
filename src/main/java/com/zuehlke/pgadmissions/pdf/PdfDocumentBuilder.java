@@ -639,7 +639,7 @@ public class PdfDocumentBuilder {
 					table.addCell(newTableCell("Reference", smallBoldFont));
 					if (referee.getReference() != null) {
 						table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
-						bookmarkMap.put(appendixCounter++, referee.getReference().getDocument());
+						bookmarkMap.put(appendixCounter++, referee.getReference().getDocuments().get(0));
 					} else {
 						table.addCell(newTableCell(null, smallFont));
 					}

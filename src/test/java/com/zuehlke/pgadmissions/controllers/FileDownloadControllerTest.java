@@ -16,10 +16,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -96,7 +96,7 @@ public class FileDownloadControllerTest {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		EasyMock.replay(encryptionHelperMock);
 		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();
-		Reference reference = new ReferenceBuilder().id(1).document(document).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).toReferenceComment();
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 
 		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
@@ -134,7 +134,7 @@ public class FileDownloadControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfReferenceDoesNotHaveDocument() throws IOException {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		EasyMock.replay(encryptionHelperMock);
-		Reference reference = new ReferenceBuilder().id(1).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).toReferenceComment();
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
 		EasyMock.replay(referenceServiceMock);
@@ -160,7 +160,7 @@ public class FileDownloadControllerTest {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		EasyMock.replay(encryptionHelperMock);
 		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();
-		Reference reference = new ReferenceBuilder().id(1).document(document).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).toReferenceComment();
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
 		EasyMock.replay(referenceServiceMock);		

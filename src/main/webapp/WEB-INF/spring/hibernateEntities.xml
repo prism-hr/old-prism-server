@@ -16,6 +16,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.StateChangeComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ReviewComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.InterviewComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReferenceComment</value>	     		
 	     		<value>com.zuehlke.pgadmissions.domain.Program</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ProgramInstance</value>		     		
 	     		<value>com.zuehlke.pgadmissions.domain.Qualification</value>
@@ -27,7 +28,6 @@
 	     		<value>com.zuehlke.pgadmissions.domain.EmploymentPosition</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Referee</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Reviewer</value>
-	     		<value>com.zuehlke.pgadmissions.domain.Reference</value>	     		
 	     		<value>com.zuehlke.pgadmissions.domain.PersonalDetails</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ProgrammeDetails</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Supervisor</value>

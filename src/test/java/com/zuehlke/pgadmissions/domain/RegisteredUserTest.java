@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
@@ -494,7 +494,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnFalseIfUserIsApplicant() {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		assertFalse(user.canSeeReference(new ReferenceBuilder().id(1).toReference()));
+		assertFalse(user.canSeeReference(new ReferenceCommentBuilder().id(1).toReferenceComment()));
 	}
 
 	@Test
@@ -509,7 +509,7 @@ public class RegisteredUserTest {
 		};
 
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
-		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).referee(referee).toReferenceComment();
 		assertFalse(user.canSeeReference(reference));
 	}
 
@@ -530,7 +530,7 @@ public class RegisteredUserTest {
 		};
 
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
-		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).referee(referee).toReferenceComment();
 		assertTrue(user.canSeeReference(reference));
 	}
 
@@ -547,7 +547,7 @@ public class RegisteredUserTest {
 		};
 
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(new RegisteredUserBuilder().id(8).toUser()).toReferee();
-		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).referee(referee).toReferenceComment();
 		assertFalse(user.canSeeReference(reference));
 	}
 
@@ -569,7 +569,7 @@ public class RegisteredUserTest {
 		};
 		user.setId(1);
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(user).toReferee();
-		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).referee(referee).toReferenceComment();
 		assertTrue(user.canSeeReference(reference));
 	}
 

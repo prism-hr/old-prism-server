@@ -8,19 +8,23 @@ import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 
 public class FeedbackCommentValidatorTest {
 	private FeedbackCommentValidator validator;
 	private ReviewComment reviewComment;
 	private InterviewComment interviewComment;
+	private ReferenceComment referenceComment;
 
 	@Test
 	public void shouldSupportComment() {
 		assertTrue(validator.supports(ReviewComment.class));
 		assertTrue(validator.supports(InterviewComment.class));
+		assertTrue(validator.supports(ReferenceComment.class));
 	}
 
 	@Test
@@ -101,10 +105,38 @@ public class FeedbackCommentValidatorTest {
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
+	@Test
+	public void shouldRejectIfCommentIsMissing(){
+		referenceComment.setComment(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "comment");
+		validator.validate(referenceComment, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfSuitableForUCLIsNotSelected(){
+		referenceComment.setSuitableForUCL(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForUCL");
+		validator.validate(referenceComment, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForUCL").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfSuitableForProgrammeIsNotSelected(){
+		referenceComment.setSuitableForProgramme(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForProgramme");
+		validator.validate(referenceComment, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForProgramme").getCode());
+	}
+	
 	@Before
 	public void setup() {
 		validator = new FeedbackCommentValidator();
 		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidate(false).willingToInterview(true).decline(false).toReviewComment();
 		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidate(false).willingToSupervice(true).decline(false).toInterviewComment();
+		referenceComment = new ReferenceCommentBuilder().comment("reference comment").suitableForProgramme(false).suitableForUcl(false).toReferenceComment();
 	}
 }

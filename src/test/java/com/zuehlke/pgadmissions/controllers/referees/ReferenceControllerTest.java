@@ -16,11 +16,11 @@ import org.springframework.web.bind.WebDataBinder;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -120,11 +120,11 @@ public class ReferenceControllerTest {
 				return currentUser;
 			}
 		};
-		Reference reference = new ReferenceBuilder().id(2).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(2).toReferenceComment();
 		Referee referee = new RefereeBuilder().id(8).reference(reference).toReferee();
 		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
 		EasyMock.replay(currentUser);
-		Reference returnedReference = controller.getReference( "1");
+		ReferenceComment returnedReference = controller.getReference( "1");
 		assertEquals(reference, returnedReference);
 	}
 
@@ -148,7 +148,7 @@ public class ReferenceControllerTest {
 		Referee referee = new RefereeBuilder().id(8).toReferee();
 		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
 		EasyMock.replay(currentUser);
-		Reference returnedReference = controller.getReference( "1");
+		ReferenceComment returnedReference = controller.getReference( "1");
 		assertNull(returnedReference.getId());
 		assertEquals(referee, returnedReference.getReferee());
 	}
@@ -168,13 +168,13 @@ public class ReferenceControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock);
-		assertEquals("private/referees/upload_references", controller.handleReferenceSubmission(new Reference(), errorsMock));
+		assertEquals("private/referees/upload_references", controller.handleReferenceSubmission(new ReferenceComment(), errorsMock));
 	}
 
 	@Test
 	public void shouldSaveReferenceAndRedirectToSaveViewIfNoErrors() {
 		Referee referee = new RefereeBuilder().id(1).toReferee();
-		Reference reference = new ReferenceBuilder().referee(referee).id(4).toReference();
+		ReferenceComment reference = new ReferenceCommentBuilder().referee(referee).id(4).toReferenceComment();
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		refereeServiceMock.saveReferenceAndSendMailNotifications(referee);

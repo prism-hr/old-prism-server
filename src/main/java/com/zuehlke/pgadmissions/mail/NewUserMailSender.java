@@ -40,7 +40,12 @@ public class NewUserMailSender extends MailSender {
 		InternetAddress toAddress = createAddress(user);
 
 		Map<String, Object> model = createModel(user);
-		String subject = resolveMessage("registration.invitation", model.get("newRoles"), model.get("program"));
+		String subject = null;
+		if(model.get("program") != null){
+			subject = resolveMessage("registration.invitation", model.get("newRoles"), model.get("program"));
+		}else{
+			subject = resolveMessage("registration.invitation.superadmin", model.get("newRoles"));
+		}
 
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,// 
 				"private/staff/mail/new_user_suggestion.ftl", model, null));

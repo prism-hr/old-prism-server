@@ -18,6 +18,7 @@ public class UserFactoryTest {
 
 	private RoleDAO roleDAOMock;
 	private UserFactory userFactory;
+	private EncryptionUtils encryptionUtilsMock;
 	
 	@Test
 	public void shouldCreateNewDisabledUserInRoles(){
@@ -30,7 +31,10 @@ public class UserFactoryTest {
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REFEREE)).andReturn(refereeRole);
 		Role applicantRole = new RoleBuilder().id(2).toRole();
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(applicantRole);
-		EasyMock.replay(roleDAOMock);
+		
+		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("activationCode");
+		EasyMock.replay(roleDAOMock, encryptionUtilsMock);
+		
 		RegisteredUser newUser = userFactory.createNewUserInRoles(firstname,lastname, email, authorities);
 		assertEquals("bob", newUser.getFirstName());
 		assertEquals("smith", newUser.getLastName());
@@ -41,12 +45,14 @@ public class UserFactoryTest {
 		assertTrue(newUser.isCredentialsNonExpired());
 		assertFalse(newUser.isEnabled());
 		assertEquals(2, newUser.getRoles().size());
+		assertEquals("activationCode", newUser.getActivationCode());
 		assertTrue(newUser.getRoles().containsAll(Arrays.asList(refereeRole, applicantRole)));
 	}
 	@Before
-	public void setUp(){
+	public void setUp(){		
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
-		userFactory = new UserFactory(roleDAOMock);
+		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
+		userFactory = new UserFactory(roleDAOMock, encryptionUtilsMock);
 		
 	}
 }

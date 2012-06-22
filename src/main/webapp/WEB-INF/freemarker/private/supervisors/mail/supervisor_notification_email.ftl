@@ -34,7 +34,7 @@
 			      		</p>
 				      	<p>
 				      		<font face="Arial, Helvetica, sans-serif" size="2">	encrypt?
-				      			<a href="${host}/pgadmissions/register?userId=${supervisor.user.id?string('#######')}">Register</a>
+				      			<a href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}">Register</a>
 				      		</font>
 				      	</p>
 			      	</#if>

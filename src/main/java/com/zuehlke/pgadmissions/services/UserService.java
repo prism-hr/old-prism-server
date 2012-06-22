@@ -373,4 +373,8 @@ public class UserService {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public RegisteredUser getUserByActivationCode(String activationCode) {
+		return userDAO.getUserByActivationCode(activationCode);
+	}
 }

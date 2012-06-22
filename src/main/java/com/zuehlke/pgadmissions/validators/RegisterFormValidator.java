@@ -15,7 +15,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class RegisterFormValidator implements Validator {
 
 	private UserService userService;
-	private boolean shouldValidateSameEmail;
 	private static final int MINIMUM_PASSWORD_CHARACTERS = 8;
 	private static final int MAXIMUM_PASSWORD_CHARACTERS = 15;
 	
@@ -33,13 +32,7 @@ public class RegisterFormValidator implements Validator {
 		return RegisteredUser.class.equals(clazz);
 	}
 
-	public boolean shouldValidateSameEmail() {
-		return shouldValidateSameEmail;
-	}
-
-	public void shouldValidateSameEmail(boolean validate) {
-		this.shouldValidateSameEmail = validate;
-	}
+	
 
 	@Override
 	public void validate(Object target, Errors errors) {
@@ -65,13 +58,12 @@ public class RegisterFormValidator implements Validator {
 			errors.rejectValue("password", "user.password.nonalphanumeric");
 		}
 		
-		if (shouldValidateSameEmail) {
-			List<RegisteredUser> allUsers = userService.getAllUsers();
-			for (RegisteredUser user : allUsers) {
-				if(user.getEmail().equals(record.getEmail()))
-					errors.rejectValue("email", "user.email.alreadyexists");
-			}
+		
+		RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(record.getEmail());
+		if (userWithSameEmail != null && !record.equals(userWithSameEmail)) {
+			errors.rejectValue("email", "user.email.alreadyexists");
 		}
+		
 		if (!EmailValidator.getInstance().isValid(record.getEmail())) {
 			errors.rejectValue("email", "text.email.notvalid");
 		}

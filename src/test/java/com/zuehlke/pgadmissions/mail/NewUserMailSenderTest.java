@@ -58,7 +58,7 @@ public class NewUserMailSenderTest {
 	}
 
 	@Test
-	public void shouldSendNotificationEmailToUse() throws UnsupportedEncodingException {
+	public void shouldSendNotificationEmailToUser() throws UnsupportedEncodingException {
 		final Map<String, Object> model = new HashMap<String, Object>();
 
 		mailSender = new NewUserMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
@@ -99,7 +99,49 @@ public class NewUserMailSenderTest {
 		mailSender.sendNewUserNotification(user);
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 	}
+	
+	@Test
+	public void shouldSendNotificationEmailWithCorrectSubjectToUserWhenProgramIsNull() throws UnsupportedEncodingException {
+		final Map<String, Object> model = new HashMap<String, Object>();
 
+		mailSender = new NewUserMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+
+			@Override
+			public Map<String, Object> createModel(RegisteredUser user) {
+				model.put("program", null);
+				model.put("newRoles", "user role");
+
+				return model;
+			}
+		};
+
+		RegisteredUser admin = new RegisteredUserBuilder().id(2).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		Role role_1 = new RoleBuilder().id(4).authorityEnum(Authority.ADMINISTRATOR).toRole();
+		PendingRoleNotification roleNotification_1 = new PendingRoleNotificationBuilder().program(program).role(role_1).addedByUser(admin).toPendingRoleNotification();
+
+		Role role_2 = new RoleBuilder().authorityEnum(Authority.INTERVIEWER).id(3).toRole();
+		PendingRoleNotification roleNotification_2 = new PendingRoleNotificationBuilder().program(program).role(role_2).addedByUser(admin).toPendingRoleNotification();
+
+		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Smith").email("email@test.com").pendingRoleNotifications(roleNotification_1, roleNotification_2).toUser();
+
+		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress = new InternetAddress("email@test.com", "Bob Smith");
+
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject", "private/staff/mail/new_user_suggestion.ftl", model, null))
+		.andReturn(preparatorMock);
+		javaMailSenderMock.send(preparatorMock);
+
+		EasyMock.expect(msgSourceMock.getMessage(//
+				EasyMock.eq("registration.invitation.superadmin"),// 
+				EasyMock.aryEq(new Object[] { "user role"}),// 
+				EasyMock.eq((Locale) null))).andReturn("resolved subject");
+
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+
+		mailSender.sendNewUserNotification(user);
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+	}
 	@Before
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);

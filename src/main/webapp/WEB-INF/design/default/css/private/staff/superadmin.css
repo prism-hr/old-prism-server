@@ -1,0 +1,74 @@
+
+h1 { font-size: 14pt; margin-bottom: 1em; }
+
+div.row { margin-bottom: 10px; overflow: hidden; }
+div.row label { font-weight: bold; }
+
+form { overflow: hidden; }
+form label { display: block; margin-bottom: 0.5em; }
+form input[type=text], form select, form textarea { width: 300px; }
+form select[multiple] { padding: 3px; width: 100% }
+
+div.programme label { float: left; width: 150px; }
+div.programme select { width: 300px; }
+
+table.data tbody td { background: #EEE; padding: 4px; }
+
+div.left-column { float: left; width: 380px; }
+div.right-column { float: left; text-align: left; width: 380px; }
+
+div.left-column label { width: 90px !important; }
+div.left-column .field { margin-left: 100px !important; }
+
+.pending{ color: #999999;}
+
+/* Table of existing users. */
+#existingUsers { border: none; border-bottom: 1px solid #999; margin-bottom: 10px; padding: 0; position: relative; }
+#existingUsers .arrow { background: url(../../../images/button_arrow.png) no-repeat; display: inline-block; height: 20px; width: 20px; }
+
+/* User's roles as icons. */
+#existingUsers .role-icons span { background: url(../../../images/icon_roles.png) no-repeat; display: inline-block; height: 21px; margin-right: 4px; width: 22px; }
+
+#existingUsers .role-icons .is-supervisor { background-position: 0 -21px; }
+#existingUsers .role-icons .is-admin { background-position: -22px -21px; }
+#existingUsers .role-icons .is-interviewer { background-position: -44px -21px; }
+#existingUsers .role-icons .is-reviewer { background-position: -66px -21px; }
+#existingUsers .role-icons .is-approver { background-position: -88px -21px; }
+
+#existingUsers .role-icons.supervisor .is-supervisor { background-position: 0 0; }
+#existingUsers .role-icons.administrator .is-admin { background-position: -22px 0; }
+#existingUsers .role-icons.interviewer .is-interviewer { background-position: -44px 0; }
+#existingUsers .role-icons.reviewer .is-reviewer { background-position: -66px 0; }
+#existingUsers .role-icons.approver .is-approver { background-position: -88px 0; }
+
+
+/* Fix header scrolling... http://www.imaputz.com/cssStuff/bigFourVersion.html */
+
+/* define height and width of scrollable area. Add 16px to width for scrollbar          */
+div.tableContainer { clear: both;	height: 210px; overflow: auto; width: 100%; }
+
+/* Reset overflow value to hidden for all non-IE browsers. */
+html>body div.tableContainer { overflow: hidden; width: 100%; }
+
+/* define width of table. IE browsers only                 */
+div.tableContainer table { float: left; width: 740px }
+
+/* define width of table. Add 16px to width for scrollbar.           */
+/* All other non-IE browsers.                                        */
+html>body div.tableContainer table { width: 100%; }
+
+thead.fixedHeader tr { position: relative }
+html>body thead.fixedHeader tr { display: block }
+
+html>body tbody.scrollContent { display: block; height: 180px; overflow: auto; width: 100% }
+
+/* Column widths. (Do not use COLGROUP!) */
+html>body thead.fixedHeader th { width: 20px }
+html>body thead.fixedHeader th + th { width: 472px }
+html>body thead.fixedHeader th + th + th { width: 240px }
+html>body thead.fixedHeader th + th + th + th { width: 70px }
+
+html>body tbody.scrollContent td { width: 20px }
+html>body tbody.scrollContent td + td { width: 472px }
+html>body tbody.scrollContent td + td + td { width: 240px }
+html>body tbody.scrollContent td + td + td + td { width: 70px }

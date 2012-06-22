@@ -28,7 +28,7 @@ public class RegisterFormValidatorTest {
 
 	@Before
 	public void setup(){
-		user = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").password("12345678").toUser();
+		user = new RegisteredUserBuilder().id(4).username("email").firstName("bob").lastName("bobson").email("meuston@gmail.com").confirmPassword("12345678").password("12345678").toUser();
 
 		userServiceMock = EasyMock.createMock(UserService.class);
 		recordValidator = new RegisterFormValidator(userServiceMock);
@@ -38,8 +38,8 @@ public class RegisterFormValidatorTest {
 	public void shouldRejectIfFirstNameIsEmpty() {
 		user.setFirstName(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -50,8 +50,8 @@ public class RegisterFormValidatorTest {
 	public void shouldRejectIfLasttNameIsEmpty() {
 		user.setLastName(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "lastName");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -62,8 +62,8 @@ public class RegisterFormValidatorTest {
 	public void shouldRejectIfEmailNotValidEmail() {
 		user.setEmail("nonvalidemail");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("nonvalidemail")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -74,8 +74,8 @@ public class RegisterFormValidatorTest {
 	public void shouldRejectIfNoConfirmPassword() {
 		user.setConfirmPassword(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "confirmPassword");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -87,8 +87,8 @@ public class RegisterFormValidatorTest {
 		user.setConfirmPassword("12345");
 		user.setPassword("12345678");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "confirmPassword");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(2, mappingResult.getErrorCount());
@@ -101,8 +101,8 @@ public class RegisterFormValidatorTest {
 		user.setPassword("12");
 		user.setConfirmPassword("12");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -114,8 +114,8 @@ public class RegisterFormValidatorTest {
 		user.setPassword("1234567891234567");
 		user.setConfirmPassword("1234567891234567");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -128,8 +128,8 @@ public class RegisterFormValidatorTest {
 		user.setPassword(" 12o*-lala");
 		user.setConfirmPassword(" 12o*-lala");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -142,8 +142,8 @@ public class RegisterFormValidatorTest {
 		user.setPassword("oooooooooo");
 		user.setConfirmPassword("oooooooooo");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
@@ -154,8 +154,8 @@ public class RegisterFormValidatorTest {
 		user.setPassword("ooo12ooo3oo1");
 		user.setConfirmPassword("ooo12ooo3oo1");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
@@ -164,23 +164,51 @@ public class RegisterFormValidatorTest {
 	@Test
 	public void shouldNotRejectIfPasswordsMatch() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "confirmPassword");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+	
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
 	@Test
-	public void shouldRejectIfEmailAlreadyExist() {
+	public void shouldRejectIfEmailAlreadyExistAndUserIsNewuser() {
+		user.setId(null);
 		user.setEmail("meuston@gmail.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
-		EasyMock.replay(userServiceMock);
-		recordValidator.shouldValidateSameEmail(true);
+		
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(new RegisteredUserBuilder().id(5).toUser());
+		EasyMock.replay(userServiceMock);		
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.email.alreadyexists", mappingResult.getFieldError("email").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfEmailAlreadyExistAndUserIsExistingUserButNotUserWithEmail() {
+
+		user.setEmail("meuston@gmail.com");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
+		
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(new RegisteredUserBuilder().id(5).toUser());
+		EasyMock.replay(userServiceMock);		
+		recordValidator.validate(user, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.email.alreadyexists", mappingResult.getFieldError("email").getCode());
+		
+	}
+	
+	@Test
+	public void shouldNotRejectIfEmailAlreadyExistAndUserIsExistingUserAndIsUserWithEmail() {
+
+		user.setEmail("meuston@gmail.com");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
+		
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
+		EasyMock.replay(userServiceMock);		
+		recordValidator.validate(user, mappingResult);
+		Assert.assertEquals(0, mappingResult.getErrorCount());
+		
+		
 	}
 }

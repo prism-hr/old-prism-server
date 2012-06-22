@@ -15,8 +15,6 @@
 		<![endif]-->
 		
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/global_public.css' />" />
-		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/register.css' />" />
-		
 	</head>
 
 	<body id="bg">
@@ -31,19 +29,17 @@
 			<!-- Middle. -->
 			<div id="middle">
 	  
-        <div id="site-message" class="success">
-          <div class="header">
-            <div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_app.png'/>" alt="" /></div>
-            <div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
-          </div>
-          <div class="content">
-            <h1>Almost there...</h1>
-            <p>To activate your account please check your emails and click on the activation link.</p>
-            <p class="buttons"><a class="button blue" href="/pgadmissions/register/resendConfirmation?activationCode=${pendingUser.activationCode}">Resend email</a></p>
-          </div>
-        </div>
+       	 		<div id="site-message" class="notice">
+		          <div class="header">
+		            	<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
+		            	<div class="tagline">Your Gateway to<br />Research Opportunities</div>
+		          </div>
+		          <div class="error">
+		            <p>The system was unable to process the activation request.</p>
+		          </div>
+       		</div>
         
-      </div>
+     	</div>
 	  	
       <!-- Footer. -->
       <div id="footer">

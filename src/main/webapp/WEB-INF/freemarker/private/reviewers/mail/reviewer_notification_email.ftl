@@ -35,8 +35,8 @@
 			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with UCL Prism, please do so by clicking the link below:</font>
 			      		</p>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">   encrypt
-				      			<a href="${host}/pgadmissions/register?userId=${reviewer.user.id?string('#######')}">Register</a>
+				      		<font face="Arial, Helvetica, sans-serif" size="2">  
+				      			<a href="${host}/pgadmissions/register?activationCode=${reviewer.user.activationCode}">Register</a>
 				      		</font>
 				      	</p>
 			      	</#if>

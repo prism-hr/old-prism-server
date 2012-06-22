@@ -54,36 +54,40 @@
 		    <!-- Login form. -->
 		    <section id="registration-box">
 		    
-		    	<form method="post" <#if (model.isSuggestedUser??)> action= "/pgadmissions/register/submit?isSuggestedUser=${model.isSuggestedUser?string('#######')}" <#else> action= "/pgadmissions/register/submit"</#if>>
+		    	<form method="post" action= "/pgadmissions/register/submit">
 		      		<p>&gt; Register Today...</p>
-		            <input id="recordId" type="hidden" name="recordId" />
+		            <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
 		            
-		            <input id="firstName" type="text" name="firstName" value="${model.record.firstName!}" placeholder="First Name" />
-		            <#if model.hasError('firstName')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
-                    </#if>
+		            <input id="firstName" type="text" name="firstName" value="${pendingUser.firstName!}" placeholder="First Name" />
+		            <@spring.bind "pendingUser.firstName" /> 
+              		<#list spring.status.errorMessages as error>		                                		
+                    	<span class="invalid">${error}</span>                    		
+                    </#list>
 		            
-		            <input id="lastName" type="text" name="lastName" value="${model.record.lastName!}" placeholder="Last Name" />
-		            <#if model.hasError('lastName')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
-                    </#if>
+		            <input id="lastName" type="text" name="lastName" value="${pendingUser.lastName!}" placeholder="Last Name" />
+		             <@spring.bind "pendingUser.lastName" /> 
+		           <#list spring.status.errorMessages as error>		                                		
+                    	<span class="invalid">${error}</span>                    		
+                    </#list>
 		            
-		            <input id="email" type="text" name="email" value="${model.record.email!"Email Address"}"/>
-		            <#if model.hasError('email')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
-                    </#if>
+		            <input id="email" type="text" name="email" value="${pendingUser.email!"Email Address"}"/>
+		             <@spring.bind "pendingUser.email" /> 
+		           <#list spring.status.errorMessages as error>		                                		
+                    	<span class="invalid">${error}</span>                    		
+                    </#list>
 		            
 		            <input id="password" type="password" name="password" value="default"/>
-		            <#if model.hasError('password')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('password').code /></span>                    		
-                    </#if>
+		             <@spring.bind "pendingUser.password" /> 
+		        	<#list spring.status.errorMessages as error>		                                		
+                    	<span class="invalid">${error}</span>                    		
+                    </#list>
 		            
 		            <input id="confirmPassword" type="password" name="confirmPassword" value="default"/>
-		            <#if model.hasError('confirmPassword')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                    		
-                    </#if>
+		             <@spring.bind "pendingUser.confirmPassword" /> 
+		            <#list spring.status.errorMessages as error>		                                		
+                    	<span class="invalid">${error}</span>                    		
+                    </#list>
 		            
-		            <input type="hidden" name="programId" value="${RequestParameters.program!}"/>
 		            
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		      	</form>

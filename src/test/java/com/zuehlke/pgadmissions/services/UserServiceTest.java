@@ -67,7 +67,15 @@ public class UserServiceTest {
 		EasyMock.replay(userDAOMock);
 		assertEquals(user, userService.getUser(1));
 	}
-
+	
+	@Test
+	public void shouldGetUserFromDAOByActivationCode() {
+		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		EasyMock.expect(userDAOMock.getUserByActivationCode("Abc")).andReturn(user);
+		EasyMock.replay(userDAOMock);
+		assertEquals(user, userService.getUserByActivationCode("Abc"));
+	}
+	
 	@Test
 	public void shouldGetAllUsersWithAuthority() {
 		RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();

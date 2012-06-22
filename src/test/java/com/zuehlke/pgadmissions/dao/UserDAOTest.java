@@ -85,7 +85,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	public void shouldFindUsersByActivationCode() throws Exception {
 
 		RegisteredUser userOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).activationCode("abc")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).activationCode("xyz")
 				.toUser();
 		RegisteredUser userTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).activationCode("def")
@@ -95,7 +95,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		RegisteredUser foundUser = userDAO.getUserByActivationCode("abc");
+		RegisteredUser foundUser = userDAO.getUserByActivationCode("xyz");
 		assertEquals(userOne, foundUser);
 
 	}

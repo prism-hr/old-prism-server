@@ -29,17 +29,17 @@
 			<!-- Middle. -->
 			<div id="middle">
 	  
-        <div id="site-message" class="notice">
-          <div class="header">
-            <div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_app.png'/>" alt="" /></div>
-            <div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
-          </div>
-          <div class="content">
-            <p>An e-mail with the new password will be sent to ${email} shortly.</p>
-          </div>
-        </div>
+       	 		<div id="site-message" class="notice">
+		          <div class="header">
+		            	<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
+		            	<div class="tagline">Your Gateway to<br />Research Opportunities</div>
+		          </div>
+		          <div class="content">
+		            <p>An e-mail with the new password will be sent to ${email} shortly.</p>
+		          </div>
+       		</div>
         
-      </div>
+     	</div>
 	  	
       <!-- Footer. -->
       <div id="footer">

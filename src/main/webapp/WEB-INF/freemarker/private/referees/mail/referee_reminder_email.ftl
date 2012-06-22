@@ -46,8 +46,8 @@
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2"> 		encrypt
-			      			<a href="${host}/pgadmissions/decline/reference?refereeId=${referee.id?string('#######')}">Decline</a>
+			      		<font face="Arial, Helvetica, sans-serif" size="2"> 
+			      			<a href="${host}/pgadmissions/decline/reference?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode}">Decline</a>
 			      		</font>
 			      	</p>
 			      	<p>

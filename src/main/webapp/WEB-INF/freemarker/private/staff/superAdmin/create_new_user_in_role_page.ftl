@@ -47,9 +47,11 @@
 							<input type="hidden" id="deleteFromUser" name="user" value=""/>						
 							<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
 						</form>
+					</section>
 						
-						<div>
-							<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
+					<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
+						<section class="form-rows">
+							<div>
 							
 								<div class="section-info-bar">
 									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
@@ -147,11 +149,9 @@
 									<button type="submit" class="blue">Submit</button>
 								</div>
 								
-							</form>
-						</div>
-		
-					</section>
-				
+							</div>
+						</section>
+					</form>
 			
 				</div><!-- .content-box-inner -->
 			</div><!-- .content-box -->

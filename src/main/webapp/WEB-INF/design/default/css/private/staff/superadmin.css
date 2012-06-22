@@ -23,7 +23,7 @@ div.left-column .field { margin-left: 100px !important; }
 .pending{ color: #999999;}
 
 /* Table of existing users. */
-#existingUsers { border: none; margin-bottom: 10px; padding: 0; position: relative; }
+#existingUsers { border: none; border-bottom: 1px solid #999; margin-bottom: 10px; padding: 0; position: relative; }
 #existingUsers .arrow { background: url(../../../images/button_arrow.png) no-repeat; display: inline-block; height: 20px; width: 20px; }
 
 /* User's roles as icons. */
@@ -45,31 +45,17 @@ div.left-column .field { margin-left: 100px !important; }
 /* Fix header scrolling... http://www.imaputz.com/cssStuff/bigFourVersion.html */
 
 /* define height and width of scrollable area. Add 16px to width for scrollbar          */
-div.tableContainer {
-	clear: both;
-	border: 1px solid #963;
-	height: 210px;
-	overflow: auto;
-	width: 756px
-}
+div.tableContainer { clear: both;	height: 210px; overflow: auto; width: 100%; }
 
 /* Reset overflow value to hidden for all non-IE browsers. */
-html>body div.tableContainer {
-	overflow: hidden;
-	width: 756px
-}
+html>body div.tableContainer { overflow: hidden; width: 100%; }
 
 /* define width of table. IE browsers only                 */
-div.tableContainer table {
-	float: left;
-	width: 740px
-}
+div.tableContainer table { float: left; width: 740px }
 
 /* define width of table. Add 16px to width for scrollbar.           */
 /* All other non-IE browsers.                                        */
-html>body div.tableContainer table {
-	width: 812px
-}
+html>body div.tableContainer table { width: 100%; }
 
 thead.fixedHeader tr { position: relative }
 html>body thead.fixedHeader tr { display: block }

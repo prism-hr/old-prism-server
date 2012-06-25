@@ -24,7 +24,7 @@
 			<option value="progress">View progress</option>
 		</#if>   
 		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
-			<option value="validate">Approve Or Reject</option>
+			<option value="validate">Approve or Reject</option>
 			<option value="restartApprovalRequest">Request restart of approval</option>
 		</#if>
 		<#if  user.hasAdminRightsOnApplication(application) && application.isInState('VALIDATION')> 

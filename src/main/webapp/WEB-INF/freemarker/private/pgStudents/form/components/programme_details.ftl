@@ -183,6 +183,7 @@
         <div class="field">
           <label><input type="radio" name="awareSupervisor" value="YES" /> Yes</label>
           <label><input type="radio" name="awareSupervisor" value="NO" /> No</label>
+           <span class="invalid" name="superAware" style="display:none;"></span>
         </div>
       </div>
   

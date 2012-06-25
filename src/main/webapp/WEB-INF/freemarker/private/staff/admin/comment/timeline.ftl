@@ -98,6 +98,8 @@
 			            	<#assign role = "interviewer"/>    
 			            <#elseif comment.type == 'APPROVAL'>
 			            	<#assign role = "approver"/>                
+			            <#elseif comment.type == 'APPROVAL_EVALUATION'>
+			            	<#assign role = "approver"/>                
 			            </#if>
 			            <li>                          
 			              <div class="box">

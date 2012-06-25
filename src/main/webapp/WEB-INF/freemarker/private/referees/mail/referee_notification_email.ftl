@@ -36,7 +36,7 @@
 		      		</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/referee/register?activationCode=${referee.activationCode!}">Register</a>
+			      			<a href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}">Register</a>
 			      		</font>
 			      	</p>
 			      	</#if>

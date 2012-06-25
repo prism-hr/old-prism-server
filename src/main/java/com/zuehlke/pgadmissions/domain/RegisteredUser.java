@@ -51,7 +51,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	
 	private boolean enabled;
 	private boolean accountNonExpired;
-	private boolean accountNonLocked;
+	private boolean accountNonLocked ;
 	private boolean credentialsNonExpired;
 	private String activationCode;
 

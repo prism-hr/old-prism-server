@@ -280,7 +280,7 @@ public class RefereeServiceTest {
 
 	@Test
 	public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist() {
-		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
 		Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").toReferee();
 		refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock, eventFactoryMock,applicationFormDAOMock) {
 			@Override

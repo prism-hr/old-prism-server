@@ -46,9 +46,6 @@ public class Referee extends DomainObject<Integer> {
 	@Column(name = "firstname")
 	private String firstname;
 
-	@Column(name = "activationCode")
-	private String activationCode;
-
 	@Column(name = "lastname")
 	private String lastname;
 
@@ -148,13 +145,6 @@ public class Referee extends DomainObject<Integer> {
 		return id;
 	}
 
-	public String getActivationCode() {
-		return activationCode;
-	}
-
-	public void setActivationCode(String activationCode) {
-		this.activationCode = activationCode;
-	}
 
 	public boolean hasProvidedReference() {
 		return reference != null;

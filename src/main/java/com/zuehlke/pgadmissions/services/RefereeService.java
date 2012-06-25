@@ -75,11 +75,6 @@ public class RefereeService {
 	}
 
 	@Transactional
-	public Referee getRefereeByActivationCode(String activationCode) {
-		return refereeDAO.getRefereeByActivationCode(activationCode);
-	}
-
-	@Transactional
 	public void saveReferenceAndSendMailNotifications(Referee referee) {
 //		save(referee);		
 		addReferenceEventToApplication(referee);

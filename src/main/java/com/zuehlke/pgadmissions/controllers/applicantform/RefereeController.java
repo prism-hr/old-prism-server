@@ -80,7 +80,7 @@ public class RefereeController {
 		if(result.hasErrors()){
 			return STUDENTS_FORM_REFEREES_VIEW;
 		}
-		referee.setActivationCode(encryptionUtils.generateUUID());
+		
 		if(!application.isSubmitted()){
 			refereeService.save(referee);
 		}

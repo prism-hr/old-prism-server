@@ -18,6 +18,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import sun.launcher.resources.launcher;
+
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -299,7 +301,54 @@ public class InterviewControllerTest {
 		assertEquals(1, interviewersUsers.size());
 		assertTrue(interviewersUsers.contains(interviewer));
 	}
+	
+	@Test
+	public void shouldGetListOfInterviewersWillingToInterviewAndRemovePendingAndAssignedInterviewers() {
+		EasyMock.reset(userServiceMock);
+	
+		final RegisteredUser interviewer = EasyMock.createMock(RegisteredUser.class);
+		final RegisteredUser pendingInterviewerUser = EasyMock.createMock(RegisteredUser.class);
+		RegisteredUser assignedInterviewerMock = EasyMock.createMock(RegisteredUser.class);
+		
+		final ApplicationForm applicationForm = EasyMock.createMock(ApplicationForm.class);
+		
+		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
+				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
+			@Override
+			public ApplicationForm getApplicationForm(String applicationId) {
+				if (applicationId == "5") {
+					return applicationForm;
+				}
+				return null;
+			}
 
+			@Override
+			public Interview getInterview(Object applicationId) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public List<RegisteredUser> getPendingInterviewers(List<String> pendingInterviewer, String applicationId) {
+				if (pendingInterviewer.size() == 1 && pendingInterviewer.get(0).equals("enc3")) {
+					return Arrays.asList(pendingInterviewerUser);
+				}
+				return Collections.EMPTY_LIST;
+			}
+
+		};
+
+		EasyMock.expect(applicationForm.getReviewersWillingToInterview()).andReturn(
+				Arrays.asList( interviewer, pendingInterviewerUser, assignedInterviewerMock));
+		EasyMock.expect(interviewer.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
+		EasyMock.expect(pendingInterviewerUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
+		EasyMock.expect(assignedInterviewerMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
+		EasyMock.replay(applicationForm,assignedInterviewerMock, interviewer, pendingInterviewerUser);
+		List<RegisteredUser> interviewersUsers = controller.getWillingToInterviewReviewers("5", Arrays.asList("enc3"));
+		assertEquals(1, interviewersUsers.size());
+		assertTrue(interviewersUsers.contains(interviewer));
+	}
 	@Before
 	public void setUp() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);

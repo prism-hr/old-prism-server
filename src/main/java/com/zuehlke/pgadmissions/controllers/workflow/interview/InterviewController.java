@@ -143,8 +143,6 @@ public abstract class InterviewController {
 		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
 		if (pendingInterviewerId != null) {
 			for (String encryptedId : pendingInterviewerId) {
-				System.err.println(encryptedId);
-				System.err.println(encryptionHelper);
 				Integer id = encryptionHelper.decryptToInteger(encryptedId);
 				RegisteredUser user = userService.getUser(id);
 				if (!user.isInterviewerOfApplicationForm(applicationForm)) {
@@ -175,8 +173,17 @@ public abstract class InterviewController {
 	}
 
 	@ModelAttribute("willingToInterviewReviewers")
-	public List<RegisteredUser> getWillingToInterviewReviewers(@RequestParam String applicationId) {
+	public List<RegisteredUser> getWillingToInterviewReviewers(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingInterviewer) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		return applicationForm.getReviewersWillingToInterview();
+		List<RegisteredUser> availableReviewersWillingToInterview = new ArrayList<RegisteredUser>();
+		List<RegisteredUser> reviewersWillingToInterview = applicationForm.getReviewersWillingToInterview();
+		List<RegisteredUser> pendingInterviewers = getPendingInterviewers(pendingInterviewer, applicationId);
+		for (RegisteredUser registeredUser : reviewersWillingToInterview) {
+			if(!pendingInterviewers.contains(registeredUser) && !registeredUser.isInterviewerOfApplicationForm(applicationForm)){
+				availableReviewersWillingToInterview.add(registeredUser);
+			}
+		}
+		return availableReviewersWillingToInterview;
+
 	}
 }

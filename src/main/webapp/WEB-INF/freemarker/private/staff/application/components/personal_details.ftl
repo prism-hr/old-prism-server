@@ -16,8 +16,7 @@
 <#-- Personal Details Rendering -->
 
 <!-- Personal details -->
-<h2 id="personalDetails-H2" class="tick">
-  <span class="left"></span><span class="right"></span><span class="status"></span>
+<h2 id="personalDetails-H2" class="no-arrow tick">
   Personal Details
 </h2>
 

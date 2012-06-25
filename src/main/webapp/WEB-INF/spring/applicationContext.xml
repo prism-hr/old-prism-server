@@ -40,6 +40,7 @@
 		        <value>tooltips</value>		        
 		        <value>email_subjects</value>		        
 		        <value>timeline_messages</value>
+		        <value>actionmessages</value>
 		      </list>
 		    </property>
 	</bean>

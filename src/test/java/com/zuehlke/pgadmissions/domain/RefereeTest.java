@@ -45,4 +45,24 @@ public class RefereeTest {
 		assertTrue(referee.isEditable());
 	}
 
+	@Test
+	public void shouldReturnRespondedTrueIfDeclined(){
+		Referee referee = new RefereeBuilder().declined(true).toReferee();		
+		assertTrue(referee.hasResponded());
+	
+	}
+	@Test
+	public void shouldReturnRespondedTrueIfReferenceProcided(){
+		Referee referee = new RefereeBuilder().declined(true).toReferee();	
+		referee.setReference(new ReferenceComment());		
+		assertTrue(referee.hasResponded());
+	
+	}
+	@Test
+	public void shouldReturnFalseIfNeitherDeclineNorProvidedReference(){
+		Referee referee = new RefereeBuilder().declined(false).toReferee();
+		
+		assertFalse(referee.hasResponded());
+	
+	}
 }

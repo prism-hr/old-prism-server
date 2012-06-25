@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping("/acceptTerms")
@@ -20,14 +19,16 @@ public class AcceptTermsController {
 
 	private final ApplicationsService applicationsService;
 	private static final String TERMS_AND_CONDITIONS_VIEW_NAME = "/private/pgStudents/form/components/terms_and_conditions";
+	private final UserService userService;
 
 	AcceptTermsController() {
-		this(null);
+		this(null, null);
 	}
 
 	@Autowired
-	public AcceptTermsController(ApplicationsService applicationsServiceMock) {
+	public AcceptTermsController(ApplicationsService applicationsServiceMock, UserService userService) {
 		this.applicationsService = applicationsServiceMock;
+		this.userService = userService;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -39,7 +40,7 @@ public class AcceptTermsController {
 	@ModelAttribute
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null || !getCurrentUser().canSee(applicationForm)) {
+		if (applicationForm == null || !userService.getCurrentUser().canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
@@ -49,14 +50,10 @@ public class AcceptTermsController {
 	@RequestMapping(value = "/getTermsAndConditions", method = RequestMethod.GET)
 	public String getAcceptedTermsView() {
 
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
 		return TERMS_AND_CONDITIONS_VIEW_NAME;
-	}
-
-	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 	}
 
 }

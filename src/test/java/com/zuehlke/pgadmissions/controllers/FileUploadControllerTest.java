@@ -6,12 +6,8 @@ import static org.junit.Assert.assertNull;
 import java.io.IOException;
 
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +24,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
 public class FileUploadControllerTest {
@@ -39,6 +36,7 @@ public class FileUploadControllerTest {
 	private BindingResult errors;
 	private Document document;
 	private DocumentService documentServiceMock;
+	private UserService userServiceMock;
 
 	@Test
 	public void shouldGetApplicationFormFromService() {
@@ -143,7 +141,8 @@ public class FileUploadControllerTest {
 		documentValidatorMock = EasyMock.createMock(DocumentValidator.class);
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
 		document = new DocumentBuilder().id(1).toDocument();
-		controller = new FileUploadController(applicationsServiceMock, documentValidatorMock, documentServiceMock) {
+		userServiceMock = EasyMock.createMock(UserService.class);
+		controller = new FileUploadController(applicationsServiceMock, documentValidatorMock, documentServiceMock, userServiceMock) {
 			@Override
 			Document newDocument() {
 				return document;
@@ -156,17 +155,9 @@ public class FileUploadControllerTest {
 		};
 
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		EasyMock.replay(userServiceMock);
 	}
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
 
 }

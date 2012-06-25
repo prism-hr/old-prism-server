@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
@@ -19,12 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
 @Controller
@@ -34,17 +33,19 @@ public class FileUploadController {
 	private final ApplicationsService applicationService;
 	private final DocumentValidator documentValidator;
 	private final DocumentService documentService;
+	private final UserService userService;
 
 	FileUploadController() {
-		this(null, null, null);
+		this(null, null, null, null);
 
 	}
 
-	@Autowired
-	public FileUploadController(ApplicationsService applicationService, DocumentValidator documentValidator, DocumentService documentService) {
+	@Autowired		
+	public FileUploadController(ApplicationsService applicationService, DocumentValidator documentValidator, DocumentService documentService, UserService userService) {
 		this.applicationService = applicationService;
 		this.documentValidator = documentValidator;
 		this.documentService = documentService;
+		this.userService = userService;
 
 	}
 
@@ -63,7 +64,7 @@ public class FileUploadController {
 			return null;
 		}
 		ApplicationForm applicationform = applicationService.getApplicationByApplicationNumber(id);
-		if (applicationform == null || !SecurityContextHolder.getContext().getAuthentication().getDetails().equals(applicationform.getApplicant())) {
+		if (applicationform == null || !userService.getCurrentUser().equals(applicationform.getApplicant())) {
 			throw new ResourceNotFoundException();
 		}
 		if (applicationform.isSubmitted()) {
@@ -83,7 +84,7 @@ public class FileUploadController {
 		document.setContentType(multipartFile.getContentType());
 		document.setContent(multipartFile.getBytes());
 		document.setType(documentType);
-		document.setUploadedBy((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
+		document.setUploadedBy(userService.getCurrentUser());
 		return document;
 	}
 	

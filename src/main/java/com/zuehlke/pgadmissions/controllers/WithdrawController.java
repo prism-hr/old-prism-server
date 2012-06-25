@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotWithdrawApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WithdrawService;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
@@ -24,16 +24,18 @@ public class WithdrawController{
 	private final WithdrawService withdrawService;
 	private final ApplicationsService applicationService;
 	private final EventFactory eventFactory;
+	private final UserService userService;
 	
 
 	public WithdrawController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public WithdrawController(ApplicationsService applicationService, WithdrawService withdrawService, EventFactory eventFactory) {
+	public WithdrawController(ApplicationsService applicationService, UserService userService, WithdrawService withdrawService, EventFactory eventFactory) {
 			
 		this.applicationService = applicationService;
+		this.userService = userService;
 		this.withdrawService = withdrawService;
 		this.eventFactory = eventFactory;
 	}
@@ -51,8 +53,9 @@ public class WithdrawController{
 	}
 	
 	protected RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getCurrentUser();
 	}
+	
 	@ModelAttribute
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);

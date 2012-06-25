@@ -3,11 +3,9 @@ package com.zuehlke.pgadmissions.controllers.applicantform;
 import java.util.Date;
 import java.util.List;
 
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -28,6 +26,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
 @RequestMapping("/update")
 @Controller
@@ -38,14 +37,16 @@ public class AddressController {
 	private final AddressSectionDTOValidator addressSectionDTOValidator;
 	private final CountryService countryService;
 	private final CountryPropertyEditor countryPropertyEditor;
+	private final UserService userService;
 
 	AddressController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public AddressController(ApplicationsService applicationService, CountryService countryService, CountryPropertyEditor countryPropertyEditor, AddressSectionDTOValidator addressSectionDTOValidator) {
+	public AddressController(ApplicationsService applicationService, UserService userService, CountryService countryService, CountryPropertyEditor countryPropertyEditor, AddressSectionDTOValidator addressSectionDTOValidator) {
 		this.applicationService = applicationService;
+		this.userService = userService;
 		this.countryService = countryService;
 		this.countryPropertyEditor = countryPropertyEditor;
 		this.addressSectionDTOValidator = addressSectionDTOValidator;
@@ -115,7 +116,7 @@ public class AddressController {
 	}
 
 	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getCurrentUser();
 	}
 
 	@ModelAttribute("addressSectionDTO")

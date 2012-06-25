@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
@@ -40,15 +41,17 @@ public class SubmitApplicationFormController {
 	private static final String VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME = "/private/staff/application/main_application_page_without_headers";
 	private final ApplicationsService applicationService;
 	private final EventFactory eventFactory;
+	private final UserService userService;
 
 	SubmitApplicationFormController() {
-		this(null, null,  null, null);
+		this(null, null,  null, null, null);
 	}
 
 	@Autowired
-	public SubmitApplicationFormController(ApplicationsService applicationService, ApplicationFormValidator applicationFormValidator,  StageDurationDAO stageDurationDAO, EventFactory eventFactory) {
+	public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,  StageDurationDAO stageDurationDAO, EventFactory eventFactory) {
 			
 		this.applicationService = applicationService;
+		this.userService = userService;
 		this.applicationFormValidator = applicationFormValidator;
 		this.stageDurationDAO = stageDurationDAO;
 		this.eventFactory = eventFactory;
@@ -101,7 +104,7 @@ public class SubmitApplicationFormController {
 	}
 	
 	protected RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getCurrentUser();
 	}
 	
 	@ModelAttribute

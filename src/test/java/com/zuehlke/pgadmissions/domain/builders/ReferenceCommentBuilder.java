@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Date;
+
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -17,8 +19,14 @@ public class ReferenceCommentBuilder {
 	private boolean suitableForProgramme;
 	private String comment;
 	private RegisteredUser user;
-	private CommentType commentType;
+
 	private ApplicationForm application;
+	private Date date;
+	
+	public ReferenceCommentBuilder date(Date date){
+		this.date = date;
+		return this;
+	}
 	
 	public ReferenceCommentBuilder id(Integer id){
 		this.id = id;
@@ -40,12 +48,6 @@ public class ReferenceCommentBuilder {
 		this.user = user;
 		return this;
 	}
-	
-	public ReferenceCommentBuilder commentType(CommentType commentType){
-		this.commentType = commentType;
-		return this;
-	}
-	
 	
 	public ReferenceCommentBuilder comment(String comment){
 		this.comment = comment;
@@ -75,9 +77,10 @@ public class ReferenceCommentBuilder {
 		reference.setSuitableForUCL(suitableForUcl);
 		reference.setComment(comment);
 		reference.setUser(user);
-		reference.setType(commentType);
+		reference.setType(CommentType.REFERENCE);
 		reference.getDocuments().add(document);
 		reference.setApplication(application);
+		reference.setDate(date);
 		return reference;
 	}
 }

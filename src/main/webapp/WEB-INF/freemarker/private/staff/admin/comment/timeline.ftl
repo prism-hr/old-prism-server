@@ -106,13 +106,13 @@
                   <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
                 </div>
                 <p><em>${(comment.comment?html)!}</em></p>
-								<#if comment.documents?? && comment.documents?size &gt; 0>
-                <ul>                
-                <#list comment.documents as document>
-                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
-                </#list>
-                </ul>
-								</#if>
+				<#if comment.documents?? && comment.documents?size &gt; 0>
+	                <ul>                
+	                <#list comment.documents as document>
+	                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
+	                </#list>
+	                </ul>
+				</#if>
                 <#if comment.type == 'VALIDATION'>                                                    
                 <#include "timeline_snippets/validation_comment.ftl"/>
                 <#elseif comment.type == 'REVIEW'>
@@ -125,15 +125,7 @@
             </#list>                       
           </ul>
           <#elseif timelineObject.referee?? && user != applicationForm.applicant>
-          	
-	          <#if timelineObject.referee.declined>
-	          <p>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee</p>
-	          <#else>  
-	          <p>
-	            ${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} provided a reference:
-	            <a href="<@spring.url '/download/reference?referenceId=${encrypter.encrypt(timelineObject.referee.reference.id)}'/>">${timelineObject.referee.reference.document.fileName?html}</a>
-	          </p>
-	          </#if>     
+            	<#include "timeline_snippets/reference_comment.ftl"/>	         
           </#if> 
         </li>
         </#list>

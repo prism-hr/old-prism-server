@@ -405,15 +405,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		
 		save(hasRefButNotInApp, hasRefInApp, hasRefInApp1, noRefInApp, noRefInApp2, noRefNoApp);
 		
-		ReferenceComment reference = new ReferenceCommentBuilder().document(document).commentType(CommentType.REFERENCE)
+		ReferenceComment reference = new ReferenceCommentBuilder().document(document)
 				.comment("This is a reference comment").suitableForProgramme(false).referee(hasRefInApp1).user(refereeUser).application(application)
 				.toReferenceComment();
 
-		ReferenceComment referenceOne = new ReferenceCommentBuilder().document(document).commentType(CommentType.REFERENCE)
+		ReferenceComment referenceOne = new ReferenceCommentBuilder().document(document)
 				.comment("This is a reference comment").suitableForProgramme(false).referee(hasRefInApp).user(refereeUser).application(application)
 				.toReferenceComment();
 		
-		ReferenceComment referenceTwo = new ReferenceCommentBuilder().document(document).commentType(CommentType.REFERENCE)
+		ReferenceComment referenceTwo = new ReferenceCommentBuilder().document(document)
 				.comment("This is a reference comment").suitableForProgramme(false).referee(hasRefButNotInApp).user(refereeUser).application(application2)
 				.toReferenceComment();
 		save(document, reference, referenceOne, referenceTwo);
@@ -497,7 +497,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").declined(false).toReferee();			
 		
-		ReferenceComment reference = new ReferenceCommentBuilder().document(document).commentType(CommentType.REFERENCE)
+		ReferenceComment reference = new ReferenceCommentBuilder().document(document)
 				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(application)
 				.referee(referee)
 				.toReferenceComment();

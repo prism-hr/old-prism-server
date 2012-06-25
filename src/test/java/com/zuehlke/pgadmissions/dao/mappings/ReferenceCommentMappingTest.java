@@ -53,7 +53,7 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).commentType(CommentType.REFERENCE)
+		ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee)
 				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(applicationForm)
 				.toReferenceComment();
 		referee.setReference(referenceComment);

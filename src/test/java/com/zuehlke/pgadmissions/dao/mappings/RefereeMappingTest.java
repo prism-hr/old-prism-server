@@ -114,7 +114,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 				.lastname("smith").addressCountry(country).addressLocation("london").jobEmployer("zuhlke").jobTitle("se")
 				.messenger("skypeAddress").phoneNumber("hallihallo").user(refereeUser).toReferee();
 		
-		ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).commentType(CommentType.REFERENCE)
+		ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee)
 				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(applicationForm)
 				.toReferenceComment();
 		save(referee, referenceComment);		

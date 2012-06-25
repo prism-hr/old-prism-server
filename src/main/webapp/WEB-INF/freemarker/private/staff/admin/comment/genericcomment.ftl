@@ -60,7 +60,9 @@
 				        
 				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) >
 									<section class="form-rows">
-										<h2>Add comment</h2>
+										<h2 class="no-arrow">
+											Add comment
+										</h2>
 										<div>
 											<form method="POST" action= "<@spring.url '/comment'/>">
 												<div class="row-group">

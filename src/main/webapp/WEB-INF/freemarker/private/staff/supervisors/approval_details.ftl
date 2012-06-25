@@ -88,7 +88,9 @@
 						<br />
 							
 							<section class="form-rows">
-								<h2>Assign Supervisors</h2>
+								<h2 class="no-arrow">
+									Assign Supervisors
+								</h2>
 								<div>
 									<form>
 									

@@ -20,7 +20,7 @@ public class RefereeBuilder {
 	private String jobTitle;
 	private String addressLocation;
 
-	private String activationCode;
+
 	private Country addressCountry;
 	private ReferenceComment reference;
 	private String email;
@@ -67,10 +67,6 @@ public class RefereeBuilder {
 		return this;
 	}
 
-	public RefereeBuilder activationCode(String activationCode) {
-		this.activationCode = activationCode;
-		return this;
-	}
 
 	public RefereeBuilder firstname(String firstname) {
 		this.firstname = firstname;
@@ -125,7 +121,7 @@ public class RefereeBuilder {
 		referee.setJobTitle(jobTitle);
 		referee.setLastname(lastname);
 		referee.setMessenger(messenger);
-		referee.setActivationCode(activationCode);
+	
 		referee.setReference(reference);
 		referee.setUser(user);
 		referee.setPhoneNumber(phoneNumber);

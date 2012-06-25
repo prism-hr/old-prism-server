@@ -87,17 +87,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
 	}
 
-	@Test
-	public void shouldGetProgramByActivationCode() {
-		Referee referee = new RefereeBuilder().activationCode("abcde").email("email").firstname("name").lastname("last").addressLocation("UK")
-				.phoneNumber("hallihallo").toReferee();
-
-		sessionFactory.getCurrentSession().save(referee);
-		flushAndClearSession();
-
-		assertEquals(referee, refereeDAO.getRefereeByActivationCode("abcde"));
-
-	}
 
 	@Test
 	public void shouldNotReturnRefereesForInactiveApplicationForms() {

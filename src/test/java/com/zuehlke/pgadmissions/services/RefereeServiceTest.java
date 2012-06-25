@@ -209,15 +209,6 @@ public class RefereeServiceTest {
 		EasyMock.verify(refereeDAOMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 	}
 
-	@Test
-	public void shouldReturnRefereeWithActivationCode() {
-		Referee referee = EasyMock.createMock(Referee.class);
-		referee.setActivationCode("2345");
-		EasyMock.expect(refereeDAOMock.getRefereeByActivationCode("2345")).andReturn(referee);
-		EasyMock.replay(referee, refereeDAOMock, msgSourceMock);
-
-		Assert.assertEquals(referee, refereeService.getRefereeByActivationCode("2345"));
-	}
 
 	@Test
 	public void shouldReturnUserIfRefereeAlreadyExists() {

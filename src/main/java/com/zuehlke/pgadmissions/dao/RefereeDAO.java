@@ -43,11 +43,6 @@ public class RefereeDAO {
 
 	}
 
-	public Referee getRefereeByActivationCode(String activationCode) {
-		return (Referee) sessionFactory.getCurrentSession().createCriteria(Referee.class).add(Restrictions.eq("activationCode", activationCode)).uniqueResult();
-
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesDueAReminder() {
 		List<Referee> refereesDueReminder = new ArrayList<Referee>();

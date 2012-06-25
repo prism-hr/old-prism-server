@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
 import com.zuehlke.pgadmissions.dto.TimelineReference;
@@ -40,7 +41,7 @@ public class TimelineService {
 		List<Comment> visibleComments = applicationForm.getVisibleComments(userService.getCurrentUser());
 		for (Comment comment : visibleComments) {
 			for (TimelinePhase phase : phases) {
-				if (comment.getDate().compareTo(phase.getEventDate()) >= 0 
+				if (CommentType.REFERENCE != comment.getType() && comment.getDate().compareTo(phase.getEventDate()) >= 0 
 						&& (phase.getExitedPhaseDate() == null || comment.getDate().before(phase.getExitedPhaseDate()))) {
 					phase.getComments().add(comment);
 				}

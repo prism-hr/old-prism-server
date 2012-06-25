@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
@@ -236,12 +237,16 @@ public class TimelineServiceTest {
 		Date commentDateThree = format.parse("03 04 2012 17:01:41");
 		Comment commentThree = new CommentBuilder().date(commentDateThree).id(5).toComment();
 
+		//reference comments should be ignored
+		Date commentDateFour = format.parse("03 04 2012 16:00:00");
+		Comment referenceComment = new ReferenceCommentBuilder().date(commentDateFour).id(5).toReferenceComment();
+
 		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).id(1).toEvent();
 		Event reviewPhaseEnteredEvent = new StateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).toEvent();
 
 		ApplicationForm applicationForm = EasyMock.createNiceMock(ApplicationForm.class);
 		EasyMock.expect(applicationForm.getEvents()).andReturn(Arrays.asList(validationPhaseEnteredEvent, reviewPhaseEnteredEvent));
-		EasyMock.expect(applicationForm.getVisibleComments(currentUser)).andReturn(Arrays.asList(commentThree, commentOne, commentTwo));
+		EasyMock.expect(applicationForm.getVisibleComments(currentUser)).andReturn(Arrays.asList(commentThree, commentOne, referenceComment, commentTwo));
 		EasyMock.replay(applicationForm);
 
 		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);

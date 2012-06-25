@@ -5,7 +5,7 @@ $(document).ready(
 
 					function() {
 						
-						if ($('#status').val() == 'APPROVAL' ||  $('#status').val() == 'REJECTED' || $('#status').val() == 'REVIEW') {
+						if ($('#status').val() == 'APPROVAL' ||  $('#status').val() == 'APPROVED' ||  $('#status').val() == 'REJECTED' || $('#status').val() == 'REVIEW') {
 							saveComment();
 							return;
 						}

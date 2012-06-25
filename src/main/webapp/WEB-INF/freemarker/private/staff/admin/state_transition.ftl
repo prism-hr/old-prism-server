@@ -65,6 +65,8 @@
 							Review Application
 						<#elseif applicationForm.isInState('INTERVIEW')>
 							Evaluate Interview Outcomes
+						<#elseif applicationForm.isInState('APPROVAL')>
+							Approve Or Reject Application
 						</#if>
 						</h2>
 		
@@ -77,6 +79,8 @@
 								Evaluate the reviewers' comments and decide which stage to progress the application to.
 							<#elseif applicationForm.isInState('INTERVIEW')>
 								Evaluate the interviewers' comments and decide which stage to progress the application to.
+							<#elseif applicationForm.isInState('APPROVAL')>
+								Evaluate the application here and decide which stage to progress the application to.
 							</#if>
 							</div>
 		
@@ -192,6 +196,8 @@
 									<input type="hidden" id="commentType" name="type" value="REVIEW_EVALUATION"/>
 									<#elseif applicationForm.isInState('INTERVIEW')>
 									<input type="hidden" id="commentType" name="type" value="INTERVIEW_EVALUATION"/>
+									<#elseif applicationForm.isInState('APPROVAL')>
+									<input type="hidden" id="commentType" name="type" value="APPROVAL_EVALUATION"/>
 								</#if>
 						 	</form>
 						</div>

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -69,6 +70,22 @@ public class CommentFactoryTest {
 		assertEquals("bob", comment.getComment());
 		assertEquals(user,comment.getUser());
 		assertEquals(ApplicationFormStatus.APPROVED, ((StateChangeComment)comment).getNextStatus());
+		
+		comment = commentFactory.createComment(applicationForm, user, strComment, CommentType.APPROVAL_EVALUATION, ApplicationFormStatus.APPROVED);
+		assertEquals(ApprovalEvaluationComment.class, comment.getClass());
+		assertEquals(applicationForm, comment.getApplication());
+		assertEquals("bob", comment.getComment());
+		assertEquals(CommentType.APPROVAL_EVALUATION, comment.getType());
+		assertEquals(ApplicationFormStatus.APPROVED, ((StateChangeComment)comment).getNextStatus());
+		assertEquals(user,comment.getUser());
+		
+		comment = commentFactory.createComment(applicationForm, user, strComment, CommentType.APPROVAL_EVALUATION, ApplicationFormStatus.REJECTED);
+		assertEquals(ApprovalEvaluationComment.class, comment.getClass());
+		assertEquals(applicationForm, comment.getApplication());
+		assertEquals("bob", comment.getComment());
+		assertEquals(CommentType.APPROVAL_EVALUATION, comment.getType());
+		assertEquals(ApplicationFormStatus.REJECTED, ((StateChangeComment)comment).getNextStatus());
+		assertEquals(user,comment.getUser());
 		
 	}
 	

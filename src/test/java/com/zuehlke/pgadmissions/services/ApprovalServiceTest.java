@@ -295,15 +295,15 @@ public class ApprovalServiceTest {
 		StateChangeEvent event = new StateChangeEventBuilder().id(1).toEvent();
 		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
 
-		StateChangeComment stateChangeComment = new StateChangeComment();
-		stateChangeComment.setId(3);
-		EasyMock.expect(commentFactoryMock.createComment(application, currentUser, strComment, CommentType.APPROVAL, ApplicationFormStatus.APPROVED))
-				.andReturn(stateChangeComment);
-		commentDAOMock.save(stateChangeComment);
+//		StateChangeComment stateChangeComment = new StateChangeComment();
+//		stateChangeComment.setId(3);
+//		EasyMock.expect(commentFactoryMock.createComment(application, currentUser, strComment, CommentType.APPROVAL, ApplicationFormStatus.APPROVED))
+//				.andReturn(stateChangeComment);
+//		commentDAOMock.save(stateChangeComment);
 
 		EasyMock.replay(applicationFormDAOMock, eventFactoryMock, encryptionHelperMock, commentFactoryMock, documentDAOMock, commentDAOMock);
 
-		approvalService.moveToApproved(application, strComment, documentIds);
+		approvalService.moveToApproved(application);
 
 		EasyMock.verify(applicationFormDAOMock, commentDAOMock);
 		assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
@@ -312,8 +312,8 @@ public class ApprovalServiceTest {
 		assertEquals(1, application.getEvents().size());
 		assertEquals(event, application.getEvents().get(0));
 
-		assertEquals(2, stateChangeComment.getDocuments().size());
-		assertTrue(stateChangeComment.getDocuments().containsAll(Arrays.asList(documentOne, documentTwo)));
+//		assertEquals(2, stateChangeComment.getDocuments().size());
+//		assertTrue(stateChangeComment.getDocuments().containsAll(Arrays.asList(documentOne, documentTwo)));
 	}
 	
 	@Test(expected=IllegalStateException.class)
@@ -325,7 +325,7 @@ public class ApprovalServiceTest {
 
 		EasyMock.replay(applicationFormDAOMock, eventFactoryMock, encryptionHelperMock, commentFactoryMock, documentDAOMock, commentDAOMock);
 
-		approvalService.moveToApproved(application, "non", null);
+		approvalService.moveToApproved(application);
 
 		EasyMock.verify(applicationFormDAOMock, commentDAOMock);
 		

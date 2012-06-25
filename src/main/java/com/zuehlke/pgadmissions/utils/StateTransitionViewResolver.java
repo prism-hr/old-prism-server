@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
@@ -19,6 +20,7 @@ public class StateTransitionViewResolver {
 	private static final String INTERVIEW_VIEW = "redirect:interview/moveToInterview?applicationId=";
 	private static final String REVIEW_VIEW = "redirect:review/moveToReview?applicationId=";
 	private static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
+	private static final String MY_APPLICATIONS_VIEW = "redirect:applications";
 
 	public String resolveView(ApplicationForm applicationForm) {
 		if (ApplicationFormStatus.VALIDATION == applicationForm.getStatus()) {
@@ -27,7 +29,29 @@ public class StateTransitionViewResolver {
 		 if (ApplicationFormStatus.REVIEW == applicationForm.getStatus()) {
 			return resolveViewForReviewState(applicationForm);
 		}
+		 if (ApplicationFormStatus.APPROVAL == applicationForm.getStatus()) {
+			 return resolveViewForApprovalState(applicationForm);
+		 }
 		return  resolveViewForInterviewState(applicationForm);
+	}
+
+	private String resolveViewForApprovalState(ApplicationForm applicationForm) {
+		ApprovalEvaluationComment evaluationCommentForLatestApprovalRound = null;
+		List<Comment> applicationComments = applicationForm.getApplicationComments();
+		for (Comment comment : applicationComments) {
+			if (comment instanceof ApprovalEvaluationComment && applicationForm.getLatestApprovalRound().equals(((ApprovalEvaluationComment) comment).getApprovalRound())) {				
+				evaluationCommentForLatestApprovalRound = (ApprovalEvaluationComment) comment;
+				break;
+			}
+		}
+		System.out.println("APPROVAL COMMENT ::: " + evaluationCommentForLatestApprovalRound);
+		if (evaluationCommentForLatestApprovalRound == null) {
+			return STATE_TRANSITION_VIEW;
+		}
+		if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus()) {
+			return MY_APPLICATIONS_VIEW;
+		}
+		return REJECTION_VIEW + applicationForm.getApplicationNumber();
 	}
 
 	private String resolveViewForInterviewState(ApplicationForm applicationForm) {

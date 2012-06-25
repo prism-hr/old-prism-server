@@ -54,6 +54,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.ValidationComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ReviewEvaluationComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.InterviewEvaluationComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

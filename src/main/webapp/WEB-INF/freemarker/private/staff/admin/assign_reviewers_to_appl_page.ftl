@@ -81,12 +81,12 @@
           <hr />
     
           <section class="form-rows violet">
-						<h2>Assign Reviewers</h2>
+						<h2 class="no-arrow">Assign Reviewers</h2>
             <div>
               <form>
               
 								<div id="add-info-bar-div" class="section-info-bar">
-									You can optionally assign new reviewers here.
+									Assign reviewers to the application here. You may also create new reviewers.
 								</div>  
 					
                 <div id="assignReviewersToAppSection" class="row-group">

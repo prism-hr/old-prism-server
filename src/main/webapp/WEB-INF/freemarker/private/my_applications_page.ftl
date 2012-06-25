@@ -58,6 +58,10 @@
               <#if message??>
               <div class="section-info-bar">${(message?html)!}</div>
               </#if>
+              <#if RequestParameters.messageCode??>
+              <div class="section-info-bar"><@spring.message '${RequestParameters.messageCode}'/></div>             
+              </#if>
+              
             
 			<div id="table-bar">
 			

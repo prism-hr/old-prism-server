@@ -31,7 +31,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated as one of their referees.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to upload a short PDF document confirming their suitability for PhD study. You may create your own document, or work from our template (attached). If you feel unable to provide a reference, you may also decline.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for postgraduate research study. If you feel unable to do this, you may also decline. <b>Be aware that declining to provide a reference may reduce the applicant's chances of securing a study place.</b></font>
 			      	</p>
 			      	<#if !referee.user?? || !referee.user.enabled>
 					<p>

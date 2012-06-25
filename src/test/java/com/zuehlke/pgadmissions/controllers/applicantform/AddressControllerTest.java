@@ -12,12 +12,8 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -38,6 +34,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
 
 public class AddressControllerTest {
@@ -46,9 +43,10 @@ public class AddressControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private AddressSectionDTOValidator addressSectionValidatorMock;
 	private AddressController controller;
-	private UsernamePasswordAuthenticationToken authenticationToken;
+	
 	private CountryService countriesServiceMock;
 	private CountryPropertyEditor countryPropertyEditor;
+	private UserService userServiceMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -82,8 +80,11 @@ public class AddressControllerTest {
 
 	@Test
 	public void shouldReturnApplicationForm() {
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		currentUser = EasyMock.createMock(RegisteredUser.class);		
+		
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		EasyMock.replay(userServiceMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
@@ -102,7 +103,9 @@ public class AddressControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		EasyMock.replay(userServiceMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
@@ -125,7 +128,9 @@ public class AddressControllerTest {
 	@Test
 	public void shouldPopulateDTOFromApplicationFromAddresses() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		EasyMock.replay(userServiceMock);
 		Country countryOne = new CountryBuilder().id(1).toCountry();
 		Address addressOne = new AddressBuilder().id(1).location("location1").country(countryOne).toAddress();
 
@@ -148,7 +153,9 @@ public class AddressControllerTest {
 	@Test
 	public void shouldGetDTOWithSameFlagSetIfAddressesIdentical() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		EasyMock.replay(userServiceMock);
 		Country countryOne = new CountryBuilder().id(1).toCountry();
 		Address addressOne = new AddressBuilder().id(1).location("location1").country(countryOne).toAddress();
 
@@ -172,7 +179,9 @@ public class AddressControllerTest {
 	@Test
 	public void shouldPopulateDTOWithNoDataIfApplicationFormAddressesNull() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		EasyMock.replay(userServiceMock);
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
@@ -219,7 +228,7 @@ public class AddressControllerTest {
 		String view = controller.editAddresses(addressSectionDTO, errors, applicationForm);
 
 		EasyMock.verify(applicationsServiceMock);
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 
 		assertEquals("location1", applicationForm.getContactAddress().getLocation());
 		assertEquals(countryOne, applicationForm.getContactAddress().getCountry());
@@ -251,7 +260,8 @@ public class AddressControllerTest {
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").currentAddress(addressOne).contactAddress(addressTwo).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").currentAddress(addressOne).contactAddress(addressTwo)
+				.toApplicationForm();
 
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock, errors);
@@ -259,7 +269,7 @@ public class AddressControllerTest {
 		String view = controller.editAddresses(addressSectionDTO, errors, applicationForm);
 
 		EasyMock.verify(applicationsServiceMock);
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 
 		assertEquals("location1", applicationForm.getContactAddress().getLocation());
 		assertEquals(countryOne, applicationForm.getContactAddress().getCountry());
@@ -299,21 +309,13 @@ public class AddressControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 
 		addressSectionValidatorMock = EasyMock.createMock(AddressSectionDTOValidator.class);
-
-		controller = new AddressController(applicationsServiceMock, countriesServiceMock, countryPropertyEditor, addressSectionValidatorMock);
-
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		controller = new AddressController(applicationsServiceMock, userServiceMock, countriesServiceMock, countryPropertyEditor, addressSectionValidatorMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 
 	}
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
 }

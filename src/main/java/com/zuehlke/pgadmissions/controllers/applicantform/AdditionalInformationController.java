@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -25,6 +24,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 
 @Controller
@@ -37,21 +37,23 @@ public class AdditionalInformationController {
 	private final AdditionalInformationValidator additionalInformationValidator;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final BooleanPropertyEditor booleanPropertyEditor;
+	private final UserService userService;
 	
 	AdditionalInformationController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public AdditionalInformationController(ApplicationsService applicationService,
-			ApplicationFormPropertyEditor applicationFormPropertyEditor,//
+			UserService userService, ApplicationFormPropertyEditor applicationFormPropertyEditor,//
 			BooleanPropertyEditor booleanEditor,//
 			AdditionalInfoService addInfoServiceMock, AdditionalInformationValidator infoValidator) {
 		this.applicationService = applicationService;
+		this.userService = userService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
-		booleanPropertyEditor = booleanEditor;
+		this.booleanPropertyEditor = booleanEditor;
 		this.additionalService = addInfoServiceMock;
-		additionalInformationValidator = infoValidator;
+		this.additionalInformationValidator = infoValidator;
 	}
 
 	@RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
@@ -95,7 +97,7 @@ public class AdditionalInformationController {
 	}
 
 	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getCurrentUser();
 	}
 
 	@ModelAttribute("errorCode")

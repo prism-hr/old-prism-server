@@ -86,7 +86,10 @@ public class RegisterControllerTest {
 	public void shouldRedirectToDirectURLIfUserExistsIsEnabledAndHasADirectURL(){
 		assertEquals("redirect:/directHere",registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).directURL("/directHere").toUser()));
 	}
-	
+	@Test
+	public void shouldReturnRegisterPageIfUserExistsIsBNOTEnabledAndHasADirectURL(){
+		assertEquals("public/register/register_applicant",registerController.getRegisterPage(new RegisteredUserBuilder().enabled(false).id(1).directURL("/directHere").toUser()));
+	}
 	@Test
 	public void shouldFindPendingUserByActivationCode(){
 		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();

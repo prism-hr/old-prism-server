@@ -140,7 +140,7 @@ public class RegisterController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getRegisterPage(@ModelAttribute("pendingUser") RegisteredUser pendingUser) {
-		if(pendingUser != null && pendingUser.getDirectToUrl() != null){
+		if(pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()){
 			return "redirect:" +  pendingUser.getDirectToUrl();
 		}
 		return REGISTER_USERS_VIEW_NAME;

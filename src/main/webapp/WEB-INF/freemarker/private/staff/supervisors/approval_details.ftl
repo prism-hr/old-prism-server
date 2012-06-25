@@ -220,7 +220,8 @@
 										</div>
 															
 										<div class="buttons">
-											<button class="blue" type="button" id="moveToApprovalBtn">Continue</button>
+											<button value="cancel" name="" id="" type="reset">Clear</button>
+											<button class="blue" type="button" id="moveToApprovalBtn">Submit</button>
 										</div>
 
 										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>

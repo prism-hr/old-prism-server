@@ -192,7 +192,8 @@
                   </div>
     
                   <div class="buttons">
-                    <button class="blue" type="button" id="moveToReviewBtn">Continue</button>
+                  	<button value="cancel" name="" id="" type="reset">Clear</button>
+                    <button class="blue" type="button" id="moveToReviewBtn">Submit</button>
                   </div>
                 </div>
     

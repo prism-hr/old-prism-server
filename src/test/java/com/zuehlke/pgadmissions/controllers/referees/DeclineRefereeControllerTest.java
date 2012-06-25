@@ -5,9 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -16,14 +13,16 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class DeclineRefereeControllerTest {
 
 	private RefereeService refereeServiceMock;
 	private DeclineRefereeController controller;
 	private RegisteredUser currentUser;
-	private UsernamePasswordAuthenticationToken authenticationToken;
+	
 	private EncryptionHelper encryptionHelper;
+	private UserService userServiceMock;
 
 	@Test
 	public void shouldGetRefereeFromService() {
@@ -70,14 +69,12 @@ public class DeclineRefereeControllerTest {
 	public void setup() {
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
-		controller = new DeclineRefereeController(refereeServiceMock, encryptionHelper);
-		
-		
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		controller = new DeclineRefereeController(refereeServiceMock, userServiceMock, encryptionHelper);
+
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		EasyMock.replay(userServiceMock);
+		
 	}
 }

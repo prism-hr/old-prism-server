@@ -3,32 +3,21 @@ package com.zuehlke.pgadmissions.controllers.referees;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.util.Arrays;
-
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
-import com.zuehlke.pgadmissions.controllers.ReviewCommentController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -38,13 +27,11 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
-import com.zuehlke.pgadmissions.validators.ReferenceValidator;
 
 public class ReferenceControllerTest {
 
 	private ApplicationsService applicationsServiceMock;
 	private ReferenceController controller;
-	private UsernamePasswordAuthenticationToken authenticationToken;
 	private RegisteredUser currentUser;
 	private DocumentPropertyEditor documentPropertyEditor;
 	private FeedbackCommentValidator referenceValidator;
@@ -55,11 +42,12 @@ public class ReferenceControllerTest {
 	@Test
 	public void shouldReturnApplicationForm() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUser);
+		EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
 			@Override
 			RegisteredUser getCurrentUser(){
@@ -80,11 +68,11 @@ public class ReferenceControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNoFoundExceptionIfUserNotRefereeForForm() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUser);
+		EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
 			@Override
 			RegisteredUser getCurrentUser(){
@@ -94,14 +82,6 @@ public class ReferenceControllerTest {
 		controller.getApplicationForm("1");
 	}
 
-	@Test
-	public void shouldReturnCurrrentUserReloadedToBindToSessionAsUser() {
-		EasyMock.expect(userServiceMock.getUser(currentUser.getId())).andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-		assertEquals(currentUser, controller.getUser());
-		EasyMock.verify(userServiceMock);
-
-	}
 
 	@Test
 	public void shouldReturnUploadReferencePage() {
@@ -118,7 +98,7 @@ public class ReferenceControllerTest {
 	@Test
 	public void shouldReturnReferenceIfFAlreadyExists() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
 
@@ -134,7 +114,7 @@ public class ReferenceControllerTest {
 		ReferenceComment reference = new ReferenceCommentBuilder().id(2).toReferenceComment();
 		Referee referee = new RefereeBuilder().id(8).reference(reference).toReferee();
 		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
-		EasyMock.replay(currentUser);
+		EasyMock.replay(currentUser, userServiceMock);
 		ReferenceComment returnedReference = controller.getComment( "1");
 		assertEquals(reference, returnedReference);
 	}
@@ -142,7 +122,7 @@ public class ReferenceControllerTest {
 	@Test
 	public void shouldReturnNewReferenceIfNotAlredyExists() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
 
@@ -158,7 +138,7 @@ public class ReferenceControllerTest {
 
 		Referee referee = new RefereeBuilder().id(8).toReferee();
 		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
-		EasyMock.replay(currentUser);
+		EasyMock.replay(currentUser, userServiceMock);
 		ReferenceComment returnedReference = controller.getComment( "1");
 		assertNull(returnedReference.getId());
 		assertEquals(referee, returnedReference.getReferee());
@@ -237,18 +217,10 @@ public class ReferenceControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock);
 
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		
 
 	}
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
+
 }

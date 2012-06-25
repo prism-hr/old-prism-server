@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 @RequestMapping("/update")
@@ -45,16 +46,18 @@ public class RefereeController {
 	private final RefereeValidator refereeValidator;
 	private final EncryptionUtils encryptionUtils;
 	private final EncryptionHelper encryptionHelper;
+	private final UserService userService;
 
 	RefereeController() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public RefereeController(RefereeService refereeService, CountryService countryService, ApplicationsService applicationsService,
+	public RefereeController(RefereeService refereeService, UserService userService, CountryService countryService, ApplicationsService applicationsService,
 			CountryPropertyEditor countryPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, 
 			RefereeValidator refereeValidator, EncryptionUtils encryptionUtils, EncryptionHelper encryptionHelper) {
 		this.refereeService = refereeService;
+		this.userService = userService;
 		this.countryService = countryService;
 		this.applicationsService = applicationsService;
 		this.countryPropertyEditor = countryPropertyEditor;
@@ -143,7 +146,7 @@ public class RefereeController {
 	}
 	
 	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getCurrentUser();
 	}
 	
 

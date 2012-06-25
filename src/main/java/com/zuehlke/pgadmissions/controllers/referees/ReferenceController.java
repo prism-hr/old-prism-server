@@ -66,8 +66,7 @@ public class ReferenceController {
 	}
 
 	RegisteredUser getCurrentUser() {
-		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		return userService.getUser(currentUser.getId());
+		return userService.getCurrentUser();
 	}
 	
 	@ModelAttribute("user")

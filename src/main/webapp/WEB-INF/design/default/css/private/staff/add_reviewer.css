@@ -1,0 +1,20 @@
+/* CSS Document */
+
+#programReviewers, #programSupervisors,
+#applicationReviewers, #applicationSupervisors { width: 400px; }
+
+#applicationReviewers, #applicationSupervisors { min-height: 60px; }
+
+#programSupervisors optgroup { font-style: normal; min-height: 3em; }
+#programSupervisors option, #applicationSupervisors option { padding: 5px; }
+#programSupervisors option:last-child, #applicationSupervisors option:last-child { border-bottom: none; }
+#programSupervisors option.selected { color: #CCC; }
+
+#programReviewers optgroup { font-style: normal; min-height: 3em; }
+#programReviewers option, #applicationReviewers option { padding: 5px; }
+#programReviewers option:last-child, #applicationReviewers option:last-child { border-bottom: none; }
+#programReviewers option.selected { color: #CCC; }
+
+.reviewer-buttons .field { border-top: 2px solid #999; margin-top: 25px; text-align: center; width: 400px; }
+.reviewer-buttons .field span { background: #FFF; display: block; margin: -18px auto 0; padding: 4px; width: 180px; }
+.reviewer-buttons .field button { margin: 0 5px; /*width: 90px;*/ }

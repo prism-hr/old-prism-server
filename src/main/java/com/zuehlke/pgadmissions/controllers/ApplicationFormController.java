@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.InvalidParameterFormatException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping("/apply")
@@ -34,25 +35,27 @@ public class ApplicationFormController {
 	private final PlainTextUserPropertyEditor userPropertyEditor;
 	public static final String PROGRAM_DOES_NOT_EXIST = "private/pgStudents/programs/program_does_not_exist";
 	private final ProgramInstanceDAO programInstanceDAO;
+	private final UserService userService;
 
 	ApplicationFormController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public ApplicationFormController(ProgramDAO programDAO, ApplicationsService applicationService, PlainTextUserPropertyEditor userPropertyEditor,
-			ProgramInstanceDAO programInstanceDAO) {
+			ProgramInstanceDAO programInstanceDAO, UserService userService) {
 		this.programDAO = programDAO;
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.programInstanceDAO = programInstanceDAO;
+		this.userService = userService;
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	public ModelAndView createNewApplicationForm(@RequestParam String program, @RequestParam String programDeadline, @RequestParam String projectTitle, @RequestParam String programhome) {
 		Date batchDeadline = parseBatchDeadline(programDeadline);
 		String researchHomePage =parseResearchHomePage(programhome);
-		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		RegisteredUser user = userService.getCurrentUser();
 
 		Program prog = programDAO.getProgramByCode(program);
 		if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()) {

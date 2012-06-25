@@ -3,12 +3,8 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -20,7 +16,9 @@ import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotWithdrawApplicationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WithdrawService;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
@@ -30,8 +28,9 @@ public class WithdrawControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private WithdrawService withdrawServiceMock;
 	private RegisteredUser student;
-	private UsernamePasswordAuthenticationToken authenticationToken;
+
 	private EventFactory eventFactoryMock;
+	private UserService userServiceMock;
 
 	@Test(expected = CannotWithdrawApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInApprovedStage() {
@@ -77,7 +76,43 @@ public class WithdrawControllerTest {
 		assertEquals(event, applicationForm.getEvents().get(0));
 		
 	}
-	
+	@Test
+	public void shouldGetApplicationForm() {
+		String applicationNumber = "abc";
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
+		EasyMock.replay(applicationsServiceMock);
+		EasyMock.reset(userServiceMock);
+		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+		EasyMock.replay(userServiceMock,currentUserMock);
+		ApplicationForm returnedForm = withdrawController.getApplicationForm(applicationNumber);
+		assertEquals(applicationForm, returnedForm);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfNotApplciationFoud() {
+		String applicationNumber = "abc";		
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(null);
+		EasyMock.replay(applicationsServiceMock);
+		withdrawController.getApplicationForm(applicationNumber);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfUserCannotSeeApplicationForm() {
+		String applicationNumber = "abc";
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
+		EasyMock.replay(applicationsServiceMock);
+		EasyMock.reset(userServiceMock);
+		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(false);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+		EasyMock.replay(userServiceMock,currentUserMock);
+		withdrawController.getApplicationForm(applicationNumber);
+		
+	}
 	
 	@Before
 	public void setUp() {
@@ -85,21 +120,16 @@ public class WithdrawControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		withdrawServiceMock = EasyMock.createMock(WithdrawService.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		
-		withdrawController = new WithdrawController(applicationsServiceMock, withdrawServiceMock,eventFactoryMock);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		withdrawController = new WithdrawController(applicationsServiceMock,userServiceMock,  withdrawServiceMock,eventFactoryMock);
 
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
 				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(student);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student).anyTimes();
+		EasyMock.replay(userServiceMock);
 
 	}
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
+	
 }

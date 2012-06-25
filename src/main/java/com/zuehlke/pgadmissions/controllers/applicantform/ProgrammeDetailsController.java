@@ -6,7 +6,6 @@ import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -20,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
@@ -31,7 +29,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
-import com.zuehlke.pgadmissions.timers.RefereeReminderTask;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
 @RequestMapping("/update")
@@ -45,21 +43,23 @@ public class ProgrammeDetailsController {
 	private final ProgrammeDetailsValidator programmeDetailsValidator;
 	private final ProgrammeDetailsService programmeDetailsService;
 	private final SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
+	private final UserService userService;
 
 	ProgrammeDetailsController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public ProgrammeDetailsController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
 			DatePropertyEditor datePropertyEditor, SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor,
-			ProgrammeDetailsValidator programmeDetailsValidator, ProgrammeDetailsService programmeDetailsService) {
+			ProgrammeDetailsValidator programmeDetailsValidator, ProgrammeDetailsService programmeDetailsService, UserService userService) {
 		this.applicationsService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
 		this.supervisorJSONPropertyEditor = supervisorJSONPropertyEditor;
 		this.programmeDetailsValidator = programmeDetailsValidator;
 		this.programmeDetailsService = programmeDetailsService;
+		this.userService = userService;
 	}
 
 	@RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
@@ -92,7 +92,7 @@ public class ProgrammeDetailsController {
 
 	@ModelAttribute("studyOptions")
 	public StudyOption[] getStudyOptions(@RequestParam String applicationId) {
-		return (StudyOption[]) programmeDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram()).toArray(new StudyOption[]{});
+		return (StudyOption[]) programmeDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram()).toArray(new StudyOption[] {});
 	}
 
 	@ModelAttribute("referrers")
@@ -102,7 +102,7 @@ public class ProgrammeDetailsController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		
+
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null || !getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
@@ -136,7 +136,7 @@ public class ProgrammeDetailsController {
 	}
 
 	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getCurrentUser();
 	}
 
 }

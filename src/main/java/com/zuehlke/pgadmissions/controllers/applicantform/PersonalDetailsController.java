@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.services.DisabilityService;
 import com.zuehlke.pgadmissions.services.EthnicityService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 @RequestMapping("/update")
 @Controller
@@ -58,18 +59,20 @@ public class PersonalDetailsController {
 	private EthnicityPropertyEditor ethnicityPropertyEditor;
 	private final PersonalDetailsValidator personalDetailsValidator;
 	private final PersonalDetailsService personalDetailsService;
+	private final UserService userService;
 
 	PersonalDetailsController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null , null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public PersonalDetailsController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,// 
+	public PersonalDetailsController(ApplicationsService applicationsService, UserService userService, ApplicationFormPropertyEditor applicationFormPropertyEditor,// 
 			DatePropertyEditor datePropertyEditor, CountryService countryService, EthnicityService ethnicityService,//
 			DisabilityService disabilityService, LanguageService languageService,//
 			LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor,// 
 			DisabilityPropertyEditor disabilityPropertyEditor, EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator, PersonalDetailsService personalDetailsService) {
 		this.applicationsService = applicationsService;
+		this.userService = userService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
 		this.countryService = countryService;
@@ -113,7 +116,7 @@ public class PersonalDetailsController {
 	}
 	
 	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getCurrentUser();
 	}
 
 

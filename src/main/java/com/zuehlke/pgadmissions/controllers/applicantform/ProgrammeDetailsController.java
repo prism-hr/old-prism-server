@@ -117,7 +117,6 @@ public class ProgrammeDetailsController {
 
 	@InitBinder(value = "programmeDetails")
 	public void registerPropertyEditors(WebDataBinder binder) {
-
 		binder.setValidator(programmeDetailsValidator);
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);

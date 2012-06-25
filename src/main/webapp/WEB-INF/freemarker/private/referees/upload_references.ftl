@@ -102,7 +102,7 @@
 									   </div>
 												
 												<div class="buttons">
-													<button type="reset" value="cancel">Cancel</button>
+													<button type="reset" value="cancel">Clear</button>
 													<button class="blue" type="submit" id="referenceSaveButton" value="close">Submit</button>              
 												</div>                      
 										</form>

@@ -58,7 +58,7 @@
 					<#include "/private/common/parts/application_info.ftl"/>
 					
 					<section class="form-rows">
-						<h2>
+						<h2 class="no-arrow">
 						<#if applicationForm.isInState('VALIDATION')>
 							Validate Application
 						<#elseif applicationForm.isInState('REVIEW')>

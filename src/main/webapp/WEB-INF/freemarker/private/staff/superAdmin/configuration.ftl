@@ -59,7 +59,9 @@
 								</div>
 
 								<section id="configuration" class="form-rows">
-									<h2>Service Level Commitments</h2>
+									<h2 class="no-arrow">
+										Service Level Commitments
+									</h2>
 									<div>
 										<form>
 										
@@ -110,7 +112,9 @@
 
 								<!-- Configure Reminder Interval -->
 								<section class="form-rows">
-									<h2>Task Notifications</h2>
+									<h2 class="no-arrow">
+										Task Notifications
+									</h2>
 									<div>
 										<form>
 											<div class="row-group">
@@ -150,7 +154,9 @@
 
 								<!-- Add Registry Users -->
 								<section class="form-rows">
-									<h2>Admissions Contacts</h2>
+									<h2 class="no-arrow">
+										Admissions Contacts
+									</h2>
 									<div>
 										<form id="addRegistryForm">
 											<span class="invalid" name="threeMaxMessage"></span>

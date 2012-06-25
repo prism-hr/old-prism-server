@@ -55,7 +55,9 @@
 							<div class="content-box-inner">
 							
 								<section id="configuration" class="form-rows">
-									<h2>Programme badge</h2>
+									<h2 class="no-arrow">
+										Programme Badge
+									</h2>
 									<div>
 										<form>
 										

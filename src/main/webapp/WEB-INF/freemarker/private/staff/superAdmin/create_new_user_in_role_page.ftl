@@ -39,7 +39,9 @@
 					
 					<section class="form-rows">
 																								
-						<h2>Manage Users</h2>
+						<h2 class="no-arrow">
+							Manage Users
+						</h2>
 
 						<div id="existingUsers" class="tableContainer">
 						</div>

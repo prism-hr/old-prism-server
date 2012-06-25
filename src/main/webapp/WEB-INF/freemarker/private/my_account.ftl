@@ -55,7 +55,9 @@
 							<div class="content-box-inner">
 							
 								<section id="configuration" class="form-rows">
-									<h2>Account Details</h2>
+									<h2 class="no-arrow">
+										Account Details
+									</h2>
 									<div>
 										<form>
 										

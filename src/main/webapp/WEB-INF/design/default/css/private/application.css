@@ -12,6 +12,7 @@ section.form-rows h2 .status {
 	/* background: url(../../images/bg_bar_status.png) no-repeat 0 14px; */ 
 	float: right; height: 14px; margin: 3px 3px 0 0; width: 14px;
 }
+section.form-rows h2.no-arrow{padding-left: 13px;}
 
 /* Heading/section states (icons to the header's right) */
 section.form-rows h2.tick .status { background-position: 0 0; }

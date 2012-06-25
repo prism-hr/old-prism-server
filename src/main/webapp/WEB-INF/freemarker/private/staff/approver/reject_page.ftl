@@ -48,9 +48,6 @@
 				<!-- Main content area. -->
 				<article id="content" role="main">
 
-				    <#if  !user.isInRole('APPLICANT')>
-				    	<#include "/private/common/parts/tools.ftl"/>
-				    </#if>
 
 					<!-- FLOATING TOOLBAR -->
 		            <ul id="view-toolbar" class="toolbar">
@@ -86,7 +83,9 @@
 						<@spring.bind "applicationForm.*" />
 						<@spring.bind "availableReasons.*" />
 						<section class="form-rows violet">
-							<h2>Reject Applicant</h2>
+							<h2 class="no-arrow">
+								Reject Applicant
+							</h2>
 							<div>
 								<form method="POST" action="<@spring.url '/rejectApplication/moveApplicationToReject'/>">
 

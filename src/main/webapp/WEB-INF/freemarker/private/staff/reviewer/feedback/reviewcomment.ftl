@@ -62,7 +62,9 @@
 							<#if !user.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)>			        		
 					
 							<section class="form-rows">
-								<h2>Review Application</h2>
+								<h2 class="no-arrow">
+									Review Application
+								</h2>
 								<div>
 									<form id ="reviewForm" method="POST" action= "<@spring.url '/reviewFeedback'/>"/>
 									

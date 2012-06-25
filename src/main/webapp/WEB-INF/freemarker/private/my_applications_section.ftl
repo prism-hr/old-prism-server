@@ -24,8 +24,7 @@
 			<option value="progress">View progress</option>
 		</#if>   
 		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
-			<option value="approve">Approve</option>
-			<option value="reject">Reject</option>
+			<option value="validate">Approve Or Reject</option>
 			<option value="restartApprovalRequest">Request restart of approval</option>
 		</#if>
 		<#if  user.hasAdminRightsOnApplication(application) && application.isInState('VALIDATION')> 
@@ -63,9 +62,9 @@
 	</td>
 	<td>
 		<#if application.submittedDate??>
-		${(application.submittedDate?string("dd MMM yyyy"))}
+			${(application.submittedDate?string("dd MMM yyyy"))}
 		<#else>
-		<a class="proceed-link" href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Proceed &gt;</a>
+			<a class="proceed-link" href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Proceed &gt;</a>
 		</#if>
 	</td>
 </tr>

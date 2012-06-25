@@ -78,7 +78,7 @@ public class MoveToApprovedControllerTest {
 		};
 
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, application.getProgram())).andReturn(true);
-		approvalServiceMock.moveToApproved(application, strComment, documentIds);
+		approvalServiceMock.moveToApproved(application);
 
 		EasyMock.replay(currentUserMock, approvalServiceMock);
 

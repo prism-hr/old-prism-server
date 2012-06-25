@@ -42,12 +42,6 @@ $(document).ready(function() {
 			case 'assignInterviewer':
 				window.location.href = "/pgadmissions/interview/assignInterviewers?applicationId=" + id;
 				break;
-			case 'approve':
-				window.location.href = "/pgadmissions/approved/moveToApproved?applicationId=" + id;
-				break;
-			case 'reject':
-				window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
-				break;
 			case 'restartApprovalRequest':
 				window.location.href = "/pgadmissions/approval/requestRestart?applicationId=" + id;
 				break;
@@ -56,7 +50,6 @@ $(document).ready(function() {
 				break;
 			case 'print':
 				window.open("/pgadmissions/print?applicationFormId=" + id, "_blank");
-				//window.location.href = "/pgadmissions/print?applicationFormId=" + id;
 				break;
 			case 'reference':
 				window.location.href = "/pgadmissions/referee/addReferences?applicationId=" + id;

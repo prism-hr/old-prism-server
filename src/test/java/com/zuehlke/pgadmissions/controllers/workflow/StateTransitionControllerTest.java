@@ -16,6 +16,8 @@ import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -26,6 +28,8 @@ import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalEvaluationCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
@@ -36,12 +40,14 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewEvaluationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -58,20 +64,38 @@ public class StateTransitionControllerTest {
 	private StateTransitionViewResolver stateTransitionViewResolverMock;
 	private EncryptionHelper encryptionHelperMock;
 	private DocumentService documentServiceMock;
+	private ApprovalService approvalServiceMock;
 
 	@Test
-	public void shouldGetApplicationFromId() {
+	public void shouldGetApplicationFromIdForAdminUser() {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
+		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 
+	}
+	
+	@Test
+	public void shouldGetApplicationFromIdForApproverUser() {
+		Program program = new ProgramBuilder().id(6).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
+		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
+		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
+		
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
+		assertEquals(applicationForm, returnedForm);
+		
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -83,7 +107,7 @@ public class StateTransitionControllerTest {
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminInApplicationProgram() {
+	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrApproverInApplicationProgram() {
 
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
@@ -91,6 +115,7 @@ public class StateTransitionControllerTest {
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
+		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
@@ -122,7 +147,7 @@ public class StateTransitionControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicationNumber(applicationNumber).status(ApplicationFormStatus.REVIEW)
 				.toApplicationForm();
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock) {
+				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, approvalServiceMock) {
 
 			@Override
 			public ApplicationForm getApplicationForm(String application) {
@@ -150,7 +175,7 @@ public class StateTransitionControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber(applicationNumber).id(5)
 				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock) {
+				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, approvalServiceMock) {
 
 			@Override
 			public ApplicationForm getApplicationForm(String application) {
@@ -172,7 +197,7 @@ public class StateTransitionControllerTest {
 	public void shouldReturnAvaialableNextStati() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock) {
+				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, approvalServiceMock) {
 
 			@Override
 			public ApplicationForm getApplicationForm(String application) {
@@ -246,6 +271,7 @@ public class StateTransitionControllerTest {
 		assertEquals(ValidationQuestionOptions.UNSURE, comment.getEnglishCompentencyOk());
 		assertEquals(HomeOrOverseas.OVERSEAS, comment.getHomeOrOverseas());
 	}
+	
 
 	@Test
 	public void shouldCreateReviewEvaluationCommentWithLatestReviewRound() {
@@ -266,7 +292,62 @@ public class StateTransitionControllerTest {
 		assertEquals(reviewRound, comment.getReviewRound());
 
 	}
+	
+	@Test
+	public void shouldCreateApprovalEvaluationCommentWithLatestReviewRound() {
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).toApprovalRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		String strComment = "comment";
+		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().id(6).toApprovalEvaluationComment();
+		CommentType type = CommentType.APPROVAL_EVALUATION;
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, user, strComment, type, ApplicationFormStatus.REJECTED)).andReturn(comment);
+		commentServiceMock.save(comment);
+		EasyMock.replay(commentFactoryMock, commentServiceMock);
+		
+		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.REJECTED, null, null, null, null);
+		
+		EasyMock.verify(commentServiceMock);
+		assertEquals(approvalRound, comment.getApprovalRound());
+	}
+	
+	@Test
+	public void shouldCreateApprovalEvaluationCommentWithLatestReviewRoundAndMoveToApprovedIdNextStageIsApproved() {
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).toApprovalRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		String strComment = "comment";
+		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVED).id(6).toApprovalEvaluationComment();
+		CommentType type = CommentType.APPROVAL_EVALUATION;
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, user, strComment, type, ApplicationFormStatus.APPROVED)).andReturn(comment);
+		commentServiceMock.save(comment);
+		approvalServiceMock.moveToApproved(applicationForm);
+		EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock);
+		
+		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.APPROVED, null, null, null, null);
+		
+		EasyMock.verify(commentServiceMock, approvalServiceMock);
+		assertEquals(approvalRound, comment.getApprovalRound());
+	}
 
+	@Test
+	public void shouldCreateApprovalEvaluationCommentWithLatestReviewRoundAndNotMoveToApprovedIdNextStageIsRejected() {
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).toApprovalRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		String strComment = "comment";
+		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).id(6).toApprovalEvaluationComment();
+		CommentType type = CommentType.APPROVAL_EVALUATION;
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, user, strComment, type, ApplicationFormStatus.REJECTED)).andReturn(comment);
+		commentServiceMock.save(comment);
+		EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock);
+		
+		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.REJECTED, null, null, null, null);
+		
+		EasyMock.verify(commentServiceMock, approvalServiceMock);
+		assertEquals(approvalRound, comment.getApprovalRound());
+	}
+	
 	@Test
 	public void shouldCreateInterviewEvaluationCommentWithLatestInterview() {
 		Interview interview = new InterviewBuilder().id(5).toInterview();
@@ -289,6 +370,7 @@ public class StateTransitionControllerTest {
 
 	@Before
 	public void setUp() {
+		approvalServiceMock = EasyMock.createMock(ApprovalService.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		commentFactoryMock = EasyMock.createMock(CommentFactory.class);
@@ -297,7 +379,7 @@ public class StateTransitionControllerTest {
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock);
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock);
 
 	}
 

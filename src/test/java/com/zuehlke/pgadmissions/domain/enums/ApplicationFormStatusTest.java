@@ -37,6 +37,12 @@ public class ApplicationFormStatusTest {
 	}
 	
 	@Test
+	public void shouldReturnRejectedApprovedForApprovalState(){
+		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.APPROVAL);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.APPROVED},avaialbleStati);
+	}
+	
+	@Test
 	public void shouldReturnEmptyArrayForOtherStates(){
 		assertArrayEquals(new ApplicationFormStatus[]{},ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.UNSUBMITTED));
 		assertArrayEquals(new ApplicationFormStatus[]{},ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.REJECTED));

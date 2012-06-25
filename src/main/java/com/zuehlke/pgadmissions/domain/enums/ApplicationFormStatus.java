@@ -29,6 +29,9 @@ public enum ApplicationFormStatus {
 		if (status == INTERVIEW) {
 			return new ApplicationFormStatus[] { REJECTED, APPROVAL, INTERVIEW };
 		}
+		if (status == APPROVAL) {
+			return new ApplicationFormStatus[] { REJECTED, APPROVED};
+		}
 		return new ApplicationFormStatus[] {};
 	}
 

@@ -58,7 +58,7 @@ public class MoveToApprovedController {
 		if (!getUser().isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
 			throw new ResourceNotFoundException();
 		}
-		approvalService.moveToApproved(applicationForm, comment, documents);
+		approvalService.moveToApproved(applicationForm);
 		return "redirect:/applications";
 	}
 

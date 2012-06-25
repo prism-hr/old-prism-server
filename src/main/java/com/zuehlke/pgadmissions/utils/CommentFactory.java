@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.utils;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -23,10 +24,12 @@ public class CommentFactory {
 		if(commentType == CommentType.REVIEW_EVALUATION){
 			return createReviewEvaluationComment(applicationForm, user, strComment, commentType, nextStatus);
 		}
+		if(commentType == CommentType.APPROVAL_EVALUATION){
+			return createApprovalEvaluationComment(applicationForm, user, strComment, commentType, nextStatus);
+		}
 		if(commentType == CommentType.VALIDATION ){
 			return createValidationComment(applicationForm, user, strComment, commentType, nextStatus);
 		}
-		
 		if(commentType == CommentType.REVIEW){
 			return createReviewComment(applicationForm, user, strComment, commentType);
 		}
@@ -45,6 +48,7 @@ public class CommentFactory {
 		stateChangeComment.setNextStatus(nextStatus);
 		return stateChangeComment;
 	}
+	
 	private Comment createGenericComment(ApplicationForm applicationForm, RegisteredUser user, String strComment) {
 		Comment comment = new Comment();
 		comment.setApplication(applicationForm);
@@ -52,7 +56,6 @@ public class CommentFactory {
 		comment.setUser(user);
 		return comment;
 	}
-
 
 	private Comment createReviewComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType) {
 		ReviewComment reviewComment = new ReviewComment();
@@ -62,8 +65,6 @@ public class CommentFactory {
 		reviewComment.setType(commentType);
 		return reviewComment;
 	}
-
-
 	
 	private Comment createValidationComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType, ApplicationFormStatus nextStatus) {
 		ValidationComment validationComment = new ValidationComment();
@@ -87,6 +88,16 @@ public class CommentFactory {
 	
 	private Comment createInterviewEvaluationComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType, ApplicationFormStatus nextStatus) {
 		InterviewEvaluationComment comment = new InterviewEvaluationComment();
+		comment.setApplication(applicationForm);
+		comment.setUser(user);
+		comment.setComment(strComment);
+		comment.setType(commentType);
+		comment.setNextStatus(nextStatus);
+		return comment;
+	}
+	
+	private Comment createApprovalEvaluationComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType, ApplicationFormStatus nextStatus) {
+		ApprovalEvaluationComment comment = new ApprovalEvaluationComment();
 		comment.setApplication(applicationForm);
 		comment.setUser(user);
 		comment.setComment(strComment);

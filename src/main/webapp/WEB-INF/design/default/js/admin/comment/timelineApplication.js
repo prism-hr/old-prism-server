@@ -1,6 +1,7 @@
 $(document).ready(function()
 {
 
+
 	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
 	
 	// Timeline tab.	

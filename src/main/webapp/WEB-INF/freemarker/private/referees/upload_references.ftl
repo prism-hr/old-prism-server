@@ -17,6 +17,12 @@
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+        <!-- Scripts -->
+    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
   </head>
   
   <body>
@@ -104,6 +110,7 @@
                   
 				</div>
 				</section>
+					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
                     <#include "/private/staff/admin/comment/timeline_application.ftl"/>
 							</div><!-- .content-box-inner -->
 						</div><!-- .content-box -->
@@ -116,12 +123,6 @@
     
     </div>
     
-    <!-- Scripts -->
-    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-    <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
-    <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
-    <script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>
-    <script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
-    <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
+
   </body>
 </html>

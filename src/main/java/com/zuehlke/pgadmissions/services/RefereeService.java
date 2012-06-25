@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
@@ -37,15 +38,17 @@ public class RefereeService {
 	private final MessageSource messageSource;
 	private final EventFactory eventFactory;
 	private final ApplicationFormDAO applicationFormDAO;
+	private final EncryptionUtils encryptionUtils;
 
 	RefereeService() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public RefereeService(RefereeDAO refereeDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, UserService userService,
+	public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, UserService userService,
 			RoleDAO roleDAO, MessageSource messageSource, EventFactory eventFactory, ApplicationFormDAO applicationFormDAO) {
 		this.refereeDAO = refereeDAO;
+		this.encryptionUtils = encryptionUtils;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 		this.userService = userService;
@@ -185,6 +188,8 @@ public class RefereeService {
 		user.setLastName(referee.getLastname());
 		user.setUsername(referee.getEmail());
 		user.getRoles().add(refereeRole);
+		user.setActivationCode(encryptionUtils.generateUUID());
+		user.setEnabled(false);
 		userService.save(user);
 		return user;
 	}

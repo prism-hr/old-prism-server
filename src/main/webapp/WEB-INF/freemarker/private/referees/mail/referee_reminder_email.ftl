@@ -42,7 +42,7 @@
 			      	</#if>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/referee/addReferences?application=${application.applicationNumber}">Add Reference</a>
+			      			<a href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}">Add Reference</a>
 			      		</font>
 			      	</p>
 			      	<p>

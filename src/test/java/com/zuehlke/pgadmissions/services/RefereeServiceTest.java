@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
@@ -36,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 public class RefereeServiceTest {
@@ -49,6 +51,7 @@ public class RefereeServiceTest {
 	private MessageSource msgSourceMock;
 	private EventFactory eventFactoryMock;
 	private ApplicationFormDAO applicationFormDAOMock;
+	private EncryptionUtils encryptionUtilsMock;
 
 
 	@Before
@@ -61,7 +64,8 @@ public class RefereeServiceTest {
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock);
+		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
+		refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -287,24 +291,35 @@ public class RefereeServiceTest {
 	public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist() {
 		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
 		Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").toReferee();
-		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock, eventFactoryMock,applicationFormDAOMock) {
+		refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock, eventFactoryMock,applicationFormDAOMock) {
 			@Override
 			RegisteredUser newRegisteredUser() {
 				return user;
 			}
 		};
+		Role role = new RoleBuilder().id(1).toRole();
+		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REFEREE)).andReturn(role);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("emailemail@test.com")).andReturn(null);
 		userServiceMock.save(user);
 		referee.setUser(user);
 		refereeDAOMock.save(referee);
-		EasyMock.replay(userServiceMock, refereeDAOMock);
+		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("abc");
+		EasyMock.replay(userServiceMock, refereeDAOMock, encryptionUtilsMock,roleDAOMock);
+		
 		RegisteredUser newUser = refereeService.processRefereeAndGetAsUser(referee);
 		EasyMock.verify(refereeDAOMock, userServiceMock);
 		Assert.assertNotNull(newUser);
 		Assert.assertEquals(1, newUser.getRoles().size());
+		Assert.assertEquals(role, newUser.getRoles().get(0));
 		Assert.assertEquals("ref", newUser.getFirstName());
 		Assert.assertEquals("erre", newUser.getLastName());
 		Assert.assertEquals("emailemail@test.com", newUser.getEmail());
+		Assert.assertEquals("emailemail@test.com", newUser.getUsername());
+		assertTrue(newUser.isAccountNonExpired());
+		assertTrue(newUser.isAccountNonLocked());
+		assertTrue(newUser.isCredentialsNonExpired());
+		assertFalse(newUser.isEnabled());
+		assertEquals("abc", newUser.getActivationCode());
 	}
 
 	@Test

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
@@ -14,12 +13,8 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -37,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
@@ -47,8 +43,7 @@ public class SubmitApplicationFormControllerTest {
 	private ApplicationsService applicationsServiceMock;
 
 	private RegisteredUser student;
-
-	private UsernamePasswordAuthenticationToken authenticationToken;
+	
 
 	private ApplicationFormValidator applicationFormValidatorMock;
 	
@@ -56,6 +51,8 @@ public class SubmitApplicationFormControllerTest {
 	private StageDurationDAO stageDurationDAOMock;
 
 	private EventFactory eventFactoryMock;
+
+	private UserService userServiceMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -75,14 +72,18 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	public void shouldReturnStudenApplicationViewOnGetForNonApplicant() {
 		RegisteredUser otherUser = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		authenticationToken.setDetails(otherUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(otherUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 		String view = applicationController.getApplicationView(null,new ApplicationFormBuilder().id(1).toApplicationForm());
 		assertEquals("/private/staff/application/main_application_page", view);
 	}
 	@Test
 	public void shouldReturnStudenApplicationViewWithoutHeaders() {
 		RegisteredUser otherUser = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		authenticationToken.setDetails(otherUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(otherUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 		HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);  
 		EasyMock.expect(request.getParameter("embeddedApplication")).andReturn("true");
 		EasyMock.expect(request.getParameter("embeddedApplication")).andReturn("true");
@@ -173,7 +174,10 @@ public class SubmitApplicationFormControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfSubmitterNotFormApplicant() {
 		RegisteredUser otherApplicant = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(otherApplicant);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(otherApplicant).anyTimes();
+		EasyMock.replay(userServiceMock);
+		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).toApplicationForm();
 		applicationController.submitApplication(applicationForm, null);
 
@@ -195,7 +199,9 @@ public class SubmitApplicationFormControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowSubmitExceptionIfUserCannotSeeApplicationForm() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(userMock);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
+		EasyMock.replay(userServiceMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("3")).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
@@ -234,25 +240,20 @@ public class SubmitApplicationFormControllerTest {
 	public void setUp() {
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		
+		userServiceMock = EasyMock.createMock(UserService.class);
 
 		applicationFormValidatorMock = EasyMock.createMock(ApplicationFormValidator.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormValidatorMock, stageDurationDAOMock,eventFactoryMock);
+		applicationController = new SubmitApplicationFormController(applicationsServiceMock,userServiceMock,  applicationFormValidatorMock, stageDurationDAOMock,eventFactoryMock);
 
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
 				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(student);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student).anyTimes();
+		EasyMock.replay(userServiceMock);
 
 	}
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
 }

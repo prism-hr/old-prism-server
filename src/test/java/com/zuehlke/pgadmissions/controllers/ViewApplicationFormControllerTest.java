@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 
 public class ViewApplicationFormControllerTest {
@@ -27,6 +28,7 @@ public class ViewApplicationFormControllerTest {
 	private RegisteredUser userMock;
 	private ApplicationsService applicationsServiceMock;	
 	private ApplicationPageModelBuilder applicationPageModelBuilderMock;
+	private UserService userServiceMock;
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
@@ -104,22 +106,18 @@ public class ViewApplicationFormControllerTest {
 
 	@Before
 	public void setUp() {
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+	
 		userMock = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(userMock);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
 
+		
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationPageModelBuilderMock = EasyMock.createMock(ApplicationPageModelBuilder.class);
-		controller = new ViewApplicationFormController(applicationsServiceMock, applicationPageModelBuilderMock);
-
+		userServiceMock = EasyMock.createMock(UserService.class);
+		controller = new ViewApplicationFormController(applicationsServiceMock,userServiceMock,  applicationPageModelBuilderMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
+		EasyMock.replay(userServiceMock);
 	}
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
+	
 
 }

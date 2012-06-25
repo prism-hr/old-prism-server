@@ -11,9 +11,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -32,6 +30,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 
 public class AdditionalInformationControllerTest {
@@ -44,7 +43,9 @@ public class AdditionalInformationControllerTest {
 	private BooleanPropertyEditor booleanPropertyEditorMock;
 
 	private AdditionalInformationController controller;
-	private UsernamePasswordAuthenticationToken authenticationToken;
+
+	private UserService userServiceMock;
+
 
 	@Before
 	public void setUp() {
@@ -52,17 +53,14 @@ public class AdditionalInformationControllerTest {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 		booleanPropertyEditorMock = EasyMock.createMock(BooleanPropertyEditor.class);
-
+		userServiceMock = EasyMock.createMock(UserService.class);
 		validatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
-		controller = new AdditionalInformationController(applicationServiceMock, applFormPropertyEditorMock,// 
-				booleanPropertyEditorMock, addInfoServiceMock, validatorMock);
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		controller = new AdditionalInformationController(applicationServiceMock, userServiceMock, applFormPropertyEditorMock,// 
+				booleanPropertyEditorMock, addInfoServiceMock, validatorMock);		
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 	}
 
 	@After
@@ -142,7 +140,10 @@ public class AdditionalInformationControllerTest {
 	@Test
 	public void returnAdditionalInfo() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(userMock);
+
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
+		EasyMock.replay(userServiceMock);
 		AdditionalInformation additionalInfo = new AdditionalInformationBuilder().id(200).toAdditionalInformation();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(100).toApplicationForm();
 		applicationForm.setAdditionalInformation(additionalInfo);
@@ -166,7 +167,10 @@ public class AdditionalInformationControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void throwRNFEIfUserCantseeForm() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(userMock);
+
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
+		EasyMock.replay(userServiceMock);
 		AdditionalInformation additionalInfo = new AdditionalInformationBuilder().id(200).toAdditionalInformation();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(100).toApplicationForm();
 		applicationForm.setAdditionalInformation(additionalInfo);
@@ -192,7 +196,10 @@ public class AdditionalInformationControllerTest {
 	@Test
 	public void shouldReturnApplicationForm() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
@@ -212,7 +219,9 @@ public class AdditionalInformationControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowRNFEIfUserCAnnotSeeApplFormOnGet() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);

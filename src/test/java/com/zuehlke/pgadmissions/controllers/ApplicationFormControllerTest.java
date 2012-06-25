@@ -4,17 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.exceptions.InvalidParameterFormatException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class ApplicationFormControllerTest {
 
@@ -44,6 +40,7 @@ public class ApplicationFormControllerTest {
 	private PlainTextUserPropertyEditor userPropertyEditorMock;
 	private RegisteredUser student;
 	private ProgramInstanceDAO programInstanceDAOMock;
+	private UserService userServiceMock;
 
 	@Test
 	public void shouldCreateNewApplicationFormWithProgramProjectAndUserFromSecurityContext() throws ParseException {
@@ -239,26 +236,19 @@ public class ApplicationFormControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userPropertyEditorMock = EasyMock.createMock(PlainTextUserPropertyEditor.class);
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
+		userServiceMock = EasyMock.createMock(UserService.class);
 		
-		
-		applicationController = new ApplicationFormController(programDAOMock, applicationsServiceMock, userPropertyEditorMock, programInstanceDAOMock) {
+		applicationController = new ApplicationFormController(programDAOMock, applicationsServiceMock, userPropertyEditorMock, programInstanceDAOMock, userServiceMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}
 		};
 
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+	
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(student);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student).anyTimes();
+		EasyMock.replay(userServiceMock);
 	}
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
 }
 

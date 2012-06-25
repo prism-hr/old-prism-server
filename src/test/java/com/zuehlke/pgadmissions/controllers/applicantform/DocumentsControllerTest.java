@@ -6,12 +6,8 @@ import java.util.Calendar;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -27,6 +23,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.DocumentSectionValidator;
 
 public class DocumentsControllerTest {
@@ -36,8 +33,10 @@ public class DocumentsControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private DocumentSectionValidator documentSectionValidatorMock;
 	private DocumentsController controller;
-	private UsernamePasswordAuthenticationToken authenticationToken;
+	
 	private DocumentPropertyEditor documentPropertyEditorMock;
+
+	private UserService userServiceMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -69,7 +68,11 @@ public class DocumentsControllerTest {
 	@Test
 	public void shouldReturnApplicationForm() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
+		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
@@ -88,7 +91,10 @@ public class DocumentsControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
@@ -142,24 +148,18 @@ public class DocumentsControllerTest {
 	public void setUp() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		documentSectionValidatorMock = EasyMock.createMock(DocumentSectionValidator.class);
-
 		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+		userServiceMock = EasyMock.createMock(UserService.class);
 
-		controller = new DocumentsController(applicationsServiceMock, documentSectionValidatorMock, documentPropertyEditorMock);
-
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		controller = new DocumentsController(applicationsServiceMock, userServiceMock, documentSectionValidatorMock, documentPropertyEditorMock);	
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		EasyMock.replay(userServiceMock);
+		
 
 	}
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
+	
 
 }

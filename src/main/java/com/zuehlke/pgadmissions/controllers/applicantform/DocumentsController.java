@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -23,6 +22,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.DocumentSectionValidator;
 
 
@@ -34,15 +34,17 @@ public class DocumentsController{
 	private final ApplicationsService applicationsService;
 	private final DocumentSectionValidator documentSectionValidator;
 	private final DocumentPropertyEditor documentPropertyEditor;
+	private final UserService userService;
 
 	DocumentsController(){
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 	
 	@Autowired
-	public DocumentsController(ApplicationsService applicationsService, DocumentSectionValidator documentSectionValidator,
+	public DocumentsController(ApplicationsService applicationsService, UserService userService, DocumentSectionValidator documentSectionValidator,
 			DocumentPropertyEditor documentPropertyEditor) {
 				this.applicationsService = applicationsService;
+				this.userService = userService;
 				this.documentSectionValidator = documentSectionValidator;
 				this.documentPropertyEditor = documentPropertyEditor;
 	
@@ -97,6 +99,6 @@ public class DocumentsController{
 	}
 	
 	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getCurrentUser();
 	}
 }

@@ -49,7 +49,7 @@
 		<#if user.isInterviewerOfApplicationForm(application) && application.isInState('INTERVIEW') && !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application)> 
 			<option value="interviewFeedback">Add Interview Feedback</option>								    				
 		</#if>      												
-		<#if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>
+		<#if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && application.isModifiable() && !user.getRefereeForApplicationForm(application).hasResponded()  )>
 			<option value="reference">Add Reference</option>
 		</#if>      												
 		<#if (user.isInRole('APPLICANT') && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>

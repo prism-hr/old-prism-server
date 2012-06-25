@@ -132,28 +132,8 @@ public class ApprovalService {
 		application.setApprover(userService.getCurrentUser());
 		application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
 		applicationDAO.save(application);
-		
-//		Comment approvalComment = commentFactory.createComment(application, userService.getCurrentUser(), strComment, CommentType.APPROVAL, ApplicationFormStatus.APPROVED);
-//		if(documentIds != null){
-//			for (String encryptedId : documentIds) {
-//				approvalComment.getDocuments().add(documentDAO.getDocumentbyId(encryptionHelper.decryptToInteger(encryptedId)));
-//			}
-//		}
-//		commentDAO.save(approvalComment);
-		
-//		checkApplicationStatus(application);
-//		application.setLatestApprovalRound(approvalRound);
-//		approvalRound.setApplication(application);
-//		approvalRoundDAO.save(approvalRound);
-//		StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
-//		application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
-//		application.setStatus(ApplicationFormStatus.APPROVAL);
-//		application.getEvents().add(eventFactory.createEvent(approvalRound));
-//		applicationDAO.save(application);      
-//		
-		
-		
 	}
+	
 	@Transactional
 	public void addSupervisorInPreviousReviewRound(ApplicationForm applicationForm, RegisteredUser newUser) {
 		Supervisor supervisor = newSupervisor();

@@ -32,6 +32,9 @@ public class StateTransitionViewResolver {
 		 if (ApplicationFormStatus.APPROVAL == applicationForm.getStatus()) {
 			 return resolveViewForApprovalState(applicationForm);
 		 }
+		 if (ApplicationFormStatus.APPROVED == applicationForm.getStatus()) {
+			 return MY_APPLICATIONS_VIEW;
+		 }
 		return  resolveViewForInterviewState(applicationForm);
 	}
 
@@ -44,7 +47,6 @@ public class StateTransitionViewResolver {
 				break;
 			}
 		}
-		System.out.println("APPROVAL COMMENT ::: " + evaluationCommentForLatestApprovalRound);
 		if (evaluationCommentForLatestApprovalRound == null) {
 			return STATE_TRANSITION_VIEW;
 		}

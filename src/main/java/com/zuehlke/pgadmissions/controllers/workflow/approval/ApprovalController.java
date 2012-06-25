@@ -150,9 +150,17 @@ public abstract class ApprovalController {
 	}
 
 	@ModelAttribute("willingToSuperviseUsers")
-	public List<RegisteredUser> getWillingToSuperviseusers(@RequestParam String applicationId) {
+	public List<RegisteredUser> getWillingToSuperviseusers(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingSupervisors)  {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		return applicationForm.getUsersWillingToSupervise();
+		List<RegisteredUser> availableInterviewsWillingToSupervise = new ArrayList<RegisteredUser>();
+		List<RegisteredUser> interviewsWillingToSupervise = applicationForm.getUsersWillingToSupervise();
+		List<RegisteredUser> pendingSupervisor = getPendingSupervisors(pendingSupervisors, applicationId);
+		for (RegisteredUser registeredUser : interviewsWillingToSupervise) {
+			if(!pendingSupervisor.contains(registeredUser) && !registeredUser.isSupervisorOfApplicationForm(applicationForm)){
+				availableInterviewsWillingToSupervise.add(registeredUser);
+			}
+		}
+		return availableInterviewsWillingToSupervise;
 	}
 
 	@ModelAttribute("previousSupervisors")

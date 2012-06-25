@@ -183,7 +183,7 @@
 							</div><!-- close .row-group -->
 
 							<div class="buttons">						        		
-								<button type="reset" value="cancel">Cancel</button>
+								<button type="reset" value="cancel">Clear</button>
 								<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
 							</div>
 						 	<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress' />">

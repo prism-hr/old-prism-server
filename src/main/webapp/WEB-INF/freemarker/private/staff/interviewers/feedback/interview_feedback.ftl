@@ -128,7 +128,7 @@
 								</div>
 								
 								<div class="buttons">						        		
-									<button type="button" id="cancelInterviewFeedbackBtn" value="cancel">Cancel</button>
+									<button type="button" id="cancelInterviewFeedbackBtn" value="cancel">Clear</button>
 									<button class="blue" id="submitInterviewFeedback" type="button" value="Submit">Submit</button>						        
 								</div>
 							</form>

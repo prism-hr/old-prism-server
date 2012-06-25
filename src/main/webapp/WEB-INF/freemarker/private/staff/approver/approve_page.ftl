@@ -82,7 +82,7 @@
 
 	
 								<div class="buttons">						        		
-									<button id="cancelApproved" value="cancel">Cancel</button>
+									<button id="cancelApproved" value="cancel">Clear</button>
 									<button type="submit" id="approveButton" class="blue">Approve application</button>		        
 								</div>
 							</form>

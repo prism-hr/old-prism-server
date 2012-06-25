@@ -185,6 +185,9 @@ public class RefereeService {
 		user.getRoles().add(refereeRole);
 		user.setActivationCode(encryptionUtils.generateUUID());
 		user.setEnabled(false);
+		user.setAccountNonExpired(true);
+		user.setAccountNonLocked(true);
+		user.setCredentialsNonExpired(true);
 		userService.save(user);
 		return user;
 	}

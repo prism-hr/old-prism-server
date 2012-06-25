@@ -16,8 +16,7 @@
 <#-- Programme Details Rendering -->
 
 
-<h2 id="programme-H2" class="tick"> 
-  <span class="left"></span><span class="right"></span><span class="status"></span>
+<h2 id="programme-H2" class="no-arrow tick"> 
   Programme
 </h2>
 

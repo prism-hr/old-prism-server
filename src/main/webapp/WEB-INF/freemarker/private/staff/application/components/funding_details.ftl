@@ -6,8 +6,7 @@
 
 <#import "/spring.ftl" as spring />
 
-<h2 id="funding-H2" class="empty">
-  <span class="left"></span><span class="right"></span><span class="status"></span>
+<h2 id="funding-H2" class="no-arrow empty">
   Funding
 </h2>
 

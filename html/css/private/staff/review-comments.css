@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+#review-comments td.comment { background: #FFF; display: none; padding: 10px; }
+#review-comments td.comment a.button { float: right; }
+
+table.data { font-size: 9pt; }
+table.data td.flag span { background: url(../../../images/msgs_flag.png) no-repeat 100% center; padding-right: 10px; }
+
+span.swatch { display: inline-block; height: 20px; margin-right: 5px; vertical-align: text-bottom; width: 20px; }
+tr.row-near-deadline td, .swatch.row-near-deadline { background: #FF3 !important; }
+tr.row-past-deadline td, .swatch.row-past-deadline { background: #F33 !important; }
+
+ul.key { list-style: none; margin-top: 1em; overflow: hidden; }
+ul.key li { float: left; margin-right: 1em; }
+
+#filter { margin-bottom: 20px; overflow: hidden; }
+#filter div { float: left; margin-right: 20px; }
+#filter select { margin-left: 10px; padding: 2px 0; width: 160px }
+#filter .search-box button { margin-top: 1px; }

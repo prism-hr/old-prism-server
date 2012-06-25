@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReferenceEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.EventFactory;
@@ -281,7 +282,7 @@ public class RefereeServiceTest {
 	@Test
 	public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist() {
 		final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").toReferee();
+		Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").application(new ApplicationFormBuilder().id(1).applicationNumber("abc").toApplicationForm()).toReferee();
 		refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock, eventFactoryMock,applicationFormDAOMock) {
 			@Override
 			RegisteredUser newRegisteredUser() {
@@ -311,6 +312,7 @@ public class RefereeServiceTest {
 		assertTrue(newUser.isCredentialsNonExpired());
 		assertFalse(newUser.isEnabled());
 		assertEquals("abc", newUser.getActivationCode());
+		assertEquals(DirectURLsEnum.ADD_REFERENCE.displayValue() + "abc", newUser.getDirectToUrl());
 	}
 
 	@Test

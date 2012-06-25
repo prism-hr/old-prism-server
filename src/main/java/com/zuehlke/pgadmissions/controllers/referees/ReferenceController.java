@@ -113,8 +113,6 @@ public class ReferenceController {
 			return ADD_REFERENCES_VIEW_NAME;
 		}
 		commentService.save(comment);		
-//		Referee referee = reference.getReferee();
-//		referee.setReference(reference);
 		refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
 		return "redirect:/addReferences/referenceuploaded";
 	}

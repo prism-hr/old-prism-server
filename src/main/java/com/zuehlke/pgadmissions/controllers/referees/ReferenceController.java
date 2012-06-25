@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers.referees;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -18,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -27,7 +25,6 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
-import com.zuehlke.pgadmissions.validators.ReferenceValidator;
 
 @Controller
 @RequestMapping("/referee")
@@ -76,7 +73,10 @@ public class ReferenceController {
 
 	@RequestMapping(value = "/addReferences", method = RequestMethod.GET)
 	public String getUploadReferencesPage(@ModelAttribute ApplicationForm applicationForm) {
-		if (applicationForm.isDecided()) {
+		if(getCurrentUser().getRefereeForApplicationForm(applicationForm).hasResponded()){
+			throw new ResourceNotFoundException();
+		}
+		if (!applicationForm.isModifiable()) {
 			return EXPIRED_VIEW_NAME;
 		}
 		return ADD_REFERENCES_VIEW_NAME;
@@ -113,7 +113,7 @@ public class ReferenceController {
 		}
 		commentService.save(comment);		
 		refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
-		return "redirect:/addReferences/referenceuploaded";
+		return "redirect:/applications?messageCode=reference.uploaded";
 	}
 
 }

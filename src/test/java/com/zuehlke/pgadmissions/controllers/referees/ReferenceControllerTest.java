@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -83,16 +82,70 @@ public class ReferenceControllerTest {
 	}
 
 
+
 	@Test
 	public void shouldReturnUploadReferencePage() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
+
+			@Override
+			public ApplicationForm getApplicationForm(String application) {
+				return applicationForm;
+			}
+			@Override
+			RegisteredUser getCurrentUser(){
+				return currentUser;
+			}
+		};
+		Referee refereeMock = EasyMock.createMock(Referee.class);
+		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(refereeMock);
+		EasyMock.expect(refereeMock.hasResponded()).andReturn(false);
+		EasyMock.replay(currentUser, refereeMock);
 		assertEquals("private/referees/upload_references", controller.getUploadReferencesPage(applicationForm));
 	}
 
 	@Test
 	public void shouldReturnExpiredViewIfApplicationAlreadyDecided() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
+
+			@Override
+			public ApplicationForm getApplicationForm(String application) {
+				return applicationForm;
+			}
+			@Override
+			RegisteredUser getCurrentUser(){
+				return currentUser;
+			}
+		};
+		Referee refereeMock = EasyMock.createMock(Referee.class);
+		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(refereeMock);
+		EasyMock.expect(refereeMock.hasResponded()).andReturn(false);
+		EasyMock.replay(currentUser, refereeMock);
 		assertEquals("private/referees/upload_references_expired", controller.getUploadReferencesPage(applicationForm));
+	}
+
+	@Test(expected=ResourceNotFoundException.class)
+	public void shoulThrowResourceNotFoundExceptionIfRefereeHasAlreadyProvidedReferecne() {
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
+
+			@Override
+			public ApplicationForm getApplicationForm(String application) {
+				return applicationForm;
+			}
+			@Override
+			RegisteredUser getCurrentUser(){
+				return currentUser;
+			}
+		};
+		Referee refereeMock = EasyMock.createMock(Referee.class);
+		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(refereeMock);
+		EasyMock.expect(refereeMock.hasResponded()).andReturn(true);
+		EasyMock.replay(currentUser, refereeMock);
+	
+		controller.getUploadReferencesPage(applicationForm);
+		
 	}
 
 	@Test
@@ -171,7 +224,7 @@ public class ReferenceControllerTest {
 		commentServiceMock.save(reference);
 		refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
 		EasyMock.replay(errorsMock, refereeServiceMock);
-		assertEquals("redirect:/addReferences/referenceuploaded", controller.handleReferenceSubmission(reference, errorsMock));
+		assertEquals("redirect:/applications?messageCode=reference.uploaded", controller.handleReferenceSubmission(reference, errorsMock));
 		EasyMock.verify(refereeServiceMock);
 	}
 	
@@ -217,7 +270,7 @@ public class ReferenceControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock);
 
-		currentUser = new RegisteredUserBuilder().id(1).toUser();
+		currentUser = EasyMock.createMock(RegisteredUser.class);
 		
 
 	}

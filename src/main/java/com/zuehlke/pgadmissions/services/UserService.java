@@ -98,46 +98,7 @@ public class UserService {
 
 	}
 
-	@Transactional
-	public void saveAndEmailRegisterConfirmationToReferee(RegisteredUser referee) {
-		save(referee);
-		sendMailToReferee(referee);
-	}
-
-	private void sendMailToReferee(RegisteredUser referee) {
-		try {
-			RegisteredUser applicant = referee.getCurrentReferee().getApplication().getApplicant();
-			List<RegisteredUser> administrators = referee.getCurrentReferee().getApplication().getProgram().getAdministrators();
-			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-			Map<String, Object> model = new HashMap<String, Object>();
-			model.put("referee", referee);
-			model.put("applicant", applicant);
-			model.put("adminsEmails", adminsEmails);
-			model.put("host", Environment.getInstance().getApplicationHostName());
-			InternetAddress toAddress = createUserAddress(referee);
-			String subject = msgSource.getMessage("registration.confirmation.referee", null, null);
-			
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
-					"private/referees/mail/register_referee_confirmation.ftl", model, null));
-		} catch (Throwable e) {
-			log.warn("error while sending email", e);
-		}
-
-	}
-
-	private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
-		StringBuilder adminsMails = new StringBuilder();
-		for (RegisteredUser admin : administrators) {
-			adminsMails.append(admin.getEmail());
-			adminsMails.append(", ");
-		}
-		String result = adminsMails.toString();
-		if (!result.isEmpty()) {
-			result = result.substring(0, result.length() - 1);
-		}
-		return result;
-	}
-
+	
 	@Transactional
 	public RegisteredUser getCurrentUser() {
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();

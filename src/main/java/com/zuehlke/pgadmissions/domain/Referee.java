@@ -206,4 +206,9 @@ public class Referee extends DomainObject<Integer> {
 		return !hasProvidedReference() && !declined && (application == null || application.isModifiable());
 	}
 
+	public boolean hasResponded() {
+		return isDeclined() || hasProvidedReference();
+		
+	}
+
 }

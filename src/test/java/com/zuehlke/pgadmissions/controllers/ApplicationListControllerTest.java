@@ -51,10 +51,10 @@ public class ApplicationListControllerTest {
 
 	@Test
 	public void shouldReturnNullMessageForNullParams() {
-
 		assertNull(controller.getMessage(false, null, null));
-
 	}
+	
+
 
 	@Test
 	public void shouldAddSubmissionSuccesMessageIfRequired() {

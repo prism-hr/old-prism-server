@@ -124,15 +124,16 @@
 	<bean id="mailRefereeService" class="com.zuehlke.pgadmissions.services.RefereeService"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mainRefereeDAO" />
-		<constructor-arg index="1" ref="mimeMessagePreparatorFactory" />
-		<constructor-arg index="2" ref="mailSender" />
-		<constructor-arg index="3" ref="mailUserService" />
-		<constructor-arg index="4" ref="mailRoleDAO" />
+		<constructor-arg index="1" ref="mailEncryptionUtils"/>
+		<constructor-arg index="2" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="3" ref="mailSender" />
+		<constructor-arg index="4" ref="mailUserService" />
+		<constructor-arg index="5" ref="mailRoleDAO" />
 	</bean>
 	<bean id="mailApplicationsService" class="com.zuehlke.pgadmissions.services.ApplicationsService"
 		autowire-candidate="false">
 		<constructor-arg ref="mailApplicationDAO" />
 	</bean>
-
+	<bean id="mailEncryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils" autowire-candidate="false"/>
 	
 </beans>

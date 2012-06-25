@@ -22,13 +22,16 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstname?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">${applicant.firstName?html} ${applicant.lastName?html} has recently submitted an Application ${application.applicationNumber} for PhD study at University College London in ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${applicant.firstName?html} ${applicant.lastName?html} has submitted an Application ${application.applicationNumber} for postgraduate research study at 
+			      			<a href="http://www.ucl.ac.uk/">University College London (UCL)</a> in 
+							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
+						</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated as one of their referees.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to upload a short PDF document confirming their suitability for PhD study. You may create your own document, or work from our template (attached). If you feel unable to provide a reference, you may also decline.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for postgraduate research study. If you feel unable to do this, you may also decline. <b>Be aware that declining to provide a reference may reduce the applicant's chances of securing a study place.</b></font>
 			      	</p>
 			      	<#if !referee.user?? || !referee.user.enabled>
 					<p>
@@ -42,7 +45,7 @@
 			      	</#if>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}">Add Reference</a>
+			      			<a href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}">Provide Reference</a>
 			      		</font>
 			      	</p>
 			      	<p>

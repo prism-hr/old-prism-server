@@ -21,19 +21,29 @@
 		      		<h1 style="font-size: 12pt;">
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} was approved by ${approver.firstName?html} ${approver.lastName?html}.</font>
+		      		<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">${approver.firstName?html} ${approver.lastName?html} has authorised ${application.applicant.firstName?html} ${application.applicant.lastName?html} Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You can see the application here:</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this does not constitute a legally binding offer of study.</b></font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">View application</a>
-			      		</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions will now evaluate the application and generate an offer of study. We expect this to happen within --AdmissionsOfferServiceLevel--.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Prism</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on the application, you should now refer them to one of the following UCL Admissions contacts:
+				      		<ul>			
+				      		<#list registryContacts as contact>      		
+								<li><a href="mailto: ${contact.email}">${contact.firstname} ${contact.lastname}</a></li>
+							</#list>
+				      		</ul>			      		  
+			      		  </font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">The candidate number for their reference is --SitsApplicationId--. Please quote this number in all correspondence with them.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

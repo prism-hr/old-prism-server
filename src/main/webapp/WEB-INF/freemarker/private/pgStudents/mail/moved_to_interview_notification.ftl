@@ -22,7 +22,13 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to confirm the arrangements for your interview for Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
+				      	<font face="Arial, Helvetica, sans-serif" size="2">
+				      	<#if (previousStage.displayValue() = "Interview")>
+				      		 We can confirm that your Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to a further stage of interview.
+					    <#else>
+				      		  We are pleased to confirm that your Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to interview.
+					    </#if>
+			      		</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${application.latestInterview.interviewTime} on ${application.latestInterview.interviewDueDate?string("dd MMM yyyy")}.</font>

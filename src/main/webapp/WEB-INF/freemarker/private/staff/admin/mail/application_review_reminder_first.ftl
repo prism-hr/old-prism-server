@@ -22,7 +22,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>			      	
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The academic review period for Application ${application.applicationNumber} for UCL ${application.program.title} has expired. Please review the feedback and select the next action.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The review period for ${application.applicant.firstName?html} ${application.applicant.lastName?html} Application ${application.applicationNumber} for UCL 
+							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has expired.</font>
+			      	</p>
+			      	<p>			      	
+			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must now evaluate the feedback and select the next action.</b></font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

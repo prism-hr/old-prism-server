@@ -22,11 +22,16 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<#if !previousStage?? || (previousStage.displayValue() = "Validation")>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been advanced to academic assessment. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
-			            <#else>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">In order to obtain further feedback on your application it has been advanced to a second stage of academic assessment. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
-			            </#if>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+				      		<#if !previousStage?? || (previousStage.displayValue() = "Validation")>
+				      		  We are pleased to inform you that your application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to academic assessment.
+				      		  <br />An academic panel will now make a detailed assessment of your application.
+				            <#else>
+				      		  Your Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to a further stage of academic review.
+				      		  <br />An academic panel will now make a further detailed assessment of your application.
+				            </#if>
+			            	We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.
+			            </font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

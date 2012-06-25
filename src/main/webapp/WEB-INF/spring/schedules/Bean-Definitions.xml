@@ -45,6 +45,7 @@
 		<constructor-arg index="1" ref="mailSender" />
 		<constructor-arg index="2" ref="mailApplicationsService" />
 		<constructor-arg index="3" ref="messageSource" />
+		<constructor-arg index="4" ref="mailPersonService" />
 	</bean>
 
 	<bean id="adminMailSender" class="com.zuehlke.pgadmissions.mail.AdminMailSender"
@@ -53,6 +54,7 @@
 		<constructor-arg index="1" ref="mailSender" />
 		<constructor-arg index="2" ref="mailApplicationsService" />
 		<constructor-arg index="3" ref="messageSource" />
+		<constructor-arg index="4" ref="mailPersonService" />
 	</bean>
 
 	<bean id="approverMailSender" class="com.zuehlke.pgadmissions.mail.ApproverAdminMailSender"
@@ -135,5 +137,12 @@
 		<constructor-arg ref="mailApplicationDAO" />
 	</bean>
 	<bean id="mailEncryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils" autowire-candidate="false"/>
-	
+	<bean id="mailPersonDAO" class="com.zuehlke.pgadmissions.dao.PersonDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	<bean id="mailPersonService" class="com.zuehlke.pgadmissions.services.PersonService"
+		autowire-candidate="false">
+		<constructor-arg ref="mailPersonDAO" />
+	</bean>
 </beans>

@@ -24,12 +24,13 @@ public class SupervisorMailSender extends MailSender {
 
 	Map<String, Object> createModel(Supervisor supervisor) {
 		ApplicationForm form = supervisor.getApprovalRound().getApplication();
+		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
+		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 
 		Map<String, Object> model = new HashMap<String, Object>();
-
 		model.put("supervisor", supervisor);
 		model.put("application", form);
-
+		model.put("adminsEmails", adminsEmails);
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		return model;
 	}

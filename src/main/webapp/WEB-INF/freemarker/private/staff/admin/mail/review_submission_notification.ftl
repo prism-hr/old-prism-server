@@ -22,7 +22,9 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The reviewer ${reviewer.firstName?html} ${reviewer.lastName?html} has provided their review for Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The reviewer ${reviewer.firstName?html} ${reviewer.lastName?html} has provided their review for ${application.applicant.firstName?html} ${application.applicant.lastName?html} Application ${application.applicationNumber} for UCL 
+							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
+						</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

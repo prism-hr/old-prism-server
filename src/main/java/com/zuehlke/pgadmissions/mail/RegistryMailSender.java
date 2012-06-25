@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -65,7 +65,7 @@ public class RegistryMailSender extends MailSender {
 				new InternetAddress[] { ccAdminAddres },
 				subject,
 				templatename,
-				createModel(applicationForm, currentUser),
+				createModel(applicationForm, currentUser, registryContacts),
 				ccAdminAddres,
 				pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber() + ".pdf",
 						pdfDocumentBuilder.buildPdf(applicationForm)));
@@ -74,13 +74,25 @@ public class RegistryMailSender extends MailSender {
 
 	}
 
-	public Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser currentAdminUser) {
+	public Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser currentAdminUser, List<Person> registryContacts) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("application", applicationForm);
 		model.put("sender", currentAdminUser);
 		model.put("host", Environment.getInstance().getApplicationHostName());
+		model.put("recipients", createRecipientString(registryContacts));
 		return model;
-
 	}
 
+	private String createRecipientString(List<Person> registryContacts) {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (Person person : registryContacts) {
+			if( !first) {
+				sb.append(", ");
+			}
+			sb.append(person.getFirstname());
+			first = false;
+		}
+		return sb.toString();
+	}
 }

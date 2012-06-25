@@ -22,7 +22,10 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${newUser.firstName?html},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">${admin.firstName?html} ${admin.lastName?html} has added you as a ${newRoles}<#if program??> for UCL ${program.title?html}</#if>. Register to start using UCL Prism in this role.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${admin.firstName?html} ${admin.lastName?html} has invited you to register with UCL Prism in the role of ${newRoles}<#if program??> for UCL ${program.title?html}</#if>.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Register to start using UCL Prism in this role.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

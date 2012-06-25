@@ -22,7 +22,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">A new application has been submitted for ${application.program.title}. The application number is ${application.applicationNumber}. You must now validate the application.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.applicant.firstName} ${application.applicant.lastName} has submitted an Application ${application.applicationNumber} for UCL 
+							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must now evaluate their application and select the next action.</b></font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

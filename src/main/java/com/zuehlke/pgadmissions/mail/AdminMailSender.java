@@ -17,15 +17,19 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.PersonService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class AdminMailSender extends StateChangeMailSender {
 	
 	private final ApplicationsService applicationService;
+	private final PersonService personService;
 	
-	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ApplicationsService applicationService,MessageSource msgSource) {
+	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,// 
+			ApplicationsService applicationService,MessageSource msgSource, PersonService personService) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
 		this.applicationService = applicationService;
+		this.personService = personService;
 
 	}
 
@@ -131,6 +135,7 @@ public class AdminMailSender extends StateChangeMailSender {
 		Map<String, Object> model = createModel(application);
 		model.put("approver", approver);
 		model.put("previousStage", applicationService.getStageComingFrom(application));
+		model.put("registryContacts", personService.getAllRegistryUsers());
 
 		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());
 		administrators.remove(approver);

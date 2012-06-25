@@ -22,12 +22,34 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been suggested to be approved. We aim to be back in contact with the final decision soon.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to confirm that your Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been authorised.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">View application</a>
-			      		</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this does not constitute a legally binding offer of study.</b></font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions will now evaluate your application and generate an offer of study.</font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>You must be in possession of an offer of study in order to enrol.</b></font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Your offer of study will contain enrolment instructions and details of any conditions that you must meet in order to be permitted to enrol.</font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">You should expect to receive notification from UCL admissions within --AdmissionsOfferServiceLevel--.</font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on your application, you should now refer them to one of the following UCL Admissions contacts:
+				      		<ul>			
+				      		<#list registryContacts as contact>      		
+								<li><a href="mailto: ${contact.email}">${contact.firstname} ${contact.lastname}</a></li>
+							</#list>
+				      		</ul>			      		  
+			      		  </font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Your candidate number for their reference is --SitsApplicationId--. Please quote this number in all correspondence with them.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>

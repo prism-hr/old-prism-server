@@ -22,7 +22,10 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The approver ${approver.firstName?html} ${approver.lastName?html} has requested a restart of the approval phase for application ${application.applicationNumber}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${approver.firstName?html} ${approver.lastName?html} is unable to complete their authorisation of ${application.applicant.firstName?html} ${application.applicant.lastName?html} Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must restart the approval stage for the application to progress.</b></font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
@@ -30,7 +33,10 @@
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards, <br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

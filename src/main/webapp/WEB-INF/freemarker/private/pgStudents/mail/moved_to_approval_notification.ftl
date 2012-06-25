@@ -22,7 +22,16 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been advanced to approval stage. We aim to be back in contact with the outcome of that phase by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to confirm that your Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to approval.  At this stage, your study programme director evaluates and authorises your application.</font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this does not constitute a legally binding offer of study.</b></font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Your study programme director will authorise your application. Following this, your application will be passed to UCL Admissions to generate your offer of study.</font>
+			      	</p>
+			      	<p>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>You must be in possession of an offer of study in order to enrol.</b></font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

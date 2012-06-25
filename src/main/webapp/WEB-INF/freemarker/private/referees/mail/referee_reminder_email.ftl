@@ -22,7 +22,10 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstname?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that ${applicant.firstName?html} ${applicant.lastName?html} has submitted an Application ${application.applicationNumber} for PhD study at University College London (UCL) in ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that ${applicant.firstName?html} ${applicant.lastName?html} has submitted an Application ${application.applicationNumber} for postgraduate research study at 
+			      			<a href="http://www.ucl.ac.uk/">University College London (UCL)</a> in 
+							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
+						</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated as one of their referees.</font>

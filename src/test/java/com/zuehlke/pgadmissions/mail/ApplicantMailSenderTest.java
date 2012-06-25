@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -18,16 +20,19 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.PersonService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSenderTest {
@@ -37,6 +42,7 @@ public class ApplicantMailSenderTest {
 	private ApplicantMailSender applicantMailSender;
 	private ApplicationsService applicationServiceMock;
 	private MessageSource msgSourceMock;
+	private PersonService personServiceMock;
 
 	@Before
 	public void setUp() {
@@ -44,8 +50,9 @@ public class ApplicantMailSenderTest {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
+		personServiceMock = EasyMock.createMock(PersonService.class);
 		
-		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,applicationServiceMock, msgSourceMock);
+		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,applicationServiceMock, msgSourceMock, personServiceMock);
 	}
 
 	@Test
@@ -58,14 +65,19 @@ public class ApplicantMailSenderTest {
 				.applicant(applicant).toApplicationForm();
 
 		EasyMock.expect(applicationServiceMock.getStageComingFrom(form)).andReturn(ApplicationFormStatus.INTERVIEW);
-		EasyMock.replay(applicationServiceMock);
+		
+		List<Person> registryContacts = new ArrayList<Person>();
+		registryContacts.add(new PersonBuilder().id(123).toPerson());
+		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
+		EasyMock.replay(applicationServiceMock, personServiceMock);
 
 		Map<String, Object> model = applicantMailSender.createModel(form);
 		
-		EasyMock.verify(applicationServiceMock);
+		EasyMock.verify(applicationServiceMock, personServiceMock);
 		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));
+		assertEquals(registryContacts, model.get("registryContacts"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 		assertNull(model.get("reasons"));
 		assertEquals(ApplicationFormStatus.INTERVIEW, model.get("previousStage"));
@@ -86,14 +98,19 @@ public class ApplicantMailSenderTest {
 		form.setRejection(rejection);
 
 		EasyMock.expect(applicationServiceMock.getStageComingFrom(form)).andReturn(ApplicationFormStatus.INTERVIEW);
-		EasyMock.replay(applicationServiceMock);
+		
+		List<Person> registryContacts = new ArrayList<Person>();
+		registryContacts.add(new PersonBuilder().id(123).toPerson());
+		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
+		EasyMock.replay(applicationServiceMock, personServiceMock);
 		
 		Map<String, Object> model = applicantMailSender.createModel(form);
 		
-		EasyMock.verify(applicationServiceMock);
+		EasyMock.verify(applicationServiceMock, personServiceMock);
 		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));
+		assertEquals(registryContacts, model.get("registryContacts"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 		assertEquals(ApplicationFormStatus.INTERVIEW, model.get("previousStage"));
 		assertEquals(reason, model.get("reason"));
@@ -103,7 +120,7 @@ public class ApplicantMailSenderTest {
 	@Test
 	public void shouldSendMovedToReviewNotificationToApplicant() throws UnsupportedEncodingException {
 		final Map<String, Object> model = new HashMap<String, Object>();
-		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(ApplicationForm application) {

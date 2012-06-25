@@ -14,15 +14,19 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.PersonService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSender extends StateChangeMailSender {
 
 	private final ApplicationsService applicationsService;
+	private final PersonService personService;
 
-	public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ApplicationsService applicationsService, MessageSource msgSource) {
+	public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,// 
+			ApplicationsService applicationsService, MessageSource msgSource, PersonService personService) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
 		this.applicationsService = applicationsService;
+		this.personService = personService;
 	}
 
 	Map<String, Object> createModel(ApplicationForm form) {
@@ -33,8 +37,9 @@ public class ApplicantMailSender extends StateChangeMailSender {
 		model.put("adminsEmails", adminsEmails);
 
 		model.put("application", form);
-
 		model.put("applicant", form.getApplicant());
+		model.put("registryContacts", personService.getAllRegistryUsers());
+		
 		model.put("host", Environment.getInstance().getApplicationHostName());
 
 		if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -52,7 +57,6 @@ public class ApplicantMailSender extends StateChangeMailSender {
 	public void sendMailsForApplication(ApplicationForm form, String messageCode, String templatename, NotificationType notificationType) {
 		InternetAddress toAddress = createAddress(form.getApplicant());
 		String subject = resolveSubject(form, messageCode);
-
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, templatename, createModel(form), null));
 	}
 

@@ -4,8 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -21,12 +23,12 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -45,14 +47,32 @@ public class RegistryMailSenderTest {
 	private PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactoryMock;
 
 	@Test
-	public void shouldReturnModelWithApplicationForm() {
+	public void shouldReturnModelWithApplicationFormAndSingleRecipient() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").toUser();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentAdminUser);
-		EasyMock.replay(userServiceMock);
-		Map<String, Object> model = registryMailSender.createModel(applicationForm, currentAdminUser);
+		List<Person> registryContacts = new ArrayList<Person>();
+		registryContacts.add(new PersonBuilder().firstname("FirstName").toPerson());
+
+		Map<String, Object> model = registryMailSender.createModel(applicationForm, currentAdminUser, registryContacts );
 		assertEquals(applicationForm, model.get("application"));
 		assertEquals(currentAdminUser, model.get("sender"));
+		assertEquals("FirstName", model.get("recipients"));
+		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
+	}
+
+	@Test
+	public void shouldReturnModelWithApplicationFormAndMultipleRecipient() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").toUser();
+		List<Person> registryContacts = new ArrayList<Person>();
+		registryContacts.add(new PersonBuilder().firstname("FirstName").toPerson());
+		registryContacts.add(new PersonBuilder().firstname("Hui").toPerson());
+
+		Map<String, Object> model = registryMailSender.createModel(applicationForm, currentAdminUser, registryContacts );
+
+		assertEquals(applicationForm, model.get("application"));
+		assertEquals(currentAdminUser, model.get("sender"));
+		assertEquals("FirstName, Hui", model.get("recipients"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 	}
 
@@ -63,7 +83,7 @@ public class RegistryMailSenderTest {
 		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, registryUserDAOMock, userServiceMock, msgSourceMock,pdfDocumentBuilderMock, pdfAttachmentInputSourceFactoryMock) {
 
 			@Override
-			public Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser currentAdminUser) {
+			public Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser currentAdminUser, List<Person> registryContacts) {
 				return model;
 			}
 

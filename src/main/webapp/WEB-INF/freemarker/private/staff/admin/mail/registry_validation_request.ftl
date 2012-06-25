@@ -19,17 +19,37 @@
 		    	</td>
 		    	<td width="500">
 		      		<h1 style="font-size: 12pt;">
-		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear all,</font>
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${recipients},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We have recently received the attached application to the UCL ${application.program.title?html} programme.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.applicant.firstName?html} ${application.applicant.lastName?html} has submitted an Application ${application.applicationNumber} for UCL 
+							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
+			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We would be most grateful if you could assist us in validating the applicant's academic and English language qualifications as well as establishing their fee status.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Please find attached their application.</font>
 			      	</p>
-			    
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />${sender.firstName}</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We are unable to make a confident preliminary assessment of their student fees status and eligibility for postgraduate research study at UCL.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>We would be grateful for your assessment of the following:</b>
+			      		<ul>			      		  
+							<li>Is the applicant qualified for postgraduate study at UCL (yes/no/unsure*)?</li>
+							<li>Does the applicant meet the required level of English language competence (yes/no/unsure*)?</li>
+							<li>What is the applicant's fee status (home/overseas)?</li>
+			      		</ul>
+			      		<br/><i>*e.g. Refer to Dean of Students.</i>
+			      		</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">To progress the application without unreasonable delay to the applicant, we would hope to receive your response within <<AdmissionsValidationServiceLevel>>.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Please contact me should you have any questions.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards, <br />${sender.firstName}</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

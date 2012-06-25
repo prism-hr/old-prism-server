@@ -23,18 +23,21 @@
 		      		</h1>
 			      	</br>
 			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Our 
 				      	<#if (previousStage.displayValue() == "Validation")>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">Our admissions officer has now completed their assessment of your Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
+				      		recruitment office 
 				      	</#if> 
 				      	<#if (previousStage.displayValue() == "Review")>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">We have completed our academic review of your Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
+				      		academic review panel 
 				      	</#if> 
 				      	<#if (previousStage.displayValue() == "Interview")>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for presenting for your recent interview for your Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
-				      	</#if> 
+				      		interview panel 
+				      	</#if>
+				      	have completed their assessment of your Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
+						</font>				      	 
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We regret to inform you that your application has been rejected. The reason for rejection is as follows: ${(reason.text?html)!}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We regret to inform you that your application was rejected for the following reason: ${(reason.text?html)!}.</font>
 			      	</p>
 			      	<#if prospectusLink??>
 				      	<p>

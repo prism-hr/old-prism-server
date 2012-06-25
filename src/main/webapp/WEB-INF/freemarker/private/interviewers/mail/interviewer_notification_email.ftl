@@ -22,7 +22,9 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${interviewer.user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to confirm the arrangements for your interview of ${applicant.firstName?html} ${applicant.lastName?html} for Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We can confirm the arrangements for your interview of ${applicant.firstName?html} ${applicant.lastName?html} in connection with Application ${application.applicationNumber} for UCL 
+							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
+			      		</font>
 			      	</p>
 			      	<#if !interviewer.user.enabled>
 			      		<p>

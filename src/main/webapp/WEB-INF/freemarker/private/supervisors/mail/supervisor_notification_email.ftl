@@ -22,23 +22,24 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${supervisor.user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.applicant.firstName?html} ${application.applicant.lastName?html} has recently submitted an Application ${application.applicationNumber} for PhD study at University College London in ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to confirm your intention to supervise ${application.applicant.firstName?html} ${application.applicant.lastName?html} in connection with their Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This application has now been recommended for approval, and this is to inform you that you have been selected to act as supervisor for ${application.applicant.firstName?html}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The application is undergoing authorisation by the study programme director. We aim to be back in contact with the outcome of this process by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
 			      	</p>
-
 			      	<#if !supervisor.user?? || !supervisor.user.enabled >
 			      		<p>
 			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with UCL Prism, please do so by clicking the link below:</font>
 			      		</p>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">	encrypt?
+				      		<font face="Arial, Helvetica, sans-serif" size="2">
 				      			<a href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}">Register</a>
 				      		</font>
 				      	</p>
 			      	</#if>
-				      	
+				    <p>
+			      	  <font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to supervise.</font>
+			      	</p>  	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
 			      	</p>

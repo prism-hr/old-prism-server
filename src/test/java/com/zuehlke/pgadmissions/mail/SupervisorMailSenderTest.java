@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import junit.framework.Assert;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +49,8 @@ public class SupervisorMailSenderTest {
 
 		Map<String, Object> model = supervisorMailSender.createModel(supervisor);		
 		assertEquals(supervisor, model.get("supervisor"));
-		assertEquals(form, model.get("application"));		
+		assertEquals(form, model.get("application"));
+		Assert.assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 
 	}

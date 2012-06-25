@@ -3,7 +3,9 @@ package com.zuehlke.pgadmissions.mail;
 import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -19,12 +21,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
@@ -33,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.PersonService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class AdminMailSenderTest {
@@ -43,6 +48,7 @@ public class AdminMailSenderTest {
 	private AdminMailSender adminMailSender;
 	private MessageSource msgSourceMock;
 	private ApplicationsService applicationServiceMock;
+	private PersonService personServiceMock;
 
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
@@ -62,7 +68,7 @@ public class AdminMailSenderTest {
 	public void shouldSendReminderEmailToAdmin() throws UnsupportedEncodingException {
 		final Map<String, Object> model = new HashMap<String, Object>();
 
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 			@Override
 			Map<String, Object> createModel(ApplicationForm application) {
 				return model;
@@ -96,7 +102,7 @@ public class AdminMailSenderTest {
 	@Test
 	public void shouldSendAdminNotificationForNewReviewComment() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(ApplicationForm form) {
@@ -129,7 +135,7 @@ public class AdminMailSenderTest {
 	@Test
 	public void shouldSendAdminNotificationForNewInterviewComment() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(ApplicationForm form) {
@@ -174,7 +180,7 @@ public class AdminMailSenderTest {
 		final String templatename = "private/staff/admin/mail/application_validation_reminder.ftl";
 
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(ApplicationForm blabla) {
@@ -199,48 +205,47 @@ public class AdminMailSenderTest {
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 	}
 
-	
 	@Test
 	public void shouldSendApproveRejectReminderEmailToEachApprover() throws Exception {
-		
+
 		final RegisteredUser approverOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		InternetAddress adminOneAdr = new InternetAddress("bb@test.com");
-		
+
 		final RegisteredUser approverTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").toUser();
 		InternetAddress adminTwoAdr = new InternetAddress("cc@test.com");
 		Program program = new ProgramBuilder().title("prg").approver(approverOne, approverTwo).toProgram();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
 		final ApplicationForm form = new ApplicationFormBuilder().applicationNumber("abc").id(22).program(program).applicant(applicant).toApplicationForm();
-		
+
 		final String templatename = "private/approvers/mail/application_approval_reminder.ftl";
-		
+
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
-			
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
+
 			@Override
 			Map<String, Object> createModel(ApplicationForm blabla) {
 				return model;
 			}
-			
+
 		};
-		
+
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("msgCode"),// 
 				EasyMock.aryEq(new Object[] { "abc", "prg", "Jane", "Smith" }), EasyMock.eq((Locale) null))).andReturn("subject");
-		
+
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminOneAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminTwoAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
-		
+
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().times(2);
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
-		
+
 		String subjectMessageCode = "msgCode";
 		adminMailSender.sendMailsForApplication(form, subjectMessageCode, templatename, NotificationType.APPROVAL_REMINDER);
-		
+
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 	}
-	
+
 	@Test
 	public void shouldStopIfOneReminderEmailFails() throws Exception {
 		final RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
@@ -254,7 +259,7 @@ public class AdminMailSenderTest {
 		final String templatename = "private/staff/admin/mail/application_validation_reminder.ftl";
 
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(ApplicationForm blabla) {
@@ -287,7 +292,7 @@ public class AdminMailSenderTest {
 	public void sendingRejectNotifications() throws Exception {
 		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		
+
 		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).toApplicationForm();
 
 		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
@@ -300,7 +305,7 @@ public class AdminMailSenderTest {
 		String expTemplate = "private/staff/admin/mail/rejected_notification.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 			@Override
 			Map<String, Object> createModel(ApplicationForm form) {
 				Assert.assertNotNull(form);
@@ -311,7 +316,7 @@ public class AdminMailSenderTest {
 
 		EasyMock.expect(applicationServiceMock.getStageComingFrom(application)).andReturn(ApplicationFormStatus.VALIDATION).times(2);
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("rejection.notification"),// 
-				EasyMock.aryEq(new Object[] {"bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
+				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
 		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
@@ -332,7 +337,7 @@ public class AdminMailSenderTest {
 		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
 		RegisteredUser adminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").toUser();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		
+
 		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(adminOne, adminTwo).toProgram()).toApplicationForm();
 
 		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
@@ -343,7 +348,7 @@ public class AdminMailSenderTest {
 		String expTemplate = "private/staff/admin/mail/rejected_notification.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 			@Override
 			Map<String, Object> createModel(ApplicationForm form) {
 				Assert.assertNotNull(form);
@@ -379,7 +384,7 @@ public class AdminMailSenderTest {
 		application.setRejection(rejection);
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 			@Override
 			Map<String, Object> createModel(ApplicationForm form) {
 				Assert.assertNotNull(form);
@@ -398,7 +403,7 @@ public class AdminMailSenderTest {
 	@Test
 	public void shouldSendReviewerAssignedEmailToEachAdmin() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(ApplicationForm form) {
@@ -412,10 +417,10 @@ public class AdminMailSenderTest {
 		Reviewer reviewer = new ReviewerBuilder().id(1).user(reviewerUser).toReviewer();
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
-		
+
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reviewer.assigned.admin"),// 
 				EasyMock.aryEq(new Object[] { "abc", "prg" }), EasyMock.eq((Locale) null))).andReturn("subject");
-		
+
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, null, "subject", "private/staff/admin/mail/reviewer_assigned_notification.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
@@ -434,7 +439,7 @@ public class AdminMailSenderTest {
 
 		Program program = new ProgramBuilder().title("prg").administrators(programAdminOne, programAdminTwo).toProgram();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		
+
 		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(program).toApplicationForm();
 
 		RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(32).email("dd@test.com").firstName("doris").lastName("day").toUser();
@@ -449,7 +454,7 @@ public class AdminMailSenderTest {
 		String expTemplate = "private/staff/admin/mail/rejected_notification.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 			@Override
 			Map<String, Object> createModel(ApplicationForm form) {
 				Assert.assertNotNull(form);
@@ -462,8 +467,8 @@ public class AdminMailSenderTest {
 
 		EasyMock.expect(applicationServiceMock.getStageComingFrom(application)).andReturn(ApplicationFormStatus.INTERVIEW).times(2);
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("rejection.notification"),// 
-				EasyMock.aryEq(new Object[] {"bob", "prg", "Jane", "Smith", "Interview" }), EasyMock.eq((Locale) null))).andReturn("subject");
-		
+				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Interview" }), EasyMock.eq((Locale) null))).andReturn("subject");
+
 		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(//
 				EasyMock.eq(expAddr),//
@@ -480,14 +485,13 @@ public class AdminMailSenderTest {
 		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
 
 	}
-	
 
 	@Test
 	public void sendingApprovedNotificationsOnlyToNotApproverAdmins() throws Exception {
 		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
 		RegisteredUser adminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").toUser();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		
+
 		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(adminOne, adminTwo).toProgram()).toApplicationForm();
 
 		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
@@ -498,7 +502,7 @@ public class AdminMailSenderTest {
 		String expTemplate = "private/staff/admin/mail/approved_notification.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 			@Override
 			Map<String, Object> createModel(ApplicationForm form) {
 				Assert.assertNotNull(form);
@@ -515,21 +519,26 @@ public class AdminMailSenderTest {
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
 		javaMailSenderMock.send(mimePrepMock);
 		EasyMock.expectLastCall();
-		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
+		
+		List<Person> registryContacts = new ArrayList<Person>();
+		registryContacts.add(new PersonBuilder().id(123).toPerson());
+		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
+		
+		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 
 		adminMailSender.sendAdminApprovedNotification(application, adminTwo);
 
-		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
+		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 		Assert.assertEquals(adminTwo, model.get("approver"));
+		Assert.assertEquals(registryContacts, model.get("registryContacts"));
 		Assert.assertEquals(ApplicationFormStatus.INTERVIEW, model.get("previousStage"));
 	}
-
 
 	@Test
 	public void sendingApprovedNotifications() throws Exception {
 		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		
+
 		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).toApplicationForm();
 
 		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
@@ -542,7 +551,7 @@ public class AdminMailSenderTest {
 		String expTemplate = "private/staff/admin/mail/approved_notification.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock) {
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
 			@Override
 			Map<String, Object> createModel(ApplicationForm form) {
 				Assert.assertNotNull(form);
@@ -553,23 +562,26 @@ public class AdminMailSenderTest {
 
 		EasyMock.expect(applicationServiceMock.getStageComingFrom(application)).andReturn(ApplicationFormStatus.VALIDATION).times(2);
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approved.notification"),// 
-				EasyMock.aryEq(new Object[] {"bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
+				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
 		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
 		javaMailSenderMock.send(mimePrepMock);
 		EasyMock.expectLastCall();
-		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
+		
+		List<Person> registryContacts = new ArrayList<Person>();
+		registryContacts.add(new PersonBuilder().id(123).toPerson());
+		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
+		
+		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 
 		adminMailSender.sendAdminApprovedNotification(application, approver);
 
-		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
+		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 		Assert.assertEquals(approver, model.get("approver"));
+		Assert.assertEquals(registryContacts, model.get("registryContacts"));
 		Assert.assertEquals(ApplicationFormStatus.VALIDATION, model.get("previousStage"));
 	}
-
-
-	
 
 	@Before
 	public void setUp() {
@@ -577,7 +589,9 @@ public class AdminMailSenderTest {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+		personServiceMock = EasyMock.createMock(PersonService.class);
 
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock);
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,// 
+				applicationServiceMock, msgSourceMock, personServiceMock);
 	}
 }

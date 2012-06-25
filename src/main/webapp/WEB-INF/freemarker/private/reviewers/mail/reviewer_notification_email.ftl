@@ -22,13 +22,16 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${reviewer.user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">${applicant.firstName?html} ${applicant.lastName?html} has recently submitted an Application ${application.applicationNumber} for PhD study at University College London in ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${applicant.firstName?html} ${applicant.lastName?html} has submitted an Application ${application.applicationNumber} for postgraduate research study at 
+							<a href="http://www.ucl.ac.uk/">University College London (UCL)</a> in 
+							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
+						</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been selected to review their application.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for PhD study. If you feel unable to provide a review, you may also decline.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for postgraduate research study. If you feel unable to do this, you may also decline. <b>Be aware that declining to provide a review may reduce the applicant's chances of securing a study place.</b></font>
 			      	</p>
 			      	<#if !reviewer.user?? || !reviewer.user.enabled>
 			      		<p>

@@ -39,11 +39,11 @@ function loadUsersForProgram()
 				$('#existingUsers').html(data);
 				if ($(data).find('div.scroll tr').length == 0)
 				{
-					$('#existingUsers').hide();
+					$('#existingUsers table').hide();
 				}
 				else
 				{
-					$('#existingUsers').show();
+					$('#existingUsers table').show();
 				}
 				addToolTips();
 			}

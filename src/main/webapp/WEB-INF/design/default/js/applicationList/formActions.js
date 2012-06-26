@@ -125,7 +125,7 @@ $(document).ready(function() {
 		var $appList = $('#appList');
 		var list = '';
 		
-		$(':checkbox').each(function()
+		$('#applicationListSection input:checkbox').each(function()
 		{
 			this.checked = selectAllValue;
 			if (selectAllValue)

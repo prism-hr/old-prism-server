@@ -298,12 +298,11 @@ $(document).ready(function()
 		{ 
 			$('#programmeDetailsSection .terms-box').css({borderColor: 'red', color: 'red'});
 				
-			$("#prog-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
-			$("#prog-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-				
-			if (progImgCount == 0)
+			var $infobar = $('#prog-info-bar-div.section-info-bar');
+			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
+			if ($infobar)
 			{
-				$("#prog-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
 				progImgCount = progImgCount + 1;
 			}
 			addToolTips();

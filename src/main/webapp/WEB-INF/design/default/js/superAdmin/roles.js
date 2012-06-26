@@ -37,7 +37,7 @@ function loadUsersForProgram()
 			success: function(data)
 			{
 				$('#existingUsers').html(data);
-				if ($(data).find('tr').length == 0)
+				if ($(data).find('tbody tr').length == 0)
 				{
 					$('#existingUsers').hide();
 				}

@@ -23,7 +23,7 @@ div.left-column .field { margin-left: 100px !important; }
 .pending{ color: #999999;}
 
 /* Table of existing users. */
-#existingUsers { border: none; display: none; padding: 0; position: relative; }
+#existingUsers { border: none; border-bottom: 1px solid #999; display: none; padding: 0; position: relative; }
 #existingUsers .arrow { background: url(../../../images/button_arrow.png) no-repeat; display: inline-block; height: 20px; width: 20px; }
 
 /* User's roles as icons. */
@@ -45,7 +45,7 @@ div.left-column .field { margin-left: 100px !important; }
 /* Fix header scrolling... http://www.imaputz.com/cssStuff/bigFourVersion.html */
 
 /* define height and width of scrollable area. Add 16px to width for scrollbar          */
-div.tableContainer { clear: both;	max-height: 193px; overflow: auto; width: 100%; }
+div.tableContainer { clear: both;	max-height: 194px; overflow: auto; width: 100%; }
 
 /* Reset overflow value to hidden for all non-IE browsers. */
 html>body div.tableContainer { overflow: hidden; width: 100%; }
@@ -63,10 +63,10 @@ html>body thead.fixedHeader tr { display: block }
 html>body tbody.scrollContent { display: block; max-height: 164px; overflow: auto; width: 100% }
 
 /* Column widths. (Do not use COLGROUP!) */
-html>body thead.fixedHeader th { width: 20px }
-html>body thead.fixedHeader th + th { width: 472px }
-html>body thead.fixedHeader th + th + th { width: 240px }
-html>body thead.fixedHeader th + th + th + th { width: 70px }
+html>body thead.fixedHeader th { width: 24px }
+html>body thead.fixedHeader th + th { width: 458px }
+html>body thead.fixedHeader th + th + th { width: 234px }
+html>body thead.fixedHeader th + th + th + th { width: 86px }
 
 html>body tbody.scrollContent td { width: 20px }
 html>body tbody.scrollContent td + td { width: 472px }

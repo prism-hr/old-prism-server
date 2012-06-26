@@ -184,12 +184,13 @@ $(document).ready(function(){
 		if ($("#acceptTermsPEDValue").val() == 'NO')
 		{ 
 			$('#personalDetailsSection .terms-box').css({borderColor: 'red', color: 'red'});
-			
-			$("#pres-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
-			$("#pres-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			if(persImgCount == 0){
-				$("#pres-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				persImgCount = persImgCount + 1;
+
+			var $infobar = $('#prog-info-bar-div.section-info-bar');
+			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
+			//$("#pres-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+			if ($infobar)
+			{
+				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
 			}
 			addToolTips();
 		}

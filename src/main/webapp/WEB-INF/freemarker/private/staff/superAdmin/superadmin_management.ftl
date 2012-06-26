@@ -80,6 +80,8 @@
 								</table>
 							</div>
 
+							<br />
+							
 							<div>
 							
 								<div class="section-info-bar">
@@ -124,8 +126,10 @@
 										</div>
 									</div>
 		
-									<div class="buttons">
-										<button class="blue" type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+									<div class="row">
+										<div class="field">
+											<button class="blue" type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+										</div>
 									</div>
 			
 								</div>

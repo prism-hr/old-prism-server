@@ -75,7 +75,7 @@ public class MoveToReviewControllerTest {
 	@Test
 	public void shouldMoveApplicationToReview() {
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).toReviewRound();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
 		
 		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock,null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, null) {
 			@Override
@@ -88,8 +88,8 @@ public class MoveToReviewControllerTest {
 		reviewServiceMock.moveApplicationToReview(application, reviewRound);
 		EasyMock.replay(reviewServiceMock);
 		
-		String view = controller.moveToReview(application.getApplicationNumber(), reviewRound, bindingResultMock, new ModelMap());
-		assertEquals("redirect:/applications", view);
+		String view = controller.moveToReview("abc", reviewRound, bindingResultMock, new ModelMap());
+		assertEquals("redirect:/applications?messageCode=move.review&application=abc", view);
 		EasyMock.verify(reviewServiceMock);
 		
 	}

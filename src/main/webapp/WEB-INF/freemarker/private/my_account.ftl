@@ -158,7 +158,7 @@
 										
 											<div class="buttons">						        		
 												<button type="button" id="cancelMyACnt" value="cancel">Clear</button>
-												<button class="blue" id="saveChanges" type="button" value="Submit">Save Changes</button>						        
+												<button class="blue" id="saveChanges" type="button" value="Submit">Submit</button>						        
 											</div>
 											
 										</form>

@@ -36,8 +36,11 @@ public class FeedbackCommentValidator implements Validator{
 		else if (target instanceof InterviewComment) {
 			InterviewComment comment = (InterviewComment) target;
 			if(!comment.isDecline() ){
-				if(comment.getSuitableCandidate() == null ){
-					errors.rejectValue("suitableCandidate", "dropdown.radio.select.none");
+				if(comment.getSuitableCandidateForUcl() == null ){
+					errors.rejectValue("suitableCandidateForUcl", "dropdown.radio.select.none");
+				}
+				if(comment.getSuitableCandidateForProgramme() == null ){
+					errors.rejectValue("suitableCandidateForProgramme", "dropdown.radio.select.none");
 				}
 				if(comment.getWillingToSupervise() == null){
 					errors.rejectValue("willingToSupervise", "dropdown.radio.select.none");

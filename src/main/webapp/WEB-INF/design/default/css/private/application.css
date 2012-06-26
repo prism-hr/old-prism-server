@@ -101,11 +101,12 @@ section.form-rows .hint {
 section.form-rows .error-hint { 
 	background: url(../../images/button_exclaim.png) no-repeat 0 .1em; 
 	no-repeat; height: 24px; 
-	float: left;
 	width: 20px; 
   margin-left: 3px;
   margin-right: -3px;
   margin-top: -2px;	
+	position: absolute;
+	top: 16px;
 }
 
 .individual-hint { margin-top: 2px;	} 

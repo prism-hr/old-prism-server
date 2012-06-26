@@ -6,19 +6,6 @@ $(document).ready(function()
 	makeFeedbackButton();
 
 	// ------------------------------------------------------------------------------
-	// "Select all" checkbox functionality.
-	// ------------------------------------------------------------------------------
-  $('#select-all').click(function(event)
-	{
-    var selectAllValue = this.checked;
-    
-    //Iterate each checkbox
-      $(':checkbox').each(function() {
-        this.checked = selectAllValue;                        
-      });
-  });
-  
-	// ------------------------------------------------------------------------------
 	// On the application form, show "Not Provided" text in grey.
 	// ------------------------------------------------------------------------------
   $('.field').each(function()

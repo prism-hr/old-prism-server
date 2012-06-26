@@ -96,7 +96,7 @@
 											<span class="hint" data-desc="<@spring.message 'assignInterviewer.assign'/>"></span>
 											<div class="field">
 												<#-- <select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}"> -->
-												<select id="programInterviewers" multiple="multiple" size="8">
+												<select id="programInterviewers" class="list-select-from" multiple="multiple" size="8">
 													<optgroup id="default" label="Default interviewers">
 														<#list programmeInterviewers as interviewer>
 														<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} </option>
@@ -127,7 +127,7 @@
 										</div>
 		
 										<!-- Available Reviewer Buttons -->
-										<div class="row interviewer-buttons">
+										<div class="row interviewer-buttons list-select-buttons">
 											<div class="field">
 												<span>
 													<button class="blue" type="button" id="addInterviewerBtn"><span class="icon-down"></span> Add</button>
@@ -139,7 +139,7 @@
 										<!-- Already interviewers of this application -->
 										<div class="row">
 											<div class="field">
-												<select id="applicationInterviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
+												<select id="applicationInterviewers" class="list-select-to" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 													<#list applicationInterviewers as interviewer>
 													<option value="${encrypter.encrypt(interviewer.id)}">
 														${interviewer.firstName?html} ${interviewer.lastName?html}

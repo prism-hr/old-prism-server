@@ -40,3 +40,8 @@ div.left-column .field { margin-left: 100px !important; }
 #existingUsers .role-icons.interviewer .is-interviewer { background-position: -44px 0; }
 #existingUsers .role-icons.reviewer .is-reviewer { background-position: -66px 0; }
 #existingUsers .role-icons.approver .is-approver { background-position: -88px 0; }
+
+/* Table with scrolling content and fixed header. */
+#existingUsers td.scrollparent { padding: 0; }
+#existingUsers .scroll { max-height: 155px; } /* roughly five rows high. */
+#existingUsers .scroll table { border-collapse: collapse; width: 100%; }

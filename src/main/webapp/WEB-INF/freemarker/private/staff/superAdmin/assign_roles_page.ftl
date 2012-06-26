@@ -127,7 +127,7 @@
 												</div>
 												
 												<div class="buttons">
-													<button type="submit" value="adduser" >Add / update user</button>
+													<button class="blue" type="submit" value="adduser" >Add / update user</button>
 												</div>
 												
 											</div>

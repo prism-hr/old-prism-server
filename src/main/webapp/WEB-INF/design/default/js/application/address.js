@@ -81,9 +81,10 @@ $(document).ready(function(){
 			
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
-			$("#addr-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
-			$("#addr-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			if(addrImgCount == 0){
+			var $infobar = $('#addr-info-bar-div.section-info-bar');
+			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
+			if ($infobar)
+			{
 				$("#addr-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
 				addrImgCount = addrImgCount + 1;
 			}

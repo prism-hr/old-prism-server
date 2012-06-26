@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
-<span name="supportingDocumentSpan">
+<span class="uploaded-file" name="supportingDocumentSpan">
 	<#if document?? && document.id??>
 		<#if document.type != 'COMMENT'>
 			<input type="text" class="file" id="document_${document.type}" value="${encrypter.encrypt(document.id)}" style="display:none" name="document"/>

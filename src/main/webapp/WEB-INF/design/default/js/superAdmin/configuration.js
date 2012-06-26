@@ -95,6 +95,10 @@ $(document).ready(function()
 		}
 	});
 	
+
+	// -----------------------------------------------------------------------------
+	// Registry users
+	// -----------------------------------------------------------------------------
 	$('#submitRUBtn').click(function()
 	{
 		$("#registryUsers").html('');
@@ -102,6 +106,7 @@ $(document).ready(function()
 		var registryUsers = $('[input[name="registryUsers"]');
 		if (!validationErrors)
 		{
+			$('#section-registry > div').append('<div class="ajax" />');
 			$.ajax({
 				type: 'POST',
 				 statusCode: {
@@ -113,7 +118,8 @@ $(document).ready(function()
 				data:registryUsers.serialize(),
 				success:function(data)
 				{
-					window.location.href = "/pgadmissions/applications";
+					$('#section-registry div.ajax').remove();
+					//window.location.href = "/pgadmissions/applications";
 				}
 			});
 		}

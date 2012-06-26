@@ -88,9 +88,10 @@ $(document).ready(function(){
 			
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
-			$("#emp-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
-			$("#emp-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			if(empImgCount == 0){
+			var $infobar = $('#emp-info-bar-div.section-info-bar');
+			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
+			if ($infobar)
+			{
 				$("#emp-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
 				empImgCount = empImgCount + 1;
 			}

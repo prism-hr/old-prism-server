@@ -122,11 +122,19 @@ $(document).ready(function() {
   $('#select-all').click(function(event)
 	{
     var selectAllValue = this.checked;
+		var $appList = $('#appList');
+		var list = '';
+		
 		$(':checkbox').each(function()
 		{
 			this.checked = selectAllValue;
-			$(this).trigger('click');
+			if (selectAllValue)
+			{
+				list += id + ";";
+			}
 		});
+		
+		$appList.val(list);
   });
   
 	// --------------------------------------------------------------------------------

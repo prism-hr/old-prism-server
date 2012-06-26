@@ -36,7 +36,6 @@ $(document).ready(function()
 				data:stages.serialize(),
 				success:function(data)
 				{
-					console.log(data);
 					$('#section-slc div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";
 				}
@@ -86,7 +85,7 @@ $(document).ready(function()
 				  },
 				url:"/pgadmissions/configuration/submitReminderInterval", 
 				data:$.param(postData),
-				sucess:function(data)
+				success:function(data)
 				{
 					$('#section-reminder div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";

@@ -10,7 +10,8 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------
 	$('#cancelDurationBtn, #cancelReminderBtn, #cancelRegistryBtn').click(function()
 	{
-		$(this).closest('form').reset();
+		var $form = $(this).closest('form');
+		$form[0].reset();
 		//window.location.href = "/pgadmissions/applications";
 	});
 	

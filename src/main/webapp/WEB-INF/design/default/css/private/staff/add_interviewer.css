@@ -17,7 +17,6 @@
 }
 #applicationInterviewers option { padding: 5px; }
 #programInterviewers option:last-child, #applicationInterviewers option:last-child { border-bottom: none; }
-#programInterviewers option.selected { color: #CCC; }
 
 .interviewer-buttons .field { border-top: 2px solid #999; margin-top: 25px; text-align: center; width: 400px; }
 .interviewer-buttons .field span { background: #FFF; display: block; margin: -18px auto 0; padding: 4px; width: 180px; }

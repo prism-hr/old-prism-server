@@ -90,11 +90,11 @@ public class DelegateToApplicationAdministratorControllerTest {
 
 	@Test
 	public void shouldSaveApplicationAndRedirectToApplicationsList(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("abc").toApplicationForm();
 		applicationServiceMock.save(applicationForm);
 		EasyMock.replay(applicationServiceMock);
 		String view = controller.delegateToApplicationAdministrator(applicationForm);
-		assertEquals("redirect:/applications", view);
+		assertEquals("redirect:/applications?messageCode=delegate.success&application=abc", view);
 		EasyMock.verify(applicationServiceMock);
 	}
 	

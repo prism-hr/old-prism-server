@@ -59,7 +59,7 @@ public class WithdrawControllerTest {
 	
 	@Test
 	public void shouldChangeStatusToWithdrawnAndSaveAndSendEmailsNotifications() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicant(student).id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicant(student).id(2).applicationNumber("abc").toApplicationForm();
 		withdrawServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
 		
 		StateChangeEvent event = new StateChangeEventBuilder().id(1).toEvent();
@@ -71,7 +71,7 @@ public class WithdrawControllerTest {
 		
 		EasyMock.verify(withdrawServiceMock);
 		assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-		assertEquals("redirect:/applications", view);
+		assertEquals("redirect:/applications?messageCode=application.withdrawn&application=abc", view);
 		
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(event, applicationForm.getEvents().get(0));

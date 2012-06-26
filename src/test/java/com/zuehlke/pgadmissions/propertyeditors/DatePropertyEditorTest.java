@@ -16,8 +16,15 @@ public class DatePropertyEditorTest {
 	
 
 	@Test	
-	public void shouldParseAndSetAsValue() throws ParseException{
+	public void shouldParseFirstAcceptedFormatAndSetAsValue() throws ParseException{
 		editor.setAsText("02-Feb-2001");
+		assertEquals(dateFormat.parse("2001/02/02"), editor.getValue());
+		
+	}
+	
+	@Test	
+	public void shouldParseSecondAcceptedFormatAndSetAsValue() throws ParseException{
+		editor.setAsText("02 Feb 2001");
 		assertEquals(dateFormat.parse("2001/02/02"), editor.getValue());
 		
 	}

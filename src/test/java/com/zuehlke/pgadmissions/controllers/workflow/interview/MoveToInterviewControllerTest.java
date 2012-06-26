@@ -80,7 +80,7 @@ public class MoveToInterviewControllerTest {
 	@Test
 	public void shouldMoveApplicationToInterview() {
 		Interview interview = new InterviewBuilder().id(4).toInterview();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
 
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
 				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null) {
@@ -94,8 +94,8 @@ public class MoveToInterviewControllerTest {
 		interviewServiceMock.moveApplicationToInterview(interview, application);
 		EasyMock.replay(interviewServiceMock);
 
-		String view = controller.moveToInterview(application.getApplicationNumber(), interview, bindingResultMock, new ModelMap());
-		assertEquals("redirect:/applications", view);
+		String view = controller.moveToInterview("abc", interview, bindingResultMock, new ModelMap());
+		assertEquals("redirect:/applications?messageCode=move.interview&application=abc", view);
 		EasyMock.verify(interviewServiceMock);
 
 	}

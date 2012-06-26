@@ -72,7 +72,7 @@ public class MoveToApprovalController extends ApprovalController {
 		}
 		approvalService.moveApplicationToApproval(applicationForm, approvalRound);
 
-		return "redirect:/applications";
+		return "redirect:/applications?messageCode=move.approval&application=" + applicationForm.getApplicationNumber();
 	}
 	
 	@ModelAttribute("comment")
@@ -101,7 +101,7 @@ public class MoveToApprovalController extends ApprovalController {
 
 		modelMap.put("message", String.format("An e-mail requesting the restart of the approval phase " + //
 				"for application %s was sent to the administrator!", applicationForm.getApplicationNumber()));
-		return "redirect:/applications";
+		return "redirect:/applications?message.code=request.approval.restart&application=" + applicationForm.getApplicationNumber();
 	}
 
 	@Override

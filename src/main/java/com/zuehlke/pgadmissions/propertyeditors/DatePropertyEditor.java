@@ -19,7 +19,11 @@ public class DatePropertyEditor extends PropertyEditorSupport{
 		try {
 			setValue(new SimpleDateFormat("dd-MMM-yyyy").parse(strDate));
 		} catch (ParseException e) {
-			throw new IllegalArgumentException(e);
+			try {
+				setValue(new SimpleDateFormat("dd MMM yyyy").parse(strDate));
+			} catch (ParseException e1) {
+				throw new IllegalArgumentException(e1);
+			}			
 		}
 		
 	}

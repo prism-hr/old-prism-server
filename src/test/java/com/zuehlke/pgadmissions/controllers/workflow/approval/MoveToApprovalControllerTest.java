@@ -78,9 +78,9 @@ public class MoveToApprovalControllerTest {
 	}
 
 	@Test
-	public void shouldMoveApplicationToReview() {
+	public void shouldMoveApplicationToApproval() {
 		ApprovalRound approvalround = new ApprovalRoundBuilder().id(4).toApprovalRound();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		final ApplicationForm application = new ApplicationFormBuilder().applicationNumber("LALALA").id(2).toApplicationForm();
 		
 		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock){
 			@Override
@@ -94,7 +94,7 @@ public class MoveToApprovalControllerTest {
 		EasyMock.replay(approvalServiceMock);
 		
 		String view = controller.moveToApproval(application.getApplicationNumber(), approvalround, bindingResultMock);
-		assertEquals("redirect:/applications", view);
+		assertEquals("redirect:/applications?messageCode=move.approval&application=LALALA", view);
 		EasyMock.verify(approvalServiceMock);
 		
 	}
@@ -141,7 +141,7 @@ public class MoveToApprovalControllerTest {
 		EasyMock.expectLastCall();
 		
 		ModelMap modelMap = new ModelMap();
-		assertEquals("redirect:/applications", controller.requestRestart(applicationForm, comment, bindingResultMock, modelMap));
+		assertEquals("redirect:/applications?message.code=request.approval.restart&application=LALALA", controller.requestRestart(applicationForm, comment, bindingResultMock, modelMap));
 		Assert.assertEquals("An e-mail requesting the restart of the approval phase for application LALALA was sent to the administrator!",// 
 				modelMap.get("message"));
 	}

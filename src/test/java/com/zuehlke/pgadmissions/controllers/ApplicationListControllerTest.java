@@ -53,6 +53,16 @@ public class ApplicationListControllerTest {
 	public void shouldReturnNullMessageForNullParams() {
 		assertNull(controller.getMessage(false, null, null));
 	}
+
+	@Test
+	public void shouldGetApplicationFormByNumber(){
+		String appNumber = "abc";
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber(appNumber)).andReturn(applicationForm);
+		EasyMock.replay(applicationsServiceMock);
+		assertEquals(applicationForm, controller.getApplicationForm(appNumber));
+		
+	}
 	
 
 

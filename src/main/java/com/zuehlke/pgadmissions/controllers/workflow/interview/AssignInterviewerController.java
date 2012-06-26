@@ -57,7 +57,7 @@ public class AssignInterviewerController extends InterviewController {
 			return INTERVIEW_DETAILS_VIEW_NAME;
 		}
 		interviewService.save(interview);
-		return "redirect:/applications";
+		return "redirect:/applications?messageCode=interviewers.assigned&application=" + interview.getApplication().getApplicationNumber();
 	}
 
 }

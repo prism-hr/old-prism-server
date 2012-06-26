@@ -66,7 +66,7 @@ public class DelegateToApplicationAdministratorController {
 		}
 		applicationsService.save(applicationForm);
 
-		return "redirect:/applications";
+		return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
 	}
 
 }

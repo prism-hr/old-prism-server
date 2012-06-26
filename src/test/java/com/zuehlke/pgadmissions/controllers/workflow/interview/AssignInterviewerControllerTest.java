@@ -74,11 +74,11 @@ public class AssignInterviewerControllerTest {
 
 	@Test
 	public void shouldSaveInterviewIfNoErrors() {		
-		Interview interview = new InterviewBuilder().id(4).toInterview();
+		Interview interview = new InterviewBuilder().id(4).application(new ApplicationFormBuilder().id(5).applicationNumber("abc").toApplicationForm()).toInterview();
 		interviewServiceMock.save(interview);
 		EasyMock.replay(interviewServiceMock);
 		String view = controller.assignInterviewers(interview, bindingResultMock);
-		assertEquals("redirect:/applications", view);
+		assertEquals("redirect:/applications?messageCode=interviewers.assigned&application=abc", view);
 		EasyMock.verify(interviewServiceMock);
 		
 	}

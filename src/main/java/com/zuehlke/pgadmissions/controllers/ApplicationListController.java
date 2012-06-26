@@ -79,4 +79,9 @@ public class ApplicationListController {
 		}
 		return null;
 	}
+
+	@ModelAttribute("messageApplication")
+	public ApplicationForm getApplicationForm(@RequestParam(required = false) String application) {
+		return applicationsService.getApplicationByApplicationNumber(application);
+	}
 }

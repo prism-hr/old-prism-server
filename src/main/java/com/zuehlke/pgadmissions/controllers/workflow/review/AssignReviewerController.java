@@ -64,7 +64,7 @@ public class AssignReviewerController extends ReviewController {
 			}
 		}
 		reviewService.save(reviewRound);
-		return "redirect:/applications";
+		return "redirect:/applications?messageCode=reviewers.assigned&application=" + reviewRound.getApplication().getApplicationNumber();
 	}
 
 

@@ -53,8 +53,8 @@ public class MoveToInterviewController extends InterviewController {
 			return INTERVIEW_DETAILS_VIEW_NAME;
 		}
 		interviewService.moveApplicationToInterview(interview, applicationForm);
-		modelMap.put("message", String.format("Application %s has been successfully moved into Interview stage.", applicationForm.getApplicationNumber()));
-		return "redirect:/applications";
+		
+		return "redirect:/applications?messageCode=move.interview&application="+ applicationForm.getApplicationNumber();
 	}
 	
 	@Override

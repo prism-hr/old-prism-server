@@ -73,11 +73,11 @@ public class AssignReviewerControllerTest {
 
 	@Test
 	public void shouldSaveReviewRoundIfNoErrors() {		
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).application(new ApplicationFormBuilder().id(1).applicationNumber("abc").toApplicationForm()).toReviewRound();
 		reviewServiceMock.save(reviewRound);
 		EasyMock.replay(reviewServiceMock);
 		String view = controller.assignReviewers(reviewRound, bindingResultMock);
-		assertEquals("redirect:/applications", view);
+		assertEquals("redirect:/applications?messageCode=reviewers.assigned&application=abc", view);
 		EasyMock.verify(reviewServiceMock);
 		
 	}
@@ -88,11 +88,12 @@ public class AssignReviewerControllerTest {
 		Reviewer reviewer3 = new ReviewerBuilder().id(1).requiresAdminNotification(CheckedStatus.NO).toReviewer();
 		Reviewer reviewer1 = new ReviewerBuilder().id(null).requiresAdminNotification(CheckedStatus.NO).toReviewer();
 		Reviewer reviewer2 = new ReviewerBuilder().id(2).requiresAdminNotification(CheckedStatus.YES).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer1, reviewer2, reviewer3).id(4).toReviewRound();
+		
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer1, reviewer2, reviewer3).id(4).application(new ApplicationFormBuilder().id(1).applicationNumber("abc").toApplicationForm()).toReviewRound();
 		reviewServiceMock.save(reviewRound);
 		EasyMock.replay(reviewServiceMock);
 		String view = controller.assignReviewers(reviewRound, bindingResultMock);
-		assertEquals("redirect:/applications", view);
+		assertEquals("redirect:/applications?messageCode=reviewers.assigned&application=abc", view);
 		EasyMock.verify(reviewServiceMock);
 		Assert.assertEquals(CheckedStatus.YES, reviewer1.getRequiresAdminNotification());
 		Assert.assertEquals(CheckedStatus.YES, reviewer2.getRequiresAdminNotification());

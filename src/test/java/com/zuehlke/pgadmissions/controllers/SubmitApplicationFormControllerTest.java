@@ -139,7 +139,7 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	public void shouldRedirectToAppsViewWithMessageIfNoErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).applicationNumber("abc").toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		StageDuration stageDuration = new StageDuration();
 		stageDuration.setDuration(1);
@@ -147,7 +147,7 @@ public class SubmitApplicationFormControllerTest {
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationDAOMock);
 		String view = applicationController.submitApplication(applicationForm, errorsMock);
-		assertEquals("redirect:/applications?submissionSuccess=true", view);
+		assertEquals("redirect:/applications?messageCode=application.submitted&application=abc" , view);
 	}
 	
 	@Test

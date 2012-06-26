@@ -50,9 +50,8 @@ public class MoveToReviewController extends ReviewController {
 		if (bindingResult.hasErrors()) {
 			return REVIEW_DETAILS_VIEW_NAME;
 		}
-		reviewService.moveApplicationToReview( applicationForm, reviewRound);
-		modelMap.put("message", String.format("Application %s has been successfully moved into Review stage.", applicationForm.getApplicationNumber()));
-		return "redirect:/applications";
+		reviewService.moveApplicationToReview( applicationForm, reviewRound);		
+		return "redirect:/applications?messageCode=move.review&application=" + applicationForm.getApplicationNumber();
 	}
 	
 	

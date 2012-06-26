@@ -58,8 +58,13 @@
               <#if message??>
               <div class="section-info-bar">${(message?html)!}</div>
               </#if>
-              <#if RequestParameters.messageCode??>
-              <div class="section-info-bar"><@spring.message '${RequestParameters.messageCode}'/></div>             
+              <#if RequestParameters.messageCode??>              
+	              <#if messageApplication??>
+	              	<#assign args = ["${messageApplication.applicationNumber}"] />
+	              	<div class="section-info-bar"><@spring.messageArgs  '${RequestParameters.messageCode}' args /></div>
+	              <#else>
+	              	<div class="section-info-bar"><@spring.message '${RequestParameters.messageCode}' /></div>
+	              </#if>             
               </#if>
               
             

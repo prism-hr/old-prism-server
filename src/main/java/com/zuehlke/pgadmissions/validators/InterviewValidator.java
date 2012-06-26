@@ -27,7 +27,7 @@ public class InterviewValidator implements Validator {
 		if (!UrlValidator.getInstance().isValid(interview.getLocationURL())) {
 			errors.rejectValue("locationURL", "interview.locationURL.invalid");
 		}
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "furtherDetails", "interview.furtherDetails.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "furtherDetails", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewDueDate", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewTime", "text.field.empty");
 		String dueDate = interview.getInterviewDueDate() == null ? "": interview.getInterviewDueDate().toString();

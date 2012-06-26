@@ -34,7 +34,7 @@ public class InterviewValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "furtherDetails");
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("interview.furtherDetails.notempty", mappingResult.getFieldError("furtherDetails").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("furtherDetails").getCode());
 	}
 	
 	@Test

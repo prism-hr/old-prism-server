@@ -839,3 +839,5 @@ div.ajax {
 
 #view-toolbar { top: 140px; }
 #view-toolbar li.tool-button a { background: #444; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
+
+span.uploaded-file { display: block; }

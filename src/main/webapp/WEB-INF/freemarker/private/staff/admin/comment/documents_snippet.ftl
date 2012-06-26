@@ -5,7 +5,7 @@
 		<span id="commentUploadedDocument">
 			<#if comment??>
 				<#list comment.documents as document>
-				<span name="supportingDocumentSpan">
+				<span class="uploaded-file" name="supportingDocumentSpan">
 					<input type="text" value = "${encrypter.encrypt(document.id)}" style="display:none" name="documents"/>	
 					<a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a>
 					<a name="delete" data-desc="Delete" class="button-delete button-hint" id="${encrypter.encrypt(document.id)}">delete</a>

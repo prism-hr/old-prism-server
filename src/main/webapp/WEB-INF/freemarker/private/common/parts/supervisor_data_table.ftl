@@ -54,6 +54,6 @@
 		            <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
 				</div>			
 				
-				<button id="addSupervisor" type="button" name="add">Submit</button>
+				<button class="blue" id="addSupervisor" type="button" name="add">Submit</button>
 
 

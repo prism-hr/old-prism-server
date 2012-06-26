@@ -125,7 +125,7 @@
 									</div>
 		
 									<div class="buttons">
-										<button type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+										<button class="blue" type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
 									</div>
 			
 								</div>

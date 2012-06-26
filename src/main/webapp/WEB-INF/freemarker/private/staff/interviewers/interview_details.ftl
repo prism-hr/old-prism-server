@@ -99,7 +99,7 @@
 												<select id="programInterviewers" multiple="multiple" size="8">
 													<optgroup id="default" label="Default interviewers">
 														<#list programmeInterviewers as interviewer>
-														<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
+														<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} </option>
 														</#list>
 													</optgroup>
 													<optgroup id="previous" label="Previous interviewers">

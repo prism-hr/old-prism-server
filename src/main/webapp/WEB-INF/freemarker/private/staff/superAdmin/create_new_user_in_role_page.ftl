@@ -71,7 +71,7 @@
 												<#list programs as program>"
 												<option value='${program.code}' 
 												<#if userDTO.selectedProgram?? && userDTO.selectedProgram.id == program.id >selected="selected"</#if>
-												>${program.title?html?capitalize}</option>               
+												>${program.title?html}</option>               
 												</#list>
 											</select>
 		
@@ -130,7 +130,7 @@
 										<div class="field">
 											<select multiple size="5" id="roles" name="selectedAuthorities" class="max">
 												<#list authorities as authority>
-												<option value="${authority}" <#if userDTO.isInAuthority(authority)>selected="selected"</#if>>${authority}</option>
+												<option value="${authority}" <#if userDTO.isInAuthority(authority)>selected="selected"</#if>>${authority?capitalize}</option>
 												</#list>
 											</select>
 											<@spring.bind "userDTO.selectedAuthorities" /> 

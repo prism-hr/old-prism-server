@@ -41,13 +41,11 @@
 									<colgroup>
 										<col style="width: 20px;" />
 										<col style="width: 472px;" />
-										<col style="width: 240px;" />
 									</colgroup>
 									<thead>
 										<tr>
 											<th scope="col">&nbsp;</th>
 											<th scope="col">Name</th>
-											<th scope="col">Role(s)</th>
 											<th scope="col">&nbsp;</th>
 										</tr>
 									</thead>

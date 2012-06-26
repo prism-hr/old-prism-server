@@ -185,7 +185,7 @@ function bindDatePicker(selector)
 		{
 			$(this).attr("readonly", "readonly");	
 			$(this).datepicker({
-				dateFormat: 'dd-M-yy',
+				dateFormat: 'dd M yy',
 				changeMonth: true,
 				changeYear: true,
 				yearRange: '1900:c+20' });

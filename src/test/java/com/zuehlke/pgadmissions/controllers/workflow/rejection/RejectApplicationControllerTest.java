@@ -269,7 +269,7 @@ public class RejectApplicationControllerTest {
 		EasyMock.expectLastCall();
 		EasyMock.replay(rejectServiceMock);
 
-		String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application);
+		String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
 
 		EasyMock.verify(rejectServiceMock);
 		Assert.assertEquals(AFTER_REJECT_VIEW, nextView);
@@ -284,7 +284,7 @@ public class RejectApplicationControllerTest {
 
 		EasyMock.replay(rejectServiceMock);
 
-		String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application);
+		String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
 
 		EasyMock.verify(rejectServiceMock);
 		Assert.assertEquals(VIEW_RESULT, nextView);
@@ -299,7 +299,7 @@ public class RejectApplicationControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
 		EasyMock.replay(userServiceMock);
 		Rejection rejection = new RejectionBuilder().id(3).toRejection();
-		controllerUT.moveApplicationToReject(rejection, errorsMock, application);
+		controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
 	}
 
 

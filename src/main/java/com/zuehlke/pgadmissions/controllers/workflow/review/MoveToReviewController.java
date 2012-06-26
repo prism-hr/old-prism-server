@@ -44,15 +44,14 @@ public class MoveToReviewController extends ReviewController {
 	}
 
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
-	public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
+	public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult, ModelMap modelMap) {
 
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		if (bindingResult.hasErrors()) {
 			return REVIEW_DETAILS_VIEW_NAME;
 		}
 		reviewService.moveApplicationToReview( applicationForm, reviewRound);
-		
-
+		modelMap.put("message", String.format("Application %s has been successfully moved into Review stage.", applicationForm.getApplicationNumber()));
 		return "redirect:/applications";
 	}
 	

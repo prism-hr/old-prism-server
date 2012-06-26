@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
@@ -235,7 +236,7 @@ public class StateTransitionControllerTest {
 		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("view");
 		EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock);
 
-		assertEquals("view", controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.INTERVIEW, documentIds, null, null, null));
+		assertEquals("view", controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.INTERVIEW, documentIds, null, null, null, new ModelMap()));
 
 		EasyMock.verify(commentServiceMock);
 		assertEquals(2, comment.getDocuments().size());
@@ -250,7 +251,7 @@ public class StateTransitionControllerTest {
 		CommentType type = CommentType.VALIDATION;
 
 		EasyMock.replay(commentFactoryMock, commentServiceMock);
-		controller.addComment(applicationForm, user, type, strComment, null, null, null, null, null);
+		controller.addComment(applicationForm, user, type, strComment, null, null, null, null, null, new ModelMap());
 		EasyMock.verify(commentServiceMock);
 	}
 
@@ -265,7 +266,7 @@ public class StateTransitionControllerTest {
 		commentServiceMock.save(comment);
 		EasyMock.replay(commentFactoryMock, commentServiceMock);
 		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.INTERVIEW, null, ValidationQuestionOptions.NO,
-				ValidationQuestionOptions.UNSURE, HomeOrOverseas.OVERSEAS);
+				ValidationQuestionOptions.UNSURE, HomeOrOverseas.OVERSEAS, new ModelMap());
 		EasyMock.verify(commentServiceMock);
 		assertEquals(ValidationQuestionOptions.NO, comment.getQualifiedForPhd());
 		assertEquals(ValidationQuestionOptions.UNSURE, comment.getEnglishCompentencyOk());
@@ -286,7 +287,7 @@ public class StateTransitionControllerTest {
 		EasyMock.replay(commentFactoryMock, commentServiceMock);
 
 		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.INTERVIEW, null, ValidationQuestionOptions.NO,
-				ValidationQuestionOptions.UNSURE, HomeOrOverseas.OVERSEAS);
+				ValidationQuestionOptions.UNSURE, HomeOrOverseas.OVERSEAS, new ModelMap());
 
 		EasyMock.verify(commentServiceMock);
 		assertEquals(reviewRound, comment.getReviewRound());
@@ -305,7 +306,7 @@ public class StateTransitionControllerTest {
 		commentServiceMock.save(comment);
 		EasyMock.replay(commentFactoryMock, commentServiceMock);
 		
-		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.REJECTED, null, null, null, null);
+		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.REJECTED, null, null, null, null, new ModelMap());
 		
 		EasyMock.verify(commentServiceMock);
 		assertEquals(approvalRound, comment.getApprovalRound());
@@ -324,7 +325,7 @@ public class StateTransitionControllerTest {
 		approvalServiceMock.moveToApproved(applicationForm);
 		EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock);
 		
-		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.APPROVED, null, null, null, null);
+		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.APPROVED, null, null, null, null, new ModelMap());
 		
 		EasyMock.verify(commentServiceMock, approvalServiceMock);
 		assertEquals(approvalRound, comment.getApprovalRound());
@@ -342,7 +343,7 @@ public class StateTransitionControllerTest {
 		commentServiceMock.save(comment);
 		EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock);
 		
-		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.REJECTED, null, null, null, null);
+		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.REJECTED, null, null, null, null, new ModelMap());
 		
 		EasyMock.verify(commentServiceMock, approvalServiceMock);
 		assertEquals(approvalRound, comment.getApprovalRound());
@@ -361,7 +362,7 @@ public class StateTransitionControllerTest {
 		EasyMock.replay(commentFactoryMock, commentServiceMock);
 
 		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.INTERVIEW, null, ValidationQuestionOptions.NO,
-				ValidationQuestionOptions.UNSURE, HomeOrOverseas.OVERSEAS);
+				ValidationQuestionOptions.UNSURE, HomeOrOverseas.OVERSEAS, new ModelMap());
 
 		EasyMock.verify(commentServiceMock);
 		assertEquals(interview, comment.getInterview());

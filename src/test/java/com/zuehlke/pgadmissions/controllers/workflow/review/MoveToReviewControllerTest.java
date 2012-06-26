@@ -88,7 +88,7 @@ public class MoveToReviewControllerTest {
 		reviewServiceMock.moveApplicationToReview(application, reviewRound);
 		EasyMock.replay(reviewServiceMock);
 		
-		String view = controller.moveToReview(application.getApplicationNumber(), reviewRound, bindingResultMock);
+		String view = controller.moveToReview(application.getApplicationNumber(), reviewRound, bindingResultMock, new ModelMap());
 		assertEquals("redirect:/applications", view);
 		EasyMock.verify(reviewServiceMock);
 		
@@ -109,7 +109,7 @@ public class MoveToReviewControllerTest {
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);
-		assertEquals(REVIEW_DETAILS_VIEW_NAME, controller.moveToReview("1", reviewRound, errorsMock));
+		assertEquals(REVIEW_DETAILS_VIEW_NAME, controller.moveToReview("1", reviewRound, errorsMock, new ModelMap()));
 
 	}
 

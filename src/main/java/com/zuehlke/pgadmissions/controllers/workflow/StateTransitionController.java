@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -100,7 +101,7 @@ public class StateTransitionController {
 	public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @ModelAttribute("user") RegisteredUser user,
 			@RequestParam CommentType type, @RequestParam String comment, @RequestParam ApplicationFormStatus nextStatus,
 			@RequestParam(required = false) List<String> documents, @RequestParam(required = false) ValidationQuestionOptions qualifiedForPhd,
-			@RequestParam(required = false) ValidationQuestionOptions englishCompentencyOk, @RequestParam(required = false) HomeOrOverseas homeOrOverseas) {
+			@RequestParam(required = false) ValidationQuestionOptions englishCompentencyOk, @RequestParam(required = false) HomeOrOverseas homeOrOverseas, ModelMap modelMap) {
 		if (StringUtils.isNotBlank(comment)) {
 			Comment newComment = commentFactory.createComment(applicationForm, user, comment, type, nextStatus);
 			if (newComment instanceof ValidationComment) {
@@ -128,6 +129,7 @@ public class StateTransitionController {
 				ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
 				if(ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()){
 					approvalService.moveToApproved(applicationForm);
+					modelMap.put("message", String.format("Application %s has been successfully Approved.", applicationForm.getApplicationNumber()));
 				}
 			}
 		}

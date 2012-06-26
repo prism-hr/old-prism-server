@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -35,25 +36,25 @@ public class WithdrawControllerTest {
 	@Test(expected = CannotWithdrawApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInApprovedStage() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicant(student).id(2).toApplicationForm();
-		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
 	@Test(expected = CannotWithdrawApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInRejectStage() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).applicant(student).id(2).toApplicationForm();
-		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
 	@Test(expected = CannotWithdrawApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInUnsubmittedStage() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).applicant(student).id(2).toApplicationForm();
-		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
 	@Test(expected = CannotWithdrawApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfAlreadyWithdrawn() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).applicant(student).id(2).toApplicationForm();
-		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
 	@Test
@@ -66,7 +67,7 @@ public class WithdrawControllerTest {
 		
 		EasyMock.replay(withdrawServiceMock, eventFactoryMock);
 		
-		String view = withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+		String view = withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 		
 		EasyMock.verify(withdrawServiceMock);
 		assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());

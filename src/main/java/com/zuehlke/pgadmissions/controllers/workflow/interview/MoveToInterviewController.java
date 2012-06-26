@@ -46,13 +46,14 @@ public class MoveToInterviewController extends InterviewController {
 	}
 
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
-	public String moveToInterview(@RequestParam String applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult) {
+	public String moveToInterview(@RequestParam String applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult, ModelMap modelMap) {
 
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		if (bindingResult.hasErrors()) {
 			return INTERVIEW_DETAILS_VIEW_NAME;
 		}
 		interviewService.moveApplicationToInterview(interview, applicationForm);
+		modelMap.put("message", String.format("Application %s has been successfully moved into Interview stage.", applicationForm.getApplicationNumber()));
 		return "redirect:/applications";
 	}
 	

@@ -94,7 +94,7 @@ public class MoveToInterviewControllerTest {
 		interviewServiceMock.moveApplicationToInterview(interview, application);
 		EasyMock.replay(interviewServiceMock);
 
-		String view = controller.moveToInterview(application.getApplicationNumber(), interview, bindingResultMock);
+		String view = controller.moveToInterview(application.getApplicationNumber(), interview, bindingResultMock, new ModelMap());
 		assertEquals("redirect:/applications", view);
 		EasyMock.verify(interviewServiceMock);
 
@@ -116,7 +116,7 @@ public class MoveToInterviewControllerTest {
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);
-		assertEquals(INTERVIEW_DETAILS_VIEW_NAME, controller.moveToInterview("1", interview, errorsMock));
+		assertEquals(INTERVIEW_DETAILS_VIEW_NAME, controller.moveToInterview("1", interview, errorsMock, new ModelMap()));
 
 	}
 

@@ -66,7 +66,7 @@ public class RejectApplicationController {
 
 	@RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
 	public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors,
-			@ModelAttribute("applicationForm") ApplicationForm application) {
+			@ModelAttribute("applicationForm") ApplicationForm application, ModelMap modelMap) {
 
 		checkPermissionForApplication(application);
 		checkApplicationStatus(application);
@@ -75,6 +75,7 @@ public class RejectApplicationController {
 		}
 
 		rejectService.moveApplicationToReject(application, getCurrentUser(), rejection);
+		modelMap.put("message", String.format("Application %s has been successfully rejected.", application.getApplicationNumber()));
 		return NEXT_VIEW_NAME;
 	}
 

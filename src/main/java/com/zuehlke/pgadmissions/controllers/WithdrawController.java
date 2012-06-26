@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,7 +42,7 @@ public class WithdrawController{
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String withdrawApplicationAndGetApplicationList(@ModelAttribute ApplicationForm applicationForm) {
+	public String withdrawApplicationAndGetApplicationList(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
 		if (applicationForm.getStatus() == ApplicationFormStatus.UNSUBMITTED || applicationForm.getStatus() == ApplicationFormStatus.APPROVED
 				|| applicationForm.getStatus() == ApplicationFormStatus.REJECTED | applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN) {
 			throw new CannotWithdrawApplicationException();
@@ -49,6 +50,7 @@ public class WithdrawController{
 		applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
 		applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
 		withdrawService.saveApplicationFormAndSendMailNotifications(applicationForm);
+		modelMap.put("message", String.format("Application %s has been successfully withdrawn.", applicationForm.getApplicationNumber()));
 		return "redirect:/applications";
 	}
 	

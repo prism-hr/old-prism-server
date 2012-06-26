@@ -190,7 +190,7 @@
       <div class="row">
         <span class="supervisorAction"></span>       
         <div class="field">
-          <button id="updateSupervisorButton" type="button" style="display:none;">Update</button>
+          <button id="updateSupervisorButton" class="blue" type="button" style="display:none;">Update</button>
           <button id="addSupervisorButton" class="blue" type="button" style="display:none;">Add</button>
         </div>
       </div>

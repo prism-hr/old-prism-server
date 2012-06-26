@@ -825,7 +825,7 @@ div.ajax {
 .toolbar li { margin: 10px 0; }
 .toolbar li a { background: no-repeat; display: block; height: 15px; overflow: hidden; text-indent: 15px; white-space: nowrap; width: 15px; }
 .toolbar li.top a { background-image: url(../../images/float_up.png) }
-.toolbar li.pdf a { background-image: url(../../images/float_download.png) }
+.toolbar li.download a { background-image: url(../../images/float_download.png) }
 .toolbar li.print a { background-image: url(../../images/float_print.png) }
 .toolbar li.tool-separator a { background-image: url("../../images/dots.png"); margin-bottom: -11px; }
 .toolbar li.tool-button a { width: 14px !important; height: 14px !important; margin-left: -1px; padding: 0 !important; }

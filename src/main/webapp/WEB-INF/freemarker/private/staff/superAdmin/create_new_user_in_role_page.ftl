@@ -50,8 +50,10 @@
 							<input type="hidden" id="deleteFromUser" name="user" value=""/>						
 							<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
 						</form>
+					</section>
 						
-						<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
+					<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
+						<section class="form-rows">
 							<div>
 							
 								<div class="section-info-bar">
@@ -151,8 +153,8 @@
 								</div>
 								
 							</div>
-						</form>
-					</section>
+						</section>
+					</form>
 			
 				</div><!-- .content-box-inner -->
 			</div><!-- .content-box -->

@@ -129,7 +129,8 @@ public class StateTransitionController {
 				ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
 				if(ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()){
 					approvalService.moveToApproved(applicationForm);
-					modelMap.put("message", String.format("Application %s has been successfully Approved.", applicationForm.getApplicationNumber()));
+					modelMap.put("messageCode", "move.approved");
+					modelMap.put("application", applicationForm.getApplicationNumber());
 				}
 			}
 		}

@@ -315,7 +315,7 @@ public class StateTransitionControllerTest {
 	@Test
 	public void shouldCreateApprovalEvaluationCommentWithLatestReviewRoundAndMoveToApprovedIdNextStageIsApproved() {
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).toApprovalRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).applicationNumber("abc").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
 		String strComment = "comment";
 		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVED).id(6).toApprovalEvaluationComment();
@@ -325,10 +325,13 @@ public class StateTransitionControllerTest {
 		approvalServiceMock.moveToApproved(applicationForm);
 		EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock);
 		
-		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.APPROVED, null, null, null, null, new ModelMap());
+		ModelMap modelMap = new ModelMap();
+		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.APPROVED, null, null, null, null, modelMap);
 		
 		EasyMock.verify(commentServiceMock, approvalServiceMock);
 		assertEquals(approvalRound, comment.getApprovalRound());
+		assertEquals("move.approved", modelMap.get("messageCode"));
+		assertEquals("abc", modelMap.get("application"));
 	}
 
 	@Test

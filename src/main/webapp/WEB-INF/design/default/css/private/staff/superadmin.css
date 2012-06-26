@@ -40,35 +40,3 @@ div.left-column .field { margin-left: 100px !important; }
 #existingUsers .role-icons.interviewer .is-interviewer { background-position: -44px 0; }
 #existingUsers .role-icons.reviewer .is-reviewer { background-position: -66px 0; }
 #existingUsers .role-icons.approver .is-approver { background-position: -88px 0; }
-
-
-/* Fix header scrolling... http://www.imaputz.com/cssStuff/bigFourVersion.html */
-
-/* define height and width of scrollable area. Add 16px to width for scrollbar          */
-div.tableContainer { clear: both;	/*max-height: 194px;*/ overflow: auto; width: 100%; }
-
-/* Reset overflow value to hidden for all non-IE browsers. */
-html>body div.tableContainer { overflow: hidden; width: 100%; }
-
-/* define width of table. IE browsers only                 */
-div.tableContainer table { float: left; width: 740px }
-
-/* define width of table. Add 16px to width for scrollbar.           */
-/* All other non-IE browsers.                                        */
-html>body div.tableContainer table { margin-bottom: 0; width: 100%; }
-
-thead.fixedHeader tr { position: relative }
-html>body thead.fixedHeader tr { display: block }
-
-html>body tbody.scrollContent { display: block; max-height: 155px; overflow: auto; width: 100% }
-
-/* Column widths. (Do not use COLGROUP!) */
-html>body thead.fixedHeader th { width: 20px }
-html>body thead.fixedHeader th + th { width: 472px }
-html>body thead.fixedHeader th + th + th { width: 240px }
-html>body thead.fixedHeader th + th + th + th { width: 70px }
-
-html>body tbody.scrollContent td { width: 20px }
-html>body tbody.scrollContent td + td { width: 472px }
-html>body tbody.scrollContent td + td + td { width: 240px }
-html>body tbody.scrollContent td + td + td + td { width: 70px }

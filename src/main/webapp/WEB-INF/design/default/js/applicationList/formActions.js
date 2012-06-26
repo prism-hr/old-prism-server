@@ -130,7 +130,7 @@ $(document).ready(function() {
 			this.checked = selectAllValue;
 			if (selectAllValue)
 			{
-				list += id + ";";
+				list += $(this).attr('id') + ";";
 			}
 		});
 		

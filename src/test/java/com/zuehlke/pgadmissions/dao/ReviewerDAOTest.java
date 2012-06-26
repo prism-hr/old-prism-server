@@ -210,7 +210,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		application.setLatestReviewRound(reviewRound);
 		
 		ReviewComment reviewComment = new ReviewCommentBuilder().reviewer(reviewer).adminsNotified(false).commentType(CommentType.REVIEW)
-				.comment("This is a review comment").suitableCandidate(false).user(user).application(application).decline(true)
+				.comment("This is a review comment").suitableCandidateForUCL(false).user(user).application(application).decline(true)
 				.willingToInterview(false).toReviewComment();
 		save(application,reviewer, reviewRound, reviewComment);
 

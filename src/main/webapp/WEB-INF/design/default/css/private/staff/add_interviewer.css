@@ -1,0 +1,23 @@
+/* CSS Document */
+
+#applicationInterviewers { min-height: 60px; }
+
+#programInterviewers, #applicationInterviewers { width: 400px; }
+#programInterviewers optgroup {
+	background: #DDD;
+	font-style: normal;
+	font-weight: normal;
+	margin-bottom: 5px;
+	padding: 5px;
+}
+#programInterviewers option {
+	background: #FFF;
+	margin: 5px -5px -5px;
+	padding: 5px 5px 5px 20px;
+}
+#applicationInterviewers option { padding: 5px; }
+#programInterviewers option:last-child, #applicationInterviewers option:last-child { border-bottom: none; }
+
+.interviewer-buttons .field { border-top: 2px solid #999; margin-top: 25px; text-align: center; width: 400px; }
+.interviewer-buttons .field span { background: #FFF; display: block; margin: -18px auto 0; padding: 4px; width: 180px; }
+.interviewer-buttons .field button { margin: 0 5px; /*width: 90px;*/ }

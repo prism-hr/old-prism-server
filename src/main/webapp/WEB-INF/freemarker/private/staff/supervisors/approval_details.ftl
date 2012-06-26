@@ -16,17 +16,9 @@
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		
-		<link type="text/css" rel="stylesheet" 
-			href="<@spring.url '/design/default/css/private/global_private.css'/>" />
-		<link type="text/css" rel="stylesheet" 
-			href="<@spring.url '/design/default/css/private/application.css'/>" />
-		
-		<link type="text/css" rel="stylesheet" 
-			href="<@spring.url '/design/default/css/private/staff/add_reviewer.css'/>" />
-		
-		<link type="text/css" rel="stylesheet"
-				href="<@spring.url '/design/default/css/actions.css' />" />
-		
+		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/global_private.css'/>" />
+		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/application.css'/>" />
+		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />" />
 		
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -183,7 +175,7 @@
 											</p>									
 											
 											<div class="row">
-												<label class="label normal">Supervisor First Name<em>*</em></label> 
+												<label class="plain-label">Supervisor First Name<em>*</em></label> 
 												<span class="hint" data-desc=""></span>
 													<div class="field">
 														<input class="full" type="text" name="newSupervisorFirstName" id="newSupervisorFirstName" value="${(supervisor.firstName?html)!}"/>
@@ -193,7 +185,7 @@
 											</div>
 											
 											<div class="row">
-												<label class="label normal">Supervisor Last Name<em>*</em></label>
+												<label class="plain-label">Supervisor Last Name<em>*</em></label>
 												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<input class="full" type="text" name="newSupervisorLastName" id="newSupervisorLastName" value="${(supervisor.lastName?html)!}"/>			                                      
@@ -203,7 +195,7 @@
 											</div>
 											
 											<div class="row">
-												<label class="label normal">Email<em>*</em></label>
+												<label class="plain-label">Email<em>*</em></label>
 												<span class="hint" data-desc=""></span>
 												<div class="field">
 													<input class="full" type="text"  name="newSupervisorEmail" id="newSupervisorEmail" value="${(supervisor.email?html)!}"/>			                                         

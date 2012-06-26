@@ -99,6 +99,6 @@ public class InterviewCommentController {
 			return INTERVIEW_FEEDBACK_PAGE;
 		}
 		commentService.save(comment);		
-		return "redirect:/applications";
+		return "redirect:/applications?messageCode=interview.feedback&application=" + comment.getApplication().getApplicationNumber();
 	}
 }

@@ -68,7 +68,7 @@ public class RejectApplicationControllerTest {
 		reason2 = new RejectReasonBuilder().id(20).text("idc").toRejectReason();
 		approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		program = new ProgramBuilder().id(100).administrators(admin).approver(approver).toProgram();
-		application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION)//
+		application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION).applicationNumber("abc")
 				.program(program)//
 				.toApplicationForm();
 
@@ -272,7 +272,7 @@ public class RejectApplicationControllerTest {
 		String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
 
 		EasyMock.verify(rejectServiceMock);
-		Assert.assertEquals(AFTER_REJECT_VIEW, nextView);
+		Assert.assertEquals(AFTER_REJECT_VIEW + "?messageCode=application.rejected&application=abc", nextView);
 	}
 
 	@Test

@@ -75,8 +75,8 @@ public class RejectApplicationController {
 		}
 
 		rejectService.moveApplicationToReject(application, getCurrentUser(), rejection);
-		modelMap.put("message", String.format("Application %s has been successfully rejected.", application.getApplicationNumber()));
-		return NEXT_VIEW_NAME;
+		
+		return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
 	}
 
 	@RequestMapping(value = "/rejectionText", method = RequestMethod.POST)

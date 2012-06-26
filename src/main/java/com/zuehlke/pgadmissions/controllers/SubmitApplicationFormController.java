@@ -73,7 +73,7 @@ public class SubmitApplicationFormController {
 		applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
 		applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
 		applicationService.save(applicationForm);
-		return "redirect:/applications?submissionSuccess=true";
+		return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
 	}
 
 	public void calculateAndSetValidationDueDate(ApplicationForm applicationForm) {

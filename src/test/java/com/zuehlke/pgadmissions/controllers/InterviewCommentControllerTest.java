@@ -177,12 +177,12 @@ public class InterviewCommentControllerTest {
 	
 	@Test
 	public void shouldSaveCommentAndToApplicationListIfNoErrors(){
-		InterviewComment comment = new InterviewCommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).toApplicationForm()).toInterviewComment();		
+		InterviewComment comment = new InterviewCommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).applicationNumber("abc").toApplicationForm()).toInterviewComment();		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(comment);
 		EasyMock.replay(errorsMock, commentServiceMock);
-		assertEquals("redirect:/applications", controller.addComment(comment, errorsMock));
+		assertEquals("redirect:/applications?messageCode=interview.feedback&application=abc", controller.addComment(comment, errorsMock));
 		EasyMock.verify(errorsMock, commentServiceMock);
 		
 		

@@ -274,24 +274,10 @@ public class UserService {
 			}
 			currentUser.setUsername(user.getEmail());
 			save(currentUser);
-			
-			sendConfirmationEmailToUser(currentUser);
+		
 	}
 	
-	private void sendConfirmationEmailToUser(RegisteredUser user) {
-			try {
-				Map<String, Object> model = new HashMap<String, Object>();
-				model.put("user", user);
-				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
-				String subject = msgSource.getMessage("account.updated.confirmation", null, null);
-				
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
-						"private/mail/account_updated_confirmation.ftl", model, null));
-			} catch (Throwable e) {
-				log.warn("error while sending email", e);
-			}
-	}
+
 
 	public boolean isAccountChanged(RegisteredUser user){
 		return !getCurrentUser().getEmail().equals(user.getEmail()) 

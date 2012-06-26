@@ -593,20 +593,11 @@ public class UserServiceTest {
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("newpass")).andReturn("encryptednewpass");
 		RegisteredUser userOne = new RegisteredUserBuilder().firstName("a").lastName("o").email("two").password("12").newPassword("newpass").toUser();
 		
-		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress1 = new InternetAddress("two", "f l");
 		
-		EasyMock.expect(msgSourceMock.getMessage("account.updated.confirmation", null, null)).andReturn("resolved subject");
-		
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("resolved subject"),
-						EasyMock.eq("private/mail/account_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress)EasyMock.isNull())).andReturn(preparatorMock1);
-		mailsenderMock.send(preparatorMock1);
-
-		EasyMock.replay(encryptionUtilsMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
+		EasyMock.replay(encryptionUtilsMock);
 
 		userServiceWithCurrentUserOverride.updateCurrentUserAndSendEmailNotification(userOne);
-		EasyMock.verify(encryptionUtilsMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
+		EasyMock.verify(encryptionUtilsMock);
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
 		assertEquals("a", currentUser.getFirstName());

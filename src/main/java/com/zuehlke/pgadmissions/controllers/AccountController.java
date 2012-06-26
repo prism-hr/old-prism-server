@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.validators.AccountValidator;
 @RequestMapping("/myAccount")
 public class AccountController {
 
+	private static final String ACCOUNT_SECTION = "/private/my_account_section";
 	private final UserService userService;
 	private static final String ACCOUNT_PAGE_VIEW_NAME = "/private/my_account";
 	private final AccountValidator accountValidator;
@@ -46,15 +47,14 @@ public class AccountController {
 
 	
 	@RequestMapping(value="/submit",method = RequestMethod.POST)
-	public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") RegisteredUser user, BindingResult bindingResult, ModelMap modelMap) {
+	public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") RegisteredUser user, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()){
-			return ACCOUNT_PAGE_VIEW_NAME;
+			return ACCOUNT_SECTION;
 		}
 		if(userService.isAccountChanged(user)){
-			modelMap.put("message", "You have successfully changed your account details. A confirmation mail is sent to your email address.");
 			userService.updateCurrentUserAndSendEmailNotification(user);
 		}
-		return "redirect:/applications";
+		return "redirect:/myAccount/section?messageCode=account.updated";
 	}
 
 	@ModelAttribute(value="updatedUser")
@@ -65,6 +65,11 @@ public class AccountController {
 	@ModelAttribute(value="user")
 	public RegisteredUser getUser() {
 		return userService.getCurrentUser();
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value="/section")
+	public String getMyAccountSection() {
+		return ACCOUNT_SECTION;
 	}
 
 }

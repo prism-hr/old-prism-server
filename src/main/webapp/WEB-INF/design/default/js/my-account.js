@@ -1,6 +1,8 @@
-$(document).ready(function(){
+$(document).ready(function(){	
+
+	getAccountDetailsSection();
 	
-	$('#saveChanges').click(function()
+	$('#accountdetails').on('click', "#saveChanges", function()
 	{
 		var postData ={ 
 				email : $('#email').val(),
@@ -11,7 +13,8 @@ $(document).ready(function(){
 				confirmPassword : $('#confirmNewPass').val()
 		};
 		
-		$('#configuration > div').append('<div class="ajax" />');
+		$('#accountdetails > div').append('<div class="ajax" />');
+		
 		
 		$.ajax({
 			type: 'POST',
@@ -24,10 +27,32 @@ $(document).ready(function(){
 			data:$.param(postData),
 			success: function(data)
 			{
-				$('#configuration div.ajax').remove();
-				$('#my_account_section').html(data);
+				$('#accountdetails div.ajax').remove();
+				$('#accountdetails').html(data);
 			}
 		});
 	});
 	
+	$('#accountdetails').on('click', "#cancelMyACnt", getAccountDetailsSection);
+	
 });
+
+function getAccountDetailsSection(){
+	$('#accountdetails > div').append('<div class="ajax" />');
+	
+	$.ajax({
+		type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/myAccount/section", 
+		success: function(data)
+		{
+			$('#accountdetails div.ajax').remove();
+			$('#accountdetails').html(data);
+		}
+	});
+	
+}

@@ -37,6 +37,14 @@ function loadUsersForProgram()
 			success: function(data)
 			{
 				$('#existingUsers').html(data);
+				if ($(data).find('tr').length == 0)
+				{
+					$('#existingUsers').hide();
+				}
+				else
+				{
+					$('#existingUsers').show();
+				}
 				addToolTips();
 			}
 	});	

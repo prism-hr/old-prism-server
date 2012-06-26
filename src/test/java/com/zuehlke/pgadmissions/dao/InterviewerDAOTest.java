@@ -331,7 +331,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
-		InterviewComment interviewComment = new InterviewCommentBuilder().interviewer(interviewer).adminsNotified(false).commentType(CommentType.INTERVIEW).comment("This is an interview comment").suitableCandidate(false).user(user).application(application).toInterviewComment();
+		InterviewComment interviewComment = new InterviewCommentBuilder().interviewer(interviewer).adminsNotified(false).commentType(CommentType.INTERVIEW).comment("This is an interview comment").suitableCandidateForUcl(false).user(user).application(application).toInterviewComment();
 		save(application, interviewer, interview, interviewComment);
 		flushAndClearSession();
 

@@ -42,7 +42,7 @@ public class InterviewCommentMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		InterviewComment interviewComment = new InterviewCommentBuilder().interviewer(interviewer).adminsNotified(false).commentType(CommentType.INTERVIEW)
-				.comment("This is an interview comment").suitableCandidate(false).user(interviewerUser).application(applicationForm)
+				.comment("This is an interview comment").suitableCandidateForUcl(false).user(interviewerUser).application(applicationForm)
 				.toInterviewComment();
 		save(interviewComment);
 
@@ -61,7 +61,7 @@ public class InterviewCommentMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(interviewerUser, reloadedInterviewComment.getUser());
 		assertEquals(interviewer, reloadedInterviewComment.getInterviewer());
 		assertEquals("This is an interview comment", reloadedInterviewComment.getComment());
-		assertFalse( reloadedInterviewComment.getSuitableCandidate());
+		assertFalse( reloadedInterviewComment.getSuitableCandidateForUcl());
 
 	}
 

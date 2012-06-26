@@ -46,7 +46,7 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		
 		ReviewComment reviewComment = new ReviewCommentBuilder().reviewer(reviewer).adminsNotified(false).commentType(CommentType.REVIEW)
-				.comment("This is a review comment").suitableCandidate(false).user(reviewerUser).application(applicationForm).decline(true)
+				.comment("This is a review comment").suitableCandidateForUCL(false).user(reviewerUser).application(applicationForm).decline(true)
 				.willingToInterview(false).toReviewComment();
 		save(reviewComment);
 		
@@ -65,7 +65,7 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(reviewerUser, reloadedComment.getUser());
 		assertEquals(reviewer, reloadedComment.getReviewer());
 		assertEquals("This is a review comment", reloadedComment.getComment());
-		assertFalse(reloadedComment.getSuitableCandidate());
+		assertFalse(reloadedComment.getSuitableCandidateForUcl());
 		assertFalse(reloadedComment.isAdminsNotified());
 		assertFalse(reloadedComment.getWillingToInterview());
 		assertTrue(reloadedComment.isDecline());

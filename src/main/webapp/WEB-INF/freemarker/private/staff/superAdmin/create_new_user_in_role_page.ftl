@@ -43,8 +43,9 @@
 							Manage Users
 						</h2>
 
-						<div id="existingUsers" class="tableContainer">
-						</div>
+						<!-- Table of users. -->
+						<div id="existingUsers" class="tableContainer"></div>
+						
 						<form id="removeForm"  action="/pgadmissions/manageUsers/remove" method="POST">
 							<input type="hidden" id="deleteFromUser" name="user" value=""/>						
 							<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>

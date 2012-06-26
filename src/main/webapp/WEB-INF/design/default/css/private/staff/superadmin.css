@@ -12,7 +12,7 @@ form select[multiple] { padding: 3px; width: 100% }
 div.programme label { float: left; width: 150px; }
 div.programme select { width: 300px; }
 
-table.data tbody td { background: #EEE; padding: 4px; }
+/*table.data tbody td { background: #EEE; padding: 4px; }*/
 
 div.left-column { float: left; width: 380px; }
 div.right-column { float: left; text-align: left; width: 380px; }

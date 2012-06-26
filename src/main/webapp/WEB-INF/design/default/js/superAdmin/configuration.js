@@ -6,11 +6,12 @@ $(document).ready(function()
 	
 	
 	// -----------------------------------------------------------------------------
-	// Cancel buttons
+	// Clear buttons
 	// -----------------------------------------------------------------------------
 	$('#cancelDurationBtn, #cancelReminderBtn, #cancelRegistryBtn').click(function()
 	{
-		window.location.href = "/pgadmissions/applications";
+		$(this).closest('form').reset();
+		//window.location.href = "/pgadmissions/applications";
 	});
 	
 	

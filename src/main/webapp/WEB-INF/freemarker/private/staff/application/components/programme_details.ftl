@@ -44,7 +44,7 @@
       <!-- Project -->
       <div class="admin_row">
         <label class="admin_row_label">Project</label>
-        <div class="field">${(applicationForm.projectTitle?html)!}</div>
+        <div class="field">${(applicationForm.projectTitle?html)!"Not Required"}</div>
       </div>
       
       <!-- Start date -->

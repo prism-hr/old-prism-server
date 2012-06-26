@@ -4,19 +4,27 @@ $(document).ready(function()
 	if($('#2_regUserId').val() == "") {	$("div[id='secondRegistryUser']").hide();	}
 	if($('#3_regUserId').val() == "") {	$("div[id='thirdRegistryUser']").hide(); }
 	
+	
+	// -----------------------------------------------------------------------------
+	// Cancel buttons
+	// -----------------------------------------------------------------------------
 	$('#cancelDurationBtn, #cancelReminderBtn, #cancelRegistryBtn').click(function()
 	{
 		window.location.href = "/pgadmissions/applications";
 	});
 	
+	
+	// -----------------------------------------------------------------------------
+	// Service Level Commitments
+	// -----------------------------------------------------------------------------
 	$('#submitDurationStages').click(function()
 	{
 		$("#stagesDuration").html('');
-		$('#section-slc > div').append('<div class="ajax" />');
 		var validationErrors = appendStagesJSON();
 		var stages = $('[input[name="stagesDuration"]');
 		if (!validationErrors)
 		{
+			$('#section-slc > div').append('<div class="ajax" />');
 			$.ajax({
 				type: 'POST',
 				 statusCode: {
@@ -54,6 +62,10 @@ $(document).ready(function()
 		}
 	});
 	
+
+	// -----------------------------------------------------------------------------
+	// Task Notifications
+	// -----------------------------------------------------------------------------
 	$('#submitRIBtn').click(function()
 	{
 		var validationErrors = validateReminderInterval();
@@ -64,6 +76,7 @@ $(document).ready(function()
 			};
 		if (!validationErrors)
 		{
+			$('#section-reminder > div').append('<div class="ajax" />');
 			$.ajax({
 				type: 'POST',
 				 statusCode: {
@@ -75,7 +88,8 @@ $(document).ready(function()
 				data:$.param(postData),
 				sucess:function(data)
 				{
-					window.location.href = "/pgadmissions/applications";
+					$('#section-reminder div.ajax').remove();
+					//window.location.href = "/pgadmissions/applications";
 				}
 			});
 		}

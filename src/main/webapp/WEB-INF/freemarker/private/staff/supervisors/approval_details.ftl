@@ -103,7 +103,7 @@
 												<span class="plain-label">Assign Supervisors<em>*</em></span>
 												<span class="hint" data-desc=""></span>
 												<div class="field">
-													<select id="programSupervisors" class="max" multiple="multiple" size="${avaliableOptionsSize}">
+													<select id="programSupervisors" class="list-select-from" class="max" multiple="multiple" size="${avaliableOptionsSize}">
 														<optgroup id="default" label="Default supervisors">
 														<#list programmeSupervisors as supervisor>
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html}</option>
@@ -135,7 +135,7 @@
 						
 					
 											<!-- Available Supervisor Buttons -->
-											<div class="row addremove-buttons">
+											<div class="row addremove-buttons list-select-buttons">
 												<div class="field">
 													<span>
 														<button class="blue" type="button" id="addSupervisorBtn"><span class="icon-down"></span> Add</button>
@@ -147,7 +147,7 @@
 											<!-- Already supervisors of this application -->
 											<div class="row">
 												<div class="field">
-													<select id="applicationSupervisors" class="max" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
+													<select id="applicationSupervisors" class="list-select-to" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 														<#list applicationSupervisors as supervisor>
 															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}">
 																${supervisor.firstName?html} ${supervisor.lastName?html}

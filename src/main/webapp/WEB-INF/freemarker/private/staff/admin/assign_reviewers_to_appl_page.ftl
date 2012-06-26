@@ -18,7 +18,6 @@
 
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/global_private.css'/>" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/application.css'/>" />
-<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/staff/add_reviewer.css'/>" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />" />
 
 <!--[if lt IE 9]>
@@ -95,7 +94,7 @@
                     <span class="plain-label">Assign Reviewers<#if !user.isInRole('REVIWER')><em>*</em></#if></span>
 										<span class="hint" data-desc="<@spring.message 'assignReviewer.defaultReviewers'/>"></span>
                     <div class="field">
-                      <select id="programReviewers" multiple="multiple" size="${avaliableOptionsSize}">
+                      <select id="programReviewers" class="list-select-from" multiple="multiple" size="${avaliableOptionsSize}">
                         <optgroup id="default" label="Default reviewers">
                           <#list programmeReviewers as reviewer>
                           <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
@@ -105,7 +104,7 @@
                           <#list previousReviewers as reviewer>
                           <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
                           </#list>
-						=<#list applicationReviewers as reviewer>
+						<#list applicationReviewers as reviewer>
 							<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" class="selected" disabled="disabled">
 							${reviewer.firstName?html} ${reviewer.lastName?html}
 						</option>
@@ -121,7 +120,7 @@
                   </div>
       
                   <!-- Available Reviewer Buttons -->
-                  <div class="row reviewer-buttons">
+                  <div class="row list-select-buttons">
                     <div class="field">
                       <span>
                         <button class="blue" type="button" id="addReviewerBtn"><span class="icon-down"></span> Add</button>
@@ -133,7 +132,7 @@
                   <!-- Already reviewers of this application -->
                   <div class="row">
                     <div class="field">
-                      <select id="applicationReviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
+                      <select id="applicationReviewers" class="list-select-to" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
                         <#list applicationReviewers as reviewer>
                         <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}">
                           ${reviewer.firstName?html} ${reviewer.lastName?html}
@@ -156,7 +155,7 @@
                   <p><strong>Create New Reviewer</strong></p>                  
     
                   <div class="row">
-                    <label class="label normal">Reviewer First Name<em>*</em></label> 
+                    <label class="plain-label">Reviewer First Name<em>*</em></label> 
 										<span class="hint" data-desc="<@spring.message 'assignReviewer.firstName'/>"></span>
                     <div class="field">
                       <input class="full" type="text" name="newReviewerFirstName" id="newReviewerFirstName" value="${(reviewer.firstName?html)!}"/>
@@ -166,7 +165,7 @@
                   </div>
                   
                   <div class="row">
-                    <label class="label normal">Reviewer Last Name<em>*</em></label>
+                    <label class="plain-label">Reviewer Last Name<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'assignReviewer.lastName'/>"></span>
                     <div class="field">
                       <input class="full" type="text" name="newReviewerLastName" id="newReviewerLastName" value="${(reviewer.lastName?html)!}"/>                                            
@@ -176,7 +175,7 @@
                   </div>
     
                   <div class="row">
-                    <label class="label normal">Email<em>*</em></label>
+                    <label class="plain-label">Email<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'assignReviewer.email'/>"></span>
                     <div class="field">
                       <input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail" value="${(reviewer.email?html)!}"/>                                               

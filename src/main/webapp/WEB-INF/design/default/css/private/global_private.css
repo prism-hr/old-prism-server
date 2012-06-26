@@ -220,6 +220,7 @@ section.folding form > div.section-error-bar {
 	color: red;
   margin-bottom: 5px;
   padding: 10px 10px 10px 40px;
+	position: relative;
 }
 section.folding form > div.section-error-bar .row { background: none; margin-bottom: 0; padding-left: 30px; }
 section.folding form > div.section-error-bar .invalid-info-text { margin: 0; padding: 0; }

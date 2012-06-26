@@ -4,17 +4,7 @@ $(document).ready(function()
 	if($('#2_regUserId').val() == "") {	$("div[id='secondRegistryUser']").hide();	}
 	if($('#3_regUserId').val() == "") {	$("div[id='thirdRegistryUser']").hide(); }
 	
-	$('#cancelDurationBtn').click(function()
-	{
-		  window.location.href = "/pgadmissions/applications";
-	});
-	
-	$('#cancelReminderBtn').click(function()
-	{
-		window.location.href = "/pgadmissions/applications";
-	});
-	
-	$('#cancelRegistryBtn').click(function()
+	$('#cancelDurationBtn, #cancelReminderBtn, #cancelRegistryBtn').click(function()
 	{
 		window.location.href = "/pgadmissions/applications";
 	});
@@ -22,6 +12,7 @@ $(document).ready(function()
 	$('#submitDurationStages').click(function()
 	{
 		$("#stagesDuration").html('');
+		$('#section-slc > div').append('<div class="ajax" />');
 		var validationErrors = appendStagesJSON();
 		var stages = $('[input[name="stagesDuration"]');
 		if (!validationErrors)
@@ -37,7 +28,9 @@ $(document).ready(function()
 				data:stages.serialize(),
 				success:function(data)
 				{
-					window.location.href = "/pgadmissions/applications";
+					console.log(data);
+					$('#section-slc div.ajax').remove();
+					//window.location.href = "/pgadmissions/applications";
 				}
 			});
 		}

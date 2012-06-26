@@ -60,7 +60,7 @@
 									Edit the system configuration. <strong>Be aware that this will change the system behaviour for all programmes.</strong>
 								</div>
 
-								<section id="configuration" class="form-rows">
+								<section id="section-slc" class="form-rows">
 									<h2 class="no-arrow">
 										Service Level Commitments
 									</h2>
@@ -113,7 +113,7 @@
 								</section>
 
 								<!-- Configure Reminder Interval -->
-								<section class="form-rows">
+								<section id="section-reminder" class="form-rows">
 									<h2 class="no-arrow">
 										Task Notifications
 									</h2>
@@ -155,7 +155,7 @@
 
 
 								<!-- Add Registry Users -->
-								<section class="form-rows">
+								<section id="section-registry" class="form-rows">
 									<h2 class="no-arrow">
 										Admissions Contacts
 									</h2>

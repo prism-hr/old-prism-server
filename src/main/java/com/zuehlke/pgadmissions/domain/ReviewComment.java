@@ -33,7 +33,10 @@ public class ReviewComment extends Comment{
 	
 	
 	@Column(name="suitable_candidate")
-	private Boolean suitableCandidate;
+	private Boolean suitableCandidateForUcl;
+	
+	@Column(name="applicant_suitable_for_programme")
+	private Boolean suitableCandidateForProgramme;
 	
 	
 	@Column(name = "decline")
@@ -78,14 +81,14 @@ public class ReviewComment extends Comment{
 	}
 	
 	public boolean isSuitableCandidateSet() {
-		return suitableCandidate != null;
+		return suitableCandidateForUcl != null;
 	}
-	public Boolean getSuitableCandidate() {
-		return suitableCandidate;
+	public Boolean getSuitableCandidateForUcl() {
+		return suitableCandidateForUcl;
 	}
 
-	public void setSuitableCandidate(Boolean suitableCandidate) {
-		this.suitableCandidate = suitableCandidate;
+	public void setSuitableCandidateForUcl(Boolean suitableCandidate) {
+		this.suitableCandidateForUcl = suitableCandidate;
 	}
 
 	public boolean isDecline() {
@@ -102,6 +105,15 @@ public class ReviewComment extends Comment{
 
 	public void setAdminsNotified(boolean adminsNotified) {
 		this.adminsNotified = adminsNotified;
+	}
+
+	public Boolean getSuitableCandidateForProgramme() {
+		return suitableCandidateForProgramme;
+	}
+
+	public void setSuitableCandidateForProgramme(
+			Boolean suitableCandidateForProgramme) {
+		this.suitableCandidateForProgramme = suitableCandidateForProgramme;
 	}
 
 	

@@ -100,25 +100,40 @@
 											
 										<div class="row-group">
 											<#include "/private/staff/admin/comment/documents_snippet.ftl"/>
-											<h3>Applicant Suitability</h3>
-											
+										</div>
+										
+										<div class="row-group">
+										<h3>Applicant Suitability</h3>
 											<div class="row">
 												<span id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></span>
 												<span class="hint" data-desc=""></span>
 												<div class="field">
-													<label><input type="radio" name="suitableCandidate" value="true" id="suitableRB_true"
-													<#if comment.suitableCandidateSet && comment.suitableCandidate> checked="checked"</#if>
+													<label><input type="radio" name="suitableCandidateForUcl" value="true" id="suitableRB_true"
+													<#if comment.suitableCandidateForUcl?? && comment.suitableCandidateForUcl> checked="checked"</#if>
 													/> Yes</label> 
-													<label><input type="radio" name="suitableCandidate" value="false" id="suitableRB_false"
-													<#if comment.suitableCandidateSet && !comment.suitableCandidate> checked="checked"</#if>
+													<label><input type="radio" name="suitableCandidateForUcl" value="false" id="suitableRB_false"
+													<#if comment.suitableCandidateForUcl?? && !comment.suitableCandidateForUcl> checked="checked"</#if>
 													/> No</label> 
-													<@spring.bind "comment.suitableCandidate" /> 
+													<@spring.bind "comment.suitableCandidateForUcl" /> 
 													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 												</div>
 											</div>
-										</div>
 											
-										<div class="row-group">
+											<div class="row">
+												<span id="suitable-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
+												<span class="hint" data-desc=""></span>
+												<div class="field">
+													<label><input type="radio" name="suitableCandidateForProgramme" value="true" id="suitableRB_true"
+													<#if comment.suitableCandidateForProgramme?? && comment.suitableCandidateForProgramme> checked="checked"</#if>
+													/> Yes</label> 
+													<label><input type="radio" name="suitableCandidateForProgramme" value="false" id="suitableRB_false"
+													<#if comment.suitableCandidateForProgramme?? && !comment.suitableCandidateForProgramme> checked="checked"</#if>
+													/> No</label> 
+													<@spring.bind "comment.suitableCandidateForProgramme" /> 
+													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+												</div>
+											</div>
+											
 											<div class="row">
 												<span id="supervise-lbl" class="plain-label">Would you like to interview the applicant with a view to working with them?<em>*</em></span>
 												<span class="hint" data-desc=""></span>

@@ -46,12 +46,21 @@ public class FeedbackCommentValidatorTest {
 	}
 	
 	@Test
-	public void shouldRejectIfNotDeclinedAndSuitableCandidateIsEmpty() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "willingToInterview");
-		reviewComment.setWillingToInterview(null);
+	public void shouldRejectIfNotDeclinedAndSuitableCandidateForUclIsEmpty() {
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "suitableCandidateForUcl");
+		reviewComment.setSuitableCandidateForUcl(null);
 		validator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToInterview").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableCandidateForUcl").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfNotDeclinedAndSuitableCandidateForProgrammeIsEmpty() {
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "suitableCandidateForProgramme");
+		reviewComment.setSuitableCandidateForProgramme(null);
+		validator.validate(reviewComment, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableCandidateForProgramme").getCode());
 	}
 
 	
@@ -60,7 +69,7 @@ public class FeedbackCommentValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "reviewComment");
 		reviewComment.setDecline(true);
 		reviewComment.setComment(null);
-		reviewComment.setSuitableCandidate(null);
+		reviewComment.setSuitableCandidateForUcl(null);
 		reviewComment.setWillingToInterview(null);
 		validator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
@@ -144,7 +153,7 @@ public class FeedbackCommentValidatorTest {
 	@Before
 	public void setup() {
 		validator = new FeedbackCommentValidator();
-		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidate(false).willingToInterview(true).decline(false).toReviewComment();
+		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidateForProgramme(false).suitableCandidateForUCL(false).willingToInterview(true).decline(false).toReviewComment();
 		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervice(true).decline(false).toInterviewComment();
 		referenceComment = new ReferenceCommentBuilder().comment("reference comment").suitableForProgramme(false).suitableForUcl(false).toReferenceComment();
 	}

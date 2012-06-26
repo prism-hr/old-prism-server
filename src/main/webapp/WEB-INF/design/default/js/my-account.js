@@ -1,6 +1,7 @@
 $(document).ready(function(){
 	
-	$('#saveChanges').click(function(){
+	$('#saveChanges').click(function()
+	{
 		var postData ={ 
 				email : $('#email').val(),
 				firstName : $('#firstName').val(),
@@ -9,6 +10,9 @@ $(document).ready(function(){
 				newPassword : $('#newPassword').val(),
 				confirmPassword : $('#confirmNewPass').val()
 		};
+		
+		$('#configuration > div').append('<div class="ajax" />');
+		
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -18,9 +22,11 @@ $(document).ready(function(){
 			  },
 			url:"/pgadmissions/myAccount/submit", 
 			data:$.param(postData),
-			success:	function(data) {
-					$('#my_account_section').html(data);
-				}
+			success: function(data)
+			{
+				$('#configuration div.ajax').remove();
+				$('#my_account_section').html(data);
+			}
 		});
 	});
 	

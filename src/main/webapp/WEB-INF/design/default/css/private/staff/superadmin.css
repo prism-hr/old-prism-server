@@ -44,5 +44,5 @@ div.left-column .field { margin-left: 100px !important; }
 /* Table with scrolling content and fixed header. */
 #existingUsers table { margin-bottom: 0; }
 #existingUsers td.scrollparent { padding: 0; }
-#existingUsers .scroll { max-height: 155px; } /* roughly five rows high. */
+#existingUsers .scroll { max-height: 155px; overflow: hidden; } /* roughly five rows high. */
 #existingUsers .scroll table { border-collapse: collapse; width: 100%; }

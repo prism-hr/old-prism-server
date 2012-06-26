@@ -11,7 +11,8 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 public class ReviewCommentBuilder {
 	
 	private Boolean willingToInterview;
-	private Boolean suitableCandidate;
+	private Boolean suitableCandidateForUcl;
+	private Boolean suitableCandidateForProgramme;
 	private boolean decline;
 	private boolean adminsNotified;
 	private ApplicationForm applicationForm;
@@ -32,8 +33,13 @@ public class ReviewCommentBuilder {
 		return this;
 	}
 	
-	public ReviewCommentBuilder suitableCandidate(Boolean suitableCandidate) {
-		this.suitableCandidate = suitableCandidate;
+	public ReviewCommentBuilder suitableCandidateForUCL(Boolean suitableCandidate) {
+		this.suitableCandidateForUcl = suitableCandidate;
+		return this;
+	}
+	
+	public ReviewCommentBuilder suitableCandidateForProgramme(Boolean suitableCandidateForProgramme) {
+		this.suitableCandidateForProgramme = suitableCandidateForProgramme;
 		return this;
 	}
 	
@@ -78,11 +84,12 @@ public class ReviewCommentBuilder {
 		reviewComment.setDate(createdTimeStamp);
 		reviewComment.setDecline(decline);
 		reviewComment.setId(id);
-		reviewComment.setSuitableCandidate(suitableCandidate);
+		reviewComment.setSuitableCandidateForUcl(suitableCandidateForUcl);
 		reviewComment.setUser(user);
 		reviewComment.setWillingToInterview(willingToInterview);
 		reviewComment.setAdminsNotified(adminsNotified);
 		reviewComment.setReviewer(reviewer);
+		reviewComment.setSuitableCandidateForProgramme(suitableCandidateForProgramme);
 		return reviewComment;
 		
 	}

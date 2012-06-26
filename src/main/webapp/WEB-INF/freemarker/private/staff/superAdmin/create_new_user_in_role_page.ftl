@@ -142,7 +142,7 @@
 																		
 									<div class="row">
 										<div class="field">
-											<button type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+											<button class="blue" type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
 										</div>
 									</div>
 								</div>

@@ -243,12 +243,12 @@
                         <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     
                            <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
                                 <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-                                <a class="button" href="<@spring.url '/applications'/>">Save & Close</a>
+                                <a class="button blue" href="<@spring.url '/applications'/>">Save & Close</a>
                                 <button id="submitAppButton" type="button" class="blue">Submit</button>
                     </form>
                   <#else>
                     <form>                              
-                                <a class="button" href="<@spring.url '/applications'/>">Save & Close</a>
+                                <a class="button blue" href="<@spring.url '/applications'/>">Save & Close</a>
                     </form>
                   </#if>
                   

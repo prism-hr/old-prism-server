@@ -115,7 +115,7 @@
 													<span class="plain-label">Current Password</span>
 													<span class="hint" data-desc="<@spring.message 'myaccount.currentPw'/>"></span>
 													<div class="field">	
-														<input class="full" id="currentPassword" type="password" />
+														<input class="full" id="currentPassword" type="password" value="" />
 													</div>
 													<@spring.bind "updatedUser.password" />
 													<#list spring.status.errorMessages as error>

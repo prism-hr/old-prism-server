@@ -92,7 +92,7 @@ $(document).ready(function(){
 			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
 			if ($infobar)
 			{
-				$("#emp-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
 				empImgCount = empImgCount + 1;
 			}
 			addToolTips();

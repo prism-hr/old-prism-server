@@ -130,7 +130,7 @@ $(document).ready(function() {
 			this.checked = selectAllValue;
 			if (selectAllValue)
 			{
-				list += $(this).attr('id') + ";";
+				list += $(this).val() + ";";
 			}
 		});
 		
@@ -142,10 +142,9 @@ $(document).ready(function() {
 	// --------------------------------------------------------------------------------
 	$(document).on('click', "input[name*='appDownload']", function()
 	{		
-		var id = this.id;
-		id = id.replace('appDownload_', '');
-	
+		var id = $(this).val();
 		var currentAppList = $('#appList').val();		
+
 		if ($(this).is(':checked'))
 		{
 			$('#appList').val(currentAppList + id + ";");

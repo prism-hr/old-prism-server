@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring />
 <table class="data" border="0">
 	<colgroup>
-		<col style="width: 20px;" />
+		<col style="width: 26px;" />
 		<col style="width: 472px;" />
 		<col style="width: 240px;" />
 	</colgroup>

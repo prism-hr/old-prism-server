@@ -13,14 +13,19 @@ import org.springframework.validation.BindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 public class MoveToApprovalControllerTest {
@@ -34,6 +39,9 @@ public class MoveToApprovalControllerTest {
 	private ApprovalService approvalServiceMock;
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
+	private CommentService commentServiceMock;
+	private DocumentPropertyEditor documentPropertyEditorMock;
+	private GenericCommentValidator genericCommentValidator;
 
 	private static final String APROVAL_DETAILS_VIEW_NAME = "/private/staff/supervisors/approval_details";
 	private RegisteredUser currentUserMock;
@@ -74,7 +82,7 @@ public class MoveToApprovalControllerTest {
 		ApprovalRound approvalround = new ApprovalRoundBuilder().id(4).toApprovalRound();
 		final ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 		
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null){
+		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				return application;
@@ -95,7 +103,7 @@ public class MoveToApprovalControllerTest {
 	public void shouldNotSaveReviewRoundAndReturnToReviewRoundPageIfHasErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null){
+		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				Assert.assertEquals("1", applicationId);
@@ -114,9 +122,9 @@ public class MoveToApprovalControllerTest {
 	public void shouldRequestRestartOfApproval() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").toApplicationForm();
 		final RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
-
+		Comment comment = new CommentBuilder().comment("request restart").toComment();
 		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock,// 
-				userValidatorMock, null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null) {
+				userValidatorMock, null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				Assert.assertEquals("121", applicationId);
@@ -129,17 +137,20 @@ public class MoveToApprovalControllerTest {
 			}
 		};
 
-		approvalServiceMock.requestApprovalRestart(applicationForm, currentUser);
+		approvalServiceMock.requestApprovalRestart(applicationForm, currentUser, comment);
 		EasyMock.expectLastCall();
 		
 		ModelMap modelMap = new ModelMap();
-		assertEquals("redirect:/applications", controller.requestRestart(applicationForm, modelMap));
+		assertEquals("redirect:/applications", controller.requestRestart(applicationForm, comment, bindingResultMock, modelMap));
 		Assert.assertEquals("An e-mail requesting the restart of the approval phase for application LALALA was sent to the administrator!",// 
 				modelMap.get("message"));
 	}
 
 	@Before
 	public void setUp() {
+		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+		genericCommentValidator = EasyMock.createMock(GenericCommentValidator.class);
+		
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);
@@ -154,7 +165,7 @@ public class MoveToApprovalControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null);
+		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock);
 	}
 
 }

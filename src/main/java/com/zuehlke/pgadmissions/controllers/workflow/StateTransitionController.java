@@ -107,7 +107,6 @@ public class StateTransitionController {
 				((ValidationComment) newComment).setEnglishCompentencyOk(englishCompentencyOk);
 				((ValidationComment) newComment).setQualifiedForPhd(qualifiedForPhd);
 				((ValidationComment) newComment).setHomeOrOverseas(homeOrOverseas);
-
 			}
 			if (newComment instanceof ReviewEvaluationComment) {
 				((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());

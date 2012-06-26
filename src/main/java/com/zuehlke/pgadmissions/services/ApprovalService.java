@@ -80,7 +80,7 @@ public class ApprovalService {
 	}
 
 	@Transactional
-	public void requestApprovalRestart(ApplicationForm application, RegisteredUser approver) {
+	public void requestApprovalRestart(ApplicationForm application, RegisteredUser approver, Comment comment) {
 		if (!approver.isInRole(Authority.APPROVER)) {
 			throw new IllegalArgumentException(String.format("User %s is not an approver!", approver.getUsername()));
 		}
@@ -91,10 +91,8 @@ public class ApprovalService {
 		if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
 			throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", application.getApplicationNumber()));
 		}
-
 		mailService.sendRequestRestartApproval(application, approver);
-		commentDAO.save(commentFactory.createComment(application, approver, "Requested re-start of approval phase", CommentType.GENERIC, null));
-
+		commentDAO.save(comment);
 	}
 
 	private void checkApplicationStatus(ApplicationForm application) {

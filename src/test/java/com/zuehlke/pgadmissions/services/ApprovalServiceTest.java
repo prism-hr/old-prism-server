@@ -204,7 +204,7 @@ public class ApprovalServiceTest {
 				.role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).toRole())//
 				.programsOfWhichApprover(program).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.APPROVAL).id(1).toApplicationForm();
-
+		
 		mailServiceMock.sendRequestRestartApproval(applicationForm, approver);
 		EasyMock.expectLastCall();
 		Comment comment = new CommentBuilder().id(1).toComment();
@@ -212,7 +212,7 @@ public class ApprovalServiceTest {
 				.andReturn(comment);
 		commentDAOMock.save(comment);
 		EasyMock.replay(mailServiceMock, commentFactoryMock, commentDAOMock);
-		approvalService.requestApprovalRestart(applicationForm, approver);
+		approvalService.requestApprovalRestart(applicationForm, approver, comment);
 		EasyMock.verify(mailServiceMock, commentDAOMock);
 	}
 
@@ -224,10 +224,10 @@ public class ApprovalServiceTest {
 				.programsOfWhichApprover(program).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW)//
 				.program(program).id(1).applicationNumber("DUDU").toApplicationForm();
-
+		Comment comment = new CommentBuilder().id(1).toComment();
 		EasyMock.replay(mailServiceMock);
 		try {
-			approvalService.requestApprovalRestart(applicationForm, approver);
+			approvalService.requestApprovalRestart(applicationForm, approver, comment);
 			Assert.fail("expected exception not thrown!");
 		} catch (IllegalArgumentException iae) {
 			Assert.assertEquals("Application DUDU is not in state APPROVAL!", iae.getMessage());
@@ -243,10 +243,10 @@ public class ApprovalServiceTest {
 				.programsOfWhichApprover(program).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW)//
 				.program(program).id(1).applicationNumber("DUDU").toApplicationForm();
-
+		Comment comment = new CommentBuilder().id(1).toComment();
 		EasyMock.replay(mailServiceMock);
 		try {
-			approvalService.requestApprovalRestart(applicationForm, approver);
+			approvalService.requestApprovalRestart(applicationForm, approver, comment);
 			Assert.fail("expected exception not thrown!");
 		} catch (IllegalArgumentException iae) {
 			Assert.assertEquals("User dd@test.com is not an approver!", iae.getMessage());
@@ -262,10 +262,10 @@ public class ApprovalServiceTest {
 				.toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW)//
 				.program(program).id(1).applicationNumber("DUDU").toApplicationForm();
-
+		Comment comment = new CommentBuilder().id(1).toComment();
 		EasyMock.replay(mailServiceMock);
 		try {
-			approvalService.requestApprovalRestart(applicationForm, approver);
+			approvalService.requestApprovalRestart(applicationForm, approver, comment);
 			Assert.fail("expected exception not thrown!");
 		} catch (IllegalArgumentException iae) {
 			Assert.assertEquals("User dd@test.com is not an approver in program lala!", iae.getMessage());

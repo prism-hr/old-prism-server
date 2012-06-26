@@ -85,12 +85,21 @@ public class FeedbackCommentValidatorTest {
 	}
 	
 	@Test
-	public void shouldRejectInterviewCommentIfNotDeclinedAndSuitableCandidateIsEmpty() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "willingToSupervise");
-		interviewComment.setWillingToSupervise(null);
+	public void shouldRejectInterviewCommentIfNotDeclinedAndSuitableCandidateForUclIsEmpty() {
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "suitableCandidateForUcl");
+		interviewComment.setSuitableCandidateForUcl(null);
 		validator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToSupervise").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableCandidateForUcl").getCode());
+	}
+	
+	@Test
+	public void shouldRejectInterviewCommentIfNotDeclinedAndSuitableCandidateForProgrammeIsEmpty() {
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "suitableCandidateForProgramme");
+		interviewComment.setSuitableCandidateForProgramme(null);
+		validator.validate(interviewComment, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableCandidateForProgramme").getCode());
 	}
 	
 	
@@ -99,7 +108,7 @@ public class FeedbackCommentValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "interviewComment");
 		interviewComment.setDecline(true);
 		interviewComment.setComment(null);
-		interviewComment.setSuitableCandidate(null);
+		interviewComment.setSuitableCandidateForUcl(null);
 		interviewComment.setWillingToSupervise(null);
 		validator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
@@ -136,7 +145,7 @@ public class FeedbackCommentValidatorTest {
 	public void setup() {
 		validator = new FeedbackCommentValidator();
 		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidate(false).willingToInterview(true).decline(false).toReviewComment();
-		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidate(false).willingToSupervice(true).decline(false).toInterviewComment();
+		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervice(true).decline(false).toInterviewComment();
 		referenceComment = new ReferenceCommentBuilder().comment("reference comment").suitableForProgramme(false).suitableForUcl(false).toReferenceComment();
 	}
 }

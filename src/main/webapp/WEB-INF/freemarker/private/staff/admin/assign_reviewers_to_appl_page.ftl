@@ -156,7 +156,7 @@
                   <p><strong>Create New Reviewer</strong></p>                  
     
                   <div class="row">
-                    <label class="label normal">Reviewer First Name<em>*</em></label> 
+                    <label class="plain-label normal">Reviewer First Name<em>*</em></label> 
 										<span class="hint" data-desc="<@spring.message 'assignReviewer.firstName'/>"></span>
                     <div class="field">
                       <input class="full" type="text" name="newReviewerFirstName" id="newReviewerFirstName" value="${(reviewer.firstName?html)!}"/>
@@ -166,7 +166,7 @@
                   </div>
                   
                   <div class="row">
-                    <label class="label normal">Reviewer Last Name<em>*</em></label>
+                    <label class="plain-label normal">Reviewer Last Name<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'assignReviewer.lastName'/>"></span>
                     <div class="field">
                       <input class="full" type="text" name="newReviewerLastName" id="newReviewerLastName" value="${(reviewer.lastName?html)!}"/>                                            
@@ -176,7 +176,7 @@
                   </div>
     
                   <div class="row">
-                    <label class="label normal">Email<em>*</em></label>
+                    <label class="plain-label normal">Email<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'assignReviewer.email'/>"></span>
                     <div class="field">
                       <input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail" value="${(reviewer.email?html)!}"/>                                               

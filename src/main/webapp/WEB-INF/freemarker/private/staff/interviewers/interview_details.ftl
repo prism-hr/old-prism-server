@@ -172,7 +172,7 @@
 										<p><strong>Create New Interviewer</strong></p>									
 
 										<div class="row">
-											<label class="label normal">Interviewer First Name<em>*</em></label> 
+											<label class="plain-label normal">Interviewer First Name<em>*</em></label> 
 											<span class="hint" data-desc="<@spring.message 'assignInterviewer.firstName'/>"></span>
 											<div class="field">
 												<input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  value="${(interviewer.firstName?html)!}"/>
@@ -182,7 +182,7 @@
 										</div>
 										
 										<div class="row">
-											<label class="label normal">Interviewer Last Name<em>*</em></label>
+											<label class="plain-label normal">Interviewer Last Name<em>*</em></label>
 											<span class="hint" data-desc="<@spring.message 'assignInterviewer.lastName'/>"></span>
 											<div class="field">
 												<input class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName" value="${(interviewer.lastName?html)!}"/>			                                      
@@ -192,7 +192,7 @@
 										</div>
 			
 										<div class="row">
-											<label class="label normal">Interviewer Email Address<em>*</em></label>
+											<label class="plain-label normal">Interviewer Email Address<em>*</em></label>
 											<span class="hint" data-desc="<@spring.message 'assignInterviewer.email'/>"></span>
 											<div class="field">
 												<input class="full" type="text"  name="newInterviewerEmail" id="newInterviewerEmail" value="${(interviewer.email?html)!}"/>			                                         
@@ -211,7 +211,7 @@
 									<div class="row-group">
 										<p><strong>Interview Arrangements</strong></p>
 										<div class="row">
-											<label class="label normal">Interview Date<em>*</em></label>
+											<label class="plain-label normal">Interview Date<em>*</em></label>
 											<span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewDate'/>"></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
@@ -225,7 +225,7 @@
 										</div>
 									
 										<div class="row">
-											<label class="label normal">Interview Time (GMT/BST)<em>*</em></label>
+											<label class="plain-label normal">Interview Time (GMT/BST)<em>*</em></label>
 											<span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewTime'/>"></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
@@ -240,7 +240,7 @@
 										</div>
 									
 										<div class="row">
-											<label class="label normal">Interview Instructions<em>*</em></label>
+											<label class="plain-label normal">Interview Instructions<em>*</em></label>
 											<span class="hint" data-desc="<@spring.message 'assignInterviewer.instructions'/>"></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>
@@ -254,7 +254,7 @@
 										</div>
 		
 										<div class="row">
-											<label class="label normal">Interviewer Location<em>*</em></label>
+											<label class="plain-label normal">Interviewer Location<em>*</em></label>
 											<span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
 											<div class="field">
 												<#if assignOnly?? && assignOnly>

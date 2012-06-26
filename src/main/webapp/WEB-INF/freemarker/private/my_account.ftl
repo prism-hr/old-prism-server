@@ -59,7 +59,7 @@
 										Account Details
 									</h2>
 									<div>
-										<form>
+										<form autocomplete="off">
 										
 											<div class="section-info-bar">
 												Edit your account details.
@@ -115,7 +115,7 @@
 													<span class="plain-label">Current Password</span>
 													<span class="hint" data-desc="<@spring.message 'myaccount.currentPw'/>"></span>
 													<div class="field">	
-														<input class="full" id="currentPassword" type="password" value="" />
+														<input class="full" id="currentPassword" type="password" />
 													</div>
 													<@spring.bind "updatedUser.password" />
 													<#list spring.status.errorMessages as error>

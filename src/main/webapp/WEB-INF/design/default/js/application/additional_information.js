@@ -102,10 +102,11 @@ $(document).ready(function(){
 			
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
-			$("#add-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
-			$("#add-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			if(addImgCount == 0){
-				$("#add-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			var $infobar = $('#add-info-bar-div.section-info-bar');
+			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
+			if ($infobar)
+			{
+				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
 				addImgCount = addImgCount + 1;
 			}
 			addToolTips();

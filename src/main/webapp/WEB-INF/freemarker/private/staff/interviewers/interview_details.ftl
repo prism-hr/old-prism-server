@@ -92,7 +92,7 @@
 								<div class="row-group">			
 								
 										<div class="row" id="assignInterviewersToAppSection">
-											<span class="plain-label">Assign Interviewers</span>
+											<span class="plain-label">Assign Interviewers<em>*</em></span>
 											<span class="hint" data-desc="<@spring.message 'assignInterviewer.assign'/>"></span>
 											<div class="field">
 												<#-- <select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}"> -->

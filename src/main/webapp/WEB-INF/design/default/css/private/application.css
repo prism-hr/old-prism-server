@@ -212,3 +212,33 @@ section.form-rows .field.upload-delete input[type="file"] { display: inline-bloc
 
 /* Withdraw button */
 #withdrawButton { float: left; }
+
+
+
+/* Selecting lists of users. */
+select.list-select-from,
+select.list-select-to { width: 400px; }
+select.list-select-from option:last-child,
+select.list-select-to option:last-child { border-bottom: none; }
+
+/* "From" list */
+select.list-select-from optgroup {
+	background: #DDD;
+	font-style: normal;
+	font-weight: normal;
+	margin-bottom: 5px;
+	padding: 5px;
+}
+select.list-select-from option {
+	background: #FFF;
+	margin: 5px -5px -5px;
+	padding: 5px 5px 5px 20px;
+}
+
+/* "To" list */
+select.list-select-to { min-height: 60px; }
+select.list-select-to option { padding: 5px; }
+
+.list-select-buttons .field { border-top: 2px solid #999; margin-top: 25px; text-align: center; width: 400px; }
+.list-select-buttons .field span { background: #FFF; display: block; margin: -18px auto 0; padding: 4px; width: 180px; }
+.list-select-buttons .field button { margin: 0 5px; /*width: 90px;*/ }

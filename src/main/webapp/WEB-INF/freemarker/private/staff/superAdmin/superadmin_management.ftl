@@ -134,7 +134,7 @@
 								
 								<div class="buttons">
 									<button type="reset" id="clear">Clear</button>
-									<button type="submit" >Submit</button>
+									<button type="submit" class="blue">Submit</button>
 								</div>
 							</div>
 			

@@ -28,6 +28,11 @@ $(document).ready(function() {
 	// --------------------------------------------------------------------------------
 	$(document).on('change', 'select.actionType', function()
 	{
+		
+		// Display a loading prompt, even though what follows isn't AJAX.
+		$('div.content-box-inner').css({ position: 'relative' })
+						 									.append('<div class="ajax" />');
+
 		var name = this.name;
 		var id = name.substring(5).replace(']', '');
 
@@ -87,6 +92,10 @@ $(document).ready(function() {
 							window.location.href = "/pgadmissions/applications";
 						}
 					});
+				}
+				else
+				{
+					$('div.content-box-inner div.ajax').remove();
 				}
 		}
 	});

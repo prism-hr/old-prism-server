@@ -26,7 +26,7 @@
 				<input type="checkbox" name="isAware" value=""/>
 			</td>	
 			<td>
-				<button type="button" name="add">Add Another</button>
+				<button type="button blue" name="add">Add Another</button>
 			</td>
 		</tr>	
 	</tfoot>

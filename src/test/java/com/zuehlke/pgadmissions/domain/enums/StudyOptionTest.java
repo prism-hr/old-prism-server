@@ -13,6 +13,7 @@ public class StudyOptionTest {
 		Assert.assertEquals("Full time by distance", StudyOption.FULL_TIME_DISTANCE.displayValue());
 		Assert.assertEquals("Part time", StudyOption.PART_TIME.displayValue());
 		Assert.assertEquals("Part time by distance", StudyOption.PART_TIME_DISTANCE.displayValue());
+		Assert.assertEquals("Modular/flexible study", StudyOption.MODULAR.displayValue());
 	}
 	
 	@Test
@@ -21,6 +22,7 @@ public class StudyOptionTest {
 		Assert.assertEquals(StudyOption.FULL_TIME_DISTANCE, StudyOption.fromString("Full time by distance"));
 		Assert.assertEquals(StudyOption.PART_TIME, StudyOption.fromString("Part time"));
 		Assert.assertEquals(StudyOption.PART_TIME_DISTANCE, StudyOption.fromString("Part time by distance"));
+		Assert.assertEquals(StudyOption.MODULAR, StudyOption.fromString("Modular/flexible study"));
 	}
 	
 	@Test

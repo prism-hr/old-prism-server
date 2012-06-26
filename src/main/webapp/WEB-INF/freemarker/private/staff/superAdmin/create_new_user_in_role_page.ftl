@@ -71,7 +71,7 @@
 												<#list programs as program>"
 												<option value='${program.code}' 
 												<#if userDTO.selectedProgram?? && userDTO.selectedProgram.id == program.id >selected="selected"</#if>
-												>${program.title?html}</option>               
+												>${program.title?html?capitalize}</option>               
 												</#list>
 											</select>
 		

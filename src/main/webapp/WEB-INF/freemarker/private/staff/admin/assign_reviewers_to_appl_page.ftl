@@ -1,13 +1,6 @@
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
-<#assign avaliableOptionsSize = (programmeReviewers?size + previousReviewers?size + 4)/>
-<#if (avaliableOptionsSize > 25)>
-<#assign avaliableOptionsSize = 25 />
-</#if> 
-<#assign selectedOptionsSize = (applicationReviewers?size + pendingReviewers?size) + 1/>
-<#if (selectedOptionsSize > 25)>
-<#assign selectedOptionsSize = 25 />
-</#if> 
+ 
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -43,7 +36,7 @@
   <div id="middle">
   
     <#include "/private/common/parts/nav_with_user_info.ftl"/>
-           <@header/>
+     <@header/>
     <!-- Main content area. -->
     <article id="content" role="main">
     
@@ -57,98 +50,19 @@
       <div class="content-box">
         <div class="content-box-inner">
         
-          <div id="programme-details">                
-          
-            <div class="row">
-              <label class="label">Programme</label>
-              ${applicationForm.program.code} - ${applicationForm.program.title}
-            </div>
-    
-            <div class="row">
-              <label class="label">Application Number</label>
-              ${applicationForm.applicationNumber} 
-            </div>
-    
-            <#if applicationForm.isSubmitted()>
-            <div class="row">
-              <label>Submitted</label>
-              ${(applicationForm.submittedDate?string("dd MMM yyyy"))!}
-            </div>
-            </#if>
-          </div>
-            
-          <hr />
-    
-          <section class="form-rows violet">
-						<h2 class="no-arrow">Assign Reviewers</h2>
+ 		<#include "/private/common/parts/application_info.ftl"/>
+    		<input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
+          <section class="form-rows violet" id="reviewsection">
+			<h2 class="no-arrow">Assign Reviewers</h2>
             <div>
               <form>
               
-								<div id="add-info-bar-div" class="section-info-bar">
-									Assign reviewers to the application here. You may also create new reviewers.
-								</div>  
+				<div id="add-info-bar-div" class="section-info-bar">
+					Assign reviewers to the application here. You may also create new reviewers.
+				</div>  
 					
                 <div id="assignReviewersToAppSection" class="row-group">
-  
-                  <div class="row">
-                    <span class="plain-label">Assign Reviewers<#if !user.isInRole('REVIWER')><em>*</em></#if></span>
-										<span class="hint" data-desc="<@spring.message 'assignReviewer.defaultReviewers'/>"></span>
-                    <div class="field">
-                      <select id="programReviewers" class="list-select-from" multiple="multiple" size="${avaliableOptionsSize}">
-                        <optgroup id="default" label="Default reviewers">
-                          <#list programmeReviewers as reviewer>
-                          <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
-                          </#list>
-                        </optgroup>
-                        <optgroup id="previous" label="Previous reviewers">
-                          <#list previousReviewers as reviewer>
-                          <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
-                          </#list>
-						<#list applicationReviewers as reviewer>
-							<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" class="selected" disabled="disabled">
-							${reviewer.firstName?html} ${reviewer.lastName?html}
-						</option>
-						</#list>
-						<#list pendingReviewers as unsaved>									
-														<option value="${encrypter.encrypt(unsaved.id)}" class="selected" disabled="disabled">
-															${unsaved.firstName?html} ${unsaved.lastName?html}
-														</option>
-						</#list>
-                        </optgroup>
-                      </select>
-                    </div>
-                  </div>
-      
-                  <!-- Available Reviewer Buttons -->
-                  <div class="row list-select-buttons">
-                    <div class="field">
-                      <span>
-                        <button class="blue" type="button" id="addReviewerBtn"><span class="icon-down"></span> Add</button>
-                        <button type="button" id="removeReviewerBtn"><span class="icon-up"></span> Remove</button>
-                      </span>
-                    </div>
-                  </div>
-    
-                  <!-- Already reviewers of this application -->
-                  <div class="row">
-                    <div class="field">
-                      <select id="applicationReviewers" class="list-select-to" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
-                        <#list applicationReviewers as reviewer>
-                        <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}">
-                          ${reviewer.firstName?html} ${reviewer.lastName?html}
-                        </option>
-                        </#list>
-                        <#list pendingReviewers as unsaved>									
-														<option value="${encrypter.encrypt(unsaved.id)}" class="selected" disabled="disabled">
-															${unsaved.firstName?html} ${unsaved.lastName?html}
-														</option>
-						</#list>
-                      </select>
-                      <@spring.bind "reviewRound.reviewers" /> 
-                      <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-                    </div>
-                  </div>
-                  
+                    
                 </div>
     
                 <div class="row-group">        

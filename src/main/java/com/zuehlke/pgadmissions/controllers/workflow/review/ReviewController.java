@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 public abstract class ReviewController {
 	protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/admin/assign_reviewers_to_appl_page";
+	protected static final String REVIEWERS_SECTION_NAME = "/private/staff/admin/assign_reviewers_section";
 	protected final ApplicationsService applicationsService;
 	protected final UserService userService;
 	protected final NewUserByAdminValidator reviewerValidator;

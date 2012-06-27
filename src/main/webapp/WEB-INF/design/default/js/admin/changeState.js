@@ -32,9 +32,8 @@ $(document).ready(
 
 			$('#notifyRegistryButton').click(function()
 			{
-				$('#notifyRegistryButton').attr('disabled', 'disabled');
-				$('#notifyRegistryButton').removeClass("blue");
-				$('body').css('cursor', 'wait');
+				
+				$('#commentsection').append('<div class="ajax" />');
 				$.ajax({
 					type: 'POST',
 					 statusCode: {
@@ -51,10 +50,8 @@ $(document).ready(
 						$('#emailMessage').html(data);
 						$('#notifyRegistryButton').removeAttr('disabled');
 						$('#notifyRegistryButton').addClass("blue");
-						$('body').css('cursor', 'auto');
-						//$('#timelineBtn').trigger('click');
-						// Go to application list.
-						window.location.href = '/pgadmissions/applications';
+
+						window.location.href = '/pgadmissions/applications?messageCode=registry.refer&application=' + $('#applicationId').val();
 					}
 				});
 				

@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
@@ -38,6 +37,7 @@ public class MoveToReviewControllerTest {
 	private BindingResult bindingResultMock;
 
 	private static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/admin/assign_reviewers_to_appl_page";
+	private static final String REVIEWERS_SECTION_NAME = "/private/staff/admin/assign_reviewers_section";
 	private RegisteredUser currentUserMock;	
 	private ReviewerPropertyEditor reviewerPropertyEditorMock;
 
@@ -46,6 +46,15 @@ public class MoveToReviewControllerTest {
 		ModelMap modelMap = new ModelMap();
 		String reviewRoundDetailsPage = controller.getReviewRoundDetailsPage(modelMap);
 		Assert.assertEquals(REVIEW_DETAILS_VIEW_NAME, reviewRoundDetailsPage);
+		Assert.assertFalse((Boolean) modelMap.get("assignOnly"));
+
+	}	
+	
+@Test
+	public void shouldGetReviewesSectionWithOnlyAssignFalseNewReviewersFunctionality() {
+		ModelMap modelMap = new ModelMap();
+		String reviewersDetailsSection = controller.getReviewersSectionView(modelMap);
+		Assert.assertEquals(REVIEWERS_SECTION_NAME, reviewersDetailsSection);
 		Assert.assertFalse((Boolean) modelMap.get("assignOnly"));
 
 	}

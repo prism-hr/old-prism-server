@@ -40,7 +40,7 @@
       <!-- Project -->
       <div class="admin_row">
         <label class="admin_row_label">Project</label>
-        <div class="field"><#if applicationForm.projectTitle??>${(applicationForm.projectTitle?html)}<#else>Not Required</#if></div>
+        <div class="field"><#if (applicationForm.projectTitle)?has_content>${(applicationForm.projectTitle?html)}<#else>Not Required</#if></div>
       </div>
       
       <!-- Start date -->

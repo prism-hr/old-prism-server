@@ -38,7 +38,7 @@ $(document).ready(function(){
 });
 
 function getAccountDetailsSection(){
-	$('#accountdetails > div').append('<div class="ajax" />');
+	$('#reviewsecion').append('<div class="ajax" />');
 	
 	$.ajax({
 		type: 'GET',
@@ -50,7 +50,7 @@ function getAccountDetailsSection(){
 		url:"/pgadmissions/myAccount/section", 
 		success: function(data)
 		{
-			$('#accountdetails div.ajax').remove();
+			$('#reviewsecion div.ajax').remove();
 			$('#accountdetails').html(data);
 		}
 	});

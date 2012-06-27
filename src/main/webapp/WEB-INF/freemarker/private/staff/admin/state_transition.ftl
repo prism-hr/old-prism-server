@@ -57,7 +57,7 @@
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
 					
-					<section class="form-rows">
+					<section id="commentsection" class="form-rows">
 						<h2 class="no-arrow">
 						<#if applicationForm.isInState('VALIDATION')>
 							Validate Application
@@ -86,15 +86,7 @@
 		
 							<div class="row-group">
 							
-<#--
-								<#if applicationForm.isInState('VALIDATION')>
-								<h3>Validate application</h3>
-								<#elseif applicationForm.isInState('REVIEW')>
-								<h3>Evaluate reviews</h3>
-								<#elseif applicationForm.isInState('INTERVIEW')>
-								<h3>Evaluate interview feedback</h3>
-								</#if>
--->
+
 								<div class="row">
 									<span class="plain-label">Comments<em>*</em></span>
 									<span class="hint" data-desc="<@spring.message 'validateApp.comment'/>"></span>

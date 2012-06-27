@@ -42,6 +42,13 @@ public class MoveToReviewController extends ReviewController {
 		modelMap.put("assignOnly", false);
 		return REVIEW_DETAILS_VIEW_NAME;
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "reviewersSection")
+	public String getReviewersSectionView(ModelMap modelMap) {
+		modelMap.put("assignOnly", false);
+		return REVIEWERS_SECTION_NAME;
+	}
+
 
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
 	public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult, ModelMap modelMap) {

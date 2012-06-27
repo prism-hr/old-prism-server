@@ -1,5 +1,6 @@
 $(document).ready(function()
 {
+	getReviewersSection();
 
 	// -----------------------------------------------------------------------------------------
 	// Add reviewer
@@ -85,3 +86,21 @@ $(document).ready(function()
 });
 
 
+function getReviewersSection(){
+	$('#reviewsection').append('<div class="ajax" />');
+	
+	$.ajax({
+		type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/review/reviewersSection?applicationId=" + $('#applicationId').val(), 
+		success: function(data)
+		{
+			$('#reviewsection div.ajax').remove();
+			$('#assignReviewersToAppSection').html(data);
+		}
+	});
+}

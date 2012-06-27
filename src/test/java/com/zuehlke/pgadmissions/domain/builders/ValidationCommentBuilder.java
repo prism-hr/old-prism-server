@@ -1,8 +1,12 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -22,6 +26,7 @@ public class ValidationCommentBuilder {
 	private String comment;	
 	private Integer id;
 	private ApplicationFormStatus nextStatus;
+	private List<Document> documents = new ArrayList<Document>();
 
 	public ValidationCommentBuilder nextStatus(ApplicationFormStatus nextStatus){
 		this.nextStatus = nextStatus;
@@ -30,6 +35,11 @@ public class ValidationCommentBuilder {
 	
 	public ValidationCommentBuilder user(RegisteredUser user){
 		this.user = user;
+		return this;
+	}
+	
+	public ValidationCommentBuilder documents(Document... documents){
+		this.documents.addAll(Arrays.asList(documents));
 		return this;
 	}
 	
@@ -87,6 +97,7 @@ public class ValidationCommentBuilder {
 		validationComment.setType(type);
 		validationComment.setUser(user);
 		validationComment.setNextStatus(nextStatus);
+		validationComment.setDocuments(documents);
 		return validationComment;
 	}
 }

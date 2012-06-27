@@ -1,7 +1,5 @@
 <#import "/spring.ftl" as spring />
-<h2 id="additional-H2" class="no-arrow empty">
-  Additional Information
-</h2>
+<h2 id="additional-H2" class="no-arrow empty">Additional Information</h2>
 
 <div>
   <form>
@@ -30,5 +28,3 @@
     </div>    
   </form>
 </div>
-
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>

@@ -1,22 +1,31 @@
-$(document).ready(function(){
-	 loadUsersForProgram();
-	$('#programs').change(function(){
+$(document).ready(function()
+{
+
+	loadUsersForProgram();
+	$('#programs').change(function()
+	{
 		 loadUsersForProgram()
 	});
 	
-	$('#clear').click(function(){
-		 window.location.href="/pgadmissions/manageUsers/edit";
+	// Clear button.
+	$('#clear').click(function()
+	{
+		var $form = $(this).closest('form');
+		clearForm($form);
 	});
 	
-	$('#existingUsers').on('click', 'a[name="removeuser"]', function(event){
-	    event.preventDefault();		
+	
+	$('#existingUsers').on('click', 'a[name="removeuser"]', function(event)
+	{
+	  event.preventDefault();		
 	 	var user = $(this).attr("id").replace("remove_", "");
 	 	$('#deleteFromUser').val(user);
 	 	$('#deleteFromProgram').val($('#programs').val());
 	 	$('#removeForm').submit();
-		
 	});
+	
 });
+
 
 function loadUsersForProgram()
 {
@@ -25,7 +34,8 @@ function loadUsersForProgram()
 	$.ajax({
 		 type: 'GET',
 		 statusCode: {
-			  401: function() {
+			  401: function()
+				{
 				  window.location.reload();
 			  }
 		  },

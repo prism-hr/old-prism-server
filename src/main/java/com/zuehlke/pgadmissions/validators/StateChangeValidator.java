@@ -34,7 +34,6 @@ public class StateChangeValidator implements Validator{
 			if(comment.getNextStatus() == null ){
 				errors.rejectValue("nextStatus", "dropdown.radio.select.none");
 			}
-			
 		}
 		else if (target instanceof StateChangeComment) {
 			StateChangeComment comment = (StateChangeComment) target;
@@ -44,30 +43,5 @@ public class StateChangeValidator implements Validator{
 			}
 			
 		}
-//		if (target instanceof ReviewEvaluationComment) {
-//			ReviewEvaluationComment comment = (ReviewEvaluationComment) target;
-//			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
-//			if(comment.getNextStatus() == null ){
-//				errors.rejectValue("nextStatus", "dropdown.radio.select.none");
-//			}
-//			
-//		}
-//		if (target instanceof InterviewEvaluationComment) {
-//			InterviewEvaluationComment comment = (InterviewEvaluationComment) target;
-//			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
-//			if(comment.getNextStatus() == null ){
-//				errors.rejectValue("nextStatus", "dropdown.radio.select.none");
-//			}
-//			
-//		}
-//		if (target instanceof ApprovalEvaluationComment) {
-//			ApprovalEvaluationComment comment = (ApprovalEvaluationComment) target;
-//			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
-//			if(comment.getNextStatus() == null ){
-//				errors.rejectValue("nextStatus", "dropdown.radio.select.none");
-//			}
-//		}
 	}
-
-	
 }

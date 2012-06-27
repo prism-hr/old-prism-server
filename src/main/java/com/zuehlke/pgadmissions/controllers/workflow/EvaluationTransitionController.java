@@ -61,7 +61,6 @@ public class EvaluationTransitionController extends StateTransitionController {
 				return STATE_TRANSITION_VIEW;
 			}
 			Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getType(), stateChangeComment.getNextStatus());
-			
 			if (newComment instanceof ReviewEvaluationComment) {
 				((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());
 			}
@@ -72,7 +71,6 @@ public class EvaluationTransitionController extends StateTransitionController {
 				((ApprovalEvaluationComment) newComment).setApprovalRound(applicationForm.getLatestApprovalRound());
 			}
 			commentService.save(newComment);
-			
 			if (newComment instanceof ApprovalEvaluationComment) {
 				ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
 				System.out.println(approvalComment.getNextStatus());

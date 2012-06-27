@@ -92,11 +92,13 @@
 									<span class="hint" data-desc="<@spring.message 'validateApp.comment'/>"></span>
 									<div class="field">		            				
 										<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}</textarea>
+										<@spring.bind "comment.comment" /> 
+										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
-									<@spring.bind "comment.comment" /> 
-									<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 								</div>
-   								<#include "comment/documents_snippet.ftl"/>
+								
+   							<#include "comment/documents_snippet.ftl"/>
+									
 							</div><!-- close .row-group -->
 
 							<#if applicationForm.isInState('VALIDATION')>

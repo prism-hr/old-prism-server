@@ -95,6 +95,7 @@
 										<@spring.bind "comment.comment" /> 
 										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
+									</div>
 								</div>
 								
    							<#include "comment/documents_snippet.ftl"/>

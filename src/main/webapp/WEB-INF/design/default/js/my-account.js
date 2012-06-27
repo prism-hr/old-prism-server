@@ -2,6 +2,7 @@ $(document).ready(function(){
 
 	getAccountDetailsSection();
 	
+	// Submit button.
 	$('#accountdetails').on('click', "#saveChanges", function()
 	{
 		var postData ={ 
@@ -33,11 +34,17 @@ $(document).ready(function(){
 		});
 	});
 	
-	$('#accountdetails').on('click', "#cancelMyACnt", getAccountDetailsSection);
+	// Cancel button.
+	$('#accountdetails').on('click', "#cancelMyACnt", function()
+	{
+		var $form = $(this).closest('form');
+		clearForm($form);
+	});
 	
 });
 
-function getAccountDetailsSection(){
+function getAccountDetailsSection()
+{
 	$('#reviewsecion').append('<div class="ajax" />');
 	
 	$.ajax({

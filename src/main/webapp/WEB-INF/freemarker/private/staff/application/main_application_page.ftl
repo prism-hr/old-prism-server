@@ -69,7 +69,6 @@
       <!-- FLOATING TOOLBAR -->
       <ul id="view-toolbar" class="toolbar">
         <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-        <li class="print"><a target="_blank" title="Print" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Print</a></li>
         <li class="download"><a target="_blank" title="Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download</a></li>
       </ul>
       

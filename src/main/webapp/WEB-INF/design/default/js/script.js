@@ -253,6 +253,8 @@ function watchUpload($field)
   $container.on('click', '.button-delete', function()
   {
     var $hidden  = $container.find('input.file');
+		deleteUploadedFile($hidden);
+		
 		$hidden.val(''); // clear field value.
 	  $container.removeClass('uploaded');
 		

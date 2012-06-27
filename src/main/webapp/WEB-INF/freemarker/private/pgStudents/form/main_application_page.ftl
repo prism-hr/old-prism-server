@@ -145,7 +145,6 @@
             <!-- FLOATING TOOLBAR -->
 						<ul id="view-toolbar" class="toolbar">
 							<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-							<li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" target="_blank" title="Click to Download">Print</a></li>
 			        <li class="download"><a target="_blank" title="Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download</a></li>
 							
 							<li class="tool-separator"><a href="#"></a></li>

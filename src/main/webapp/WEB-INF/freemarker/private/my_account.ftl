@@ -19,11 +19,6 @@
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-	
-	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	    <script type="text/javascript" src="<@spring.url '/design/default/js/my-account.js' />"></script>
-	    
-	    
 	</head>
 	
 	<!--[if IE 9]>
@@ -70,5 +65,9 @@
 		</div>
 		<!-- Wrapper Ends -->
 		   
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/my-account.js' />"></script>
 	</body>
 </html>

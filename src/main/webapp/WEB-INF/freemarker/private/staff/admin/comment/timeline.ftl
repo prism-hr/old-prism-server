@@ -29,8 +29,7 @@
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
 									<div class="box">
-										<h3>Invited reviewers:</h3>
-										<ul>
+										<ul class="added">
 											<#list timelineObject.reviewRound.reviewers as reviewer>
 											<li>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</li>
 											</#list>
@@ -48,8 +47,7 @@
 										<h3>Interview</h3>
 										<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
 										<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
-										<h3>Invited interviewers:</h3>
-										<ul>
+										<ul class="added">
 											<#list timelineObject.interview.interviewers as interviewer>
 											<li>${interviewer.user.firstName?html} ${interviewer.user.lastName?html}</li>
 											</#list>
@@ -64,8 +62,7 @@
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
 									<div class="box">
-										<h3>Selected supervisors:</h3>       
-										<ul>
+										<ul class="added">
 											<#list timelineObject.approvalRound.supervisors as supervisor>
 											<li>${supervisor.user.firstName?html} ${supervisor.user.lastName?html}</li>
 											</#list>

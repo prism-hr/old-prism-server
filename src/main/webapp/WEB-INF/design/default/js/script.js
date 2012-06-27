@@ -400,3 +400,12 @@ function markSectionError(section_id)
 	}
 }
 
+
+function clearForm($form)
+{
+	var $fields = $form.find('input[type!="hidden"], select, textarea');
+	$fields.each(function()
+	{
+		$(this).val('');
+	});
+}

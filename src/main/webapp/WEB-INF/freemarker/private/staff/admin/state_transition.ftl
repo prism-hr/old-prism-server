@@ -101,7 +101,8 @@
 									<div class="field">		            				
 										<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 									</div>
-									
+									<@spring.bind "comment.comment" /> 
+									<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 								</div>
    								<#include "comment/documents_snippet.ftl"/>
 							</div><!-- close .row-group -->
@@ -116,6 +117,8 @@
 										<#list validationQuestionOptions as option>
 										<label><input type="radio" name="qualifiedForPhd" value="${option}"/> ${option.displayValue}</label>
 										</#list>
+										<@spring.bind "comment.qualifiedForPhd" /> 
+										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
 								</div>
 
@@ -126,6 +129,8 @@
 										<#list validationQuestionOptions as option>
 										<label><input type="radio" name="englishCompentencyOk" value="${option}"/> ${option.displayValue}</label>
 										</#list>
+										<@spring.bind "comment.englishCompentencyOk" /> 
+										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
 								</div>
 
@@ -136,6 +141,8 @@
 										<#list homeOrOverseasOptions as option>
 										<label><input type="radio" name="homeOrOverseas" value="${option}"/> ${option.displayValue}</label>
 										</#list>
+										<@spring.bind "comment.homeOrOverseas" /> 
+										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
 								</div>
 
@@ -160,6 +167,8 @@
 											<option value="${status}" >${status.displayValue()}</option>               
 											</#list>
 										</select>	
+										<@spring.bind "comment.nextStatus" /> 
+										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
 								</div>
 								<#if reviewersWillingToInterview??>		            			
@@ -186,8 +195,12 @@
 								<button type="reset" value="cancel">Clear</button>
 								<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
 							</div>
-						 	<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress' />">
-						 		 <input type="hidden" id="applicationId" name ="application" value =  "${(applicationForm.applicationNumber)!}"/>
+							<#if applicationForm.isInState('VALIDATION')>
+						 		<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitValidationComment' />">
+						 	<#else>
+						 		<form id="stateChangeForm" method ="POST" action="<@spring.url '/progress/submitEvaluationComment' />">
+						 	</#if>
+						 		 <input type="hidden" id="applicationId" name ="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 						 		 <input type="hidden" id="commentField" name="comment" value=""/>				
 						 		 <input type="hidden" id="nextStatus" name="nextStatus"  value=""/>
 						 		 <#if applicationForm.isInState('VALIDATION')>

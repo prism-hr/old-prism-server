@@ -1,0 +1,1 @@
+update APPLICATION_FORM_PERSONAL_DETAIL set phone=(select  number from TELEPHONE where TELEPHONE.personal_detail_id = APPLICATION_FORM_PERSONAL_DETAIL.id limit 1);

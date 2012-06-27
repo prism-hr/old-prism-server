@@ -49,7 +49,7 @@
 		                    </#if>
 		                 <#else>
 		                	 <td>
-		                    	<a name="editRefereeLink" data-desc="Edit"id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a>
+		                    	<a name="editRefereeLink" data-desc="Edit" id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a>
 				        	</td>	
 				        	 <td>
 		                    	<a name="deleteRefereeButton" data-desc="Delete" id="referee_${encExistingRefereeId}" class="button-delete button-hint">delete</a>

@@ -99,9 +99,8 @@ public class MoveToApprovalController extends ApprovalController {
 		
 		approvalService.requestApprovalRestart(applicationForm, getUser(), comment);
 
-		modelMap.put("message", String.format("An e-mail requesting the restart of the approval phase " + //
-				"for application %s was sent to the administrator!", applicationForm.getApplicationNumber()));
-		return "redirect:/applications?message.code=request.approval.restart&application=" + applicationForm.getApplicationNumber();
+
+		return "redirect:/applications?messageCode=request.approval.restart&application=" + applicationForm.getApplicationNumber();
 	}
 
 	@Override

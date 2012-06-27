@@ -141,9 +141,8 @@ public class MoveToApprovalControllerTest {
 		EasyMock.expectLastCall();
 		
 		ModelMap modelMap = new ModelMap();
-		assertEquals("redirect:/applications?message.code=request.approval.restart&application=LALALA", controller.requestRestart(applicationForm, comment, bindingResultMock, modelMap));
-		Assert.assertEquals("An e-mail requesting the restart of the approval phase for application LALALA was sent to the administrator!",// 
-				modelMap.get("message"));
+		assertEquals("redirect:/applications?messageCode=request.approval.restart&application=LALALA", controller.requestRestart(applicationForm, comment, bindingResultMock, modelMap));
+	
 	}
 
 	@Before

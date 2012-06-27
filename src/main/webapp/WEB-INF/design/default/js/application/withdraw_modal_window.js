@@ -25,17 +25,7 @@ $(document).ready(function()
 
 	$('a#popup-ok-button').click(function()
 	{
-		$.ajax({
-			type: 'POST',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  }
-			  },
-			url:"/pgadmissions/withdraw",
-			data:{ applicationId:  $('#wapplicationFormId').val() }, 
-			success:function(data) {}
-		});
+		$('#withdrawApplicationForm').submit();
 	
 		$('#dialog-overlay, #dialog-box').hide();
 		return false;

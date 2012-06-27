@@ -55,6 +55,7 @@ $(document).ready(function() {
 				break;
 			case 'print':
 				window.open("/pgadmissions/print?applicationFormId=" + id, "_blank");
+				$('div.content-box-inner div.ajax').remove();
 				break;
 			case 'reference':
 				window.location.href = "/pgadmissions/referee/addReferences?applicationId=" + id;

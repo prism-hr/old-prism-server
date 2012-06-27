@@ -1,51 +1,63 @@
-$(document).ready(function(){
+$(document).ready(function()
+{
 	$("#acceptTermsDDValue").val("NO");
 	
 	var addImgCount = 0;
 	
-	$('#documentsCloseButton').click(function(){
+	// --------------------------------------------------------------------------------
+	// Close button
+	// --------------------------------------------------------------------------------
+	$('#documentsCloseButton').click(function()
+	{
 		$('#documents-H2').trigger('click');
 		return false;
 	});
 	
-	$('#documentsCancelButton').click(function(){
-
+	// --------------------------------------------------------------------------------
+	// Cancel button
+	// --------------------------------------------------------------------------------
+	$('#documentsCancelButton').click(function()
+	{
 		$.ajax({
-			 type: 'GET',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  }
-			  },
-			  url: "/pgadmissions/update/getDocuments",
-			  data:	{
-					applicationId:  $('#applicationId').val(),
-					message: 'cancel'
-				}, 
-			  success:function(data) {
-					$('#documentSection').html(data);
+			type: 'GET',
+			statusCode: {
+				401: function()
+				{
+					window.location.reload();
 				}
+			},
+			url: "/pgadmissions/update/getDocuments",
+			data:	{
+				applicationId: $('#applicationId').val(),
+				message: 'cancel'
+			}, 
+			success: function(data)
+			{
+				$('#documentSection').html(data);
+			}
 		});
 	});
 	
-	$("input[name*='acceptTermsDDCB']").click(function() {
-		if ($("#acceptTermsDDValue").val() =='YES'){
+	// --------------------------------------------------------------------------------
+	// 
+	// --------------------------------------------------------------------------------
+	$("input[name*='acceptTermsDDCB']").click(function()
+	{
+		if ($("#acceptTermsDDValue").val() == 'YES')
+		{
 			$("#acceptTermsDDValue").val("NO");
-		} else {	
+		}
+		else
+		{	
 			$("#acceptTermsDDValue").val("YES");
 			
-			/*
-			$(".terms-box").attr('style','');
-			$("#doc-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#doc-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#doc-info-bar-div .row span.error-hint").remove();
-			*/
 			addImgCount = 0;
 			
 			$.ajax({
 				type: 'POST',
 				 statusCode: {
-					  401: function() {
+					  401: function()
+						{
 						  window.location.reload();
 					  }
 				  },
@@ -57,15 +69,16 @@ $(document).ready(function(){
 				success: function(data) {}
 			});
 		}
-		});
+	});
 	
-	$('#documentsSaveButton').click(function(){
-		if( $("#acceptTermsDDValue").val() =='NO')
+	// --------------------------------------------------------------------------------
+	// Save button
+	// --------------------------------------------------------------------------------
+	$('#documentsSaveButton').click(function()
+	{
+		if ($("#acceptTermsDDValue").val() == 'NO')
 		{ 
 			// Highlight the information bar and terms box.
-//			var $form = $('#documentSection form');
-//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
-			
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
 			var $infobar = $('#doc-info-bar-div.section-info-bar');
@@ -76,7 +89,6 @@ $(document).ready(function(){
 				addImgCount = addImgCount + 1;
 			}
 			addToolTips();
-			
 		}
 		else
 		{
@@ -93,9 +105,11 @@ $(document).ready(function(){
 });
 
 
+// --------------------------------------------------------------------------------
+// Posting document data.
+// --------------------------------------------------------------------------------
 function postDocumentData(message)
 {
-
 	$('#documentSection > div').append('<div class="ajax" />');
 	
 	$.ajax({
@@ -110,9 +124,9 @@ function postDocumentData(message)
 			applicationId:  $('#applicationId').val(),	
 			cv: $('#document_CV').val(),
 			personalStatement: $('#document_PERSONAL_STATEMENT').val(),
-			message:message
+			message: message
 		},
-		success:function(data)
+		success: function(data)
 		{
 			$('#documentSection').html(data);
 			$('#documentSection div.ajax').remove();
@@ -131,107 +145,107 @@ function postDocumentData(message)
 	});
 }
 
-
-
-function cvDelete(){
-	
-	if($('#document_CV') && $('#document_CV').val() && $('#document_CV').val() != ''){
+// --------------------------------------------------------------------------------
+// 
+// --------------------------------------------------------------------------------
+function cvDelete()
+{
+	if ($('#document_CV') && $('#document_CV').val() && $('#document_CV').val() != '')
+	{
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
-				  401: function() {
+				  401: function()
+					{
 					  window.location.reload();
 				  }
 			  },
 			url:"/pgadmissions/delete/asyncdelete",
-			data:{
+			data: {
 				documentId: $('#document_CV').val()
-				
 			}				
 		});
-
 	}
 }
 
+// --------------------------------------------------------------------------------
+// 
+// --------------------------------------------------------------------------------
 function cvUpload()
 {	
-	
 	$("#cvDocumentProgress").ajaxStart(function(){
 		$(this).show();
 	})
-	.ajaxComplete(function(){
+	.ajaxComplete(function()
+	{
 		$(this).hide();
 		$('#cvDocumentProgress').html("");
-		
 	});
 
-	$.ajaxFileUpload
-	(
-		{
-			url:'/pgadmissions/documents/async',
-			secureuri:false,
-			
-			fileElementId:'cvDocument',	
-			dataType:'text',
-			data:{type:'CV'},
-			success: function (data)
-			{		
-				$('#cvUploadedDocument').html(data);
-				$('#cvUploadedDocument').show();
-				
-			}
+	$.ajaxFileUpload({
+		url: '/pgadmissions/documents/async',
+		secureuri: false,
+		
+		fileElementId: 'cvDocument',	
+		dataType: 'text',
+		data: { type: 'CV' },
+		success: function (data)
+		{		
+			$('#cvUploadedDocument').html(data);
+			$('#cvUploadedDocument').show();
 		}
-	)
+	});
 }
 
-
-function psDelete(){
-	
-	if($('#document_PERSONAL_STATEMENT') && $('#document_PERSONAL_STATEMENT').val() && $('#document_PERSONAL_STATEMENT').val() != ''){
+// --------------------------------------------------------------------------------
+// 
+// --------------------------------------------------------------------------------
+function psDelete()
+{
+	if ($('#document_PERSONAL_STATEMENT') && $('#document_PERSONAL_STATEMENT').val() && $('#document_PERSONAL_STATEMENT').val() != '')
+	{
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
-				  401: function() {
+				  401: function()
+					{
 					  window.location.reload();
 				  }
 			  },
-			url:"/pgadmissions/delete/asyncdelete",
-			data:{
+			url: "/pgadmissions/delete/asyncdelete",
+			data: {
 				documentId: $('#document_PERSONAL_STATEMENT').val()
-				
 			}				
 		});
-
 	}
 }
 
+// --------------------------------------------------------------------------------
+// 
+// --------------------------------------------------------------------------------
 function psUpload()
 {	
-	
-	$("#psDocumentProgress").ajaxStart(function(){
+	$("#psDocumentProgress").ajaxStart(function()
+	{
 		$(this).show();
 	})
-	.ajaxComplete(function(){
+	.ajaxComplete(function()
+	{
 		$(this).hide();
 		$('#psDocumentProgress').html("");
-		
 	});
 
-	$.ajaxFileUpload
-	(
-		{
-			url:'/pgadmissions/documents/async',
-			secureuri:false,
-			
-			fileElementId:'psDocument',	
-			dataType:'text',
-			data:{type:'PERSONAL_STATEMENT'},
-			success: function (data)
-			{		
-				$('#psUploadedDocument').html(data);
-				$('#psUploadedDocument').show();
-				
-			}
+	$.ajaxFileUpload({
+		url: '/pgadmissions/documents/async',
+		secureuri: false,
+		
+		fileElementId: 'psDocument',	
+		dataType: 'text',
+		data: { type:'PERSONAL_STATEMENT' },
+		success: function(data)
+		{		
+			$('#psUploadedDocument').html(data);
+			$('#psUploadedDocument').show();
 		}
-	)
+	});
 }

@@ -260,8 +260,8 @@ $(document).ready(function()
 					'<tr class="' + awareState + '" rel="'+ currentRel +'">' +
 					'<td data-desc="' + awareState + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 					'<td>' +
-					'<a class=\"button-edit\" id="us_'+currentRel+'" name=\"editSupervisorLink\">edit</a>' +
-					'<a class=\"button-delete\" id="usd_'+currentRel+'" name=\"deleteSupervisor\">delete</a> ' +
+					'<a class=\"button-edit\" data-desc="Edit" id="us_'+currentRel+'" name=\"editSupervisorLink\">edit</a>' +
+					'<a class=\"button-delete\" data-desc="Delete" id="usd_'+currentRel+'" name=\"deleteSupervisor\">delete</a> ' +
 					'<input name="sId" type="hidden" id="us_'+currentRel+'_supervisorId" value="' + $('#supervisorId').val()+'"/>'	+								
 					'<input name="sFN" type="hidden" id="us_'+currentRel+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 					'<input name="sLN" type="hidden" id="us_'+currentRel+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								

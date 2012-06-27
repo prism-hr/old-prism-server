@@ -61,7 +61,7 @@ $(document).ready(function() {
 				window.location.href = "/pgadmissions/referee/addReferences?applicationId=" + id;
 				break;
 			case 'validate':
-				window.location.href = "/pgadmissions/progress?application=" + id;
+				window.location.href = "/pgadmissions/progress/getPage?applicationId=" + id;
 				break;
 			case 'review':
 				window.location.href = "/pgadmissions/reviewFeedback?applicationId=" + id;

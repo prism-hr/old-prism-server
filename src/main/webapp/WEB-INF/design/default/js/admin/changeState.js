@@ -9,12 +9,7 @@ $(document).ready(function()
 			return;
 		}
 		
-		if ($('#status').val() == 'APPROVAL' ||  $('#status').val() == 'APPROVED' ||  $('#status').val() == 'REJECTED' || $('#status').val() == 'REVIEW')
-		{
-			saveComment();
-			return;
-		}
-	
+		
 		if ($('#status').val() == 'INTERVIEW')
 		{
 			if ($('#appliationAdmin').length == 0	|| $('#appliationAdmin').val() == '')
@@ -27,6 +22,9 @@ $(document).ready(function()
 				$('#delegateForm').submit();
 			}
 		}
+		
+		saveComment();
+		return;
 	});
 
 

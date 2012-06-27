@@ -16,9 +16,13 @@
       <div class="admin_row">
         <span class="admin_row_label">CV / resume</span>                  
         <div class="field">
+				<#if applicationForm.cv??>
           <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.cv.id))!}'/>" target="_blank">
             ${(applicationForm.cv.fileName)!}
           </a>
+				<#else>
+					Not Provided
+				</#if>
         </div>
       </div>
       

@@ -2,6 +2,7 @@ $(document).ready(function(){
 
 	getAccountDetailsSection();
 	
+	// Submit button.
 	$('#accountdetails').on('click', "#saveChanges", function()
 	{
 		var postData ={ 
@@ -33,12 +34,18 @@ $(document).ready(function(){
 		});
 	});
 	
-	$('#accountdetails').on('click', "#cancelMyACnt", getAccountDetailsSection);
+	// Cancel button.
+	$('#accountdetails').on('click', "#cancelMyACnt", function()
+	{
+		var $form = $(this).closest('form');
+		clearForm($form);
+	});
 	
 });
 
-function getAccountDetailsSection(){
-	$('#accountdetails > div').append('<div class="ajax" />');
+function getAccountDetailsSection()
+{
+	$('#reviewsecion').append('<div class="ajax" />');
 	
 	$.ajax({
 		type: 'GET',
@@ -50,7 +57,7 @@ function getAccountDetailsSection(){
 		url:"/pgadmissions/myAccount/section", 
 		success: function(data)
 		{
-			$('#accountdetails div.ajax').remove();
+			$('#reviewsecion div.ajax').remove();
 			$('#accountdetails').html(data);
 		}
 	});

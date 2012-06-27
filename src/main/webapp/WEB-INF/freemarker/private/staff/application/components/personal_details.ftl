@@ -130,7 +130,7 @@
       
       <div class="admin_row">
         <span class="admin_row_label">Skype Name</span>
-        <div class="field">${(applicationForm.personalDetails.messenger?html)!"Not Provided"}</div>
+				<div class="field"><#if (applicationForm.personalDetails.messenger)?has_content>${(applicationForm.personalDetails.messenger?html)}<#else>Not Provided</#if></div>
       </div>
       
 <#--

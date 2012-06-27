@@ -16,9 +16,7 @@
 <#-- Personal Details Rendering -->
 
 <!-- Personal details -->
-<h2 id="personalDetails-H2" class="no-arrow tick">
-  Personal Details
-</h2>
+<h2 id="personalDetails-H2" class="no-arrow tick">Personal Details</h2>
 
 <div id="personal-details-section" class="open">
   <form method="post" method = "GET">
@@ -150,5 +148,3 @@
   </form>
   
 </div>
-
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>

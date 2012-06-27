@@ -14,11 +14,7 @@
 <#import "/spring.ftl" as spring />
 
 <#-- Programme Details Rendering -->
-
-
-<h2 id="programme-H2" class="no-arrow tick"> 
-  Programme
-</h2>
+<h2 id="programme-H2" class="no-arrow tick">Programme</h2>
 
 <div>
   <form>
@@ -104,5 +100,3 @@
   
   </form>
 </div>
-
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>

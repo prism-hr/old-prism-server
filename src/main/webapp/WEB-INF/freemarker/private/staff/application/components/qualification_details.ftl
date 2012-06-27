@@ -6,9 +6,7 @@
 
 <#import "/spring.ftl" as spring />
 
-<h2 id="qualifications-H2" class="no-arrow empty">
-  Qualifications
-</h2>
+<h2 id="qualifications-H2" class="no-arrow empty">Qualifications</h2>
 
 <div>
   <form>
@@ -101,5 +99,3 @@
     </#if>
   </form>
 </div>
-
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/qualifications.js'/>"></script>

@@ -6,9 +6,7 @@
 
 <#import "/spring.ftl" as spring />
 
-<h2 id="position-H2" class="no-arrow empty">
-  Employment
-</h2>
+<h2 id="position-H2" class="no-arrow empty">Employment</h2>
 
 <div>
   <form>
@@ -94,5 +92,3 @@
     
   </form>
 </div>
-
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/employmentPosition.js'/>"></script>

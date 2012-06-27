@@ -1,6 +1,4 @@
-<h2 id="documents-H2" class="no-arrow empty">
-  Documents
-</h2>
+<h2 id="documents-H2" class="no-arrow empty">Documents</h2>
 
 <div>
   <form>
@@ -28,5 +26,3 @@
   
   </form>
 </div>
-
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>

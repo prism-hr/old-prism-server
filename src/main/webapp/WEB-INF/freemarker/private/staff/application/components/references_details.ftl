@@ -6,9 +6,7 @@
 
 <#import "/spring.ftl" as spring />
 
-<h2 id="referee-H2" class="no-arrow empty">
-  References
-</h2>
+<h2 id="referee-H2" class="no-arrow empty">References</h2>
 
 <div class="open">
   <form>        
@@ -128,5 +126,3 @@
     </#if>
   </form>           
 </div>
-
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/referee.js'/>"></script>

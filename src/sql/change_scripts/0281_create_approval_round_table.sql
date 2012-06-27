@@ -1,0 +1,9 @@
+CREATE TABLE APPROVAL_ROUND (
+  id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  application_form_id INTEGER UNSIGNED,
+  created_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT app_approval_round_fk FOREIGN KEY (application_form_id) REFERENCES APPLICATION_FORM(id),
+  PRIMARY KEY (id)
+)
+
+ENGINE = InnoDB;

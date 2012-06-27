@@ -4,22 +4,24 @@ $(document).ready(function()
 	// Submit button.
 	$('#changeStateButton').click(function()
 	{
-		if (!confirm('Confirm you want to move this application to the ' + $('#status').val() + ' stage.'))
+		if ($('#status').val() != '')
 		{
-			return;
-		}
-		
-		
-		if ($('#status').val() == 'INTERVIEW')
-		{
-			if ($('#appliationAdmin').length == 0	|| $('#appliationAdmin').val() == '')
+			if (!confirm('Confirm you want to move this application to the ' + $('#status').val() + ' stage.'))
 			{
-				saveComment();
 				return;
 			}
-			else
+		
+			if ($('#status').val() == 'INTERVIEW')
 			{
-				$('#delegateForm').submit();
+				if ($('#appliationAdmin').length == 0	|| $('#appliationAdmin').val() == '')
+				{
+					saveComment();
+					return;
+				}
+				else
+				{
+					$('#delegateForm').submit();
+				}
 			}
 		}
 		

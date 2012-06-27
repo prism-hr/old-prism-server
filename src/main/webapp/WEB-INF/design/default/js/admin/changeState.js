@@ -2,14 +2,7 @@ $(document).ready(
 		function() {
 
 			$('#changeStateButton').click(
-
 					function() {
-//						
-//						if ($('#status').val() == 'APPROVAL' ||  $('#status').val() == 'APPROVED' ||  $('#status').val() == 'REJECTED' || $('#status').val() == 'REVIEW') {
-//							saveComment();
-//							return;
-//						}
-//
 						if ($('#status').val() == 'INTERVIEW') {
 							if ($('#appliationAdmin').length == 0
 									|| $('#appliationAdmin').val() == '') {
@@ -18,9 +11,7 @@ $(document).ready(
 							} else {
 								$('#delegateForm').submit();
 							}
-
 						}
-						
 						saveComment();
 						return;
 					});
@@ -35,7 +26,6 @@ $(document).ready(
 
 			$('#notifyRegistryButton').click(function()
 			{
-				
 				$('#commentsection').append('<div class="ajax" />');
 				$.ajax({
 					type: 'POST',
@@ -57,7 +47,6 @@ $(document).ready(
 						window.location.href = '/pgadmissions/applications?messageCode=registry.refer&application=' + $('#applicationId').val();
 					}
 				});
-				
 				return false;
 			});
 		});

@@ -15,12 +15,12 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 @Component
 public class StateTransitionViewResolver {
 
-	private static final String REJECTION_VIEW = "redirect:rejectApplication?applicationId=";
-	private static final String APPROVAL_VIEW = "redirect:approval/moveToApproval?applicationId=";
-	private static final String INTERVIEW_VIEW = "redirect:interview/moveToInterview?applicationId=";
-	private static final String REVIEW_VIEW = "redirect:review/moveToReview?applicationId=";
+	private static final String REJECTION_VIEW = "redirect:/rejectApplication?applicationId=";
+	private static final String APPROVAL_VIEW = "redirect:/approval/moveToApproval?applicationId=";
+	private static final String INTERVIEW_VIEW = "redirect:/interview/moveToInterview?applicationId=";
+	private static final String REVIEW_VIEW = "redirect:/review/moveToReview?applicationId=";
 	private static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
-	private static final String MY_APPLICATIONS_VIEW = "redirect:applications";
+	private static final String MY_APPLICATIONS_VIEW = "redirect:/applications";
 
 	public String resolveView(ApplicationForm applicationForm) {
 		if (ApplicationFormStatus.VALIDATION == applicationForm.getStatus()) {
@@ -69,11 +69,14 @@ public class StateTransitionViewResolver {
 			return STATE_TRANSITION_VIEW;
 		}
 		if (ApplicationFormStatus.INTERVIEW == evaluationCommentForLatestInterview.getNextStatus()) {
+			System.out.println(INTERVIEW_VIEW + applicationForm.getApplicationNumber());
 			return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
 		}
 		if (ApplicationFormStatus.APPROVAL == evaluationCommentForLatestInterview.getNextStatus()) {
+			System.out.println(APPROVAL_VIEW + applicationForm.getApplicationNumber());
 			return APPROVAL_VIEW + applicationForm.getApplicationNumber();
 		}
+		System.out.println(REJECTION_VIEW + applicationForm.getApplicationNumber());
 		return REJECTION_VIEW + applicationForm.getApplicationNumber();
 	}
 
@@ -123,7 +126,6 @@ public class StateTransitionViewResolver {
 			return APPROVAL_VIEW + applicationForm.getApplicationNumber();
 		}
 		return REJECTION_VIEW + applicationForm.getApplicationNumber();
-	
 	}
 
 }

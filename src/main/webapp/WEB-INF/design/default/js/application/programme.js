@@ -5,23 +5,31 @@
 $(document).ready(function()
 {
 	
-	if ($("#startDate").val() === ""){
+	// -------------------------------------------------------------------------------
+	// Get the date for the first Monday in the upcoming October.
+	// -------------------------------------------------------------------------------
+	if ($("#startDate").val() === "")
+	{
 		var today = new Date();
-		var mm = today.getMonth(); 
-		var yyyy = today.getFullYear();
+		var mm    = today.getMonth(); 
+		var yyyy  = today.getFullYear();
 		var year;
 //		mm=10; uncomment to test 
-		if(mm >= 9){
+		if (mm >= 9)
+		{
 			year = yyyy +1;
-		}else{
+		}
+		else
+		{
 			year = yyyy;
 		}
 		var firstDayInNextYearsOctober = new Date();
 		firstDayInNextYearsOctober.setFullYear(year, 9, 1);
-		 while (firstDayInNextYearsOctober.getDay() !== 1) { //while not monday
-			 	firstDayInNextYearsOctober.setDate(firstDayInNextYearsOctober.getDate() + 1);
-		 }
-		 var formattedDate = firstDayInNextYearsOctober.getDate() + "-Oct-" + firstDayInNextYearsOctober.getFullYear();
+		while (firstDayInNextYearsOctober.getDay() !== 1) // while not monday
+		{
+			firstDayInNextYearsOctober.setDate(firstDayInNextYearsOctober.getDate() + 1);
+		}
+		var formattedDate = firstDayInNextYearsOctober.getDate() + "-Oct-" + firstDayInNextYearsOctober.getFullYear();
 		$("#startDate").val(formattedDate);
 	}
 	
@@ -151,8 +159,8 @@ $(document).ready(function()
 				'<tr class="' + awareState + '" rel="'+ unsavedSupervisors +'">' +
 				'<td data-desc="Supervisor ' + awareState + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 				'<td>' +
-				'<a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a>' +
-				'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
+				'<a class="button-edit" data-desc="Edit" id="us_'+unsavedSupervisors+'" name="editSupervisorLink">edit</a>' +
+				'<a class="button-delete" data-desc="Delete" id="usd_'+unsavedSupervisors+'" name="deleteSupervisor">delete</a> ' +
 				'<input type="hidden" name="sId" id="us_'+unsavedSupervisors+'_supervisorId" value="'+unsavedSupervisors+'" />' +
 				'<input type="hidden" name="sFN" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 				'<input type="hidden" name="sLN" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
@@ -164,9 +172,10 @@ $(document).ready(function()
 			addToolTips();
 		
 			$('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
-			 $("input[name='awareSupervisor']").each(function(){				 
-				 $(this).prop('checked', false);
-			 });
+			$("input[name='awareSupervisor']").each(function()
+			{				 
+				$(this).prop('checked', false);
+			});
 		}
 	});
 

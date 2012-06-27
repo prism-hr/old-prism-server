@@ -159,7 +159,7 @@
 												<td scope="col">${userInRole.email?html}</td>
 												<td scope="col">${userInRole.firstName?html} ${userInRole.lastName?html}</td>
 												<td scope="col">${userInRole.getAuthoritiesForProgramAsString(selectedProgram)}</td>
-												<td scope="col"><a href="<@spring.url '/manageUsers/showPage?programId=${selectedProgram.code}&userId=${encrypter.encrypt(userInRole.id)}'/>">Edit</a> / <a href="#" name="removeuser" id="remove_${encrypter.encrypt(userInRole.id)}">Remove</a></td>
+												<td scope="col"><a data-desc="Edit" href="<@spring.url '/manageUsers/showPage?programId=${selectedProgram.code}&userId=${encrypter.encrypt(userInRole.id)}'/>">Edit</a> / <a href="#" name="removeuser" data-desc="Remove" id="remove_${encrypter.encrypt(userInRole.id)}">Remove</a></td>
 											</tr>
 											</#list>			              			
 										</tbody>

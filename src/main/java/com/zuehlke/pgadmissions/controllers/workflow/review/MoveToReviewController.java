@@ -21,20 +21,21 @@ import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
+
 @Controller
 @RequestMapping("/review")
 public class MoveToReviewController extends ReviewController {
 
-	
 	MoveToReviewController() {
-		this(null, null,null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
-		
+
 	@Autowired
-	public MoveToReviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator, ReviewRoundValidator reviewRoundValidator,
-			ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor,  EncryptionHelper encryptionHelper) {
-		super(applicationsService, userService, reviewerValidator,reviewRoundValidator, reviewService, messageSource,   reviewerPropertyEditor, encryptionHelper);
-		
+	public MoveToReviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator,
+			ReviewRoundValidator reviewRoundValidator, ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor,
+			EncryptionHelper encryptionHelper) {
+		super(applicationsService, userService, reviewerValidator, reviewRoundValidator, reviewService, messageSource, reviewerPropertyEditor, encryptionHelper);
+
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToReview")
@@ -42,30 +43,33 @@ public class MoveToReviewController extends ReviewController {
 		modelMap.put("assignOnly", false);
 		return REVIEW_DETAILS_VIEW_NAME;
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "reviewersSection")
 	public String getReviewersSectionView(ModelMap modelMap) {
 		modelMap.put("assignOnly", false);
 		return REVIEWERS_SECTION_NAME;
 	}
 
-
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
-	public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult, ModelMap modelMap) {
+	public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
 
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		if (bindingResult.hasErrors()) {
-			return REVIEW_DETAILS_VIEW_NAME;
+			return REVIEWERS_SECTION_NAME;
 		}
-		reviewService.moveApplicationToReview( applicationForm, reviewRound);		
-		return "redirect:/applications?messageCode=move.review&application=" + applicationForm.getApplicationNumber();
-	}
-	
-	
-	@ModelAttribute("reviewRound")
-	public ReviewRound getReviewRound(@RequestParam Object applicationId) {
-		return new ReviewRound();
+		reviewService.moveApplicationToReview(applicationForm, reviewRound);
+		return "/private/common/ajax_OK";
 	}
 
+	@ModelAttribute("reviewRound")
+	public ReviewRound getReviewRound(@RequestParam Object applicationId) {
+		ReviewRound reviewRound = new ReviewRound();
+		ApplicationForm applicationForm = getApplicationForm((String) applicationId);
+		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
+		if (latestReviewRound != null) {
+			reviewRound.setReviewers(latestReviewRound.getReviewers());
+		}
+		return reviewRound;
+	}
 
 }

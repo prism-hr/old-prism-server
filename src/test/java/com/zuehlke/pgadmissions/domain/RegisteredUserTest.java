@@ -280,6 +280,24 @@ public class RegisteredUserTest {
 	}
 
 	@Test
+	public void shouldReturnTrueInfUserIsReviewerOfReviewRound(){
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer()).toReviewRound();		
+		assertTrue(reviewerUser.isReviewerInReviewRound(reviewRound));
+	}
+	@Test
+	public void shouldReturnFalseInfUserIsNotReviewerOfReviewRound(){
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		ReviewRound reviewRound = new ReviewRoundBuilder().toReviewRound();		
+		assertFalse(reviewerUser.isReviewerInReviewRound(reviewRound));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfReviewRoundIsNull(){
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();				
+		assertFalse(reviewerUser.isReviewerInReviewRound(null));
+	}
+	@Test
 	public void shouldReturnFalseIfUserIsApproverInApplication() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(new ReviewRoundBuilder().toReviewRound()).approver(approver).status(ApplicationFormStatus.VALIDATION)

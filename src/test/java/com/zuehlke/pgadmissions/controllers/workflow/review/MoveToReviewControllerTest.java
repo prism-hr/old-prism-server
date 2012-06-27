@@ -2,6 +2,9 @@ package com.zuehlke.pgadmissions.controllers.workflow.review;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -15,9 +18,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
@@ -75,12 +80,46 @@ public class MoveToReviewControllerTest {
 	}
 
 	@Test
-	public void shouldReturnNewReviewRound() {
+	public void shouldReturnNewReviewRoundWithExistingRoundsReviewersIfAny() {
+		Reviewer reviewerOne = new ReviewerBuilder().id(1).toReviewer();
+		Reviewer reviewerTwo = new ReviewerBuilder().id(2).toReviewer();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").latestReviewRound(new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo).toReviewRound()).toApplicationForm();
+		
+		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock, null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, null) {
+			@Override
+			public ApplicationForm getApplicationForm(String applicationId) {
+				if(applicationId == "bob"){
+					return application;
+				}
+				return null;
+			}
 
-		ReviewRound returnedReviewRound = controller.getReviewRound(null);
+		};	
+		ReviewRound returnedReviewRound = controller.getReviewRound("bob");
 		assertNull(returnedReviewRound.getId());
+		assertEquals(2, returnedReviewRound.getReviewers().size());
+		assertTrue(returnedReviewRound.getReviewers().containsAll(Arrays.asList(reviewerOne, reviewerTwo)));
 	}
+	@Test
+	public void shouldReturnNewReviewRoundWithEmtpyReviewersIfNoLatestReviewRound() {
+	
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
+		
+		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock, null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, null) {
+			@Override
+			public ApplicationForm getApplicationForm(String applicationId) {
+				if(applicationId == "bob"){
+					return application;
+				}
+				return null;
+			}
 
+		};	
+		ReviewRound returnedReviewRound = controller.getReviewRound("bob");
+		assertNull(returnedReviewRound.getId());
+		assertTrue(returnedReviewRound.getReviewers().isEmpty());
+
+	}
 	@Test
 	public void shouldMoveApplicationToReview() {
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).toReviewRound();
@@ -97,8 +136,8 @@ public class MoveToReviewControllerTest {
 		reviewServiceMock.moveApplicationToReview(application, reviewRound);
 		EasyMock.replay(reviewServiceMock);
 		
-		String view = controller.moveToReview("abc", reviewRound, bindingResultMock, new ModelMap());
-		assertEquals("redirect:/applications?messageCode=move.review&application=abc", view);
+		String view = controller.moveToReview("abc", reviewRound, bindingResultMock);
+		assertEquals("/private/common/ajax_OK", view);
 		EasyMock.verify(reviewServiceMock);
 		
 	}
@@ -118,7 +157,7 @@ public class MoveToReviewControllerTest {
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);
-		assertEquals(REVIEW_DETAILS_VIEW_NAME, controller.moveToReview("1", reviewRound, errorsMock, new ModelMap()));
+		assertEquals(REVIEWERS_SECTION_NAME, controller.moveToReview("1", reviewRound, errorsMock));
 
 	}
 

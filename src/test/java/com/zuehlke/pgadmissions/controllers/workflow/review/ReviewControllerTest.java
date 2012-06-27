@@ -73,53 +73,14 @@ public class ReviewControllerTest {
 		EasyMock.verify(binderMock);
 	}
 
+	
 	@Test
-	public void shouldReturnExistingReviewersBelongingToApplication() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
-		controller = new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, encryptionHelperMock) {
-			@Override
-			public ApplicationForm getApplicationForm(String applicationId) {
-				return applicationForm;
-			}
-
-			@Override
-			public ReviewRound getReviewRound(Object applicationId) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			
-		};
-		RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
-
-		Reviewer inter1 = new ReviewerBuilder().user(interUser1).id(4).toReviewer();
-		Reviewer inter2 = new ReviewerBuilder().user(interUser2).id(5).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
-		reviewRound.setReviewers(Arrays.asList(inter1, inter2));
-		applicationForm.setLatestReviewRound(reviewRound);
-
-		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
-		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-		applicationServiceMock.save(applicationForm);
-		EasyMock.replay(applicationServiceMock, currentUserMock);
-
-		Set<RegisteredUser> reviewersUsers = controller.getApplicationReviewersAsUsers(applicationForm.getApplicationNumber());
-		assertEquals(2, reviewersUsers.size());
-	}
-
-	@Test
-	public void shouldGetProgrammeReviewersAndRemovePendingAndAssignedReviewersUsers() {
+	public void shouldGetProgrammeReviewers() {
 		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
 		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
-		final RegisteredUser interUser3 = new RegisteredUserBuilder().id(8).toUser();
-		final RegisteredUser interUser4 = new RegisteredUserBuilder().id(9).toUser();
 
-		final Program program = new ProgramBuilder().reviewers(interUser1, interUser2, interUser3, interUser4).id(6).toProgram();
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).reviewers(new ReviewerBuilder().user(interUser4).toReviewer()).toReviewRound();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).latestReviewRound(reviewRound).acceptedTerms(CheckedStatus.NO)
-				.id(5).program(program).toApplicationForm();
+		final Program program = new ProgramBuilder().reviewers(interUser1, interUser2).id(6).toProgram();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 		controller =  new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -130,17 +91,6 @@ public class ReviewControllerTest {
 			}
 		
 
-			@SuppressWarnings("unchecked")
-			@Override
-			public List<RegisteredUser> getPendingReviewers(List<String> pendingReviewer, String applicationId) {
-				if (pendingReviewer.size() == 1 && pendingReviewer.get(0) == "3") {
-					return Arrays.asList(interUser3);
-				}
-				return Collections.EMPTY_LIST;
-			}
-
-
-
 			@Override
 			public ReviewRound getReviewRound(Object applicationId) {
 				// TODO Auto-generated method stub
@@ -150,8 +100,9 @@ public class ReviewControllerTest {
 		};
 
 
-		List<RegisteredUser> reviewersUsers = controller.getProgrammeReviewers("5", Arrays.asList("3"));
+		List<RegisteredUser> reviewersUsers = controller.getProgrammeReviewers("5");
 		assertEquals(2, reviewersUsers.size());
+		assertTrue(reviewersUsers.containsAll(Arrays.asList(interUser1, interUser2)));
 	}
 
 	@Test
@@ -213,58 +164,17 @@ public class ReviewControllerTest {
 		controller.getApplicationForm("5");
 	}
 
-	@Test
-	public void shouldReturnPendingReviewersAndRemoveExistingReviewersFromList() {
-		List<String> encryptedIds = Arrays.asList("1", "8");
-		EasyMock.expect(encryptionHelperMock.decryptToInteger("1")).andReturn(1);
-		EasyMock.expect(encryptionHelperMock.decryptToInteger("8")).andReturn(8);
-		EasyMock.reset(userServiceMock);
-		RegisteredUser newUser1 = new RegisteredUserBuilder().id(1).toUser();
-		RegisteredUser newUser2 = new RegisteredUserBuilder().id(8).toUser();
-
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(newUser1);
-		EasyMock.expect(userServiceMock.getUser(8)).andReturn(newUser2);
-		
-		EasyMock.replay(userServiceMock, encryptionHelperMock);
-
-		String applicationNumber = "5";
-		final ApplicationForm applicationForm = new ApplicationFormBuilder()
-				.latestReviewRound(new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(newUser2).toReviewer()).toReviewRound()).applicationNumber(applicationNumber).id(3)
-				.toApplicationForm();
-		controller = new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, encryptionHelperMock) {
-			@Override
-			public ApplicationForm getApplicationForm(String applicationId) {
-				if ("5" == applicationId) {
-					return applicationForm;
-				}
-				return null;
-			}
-
-			@Override
-			public ReviewRound getReviewRound(Object applicationId) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			
-		};
-		List<RegisteredUser> newUsers = controller.getPendingReviewers(encryptedIds, applicationNumber);
-		assertEquals(1, newUsers.size());
-		assertEquals(newUser1, newUsers.get(0));
-
-	}
 	
 	@Test
-	public void shouldGetListOfPreviousReviewersAndRemovePendingAssignedOrDefaultReviewers(){
+	public void shouldGetListOfPreviousReviewersAndRemoveDefaultReviewers(){
 		EasyMock.reset(userServiceMock);
 		final RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(7).toUser();
 		final RegisteredUser reviewer = new RegisteredUserBuilder().id(6).toUser();
-		final RegisteredUser pendingReviewerUser = new RegisteredUserBuilder().id(8).toUser();
-		final RegisteredUser assignedReviewer = new RegisteredUserBuilder().id(9).toUser();
+
 
 		final Program program = new ProgramBuilder().reviewers(defaultReviewer).id(6).toProgram();
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).reviewers(new ReviewerBuilder().user(assignedReviewer).toReviewer()).toReviewRound();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(reviewRound).id(5).program(program).toApplicationForm();
+
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 		controller = new  ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -275,16 +185,6 @@ public class ReviewControllerTest {
 			}
 
 		
-			@SuppressWarnings("unchecked")
-			@Override
-			public List<RegisteredUser> getPendingReviewers(List<String> pendingReviewer, String applicationId) {
-				if (pendingReviewer.size() == 1 && pendingReviewer.get(0) == "3") {
-					return Arrays.asList(pendingReviewerUser);
-				}
-				return Collections.EMPTY_LIST;
-			}
-
-
 			@Override
 			public ReviewRound getReviewRound(Object applicationId) {
 				// TODO Auto-generated method stub
@@ -293,9 +193,9 @@ public class ReviewControllerTest {
 
 		};
 		
-		EasyMock.expect(userServiceMock.getAllPreviousReviewersOfProgram(program)).andReturn(Arrays.asList(defaultReviewer, reviewer, pendingReviewerUser, assignedReviewer));
+		EasyMock.expect(userServiceMock.getAllPreviousReviewersOfProgram(program)).andReturn(Arrays.asList(defaultReviewer, reviewer));
 		EasyMock.replay(userServiceMock);
-		List<RegisteredUser> reviewersUsers = controller.getPreviousReviewers("5", Arrays.asList("3"));
+		List<RegisteredUser> reviewersUsers = controller.getPreviousReviewers("5");
 		assertEquals(1, reviewersUsers.size());
 		assertTrue(reviewersUsers.contains(reviewer));
 	}

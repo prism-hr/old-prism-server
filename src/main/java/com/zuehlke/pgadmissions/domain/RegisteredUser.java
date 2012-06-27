@@ -692,4 +692,16 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setOriginalApplicationQueryString(String queryString) {
 		this.originalApplicationQueryString = queryString;
 	}
+
+	public boolean isReviewerInReviewRound(ReviewRound reviewRound) {
+		if(reviewRound == null){
+			return false;
+		}
+		for (Reviewer reviewer : reviewRound.getReviewers()) {
+			if(this.equals(reviewer.getUser())){
+				return true;
+			}
+		}
+		return false;
+	}
 }

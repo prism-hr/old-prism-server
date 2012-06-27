@@ -76,41 +76,13 @@ public abstract class ReviewController {
 	}
 
 	@ModelAttribute("programmeReviewers")
-	public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingReviewer) {
-		ApplicationForm application = getApplicationForm(applicationId);
-		Program program = application.getProgram();
-		List<RegisteredUser> availableReviewers = new ArrayList<RegisteredUser>();
-		List<RegisteredUser> programmeReviewers = program.getProgramReviewers();
-		for (RegisteredUser registeredUser : programmeReviewers) {
-			if (!registeredUser.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
-				availableReviewers.add(registeredUser);
-			}
-		}
-		for (RegisteredUser registeredUser : getPendingReviewers(pendingReviewer, applicationId)) {
-			if (availableReviewers.contains(registeredUser)) {
-				availableReviewers.remove(registeredUser);
-			}
-		}
-
-		return availableReviewers;
+	public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId) {
+		return getApplicationForm(applicationId).getProgram().getProgramReviewers();
 	}
 
 	@ModelAttribute("user")
 	public RegisteredUser getUser() {
 		return userService.getCurrentUser();
-	}
-
-	@ModelAttribute("applicationReviewers")
-	public Set<RegisteredUser> getApplicationReviewersAsUsers(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		Set<RegisteredUser> existingReviewers = new HashSet<RegisteredUser>();
-		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
-		if (latestReviewRound != null) {
-			for (Reviewer reviewer : latestReviewRound.getReviewers()) {
-				existingReviewers.add(reviewer.getUser());
-			}
-		}
-		return existingReviewers;
 	}
 
 	protected String getCreateReviewerMessage(String code, RegisteredUser user) {
@@ -135,38 +107,22 @@ public abstract class ReviewController {
 
 	public abstract ReviewRound getReviewRound(@RequestParam Object id);
 
-	@ModelAttribute("pendingReviewers")
-	public List<RegisteredUser> getPendingReviewers(@RequestParam(value="pendingReviewer",required = false) List<String> encryptedPendingReviewerIds, @RequestParam String applicationId) {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
-		if (encryptedPendingReviewerIds != null) {
-			for (String encryptedId : encryptedPendingReviewerIds) {
-				RegisteredUser user = userService.getUser(encryptionHelper.decryptToInteger(encryptedId));
-				if (!user.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)) {
-					newUsers.add(user);
-				}
-			}
-		}
 
-		return newUsers;
-	}
 
 	@ModelAttribute("previousReviewers")
-	public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingReviewer) {
+	public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId) {
 		List<RegisteredUser> availablePreviousReviewers = new ArrayList<RegisteredUser>();
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> previousReviewersOfProgram = userService.getAllPreviousReviewersOfProgram(applicationForm.getProgram());
 
-		List<RegisteredUser> pendingReviewers = getPendingReviewers(pendingReviewer, applicationId);
-
 		for (RegisteredUser registeredUser : previousReviewersOfProgram) {
-			if (!registeredUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm) && !pendingReviewers.contains(registeredUser)
-					&& !applicationForm.getProgram().getProgramReviewers().contains(registeredUser)) {
+			if (!applicationForm.getProgram().getProgramReviewers().contains(registeredUser)) {
 				availablePreviousReviewers.add(registeredUser);
 			}
 		}
 
 		return availablePreviousReviewers;
+
 	}
 
 }

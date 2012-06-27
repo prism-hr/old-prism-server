@@ -122,15 +122,6 @@
         </#if>
       </div>                  
 
-      <div class="admin_row">              
-        <span class="admin_row_label">Uploaded date</span>
-        <#if referee.hasProvidedReference() >
-        <div class="field">${(referee.reference.lastUpdated?string('dd MMM yyyy'))!}</div>
-        <#else> 
-        <div class="field" id="referenceUpdated">Not Provided</div> 
-        </#if>
-      </div>
-    
     </div>
     
     </#list>

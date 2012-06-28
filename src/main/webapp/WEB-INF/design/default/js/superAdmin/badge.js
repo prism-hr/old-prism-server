@@ -11,15 +11,18 @@ $(document).ready(function()
 		$('#html').val('');
 		$('#badge').attr("src", "");
 	});
-	
+
+	$(document).on('change', '#programme, #project, #programhome, #batchdeadline', updateBadge);	
+/*
  	$('#programme').change(updateBadge);
  	$('#project').change(updateBadge);
  	$('#programhome').change(updateBadge);
  	$('#batchdeadline').change(updateBadge);
- 	
+*/ 	
 });
 	
-function updateBadge(){
+function updateBadge()
+{
 	$.ajax({
 		 type: 'GET',
 		 statusCode: {
@@ -45,4 +48,4 @@ function updateBadge(){
 		+ "&programhome=" +$('#programhome').val()
 		+ "&batchdeadline=" +$('#batchdeadline').val()
 		+ "&disable=true");
-};				
+};

@@ -4,73 +4,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
-import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 public abstract class ReviewController {
 	protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
 	protected static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
 	protected final ApplicationsService applicationsService;
 	protected final UserService userService;
-	protected final NewUserByAdminValidator reviewerValidator;
 	protected final ReviewService reviewService;
-	protected final MessageSource messageSource;
-	protected final ReviewerPropertyEditor reviewerPropertyEditor;
-	protected final ReviewRoundValidator reviewRoundValidator;
-	protected final EncryptionHelper encryptionHelper;
 
 	ReviewController() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public ReviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator,
-			ReviewRoundValidator reviewRoundValidator, ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor,
-			EncryptionHelper encryptionHelper) {
+	public ReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService ) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
-		this.reviewerValidator = reviewerValidator;
-		this.reviewRoundValidator = reviewRoundValidator;
-
 		this.reviewService = reviewService;
-		this.messageSource = messageSource;
-		this.reviewerPropertyEditor = reviewerPropertyEditor;
-		this.encryptionHelper = encryptionHelper;
-
 	}
 
-	@InitBinder(value = "reviewer")
-	public void registerReviewerValidators(WebDataBinder binder) {
-		binder.setValidator(reviewerValidator);
 
-	}
 
-	@InitBinder(value = "reviewRound")
-	public void registerReviewRoundValidator(WebDataBinder binder) {
-		binder.setValidator(reviewRoundValidator);
-		binder.registerCustomEditor(Reviewer.class, reviewerPropertyEditor);
-	}
-
-	@ModelAttribute("reviewer")
-	public RegisteredUser getReviewer() {
-		return new RegisteredUser();
-	}
 
 	@ModelAttribute("programmeReviewers")
 	public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId) {
@@ -82,13 +46,7 @@ public abstract class ReviewController {
 		return userService.getCurrentUser();
 	}
 
-	protected String getCreateReviewerMessage(String code, RegisteredUser user) {
-		return getMessage(code, new Object[] { user.getFirstName() + " " + user.getLastName(), user.getEmail() });
-	}
 
-	protected String getMessage(String code, Object... args) {
-		return messageSource.getMessage(code, args, null);
-	}
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {

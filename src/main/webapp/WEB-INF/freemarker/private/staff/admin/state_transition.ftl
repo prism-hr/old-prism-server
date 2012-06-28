@@ -181,7 +181,7 @@
 											<div class="field">		   
 												<form id="delegateForm" method="POST" action="<@spring.url '/delegate' />">   
 													<input type="hidden" name="applicationId" value="${(applicationForm.applicationNumber)!}"/>     				
-													<select class="max" name="applicationAdministrator" id="appliationAdmin" disabled="disabled">
+													<select class="max" name="applicationAdministrator" id="applicationAdministrator" disabled="disabled">
 														<option value="">Select...</option>
 														<#list reviewersWillingToInterview as reviewerWillingToInterview>
 														<option value="${encrypter.encrypt(reviewerWillingToInterview.id)}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               

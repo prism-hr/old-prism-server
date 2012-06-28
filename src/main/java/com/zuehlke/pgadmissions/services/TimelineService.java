@@ -114,5 +114,4 @@ public class TimelineService {
 		timelineReference.setReferee(((ReferenceEvent) event).getReferee());
 		return timelineReference;
 	}
-
 }

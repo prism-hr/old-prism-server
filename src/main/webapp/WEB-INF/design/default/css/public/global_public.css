@@ -177,6 +177,7 @@ input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin:
 #site-message.success .content { background-image: url(../../images/circle_lrg_grn.png); }
 #site-message.notice .content { background-image: url(../../images/circle_lrg_org.png); }
 #site-message.error .content { background-image: url(../../images/circle_lrg_red.png); }
+#site-message.comingsoon .content { background-image: url(../../images/circle_lrg_org.png); }
 
 #site-message.success .content h1 { color: #AFBD21; }
 #site-message.notice .content h1 { color: #FFC220; }

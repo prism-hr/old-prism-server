@@ -306,7 +306,7 @@
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 			<div class="row">
 				<div class="field">
-					<a id="addQualificationButton" class="button blue">Add</a>
+					<button id="addQualificationButton" type="button" class="blue">Add</button>
 				</div>
 			</div>
 			</#if>
@@ -334,9 +334,9 @@
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 			<button class="clear" type="button" id="qualificationCancelButton" name="qualificationCancelButton">Clear</button>
 			<button class="blue" type="button" id="qualificationsCloseButton" name="qualificationsCloseButton">Close</button>
-			<button id="qualificationsSaveButton" class="blue" type="button" value="add">Save</button>
+			<button class="blue" type="button" id="qualificationsSaveButton" value="add">Save</button>
 			<#else>
-			<a id="qualificationsCloseButton" class="button blue">Close</a>   
+			<button class="blue" type="button" id="qualificationsCloseButton">Close</button>
 			</#if>  
 		</div>
   </form>

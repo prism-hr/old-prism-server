@@ -206,7 +206,7 @@
 										
 											<div class="row">
 												<div class="field">
-													<button class="blue" type="button" id="createSupervisor">Create supervisor</button>
+													<button class="blue" type="button" id="createSupervisor">Add</button>
 												</div>
 											</div>
 										</div>

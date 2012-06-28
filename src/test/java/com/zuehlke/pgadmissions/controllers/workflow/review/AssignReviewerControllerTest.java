@@ -41,7 +41,7 @@ public class AssignReviewerControllerTest {
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
 	
-	protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/admin/assign_reviewers_to_appl_page";
+	protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
 	private RegisteredUser currentUserMock;
 	private ReviewerPropertyEditor reviewerPropertyEditorMock;
 	

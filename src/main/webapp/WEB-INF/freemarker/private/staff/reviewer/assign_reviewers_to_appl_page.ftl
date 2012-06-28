@@ -65,51 +65,14 @@
                     
                 </div>
     
-                <div class="row-group">        
-                  <p><strong>Create New Reviewer</strong></p>                  
-    
-                  <div class="row">
-                    <label class="plain-label">Reviewer First Name<em>*</em></label> 
-										<span class="hint" data-desc="<@spring.message 'assignReviewer.firstName'/>"></span>
-                    <div class="field">
-                      <input class="full" type="text" name="newReviewerFirstName" id="newReviewerFirstName" value="${(reviewer.firstName?html)!}"/>
-                      <@spring.bind "reviewer.firstName" /> 
-                      <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
-                    </div>
-                  </div>
-                  
-                  <div class="row">
-                    <label class="plain-label">Reviewer Last Name<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'assignReviewer.lastName'/>"></span>
-                    <div class="field">
-                      <input class="full" type="text" name="newReviewerLastName" id="newReviewerLastName" value="${(reviewer.lastName?html)!}"/>                                            
-                      <@spring.bind "reviewer.lastName" /> 
-                      <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-                    </div>
-                  </div>
-    
-                  <div class="row">
-                    <label class="plain-label">Email<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'assignReviewer.email'/>"></span>
-                    <div class="field">
-                      <input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail" value="${(reviewer.email?html)!}"/>                                               
-                      <@spring.bind "reviewer.email" /> 
-                      <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-                    </div>
-                  </div>
-    
-                  <div class="row">
-                    <div class="field">
-                      <button class="blue" type="button" id="createReviewer">Create reviewer</button>
-                    </div>
-                  </div>
-    
-                  <div class="buttons">
-                  	<button value="cancel" class="clear" type="button">Clear</button>
-                    <button class="blue" type="button" id="moveToReviewBtn">Submit</button>
-                  </div>
+                <div class="row-group" id="createreviewersection">    
+       
                 </div>
-    
+                
+               	<div class="buttons">
+                  	<button value="cancel" name="" id="" type="reset">Clear</button>
+                    <button class="blue" type="button" id="moveToReviewBtn">Submit</button>
+                 </div>
                 <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
     
               </form>
@@ -129,9 +92,6 @@
 <#include "/private/common/global_footer.ftl"/>
   
 </div>
-
-		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
-
 
 <script type="text/javascript"  src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script src="http://malsup.github.com/jquery.form.js"></script> 

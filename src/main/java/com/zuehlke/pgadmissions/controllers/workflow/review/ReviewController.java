@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.review;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
@@ -27,8 +24,8 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 public abstract class ReviewController {
-	protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/admin/assign_reviewers_to_appl_page";
-	protected static final String REVIEWERS_SECTION_NAME = "/private/staff/admin/assign_reviewers_section";
+	protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
+	protected static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
 	protected final ApplicationsService applicationsService;
 	protected final UserService userService;
 	protected final NewUserByAdminValidator reviewerValidator;

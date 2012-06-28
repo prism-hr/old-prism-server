@@ -41,8 +41,8 @@ public class MoveToReviewControllerTest {
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
 
-	private static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/admin/assign_reviewers_to_appl_page";
-	private static final String REVIEWERS_SECTION_NAME = "/private/staff/admin/assign_reviewers_section";
+	private static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
+	private static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
 	private RegisteredUser currentUserMock;	
 	private ReviewerPropertyEditor reviewerPropertyEditorMock;
 
@@ -55,7 +55,7 @@ public class MoveToReviewControllerTest {
 
 	}	
 	
-@Test
+	@Test
 	public void shouldGetReviewesSectionWithOnlyAssignFalseNewReviewersFunctionality() {
 		ModelMap modelMap = new ModelMap();
 		String reviewersDetailsSection = controller.getReviewersSectionView(modelMap);

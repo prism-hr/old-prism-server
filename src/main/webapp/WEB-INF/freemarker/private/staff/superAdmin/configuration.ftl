@@ -1,4 +1,3 @@
-<section id="assignstagessection" >					          	
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
@@ -284,4 +283,3 @@
 		   
 	</body>
 </html>
-</section>

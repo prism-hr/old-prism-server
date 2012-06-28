@@ -218,13 +218,14 @@ public class ReferenceControllerTest {
 	@Test
 	public void shouldSaveReferenceAndRedirectToSaveViewIfNoErrors() {
 		Referee referee = new RefereeBuilder().id(1).toReferee();
-		ReferenceComment reference = new ReferenceCommentBuilder().referee(referee).id(4).toReferenceComment();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").toApplicationForm();
+		ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).toReferenceComment();
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(reference);
 		refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
 		EasyMock.replay(errorsMock, refereeServiceMock);
-		assertEquals("redirect:/applications?messageCode=reference.uploaded", controller.handleReferenceSubmission(reference, errorsMock));
+		assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errorsMock));
 		EasyMock.verify(refereeServiceMock);
 	}
 	

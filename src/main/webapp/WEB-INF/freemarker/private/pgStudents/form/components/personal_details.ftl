@@ -117,10 +117,10 @@
 					<span class="hint" data-desc="<@spring.message 'personalDetails.dateOfBirth'/>"></span>
 					<div class="field">
 					<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
-						<input class="half date" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
+						<input class="half date" value="${(personalDetails.dateOfBirth?string('dd MMM yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
 						
 					<#else>
-						<input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
+						<input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.dateOfBirth?string('dd MMM yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
 					</#if>    
 					</div>               
 				</div>

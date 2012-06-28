@@ -1,7 +1,8 @@
 $(document).ready(function()
 {
-
+	// ------------------------------------------------------------------------------
 	// Submit button.
+	// ------------------------------------------------------------------------------
 	$('#changeStateButton').click(function()
 	{
 		if ($('#status').val() != '')
@@ -30,6 +31,10 @@ $(document).ready(function()
 	});
 
 
+
+	// ------------------------------------------------------------------------------
+	// Next stage dropdown field.
+	// ------------------------------------------------------------------------------
 	$('#status').change(function()
 	{
 		if ($('#status').val() == 'INTERVIEW')
@@ -43,6 +48,9 @@ $(document).ready(function()
 	});
 
 
+	// ------------------------------------------------------------------------------
+	// Link to request assistance from the registry.
+	// ------------------------------------------------------------------------------
 	$('#notifyRegistryButton').click(function()
 	{
 		$('#commentsection').append('<div class="ajax" />');
@@ -74,6 +82,9 @@ $(document).ready(function()
 });
 
 
+// ------------------------------------------------------------------------------
+// Save the comment leading to the next stage.
+// ------------------------------------------------------------------------------
 function saveComment()
 {
 	$('#nextStatus').val($('#status').val());

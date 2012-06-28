@@ -12,22 +12,41 @@ $(document).ready(function()
 				return;
 			}
 		
+			if ($('#status').val() != 'INTERVIEW'){
+				saveComment();
+				return;
+			}
+			
 			if ($('#status').val() == 'INTERVIEW')
 			{
-				if ($('#appliationAdmin').length == 0	|| $('#appliationAdmin').val() == '')
+				if ($('#applicationAdministrator').length == 0	|| $('#applicationAdministrator').val() == '')
 				{
 					saveComment();
 					return;
 				}
 				else
 				{
-					$('#delegateForm').submit();
+					$.ajax({
+						type: 'POST',
+						 statusCode: {
+								401: function() {
+									window.location.reload();
+								}
+							},
+						url:"/pgadmissions/delegate",
+						data:{
+							applicationId : $('#applicationId').val(),
+							applicationAdministrator : $('#applicationAdministrator').val()
+						},
+						success:function(data)
+						{
+							saveComment();
+						}
+					});
 				}
 			}
 		}
 		
-		saveComment();
-		return;
 	});
 
 
@@ -39,11 +58,11 @@ $(document).ready(function()
 	{
 		if ($('#status').val() == 'INTERVIEW')
 		{
-			$('#appliationAdmin').removeAttr('disabled');
+			$('#applicationAdministrator').removeAttr('disabled');
 		}
 		else
 		{
-			$('#appliationAdmin')
+			$('#applicationAdministrator')
 		}
 	});
 

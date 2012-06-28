@@ -163,9 +163,11 @@
 									</div>
 		
 									<div class="row-group">				
+<#--
 										<#if mesage??>			
 										<p>${message?html}</p>
 										</#if>
+-->
 										<#if RequestParameters.message??>			
 										<p>${RequestParameters.message?html}</p>
 										</#if>
@@ -261,9 +263,9 @@
 												<textarea id="interviewLocation" readonly="readonly" disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>
 												<#else>
 												<textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength="5000" placeholder="e.g. http://www.ucl.ac.uk/locations/ucl-maps/">${(interview.locationURL?html)!}</textarea>
-												</#if>				                                            
+												</#if>
 												<@spring.bind "interview.locationURL" /> 
-												<#list spring.status.errorMessages as error><br /><span class="invalid">${error}</span></#list>
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>				                                            
 											</div>
 										</div>
 									

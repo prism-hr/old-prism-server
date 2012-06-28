@@ -177,7 +177,7 @@
       <!-- Add another button -->
       <div class="row">
         <div class="field">
-          <a id="addFundingButton" class="button blue">Add</a>
+          <button type="button" id="addFundingButton" class="blue">Add</button>
         </div>
       </div>
       </#if>
@@ -207,7 +207,7 @@
       <button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
       <button class="blue" type="button" id="fundingSaveCloseButton" value="close">Save</button>
       <#else>
-      <a id="fundingCloseButton" class="button blue">Close</a>  
+      <button type="button" id="fundingCloseButton" class="blue">Close</button>  
       </#if>
     </div>
 

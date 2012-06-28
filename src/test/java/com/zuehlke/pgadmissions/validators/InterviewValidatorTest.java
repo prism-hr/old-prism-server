@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
-import java.sql.Time;
 import java.util.Calendar;
 
 import junit.framework.Assert;
@@ -47,15 +46,6 @@ public class InterviewValidatorTest {
 	}
 
 	@Test
-	public void shouldRejectIfURLisNotValid() {
-		interview.setLocationURL("notvvalidurl");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "locationURL");
-		interviewValidator.validate(interview, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("interview.locationURL.invalid", mappingResult.getFieldError("locationURL").getCode());
-	}
-	
-	@Test
 	public void shouldRejectIfDueDateInPast() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -74,6 +64,15 @@ public class InterviewValidatorTest {
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("interviewTime").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfURLIsEmpty() {
+		interview.setLocationURL(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "locationURL");
+		interviewValidator.validate(interview, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("locationURL").getCode());
 	}
 	
 	@Test

@@ -21,7 +21,7 @@
       <!-- Free text field for convictions. -->
       <div class="admin_row">
         <span class="admin_row_label">Details of the convictions</span>
-				<div class="field"><#if (applicationForm.additionalInformation.convictionsText)?has_content>${(additionalInformation.convictionsText?html)}<#else>Not Provided</#if></div>
+				<div class="field"><#if applicationForm.additionalInformation?? && (applicationForm.additionalInformation.convictionsText)?has_content>${(additionalInformation.convictionsText?html)}<#else>Not Provided</#if></div>
       </div>
       </#if>
       

@@ -64,6 +64,7 @@ $(document).ready(function()
 				$('#notifyRegistryButton').addClass("blue");
 
 				window.location.href = '/pgadmissions/applications?messageCode=registry.refer&application=' + $('#applicationId').val();
+				addToolTips();
 			}
 		});
 		

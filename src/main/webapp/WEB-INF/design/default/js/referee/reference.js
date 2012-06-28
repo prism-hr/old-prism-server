@@ -69,7 +69,7 @@ function referenceUpload()
 			{		
 				$('#referenceUploadedDocument').html(data);
 				$('#referenceUploadedDocument').show();
-				
+				addToolTips();
 			}
 		}
 	);

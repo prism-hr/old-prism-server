@@ -153,8 +153,6 @@
 									</div>
 								</section>
 
-								<#include "/private/staff/superAdmin/additional_contacts_form.ftl"/>
-								
 								<!-- Add Registry Users -->
 								<section id="section-registry" class="form-rows">
 									<h2 class="no-arrow">

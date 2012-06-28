@@ -113,7 +113,7 @@ public class ReferenceController {
 		}
 		commentService.save(comment);		
 		refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
-		return "redirect:/applications?messageCode=reference.uploaded&application='" + comment.getApplication().getApplicationNumber();
+		return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
 	}
 
 }

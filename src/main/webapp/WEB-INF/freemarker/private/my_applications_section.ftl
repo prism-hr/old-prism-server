@@ -16,7 +16,7 @@
 	<td class="centre">
 		<select class="actionType" name="app_[${application.applicationNumber}]">
 		<option>Select.. </option> 
-		<option value="view">View</option>
+		<option value="view">View<#if user.isInRole('APPLICANT') && application.isModifiable()> / Edit</#if></option>
 <#--
 		<#if !user.isInRole('APPLICANT')>
 		<option value="print">Download</option>

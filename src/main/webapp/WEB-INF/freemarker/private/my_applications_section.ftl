@@ -15,7 +15,7 @@
 	</td>
 	<td class="centre">
 		<select class="actionType" name="app_[${application.applicationNumber}]">
-		<option>Select...</option>
+		<option>Select.. </option> 
 		<option value="view">View</option>
 		<#if !user.isInRole('APPLICANT')>
 		<option value="print">Download</option>
@@ -68,4 +68,5 @@
 		</#if>
 	</td>
 </tr>
+
 </#list>

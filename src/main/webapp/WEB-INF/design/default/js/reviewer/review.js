@@ -49,8 +49,12 @@ $(document).ready(function()
 	$('#moveToReviewBtn').click(function() {
 		
 		$('#reviewsection').append('<div class="ajax" />');
-		
-
+		var url = null;
+		if($('#assign').val() == 'true'){
+			url = "/pgadmissions/review/assign";
+		}else{
+			url = "/pgadmissions/review/move";
+		}
 		$('#applicationReviewers option').each(function(){	
 			$('#postReviewData').append("<input name='reviewers' type='hidden' value='" +  $(this).val() + "'/>");
 		});
@@ -66,12 +70,18 @@ $(document).ready(function()
 					  window.location.reload();
 				  }
 			  },
-			url:"/pgadmissions/review/move",
+			url: url,
 			data:	$.param(postData) + "&" + $('input[name="pendingReviewer"]').serialize()+ "&" + $('input[name="reviewers"]').serialize(),
 			success: function(data)
 			{	
 				if(data == "OK"){
-					window.location.href = '/pgadmissions/applications?messageCode=move.review&application=' + $('#applicationId').val();
+					var url = null;
+					if($('#assign').val() == 'true'){
+						window.location.href = '/pgadmissions/applications?messageCode=move.review&application=' + $('#applicationId').val();
+					}else{
+						window.location.href = '/pgadmissions/applications?messageCode=move.review&application=' + $('#applicationId').val();
+					}
+				
 				}else{
 					$('#assignReviewersToAppSection').html(data);
 					$('#postReviewData').html('');
@@ -87,6 +97,12 @@ $(document).ready(function()
 function getReviewersSection(){
 	$('#reviewsection').append('<div class="ajax" />');
 	
+	var url = null;
+	if($('#assign').val() == 'true'){
+		url = "/pgadmissions/review/assignReviewersSection";
+	}else{
+		url = "/pgadmissions/review/reviewersSection";
+	}
 	$.ajax({
 		type: 'GET',
 		 statusCode: {
@@ -94,7 +110,7 @@ function getReviewersSection(){
 				  window.location.reload();
 			  }
 		  },
-		url:"/pgadmissions/review/reviewersSection?applicationId=" + $('#applicationId').val(), 
+		url: url +"?applicationId=" + $('#applicationId').val(), 
 		success: function(data)
 		{
 			$('#reviewsection div.ajax').remove();

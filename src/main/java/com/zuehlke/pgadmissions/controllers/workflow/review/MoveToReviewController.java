@@ -3,10 +3,11 @@ package com.zuehlke.pgadmissions.controllers.workflow.review;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,27 +15,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
+import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 @Controller
 @RequestMapping("/review")
 public class MoveToReviewController extends ReviewController {
 
-	MoveToReviewController() {
-		this(null, null, null, null, null, null, null, null);
+	private final ReviewRoundValidator reviewRoundValidator;
+	private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
+
+	MoveToReviewController(){
+		this(null,null,null,null,null);
 	}
 
 	@Autowired
-	public MoveToReviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator,
-			ReviewRoundValidator reviewRoundValidator, ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor,
-			EncryptionHelper encryptionHelper) {
-		super(applicationsService, userService, reviewerValidator, reviewRoundValidator, reviewService, messageSource, reviewerPropertyEditor, encryptionHelper);
+	public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
+			ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor) {
+		super(applicationsService, userService, reviewService);
+		this.reviewRoundValidator = reviewRoundValidator;
+		this.reviewerPropertyEditor = reviewerPropertyEditor;
 
 	}
 
@@ -70,6 +74,12 @@ public class MoveToReviewController extends ReviewController {
 			reviewRound.setReviewers(latestReviewRound.getReviewers());
 		}
 		return reviewRound;
+	}
+
+	@InitBinder(value = "reviewRound")
+	public void registerReviewRoundValidator(WebDataBinder binder) {
+		binder.setValidator(reviewRoundValidator);
+		binder.registerCustomEditor(Reviewer.class, reviewerPropertyEditor);
 	}
 
 }

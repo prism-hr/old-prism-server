@@ -38,6 +38,7 @@ public class ApplicationFormBuilder {
 	private RegisteredUser applicant;
 	private String projectTitle;
 	private String researchHomePage;
+	private Boolean registryUsersNotified;
 	private Program program;
 	private Date appDate;
 	private Date submittedDate;
@@ -70,6 +71,11 @@ public class ApplicationFormBuilder {
 	
 	public ApplicationFormBuilder applicationNumber(String applicationNumber) {
 		this.applicationNumber = applicationNumber;
+		return this;
+	}
+	
+	public ApplicationFormBuilder applicationNumber(Boolean registryUsersNotified) {
+		this.registryUsersNotified = registryUsersNotified;
 		return this;
 	}
 	
@@ -331,6 +337,8 @@ public class ApplicationFormBuilder {
 		application.setBatchDeadline(batchDeadline);
 		
 		application.setRejectNotificationDate(rejectNotificationDate);
+		
+		application.setRegistryUsersNotified(registryUsersNotified);
 		return application;
 	}
 }

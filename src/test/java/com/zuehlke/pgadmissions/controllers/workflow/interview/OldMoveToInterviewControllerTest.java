@@ -26,9 +26,9 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-public class MoveToInterviewControllerTest {
+public class OldMoveToInterviewControllerTest {
 
-	private MoveToInterviewController controller;
+	private OlkdMoveToInterviewController controller;
 	private ApplicationsService applicationServiceMock;
 	private UserService userServiceMock;
 
@@ -82,7 +82,7 @@ public class MoveToInterviewControllerTest {
 		Interview interview = new InterviewBuilder().id(4).toInterview();
 		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
 
-		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
+		controller = new OlkdMoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
 				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -104,7 +104,7 @@ public class MoveToInterviewControllerTest {
 	public void shouldNotSaveInterviewAndReturnToInterviewPageIfHasErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
+		controller = new OlkdMoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
 				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -138,7 +138,7 @@ public class MoveToInterviewControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 
-		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
+		controller = new OlkdMoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
 				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null);
 
 	}

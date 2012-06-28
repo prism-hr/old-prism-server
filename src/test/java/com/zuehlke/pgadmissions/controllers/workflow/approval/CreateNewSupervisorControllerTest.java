@@ -16,7 +16,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.controllers.workflow.interview.CreateNewInterviewerController;
+import com.zuehlke.pgadmissions.controllers.workflow.interview.OldCreateNewInterviewerController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;

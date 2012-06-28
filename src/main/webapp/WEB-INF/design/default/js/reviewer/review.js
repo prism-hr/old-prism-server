@@ -77,7 +77,7 @@ $(document).ready(function()
 				if(data == "OK"){
 					var url = null;
 					if($('#assign').val() == 'true'){
-						window.location.href = '/pgadmissions/applications?messageCode=move.review&application=' + $('#applicationId').val();
+						window.location.href = '/pgadmissions/applications?messageCode=assign.review&application=' + $('#applicationId').val();
 					}else{
 						window.location.href = '/pgadmissions/applications?messageCode=move.review&application=' + $('#applicationId').val();
 					}

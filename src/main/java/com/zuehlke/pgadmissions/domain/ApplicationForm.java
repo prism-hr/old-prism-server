@@ -38,6 +38,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "application_number")
 	private String applicationNumber;
 
+	@Column(name = "registry_users_notified")
+	private Boolean registryUsersNotified;
+
 	@ManyToOne
 	@JoinColumn(name = "app_administrator_id")
 	private RegisteredUser applicationAdministrator;
@@ -632,6 +635,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setResearchHomePage(String researchHomePage) {
 		this.researchHomePage = researchHomePage;
+	}
+
+	public Boolean getRegistryUsersNotified() {
+		return registryUsersNotified;
+	}
+
+	public void setRegistryUsersNotified(Boolean registryUsersNotified) {
+		this.registryUsersNotified = registryUsersNotified;
 	}
 
 }

@@ -176,7 +176,7 @@
 									</div>
 									<#if reviewersWillingToInterview??>		            			
 										<div class="row">
-											<label class="plain-label grey-label">Delegate Application Processing</label>
+											<label id="delegateLabel" class="plain-label grey-label">Delegate Application Processing</label>
 											<span class="hint" data-desc="<@spring.message 'validateApp.delegate'/>"></span>
 											<div class="field">		   
 												<form id="delegateForm" method="POST" action="<@spring.url '/delegate' />">   

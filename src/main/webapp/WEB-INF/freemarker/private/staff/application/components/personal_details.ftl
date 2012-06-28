@@ -39,7 +39,7 @@
       
       <div class="admin_row">
         <label class="admin_row_label">Gender</label>
-        <div class="field">${(applicationForm.personalDetails.gender?html)!"Not Provided"}</div>
+        <div class="field">${(applicationForm.personalDetails.gender?replace("_", " ")?cap_first?html)!"Not Provided"}</div>
       </div>
       
       <div class="admin_row">

@@ -64,11 +64,11 @@
 											Request Restart Of Approval Phase
 										</h2>
 										<div>
-											<form method="POST" action= "<@spring.url '/approval/submitRequestRestart'/>">
+											<form method="POST" action="<@spring.url '/approval/submitRequestRestart'/>">
 												<div class="row-group">
-													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
+													<input type="hidden" name="applicationId" id="applicationId" value="${(applicationForm.applicationNumber)!}"/>
 													<div class="row">
-														<span class="plain-label">Comment<em>*</em></span>
+														<span class="plain-label">Reason<em>*</em></span>
 														<span class="hint" data-desc=""></span>
 														<div class="field">		            				
 															<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
@@ -84,14 +84,14 @@
 												
 												<div class="buttons">						        		
 													<button class="clear" type="button" value="cancel">Clear</button>
-													<button class="blue" id="submitRequestRestart" type="submit" value="Submit">Request Restart Of Approval</button>						        
+													<button class="blue" id="submitRequestRestart" type="submit" value="Submit">Submit</button>						        
 												</div>
 											</form>
 											
 										</div>
 									</section>
 			  				<#else>
-			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
+			  					<input type="hidden" name="applicationId" id="applicationId" value="${(applicationForm.applicationNumber)!}"/>
 		  					</#if>
 		  					<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 		  					

@@ -5,6 +5,7 @@ $(document).ready(function()
 	if($('#3_regUserId').val() == "") {	$("div[id='thirdRegistryUser']").hide(); }
 	
 	
+/*
 	// -----------------------------------------------------------------------------
 	// Clear buttons
 	// -----------------------------------------------------------------------------
@@ -13,7 +14,7 @@ $(document).ready(function()
 		var $form = $(this).closest('form');
 		clearForm($form);
 	});
-	
+*/	
 	
 	// -----------------------------------------------------------------------------
 	// Service Level Commitments

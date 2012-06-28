@@ -7,13 +7,14 @@ $(document).ready(function()
 		 loadUsersForProgram()
 	});
 	
+/*
 	// Clear button.
 	$('#clear').click(function()
 	{
 		var $form = $(this).closest('form');
 		clearForm($form);
 	});
-	
+*/	
 	
 	$('#existingUsers').on('click', 'a[name="removeuser"]', function(event)
 	{

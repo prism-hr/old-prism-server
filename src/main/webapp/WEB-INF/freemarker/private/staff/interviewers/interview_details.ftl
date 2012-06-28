@@ -163,9 +163,11 @@
 									</div>
 		
 									<div class="row-group">				
+<#--
 										<#if mesage??>			
 										<p>${message?html}</p>
 										</#if>
+-->
 										<#if RequestParameters.message??>			
 										<p>${RequestParameters.message?html}</p>
 										</#if>

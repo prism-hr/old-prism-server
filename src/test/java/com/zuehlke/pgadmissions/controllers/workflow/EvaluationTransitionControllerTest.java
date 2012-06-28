@@ -17,8 +17,6 @@ import org.springframework.validation.BindingResult;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -28,8 +26,6 @@ import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalEvaluationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewEvaluationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -37,8 +33,6 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewEvaluationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
-import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -151,71 +145,63 @@ public class EvaluationTransitionControllerTest {
 		assertEquals(approvalRound, comment.getApprovalRound());
 	}
 	
-//	@Test
-//	public void shouldCreateInterviewEvaluationCommentWithLatestInterview() {
-//		Interview interview = new InterviewBuilder().id(5).toInterview();
-//		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestInterview(interview).toApplicationForm();
-//		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
-//		String strComment = "comment";
-//		InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().id(6).toInterviewEvaluationComment();
-//		CommentType type = CommentType.INTERVIEW_EVALUATION;
-//		EasyMock.expect(commentFactoryMock.createComment(applicationForm, user, strComment, type, ApplicationFormStatus.INTERVIEW)).andReturn(comment);
-//		commentServiceMock.save(comment);
-//		EasyMock.replay(commentFactoryMock, commentServiceMock);
-//
-//		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.INTERVIEW, null, ValidationQuestionOptions.NO,
-//				ValidationQuestionOptions.UNSURE, HomeOrOverseas.OVERSEAS, new ModelMap());
-//
-//		EasyMock.verify(commentServiceMock);
-//		assertEquals(interview, comment.getInterview());
-//
-//	}
-//	
-//	@Test
-//	public void shouldCreateCommentWithDocumentsAndSaveAndRedirectToResolvedView() {
-//		List<String> documentIds = Arrays.asList("abc", "def");
-//		EasyMock.expect(encryptionHelperMock.decryptToInteger("abc")).andReturn(1);
-//		EasyMock.expect(encryptionHelperMock.decryptToInteger("def")).andReturn(2);
-//		Document documentOne = new DocumentBuilder().id(1).toDocument();
-//		Document documentTwo = new DocumentBuilder().id(2).toDocument();
-//		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(documentOne);
-//		EasyMock.expect(documentServiceMock.getDocumentById(2)).andReturn(documentTwo);
-//		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-//		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
-//		String strComment = "comment";
-//		Comment comment = new CommentBuilder().id(6).toComment();
-//		CommentType type = CommentType.VALIDATION;
-//		EasyMock.expect(commentFactoryMock.createComment(applicationForm, user, strComment, type, ApplicationFormStatus.INTERVIEW)).andReturn(comment);
-//		commentServiceMock.save(comment);
-//		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("view");
-//		EasyMock.replay(commentFactoryMock, commentServiceMock, stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock);
-//
-//		assertEquals("view", controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.INTERVIEW, documentIds, null, null, null, new ModelMap()));
-//
-//		EasyMock.verify(commentServiceMock);
-//		assertEquals(2, comment.getDocuments().size());
-//		assertTrue(comment.getDocuments().containsAll(Arrays.asList(documentOne, documentTwo)));
-//	}
-//	
-//	@Test
-//	public void shouldCreateReviewEvaluationCommentWithLatestReviewRound() {
-//		ReviewRound reviewRound = new ReviewRoundBuilder().id(5).toReviewRound();
-//		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestReviewRound(reviewRound).toApplicationForm();
-//		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
-//		String strComment = "comment";
-//		ReviewEvaluationComment comment = new ReviewEvaluationCommentBuilder().id(6).toReviewEvaluationComment();
-//		CommentType type = CommentType.REVIEW_EVALUATION;
-//		EasyMock.expect(commentFactoryMock.createComment(applicationForm, user, strComment, type, ApplicationFormStatus.INTERVIEW)).andReturn(comment);
-//		commentServiceMock.save(comment);
-//		EasyMock.replay(commentFactoryMock, commentServiceMock);
-//
-//		controller.addComment(applicationForm, user, type, strComment, ApplicationFormStatus.INTERVIEW, null, ValidationQuestionOptions.NO,
-//				ValidationQuestionOptions.UNSURE, HomeOrOverseas.OVERSEAS, new ModelMap());
-//
-//		EasyMock.verify(commentServiceMock);
-//		assertEquals(reviewRound, comment.getReviewRound());
-//
-//	}
+	@Test
+	public void shouldCreateInterviewEvaluationCommentWithLatestInterview() {
+		Interview interview = new InterviewBuilder().id(5).toInterview();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestInterview(interview).toApplicationForm();
+		StateChangeComment stateComment = new StateChangeComment();
+		stateComment.setComment("comment");
+		stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
+		stateComment.setType(CommentType.APPROVAL_EVALUATION);
+		controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock){
+			@Override
+			public ApplicationForm getApplicationForm( String applicationId) {
+				return applicationForm;
+			}
+				
+		};
+		InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).toInterviewEvaluationComment();
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, null, stateComment.getComment(), stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
+		commentServiceMock.save(comment);
+		EasyMock.replay(commentFactoryMock, commentServiceMock);
+
+		controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, new ModelMap());
+
+		EasyMock.verify(commentServiceMock);
+		assertEquals(interview, comment.getInterview());
+
+	}
+	
+	
+	@Test
+	public void shouldCreateReviewEvaluationCommentWithLatestReviewRound() {
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(5).toReviewRound();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestReviewRound(reviewRound).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		StateChangeComment stateComment = new StateChangeComment();
+		stateComment.setComment("comment");
+		stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
+		stateComment.setType(CommentType.REVIEW_EVALUATION);
+		controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock){
+			@Override
+			public ApplicationForm getApplicationForm( String applicationId) {
+				return applicationForm;
+			}
+				
+		};
+		ReviewEvaluationComment comment = new ReviewEvaluationCommentBuilder().id(6).toReviewEvaluationComment();
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, null, stateComment.getComment(), stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
+		commentServiceMock.save(comment);
+		EasyMock.replay(commentFactoryMock, commentServiceMock);
+
+		controller.addComment(applicationForm.getApplicationNumber(), stateComment, bindingResultMock, new ModelMap());
+
+		EasyMock.verify(commentServiceMock);
+		assertEquals(reviewRound, comment.getReviewRound());
+
+	}
 	
 	@Before
 	public void setUp() {

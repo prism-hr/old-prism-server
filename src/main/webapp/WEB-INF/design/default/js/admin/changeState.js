@@ -7,48 +7,11 @@ $(document).ready(function()
 	{
 		if ($('#status').val() != '')
 		{
-			if (!confirm('Confirm you want to move this application to the ' + $('#status').val() + ' stage.'))
-			{
-				return;
-			}
-		
-			if ($('#status').val() != 'INTERVIEW'){
-				saveComment();
-				return;
-			}
-			
-			if ($('#status').val() == 'INTERVIEW')
-			{
-				if ($('#applicationAdministrator').length == 0	|| $('#applicationAdministrator').val() == '')
-				{
-					saveComment();
-					return;
-				}
-				else
-				{
-					$.ajax({
-						type: 'POST',
-						 statusCode: {
-								401: function() {
-									window.location.reload();
-								}
-							},
-						url:"/pgadmissions/delegate",
-						data:{
-							applicationId : $('#applicationId').val(),
-							applicationAdministrator : $('#applicationAdministrator').val()
-						},
-						success:function(data)
-						{
-							saveComment();
-						}
-					});
-				}
-			}
+			var message = 'Confirm you want to move this application to the ' + $('#status').val() + ' stage.';
+			modalPrompt(message, changeStatus);
+			return;
 		}
-		
 	});
-
 
 
 	// ------------------------------------------------------------------------------
@@ -135,4 +98,43 @@ function saveComment()
 				'<input type="hidden" name="documents" value="' + $(this).val() + '"/>');
 	});
 	 $('#stateChangeForm').submit();
+}
+
+
+function changeState()
+{
+	if ($('#status').val() != 'INTERVIEW')
+	{
+		saveComment();
+		return;
+	}
+	
+	if ($('#status').val() == 'INTERVIEW')
+	{
+		if ($('#applicationAdministrator').length == 0 || $('#applicationAdministrator').val() == '')
+		{
+			saveComment();
+			return;
+		}
+		else
+		{
+			$.ajax({
+				type: 'POST',
+				statusCode: {
+					401: function() {
+						window.location.reload();
+					}
+				},
+				url:"/pgadmissions/delegate",
+				data:{
+					applicationId : $('#applicationId').val(),
+					applicationAdministrator : $('#applicationAdministrator').val()
+				},
+				success:function(data)
+				{
+					saveComment();
+				}
+			});
+		}
+	}
 }

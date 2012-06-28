@@ -166,7 +166,8 @@ $(document).ready(function(){
 					message: 'edit',					
 					cacheBreaker: new Date().getTime()
 				},
-				success:function(data) {
+				success:function(data)
+				{
 					$('#fundingSection').html(data);
 					$('#addFundingButton').html('Update');
 				}

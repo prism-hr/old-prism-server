@@ -69,14 +69,11 @@ public class StateTransitionViewResolver {
 			return STATE_TRANSITION_VIEW;
 		}
 		if (ApplicationFormStatus.INTERVIEW == evaluationCommentForLatestInterview.getNextStatus()) {
-			System.out.println(INTERVIEW_VIEW + applicationForm.getApplicationNumber());
 			return INTERVIEW_VIEW + applicationForm.getApplicationNumber();
 		}
 		if (ApplicationFormStatus.APPROVAL == evaluationCommentForLatestInterview.getNextStatus()) {
-			System.out.println(APPROVAL_VIEW + applicationForm.getApplicationNumber());
 			return APPROVAL_VIEW + applicationForm.getApplicationNumber();
 		}
-		System.out.println(REJECTION_VIEW + applicationForm.getApplicationNumber());
 		return REJECTION_VIEW + applicationForm.getApplicationNumber();
 	}
 

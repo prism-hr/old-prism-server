@@ -207,7 +207,7 @@
       <button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
       <button class="blue" type="button" id="fundingSaveCloseButton" value="close">Save</button>
       <#else>
-      <a id="fundingCloseButton" class="button blue">Close</a>  
+      <button type="button" id="fundingCloseButton" class="blue">Close</button>  
       </#if>
     </div>
 

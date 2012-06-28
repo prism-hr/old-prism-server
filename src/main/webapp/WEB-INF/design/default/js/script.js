@@ -401,12 +401,18 @@ function isFormEmpty($container)
 function markSectionError(section_id)
 {
 	var $section = $(section_id);
+	
+	// If the terms checkbox isn't ticked, highlight the terms box.
+	var $terms = $('.terms-box', $section);
+	if ($('input:checkbox', $terms).not(':checked'))
+	{
+		$terms.css({borderColor: 'red', color: 'red'});
+	}
+	
+	// Check for form validation errors.
 	var errors   = $('.invalid:visible', $section).length;
 	if (errors == 0) { return; }
 	
-	// highlight terms box.
-	$('.terms-box', $section).css({borderColor: 'red', color: 'red'});
-
 	// Change the info bar.
 	var $infobar = $('.section-info-bar', $section);
 	if ($infobar)
@@ -424,16 +430,85 @@ function clearForm($form)
 	$fields.each(function()
 	{
 		var $field = $(this);
-		if ($field.is(':checkbox, :radio'))
+		if ($field.not('.list-select-to, .list-select-from')) // exclude lists of reviewers/supervisors/interviewers
 		{
-			$field.attr('checked', false);
-		}
-		else
-		{
-			$(this).val('');
+			if ($field.is(':checkbox, :radio'))
+			{
+				$field.attr('checked', false);
+			}
+			else
+			{
+				$(this).val('');
+			}
 		}
 	});
 		
 	// Remove any uploaded files in field rows.
 	$('div.field .uploaded-files', $form).html('');
+}
+
+
+function setupModalBox()
+{
+	// Hide the modal window and overlay.
+	$('#dialog-overlay, #dialog-box').hide();
+	
+	// Reposition the dialog box on window resize.
+	$(window).resize(function()
+	{
+		//only do it if the dialog box is not hidden
+		if (!$('#dialog-box').is(':hidden'))
+		{
+			modalPosition();
+		}
+	});	
+
+	// Hitting the escape key closes the modal box.
+	$(document).keypress(function(e)
+	{
+		if ( e.keyCode == 27 )
+		{
+			$('#dialog-overlay, #dialog-box').hide();		
+			return false;
+		}
+	});
+}
+
+
+function modalPosition()
+{
+	var offset_x = $('#dialog-box').width() / 2;
+	var offset_y = $('#dialog-box').height() / 2;
+	
+	$('#dialog-box').css({ marginLeft: -offset_x, marginTop: -offset_y })
+									.show();
+}
+
+
+function modalPrompt(message, okay, cancel)
+{
+	$('#dialog-header').html("Please Confirm!");
+	$('#dialog-message').html(message);
+
+	// Set function to execute on "Ok".
+	$('#dialog-box').off('click', '#popup-ok-button')
+                  .on('click', '#popup-ok-button', function()
+									{
+										$('#dialog-overlay, #dialog-box').hide();
+										okay;
+										return false;
+									});
+
+	// Set function to execute on "Cancel".
+	$('#dialog-box').off('click', '#popup-cancel-button')
+                  .on('click', '#popup-cancel-button', function()
+									{
+										$('#dialog-overlay, #dialog-box').hide();
+										cancel;
+										return false;
+									});
+
+	// Show the box.
+	$('#dialog-overlay, #dialog-box').show();
+	modalPosition();
 }

@@ -33,6 +33,6 @@
 
  <div class="row">
     <div class="field">
-      <button class="blue" type="button" id="createReviewer">Create reviewer</button>
+      <button class="blue" type="button" id="createReviewer">Add</button>
     </div>
  </div>

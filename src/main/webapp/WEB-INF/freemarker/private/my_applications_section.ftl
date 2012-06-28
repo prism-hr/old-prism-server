@@ -16,13 +16,15 @@
 	<td class="centre">
 		<select class="actionType" name="app_[${application.applicationNumber}]">
 		<option>Select.. </option> 
-		<option value="view">View</option>
+		<option value="view">View<#if user.isInRole('APPLICANT') && application.isModifiable()> / Edit</#if></option>
+<#--
 		<#if !user.isInRole('APPLICANT')>
 		<option value="print">Download</option>
 		</#if>   
 		<#if user.isInRole('APPLICANT')>
 			<option value="progress">View progress</option>
 		</#if>   
+-->
 		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
 			<option value="validate">Approve or Reject</option>
 			<option value="restartApprovalRequest">Request restart of approval</option>

@@ -33,9 +33,9 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 
-public class CreateNewInterviewerControllerTest {
+public class OldCreateNewInterviewerControllerTest {
 	private static final String INTERVIEW_DETAILS_VIEW_NAME = "/private/staff/interviewers/interview_details";
-	private CreateNewInterviewerController controller;
+	private OldCreateNewInterviewerController controller;
 	private UserService userServiceMock;
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
@@ -48,7 +48,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldCreateNewInterviewForNewInterviewUserIfUserDoesNotExists() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encrypted5");
-		controller = new CreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+		controller = new OldCreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -82,7 +82,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldCreateNewInterviewForExistingInterviewUserIfUserDoesNotExists() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encrypted5");
-		controller = new CreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+		controller = new OldCreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -182,7 +182,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldDoNothingIfUserExistsAndIsAlreadyPedningInterviewerOfApp() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encryptedOne");
-		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+		controller = new OldCreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -220,7 +220,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldAddUserToPendingInterviewersIfExistingUserInPreviousInterviewerOfProgram() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encryptedEight");
-		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+		controller = new OldCreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -256,7 +256,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldAddUserToPendingInterviewersIfExistingUserIsDefaultInterviewOfProgram() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encryptedEight");
-		controller = new CreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+		controller = new OldCreateNewInterviewerController(null, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -291,7 +291,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldAddExistingUserToPendingIfUserExistsAndIsNewToAppAndProgram() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encryptedEight");
-		controller = new CreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
+		controller = new OldCreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -377,6 +377,6 @@ public class CreateNewInterviewerControllerTest {
 		interviewServiceMock = EasyMock.createMock(InterviewService.class);
 		encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
 		
-		controller = new CreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper);
+		controller = new OldCreateNewInterviewerController(applicationsServiceMock, userServiceMock, null,  messageSourceMock, interviewServiceMock, null, null, encryptionHelper);
 	}
 }

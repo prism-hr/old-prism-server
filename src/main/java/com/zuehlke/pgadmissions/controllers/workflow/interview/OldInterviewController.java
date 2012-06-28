@@ -28,7 +28,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-public abstract class InterviewController {
+@Deprecated
+public abstract class OldInterviewController {
 	protected final String INTERVIEW_DETAILS_VIEW_NAME = "/private/staff/interviewers/interview_details";
 	protected final ApplicationsService applicationsService;
 	protected final UserService userService;
@@ -40,12 +41,12 @@ public abstract class InterviewController {
 	protected final InterviewerPropertyEditor interviewerPropertyEditor;
 	protected final EncryptionHelper encryptionHelper;
 
-	InterviewController() {
+	OldInterviewController() {
 		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public InterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,//
+	public OldInterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,//
 			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator, DatePropertyEditor datePropertyEditor,//
 			InterviewerPropertyEditor interviewerPropertyEditor, EncryptionHelper encryptionHelper) {
 		this.applicationsService = applicationsService;

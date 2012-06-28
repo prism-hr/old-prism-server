@@ -27,7 +27,7 @@
 							<#list usersInRoles as userInRole>
 							<tr <#if !userInRole.enabled>class="pending"</#if>>
 								<td><span class="arrow">&nbsp;</span></td>
-								<td scope="col">${userInRole.firstName?html} ${userInRole.lastName?html} (${userInRole.email?html})</td>
+								<td scope="col"<#if !userInRole.enabled> data-desc="Pending"</#if>>${userInRole.firstName?html} ${userInRole.lastName?html} (${userInRole.email?html})</td>
 								<td scope="col">
 									<div class="role-icons <#list userInRole.getAuthoritiesForProgram(selectedProgram) as authority>${authority?lower_case} </#list>">
 										<span class="is-admin" data-desc="Administrator"></span>

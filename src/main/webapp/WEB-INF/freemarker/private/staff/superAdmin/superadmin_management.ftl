@@ -94,7 +94,7 @@
 										<span class="plain-label">First Name<em>*</em></span>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
 										<div class="field">
-											<input class="full" type="text"  value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>readonly="readonly"</#if>/>			                                  
+											<input class="full" type="text"  value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			                                  
 											<@spring.bind "userDTO.firstName" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>
@@ -106,7 +106,7 @@
 										<span class="plain-label">Last Name<em>*</em></span>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
 										<div class="field">
-											<input class="full" type="text" value="${(userDTO.lastName?html)!}"  name="lastName" id="lastName"  <#if !userDTO.newUser>readonly="readonly"</#if>/>
+											<input class="full" type="text" value="${(userDTO.lastName?html)!}" name="lastName" id="lastName"  <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<@spring.bind "userDTO.lastName" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>
@@ -118,7 +118,7 @@
 										<span class="plain-label">Email<em>*</em></span>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
 										<div class="field">
-											<input class="full" type="text" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>readonly="readonly"</#if>/>
+											<input class="full" type="text" value="${(userDTO.email?html)!}" name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<@spring.bind "userDTO.email" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>
@@ -128,7 +128,7 @@
 		
 									<div class="row">
 										<div class="field">
-											<button class="blue" type="submit"><#if userDTO.newUser>Add<#else>Edit</#if></button>
+											<button class="blue" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
 										</div>
 									</div>
 			

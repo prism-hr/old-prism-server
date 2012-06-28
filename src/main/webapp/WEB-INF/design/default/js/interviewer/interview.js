@@ -104,17 +104,25 @@ $(document).ready(function()
 	});
 });
 
-function getAssignedInterviewerIdString()
-{
-	var assignedInterviewers = document.getElementById("applicationInterviewers").options;
-	var revIds = "";
-	for (i = 0; i < assignedInterviewers.length; i = i + 1)
-	{
-		if( i != 0)
+
+function getInterviewersAndDetailsSections(){
+	$('#interviewsection').append('<div class="ajax" />');
+	
+	var url  = "/pgadmissions/review/reviewersSection";
+
+	$.ajax({
+		type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url: url +"?applicationId=" + $('#applicationId').val(), 
+		success: function(data)
 		{
-			revIds += "|";
+			$('#interviewsection div.ajax').remove();
+			$('#assignReviewersToAppSection').html(data);
+			addToolTips();
 		}
-		revIds += assignedInterviewers.item(i).value;
-	}
-	return revIds;
+	});
 }

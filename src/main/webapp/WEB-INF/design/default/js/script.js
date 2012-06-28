@@ -435,5 +435,5 @@ function clearForm($form)
 	});
 		
 	// Remove any uploaded files in field rows.
-	$('div.uploaded-files', $form).html('');
+	$('div.field .uploaded-files', $form).html('');
 }

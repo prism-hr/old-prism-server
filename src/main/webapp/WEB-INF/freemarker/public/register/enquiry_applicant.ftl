@@ -46,7 +46,7 @@
 			        		<select id="field_programme">
 			          			<option>Programme Name</option>
 			          		</select>
-			          		<a class="button">Browse Programmes</a>
+			          		<button type="button">Browse Programmes</button>
 			        	</div>
 			        
 			        	<div class="row">

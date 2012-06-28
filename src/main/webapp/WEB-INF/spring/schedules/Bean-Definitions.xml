@@ -2,7 +2,29 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 
 <beans>
+	<bean id="registryMailSender" class="com.zuehlke.pgadmissions.mail.RegistryMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="mailRegistryUserDAO" />
+		<constructor-arg index="3" ref="mailUserService" />
+		<constructor-arg index="4" ref="messageSource" />
+		<constructor-arg index="5" ref="mailPdfDocumentBuilder" />
+		<constructor-arg index="6" ref="mailPdfAttachmentInputSourceFactory" />
+	</bean>
 
+	<bean id="mailPdfAttachmentInputSourceFactory" class="com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory"
+		autowire-candidate="false">
+	</bean>
+	
+	<bean id="mailPdfDocumentBuilder" class="com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder"
+		autowire-candidate="false">
+	</bean>
+	
+	<bean id="mailRegistryUserDAO" class="com.zuehlke.pgadmissions.dao.PersonDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
 	<bean id="mailServiceForTimers" class="com.zuehlke.pgadmissions.services.MailService"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />

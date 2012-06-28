@@ -74,7 +74,7 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder applicationNumber(Boolean registryUsersNotified) {
+	public ApplicationFormBuilder registryUsersNotified(Boolean registryUsersNotified) {
 		this.registryUsersNotified = registryUsersNotified;
 		return this;
 	}

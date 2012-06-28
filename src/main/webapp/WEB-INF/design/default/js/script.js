@@ -446,3 +446,69 @@ function clearForm($form)
 	// Remove any uploaded files in field rows.
 	$('div.field .uploaded-files', $form).html('');
 }
+
+
+function setupModalBox()
+{
+	// Hide the modal window and overlay.
+	$('#dialog-overlay, #dialog-box').hide();
+	
+	// Reposition the dialog box on window resize.
+	$(window).resize(function()
+	{
+		//only do it if the dialog box is not hidden
+		if (!$('#dialog-box').is(':hidden'))
+		{
+			modalPosition();
+		}
+	});	
+
+	// Hitting the escape key closes the modal box.
+	$(document).keypress(function(e)
+	{
+		if ( e.keyCode == 27 )
+		{
+			$('#dialog-overlay, #dialog-box').hide();		
+			return false;
+		}
+	});
+}
+
+
+function modalPosition()
+{
+	var offset_x = $('#dialog-box').width() / 2;
+	var offset_y = $('#dialog-box').height() / 2;
+	
+	$('#dialog-box').css({ marginLeft: -offset_x, marginTop: -offset_y })
+									.show();
+}
+
+
+function modalPrompt(message, okay, cancel)
+{
+	$('#dialog-header').html("Please Confirm!");
+	$('#dialog-message').html(message);
+
+	// Set function to execute on "Ok".
+	$('#dialog-box').off('click', '#popup-ok-button')
+                  .on('click', '#popup-ok-button', function()
+									{
+										$('#dialog-overlay, #dialog-box').hide();
+										okay;
+										return false;
+									});
+
+	// Set function to execute on "Cancel".
+	$('#dialog-box').off('click', '#popup-cancel-button')
+                  .on('click', '#popup-cancel-button', function()
+									{
+										$('#dialog-overlay, #dialog-box').hide();
+										cancel;
+										return false;
+									});
+
+	// Show the box.
+	$('#dialog-overlay, #dialog-box').show();
+	modalPosition();
+}

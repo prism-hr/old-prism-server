@@ -80,7 +80,7 @@
           </section>
     
           <div id="postReviewData"></div>
-          <form id="postReviewerForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/review/assignNewReviewer'/>" <#else> action ="<@spring.url '/review/createReviewer'/>" </#if>></form>
+          <input type="hidden" id="assign" value="${assignOnly?string}"/>
   
         </div><!-- .content-box-inner -->
       </div><!-- .content-box -->

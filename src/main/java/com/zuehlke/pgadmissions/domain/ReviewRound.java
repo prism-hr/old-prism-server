@@ -60,7 +60,12 @@ public class ReviewRound extends DomainObject<Integer> {
 	}
 
 	public void setReviewers(List<Reviewer> reviewers) {
-		this.reviewers = reviewers;
+		this.reviewers.clear();
+		for (Reviewer reviewer : reviewers) {
+			if(reviewer != null){
+				this.reviewers.add(reviewer);
+			}
+		}
 	}
 
 	public ApplicationForm getApplication() {

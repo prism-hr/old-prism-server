@@ -206,7 +206,7 @@ $(document).ready(function(){
 				{
 					$('#qualificationsSection').html(data);
 					
-					if($("#currentQualificationCB").is(":checked"))
+					if ($("#currentQualificationCB").is(":checked"))
 					{
 						$("#qualificationAwardDate").removeAttr("disabled", "disabled");
 						$("#proofOfAward").removeAttr("disabled", "disabled");
@@ -226,6 +226,9 @@ $(document).ready(function(){
 						$("#quali-award-date-lb").text("Award Date").addClass("grey-label");
 						$("#quali-proof-of-award-lb").text("Proof of award (PDF)").addClass("grey-label");
 					}
+					
+					// Cheap way of changing the button text.
+					$('#addQualificationButton').html('Update');
 				}
 		});
 	});

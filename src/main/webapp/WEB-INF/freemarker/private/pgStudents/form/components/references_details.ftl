@@ -362,9 +362,9 @@
       		<div class="row">
       			<div class="field">
       				<#if referee.id?? || applicationForm.referees?size &lt; 3>
-      					<a id="addReferenceButton" class="button blue"><#if referee.id??>Update<#else>Add</#if></a>
+      					<button type="button" id="addReferenceButton" class="blue"><#if referee.id??>Update<#else>Add</#if></button>
       				<#else>
-      					<a class="button blue" style="cursor:default">Add</a>
+      					<button type="button" class="blue" style="cursor:default">Add</button>
       				</#if>
       			</div>
       		</div>

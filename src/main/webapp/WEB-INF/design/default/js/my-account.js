@@ -30,6 +30,7 @@ $(document).ready(function(){
 			{
 				$('#accountdetails div.ajax').remove();
 				$('#accountdetails').html(data);
+				addToolTips();
 			}
 		});
 	});
@@ -59,6 +60,7 @@ function getAccountDetailsSection()
 		{
 			$('#reviewsecion div.ajax').remove();
 			$('#accountdetails').html(data);
+			addToolTips();
 		}
 	});
 	

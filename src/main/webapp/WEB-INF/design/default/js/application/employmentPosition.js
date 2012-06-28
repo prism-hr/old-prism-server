@@ -135,6 +135,9 @@ $(document).ready(function(){
 		}
 	});
 
+	// -------------------------------------------------------------------------------
+	// Edit existing funding.
+	// -------------------------------------------------------------------------------
 	$('a[name="positionEditButton"]').click(function(){
 		var id = this.id;
 		id = id.replace('position_', '');	
@@ -161,6 +164,7 @@ $(document).ready(function(){
 						$('#posi-end-date-lb').addClass('grey-label');
 						$('#posi-end-date-lb em').hide();
 					}
+					$('#addPosisionButton').html('Update');
 				}
 		});
 	});

@@ -1,38 +1,50 @@
 $(document).ready(function(){
 	
 	var fundImgCount = 0;
-	
-	$('#fundingValue').keydown(function(event) {
+
+	// -------------------------------------------------------------------------------
+	// Prevent non-numerical input for funding value field.
+	// -------------------------------------------------------------------------------	
+	$('#fundingValue').keydown(function(event)
+	{
 		// http://stackoverflow.com/questions/995183/how-to-allow-only-numeric-0-9-in-html-inputbox-using-jquery
 		// Allow: backspace, delete, tab, escape, and enter
 		if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || 
-				 // Allow: Ctrl+A
-				(event.keyCode == 65 && event.ctrlKey === true) || 
-				 // Allow: home, end, left, right
-				(event.keyCode >= 35 && event.keyCode <= 39))
+		// Allow: Ctrl+A
+		(event.keyCode == 65 && event.ctrlKey === true) || 
+		// Allow: home, end, left, right
+		(event.keyCode >= 35 && event.keyCode <= 39))
 		{
-						 // let it happen, don't do anything
-						 return;
+			// let it happen, don't do anything
+			return;
 		}
 		else
 		{
-				// Ensure that it is a number and stop the keypress
-				if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
-						event.preventDefault(); 
-				}   
+			// Ensure that it is a number and stop the keypress
+			if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 ))
+			{
+				event.preventDefault(); 
+			}   
 		}
 	});
 	
 	$("#acceptTermsFDValue").val("NO");
 	limitTextArea();
 	
-	$('#fundingCloseButton').click(function(){
+
+	// -------------------------------------------------------------------------------
+	// Close button.
+	// -------------------------------------------------------------------------------
+	$('#fundingCloseButton').click(function()
+	{
 		$('#funding-H2').trigger('click');
 		return false;
 	});
 	
 	
+	// -------------------------------------------------------------------------------
 	// Delete existing funding.
+	// -------------------------------------------------------------------------------
 	$('a[name="deleteFundingButton"]').click( function(){	
 			var id = $(this).attr("id").replace("funding_", "");
 			$.ajax({
@@ -54,18 +66,19 @@ $(document).ready(function(){
 			});
 	});
 	
-	$("input[name*='acceptTermsFDCB']").click(function() {
-		if ($("#acceptTermsFDValue").val() =='YES'){
+
+	// -------------------------------------------------------------------------------
+	// "Accept terms" checkbox.
+	// -------------------------------------------------------------------------------
+	$("input[name*='acceptTermsFDCB']").click(function()
+	{
+		if ($("#acceptTermsFDValue").val() =='YES')
+		{
 			$("#acceptTermsFDValue").val("NO");
-		} else {	
+		}
+		else
+		{	
 			$("#acceptTermsFDValue").val("YES");
-			
-			/*
-			$(".terms-box").attr('style','');
-			$("#fund-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#fund-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#fund-info-bar-div .row span.error-hint").remove();
-			*/
 			fundImgCount = 0;
 			
 			$.ajax({
@@ -86,6 +99,10 @@ $(document).ready(function(){
 		}
 		});
 	
+
+	// -------------------------------------------------------------------------------
+	// Add funding button.
+	// -------------------------------------------------------------------------------
 	$('#addFundingButton').click(function()
 	{
 		if ($('#acceptTermsFDValue').length != 0 && $("#acceptTermsFDValue").val() =='NO')
@@ -100,14 +117,19 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('#fundingSaveCloseButton').click(function(){
+	
+	// -------------------------------------------------------------------------------
+	// Save button.
+	// -------------------------------------------------------------------------------
+	$('#fundingSaveCloseButton').click(function()
+	{
 		if ($("#acceptTermsFDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
 			markSectionError('#fundingSection');
-			
 		}
-		else{
+		else
+		{
 			$("span[name='nonAcceptedFD']").html('');
 
 			// Check for a "dirty" employment position form. If there is data try to submit it.
@@ -123,8 +145,11 @@ $(document).ready(function(){
 	});
 	
 	
-	// Edit funding button.
-	$('a[name="editFundingLink"]').click(function(){
+	// -------------------------------------------------------------------------------
+	// Edit existing funding details.
+	// -------------------------------------------------------------------------------
+	$('a[name="editFundingLink"]').click(function()
+	{
 		var id = this.id;
 		id = id.replace('funding_', '');	
 		$.ajax({
@@ -143,11 +168,17 @@ $(document).ready(function(){
 				},
 				success:function(data) {
 					$('#fundingSection').html(data);
+					$('#addFundingButton').html('Update');
 				}
 		});
 	});
 	
-	$('a[name="fundingCancelButton"]').click(function(){
+
+	// -------------------------------------------------------------------------------
+	// Clear button.
+	// -------------------------------------------------------------------------------
+	$('a[name="fundingCancelButton"]').click(function()
+	{
 		$.ajax({
 				type: 'GET',
 				statusCode: {
@@ -161,7 +192,8 @@ $(document).ready(function(){
 					message: 'cancel',					
 					cacheBreaker: new Date().getTime()
 				},
-				success: function(data) {
+				success: function(data)
+				{
 					$('#fundingSection').html(data);
 				}
 		});

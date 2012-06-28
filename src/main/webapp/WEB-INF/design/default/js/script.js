@@ -401,12 +401,18 @@ function isFormEmpty($container)
 function markSectionError(section_id)
 {
 	var $section = $(section_id);
+	
+	// If the terms checkbox isn't ticked, highlight the terms box.
+	var $terms = $('.terms-box', $section);
+	if ($('input:checkbox', $terms).not(':checked'))
+	{
+		$terms.css({borderColor: 'red', color: 'red'});
+	}
+	
+	// Check for form validation errors.
 	var errors   = $('.invalid:visible', $section).length;
 	if (errors == 0) { return; }
 	
-	// highlight terms box.
-	$('.terms-box', $section).css({borderColor: 'red', color: 'red'});
-
 	// Change the info bar.
 	var $infobar = $('.section-info-bar', $section);
 	if ($infobar)

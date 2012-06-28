@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -19,9 +18,9 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class DelegateToApplicationAdministratorControllerTest {
@@ -30,6 +29,7 @@ public class DelegateToApplicationAdministratorControllerTest {
 	private UserService userServiceMock;
 	private DelegateToApplicationAdministratorController controller;
 	private UserPropertyEditor userPropertyEditorMock;
+	private CommentService commentServiceMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -105,14 +105,32 @@ public class DelegateToApplicationAdministratorControllerTest {
 		EasyMock.replay(applicationServiceMock);
 		controller.delegateToApplicationAdministrator(applicationForm);
 		assertNull(applicationForm.getNotificationForType(NotificationType.REVIEW_REMINDER));
-		
 	}
+	
+	@Test
+	public void shouldCreateDelegationComment(){	
+		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).notificationRecords(new NotificationRecordBuilder().id(1).notificationType(NotificationType.REVIEW_REMINDER).toNotificationRecord()).toApplicationForm();
+		commentServiceMock.createDelegateComment(user, applicationForm);
+		applicationServiceMock.save(applicationForm);
+		controller = new DelegateToApplicationAdministratorController(applicationServiceMock, userServiceMock, userPropertyEditorMock, commentServiceMock){
+			@Override
+			public RegisteredUser getCurrentUser() {
+				return user;
+			}
+		};
+		EasyMock.replay(applicationServiceMock, commentServiceMock);
+		controller.delegateToApplicationAdministrator(applicationForm);
+		EasyMock.verify(applicationServiceMock, commentServiceMock);
+	}
+	
 	@Before
 	public void setup() {
+		commentServiceMock = EasyMock.createMock(CommentService.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
-		controller = new DelegateToApplicationAdministratorController(applicationServiceMock, userServiceMock, userPropertyEditorMock);
+		controller = new DelegateToApplicationAdministratorController(applicationServiceMock, userServiceMock, userPropertyEditorMock, commentServiceMock);
 
 	}
 }

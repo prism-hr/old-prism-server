@@ -484,36 +484,35 @@
 					</div>
 				</#list>
               	
-              	
-            </div>
+			</div>
   
-       <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
-       <div class="row-group terms-box">
-			<div class="row">
-				<span class="terms-label">
-					I understand that in accepting this declaration I am confirming
-					that the information contained in this section is true and accurate. 
-					I am aware that any subsequent offer of study may be retracted at any time
-					if any of the information contained is found to be misleading or false.
-				</span>
-				<div class="terms-field">
-		        	<input type="checkbox" name="acceptTermsPEDCB" id="acceptTermsPEDCB"/>
-		        </div>
-	            <input type="hidden" name="acceptTermsPEDValue" id="acceptTermsPEDValue"/>
-			</div>	        
+			<#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
+			<div class="row-group terms-box">
+				<div class="row">
+					<span class="terms-label">
+						I understand that in accepting this declaration I am confirming
+						that the information contained in this section is true and accurate. 
+						I am aware that any subsequent offer of study may be retracted at any time
+						if any of the information contained is found to be misleading or false.
+					</span>
+					<div class="terms-field">
+						<input type="checkbox" name="acceptTermsPEDCB" id="acceptTermsPEDCB"/>
+					</div>
+					<input type="hidden" name="acceptTermsPEDValue" id="acceptTermsPEDValue"/>
+				</div>	        
 	    </div>
 	    </#if>  
   
-          	<div class="buttons">
-              <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-              		<button type="button" class="clear" name="personalDetailsCancelButton" id="personalDetailsCancelButton" value="cancel">Clear</button>
-                    <button type="button" id="personalDetailsCloseButton" class="blue">Close</a>
-					<button class="blue" type="button" id="personalDetailsSaveButton" value="close">Save</button>
-              <#else>
-              		<a id="personalDetailsCloseButton"class="button blue">Close</a>			
-              </#if>
-            </div>
-       </form>
+			<div class="buttons">
+				<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+				<button type="button" class="clear" name="personalDetailsCancelButton" id="personalDetailsCancelButton" value="cancel">Clear</button>
+				<button type="button" id="personalDetailsCloseButton" class="blue">Close</a>
+				<button class="blue" type="button" id="personalDetailsSaveButton" value="close">Save</button>
+				<#else>
+				<a id="personalDetailsCloseButton"class="button blue">Close</a>			
+				</#if>
+			</div>
+	 </form>
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>

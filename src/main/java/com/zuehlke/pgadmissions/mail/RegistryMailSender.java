@@ -54,7 +54,7 @@ public class RegistryMailSender extends MailSender {
 		for (Person registryUser : registryContacts) {
 			toAddresses[counter++] = new InternetAddress(registryUser.getEmail(), registryUser.getFirstname() + " " + registryUser.getLastname());
 		}
-		RegisteredUser currentUser = userService.getCurrentUser();
+		RegisteredUser currentUser = applicationForm.getAdminRequestedRegistry();
 		InternetAddress ccAdminAddres = createAddress(currentUser);
 
 		String subject = resolveMessage("validation.request.registry.contacts", applicationForm);

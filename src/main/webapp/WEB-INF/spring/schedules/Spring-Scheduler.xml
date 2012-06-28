@@ -30,7 +30,7 @@
 	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">
 		<property name="scheduledTimerTasks">
 			<list>
-				<ref bean="adminValidationReminderSchedule" />
+				<!--<ref bean="adminValidationReminderSchedule" />
 				<ref bean="adminRejectNotificationSchedule" />
 				<ref bean="adminReviewReminderSchedule" />
 				<ref bean="refereeReminderSchedule" />
@@ -55,7 +55,7 @@
 				<ref bean="supervisorNotificationSchedule"/> 
 				<ref bean="adminApprovedNotificationSchedule"/> 
 				<ref bean="approverApprovalReminderSchedule"/> 
-				<ref bean="moveToApprovedNotificationSchedule"/> 
+				<ref bean="moveToApprovedNotificationSchedule"/> -->
 				<ref bean="registryNotificationSchedule"/> 
 			</list>
 		</property>

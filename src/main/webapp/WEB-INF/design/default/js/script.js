@@ -424,13 +424,16 @@ function clearForm($form)
 	$fields.each(function()
 	{
 		var $field = $(this);
-		if ($field.is(':checkbox, :radio'))
+		if ($field.not('.list-select-to, .list-select-from')) // exclude lists of reviewers/supervisors/interviewers
 		{
-			$field.attr('checked', false);
-		}
-		else
-		{
-			$(this).val('');
+			if ($field.is(':checkbox, :radio'))
+			{
+				$field.attr('checked', false);
+			}
+			else
+			{
+				$(this).val('');
+			}
 		}
 	});
 		

@@ -103,7 +103,7 @@
 		</div><!-- .row-group -->
 	
 		<div class="buttons">						        		
-			<button class="clear" type="button" id="cancelMyACnt">Clear</button>
+<#--			<button class="clear" type="button" id="cancelMyACnt">Clear</button> -->
 			<button class="blue" id="saveChanges" type="button">Submit</button>						        
 		</div>
 		

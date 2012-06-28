@@ -86,7 +86,6 @@
 		
 							<div class="row-group">
 							
-
 								<div class="row">
 									<span class="plain-label">Comments<em>*</em></span>
 									<span class="hint" data-desc="<@spring.message 'validateApp.comment'/>"></span>
@@ -97,9 +96,11 @@
 									</div>
 									</div>
 								</div>
+
+							</div>
 								
+							<div class="row-group">
    							<#include "comment/documents_snippet.ftl"/>
-									
 							</div><!-- close .row-group -->
 
 							<#if applicationForm.isInState('VALIDATION')>

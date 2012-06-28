@@ -13,6 +13,10 @@
 		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
+		
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->

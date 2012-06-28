@@ -423,7 +423,15 @@ function clearForm($form)
 	var $fields = $form.find('input[type!="hidden"], select, textarea');
 	$fields.each(function()
 	{
-		$(this).val('');
+		var $field = $(this);
+		if ($field.is(':checkbox, :radio'))
+		{
+			$field.attr('checked', false);
+		}
+		else
+		{
+			$(this).val('');
+		}
 		
 		// Remove any uploaded files in field rows.
 		$('div.uploaded-files', $form).html('');

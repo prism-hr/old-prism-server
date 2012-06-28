@@ -5,19 +5,27 @@ $(document).ready(function(){
 	
 	//Adjust CSS to display multiple values in one line, delimited by comma ','
 	// in admin view.
-	
-	$(".half,.multiples").each(function(){
-		
-		$(this).css('display','inline');
-		
+	$(".half,.multiples").each(function()
+	{
+		$(this).css({ display: 'inline' });
 	});
 	
 	$("#acceptTermsPEDValue").val("NO");
-	$('#personalDetailsCloseButton').click(function(){		
+
+
+	// -------------------------------------------------------------------------------
+	// Close button.
+	// -------------------------------------------------------------------------------
+	$('#personalDetailsCloseButton').click(function()
+	{
 		$('#personalDetails-H2').trigger('click');
 		return false;
 	});
-	
+
+
+	// -------------------------------------------------------------------------------
+	// Clear button.
+	// -------------------------------------------------------------------------------
 	$('#personalDetailsCancelButton').click(function()
 	{
 		$.ajax({
@@ -41,8 +49,9 @@ $(document).ready(function(){
 
 	
 	
-	
-	//candidate nationalities
+	// -------------------------------------------------------------------------------
+	// Add a nationality (candidate).
+	// -------------------------------------------------------------------------------
 	$('#addCandidateNationalityButton').on("click", function()
 	{
 		var selected = $('#candidateNationalityCountry option:selected').val();
@@ -76,14 +85,10 @@ $(document).ready(function(){
 		
 	});
 	
-	//candidate nationalities - remove
-	$('.nationality-item a.button-delete').live('click', function(){
-		
-		$(this).parent().remove();
-		return false;
-	});
-	
-	//maternal guardian nationalities
+
+	// -------------------------------------------------------------------------------
+	// Add a nationality (mother).
+	// -------------------------------------------------------------------------------
 	$('#addMaternalNationalityButton').on("click", function()
 	{
 		var selected = $('#maternalNationalityCountry option:selected').val();
@@ -114,7 +119,10 @@ $(document).ready(function(){
 		}
 	});
 	
-	//paternal guardian nationalities
+
+	// -------------------------------------------------------------------------------
+	// Add a nationality (father).
+	// -------------------------------------------------------------------------------
 	$('#addPaternalNationalityButton').on("click", function()
 	{
 		var selected = $('#paternalNationalityCountry option:selected').val();
@@ -147,6 +155,19 @@ $(document).ready(function(){
 	});
 	
 	
+	// -------------------------------------------------------------------------------
+	// Remove a nationality (all sections).
+	// -------------------------------------------------------------------------------
+	$('.nationality-item a.button-delete').live('click', function(){
+		
+		$(this).parent().remove();
+		return false;
+	});
+	
+
+	// -------------------------------------------------------------------------------
+	// "Accept terms" checkbox.
+	// -------------------------------------------------------------------------------
 	$("input[name*='acceptTermsPEDCB']").click(function() {
 		if ($("#acceptTermsPEDValue").val() =='YES'){
 			$("#acceptTermsPEDValue").val("NO");
@@ -179,6 +200,10 @@ $(document).ready(function(){
 		}
 		});
 	
+
+	// -------------------------------------------------------------------------------
+	// Save button.
+	// -------------------------------------------------------------------------------
 	$('#personalDetailsSaveButton').on("click", function()
 	{	
 		if ($("#acceptTermsPEDValue").val() == 'NO')

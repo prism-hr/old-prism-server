@@ -4,27 +4,18 @@ $(document).ready(function(){
 	
 	$("#acceptTermsQDValue").val("NO");
 	
-	/*if($("#qualificationInstitution").val() == ""){
-		$("#currentQualificationCB").attr('checked', false);
-		$("#currentQualification").val("NO");
-	}
-	
-	if($("#currentQualificationCB").is(":checked")){
-		$("#currentQualification").val("YES");
-	}
-	else{	
-		$("#currentQualification").val("NO");
-		$("#qualificationAwardDate").val("");
-		$("#qualificationAwardDate").attr("disabled", "disabled");
-		$("#proofOfAward").val("");
-		$("#proofOfAward").attr("disabled", "disabled");
-	}*/
-	
+	// -------------------------------------------------------------------------------
+	// Close button.
+	// -------------------------------------------------------------------------------
 	$('#qualificationsCloseButton').click(function(){
 		$('#qualifications-H2').trigger('click');
 		return false;
 	});
 	
+
+	// -------------------------------------------------------------------------------
+	// Checkbox to mark the qualification as current.
+	// -------------------------------------------------------------------------------
 	$("input[name*='currentQualificationCB']").click(function()
 	{
 		if ($("#currentQualification").val() =='YES')
@@ -67,8 +58,13 @@ $(document).ready(function(){
 		
 	
 	});
+
 	
-	$('a[name="deleteQualificationButton"]').click( function(){
+	// -------------------------------------------------------------------------------
+	// Delete a qualification.
+	// -------------------------------------------------------------------------------
+	$('a[name="deleteQualificationButton"]').click(function()
+	{
 
 			var id = $(this).attr("id").replace("qualification_", "");
 			$.ajax({
@@ -82,7 +78,6 @@ $(document).ready(function(){
 				data:	{
 						id: id	
 					}, 
-					
 				success:	function(data) {
 						$('#qualificationsSection').html(data);
 					}	
@@ -90,18 +85,20 @@ $(document).ready(function(){
 			});
 	});
 	
-	$("input[name*='acceptTermsQDCB']").click(function() {
-		if ($("#acceptTermsQDValue").val() =='YES'){
+
+	// -------------------------------------------------------------------------------
+	// "Accept terms" checkbox.
+	// -------------------------------------------------------------------------------
+	$("input[name*='acceptTermsQDCB']").click(function()
+	{
+		if ($("#acceptTermsQDValue").val() =='YES')
+		{
 			$("#acceptTermsQDValue").val("NO");
-		} else {	
+		}
+		else
+		{	
 			$("#acceptTermsQDValue").val("YES");
-			
-			/*
-			$(".terms-box").attr('style','');
-			$("#qual-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#qual-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#qual-info-bar-div .row span.error-hint").remove();
-			*/
+
 			qualImgCount = 0;
 			
 			$.ajax({
@@ -119,12 +116,16 @@ $(document).ready(function(){
 				success: function(data) {}
 			});
 		}
-		});
+	});
 	
-	$('#addQualificationButton').click(function(){
-		
-		if($('#acceptTermsQDValue').length != 0 &&  $("#acceptTermsQDValue").val() =='NO'){
-			
+
+	// -------------------------------------------------------------------------------
+	// Add a qualification.
+	// -------------------------------------------------------------------------------
+	$('#addQualificationButton').click(function()
+	{
+		if ($('#acceptTermsQDValue').length != 0 &&  $("#acceptTermsQDValue").val() =='NO')
+		{
 			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
 			var $infobar = $('#qual-info-bar-div.section-info-bar');
@@ -135,22 +136,23 @@ $(document).ready(function(){
 				qualImgCount = qualImgCount + 1;
 			}
 			addToolTips();
-			
 		}
-		else{
+		else
+		{
 			$("span[name='nonAcceptedQD']").html('');
 			postQualificationData('add');
 		}
 	});
 	
+
+	// -------------------------------------------------------------------------------
+	// Save qualification.
+	// -------------------------------------------------------------------------------
 	$('#qualificationsSaveButton').click(function()
 	{
 		if ($("#acceptTermsQDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
-//			var $form = $('#qualificationsSection form');
-//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
-			
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
 			var $infobar = $('#qual-info-bar-div.section-info-bar');
@@ -161,9 +163,9 @@ $(document).ready(function(){
 				qualImgCount = qualImgCount + 1;
 			}
 			addToolTips();
-			
 		}
-		else{
+		else
+		{
 			$("span[name='nonAcceptedQD']").html('');
 			
 			// Check for a "dirty" qualification form. If there is data try to submit it.
@@ -178,7 +180,12 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('a[name="editQualificationLink"]').click(function(){
+
+	// -------------------------------------------------------------------------------
+	// Edit a qualification.
+	// -------------------------------------------------------------------------------
+	$('a[name="editQualificationLink"]').click(function()
+	{
 		var id = this.id;
 		id = id.replace('qualification_', '');	
 		$.ajax({
@@ -195,11 +202,12 @@ $(document).ready(function(){
 					message: 'edit',					
 					cacheBreaker: new Date().getTime()
 				},
-				success: function(data) {
+				success: function(data)
+				{
 					$('#qualificationsSection').html(data);
 					
-					if($("#currentQualificationCB").is(":checked")){
-						
+					if($("#currentQualificationCB").is(":checked"))
+					{
 						$("#qualificationAwardDate").removeAttr("disabled", "disabled");
 						$("#proofOfAward").removeAttr("disabled", "disabled");
 						$("#quali-grad-id em").remove();
@@ -207,10 +215,9 @@ $(document).ready(function(){
 						$("#quali-award-date-lb em").remove();
 						$("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
 						$("#quali-proof-of-award-lb").removeClass("grey-label");
-						
 					}
-					else{	
-						
+					else
+					{	
 						$("#qualificationAwardDate").attr("disabled", "disabled");
 						$("#proofOfAward").attr("disabled", "disabled");
 						$("#quali-grad-id em").remove();
@@ -218,14 +225,17 @@ $(document).ready(function(){
 						$("#quali-award-date-lb em").remove();
 						$("#quali-award-date-lb").text("Award Date").addClass("grey-label");
 						$("#quali-proof-of-award-lb").text("Proof of award (PDF)").addClass("grey-label");
-						
 					}
-					
 				}
 		});
 	});
 	
-	$('a[name="qualificationCancelButton"]').click(function(){
+
+	// -------------------------------------------------------------------------------
+	// Clear button.
+	// -------------------------------------------------------------------------------
+	$('a[name="qualificationCancelButton"]').click(function()
+	{
 		$.ajax({
 			 type: 'GET',
 			 statusCode: {
@@ -244,6 +254,7 @@ $(document).ready(function(){
 				}
 		});
 	});
+
 	
 	bindDatePicker('#qualificationStartDate');
 	bindDatePicker('#qualificationAwardDate');
@@ -251,15 +262,6 @@ $(document).ready(function(){
 	
   // Generic file upload solution...
 	watchUpload($('#proofOfAward'));	
-	
-	/* Show the upload field if edit button is clicked. */
-	$(document).on('click','a.button-edit', function()
-  {
-		$(this).closest('.uploaded').removeClass('uploaded');
-		$(this).hide();
-	});
-	
-	
 });
 
 function postQualificationData(message)

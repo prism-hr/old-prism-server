@@ -40,6 +40,7 @@ $(document).ready(function()
 				{
 					$('#section-slc div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";
+					addToolTips();
 				}
 			});
 		}
@@ -91,6 +92,7 @@ $(document).ready(function()
 				{
 					$('#section-reminder div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";
+					addToolTips();
 				}
 			});
 		}
@@ -121,6 +123,7 @@ $(document).ready(function()
 				{
 					$('#section-registry div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";
+					addToolTips();
 				}
 			});
 		}

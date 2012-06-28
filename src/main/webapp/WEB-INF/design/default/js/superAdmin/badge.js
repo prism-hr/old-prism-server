@@ -41,6 +41,7 @@ function updateBadge()
 		success:function(data)
 		{
 			$('#html').val(data);
+			addToolTips();
 		}
 	});	
 	/*

@@ -42,6 +42,7 @@ $(document).ready(function() {
 			data:$.param(postData),
 			success:function(data) {
 				$('#assignReviewersToAppSection').html(data);
+				addToolTips();
 			}
 		});
 		return false;
@@ -70,6 +71,7 @@ $(document).ready(function() {
 			  data:$.param(postData),
 			  success: function(data) {
 				   window.location.href = "/pgadmissions/applications";
+				   addToolTips();
 				}
 		});
 	});

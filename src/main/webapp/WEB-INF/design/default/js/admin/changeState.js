@@ -58,11 +58,15 @@ $(document).ready(function()
 	{
 		if ($('#status').val() == 'INTERVIEW')
 		{
+			// enable the delegation dropdown box.
 			$('#applicationAdministrator').removeAttr('disabled');
+			$('#delegateLabel').removeClass('grey-label');
 		}
 		else
 		{
-			$('#applicationAdministrator')
+			// disable the delegation dropdown box.
+			$('#applicationAdministrator').attr('disabled', 'disabled');
+			$('#delegateLabel').addClass('grey-label');
 		}
 	});
 

@@ -357,4 +357,12 @@ public class ApplicationFormDAO {
 								.property("notificationRecord.id")))).list();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueRegistryNotification() {
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("registryUsersNotified", true)).list();
+	}
+
 }

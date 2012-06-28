@@ -1,4 +1,8 @@
-$(document).ready(function() {
+$(document).ready(function()
+{
+
+	// Modal window functionality.
+	setupModalBox();
 	
 	populateApplicationList(true);
 
@@ -76,8 +80,11 @@ $(document).ready(function() {
 				window.location.href = "/pgadmissions/viewprogress?applicationId=" + id;
 				break;
 			case 'withdraw':
-				if (confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))
+				
+				var message  = 'Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application.';
+				var onOk     = function()
 				{
+					$('div.content-box-inner div.ajax').remove();
 					$.ajax({
 						type: 'POST',
 						 statusCode: {
@@ -85,19 +92,23 @@ $(document).ready(function() {
 								  window.location.reload();
 							  }
 						  },
-						url:"/pgadmissions/withdraw",
-						data:{
+						url: "/pgadmissions/withdraw",
+						data: {
 							applicationId: id
 						}, 
-						success:function(data) {
+						success: function(data)
+						{
 							window.location.href = "/pgadmissions/applications";
 						}
 					});
-				}
-				else
+				};
+				var onCancel = function()
 				{
 					$('div.content-box-inner div.ajax').remove();
-				}
+				};
+				
+				modalPrompt(message, onOK, onCancel);
+				break;
 		}
 	});
 	

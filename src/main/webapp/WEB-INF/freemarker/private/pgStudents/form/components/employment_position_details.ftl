@@ -287,7 +287,7 @@
 	           	<!-- Add another button -->
 	            <div class="row">
 	            	<div class="field">
-	                	<a id="addPosisionButton" class="button blue">Add</a>
+	                	<button type="button" id="addPosisionButton" class="blue">Add</button>
 	                </div>
 	            </div>
            		</#if>

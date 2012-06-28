@@ -180,4 +180,9 @@ public class ApplicationsService {
 		}
 		return applications.subList(0, toIndex);
 	}
+
+	@Transactional
+	public List<ApplicationForm> getApplicationsDueRegistryNotification() {
+		return applicationFormDAO.getApplicationsDueRegistryNotification();
+	}
 }

@@ -205,7 +205,7 @@
 		
 										<div class="row">
 											<div class="field">
-												<button class="blue" type="button" id="createInterviewer">Create interviewer</button>
+												<button class="blue" type="button" id="createInterviewer">Add</button>
 											</div>
 										</div>
 									</div>

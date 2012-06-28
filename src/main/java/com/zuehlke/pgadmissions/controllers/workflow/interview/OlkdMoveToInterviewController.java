@@ -24,15 +24,16 @@ import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
+@Deprecated
 @RequestMapping("/interview")
-public class MoveToInterviewController extends InterviewController {
+public class OlkdMoveToInterviewController extends OldInterviewController {
 
-	MoveToInterviewController() {
+	OlkdMoveToInterviewController() {
 		this(null, null, null, null, null, null, null,  null, null);
 	}
 
 	@Autowired
-	public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
+	public OlkdMoveToInterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
 			 MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
 			DatePropertyEditor datePropertyEditor, InterviewerPropertyEditor interviewerPropertyEditor, EncryptionHelper encryptionHelper) {
 		super(applicationsService, userService, validator, messageSource, interviewService,// 

@@ -10,6 +10,7 @@
 	<import resource="Approver-Emails.xml" /> 
 	<import resource="Supervisor-Emails.xml" />
 	<import resource="Bean-Definitions.xml" />
+	<import resource="Person-Emails.xml" />
 
 	
 	<!-- new user notifications -->
@@ -55,6 +56,7 @@
 				<ref bean="adminApprovedNotificationSchedule"/> 
 				<ref bean="approverApprovalReminderSchedule"/> 
 				<ref bean="moveToApprovedNotificationSchedule"/> 
+				<ref bean="registryNotificationSchedule"/> 
 			</list>
 		</property>
 	</bean>

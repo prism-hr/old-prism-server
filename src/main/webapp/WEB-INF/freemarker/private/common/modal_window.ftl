@@ -1,4 +1,3 @@
-		
 
 			<div id="dialog-overlay"></div>
 		
@@ -10,6 +9,7 @@
 					<div id="dialog-row">
 						<div id="dialog-actions">
 							<a href="#" class="default-button red-button" id="popup-ok-button">OK</a>
+							&nbsp;
 							<a href="#" class="default-button" id="popup-cancel-button">Cancel</a>
 						</div>
 					</div>

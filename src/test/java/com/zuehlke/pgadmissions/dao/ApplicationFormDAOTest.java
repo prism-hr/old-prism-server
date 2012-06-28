@@ -1536,7 +1536,38 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalNotifications();
 		assertTrue(applicationsDueApprovalNotification.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnApplicationFormDueRegistryNotification() {
+		Date now = Calendar.getInstance().getTime();
+		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().registryUsersNotified(true).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
+		save(applicationForm);
+
+		flushAndClearSession();
+
+		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueRegistryNotification();
+		assertTrue(applicationsDueApplicantReviewNotification.contains(applicationForm));
+
+	}
+	
+	
+	@Test
+	public void shouldNotReturnApplicationFormNotDueRegistryNotification() {
+		Date now = Calendar.getInstance().getTime();
+		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().registryUsersNotified(false).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueRegistryNotification();
+		assertFalse(applicationsDueApplicantReviewNotification.contains(applicationForm));
 		
 	}
+	
 	
 }

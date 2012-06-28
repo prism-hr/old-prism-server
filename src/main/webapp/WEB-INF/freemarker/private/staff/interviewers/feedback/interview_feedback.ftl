@@ -113,7 +113,7 @@
 										</div>
 									</div>
 									
-									<div class="row">
+									<div class="row multi-line">
 										<span id="suitable-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
 										<span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPGP'/>"></span>
 										<div class="field">
@@ -128,7 +128,7 @@
 										</div>
 									</div>
 									
-									<div class="row">
+									<div class="row multi-line">
 										<span id="supervise-lbl" class="plain-label">Would you like to admit the applicant as their supervisor/programme director?<em>*</em></span>
 										<span class="hint" data-desc="<@spring.message 'interviewOutcome.admit'/>"></span>
 										<div class="field">

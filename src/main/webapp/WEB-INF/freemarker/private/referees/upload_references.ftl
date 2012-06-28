@@ -85,7 +85,7 @@
 															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 														</div>
 												</div>
-											<div class="row">
+											<div class="row row multi-line">
 												<span id="supervise-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
 												<span class="hint" data-desc=""></span>
 												<div class="field">

@@ -123,6 +123,10 @@ section.form-rows label.label { font-weight: bold; }
 	font-weight: normal; 
 }
 
+.multi-line{
+	padding-top: 8px;
+}
+
 .group-heading-label { 
 	float: left;
 	line-height: 1.2;

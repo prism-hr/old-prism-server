@@ -2,7 +2,7 @@
 	<label class="plain-label" for="file">Attach Document</label>
 	<span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
 	<div class="field uploaded" id="uploadFields">
-		<span id="commentUploadedDocument">
+		<span id="commentUploadedDocument" class="uploaded-files">
 			<#if comment??>
 				<#list comment.documents as document>
 				<span class="uploaded-file" name="supportingDocumentSpan">

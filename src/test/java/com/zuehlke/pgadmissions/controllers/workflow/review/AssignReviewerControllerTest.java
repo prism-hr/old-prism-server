@@ -9,8 +9,8 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 
-import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -20,42 +20,49 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.AssignReviewersReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
+import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 public class AssignReviewerControllerTest {
 
 	
 	private AssignReviewerController controller;
 	private ApplicationsService applicationServiceMock;
-	private UserService userServiceMock;
-	
-	private NewUserByAdminValidator userValidatorMock;
+	private UserService userServiceMock;	
+
 	private ReviewService reviewServiceMock;
-	
-	private MessageSource messageSourceMock;
+
 	private BindingResult bindingResultMock;
 	
-	protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
+	private static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
+	private static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
 	private RegisteredUser currentUserMock;
-	private ReviewerPropertyEditor reviewerPropertyEditorMock;
+	private AssignReviewersReviewerPropertyEditor reviewerPropertyEditorMock;
+	private ReviewRoundValidator reviewRoundValidatorMock;
 	
 	
 
 	@Test
-	public void shouldGetReviewRoundPageWithOnlyAssignTrueAssignReviewersFunctionality() {
+	public void shouldGetReviewRoundPageWithOnlyAssignTrue() {
 		ModelMap modelMap = new ModelMap();
 		String reviewRoundDetailsPage = controller.getAssignReviewersPage(modelMap);
 		Assert.assertEquals(REVIEW_DETAILS_VIEW_NAME, reviewRoundDetailsPage);
 		Assert.assertTrue((Boolean) modelMap.get("assignOnly"));
 		
 	}
-	
+	@Test
+	public void shouldGetReviewesSectionWithOnlyAssignTrue() {
+		ModelMap modelMap = new ModelMap();
+		String reviewersDetailsSection = controller.getReviewersSectionView(modelMap);
+		Assert.assertEquals(REVIEWERS_SECTION_NAME, reviewersDetailsSection);
+		Assert.assertTrue((Boolean) modelMap.get("assignOnly"));
+
+	}
 	
 	@Test
 	public void shouldReturnLatestReviewRoundIfApplicationForm(){
@@ -77,7 +84,7 @@ public class AssignReviewerControllerTest {
 		reviewServiceMock.save(reviewRound);
 		EasyMock.replay(reviewServiceMock);
 		String view = controller.assignReviewers(reviewRound, bindingResultMock);
-		assertEquals("redirect:/applications?messageCode=reviewers.assigned&application=abc", view);
+		assertEquals("/private/common/ajax_OK", view);
 		EasyMock.verify(reviewServiceMock);
 		
 	}
@@ -93,7 +100,7 @@ public class AssignReviewerControllerTest {
 		reviewServiceMock.save(reviewRound);
 		EasyMock.replay(reviewServiceMock);
 		String view = controller.assignReviewers(reviewRound, bindingResultMock);
-		assertEquals("redirect:/applications?messageCode=reviewers.assigned&application=abc", view);
+		assertEquals("/private/common/ajax_OK", view);
 		EasyMock.verify(reviewServiceMock);
 		Assert.assertEquals(CheckedStatus.YES, reviewer1.getRequiresAdminNotification());
 		Assert.assertEquals(CheckedStatus.YES, reviewer2.getRequiresAdminNotification());
@@ -107,10 +114,20 @@ public class AssignReviewerControllerTest {
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).toReviewRound();	
 		EasyMock.replay(reviewServiceMock);
 		String view = controller.assignReviewers(reviewRound, bindingResultMock);
-		assertEquals(REVIEW_DETAILS_VIEW_NAME, view);
+		assertEquals(REVIEWERS_SECTION_NAME, view);
 		EasyMock.verify(reviewServiceMock);
 		
 	}
+	@Test
+	public void shouldAddReviewRoundValidator() {
+		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+		binderMock.setValidator(reviewRoundValidatorMock);		
+		binderMock.registerCustomEditor(Reviewer.class, reviewerPropertyEditorMock);
+		EasyMock.replay(binderMock);
+		controller.registerReviewRoundValidator(binderMock);
+		EasyMock.verify(binderMock);
+	}
+	
 	
 	@Before
 	public void setUp() {
@@ -119,17 +136,17 @@ public class AssignReviewerControllerTest {
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		EasyMock.replay(userServiceMock);
-		userValidatorMock = EasyMock.createMock(NewUserByAdminValidator.class);
-		reviewServiceMock = EasyMock.createMock(ReviewService.class);
+
+		reviewServiceMock = EasyMock.createMock(ReviewService.class);	
+
 		
-		messageSourceMock = EasyMock.createMock(MessageSource.class);
-		
-		reviewerPropertyEditorMock = EasyMock.createMock(ReviewerPropertyEditor.class);
+		reviewerPropertyEditorMock = EasyMock.createMock(AssignReviewersReviewerPropertyEditor.class);
+		reviewRoundValidatorMock = EasyMock.createMock(ReviewRoundValidator.class);
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 		
-		controller = new AssignReviewerController(applicationServiceMock, userServiceMock, userValidatorMock, null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, null);		
+		controller = new AssignReviewerController(applicationServiceMock, userServiceMock, reviewServiceMock, reviewRoundValidatorMock, reviewerPropertyEditorMock);		
 	}
 			
 }

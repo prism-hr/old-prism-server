@@ -14,18 +14,18 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
-public class ReviewerPropertyEditor extends PropertyEditorSupport {
+public class AssignReviewersReviewerPropertyEditor extends PropertyEditorSupport {
 
 	private final UserService userService;
 	private final ApplicationsService applicationsService;
 	private final EncryptionHelper encryptionHelper;
 
-	ReviewerPropertyEditor() {
+	AssignReviewersReviewerPropertyEditor() {
 		this(null, null, null);
 	}
 
 	@Autowired
-	public ReviewerPropertyEditor(UserService userService, ApplicationsService applicationsService, EncryptionHelper encryptionHelper) {
+	public AssignReviewersReviewerPropertyEditor(UserService userService, ApplicationsService applicationsService, EncryptionHelper encryptionHelper) {
 		this.userService = userService;
 		this.applicationsService = applicationsService;
 		this.encryptionHelper = encryptionHelper;

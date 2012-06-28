@@ -18,7 +18,7 @@
 			<#if user?? && (user.isInRole('SUPERADMINISTRATOR'))>
 			<li  <#if activeTab=="config">class="current"</#if>><a href="<@spring.url '/configuration'/>">Configuration</a></li>
 			</#if>
-			<li <#if activeTab=="help">class="current"</#if>><a href="#">Help</a></li>    
+			<li <#if activeTab=="help">class="current"</#if>><a href="<@spring.url '/comingsoon'/>">Help</a></li>    
 		</ul>
 			        
 		<div class="user">

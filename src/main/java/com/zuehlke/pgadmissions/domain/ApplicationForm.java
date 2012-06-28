@@ -112,6 +112,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@ManyToOne
 	@JoinColumn(name = "approver_user_id")
 	private RegisteredUser approver = null;
+	
+	@ManyToOne
+	@JoinColumn(name = "admin_requested_registry_id")
+	private RegisteredUser adminRequestedRegistry = null;
 
 	@Column(name = "project_title")
 	private String projectTitle;
@@ -643,6 +647,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setRegistryUsersNotified(Boolean registryUsersNotified) {
 		this.registryUsersNotified = registryUsersNotified;
+	}
+
+	public RegisteredUser getAdminRequestedRegistry() {
+		return adminRequestedRegistry;
+	}
+
+	public void setAdminRequestedRegistry(RegisteredUser adminRequestedRegistry) {
+		this.adminRequestedRegistry = adminRequestedRegistry;
 	}
 
 }

@@ -33,6 +33,7 @@ public class RegistryController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView sendHelpRequestToRegistryContacts(@ModelAttribute("applicationForm") ApplicationForm applicationForm) {
+		applicationForm.setAdminRequestedRegistry(getCurrentUser());
 		applicationForm.setRegistryUsersNotified(true);
 		applicationsService.save(applicationForm);
 		ModelAndView modelAndView = new ModelAndView("private/common/simpleMessage");

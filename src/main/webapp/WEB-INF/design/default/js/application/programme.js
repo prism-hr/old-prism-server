@@ -160,7 +160,7 @@ $(document).ready(function()
 				'<td data-desc="Supervisor ' + awareState + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 				'<td>' +
 				'<a class="button-edit" data-desc="Edit" id="us_'+unsavedSupervisors+'" name="editSupervisorLink">edit</a>' +
-				'<a class="button-delete" data-desc="Delete" id="usd_'+unsavedSupervisors+'" name="deleteSupervisor">delete</a> ' +
+				'<a class="button-delete" data-desc="Delete" id="usd_'+unsavedSupervisors+'" name="deleteSupervisor">delete</a>' +
 				'<input type="hidden" name="sId" id="us_'+unsavedSupervisors+'_supervisorId" value="'+unsavedSupervisors+'" />' +
 				'<input type="hidden" name="sFN" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 				'<input type="hidden" name="sLN" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
@@ -243,16 +243,6 @@ $(document).ready(function()
 		
 		if (errors == 0)
 		{
-			//replaceWithLoader($(this));
-			
-			/*
-			$("span[name='superFirstname']").html('');
-			$("span[name='superFirstname']").hide();
-			$("span[name='superLastname']").html('');
-			$("span[name='superLastname']").hide();
-			$("span[name='superEmail']").html('');
-			$("span[name='superEmail']").hide();
-			*/
 			var isAware = $("input[name='awareSupervisor']:checked").val(); 
 			var awareState = (isAware == "YES" ? "aware" : "unaware");
 			
@@ -260,8 +250,8 @@ $(document).ready(function()
 					'<tr class="' + awareState + '" rel="'+ currentRel +'">' +
 					'<td data-desc="' + awareState + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 					'<td>' +
-					'<a class=\"button-edit\" data-desc="Edit" id="us_'+currentRel+'" name=\"editSupervisorLink\">edit</a>' +
-					'<a class=\"button-delete\" data-desc="Delete" id="usd_'+currentRel+'" name=\"deleteSupervisor\">delete</a> ' +
+					'<a class="button-edit" data-desc="Edit" id="us_'+currentRel+'" name="editSupervisorLink">edit</a>' +
+					'<a class="button-delete" data-desc="Delete" id="usd_'+currentRel+'" name="deleteSupervisor">delete</a>' +
 					'<input name="sId" type="hidden" id="us_'+currentRel+'_supervisorId" value="' + $('#supervisorId').val()+'"/>'	+								
 					'<input name="sFN" type="hidden" id="us_'+currentRel+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 					'<input name="sLN" type="hidden" id="us_'+currentRel+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
@@ -276,25 +266,16 @@ $(document).ready(function()
 
 			addToolTips();			
 		
-			/*
-			$("input[name='sFN']").val($('#supervisorFirstname').val());
-			$("input[name='sLN']").val($('#supervisorLastname').val());
-			$("input[name='sEM']").val($('#supervisorEmail').val());
-			$("input[name='sAS']").val($('#awareSupervisor').val());
-			*/
-
-			$('#supervisorId').val('');
-			$('#supervisorFirstname').val('');
-			$('#supervisorLastname').val('');
-			$('#supervisorEmail').val('');
+			$('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
 
 			// restore add button.
 			$('#updateSupervisorButton').hide();
 			$('#addSupervisorButton').show();
 		}
-		 $("input[name='awareSupervisor']").each(function(){				 
-			 $(this).prop('checked', false);
-		 });
+		$("input[name='awareSupervisor']").each(function()
+		{
+			$(this).prop('checked', false);
+		});
 	});
 
 

@@ -35,11 +35,11 @@
                     	<span class="hint" data-desc="<@spring.message 'addressDetails.currentAddress.address'/>"></span>	
                     	<div class="field">
                     	   <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-                      		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" maxlength='2000'>${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
+                      		<textarea id="currentAddressLocation" class="max" rows="5" cols="80" maxlength='2000'>${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
                       			
                 				  
 				             <#else>
-                      		    <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80">${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
+                      		    <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="5" cols="80">${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
                             </#if>
                     	</div>
                   	</div>
@@ -111,7 +111,7 @@
                     
                         <div class="field">
                            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-                            <textarea id="contactAddressLocation" class="max" rows="6" cols="80" maxlength='2000'
+                            <textarea id="contactAddressLocation" class="max" rows="5" cols="80" maxlength='2000'
                             <#if addressSectionDTO.sameAddress>
                                           disabled="disabled"
                                 </#if>
@@ -119,7 +119,7 @@
                             	        	 
                           
                             <#else>
-                                <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80"
+                                <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="5" cols="80"
                                 <#if addressSectionDTO.sameAddress>
                                           disabled="disabled"
                                 </#if>

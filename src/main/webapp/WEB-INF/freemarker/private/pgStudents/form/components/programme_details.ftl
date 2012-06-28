@@ -130,8 +130,8 @@
               </td>
               <td>
                 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>                    
-                <a class="button-edit" data-desc="Edit" id="supervisor_<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>" name="editSupervisorLink">edit</a>
-                <a class="button-delete" data-desc="Delete" name="deleteSupervisor" id="supervisorDelete_<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>">delete</a>
+                <a class="button-edit" data-desc="Edit" id="supervisor_<#if supervisor.id??>${encrypter.encrypt(supervisor.id)!}</#if>" name="editSupervisorLink">edit</a>
+                <a class="button-delete" data-desc="Delete" id="supervisorDelete_<#if supervisor.id??>${encrypter.encrypt(supervisor.id)!}</#if>" name="deleteSupervisor">delete</a>
                 </#if>
                 <input type="hidden" id="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>_supervisorId" name="sId" value="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>" />
                 <input type="hidden" id="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>_firstname" name="sFN" value="${(supervisor.firstname?html)!}"/>

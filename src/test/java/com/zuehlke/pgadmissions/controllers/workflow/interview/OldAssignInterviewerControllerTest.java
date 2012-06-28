@@ -26,10 +26,10 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-public class AssignInterviewerControllerTest {
+public class OldAssignInterviewerControllerTest {
 
 	
-	private AssignInterviewerController controller;
+	private OldAssignInterviewerController controller;
 	private ApplicationsService applicationServiceMock;
 	private UserService userServiceMock;
 	
@@ -116,7 +116,7 @@ public class AssignInterviewerControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 		
-		controller = new AssignInterviewerController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null);
+		controller = new OldAssignInterviewerController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, null);
 		
 		
 	}

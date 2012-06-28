@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -17,11 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.InterviewDAO;
-import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
@@ -34,18 +30,19 @@ import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
+@Deprecated
 @RequestMapping("/interview")
-public class CreateNewInterviewerController extends InterviewController {
+public class OldCreateNewInterviewerController extends OldInterviewController {
 
 	private static final String REDIRECT_INTERVIEW_ASSIGN_INTERVIEWERS = "redirect:/interview/assignInterviewers";
 	private static final String REDIRECT_INTERVIEW_MOVE_TO_INTERVIEW = "redirect:/interview/moveToInterview";
 
-	CreateNewInterviewerController() {
+	OldCreateNewInterviewerController() {
 		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public CreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,//
+	public OldCreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,//
 			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator, DatePropertyEditor datePropertyEditor,//
 			EncryptionHelper encryptionHelper) {
 		super(applicationsService, userService, validator, messageSource, interviewService, interviewValidator, datePropertyEditor, null, encryptionHelper);

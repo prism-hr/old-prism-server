@@ -39,8 +39,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-public class InterviewControllerTest {
-	private InterviewController controller;
+public class OldInterviewControllerTest {
+	private OldInterviewController controller;
 	private ApplicationsService applicationServiceMock;
 	private UserService userServiceMock;
 
@@ -70,7 +70,7 @@ public class InterviewControllerTest {
 	public void shouldReturnExistingInterviewersBelongingToApplication() {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
-		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
+		controller = new OldInterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
 				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -112,7 +112,7 @@ public class InterviewControllerTest {
 		Interview interview = new InterviewBuilder().id(1).interviewers(new InterviewerBuilder().user(interUser4).toInterviewer()).toInterview();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview).latestInterview(interview).acceptedTerms(CheckedStatus.NO)
 				.id(5).program(program).toApplicationForm();
-		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
+		controller = new OldInterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
 				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -231,7 +231,7 @@ public class InterviewControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder()
 				.latestInterview(new InterviewBuilder().interviewers(new InterviewerBuilder().user(newUser2).toInterviewer()).toInterview()).id(5).applicationNumber(applicationNumber)
 				.toApplicationForm();
-		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
+		controller = new OldInterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
 				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -265,7 +265,7 @@ public class InterviewControllerTest {
 		final Program program = new ProgramBuilder().interviewers(defaultInterviewer).id(6).toProgram();
 		Interview interview = new InterviewBuilder().id(1).interviewers(new InterviewerBuilder().user(assignedInterviewer).toInterviewer()).toInterview();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).id(5).program(program).toApplicationForm();
-		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
+		controller = new OldInterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
 				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -310,7 +310,7 @@ public class InterviewControllerTest {
 		
 		final ApplicationForm applicationForm = EasyMock.createMock(ApplicationForm.class);
 		
-		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
+		controller = new OldInterviewController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock,
 				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -367,7 +367,7 @@ public class InterviewControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 
-		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock,
+		controller = new OldInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock,
 				interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock, encryptionHelper) {
 
 			@Override

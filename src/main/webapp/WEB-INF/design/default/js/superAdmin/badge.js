@@ -38,6 +38,7 @@ function updateBadge(){
 		success:function(data)
 		{
 			$('#html').html(data);
+			addToolTips();
 		}
 	});	
 	$('#badge').attr("src", "/pgadmissions/badge/html?program=" + $('#programme').val() 

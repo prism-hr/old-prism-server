@@ -24,6 +24,7 @@ $(document).ready(function() {
 				data:$.param(postData),
 				success:function(data) {
 					$('#emailText').html(data);
+					addToolTips();
 				}
 		});
 	});
@@ -56,6 +57,7 @@ $(document).ready(function() {
 				data:$.param(postData),
 				success: function(data) {
 					$('#emailText').html(data);
+					addToolTips();
 				}
 		});
 	});

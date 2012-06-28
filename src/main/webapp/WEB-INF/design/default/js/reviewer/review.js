@@ -55,6 +55,7 @@ $(document).ready(function()
 					$('#postReviewData').html('');
 					$('#reviewsection div.ajax').remove();
 				}
+				addToolTips();
 			}
 		});
 	});
@@ -76,6 +77,7 @@ function getReviewersSection(){
 		{
 			$('#reviewsection div.ajax').remove();
 			$('#assignReviewersToAppSection').html(data);
+			addToolTips();
 		}
 	});
 }

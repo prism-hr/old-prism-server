@@ -14,9 +14,9 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RequestMapping("/delegate")
@@ -26,16 +26,19 @@ public class DelegateToApplicationAdministratorController {
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
+	private final CommentService commentService;
 
 	DelegateToApplicationAdministratorController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public DelegateToApplicationAdministratorController(ApplicationsService applicationsService, UserService userService, UserPropertyEditor userPropertyEditor) {
+	public DelegateToApplicationAdministratorController(ApplicationsService applicationsService, UserService userService, UserPropertyEditor userPropertyEditor
+			, CommentService commentService) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.userPropertyEditor = userPropertyEditor;
+		this.commentService = commentService;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -51,7 +54,7 @@ public class DelegateToApplicationAdministratorController {
 	public RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();
 	}
-
+	
 	@InitBinder(value = "applicationForm")
 	public void registerPropertyEditors(WebDataBinder dataBinder) {
 		dataBinder.registerCustomEditor(RegisteredUser.class, "applicationAdministrator", userPropertyEditor);
@@ -64,8 +67,8 @@ public class DelegateToApplicationAdministratorController {
 		if(reviewReminderNotification != null){
 			applicationForm.getNotificationRecords().remove(reviewReminderNotification);
 		}
+		commentService.createDelegateComment(getCurrentUser(), applicationForm);
 		applicationsService.save(applicationForm);
-
 		return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
 	}
 

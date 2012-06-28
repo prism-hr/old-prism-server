@@ -64,6 +64,19 @@ public class CommentService {
 		save(reviewComment);
 	}
 
+	@Transactional
+	public void createDelegateComment(RegisteredUser user, ApplicationForm application) {
+		Comment comment = getNewGenericComment();
+		comment.setApplication(application);
+		comment.setUser(user);
+		comment.setComment("Delegated Application for processing to " + application.getApplicationAdministrator().getFirstName() +  " " +application.getApplicationAdministrator().getLastName());
+		save(comment);
+	}
+
+	public Comment getNewGenericComment() {
+		return new Comment();
+	}
+	
 	public ReviewComment getNewReviewComment() {
 		return new ReviewComment();
 	}

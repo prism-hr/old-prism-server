@@ -40,12 +40,14 @@ function updateBadge()
 		},
 		success:function(data)
 		{
-			$('#html').html(data);
+			$('#html').val(data);
 		}
 	});	
+	/*
 	$('#badge').attr("src", "/pgadmissions/badge/html?program=" + $('#programme').val() 
 		+ "&project=" +$('#project').val()
 		+ "&programhome=" +$('#programhome').val()
 		+ "&batchdeadline=" +$('#batchdeadline').val()
 		+ "&disable=true");
+	*/
 };

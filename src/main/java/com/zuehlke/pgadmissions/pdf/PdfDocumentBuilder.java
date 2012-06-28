@@ -116,8 +116,12 @@ public class PdfDocumentBuilder {
 		addFundingSection(application, document, writer);
 
 		addSectionSeparators(document);
-
-		addReferencesSection(application, document);
+		
+		if(SecurityContextHolder.getContext().getAuthentication() != null){
+			
+			addReferencesSection(application, document);
+			
+		}
 
 		addSectionSeparators(document);
 
@@ -633,18 +637,17 @@ public class PdfDocumentBuilder {
 
 				table.addCell(newTableCell("Skype", smallBoldFont));
 				table.addCell(newTableCell(referee.getMessenger(), smallFont));
-
+				
 				RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-				if (!currentUser.isInRole(Authority.APPLICANT) && !currentUser.isRefereeOfApplicationForm(application)) {
-					table.addCell(newTableCell("Reference", smallBoldFont));
-					if (referee.getReference() != null) {
-						table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
-						bookmarkMap.put(appendixCounter++, referee.getReference().getDocuments().get(0));
-					} else {
-						table.addCell(newTableCell(null, smallFont));
+					if (!currentUser.isInRole(Authority.APPLICANT) && !currentUser.isRefereeOfApplicationForm(application)) {
+						table.addCell(newTableCell("Reference", smallBoldFont));
+						if (referee.getReference() != null) {
+							table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
+							bookmarkMap.put(appendixCounter++, referee.getReference().getDocuments().get(0));
+						} else {
+							table.addCell(newTableCell(null, smallFont));
+						}
 					}
-				}
-
 				document.add(table);
 				document.add(new Paragraph(" "));
 			}

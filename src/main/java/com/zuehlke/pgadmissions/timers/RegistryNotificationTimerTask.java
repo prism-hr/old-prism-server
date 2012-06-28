@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class RegistryNotificationTimerTask extends TimerTask {
 
-		private final Logger log = Logger.getLogger(AdminInterviewFeedbackNotificationTask.class);
+		private final Logger log = Logger.getLogger(RegistryNotificationTimerTask.class);
 		private final RegistryMailSender registryMailSender;
 		private final SessionFactory sessionFactory;
 		private final ApplicationsService applicationsService;
@@ -51,7 +51,7 @@ public class RegistryNotificationTimerTask extends TimerTask {
 						
 					}
 			}
-			log.info("Interview Comment Task complete");
+			log.info("Registry Notification Task complete");
 		}
 	}
 

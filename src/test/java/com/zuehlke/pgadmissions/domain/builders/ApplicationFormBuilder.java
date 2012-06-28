@@ -66,6 +66,7 @@ public class ApplicationFormBuilder {
 	private ApprovalRound latestApprovalRound;
 	private Rejection rejection;	
 	private RegisteredUser applicationAdministrator;
+	private RegisteredUser adminRequestedRegistry;
 	
 	private String applicationNumber;
 	
@@ -76,6 +77,12 @@ public class ApplicationFormBuilder {
 	
 	public ApplicationFormBuilder registryUsersNotified(Boolean registryUsersNotified) {
 		this.registryUsersNotified = registryUsersNotified;
+		return this;
+	}
+	
+	
+	public ApplicationFormBuilder adminRequestedRegistry(RegisteredUser adminRequestedRegistry) {
+		this.adminRequestedRegistry = adminRequestedRegistry;
 		return this;
 	}
 	
@@ -339,6 +346,7 @@ public class ApplicationFormBuilder {
 		application.setRejectNotificationDate(rejectNotificationDate);
 		
 		application.setRegistryUsersNotified(registryUsersNotified);
+		application.setAdminRequestedRegistry(adminRequestedRegistry);
 		return application;
 	}
 }

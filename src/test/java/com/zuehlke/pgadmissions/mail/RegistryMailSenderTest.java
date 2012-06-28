@@ -95,10 +95,7 @@ public class RegistryMailSenderTest {
 		EasyMock.replay(registryUserDAOMock);
 
 		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").toUser();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentAdminUser);
-		EasyMock.replay(userServiceMock);
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().title("program name").toProgram()).applicationNumber("application number")
+		ApplicationForm applicationForm = new ApplicationFormBuilder().adminRequestedRegistry(currentAdminUser).id(1).program(new ProgramBuilder().title("program name").toProgram()).applicationNumber("application number")
 				.toApplicationForm();
 
 		InternetAddress toAddress1 = new InternetAddress("jones@test.com", "Bob Jones");
@@ -120,7 +117,7 @@ public class RegistryMailSenderTest {
 						EasyMock.eq(attachmentInputSource))).andReturn(preparatorMock);
 		
 		javaMailSenderMock.send(preparatorMock);
-	
+
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock,  pdfDocumentBuilderMock,pdfAttachmentInputSourceFactoryMock , msgSourceMock);
 
 		registryMailSender.sendApplicationToRegistryContacts(applicationForm);

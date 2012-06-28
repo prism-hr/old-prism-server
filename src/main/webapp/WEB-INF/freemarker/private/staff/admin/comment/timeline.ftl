@@ -107,7 +107,7 @@
 			                </div>
 			                <p><em>${(comment.comment?html)!}</em></p>
 							<#if comment.documents?? && comment.documents?size &gt; 0>
-				                <ul>                
+				                <ul class="uploads">                
 				                <#list comment.documents as document>
 				                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
 				                </#list>

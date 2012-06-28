@@ -30,7 +30,8 @@ $(document).ready(function()
 
 function loadUsersForProgram()
 {
-	$('#existingUsers').append('<div class="ajax" />');
+	$('#existingUsers').append('<div class="ajax" />')
+										 .css({ height: 80 });
 	
 	$.ajax({
 		 type: 'GET',
@@ -47,7 +48,8 @@ function loadUsersForProgram()
 			},
 			success: function(data)
 			{
-				$('#existingUsers').html(data);
+				$('#existingUsers').html(data)
+				                   .css({ height: 'auto' });
 				if ($(data).find('div.scroll tr').length == 0)
 				{
 					$('#existingUsers table').hide();

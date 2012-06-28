@@ -424,5 +424,8 @@ function clearForm($form)
 	$fields.each(function()
 	{
 		$(this).val('');
+		
+		// Remove any uploaded files in field rows.
+		$('div.uploaded-files', $form).html('');
 	});
 }

@@ -135,7 +135,7 @@
 								</div>
 								
 								<div class="buttons">
-									<button type="reset" id="clear">Clear</button>
+									<button type="reset" id="clear" class="clear">Clear</button>
 									<button type="submit" class="blue">Submit</button>
 								</div>
 							</div>

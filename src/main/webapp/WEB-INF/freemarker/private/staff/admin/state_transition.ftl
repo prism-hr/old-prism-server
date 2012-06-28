@@ -194,7 +194,7 @@
 							</div><!-- close .row-group -->
 
 							<div class="buttons">						        		
-								<button type="reset" value="cancel">Clear</button>
+								<button class="clear" type="button" value="cancel">Clear</button>
 								<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
 							</div>
 							<#if applicationForm.isInState('VALIDATION')>

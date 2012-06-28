@@ -83,8 +83,8 @@
 												</div>
 												
 												<div class="buttons">						        		
-													<button type="reset" value="cancel">Clear</button>
-													<button class="blue" id="submitRequestRestart" type = "submit" value="Submit">Request Restart Of Approval</button>						        
+													<button class="clear" type="button" value="cancel">Clear</button>
+													<button class="blue" id="submitRequestRestart" type="submit" value="Submit">Request Restart Of Approval</button>						        
 												</div>
 											</form>
 											

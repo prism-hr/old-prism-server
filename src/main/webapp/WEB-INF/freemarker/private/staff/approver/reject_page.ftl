@@ -126,7 +126,7 @@
 									</div>
 
 									<div class="buttons">
-										<button id="" value="cancel">Clear</button>
+										<button class="clear" type="button" value="cancel">Clear</button>
 										<button type="submit" id="rejectButton" class="blue">Reject application</button>
 									</div>
 									

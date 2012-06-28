@@ -104,7 +104,7 @@
 											</div><!-- .row-group -->
 										
 											<div class="buttons">						        		
-												<button type="button" id="cancelDurationBtn" value="cancel">Clear</button>
+												<button type="button" id="cancelDurationBtn" value="cancel" class="clear">Clear</button>
 												<button class="blue" id="submitDurationStages" type="button" value="Submit">Submit</button>						        
 											</div>
 											
@@ -145,7 +145,7 @@
 											</div><!-- .row-group -->
 											
 											<div class="buttons">						        		
-												<button type="button" id="cancelReminderBtn" value="cancel">Clear</button>
+												<button type="button" id="cancelReminderBtn" value="cancel" class="clear">Clear</button>
 												<button class="blue" id="submitRIBtn" type="button" value="Submit">Submit</button>						        
 											</div>
 											
@@ -261,7 +261,7 @@
 											<input type="hidden" name="registryUsers" id= "registryUsers" />
 											
 											<div class="buttons">						        		
-												<button type="button" id="cancelRegistryBtn" value="cancel">Clear</button>
+												<button type="button" id="cancelRegistryBtn" value="cancel" class="clear">Clear</button>
 												<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
 											</div>
 									

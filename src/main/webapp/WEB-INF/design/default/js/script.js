@@ -135,6 +135,23 @@ $(document).ready(function()
     }
   });
   
+
+  // ------------------------------------------------------------------------------
+  // Generic clear button functionality for forms, which empties all form fields.
+  // ------------------------------------------------------------------------------
+	$(document).on('click', 'button.clear', function()
+	{
+		var $form = $(this).closest('form');
+		if ($form.length > 0)
+		{
+			clearForm($form)
+		}
+		else
+		{
+			alert('clear button is not inside a FORM!');
+		}
+	});
+	
 });
 
 

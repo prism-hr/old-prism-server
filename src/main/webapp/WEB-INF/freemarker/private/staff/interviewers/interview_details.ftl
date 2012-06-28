@@ -270,7 +270,7 @@
 								</div>
 								
 								<div class="buttons">
-									<button value="cancel" name="" id="" type="reset">Clear</button>
+									<button value="cancel" type="button" class="clear">Clear</button>
 									<button class="blue" type="button" id="moveToInterviewBtn">Submit</button>
 								</div>								
 								

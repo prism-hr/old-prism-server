@@ -123,11 +123,11 @@
 	
 		<div class="buttons">
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-			<button class="clear" id="informationCancelButton" name="informationCancelButton">Clear</button>
+			<button class="clear" id="informationCancelButton" type="button" name="informationCancelButton">Clear</button>
 			</#if>                
-			<button class="blue" type="button" id="additionalCloseButton">Close</button>
+			<button class="blue" id="additionalCloseButton" type="button">Close</button>
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-			<button class="blue" type="button" id="informationSaveButton">Save</button>
+			<button class="blue" id="informationSaveButton" type="button">Save</button>
 			</#if>   
 		</div>
 	

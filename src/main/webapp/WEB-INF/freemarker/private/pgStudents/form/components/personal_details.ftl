@@ -506,8 +506,8 @@
 			<div class="buttons">
 				<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 				<button type="button" class="clear" name="personalDetailsCancelButton" id="personalDetailsCancelButton" value="cancel">Clear</button>
-				<button type="button" id="personalDetailsCloseButton" class="blue">Close</a>
-				<button class="blue" type="button" id="personalDetailsSaveButton" value="close">Save</button>
+				<button type="button" class="blue" id="personalDetailsCloseButton">Close</button>
+				<button type="button" class="blue" id="personalDetailsSaveButton" value="close">Save</button>
 				<#else>
 				<a id="personalDetailsCloseButton"class="button blue">Close</a>			
 				</#if>

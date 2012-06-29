@@ -39,25 +39,20 @@
         <td>${(existingReferee.firstname?html)!} ${(existingReferee.lastname?html)!} 
         (${(existingReferee.email?html)!})</td>
         <#assign encExistingRefereeId = encrypter.encrypt(existingReferee.id) />
-        <#if !existingReferee.editable>
-          <td><a name="editRefereeLink" data-desc="Show" id="referee_${encExistingRefereeId}" class="button-edit button-hint">show</a></td>
-          <#if existingReferee.declined || existingReferee.hasProvidedReference()>
-            <td>Responded</td>
+				<td>
+					<#if existingReferee.editable>
+						<a name="editRefereeLink" data-desc="Edit" id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a>
           <#else>
-            <td>&nbsp;</td>
+						<a name="editRefereeLink" data-desc="Show" id="referee_${encExistingRefereeId}" class="button-edit button-hint">show</a>
           </#if>
-        <#else>
-        <td>
-          <a name="editRefereeLink" data-desc="Edit" id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a>
-        </td>  
-        <td>
+				</td>
+				<td>
           <#if existingReferee.declined || existingReferee.hasProvidedReference()>
-            Responded
+						<span class="button-responded" data-desc="Responded">Responded</span>
           <#else>
             <a name="deleteRefereeButton" data-desc="Delete" id="referee_${encExistingRefereeId}" class="button-delete button-hint">delete</a>
           </#if>
-        </td>                     
-        </#if> 
+				</td>
       </tr>    
       </#list>
     </tbody>

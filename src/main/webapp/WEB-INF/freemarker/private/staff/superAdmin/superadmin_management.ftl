@@ -39,7 +39,7 @@
 							<div>
 							
 								<div class="section-info-bar">
-									Manage superadministrators. You can also <a href="<@spring.url '/manageUsers/edit'/>">manage programme roles.</a>
+									Manage superadministrators. You can also <a class="proceed-link" href="<@spring.url '/manageUsers/edit'/>">manage programme roles.</a>
 								</div>
 
 								<div id="existingUsers">

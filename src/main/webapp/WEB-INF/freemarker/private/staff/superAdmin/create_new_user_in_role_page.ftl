@@ -57,7 +57,7 @@
 							<div>
 							
 								<div class="section-info-bar">
-									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
+									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
 								</div>
 
 								<div class="row-group">

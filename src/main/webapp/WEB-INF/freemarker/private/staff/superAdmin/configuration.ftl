@@ -67,19 +67,15 @@
 											</div>
 										
 											<div class="row-group" id="section-stages">
+												<h3>Service Level Commitments</h3>
+												
 												<select id="stages" style="display: none;">
 													<#list stages as stage>
 													<option value="${stage}"></option>
 													</#list>
 												</select>
 							
-												<div class="row">
-													<span id="reminder-lbl" class="plain-label"><strong>Service Level Commitments</h3></span>
-													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
-												</div><!-- .row -->
-							
 												<#list stages as stage>
-												
 												<div class="row"> 
 													<span id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Stage Duration<em>*</em></span>
 													<span class="hint" data-desc="<@spring.message 'configuration.validationDuration'/> ${stage.displayValue()} stage."></span>
@@ -118,11 +114,7 @@
 										<!-- Configure Reminder Interval -->
 										<form>
 											<div class="row-group" id="section-reminders">
-
-												<div class="row">
-													<span id="reminder-lbl" class="plain-label"><strong>Task Notifications</strong></span>
-													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
-												</div><!-- .row -->
+												<h3>Task Notifications</h3>
 
 												<div class="row">
 													<span id="reminder-lbl" class="plain-label">Reminder Frequency<em>*</em></span>
@@ -160,11 +152,7 @@
 
 											<!-- First registry user -->
 											<div class="row-group" id="firstRegistryUser">
-											
-												<div class="row">
-													<span id="reminder-lbl" class="plain-label"><strong>Admissions Contacts</strong></span>
-													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
-												</div><!-- .row -->
+												<h3>Admissions Contacts</h3>
 											
 												<input type="hidden" name="1_regUserId" id= "1_regUserId" value="<#if allRegistryUsers[0]?? && allRegistryUsers[0].id??>${encrypter.encrypt(allRegistryUsers[0].id)}</#if>" />
 												

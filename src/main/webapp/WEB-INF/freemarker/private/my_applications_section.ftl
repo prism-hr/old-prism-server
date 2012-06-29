@@ -25,10 +25,6 @@
 			<option value="progress">View progress</option>
 		</#if>   
 -->
-		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
-			<option value="validate">Approve or Reject</option>
-			<option value="restartApprovalRequest">Request restart of approval</option>
-		</#if>
 		<#if  user.hasAdminRightsOnApplication(application) && application.isInState('VALIDATION')> 
 			<option value="validate">Validate</option>
 		</#if>
@@ -58,7 +54,10 @@
 		</#if>      												
 		<#if (user.hasAdminRightsOnApplication(application) && application.isInState('APPROVAL'))>
 			<option value="restartApproval">Restart Approval</option>
-		</#if>      												
+		</#if>  
+		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
+			<option value="validate">Approve or Reject</option>
+		</#if>    												
 		</select>
 
 	</td>

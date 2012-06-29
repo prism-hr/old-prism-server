@@ -138,7 +138,6 @@ $(document).ready(function(){
 				success:function(data)
 				{
 					$('#additionalInformationSection').html(data);
-					$('#additionalInformationSection div.ajax').remove();
 					markSectionError('#additionalInformationSection');
 	
 					// Close the section only if there are no errors.
@@ -147,7 +146,11 @@ $(document).ready(function(){
 					{
 						$('#additional-H2').trigger('click');
 					}
-				}
+				},
+        complete: function()
+        {
+					$('#additionalInformationSection div.ajax').remove();
+        }
 			});
 		}
 

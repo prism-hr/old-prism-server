@@ -206,7 +206,6 @@ function postRefereeData(message){
 		data: $.param(postData),			
 		success:function(data) {
 				$('#referencesSection').html(data);
-				$('#referencesSection div.ajax').remove();
 				markSectionError('#referencesSection');
 
 				if (message == 'close')
@@ -219,6 +218,10 @@ function postRefereeData(message){
 						$('#refereeCloseButton').trigger('click');
 					}
 				}
-			}
+			},
+    complete: function()
+    {
+      $('#referencesSection div.ajax').remove();
+    }
 	});
 }

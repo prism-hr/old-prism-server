@@ -38,10 +38,13 @@ $(document).ready(function()
 				data:stages.serialize(),
 				success:function(data)
 				{
-					$('#section-stages div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";
 					addToolTips();
-				}
+				},
+        complete: function()
+        {
+					$('#section-stages div.ajax').remove();
+        }
 			});
 		}
 	});
@@ -90,10 +93,13 @@ $(document).ready(function()
 				data:$.param(postData),
 				success:function(data)
 				{
-					$('#section-reminders div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";
 					addToolTips();
-				}
+				},
+        complete: function()
+        {
+					$('#section-reminders div.ajax').remove();
+        }
 			});
 		}
 	});
@@ -121,10 +127,13 @@ $(document).ready(function()
 				data:registryUsers.serialize(),
 				success:function(data)
 				{
-					$('#section-users div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";
 					addToolTips();
-				}
+				},
+        complete: function()
+        {
+					$('#section-users div.ajax').remove();
+        }
 			});
 		}
 	});

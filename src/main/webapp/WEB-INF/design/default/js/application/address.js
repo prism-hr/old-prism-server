@@ -172,7 +172,6 @@ function postAddressData(message)
 		},
 		success: function(data) {
 			$('#addressSection').html(data);
-			$('#addressSection div.ajax').remove();
 			markSectionError('#addressSection');
 	
 			if (message == 'close')
@@ -184,7 +183,11 @@ function postAddressData(message)
 					$('#address-H2').trigger('click');
 				}
 			}
-		}
+		},
+    complete: function()
+    {
+			$('#addressSection div.ajax').remove();
+    }
 	});
 }
 

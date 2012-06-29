@@ -298,7 +298,6 @@ function postQualificationData(message)
 		},
 		success:function(data) {
 			$('#qualificationsSection').html(data);
-			$('#qualificationsSection div.ajax').remove();
 			markSectionError('#qualificationsSection');
 	
 			if (message == 'close')
@@ -310,7 +309,11 @@ function postQualificationData(message)
 					$('#qualifications-H2').trigger('click');
 				}
 			}
-		}
+		},
+    complete: function()
+    {
+			$('#qualificationsSection div.ajax').remove();
+    }
 	});
 }
 function ajaxProofOfAwardDelete(){

@@ -101,7 +101,6 @@ $(document).ready(function()
 					window.location.href = '/pgadmissions/applications?messageCode=move.interview&application=' + $('#applicationId').val();
 					
 				}else{
-					$('#interviewsection div.ajax').remove();
 					$('#temp').html(data);
 					$('#assignInterviewersToAppSection').html($('#section_1').html());
 					$('#interviewdetailsSection').html($('#section_2').html());
@@ -115,7 +114,11 @@ $(document).ready(function()
 						changeYear: true,
 						yearRange: '1900:c+20' });
 				}
-			}
+			},
+      complete: function()
+      {
+        $('#interviewsection div.ajax').remove();
+      }
 		});
 	});
 		
@@ -139,7 +142,6 @@ function getInterviewersAndDetailsSections(){
 		url: url +"?applicationId=" + $('#applicationId').val(), 
 		success: function(data)
 		{
-			$('#interviewsection div.ajax').remove();
 			$('#temp').html(data);
 			$('#assignInterviewersToAppSection').html($('#section_1').html());
 			$('#interviewdetailsSection').html($('#section_2').html());
@@ -152,7 +154,11 @@ function getInterviewersAndDetailsSections(){
 				changeMonth: true,
 				changeYear: true,
 				yearRange: '1900:c+20' });
-		}
+		},
+    complete: function()
+    {
+			$('#interviewsection div.ajax').remove();
+    }
 	});
 }
 
@@ -170,8 +176,11 @@ function getCreateInterviewersSection(){
 		url:"/pgadmissions/interview/create_interviewer_section?applicationId=" + $('#applicationId').val(), 
 		success: function(data)
 		{
-			$('#createinterviewersection div.ajax').remove();
 			$('#createinterviewersection').html(data);
-		}
+		},
+    complete: function()
+    {
+			$('#createinterviewersection div.ajax').remove();
+    }
 	});
 }

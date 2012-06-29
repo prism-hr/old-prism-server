@@ -230,7 +230,6 @@ function postEmploymentData(message){
 		},
 	   success: function(data) {
 				$('#positionSection').html(data);
-				$('#positionSection div.ajax').remove();
 				markSectionError('#positionSection');
 	
 				if (message == 'close')
@@ -242,6 +241,10 @@ function postEmploymentData(message){
 						$('#position-H2').trigger('click');
 					}
 				}
-	   		}
+      },
+    complete: function()
+    {
+      $('#positionSection div.ajax').remove();
+    }
 	});
 }

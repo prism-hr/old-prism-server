@@ -131,7 +131,6 @@ function postDocumentData(message)
 		success: function(data)
 		{
 			$('#documentSection').html(data);
-			$('#documentSection div.ajax').remove();
 			markSectionError('#documentSection');
 
 			if (message == 'close')
@@ -143,7 +142,11 @@ function postDocumentData(message)
 					$('#documents-H2').trigger('click');
 				}
 			}
-		}
+		},
+    complete: function()
+    {
+			$('#documentSection div.ajax').remove();
+    }
 	});
 }
 

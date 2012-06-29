@@ -13,13 +13,18 @@
 
 <div>
   <form>
-    <#if errorCode?? && errorCode=="true">
+    <#if (errorCode?? && errorCode=="true") || (termsError?? && termsError)>
     <div class="section-error-bar">
 			<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>               
 			<span class="invalid-info-text"><@spring.message 'programmeDetails.project'/></span>
     </div>
     <#else>
-    <div id="prog-info-bar-div" class="section-info-bar">
+    <#if termsError?? && termsError>
+    		<div id="prog-info-bar-div" class="section-error-bar">
+      <#else>
+		    <div id="prog-info-bar-div" class="section-info-bar">
+      </#if>
+    
       <@spring.message 'programmeDetails.project'/>
     </div>  
     </#if>
@@ -200,7 +205,11 @@
     
   
     <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
-    <div class="row-group terms-box">
+      <#if termsError?? && termsError>
+		    <div class="row-group terms-box" style="borderColor: 'red', color: 'red';">
+      <#else>
+    		<div class="row-group terms-box">
+      </#if>
     
       <div class="row">
         <span class="terms-label">

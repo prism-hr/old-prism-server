@@ -81,7 +81,6 @@ $(document).ready(function()
 				var message  = 'Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application.';
 				var onOk     = function()
 				{
-					$('div.content-box-inner div.ajax').remove();
 					$.ajax({
 						type: 'POST',
 						 statusCode: {

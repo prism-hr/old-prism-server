@@ -533,7 +533,8 @@ function modalPrompt(message, okay, cancel)
                   .on('click', '#popup-ok-button', function()
 									{
 										$('#dialog-overlay, #dialog-box').hide();
-										return okay;
+										okay();
+										return false;
 									});
 
 	// Set function to execute on "Cancel".
@@ -541,7 +542,8 @@ function modalPrompt(message, okay, cancel)
                   .on('click', '#popup-cancel-button', function()
 									{
 										$('#dialog-overlay, #dialog-box').hide();
-										return cancel;
+										cancel();
+										return false;
 									});
 
 	// Show the box.

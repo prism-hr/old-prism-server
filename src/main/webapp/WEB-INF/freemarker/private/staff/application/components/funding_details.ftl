@@ -26,7 +26,7 @@
       <!-- Award type -->
       <div class="admin_row">
         <span class="admin_row_label">Funding Type</span>             
-        <div class="field" id="fundingType">${(funding.type?html)!"Not Provided"}</div>
+        <div class="field" id="fundingType">${(funding.type?cap_first)!"Not Provided"}</div>
       </div>
       
       <!-- Award description -->

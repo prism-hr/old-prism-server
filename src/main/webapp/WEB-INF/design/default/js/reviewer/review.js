@@ -38,8 +38,11 @@ $(document).ready(function()
 				$('#newReviewerLastName').val('');
 				$('#newReviewerEmail').val('');				
 				
-				$('#reviewsection div.ajax').remove();
-			}
+			},
+      complete: function()
+      {
+				$('#createreviewersection div.ajax').remove();
+      }
 		});
 		
 	});
@@ -85,10 +88,13 @@ $(document).ready(function()
 				}else{
 					$('#assignReviewersToAppSection').html(data);
 					$('#postReviewData').html('');
-					$('#reviewsection div.ajax').remove();
 				}
 				addToolTips();
-			}
+			},
+      complete: function()
+      {
+				$('#reviewsection div.ajax').remove();
+      }
 		});
 	});
 });
@@ -113,10 +119,13 @@ function getReviewersSection(){
 		url: url +"?applicationId=" + $('#applicationId').val(), 
 		success: function(data)
 		{
-			$('#reviewsection div.ajax').remove();
 			$('#assignReviewersToAppSection').html(data);
 			addToolTips();
-		}
+		},
+    complete: function()
+    {
+      $('#reviewsection div.ajax').remove();
+    }
 	});
 }
 

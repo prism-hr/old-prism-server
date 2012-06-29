@@ -94,9 +94,12 @@ $(document).ready(function()
 						}, 
 						success: function(data)
 						{
-							$('div.content-box-inner div.ajax').remove();
 							populateApplicationList(true);
-						}
+						},
+            complete: function()
+            {
+							$('div.content-box-inner div.ajax').remove();
+            }
 					});
 				};
 				var onCancel = function()

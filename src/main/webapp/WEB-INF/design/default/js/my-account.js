@@ -28,10 +28,13 @@ $(document).ready(function(){
 			data:$.param(postData),
 			success: function(data)
 			{
-				$('#accountdetails div.ajax').remove();
 				$('#accountdetails').html(data);
 				addToolTips();
-			}
+			},
+      complete: function()
+      {
+				$('#accountdetails div.ajax').remove();
+      }
 		});
 	});
 	
@@ -58,10 +61,13 @@ function getAccountDetailsSection()
 		url:"/pgadmissions/myAccount/section", 
 		success: function(data)
 		{
-			$('#reviewsecion div.ajax').remove();
 			$('#accountdetails').html(data);
 			addToolTips();
-		}
+		},
+    complete: function()
+    {
+			$('#reviewsecion div.ajax').remove();
+    }
 	});
 	
 }

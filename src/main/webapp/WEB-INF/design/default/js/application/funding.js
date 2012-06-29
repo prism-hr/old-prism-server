@@ -235,7 +235,6 @@ function postFundingData(message)
 		success: function(data)
 		{
 			$('#fundingSection').html(data);
-			$('#fundingSection div.ajax').remove();
 			markSectionError('#fundingSection');
 	
 			if (message == 'close')
@@ -247,7 +246,11 @@ function postFundingData(message)
 					$('#funding-H2').trigger('click');
 				}
 			}
-		}
+		},
+    complete: function()
+    {
+			$('#fundingSection div.ajax').remove();
+    }
 	});
 }
 

@@ -362,7 +362,6 @@ function postPersonalDetailsData(message){
 			 success: function(data)
 			 {
 			    $('#personalDetailsSection').html(data);
-					$('#personalDetailsSection div.ajax').remove();
 					markSectionError('#personalDetailsSection');
 
 					if (message == 'close')
@@ -374,7 +373,11 @@ function postPersonalDetailsData(message){
 							$('#personalDetails-H2').trigger('click');
 						}
 					}
-			  }
+			  },
+    complete: function()
+    {
+      $('#personalDetailsSection div.ajax').remove();
+    }
 	});
 	
 }

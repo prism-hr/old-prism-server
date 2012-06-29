@@ -410,7 +410,6 @@ function postProgrammeData(message)
 		success: function(data)
 			{
 				$('#programmeDetailsSection').html(data);
-				$('#programmeDetailsSection div.ajax').remove();
 				markSectionError('#programmeDetailsSection');
 				
 				if (message == 'close')
@@ -422,6 +421,10 @@ function postProgrammeData(message)
 						$('#programme-H2').trigger('click');
 					}
 				}
-			}
+			},
+    complete: function()
+    {
+      $('#programmeDetailsSection div.ajax').remove();
+    }
 	});
 }

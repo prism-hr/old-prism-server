@@ -58,14 +58,22 @@ public class InterviewValidatorTest {
 	
 	
 	@Test
-	public void shouldRejectIfTimeIsEmpty() {
-		interview.setInterviewTime(null);
+	public void shouldRejectIfTimeHoursIsEmpty() {
+		interview.setInterviewTime(":45");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewTime");
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("interviewTime").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("timeHours").getCode());
 	}
 	
+	@Test
+	public void shouldRejectIfTimeMinutesIsEmpty() {
+		interview.setInterviewTime("12:");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewTime");
+		interviewValidator.validate(interview, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("timeMinutes").getCode());
+	}
 	@Test
 	public void shouldRejectIfURLIsEmpty() {
 		interview.setLocationURL(null);
@@ -89,7 +97,7 @@ public class InterviewValidatorTest {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		
-		interview = new InterviewBuilder().interviewTime("09:00 AM").application(new ApplicationFormBuilder().id(2).toApplicationForm()).dueDate(calendar.getTime())
+		interview = new InterviewBuilder().interviewTime("09:00").application(new ApplicationFormBuilder().id(2).toApplicationForm()).dueDate(calendar.getTime())
 				.furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).toInterviewer()).toInterview();
 		interviewValidator = new InterviewValidator();
 	}

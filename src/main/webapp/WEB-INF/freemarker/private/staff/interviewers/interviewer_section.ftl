@@ -1,4 +1,13 @@
-<div id="section_">
+<#import "/spring.ftl" as spring />
+<#assign avaliableOptionsSize = (programmeInterviewers?size + previousInterviewers?size + 4)/>
+<#if (avaliableOptionsSize > 25)>
+<#assign avaliableOptionsSize = 25 />
+</#if> 
+<#assign selectedOptionsSize = (interview.interviewers?size) + 1/>
+<#if (selectedOptionsSize > 25)>
+<#assign selectedOptionsSize = 25 />
+</#if> 
+<div id="section_1">
 <div class="row" >
 	<span class="plain-label">Assign Interviewers<em>*</em></span>
 	<span class="hint" data-desc="<@spring.message 'assignInterviewer.assign'/>"></span>
@@ -7,28 +16,13 @@
 		<select id="programInterviewers" class="list-select-from" multiple="multiple" size="8">
 			<optgroup id="default" label="Default interviewers">
 				<#list programmeInterviewers as interviewer>
-				<option value="${encrypter.encrypt(interviewer.id)}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} </option>
+				<option value="${encrypter.encrypt(interviewer.id)}" category="default" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>${interviewer.firstName?html} ${interviewer.lastName?html} </option>
 				</#list>
 			</optgroup>
 			<optgroup id="previous" label="Previous interviewers">
 				<#list previousInterviewers as interviewer>
-				<option value="${encrypter.encrypt(interviewer.id)}" category="previous">${interviewer.firstName?html} ${interviewer.lastName?html}</option>
-				</#list>
-				<#list applicationInterviewers as interviewer>
-				<option value="${encrypter.encrypt(interviewer.id)}" class="selected" disabled="disabled">
-					${interviewer.firstName?html} ${interviewer.lastName?html}
-				</option>
-				</#list>
-				<#list pendingInterviewers as unsaved>									
-				<option value="${encrypter.encrypt(unsaved.id)}" class="selected" disabled="disabled">
-					${unsaved.firstName?html} ${unsaved.lastName?html}
-				</option>
-				</#list>
-				<#list willingToInterviewReviewers as willingReviewer>									
-				<option value="${encrypter.encrypt(willingReviewer.id)}" class="selected" disabled="disabled">
-					${willingReviewer.firstName?html} ${willingReviewer.lastName?html}
-				</option>
-				</#list>
+				<option value="${encrypter.encrypt(interviewer.id)}" category="previous" <#if interviewer.isInterviewerInInterview(interview)> disabled="disabled" </#if>>${interviewer.firstName?html} ${interviewer.lastName?html}</option>
+				</#list>			
 			</optgroup>
 		</select>
 	</div>
@@ -47,20 +41,10 @@
 <!-- Already interviewers of this application -->
 <div class="row">
 	<div class="field">
-		<select id="applicationInterviewers" class="list-select-to" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
-			<#list applicationInterviewers as interviewer>
-			<option value="${encrypter.encrypt(interviewer.id)}">
-				${interviewer.firstName?html} ${interviewer.lastName?html}
-			</option>
-			</#list>
-			<#list pendingInterviewers as unsaved>									
-			<option value="${encrypter.encrypt(unsaved.id)}">
-				${unsaved.firstName?html} ${unsaved.lastName?html}
-			</option>
-			</#list>
-			<#list willingToInterviewReviewers as willingReviewer>									
-			<option value="${encrypter.encrypt(willingReviewer.id)}">
-				${willingReviewer.firstName?html} ${willingReviewer.lastName?html}
+		<select id="applicationInterviewers" class="list-select-to" multiple="multiple" size="${selectedOptionsSize}">
+			<#list interview.interviewers as interviewer>
+			<option value="${encrypter.encrypt(interviewer.user.id)}">
+				${interviewer.user.firstName?html} ${interviewer.user.lastName?html}
 			</option>
 			</#list>
 		</select>
@@ -89,14 +73,7 @@
 	<label class="plain-label normal">Interview Time (GMT/BST)<em>*</em></label>
 	<span class="hint" data-desc="<@spring.message 'assignInterviewer.interviewTime'/>"></span>
 	<div class="field">
-		<#if assignOnly?? && assignOnly>
-		<input disabled="disabled" type="text" value="${(interview.interviewTime)!}" />
-		<#else>
 		<#include "/private/staff/interviewers/time_dropdown.ftl"/>
-		<span class="invalid" name="timeInvalid" style="display:none;"></span>
-		<@spring.bind "interview.interviewTime" /> 
-		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-		</#if>
 	</div>
 </div>
 

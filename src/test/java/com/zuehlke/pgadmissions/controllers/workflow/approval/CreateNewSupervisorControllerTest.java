@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +17,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.controllers.workflow.interview.OldCreateNewInterviewerController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;

@@ -94,7 +94,8 @@ $(document).ready(function()
 						}, 
 						success: function(data)
 						{
-							window.location.href = "/pgadmissions/applications";
+							$('div.content-box-inner div.ajax').remove();
+							populateApplicationList(true);
 						}
 					});
 				};

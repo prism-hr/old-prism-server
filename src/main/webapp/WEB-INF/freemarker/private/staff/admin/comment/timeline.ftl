@@ -51,7 +51,7 @@
 										<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
 										<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
 										<div class="added">
-											<#assign size_users = timelineObject.interview.interviewer?size>
+											<#assign size_users = timelineObject.interview.interviewers?size>
 											<#list timelineObject.interview.interviewers as interviewer>
 											<#assign index_i = interviewer_index>
 											${interviewer.user.firstName?html} ${interviewer.user.lastName?html}<#if (index_i < (size_users - 1))>, </#if>

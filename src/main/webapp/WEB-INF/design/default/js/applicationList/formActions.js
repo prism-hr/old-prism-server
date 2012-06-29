@@ -104,7 +104,7 @@ $(document).ready(function()
 					$('div.content-box-inner div.ajax').remove();
 				};
 				
-				modalPrompt(message, onOK, onCancel);
+				modalPrompt(message, onOk, onCancel);
 				break;
 		}
 	});

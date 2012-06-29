@@ -65,6 +65,11 @@ $(document).ready(function()
 		return false;
 	});
 	
+	$('#requestRestartButton').click(function()
+	{
+		window.location.href = "/pgadmissions/approval/requestRestart?applicationId=" + $('#applicationId').val();
+	});
+	
 });
 
 

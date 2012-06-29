@@ -8,7 +8,7 @@ $(document).ready(function()
 		if ($('#status').val() != '')
 		{
 			var message = 'Confirm you want to move this application to the ' + $('#status').val() + ' stage.';
-			modalPrompt(message, changeStatus);
+			modalPrompt(message, changeState);
 			return;
 		}
 	});

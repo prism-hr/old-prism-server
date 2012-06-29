@@ -147,6 +147,10 @@ public class ReviewControllerTest {
 		assertTrue(reviewersUsers.contains(reviewer));
 	}
 
+	@Test
+	public void shouldGetCurrentUserAsUser(){
+		assertEquals(currentUserMock, controller.getUser());
+	}
 	@Before
 	public void setUp() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);

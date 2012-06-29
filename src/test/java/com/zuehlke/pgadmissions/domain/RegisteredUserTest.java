@@ -285,6 +285,7 @@ public class RegisteredUserTest {
 		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer()).toReviewRound();		
 		assertTrue(reviewerUser.isReviewerInReviewRound(reviewRound));
 	}
+	
 	@Test
 	public void shouldReturnFalseInfUserIsNotReviewerOfReviewRound(){
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
@@ -297,6 +298,28 @@ public class RegisteredUserTest {
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();				
 		assertFalse(reviewerUser.isReviewerInReviewRound(null));
 	}
+	
+	@Test
+	public void shouldReturnTrueInfUserIsInterviewerOfInterview(){
+		RegisteredUser interviwerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+		Interview interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviwerUser).toInterviewer()).toInterview();		
+		assertTrue(interviwerUser.isInterviewerInInterview(interview));
+	}
+	
+	@Test
+	public void shouldReturnFalseInfUserIsNotInterviewerOfInterview(){
+		RegisteredUser interviwerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+		Interview interview = new InterviewBuilder().toInterview();		
+		assertFalse(interviwerUser.isInterviewerInInterview(interview));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfInterviewIsNull(){
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();				
+		assertFalse(reviewerUser.isInterviewerInInterview(null));
+	}
+	
+	
 	@Test
 	public void shouldReturnFalseIfUserIsApproverInApplication() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();

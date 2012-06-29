@@ -1,18 +1,14 @@
 $(document).ready(function()
 {
-	$('#interviewDate').attr("readonly", "readonly");	
-	$('#interviewDate').datepicker({
-		dateFormat: 'dd-M-yy',
-		changeMonth: true,
-		changeYear: true,
-		yearRange: '1900:c+20' });
+	getInterviewersAndDetailsSections();
+	getCreateInterviewersSection();
+
 
 
 	// -----------------------------------------------------------------------------------------
 	// Add interviewer
 	// -----------------------------------------------------------------------------------------
-	$('#addInterviewerBtn').click(function()
-	{
+	$('#assignInterviewersToAppSection').on('click', '#addInterviewerBtn', function(){
 		var selectedReviewers = $('#programInterviewers').val();
 		if (selectedReviewers)
 		{
@@ -52,8 +48,8 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------------------
 	// Remove interviewer
 	// -----------------------------------------------------------------------------------------
-	$('#removeInterviewerBtn').click(function()
-	{
+	$('#assignInterviewersToAppSection').on('click', '#removeInterviewerBtn', function(){
+
 		var selectedReviewers = $('#applicationInterviewers').val();
 		if (selectedReviewers)
 		{
@@ -74,41 +70,64 @@ $(document).ready(function()
 	
 	$('#moveToInterviewBtn').click(function()
 	{
-	
-			var timeErrors = false;
-			if($('#hours').val() == "" || $('#minutes').val() == "" || $('#format').val() == ""){
-				timeErrors = true;
-				$("span[name='timeInvalid']").html('You must specify hour, minutes and format. ');
-				$("span[name='timeInvalid']").show();
-			}
-			
-			if(!timeErrors){
-				$("span[name='timeInvalid']").html('');
-				$("span[name='timeInvalid']").hide();
-				var timeString = $('#hours').val() + ":" + $('#minutes').val() + " " + $('#format').val();
-	
-			$('#applicationInterviewers option').each(function(){
-				$('#postInterviewForm').append("<input name='pendingInterviewer' type='hidden' value='" +  $(this).val() + "'/>");	
-				$('#postInterviewForm').append("<input name='interviewers' type='hidden' value='" +  $(this).val() + "'/>");
-			});
-			$('#postInterviewForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
-			$('#postInterviewForm').append("<input name='furtherDetails' type='hidden' value='" +  $('#furtherDetails').val() + "'/>");
-			$('#postInterviewForm').append("<input name='interviewDueDate' type='hidden' value='" +  $('#interviewDate').val() + "'/>");
-			$('#postInterviewForm').append("<input name='interviewTime' type='hidden' value='" +  timeString + "'/>");
-			$('#postInterviewForm').append("<input name='locationURL' type='hidden' value='" +  $('#interviewLocation').val() + "'/>");				
-			$('#postInterviewForm').submit();
+
+		$('#interviewsection').append('<div class="ajax" />');
+		var url = "/pgadmissions/interview/move";
+		
+		$('#applicationInterviewers option').each(function(){	
+			$('#postInterviewData').append("<input name='interviewers' type='text' value='" +  $(this).val() + "'/>");
+		});
+		
+		var postData = {
+				applicationId : 	$('#applicationId').val(),
+				interviewers: 		'',
+				interviewTime:	 	$('#hours').val() + ":" + $('#minutes').val(),
+				furtherDetails:		$('#furtherDetails').val() ,
+				interviewDueDate: 	$('#interviewDate').val(),
+				locationURL:		$('#interviewLocation').val() 
 		}
-		
-		
-		
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url: url,
+			data:	$.param(postData) + "&" + $('input[name="interviewers"]').serialize(),
+			success: function(data)
+			{	
+				if(data == "OK"){	
+					window.location.href = '/pgadmissions/applications?messageCode=move.interview&application=' + $('#applicationId').val();
+					
+				}else{
+					$('#interviewsection div.ajax').remove();
+					$('#temp').html(data);
+					$('#assignInterviewersToAppSection').html($('#section_1').html());
+					$('#interviewdetailsSection').html($('#section_2').html());
+					$('#temp').empty();
+					$('#postInterviewData').empty();
+					addToolTips();
+					$('#interviewDate').attr("readonly", "readonly");	
+					$('#interviewDate').datepicker({
+						dateFormat: 'dd-M-yy',
+						changeMonth: true,
+						changeYear: true,
+						yearRange: '1900:c+20' });
+				}
+			}
+		});
 	});
+		
+		
+
 });
 
 
 function getInterviewersAndDetailsSections(){
 	$('#interviewsection').append('<div class="ajax" />');
 	
-	var url  = "/pgadmissions/review/reviewersSection";
+	var url  = "/pgadmissions/interview/interviewers_section";
 
 	$.ajax({
 		type: 'GET',
@@ -121,8 +140,38 @@ function getInterviewersAndDetailsSections(){
 		success: function(data)
 		{
 			$('#interviewsection div.ajax').remove();
-			$('#assignReviewersToAppSection').html(data);
+			$('#temp').html(data);
+			$('#assignInterviewersToAppSection').html($('#section_1').html());
+			$('#interviewdetailsSection').html($('#section_2').html());
+			$('#temp').empty();
+			
 			addToolTips();
+			$('#interviewDate').attr("readonly", "readonly");	
+			$('#interviewDate').datepicker({
+				dateFormat: 'dd-M-yy',
+				changeMonth: true,
+				changeYear: true,
+				yearRange: '1900:c+20' });
+		}
+	});
+}
+
+
+function getCreateInterviewersSection(){
+	$('#createinterviewersection').append('<div class="ajax" />');
+	
+	$.ajax({
+		type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/interview/create_interviewer_section?applicationId=" + $('#applicationId').val(), 
+		success: function(data)
+		{
+			$('#createinterviewersection div.ajax').remove();
+			$('#createinterviewersection').html(data);
 		}
 	});
 }

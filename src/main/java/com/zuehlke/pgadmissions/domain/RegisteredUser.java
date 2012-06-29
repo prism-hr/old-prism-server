@@ -704,4 +704,16 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return false;
 	}
+
+	public boolean isInterviewerInInterview(Interview interview) {
+		if(interview == null){
+			return false;
+		}
+		for (Interviewer interviewer : interview.getInterviewers()) {
+			if(this.equals(interviewer.getUser())){
+				return true;
+			}
+		}
+		return false;
+	}
 }

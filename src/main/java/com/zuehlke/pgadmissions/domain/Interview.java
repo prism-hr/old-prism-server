@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -56,6 +56,11 @@ public class Interview extends DomainObject<Integer> {
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "interview_id")
 	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
+
+	@Transient
+	private String timeHours;
+	@Transient
+	private String timeMinutes;
 
 	public Date getLastNotified() {
 		return lastNotified;
@@ -115,7 +120,12 @@ public class Interview extends DomainObject<Integer> {
 	}
 
 	public void setInterviewers(List<Interviewer> interviewers) {
-		this.interviewers = interviewers;
+		this.interviewers.clear();
+		for (Interviewer interviewer : interviewers) {
+			if(interviewer != null){
+				this.interviewers.add(interviewer);
+			}
+		}
 	}
 
 	public Date getCreatedDate() {
@@ -132,18 +142,23 @@ public class Interview extends DomainObject<Integer> {
 
 	public void setInterviewTime(String interviewTime) {
 		this.interviewTime = interviewTime;
+		if (interviewTime != null) {
+			int semiColonPosition = interviewTime.indexOf(":");		
+			timeHours = interviewTime.substring(0, semiColonPosition);
+			timeMinutes = interviewTime.substring(semiColonPosition + 1);
+			
+		}
 	}
 
-	public String[] getTimeParts() {
-		String[] parts = new String[3];
-		if (interviewTime != null) {
-			int semiColonPosition = interviewTime.indexOf(":");
-			int emptySpacePosition = interviewTime.indexOf(" ", semiColonPosition);
-			parts[0] = interviewTime.substring(0, semiColonPosition);
-			parts[1] = interviewTime.substring(semiColonPosition + 1, emptySpacePosition);
-			parts[2] = interviewTime.substring(emptySpacePosition + 1);
-		}
-		return parts;
+
+	public String getTimeHours() {
+
+		return timeHours;
+	}
+
+	public String getTimeMinutes() {
+
+		return timeMinutes;
 	}
 
 }

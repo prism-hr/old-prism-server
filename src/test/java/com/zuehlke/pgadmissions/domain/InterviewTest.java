@@ -10,18 +10,17 @@ public class InterviewTest {
 
 	@Test
 	public void shouldGetCorrectValuesForTimeParts() {
-		String time = "04:45 AM";
+		String time = "16:45";
 		Interview interview = new InterviewBuilder().interviewTime(time).toInterview();
-		assertEquals("04", interview.getTimeParts()[0]);
-		assertEquals("45", interview.getTimeParts()[1]);
-		assertEquals("AM", interview.getTimeParts()[2]);
+		assertEquals("16", interview.getTimeHours());
+		assertEquals("45", interview.getTimeMinutes());
+
 	}
 
 	@Test
-	public void shouldReturnArrayOfNullStringsIfTimeIsNull() {
+	public void shouldReturnNullsIfTimeIsNull() {
 		Interview interview = new InterviewBuilder().toInterview();
-		assertNull(interview.getTimeParts()[0]);
-		assertNull(interview.getTimeParts()[1]);
-		assertNull(interview.getTimeParts()[2]);
+		assertNull(interview.getTimeHours());
+		assertNull(interview.getTimeMinutes());
 	}
 }

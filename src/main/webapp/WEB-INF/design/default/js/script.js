@@ -259,8 +259,19 @@ function addToolTips()
 }
 
 
+// ------------------------------------------------------------------------------
+// Immediately display a tooltip.
+// ------------------------------------------------------------------------------
 function fixedTip($object, text)
 {
+	// remove any existing tooltips.
+	var existing = $object.attr('aria-describedby');
+	if (existing.length > 0)
+	{
+		$('#' + existing).remove();
+	}
+	$object.removeAttr('aria-describedby');
+	
 	var tooltipSettings = {
 		content: {
 			text: function(api)
@@ -269,8 +280,8 @@ function fixedTip($object, text)
 			} 
 		},
 		position: {
-			my: 'bottom left', // Use the corner...
-			at: 'bottom right', // ...and opposite corner
+			my: 'bottom right', // Use the corner...
+			at: 'top center', // ...and opposite corner
 			viewport: $(window),
 			adjust: {
 				method: 'flip shift'

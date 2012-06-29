@@ -199,7 +199,7 @@
 								<div class="buttons">
 									<button class="clear" type="button" value="cancel">Clear</button>
 									<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>
-									<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
+									<#if user.isInRoleInProgram('APPROVER', applicationForm.program) && applicationForm.isInState('APPROVAL')>
 										<button class="blue" type="button" id="requestRestartButton" value="requestRestart">Request restart of approval</button>
 									</#if>
 								</div>

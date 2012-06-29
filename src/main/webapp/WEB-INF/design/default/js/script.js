@@ -266,7 +266,7 @@ function fixedTip($object, text)
 {
 	// remove any existing tooltips.
 	var existing = $object.attr('aria-describedby');
-	if (existing.length > 0)
+	if (existing)
 	{
 		$('#' + existing).remove();
 	}

@@ -58,12 +58,13 @@
 
 								<section id="section-slc" class="form-rows">
 									<h2>Configuration</h2>
-									<div class="section-info-bar">
-										Edit the system configuration. <strong>Be aware that this will change the system behaviour for all programmes.</strong>
-									</div>
 									
 									<div>
 										<form>
+
+											<div class="section-info-bar">
+												Edit the system configuration. <strong>Be aware that this will change the system behaviour for all programmes.</strong>
+											</div>
 										
 											<div class="row-group">
 												<select id="stages" style="display: none;">

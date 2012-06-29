@@ -60,9 +60,6 @@
 								</div>
 
 								<section id="section-slc" class="form-rows">
-									<h2 class="no-arrow">
-										Service Level Commitments
-									</h2>
 									<div>
 										<form>
 										
@@ -73,9 +70,15 @@
 													</#list>
 												</select>
 							
+												<div class="row">
+													<span id="reminder-lbl" class="plain-label">Service Level Commitments</span>
+													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
+												</div><!-- .row -->
+							
 												<#list stages as stage>
+												
 												<div class="row"> 
-													<span id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Duration<em>*</em></span>
+													<span id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Stage Duration<em>*</em></span>
 													<span class="hint" data-desc="<@spring.message 'configuration.validationDuration'/> ${stage.displayValue()} stage."></span>
 													<div class="field">	
 														<input type="hidden" id="stage" name="stage" value="${stage}" />
@@ -109,16 +112,16 @@
 											
 										</form>
 									</div>
-								</section>
 
-								<!-- Configure Reminder Interval -->
-								<section id="section-reminder" class="form-rows">
-									<h2 class="no-arrow">
-										Task Notifications
-									</h2>
+									<!-- Configure Reminder Interval -->
 									<div>
 										<form>
 											<div class="row-group">
+
+												<div class="row">
+													<span id="reminder-lbl" class="plain-label">Task Notifications</span>
+													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
+												</div><!-- .row -->
 
 												<div class="row">
 													<span id="reminder-lbl" class="plain-label">Reminder Frequency<em>*</em></span>
@@ -150,19 +153,20 @@
 											
 										</form>
 									</div>
-								</section>
 
-								<!-- Add Registry Users -->
-								<section id="section-registry" class="form-rows">
-									<h2 class="no-arrow">
-										Admissions Contacts
-									</h2>
+									<!-- Add Registry Users -->
 									<div>
 										<form id="addRegistryForm">
 											<span class="invalid" name="threeMaxMessage"></span>
 
 											<!-- First registry user -->
 											<div class="row-group" id="firstRegistryUser">
+											
+												<div class="row">
+													<span id="reminder-lbl" class="plain-label">Admissions Contacts</span>
+													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
+												</div><!-- .row -->
+											
 												<input type="hidden" name="1_regUserId" id= "1_regUserId" value="<#if allRegistryUsers[0]?? && allRegistryUsers[0].id??>${encrypter.encrypt(allRegistryUsers[0].id)}</#if>" />
 												
 												<div class="row"> 
@@ -190,11 +194,7 @@
 													</div>
 												</div><!-- .row -->
 												
-											</div><!-- .row-group -->
-											
-									
-											<!-- Second registry user -->
-											<div class="row-group" id="secondRegistryUser">
+												<!-- Second registry user -->
 												<input type="hidden" name="2_regUserId" id= "2_regUserId" value="<#if allRegistryUsers[1]?? && allRegistryUsers[1].id??>${encrypter.encrypt(allRegistryUsers[1].id)}</#if>"/>
 
 												<div class="row"> 
@@ -222,11 +222,7 @@
 													</div>
 												</div><!-- .row -->
 												
-											</div><!-- .row-group -->
-											
-									
-											<!-- Third registry user -->
-											<div class="row-group" id="thirdRegistryUser">
+												<!-- Third registry user -->
 												<input type="hidden" name="3_regUserId" id= "3_regUserId" value="<#if allRegistryUsers[2]?? && allRegistryUsers[2].id??>${encrypter.encrypt(allRegistryUsers[2].id)}</#if>"/>
 
 												<div class="row"> 

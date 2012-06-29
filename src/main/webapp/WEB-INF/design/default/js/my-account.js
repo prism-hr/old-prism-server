@@ -49,7 +49,7 @@ $(document).ready(function(){
 
 function getAccountDetailsSection()
 {
-	$('#reviewsecion').append('<div class="ajax" />');
+	$('.content-box-inner').append('<div class="ajax" />');
 	
 	$.ajax({
 		type: 'GET',
@@ -66,7 +66,7 @@ function getAccountDetailsSection()
 		},
     complete: function()
     {
-			$('#reviewsecion div.ajax').remove();
+			$('.content-box-inner div.ajax').remove();
     }
 	});
 	

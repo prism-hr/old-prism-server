@@ -51,9 +51,6 @@ $(document).ready(function()
 			case 'assignInterviewer':
 				window.location.href = "/pgadmissions/interview/assignInterviewers?applicationId=" + id;
 				break;
-			case 'restartApprovalRequest':
-				window.location.href = "/pgadmissions/approval/requestRestart?applicationId=" + id;
-				break;
 			case 'comment':
 				window.location.href = "/pgadmissions/comment?applicationId=" + id;
 				break;

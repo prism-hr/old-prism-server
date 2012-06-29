@@ -62,7 +62,7 @@
       <!-- Has qualification been awarded? -->
       <div class="admin_row">
         <span class="admin_row_label">Has this qualification been awarded?</span>                    
-        <div class="field" id="qualificationCompleted">${(qualification.completed?html)!"Not Provided"}</div>
+        <div class="field" id="qualificationCompleted">${(qualification.completed?cap_first)!"Not Provided"}</div>
       </div>
       
       <!-- Qualification grade -->

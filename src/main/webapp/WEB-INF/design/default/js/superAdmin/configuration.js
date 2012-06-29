@@ -90,7 +90,7 @@ $(document).ready(function()
 				data:$.param(postData),
 				success:function(data)
 				{
-					$('#section-reminders').remove();
+					$('#section-reminders div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";
 					addToolTips();
 				}
@@ -121,7 +121,7 @@ $(document).ready(function()
 				data:registryUsers.serialize(),
 				success:function(data)
 				{
-					$('#section-users').remove();
+					$('#section-users div.ajax').remove();
 					//window.location.href = "/pgadmissions/applications";
 					addToolTips();
 				}

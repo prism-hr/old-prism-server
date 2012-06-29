@@ -56,7 +56,7 @@
 							<div class="content-box-inner">
 							
 
-								<section id="section-slc" class="form-rows">
+								<section class="form-rows">
 									<h2>Configuration</h2>
 									
 									<div>
@@ -66,7 +66,7 @@
 												Edit the system configuration. <strong>Be aware that this will change the system behaviour for all programmes.</strong>
 											</div>
 										
-											<div class="row-group">
+											<div class="row-group" id="section-stages">
 												<select id="stages" style="display: none;">
 													<#list stages as stage>
 													<option value="${stage}"></option>
@@ -117,7 +117,7 @@
 
 										<!-- Configure Reminder Interval -->
 										<form>
-											<div class="row-group">
+											<div class="row-group" id="section-reminders">
 
 												<div class="row">
 													<span id="reminder-lbl" class="plain-label"><strong>Task Notifications</strong></span>
@@ -155,7 +155,7 @@
 										</form>
 
 										<!-- Add Registry Users -->
-										<form id="addRegistryForm">
+										<form id="addRegistryForm" id="section-users">
 											<span class="invalid" name="threeMaxMessage"></span>
 
 											<!-- First registry user -->

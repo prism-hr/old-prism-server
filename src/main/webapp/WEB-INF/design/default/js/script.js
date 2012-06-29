@@ -286,17 +286,13 @@ function fixedTip($object, text)
 			adjust: {
 				method: 'flip shift'
 			},
-			show: {
-				event: false,
-				ready: true
-			},
-			hide: false
 		},
 		style: 'tooltip-pgr ui-tooltip-shadow'
 	};
 
 	$object.removeData('qtip')
-	       .qtip(tooltipSettings);	
+	       .qtip(tooltipSettings)
+				 .show();
 }
 
 

@@ -33,9 +33,9 @@
 											<#assign size_users = timelineObject.reviewRound.reviewers?size>
 											<#list timelineObject.reviewRound.reviewers as reviewer>
 											<#assign index_i = reviewer_index>
-											${reviewer.user.firstName?html} ${reviewer.user.lastName?html}<#if (index_i < (size_users - 1))>, </#if>
+											${reviewer.user.firstName?html} ${reviewer.user.lastName?html}<#if (index_i &lt; (size_users - 1))>, </#if>
 											</#list>
-											added as reviewer<#if size_users > 1>s</#if>.
+											added as reviewer<#if size_users &gt; 1>s</#if>.
 										</div>
 									</div>
 								</li>
@@ -54,9 +54,9 @@
 											<#assign size_users = timelineObject.interview.interviewers?size>
 											<#list timelineObject.interview.interviewers as interviewer>
 											<#assign index_i = interviewer_index>
-											${interviewer.user.firstName?html} ${interviewer.user.lastName?html}<#if (index_i < (size_users - 1))>, </#if>
+											${interviewer.user.firstName?html} ${interviewer.user.lastName?html}<#if (index_i &lt; (size_users - 1))>, </#if>
 											</#list>
-											added as interviewer<#if size_users > 1>s</#if>.
+											added as interviewer<#if size_users &gt; 1>s</#if>.
 										</div>
 									</div>
 								</li>
@@ -72,9 +72,9 @@
 											<#assign size_users = timelineObject.approvalRound.supervisors?size>
 											<#list timelineObject.approvalRound.supervisors as supervisor>
 											<#assign index_i = supervisor_index>
-											${supervisor.user.firstName?html} ${supervisor.user.lastName?html}<#if (index_i < (size_users - 1))>, </#if>
+											${supervisor.user.firstName?html} ${supervisor.user.lastName?html}<#if (index_i &lt; (size_users - 1))>, </#if>
 											</#list>
-											added as supervisor<#if size_users > 1>s</#if>.
+											added as supervisor<#if size_users &gt; 1>s</#if>.
 										</div>
 									</div>
 								</li>

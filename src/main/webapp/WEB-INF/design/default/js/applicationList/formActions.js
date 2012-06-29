@@ -118,12 +118,14 @@ $(document).ready(function()
 		$('#search-box span.invalid').remove();
 		if ($('#searchTerm').val().length < 3)
 		{
-			$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
+			//$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
+			fixedTip($('#search-go'), 'Search term must be at least three characters.');
 			return;
 		}
 		else if ($('#searchCategory').val() == '')
 		{
-			$('#search-box').append('<span class="invalid">Please select a search criterion.</span>');
+			fixedTip($('#search-go'), 'Please select a search criterion.');
+			//$('#search-box').append('<span class="invalid">Please select a search criterion.</span>');
 			return;
 		}
 		populateApplicationList();

@@ -259,6 +259,36 @@ function addToolTips()
 }
 
 
+function fixedTip($object, text)
+{
+	var tooltipSettings = {
+		content: {
+			text: function(api)
+			{
+				return text;
+			} 
+		},
+		position: {
+			my: 'bottom left', // Use the corner...
+			at: 'bottom right', // ...and opposite corner
+			viewport: $(window),
+			adjust: {
+				method: 'flip shift'
+			},
+			show: {
+				event: false,
+				ready: true
+			},
+			hide: false
+		},
+		style: 'tooltip-pgr ui-tooltip-shadow'
+	};
+
+	$object.removeData('qtip')
+	       .qtip(tooltipSettings);	
+}
+
+
 // ------------------------------------------------------------------------------
 // Set up a div.field container with a file INPUT field for AJAX uploading.
 // ------------------------------------------------------------------------------

@@ -29,11 +29,14 @@
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
 									<div class="box">
-										<ul class="added">
+										<div class="added">
+											<#assign size_users = timelineObject.reviewRound.reviewers?size>
 											<#list timelineObject.reviewRound.reviewers as reviewer>
-											<li>${reviewer.user.firstName?html} ${reviewer.user.lastName?html}</li>
+											<#assign index_i = reviewer_index>
+											${reviewer.user.firstName?html} ${reviewer.user.lastName?html}<#if (index_i < (size_users - 1))>, </#if>
 											</#list>
-										</ul>
+											added as reviewer<#if size_users > 1>s</#if>.
+										</div>
 									</div>
 								</li>
 							</ul>
@@ -47,11 +50,14 @@
 										<h3>Interview</h3>
 										<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
 										<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
-										<ul class="added">
+										<div class="added">
+											<#assign size_users = timelineObject.interview.interviewer?size>
 											<#list timelineObject.interview.interviewers as interviewer>
-											<li>${interviewer.user.firstName?html} ${interviewer.user.lastName?html}</li>
+											<#assign index_i = interviewer_index>
+											${interviewer.user.firstName?html} ${interviewer.user.lastName?html}<#if (index_i < (size_users - 1))>, </#if>
 											</#list>
-										</ul>
+											added as interviewer<#if size_users > 1>s</#if>.
+										</div>
 									</div>
 								</li>
 							</ul>
@@ -62,11 +68,14 @@
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
 									<div class="box">
-										<ul class="added">
+										<div class="added">
+											<#assign size_users = timelineObject.approvalRound.supervisors?size>
 											<#list timelineObject.approvalRound.supervisors as supervisor>
-											<li>${supervisor.user.firstName?html} ${supervisor.user.lastName?html}</li>
+											<#assign index_i = supervisor_index>
+											${supervisor.user.firstName?html} ${supervisor.user.lastName?html}<#if (index_i < (size_users - 1))>, </#if>
 											</#list>
-										</ul>
+											added as supervisor<#if size_users > 1>s</#if>.
+										</div>
 									</div>
 								</li>
 							</ul>

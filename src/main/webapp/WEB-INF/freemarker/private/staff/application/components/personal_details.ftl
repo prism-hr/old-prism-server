@@ -39,11 +39,7 @@
       
       <div class="admin_row">
         <label class="admin_row_label">Gender</label>
-        <div class="field">
-					${applicationForm.personalDetails.gender?replace("_", " ")?lowercase?html!"Not Provided"}<br />
-					${applicationForm.personalDetails.gender?lowercase}<br />
-					${applicationForm.personalDetails.gender?replace("_", " ")?lowercase}
-				</div>
+        <div class="field">${applicationForm.personalDetails.gender?lowercase?replace("_", " ")?html!"Not Provided"}</div>
       </div>
       
       <div class="admin_row">

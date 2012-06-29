@@ -286,15 +286,16 @@ $(document).ready(function()
 	{
 		if ($("#acceptTermsPDValue").val() == 'NO')
 		{ 
-			$('#programmeDetailsSection .terms-box').css({borderColor: 'red', color: 'red'});
-				
-			var $infobar = $('#prog-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				progImgCount = progImgCount + 1;
-			}
+//			$('#programmeDetailsSection .terms-box').css({borderColor: 'red', color: 'red'});
+//				
+//			var $infobar = $('#prog-info-bar-div.section-info-bar');
+//			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
+//			if ($infobar)
+//			{
+//				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+//				progImgCount = progImgCount + 1;
+//			}
+			postProgrammeData('open');
 			addToolTips();
 		}
 		else
@@ -373,6 +374,14 @@ $(document).ready(function()
 // -------------------------------------------------------------------------------
 function postProgrammeData(message)
 {
+	var acceptedTheTerms;
+	if ($("#acceptTermsPDValue").val() == 'NO'){
+		acceptedTheTerms = false;
+	}
+	else{
+		acceptedTheTerms = true;
+	}
+		
 	var postData = {
 			programmeName: $("#programmeName").val(),
 			projectName: $("#projectName").val(), 
@@ -383,6 +392,7 @@ function postProgrammeData(message)
 			application: $('#applicationId').val(),
 			applicationId: $('#applicationId').val(),
 			suggestedSupervisors: "",
+			acceptedTerms: acceptedTheTerms,
 			message: message
 		};
 

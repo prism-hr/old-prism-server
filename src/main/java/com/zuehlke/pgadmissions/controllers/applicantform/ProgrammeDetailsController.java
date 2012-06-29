@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -63,8 +64,8 @@ public class ProgrammeDetailsController {
 	}
 
 	@RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
-	public String editProgrammeDetails(@Valid ProgrammeDetails programmeDetails, BindingResult result) {
-
+	public String editProgrammeDetails(@RequestParam Boolean acceptedTerms, @Valid ProgrammeDetails programmeDetails, BindingResult result, ModelMap modelMap) {
+		modelMap.put("termsError", false);
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
@@ -72,6 +73,13 @@ public class ProgrammeDetailsController {
 			throw new CannotUpdateApplicationException();
 		}
 		if (result.hasErrors()) {
+			if(!acceptedTerms){
+				modelMap.put("termsError", true);
+			}
+			return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
+		}
+		if(!acceptedTerms){
+			modelMap.put("termsError", true);
 			return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
 		}
 		programmeDetailsService.save(programmeDetails);

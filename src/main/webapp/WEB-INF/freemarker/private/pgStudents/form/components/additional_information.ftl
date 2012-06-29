@@ -79,7 +79,7 @@
 	
 			<!-- Free text field for convictions. -->
 			<div class="row">
-				<span id="convictions-details-lbl" class="plain-label">
+				<span id="convictions-details-lbl" class="plain-label grey-label">
 					Description<#if additionalInformation.convictions?? && additionalInformation.convictions><em>*</em></#if>
 				</span>
 				<span class="hint" data-desc="<@spring.message 'additionalInformation.convictionstext'/>"></span>

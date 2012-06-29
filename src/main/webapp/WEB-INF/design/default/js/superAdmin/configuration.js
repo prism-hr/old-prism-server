@@ -26,7 +26,7 @@ $(document).ready(function()
 		var stages = $('[input[name="stagesDuration"]');
 		if (!validationErrors)
 		{
-			$('#section-slc > div').append('<div class="ajax" />');
+			$(this).closest('div.row-group').append('<div id="ajax-duration" class="ajax" />');
 			$.ajax({
 				type: 'POST',
 				 statusCode: {
@@ -38,7 +38,7 @@ $(document).ready(function()
 				data:stages.serialize(),
 				success:function(data)
 				{
-					$('#section-slc div.ajax').remove();
+					$('#ajax-duration').remove();
 					//window.location.href = "/pgadmissions/applications";
 					addToolTips();
 				}
@@ -78,7 +78,7 @@ $(document).ready(function()
 			};
 		if (!validationErrors)
 		{
-			$('#section-reminder > div').append('<div class="ajax" />');
+			$(this).closest('div.row-group').append('<div id="ajax-interval" class="ajax" />');
 			$.ajax({
 				type: 'POST',
 				 statusCode: {
@@ -90,7 +90,7 @@ $(document).ready(function()
 				data:$.param(postData),
 				success:function(data)
 				{
-					$('#section-reminder div.ajax').remove();
+					$('#ajax-interval').remove();
 					//window.location.href = "/pgadmissions/applications";
 					addToolTips();
 				}
@@ -109,7 +109,7 @@ $(document).ready(function()
 		var registryUsers = $('[input[name="registryUsers"]');
 		if (!validationErrors)
 		{
-			$('#section-registry > div').append('<div class="ajax" />');
+			$(this).closest('div.row-group').append('<div id="ajax-users" class="ajax" />');
 			$.ajax({
 				type: 'POST',
 				 statusCode: {
@@ -121,7 +121,7 @@ $(document).ready(function()
 				data:registryUsers.serialize(),
 				success:function(data)
 				{
-					$('#section-registry div.ajax').remove();
+					$('#ajax-users').remove();
 					//window.location.href = "/pgadmissions/applications";
 					addToolTips();
 				}

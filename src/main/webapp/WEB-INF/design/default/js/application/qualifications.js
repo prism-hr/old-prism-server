@@ -208,8 +208,8 @@ $(document).ready(function(){
 					
 					if ($("#currentQualificationCB").is(":checked"))
 					{
-						$("#qualificationAwardDate").removeAttr("disabled", "disabled");
-						$("#proofOfAward").removeAttr("disabled", "disabled");
+						$("#qualificationAwardDate").removeAttr("disabled");
+						$("#proofOfAward").removeAttr("disabled");
 						$("#quali-grad-id em").remove();
 						$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
 						$("#quali-award-date-lb em").remove();

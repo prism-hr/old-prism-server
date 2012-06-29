@@ -55,11 +55,13 @@
 						<div class="content-box">
 							<div class="content-box-inner">
 							
-								<div class="section-info-bar">
-									Edit the system configuration. <strong>Be aware that this will change the system behaviour for all programmes.</strong>
-								</div>
 
 								<section id="section-slc" class="form-rows">
+									<h2>Configuration</h2>
+									<div class="section-info-bar">
+										Edit the system configuration. <strong>Be aware that this will change the system behaviour for all programmes.</strong>
+									</div>
+									
 									<div>
 										<form>
 										
@@ -71,7 +73,7 @@
 												</select>
 							
 												<div class="row">
-													<span id="reminder-lbl" class="plain-label">Service Level Commitments</span>
+													<span id="reminder-lbl" class="plain-label"><strong>Service Level Commitments</h3></span>
 													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
 												</div><!-- .row -->
 							
@@ -103,23 +105,21 @@
 												</div>
 												</#list>
 												<input type="hidden" name="stagesDuration" id= "stagesDuration" />
+
+												<div class="buttons">						        		
+	<#--										<button type="button" id="cancelDurationBtn" value="cancel" class="clear">Clear</button> -->
+													<button class="blue" id="submitDurationStages" type="button" value="Submit">Submit</button>						        
+												</div>
 											</div><!-- .row-group -->
 										
-											<div class="buttons">						        		
-<#--										<button type="button" id="cancelDurationBtn" value="cancel" class="clear">Clear</button> -->
-												<button class="blue" id="submitDurationStages" type="button" value="Submit">Submit</button>						        
-											</div>
-											
 										</form>
-									</div>
 
-									<!-- Configure Reminder Interval -->
-									<div>
+										<!-- Configure Reminder Interval -->
 										<form>
 											<div class="row-group">
 
 												<div class="row">
-													<span id="reminder-lbl" class="plain-label">Task Notifications</span>
+													<span id="reminder-lbl" class="plain-label"><strong>Task Notifications</strong></span>
 													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
 												</div><!-- .row -->
 
@@ -144,18 +144,16 @@
 													</div>
 												</div><!-- .row -->
 												
+												<div class="buttons">						        		
+	<#--										<button type="button" id="cancelReminderBtn" value="cancel" class="clear">Clear</button> -->
+													<button class="blue" id="submitRIBtn" type="button" value="Submit">Submit</button>						        
+												</div>
+											
 											</div><!-- .row-group -->
 											
-											<div class="buttons">						        		
-<#--										<button type="button" id="cancelReminderBtn" value="cancel" class="clear">Clear</button> -->
-												<button class="blue" id="submitRIBtn" type="button" value="Submit">Submit</button>						        
-											</div>
-											
 										</form>
-									</div>
 
-									<!-- Add Registry Users -->
-									<div>
+										<!-- Add Registry Users -->
 										<form id="addRegistryForm">
 											<span class="invalid" name="threeMaxMessage"></span>
 
@@ -163,7 +161,7 @@
 											<div class="row-group" id="firstRegistryUser">
 											
 												<div class="row">
-													<span id="reminder-lbl" class="plain-label">Admissions Contacts</span>
+													<span id="reminder-lbl" class="plain-label"><strong>Admissions Contacts</strong></span>
 													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
 												</div><!-- .row -->
 											
@@ -250,14 +248,14 @@
 													</div>
 												</div><!-- .row -->
 
+												<input type="hidden" name="registryUsers" id= "registryUsers" />
+												
+												<div class="buttons">						        		
+	<#--										<button type="button" id="cancelRegistryBtn" value="cancel" class="clear">Clear</button> -->
+													<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
+												</div>
+
 											</div><!-- .row-group -->
-									
-											<input type="hidden" name="registryUsers" id= "registryUsers" />
-											
-											<div class="buttons">						        		
-<#--										<button type="button" id="cancelRegistryBtn" value="cancel" class="clear">Clear</button> -->
-												<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
-											</div>
 									
 										</form>
 									</div>

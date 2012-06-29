@@ -59,7 +59,7 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses .box ul.uploads { background: url(../../../images/icon_downloads.png) no-repeat 12px 11px; }
 
 #timeline-statuses ul.status-info .box h3 { margin: 0; padding: 10px; }
-#timeline-statuses ul.status-info .box ul.added { background: url(../../../images/icon_added_users.png) no-repeat 12px 11px; padding: 10px 10px 10px 40px; }
+#timeline-statuses ul.status-info .added { background: url(../../../images/icon_added_users.png) no-repeat 12px 11px; padding: 10px 10px 10px 40px; }
 
 #timeline-statuses ul .box ul { margin: 0; padding: 10px 0 20px 40px; }
 #timeline-statuses ul .box li { display: inline-block; margin-right: 20px; }

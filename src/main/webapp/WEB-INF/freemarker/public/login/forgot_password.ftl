@@ -46,8 +46,9 @@
 		    
 		    <!-- Blurb. -->
 		    <aside id="blurb">
-			    <h2>Welcome to your new gateway to<br />UCL Postgraduate Research programmes<br />in Engineering Sciences.</h2>
-					<p>Register today and begin your application to join some of the world's most highly regarded researchers and academics at the frontiers of discovery.</p>
+	          <p>Welcome to <b>UCL Prism</b>, the gateway<br />
+						to postgraduate research opportunities<br />
+						in UCL Engineering.</p>
 		    </aside>
 		
 		    <!-- Login form. -->

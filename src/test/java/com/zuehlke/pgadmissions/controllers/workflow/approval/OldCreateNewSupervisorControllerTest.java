@@ -33,9 +33,9 @@ import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 
-public class CreateNewSupervisorControllerTest {
+public class OldCreateNewSupervisorControllerTest {
 	protected final String APROVAL_DETAILS_VIEW_NAME = "/private/staff/supervisors/approval_details";
-	private CreateNewSupervisorController controller;
+	private OldCreateNewSupervisorController controller;
 	private UserService userServiceMock;
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
@@ -50,7 +50,7 @@ public class CreateNewSupervisorControllerTest {
 	public void shouldCreateNewApprovalRoundForNewSupervisorUserIfUserDoesNotExists() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encrypted5");
-		controller = new CreateNewSupervisorController(applicationsServiceMock, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, encryptionHelper){
+		controller = new OldCreateNewSupervisorController(applicationsServiceMock, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -84,7 +84,7 @@ public class CreateNewSupervisorControllerTest {
 	public void shouldCreateNewApprovalRoundForExistingSupervisorUserIfUserDoesNotExists() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encrypted5");
-		controller = new CreateNewSupervisorController(applicationsServiceMock, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, encryptionHelper){
+		controller = new OldCreateNewSupervisorController(applicationsServiceMock, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -172,7 +172,7 @@ public class CreateNewSupervisorControllerTest {
 	public void shouldDoNothingIfUserExistsAndIsAlreadyPedningSupervisorOfApp() {
 		final List<String> encryptedList = new ArrayList<String>();
 		encryptedList.add("encryptedOne");
-		controller = new CreateNewSupervisorController(applicationsServiceMock, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, encryptionHelper){
+		controller = new OldCreateNewSupervisorController(applicationsServiceMock, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, encryptionHelper){
 			@Override
 			public List<String> getEncryptedUserIds(List<Integer> newUserIds) {
 				return encryptedList;
@@ -228,6 +228,6 @@ public class CreateNewSupervisorControllerTest {
 		supervisorProertyEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
 		approvalroundValidator = EasyMock.createMock(ApprovalRoundValidator.class);
 		encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
-		controller = new CreateNewSupervisorController(applicationsServiceMock, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, encryptionHelper);
+		controller = new OldCreateNewSupervisorController(applicationsServiceMock, userServiceMock, null,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, encryptionHelper);
 		}
 }

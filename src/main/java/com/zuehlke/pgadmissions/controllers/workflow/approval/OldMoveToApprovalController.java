@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
 @RequestMapping("/approval")
-public class MoveToApprovalController extends ApprovalController {
+public class OldMoveToApprovalController extends OldApprovalController {
 
 	protected final String REQUEST_APROVAL_DETAILS_VIEW_NAME = "/private/staff/approver/request_restart_approve_page";
 	private final DocumentPropertyEditor documentPropertyEditor;
@@ -38,12 +38,12 @@ public class MoveToApprovalController extends ApprovalController {
 	
 
 	
-	MoveToApprovalController() {
+	OldMoveToApprovalController() {
 		this(null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public MoveToApprovalController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator,
+	public OldMoveToApprovalController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator,
 			ApprovalRoundValidator approvalroundValidator, ApprovalService approvalService, MessageSource messageSource,
 			SupervisorPropertyEditor supervisorPropertyEditor, EncryptionHelper encryptionHelper, GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor) {
 		super(applicationsService, userService, supervisorValidator, approvalroundValidator, approvalService, messageSource, supervisorPropertyEditor, encryptionHelper);

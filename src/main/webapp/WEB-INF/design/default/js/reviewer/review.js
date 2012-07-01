@@ -23,26 +23,34 @@ $(document).ready(function()
 			data:	$.param(postData),
 			success: function(data)
 			{	
-				var newReviewer = jQuery.parseJSON(data);	
+				var newReviewer;
+				try{
+					newReviewer = jQuery.parseJSON(data);	
+				}catch(err){
+					
+					$('#createreviewersection').html(data);
+					addToolTips();
+					return;
+				}
 				if(newReviewer.isNew){
 					$('#previous').append('<option value="' + $('#applicationId').val() + '|' + newReviewer.id + '" category="previous" disabled="disabled">' +
 							newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
 					$('#applicationReviewers').append('<option value="' + $('#applicationId').val() + '|' + newReviewer.id + '">' +
 							newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
+					$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
 					$('#add-info-bar-div').html('New user ' + newReviewer.toString + ' added as reviewer');
+					
 				}else{
 					addExistingUserToReviewersLists(newReviewer);
 				}
 				
-				$('#newReviewerFirstName').val('');
-				$('#newReviewerLastName').val('');
-				$('#newReviewerEmail').val('');				
+				getCreateReviewersSection();		
 				
 			},
-      complete: function()
-      {
-				$('#createreviewersection div.ajax').remove();
-      }
+		      complete: function()
+		      {
+				 $('#createreviewersection div.ajax').remove();
+		      }
 		});
 		
 	});
@@ -122,10 +130,10 @@ function getReviewersSection(){
 			$('#assignReviewersToAppSection').html(data);
 			addToolTips();
 		},
-    complete: function()
-    {
-      $('#reviewsection div.ajax').remove();
-    }
+		complete: function()
+    	{
+	      $('#reviewsection div.ajax').remove();
+	    }
 	});
 }
 
@@ -152,6 +160,7 @@ function addExistingUserToReviewersLists(newReviewer){
 	
 	if($('#applicationReviewers option[value="' + $('#applicationId').val() + '|' + newReviewer.id + '"]').length > 0){
 		$('#add-info-bar-div').html(newReviewer.toString + ' is already selected as reviewer');
+		
 		return;
 	}
 	
@@ -174,5 +183,6 @@ function addExistingUserToReviewersLists(newReviewer){
 			newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
 	$('#applicationReviewers').append('<option value="' + $('#applicationId').val() + '|' + newReviewer.id + '">' +
 			newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
+	$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
 	$('#add-info-bar-div').html('Existing user ' + newReviewer.toString + ' added as reviewer');
 }

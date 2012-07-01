@@ -59,7 +59,7 @@
 						<div>
 							<form>
 							
-								<div class="section-info-bar">
+								<div id="add-info-bar-div" class="section-info-bar">
 									Assign interviewers to the application here. You may also create new interviewers.
 								</div>
 					

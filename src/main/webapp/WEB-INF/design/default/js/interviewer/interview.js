@@ -32,17 +32,55 @@ $(document).ready(function()
 	});
 	
 	
-	$('#createInterviewer').click(function() {
-		$('#applicationInterviewers option').each(function(){
-			$('#postInterviewerForm').append("<input name='pendingInterviewer' type='hidden' value='" +  $(this).val() + "'/>");	
-		});
-		$('#postInterviewerForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
-		$('#postInterviewerForm').append("<input name='encryptedInterviewId' type='hidden' value='" +  $('#interviewId').val() + "'/>");
-		$('#postInterviewerForm').append("<input name='firstName' type='hidden' value='" +  $('#newInterviewerFirstName').val() + "'/>");
-		$('#postInterviewerForm').append("<input name='lastName' type='hidden' value='" +  $('#newInterviewerLastName').val() + "'/>");
-		$('#postInterviewerForm').append("<input name='email' type='hidden' value='" +  $('#newInterviewerEmail').val() + "'/>");		
-		$('#postInterviewerForm').submit();
-	});
+	$('#createinterviewersection').on('click','#createInterviewer', function()
+			{
+				$('#createinterviewersection').append('<div class="ajax" />');
+				var postData = {
+					applicationId : $('#applicationId').val(),
+					firstName: $('#newInterviewerFirstName').val(),
+					lastName: $('#newInterviewerLastName').val(),
+					email: $('#newInterviewerEmail').val()				
+				}
+				$.ajax({
+					type: 'POST',
+					 statusCode: {
+						  401: function() {
+							  window.location.reload();
+						  }
+					  },
+					url:"/pgadmissions/interview/createInterviewer",
+					data:	$.param(postData),
+					success: function(data)
+					{	
+						var newInterviewer;
+						try{
+							newInterviewer = jQuery.parseJSON(data);
+						}catch(err){
+							$('#createinterviewersection').html(data);
+							addToolTips();
+							return;
+						}
+						if(newInterviewer.isNew){
+							$('#previous').append('<option value="'+ newInterviewer.id + '" category="previous" disabled="disabled">' +
+									newInterviewer.firstname + ' ' + newInterviewer.lastname+ '</option>');
+							$('#applicationInterviewers').append('<option value="'  + newInterviewer.id + '">' +
+									newInterviewer.firstname + ' ' + newInterviewer.lastname+ '</option>');
+							$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+							$('#add-info-bar-div').html('New user ' + newInterviewer.toString + ' added as interviewer');
+						}else{
+							addExistingUserToInterviewersLists(newInterviewer);
+						}
+						
+						getCreateInterviewersSection();			
+						
+					},
+				      complete: function()
+				      {
+						$('#createinterviewersection div.ajax').remove();
+				      }
+				});
+				
+			});
 	
 	
 	// -----------------------------------------------------------------------------------------
@@ -109,16 +147,16 @@ $(document).ready(function()
 					addToolTips();
 					$('#interviewDate').attr("readonly", "readonly");	
 					$('#interviewDate').datepicker({
-						dateFormat: 'dd-M-yy',
+						dateFormat: 'dd M yy',
 						changeMonth: true,
 						changeYear: true,
 						yearRange: '1900:c+20' });
 				}
 			},
-      complete: function()
-      {
-        $('#interviewsection div.ajax').remove();
-      }
+		      complete: function()
+		      {
+		        $('#interviewsection div.ajax').remove();
+		      }
 		});
 	});
 		
@@ -150,15 +188,15 @@ function getInterviewersAndDetailsSections(){
 			addToolTips();
 			$('#interviewDate').attr("readonly", "readonly");	
 			$('#interviewDate').datepicker({
-				dateFormat: 'dd-M-yy',
+				dateFormat: 'dd M yy',
 				changeMonth: true,
 				changeYear: true,
 				yearRange: '1900:c+20' });
 		},
-    complete: function()
-    {
-			$('#interviewsection div.ajax').remove();
-    }
+	    complete: function()
+	    {
+				$('#interviewsection div.ajax').remove();
+	    }
 	});
 }
 
@@ -178,9 +216,40 @@ function getCreateInterviewersSection(){
 		{
 			$('#createinterviewersection').html(data);
 		},
-    complete: function()
-    {
-			$('#createinterviewersection div.ajax').remove();
-    }
+	    complete: function()
+	    {
+				$('#createinterviewersection div.ajax').remove();
+	    }
 	});
+}
+
+
+function addExistingUserToInterviewersLists(newInterviewer){
+	
+	if($('#applicationInterviewers option[value="' + newInterviewer.id + '"]').length > 0){
+		$('#add-info-bar-div').html(newInterviewer.toString + ' is already selected as interviewer');
+		return;
+	}
+	
+
+	if($('#default option[value="' + newInterviewer.id + '"]').length > 0){		
+		$('#default option[value="' + newInterviewer.id + '"]').attr("selected", 'selected');		
+		$('#addInterviewerBtn').trigger('click');
+		$('#add-info-bar-div').html('Default interviewer ' + newInterviewer.toString + ' selected as interviewer');
+		return;
+	}	
+
+	if($('#previous option[value="' + newInterviewer.id + '"]').length > 0){
+		$('#previous option[value="'+ newInterviewer.id + '"]').attr("selected", 'selected');		
+		$('#addInterviewerBtn').trigger('click');
+		$('#add-info-bar-div').html('Previous interviewer ' + newInterviewer.toString + ' selected as interviewer');
+		return;
+	}
+	
+	$('#previous').append('<option value="'  + newInterviewer.id + '" category="previous" disabled="disabled">' +
+			newInterviewer.firstname + ' ' + newInterviewer.lastname+ '</option>');
+	$('#applicationInterviewers').append('<option value="'  + newInterviewer.id + '">' +
+			newInterviewer.firstname + ' ' + newInterviewer.lastname+ '</option>');
+	$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+	$('#add-info-bar-div').html('Existing user ' + newInterviewer.toString + ' added as interviewer');
 }

@@ -96,6 +96,7 @@
 <script type="text/javascript"  src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script src="http://malsup.github.com/jquery.form.js"></script> 
 <script type="text/javascript"  src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 <script type="text/javascript"  src="<@spring.url '/design/default/js/reviewer/review.js'/>"></script>
 </body>
 </html>

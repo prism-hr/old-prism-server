@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-public abstract class ApprovalController {
+public abstract class OldApprovalController {
 	protected final String APROVAL_DETAILS_VIEW_NAME = "/private/staff/supervisors/approval_details";
 	protected final ApplicationsService applicationsService;
 	protected final UserService userService;
@@ -38,12 +38,12 @@ public abstract class ApprovalController {
 	protected final SupervisorPropertyEditor supervisorPropertyEditor;
 	protected final EncryptionHelper encryptionHelper;
 
-	ApprovalController() {
+	OldApprovalController() {
 		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public ApprovalController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
+	public OldApprovalController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
 			ApprovalRoundValidator approvalroundValidator, ApprovalService approvalService, MessageSource messageSource,
 			SupervisorPropertyEditor supervisorPropertyEditor, EncryptionHelper encryptionHelper) {
 		this.applicationsService = applicationsService;

@@ -28,9 +28,9 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-public class MoveToApprovalControllerTest {
+public class OldMoveToApprovalControllerTest {
 
-	private MoveToApprovalController controller;
+	private OldMoveToApprovalController controller;
 	private ApplicationsService applicationServiceMock;
 	private UserService userServiceMock;
 
@@ -82,7 +82,7 @@ public class MoveToApprovalControllerTest {
 		ApprovalRound approvalround = new ApprovalRoundBuilder().id(4).toApprovalRound();
 		final ApplicationForm application = new ApplicationFormBuilder().applicationNumber("LALALA").id(2).toApplicationForm();
 		
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock){
+		controller = new OldMoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				return application;
@@ -103,7 +103,7 @@ public class MoveToApprovalControllerTest {
 	public void shouldNotSaveReviewRoundAndReturnToReviewRoundPageIfHasErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock){
+		controller = new OldMoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				Assert.assertEquals("1", applicationId);
@@ -123,7 +123,7 @@ public class MoveToApprovalControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").toApplicationForm();
 		final RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
 		Comment comment = new CommentBuilder().comment("request restart").toComment();
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock,// 
+		controller = new OldMoveToApprovalController(applicationServiceMock, userServiceMock,// 
 				userValidatorMock, null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -164,7 +164,7 @@ public class MoveToApprovalControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 
-		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock);
+		controller = new OldMoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock, null, genericCommentValidator, documentPropertyEditorMock);
 	}
 
 }

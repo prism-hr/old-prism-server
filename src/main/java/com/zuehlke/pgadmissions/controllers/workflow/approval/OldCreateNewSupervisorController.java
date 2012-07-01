@@ -29,20 +29,20 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
 @RequestMapping("/approval")
-public class CreateNewSupervisorController extends ApprovalController {
+public class OldCreateNewSupervisorController extends OldApprovalController {
 	
 	
 	private static final String REDIRECT_APPROVAL_ASSIGN_SUPERVISORS = "redirect:/approval/assignSupervisors";
 	private static final String REDIRECT_APPROVAL_MOVE_TO_APPROVAL = "redirect:/approval/moveToApproval";
 
 
-	CreateNewSupervisorController() {
+	OldCreateNewSupervisorController() {
 		 this(null, null, null, null, null, null, null, null);
 	
 	}
 
 	@Autowired
-	public CreateNewSupervisorController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator, ApprovalRoundValidator approvalRoundValidator,
+	public OldCreateNewSupervisorController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator, ApprovalRoundValidator approvalRoundValidator,
 			ApprovalService approvalService, MessageSource messageSource, SupervisorPropertyEditor supervisorPropertyEditor, EncryptionHelper encryptionHelper) {
 		super(applicationsService, userService, supervisorValidator, approvalRoundValidator, approvalService, messageSource, supervisorPropertyEditor, encryptionHelper);
 

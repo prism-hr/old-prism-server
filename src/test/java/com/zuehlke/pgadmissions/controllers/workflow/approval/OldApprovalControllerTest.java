@@ -37,8 +37,8 @@ import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-public class ApprovalControllerTest {
-	private ApprovalController controller;
+public class OldApprovalControllerTest {
+	private OldApprovalController controller;
 	private ApplicationsService applicationServiceMock;
 	private UserService userServiceMock;
 
@@ -66,7 +66,7 @@ public class ApprovalControllerTest {
 	public void shouldReturnExistingInterviewersBelongingToApplication() {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
-		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
+		controller = new OldApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
 				supervisorProertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -108,7 +108,7 @@ public class ApprovalControllerTest {
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(superUser4).toSupervisor()).id(1).toApprovalRound();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().approvalRounds(approvalRound).latestApprovalRound(approvalRound)
 				.acceptedTerms(CheckedStatus.NO).id(5).program(program).toApplicationForm();
-		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
+		controller = new OldApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
 				supervisorProertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -229,7 +229,7 @@ public class ApprovalControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder()
 				.latestApprovalRound(new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(newUser2).toSupervisor()).toApprovalRound()).id(2)
 				.applicationNumber(applicationNumber).toApplicationForm();
-		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
+		controller = new OldApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
 				supervisorProertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -262,7 +262,7 @@ public class ApprovalControllerTest {
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).supervisors(new SupervisorBuilder().user(assignedSupervisor).toSupervisor())
 				.toApprovalRound();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(approvalRound).id(5).program(program).toApplicationForm();
-		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
+		controller = new OldApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
 				supervisorProertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -308,7 +308,7 @@ public class ApprovalControllerTest {
 
 		final ApplicationForm applicationForm = EasyMock.createMock(ApplicationForm.class);
 
-		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
+		controller = new OldApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
 				supervisorProertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -362,7 +362,7 @@ public class ApprovalControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 
-		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
+		controller = new OldApprovalController(applicationServiceMock, userServiceMock, userValidatorMock, null, approvalServiceMock, messageSourceMock,
 				supervisorProertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApprovalRound getApprovalRound(String applicationId) {

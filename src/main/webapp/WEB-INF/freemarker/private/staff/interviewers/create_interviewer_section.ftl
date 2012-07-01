@@ -1,3 +1,4 @@
+<#import "/spring.ftl" as spring />
 <p><strong>Create New Interviewer</strong></p>									
 
 									<div class="row">

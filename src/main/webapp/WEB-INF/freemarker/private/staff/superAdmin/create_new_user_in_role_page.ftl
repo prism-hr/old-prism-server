@@ -87,7 +87,8 @@
 										<span class="plain-label<#if !userDTO.newUser> grey-label</#if>">First Name<em>*</em></span>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
 										<div class="field">
-											<input class="max" type="text" value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			                                  
+											<input class="max" type="text" value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			    
+											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.firstName?html)!}" name="firstName" /></#if>                              
 											<@spring.bind "userDTO.firstName" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>
@@ -100,6 +101,7 @@
 										<span class="hint" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.lastName?html)!}"  name="lastName" id="lastName"  <#if !userDTO.newUser>disabled="disabled"</#if>/>
+											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.lastName?html)!}" name="lastName" /></#if>    
 											<@spring.bind "userDTO.lastName" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>
@@ -112,6 +114,7 @@
 										<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
+											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.email?html)!}" name="email" /></#if>    
 											<@spring.bind "userDTO.email" /> 
 											<#list spring.status.errorMessages as error>
 											<span class="invalid">${error}</span>

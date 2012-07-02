@@ -79,7 +79,7 @@
 	
 			<!-- Free text field for convictions. -->
 			<div class="row">
-				<span id="convictions-details-lbl" class="plain-label grey-label">
+				<span id="convictions-details-lbl" class="plain-label<#if !additionalInformation.convictions?? || !additionalInformation.convictions> grey-label</#if>">
 					Description<#if additionalInformation.convictions?? && additionalInformation.convictions><em>*</em></#if>
 				</span>
 				<span class="hint" data-desc="<@spring.message 'additionalInformation.convictionstext'/>"></span>
@@ -89,7 +89,7 @@
 					<#if additionalInformation.convictions?? && !additionalInformation.convictions> disabled="disabled"</#if>
 					class="max" rows="6" cols="80" >${(additionalInformation.convictionsText?html)!}</textarea>
 					<#else>
-					<textarea readonly="readonly" id="convictionsText" name="convictionsText" class="max" rows="10" cols=80" >${(additionalInformation.convictionsText?html)!}</textarea>
+					<textarea readonly="readonly" id="convictionsText" name="convictionsText" class="max" rows="10" cols=80">${(additionalInformation.convictionsText?html)!}</textarea>
 					</#if>
 				</div>
 			</div>

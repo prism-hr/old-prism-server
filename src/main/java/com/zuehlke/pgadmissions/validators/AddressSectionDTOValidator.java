@@ -8,7 +8,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 
 @Component
-public class AddressSectionDTOValidator implements Validator {
+public class AddressSectionDTOValidator extends FormSectionObjectValidator implements Validator {
 
 	private static final int MAXIMUM_CHARS = 500;
 
@@ -19,6 +19,7 @@ public class AddressSectionDTOValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		super.validate(target, errors);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressLocation", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressCountry", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressLocation", "text.field.empty");

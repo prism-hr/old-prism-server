@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 
 @Service
-public class QualificationValidator  implements Validator{
+public class QualificationValidator  extends FormSectionObjectValidator implements Validator{
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return Qualification.class.equals(clazz);
@@ -21,6 +21,7 @@ public class QualificationValidator  implements Validator{
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		super.validate(target, errors);
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", "text.field.empty");

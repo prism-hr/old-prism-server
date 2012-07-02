@@ -129,7 +129,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#addQualificationButton').click(function()
 	{
-		if ($('#acceptTermsQDValue').length != 0 &&  $("#acceptTermsQDValue").val() =='NO')
+		/*if ($('#acceptTermsQDValue').length != 0 &&  $("#acceptTermsQDValue").val() =='NO')
 		{
 			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
@@ -143,10 +143,10 @@ $(document).ready(function(){
 			addToolTips();
 		}
 		else
-		{
+		{*/
 			$("span[name='nonAcceptedQD']").html('');
 			postQualificationData('add');
-		}
+		//}
 	});
 	
 
@@ -155,7 +155,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#qualificationsSaveButton').click(function()
 	{
-		if ($("#acceptTermsQDValue").val() =='NO')
+		/*if ($("#acceptTermsQDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
@@ -170,7 +170,7 @@ $(document).ready(function(){
 			addToolTips();
 		}
 		else
-		{
+		{*/
 			$("span[name='nonAcceptedQD']").html('');
 			
 			// Check for a "dirty" qualification form. If there is data try to submit it.
@@ -183,7 +183,7 @@ $(document).ready(function(){
 				unmarkSection('#qualificationsSection');
 				$('#qualificationsCloseButton').trigger('click');
 			}
-		}
+		//}
 	});
 	
 
@@ -281,7 +281,14 @@ $(document).ready(function(){
 function postQualificationData(message)
 {
 	$('#qualificationsSection > div').append('<div class="ajax" />');
-
+	var acceptedTheTerms;
+	if ($("#acceptTermsQDValue").val() == 'NO'){
+		acceptedTheTerms = false;
+	}
+	else{
+		acceptedTheTerms = true;
+	}
+	
 	$.ajax({
 		type: 'POST',
 		 statusCode: {
@@ -305,20 +312,22 @@ function postQualificationData(message)
 			application:  $('#applicationId').val(),
 			institutionCountry: $('#institutionCountry').val(),
 			proofOfAward: $('#document_PROOF_OF_AWARD').val(),
-			message:message
+			message:message,
+			acceptedTerms: acceptedTheTerms
 		},
 		success:function(data) {
 			$('#qualificationsSection').html(data);
-			markSectionError('#qualificationsSection');
+			var errorCount = $('#qualificationsSection .invalid:visible').length;
 	
-			if (message == 'close')
+			if (errorCount == 0 && message == 'close')
 			{
 				// Close the section only if there are no errors.
-				var errorCount = $('#qualificationsSection .invalid:visible').length;
-				if (errorCount == 0)
-				{
+			
 					$('#qualifications-H2').trigger('click');
-				}
+						
+			}
+			if(errorCount > 0){
+				markSectionError('#qualificationsSection');
 			}
 		},
     complete: function()

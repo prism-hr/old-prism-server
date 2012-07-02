@@ -133,7 +133,7 @@ $(document).ready(function(){
 			markSectionError('#fundingSection');
 		}
 		else
-		{*/
+		{
 			$("span[name='nonAcceptedFD']").html('');
 
 			// Check for a "dirty" employment position form. If there is data try to submit it.
@@ -146,7 +146,7 @@ $(document).ready(function(){
 				unmarkSection('#fundingSection');
 				$('#fundingCloseButton').trigger('click');
 			}
-		//}
+		}
 	});
 	
 	

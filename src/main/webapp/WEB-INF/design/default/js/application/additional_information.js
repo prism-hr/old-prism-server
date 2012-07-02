@@ -94,7 +94,7 @@ $(document).ready(function(){
 		if ($('#convictionRadio_false:checked').val() !== undefined) {
 			hasConvictions = false;
 		}
-		if ($("#acceptTermsAIDValue").val() =='NO')
+		/*if ($("#acceptTermsAIDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
 //			var $form = $('#additionalInformationSection form');
@@ -113,9 +113,17 @@ $(document).ready(function(){
 			
 		}
 		else
-		{
+		{*/
 
-			$("span[name='nonAcceptedAID']").html('');
+		var acceptedTheTerms;
+		if ($("#acceptTermsAIDValue").val() == 'NO'){
+			acceptedTheTerms = false;
+		}
+		else{
+			acceptedTheTerms = true;
+		}
+			
+		$("span[name='nonAcceptedAID']").html('');
 			$('#additionalInformationSection > div').append('<div class="ajax" />');
 
 			$.ajax({
@@ -132,27 +140,30 @@ $(document).ready(function(){
 					convictionsText: $("#convictionsText").val(),
 					applicationId:  $('#applicationId').val(),
 					application:  $('#applicationId').val(),
-					message:'close'
+					message:'close',
+					acceptedTerms: acceptedTheTerms
 				},
 			
 				success:function(data)
 				{
 					$('#additionalInformationSection').html(data);
-					markSectionError('#additionalInformationSection');
-	
+				
 					// Close the section only if there are no errors.
 					var errorCount = $('#additionalInformationSection .invalid:visible').length;
 					if (errorCount == 0)
 					{
 						$('#additional-H2').trigger('click');
+					}else{
+						markSectionError('#additionalInformationSection');
+						
 					}
 				},
-        complete: function()
-        {
-					$('#additionalInformationSection div.ajax').remove();
-        }
+		        complete: function()
+		        {
+							$('#additionalInformationSection div.ajax').remove();
+		        }
 			});
-		}
+	//	}
 
 		
 	});

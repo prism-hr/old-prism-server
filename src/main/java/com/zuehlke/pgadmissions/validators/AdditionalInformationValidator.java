@@ -8,7 +8,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 
 @Component
-public class AdditionalInformationValidator implements Validator {
+public class AdditionalInformationValidator extends FormSectionObjectValidator implements Validator {
 
 	private static final int MAXIMUM_CHARS = 5000;
 
@@ -19,6 +19,7 @@ public class AdditionalInformationValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		super.validate(target, errors);
 		AdditionalInformation info = (AdditionalInformation) target;
 		if (info.getInformationText() != null) {
 			if (info.getInformationText().length() > MAXIMUM_CHARS) {

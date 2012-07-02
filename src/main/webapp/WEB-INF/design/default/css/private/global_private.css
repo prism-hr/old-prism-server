@@ -7,15 +7,16 @@ body.ie9 * { filter: none !important; }
 
 /* Default styling ---------------------------------------------------------------------------------------- */
 a { text-decoration: none; }
+a:hover { text-decoration: underline; }
 a img { border: none; }
 body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 label input { vertical-align: middle; }
 label.normal { font-weight: normal !important; }
 
 /* Compulsory Field Indications */
-label em { color: red; font-size: 14px; padding: 0 2px; /*position: absolute;*/ }
-span em { color: red; font-size: 14px; padding: 0 2px; /*position: absolute;*/ }
-h2 em { color: white; font-size: 14px; padding: 0 2px; /*position: absolute;*/ }
+label em { color: red; font-size: 14px; padding: 0 2px; }
+span em { color: red; font-size: 14px; padding: 0 2px; }
+h2 em { color: white; font-size: 14px; padding: 0 2px; }
 
 .centre { text-align: center !important; }
 .right { text-align: right !important; }
@@ -188,9 +189,7 @@ span.invalid-submit {
 	margin-top: -15px;
 }
 
-span.invalid-info-text{
-	
-	/* background: url(../../images/button_exclaim.png) no-repeat 0 .1em; */ 
+span.invalid-info-text {
 	color: red; 
 	display: inline-block;
 	padding-left: 10px;

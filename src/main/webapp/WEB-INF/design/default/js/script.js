@@ -3,7 +3,7 @@ $(document).ready(function()
 	// ------------------------------------------------------------------------------
 	// Create the feedback button.
 	// ------------------------------------------------------------------------------
-	makeFeedbackButton();
+	//makeFeedbackButton();
 
 	// ------------------------------------------------------------------------------
 	// On the application form, show "Not Provided" text in grey.
@@ -506,7 +506,12 @@ function clearForm($form)
 	$('div.field .uploaded-files', $form).html('');
 	
 	// Remove any validation errors.
-	$('span.invalid', $form).remove();
+	var id = $form.closest('section').attr('id');
+	if (id != '')
+	{
+		unmarkSection(id);
+	}
+	//$('span.invalid', $form).remove();
 }
 
 

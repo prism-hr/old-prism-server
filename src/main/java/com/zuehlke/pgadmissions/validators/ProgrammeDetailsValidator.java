@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 
 @Component
-public class ProgrammeDetailsValidator implements Validator {
+public class ProgrammeDetailsValidator extends FormSectionObjectValidator implements Validator  {
 
 	private final ProgramInstanceDAO programInstaceDAO;
 
@@ -35,6 +35,7 @@ public class ProgrammeDetailsValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		super.validate(target, errors);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
@@ -60,6 +61,7 @@ public class ProgrammeDetailsValidator implements Validator {
 				errors.rejectValue("suggestedSupervisors", "text.field.empty");
 			}
 		}
+		
 	}
 
 }

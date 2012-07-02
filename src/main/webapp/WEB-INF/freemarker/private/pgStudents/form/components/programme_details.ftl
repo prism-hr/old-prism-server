@@ -211,10 +211,12 @@
     
   
     <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
-      <#if termsError?? && termsError>
-		    <div class="row-group terms-box" style="borderColor: 'red', color: 'red';">
+    	<@spring.bind "programmeDetails.acceptedTerms" />
+       	<#if spring.status.errorMessages?size &gt; 0>        
+		    <div class="row-group terms-box invalid">
+
       <#else>
-    		<div class="row-group terms-box">
+    		<div class="row-group terms-box" >
       </#if>
     
       <div class="row">
@@ -248,21 +250,3 @@
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>
-<#--
-<@spring.bind "programmeDetails.*" />
-<#if ((errorCode?? && errorCode=='false' && studyOptionError?? && studyOptionError =='false' && programError?? && programError =='false' && !applicationForm.shouldOpenFirstSection()) || applicationForm.isSubmitted() || (message?? && message='close' && !spring.status.errorMessages?has_content))>
-<script type="text/javascript">
-$(document).ready(function()
-{
-  if (!$('#programmeDetailsSection').hasClass('loaded'))
-  {
-    $('#programmeDetailsSection').addClass('loaded');
-  }
-  else
-  {
-    $('#programme-H2').trigger('click');
-  }
-});
-</script> 
-</#if>
--->

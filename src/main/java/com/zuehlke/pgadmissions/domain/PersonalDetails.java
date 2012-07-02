@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
@@ -27,15 +28,19 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
 @Access(AccessType.FIELD)
 
-public class PersonalDetails extends DomainObject<Integer> {
+public class PersonalDetails extends DomainObject<Integer> implements FormSectionObject {
 
 	private static final long serialVersionUID = 6549850558507667533L;
+	
+	@Transient
+	private boolean acceptedTerms;
 	
 	@Column(name = "skype")
 	private String messenger;
 	
 	@Column(name = "phone")
 	private String phoneNumber;
+	
 	
 	
 	@Column(name = "english_first_language")
@@ -268,5 +273,13 @@ public class PersonalDetails extends DomainObject<Integer> {
 
 	public void setRequiresVisa(Boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
+	}
+
+	public boolean isAcceptedTerms() {
+		return acceptedTerms;
+	}
+
+	public void setAcceptedTerms(boolean acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
 	}
 }

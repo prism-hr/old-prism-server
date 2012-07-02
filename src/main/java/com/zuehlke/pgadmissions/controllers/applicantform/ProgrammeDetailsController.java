@@ -74,12 +74,12 @@ public class ProgrammeDetailsController {
 		}
 		if (result.hasErrors()) {
 			if(!acceptedTerms){
-				modelMap.put("termsError", true);
+				//modelMap.put("termsError", true);
 			}
 			return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
 		}
 		if(!acceptedTerms){
-			modelMap.put("termsError", true);
+			//modelMap.put("termsError", true);
 			return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
 		}
 		programmeDetailsService.save(programmeDetails);

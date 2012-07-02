@@ -142,7 +142,7 @@ span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical
 .button-edit { background-position: 0 0; }
 .button-delete { background-position: -33px 0; }
 .button-show { background-position: -66px 0; }
-.button-responded { background-position: -97px 0; }
+.button-responded { background-position: -97px 0; cursor: default; }
 .button-question { background-image: url(../../images/button_question.png); margin-top: 0; width: 20px; height: 20px; }
 
 table.existing .button-edit, table.existing .button-delete { margin: 3px 0; }

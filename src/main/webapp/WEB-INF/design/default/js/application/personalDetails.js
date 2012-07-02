@@ -185,8 +185,8 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	// Remove a nationality (all sections).
 	// -------------------------------------------------------------------------------
-	$('.nationality-item a.button-delete').live('click', function(){
-		
+	$(document).on('click', '.nationality-item a.button-delete', function()
+	{
 		$(this).parent().remove();
 		return false;
 	});

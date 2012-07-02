@@ -15,6 +15,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 
 public class QualificationValidatorTest {
@@ -118,6 +119,7 @@ public class QualificationValidatorTest {
 		
 		qualificationValidator = new QualificationValidator();
 		qualification = new Qualification();
+		qualification.setApplication(new ApplicationFormBuilder().id(9).toApplicationForm());
 		qualification.setId(3);
 		qualification.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
 		qualification.setQualificationGrade("first");

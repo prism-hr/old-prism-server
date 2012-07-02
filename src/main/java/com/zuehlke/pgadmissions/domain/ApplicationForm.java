@@ -84,7 +84,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
 	@Column(name = "accepted_terms")
-	private CheckedStatus acceptedTerms;
+	private CheckedStatus acceptedTermsOnSubmission;
 
 	@ManyToOne
 	@JoinColumn(name = "personal_statement_id")
@@ -458,7 +458,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public boolean hasAcceptedTheTerms() {
-		return acceptedTerms == CheckedStatus.YES;
+		return acceptedTermsOnSubmission == CheckedStatus.YES;
 	}
 
 	public Date getLastUpdated() {
@@ -469,12 +469,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.lastUpdated = lastUpdated;
 	}
 
-	public CheckedStatus getAcceptedTerms() {
-		return acceptedTerms;
+	public CheckedStatus getAcceptedTermsOnSubmission() {
+		return acceptedTermsOnSubmission;
 	}
 
-	public void setAcceptedTerms(CheckedStatus acceptedTerms) {
-		this.acceptedTerms = acceptedTerms;
+	public void setAcceptedTermsOnSubmission(CheckedStatus acceptedTerms) {
+		this.acceptedTermsOnSubmission = acceptedTerms;
 	}
 
 	public boolean isInState(String strStatus) {

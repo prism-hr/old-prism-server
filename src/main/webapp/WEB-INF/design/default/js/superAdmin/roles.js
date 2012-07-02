@@ -67,7 +67,7 @@ function loadUsersForProgram()
 				}
 				addToolTips();
 			},
-			completed: function()
+			complete: function()
 			{
 				$('#editRoles div.ajax').remove();
 			}

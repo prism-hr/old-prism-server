@@ -86,11 +86,9 @@ $(document).ready(function(){
 		});
 	
 	$('#positionSaveAndCloseButton').click(function(){
-		if ($("#acceptTermsEPValue").val() =='NO')
+		/*if ($("#acceptTermsEPValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
-//			var $form = $('#positionSection form');
-//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 			
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
@@ -105,7 +103,7 @@ $(document).ready(function(){
 			
 		}
 		else
-		{
+		{*/
 			$("span[name='nonAcceptedEP']").html('');
 
 			// Check for a "dirty" employment position form. If there is data try to submit it.
@@ -118,11 +116,11 @@ $(document).ready(function(){
 				unmarkSection('#positionSection');
 				$('#positionCloseButton').trigger('click');
 			}
-		}
+		//}
 	});
 
 	$('#addPosisionButton').click(function(){
-		if($('#acceptTermsEPValue').length != 0  &&  $("#acceptTermsEPValue").val() =='NO'){ 
+		/*if($('#acceptTermsEPValue').length != 0  &&  $("#acceptTermsEPValue").val() =='NO'){ 
 			//$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
 			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
@@ -136,10 +134,10 @@ $(document).ready(function(){
 			addToolTips();
 			
 		}
-		else{
+		else{*/
 			$("span[name='nonAcceptedEP']").html('');
 			postEmploymentData('add');
-		}
+		//}
 	});
 
 	// -------------------------------------------------------------------------------
@@ -215,7 +213,13 @@ function postEmploymentData(message){
 	}
 
 	$('#positionSection > div').append('<div class="ajax" />');
-
+	var acceptedTheTerms;
+	if ($("#acceptTermsEPValue").val() == 'NO'){
+		acceptedTheTerms = false;
+	}
+	else{
+		acceptedTheTerms = true;
+	}
 	$.ajax({
 		type: 'POST',
 		 statusCode: {
@@ -237,20 +241,20 @@ function postEmploymentData(message){
 			application: $("#applicationId").val(),
 			applicationId: $("#applicationId").val(),		 
 			employmentId: $("#positionId").val(), 
-			message:message
+			message:message,
+			acceptedTerms: acceptedTheTerms
 		},
 	   success: function(data) {
 				$('#positionSection').html(data);
-				markSectionError('#positionSection');
-	
-				if (message == 'close')
+			
+				var errorCount = $('#positionSection .invalid:visible').length;
+				if (message == 'close' && errorCount == 0)
 				{
-					// Close the section only if there are no errors.
-					var errorCount = $('#positionSection .invalid:visible').length;
-					if (errorCount == 0)
-					{
-						$('#position-H2').trigger('click');
-					}
+					$('#position-H2').trigger('click');
+					
+				}
+				if(errorCount > 0){
+					markSectionError('#positionSection');
 				}
       },
     complete: function()

@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.Date;
 
+import javax.swing.filechooser.FileSystemView;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -11,7 +13,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 
 @Component
-public class EmploymentPositionValidator implements Validator {
+public class EmploymentPositionValidator extends FormSectionObjectValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -20,6 +22,7 @@ public class EmploymentPositionValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		super.validate(target, errors);
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerAddress", "text.field.empty");

@@ -130,6 +130,9 @@ span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical
 
 .button-edit, .button-delete, .button-question, .button-responded, .button-show {
 	background: url(../../images/icon_round.png) no-repeat;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
 	cursor: pointer;
 	display: inline-block;
 	height: 24px;

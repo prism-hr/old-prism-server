@@ -9,6 +9,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 
 public class AdditionalInformationValidatorTest {
 
@@ -17,7 +18,7 @@ public class AdditionalInformationValidatorTest {
 
 	@Before
 	public void setup() {
-		info = new AdditionalInformationBuilder().convictionsText("blabla").setConvictions(true).toAdditionalInformation();
+		info = new AdditionalInformationBuilder().convictionsText("blabla").setConvictions(true).applicationForm(new ApplicationFormBuilder().id(8).toApplicationForm()).toAdditionalInformation();
 
 		infoValidator = new AdditionalInformationValidator();
 	}

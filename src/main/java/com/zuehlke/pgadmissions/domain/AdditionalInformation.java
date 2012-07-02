@@ -8,12 +8,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 @Entity(name = "APPLICATION_FORM_ADDITIONAL_INFO")
 @Access(AccessType.FIELD)
-public class AdditionalInformation extends DomainObject<Integer> {
+public class AdditionalInformation extends DomainObject<Integer> implements FormSectionObject{
 	private static final long serialVersionUID = -1761742614792933388L;
 
+	
+	@Transient
+	private boolean acceptedTerms;
 	@OneToOne
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application = null;
@@ -73,5 +77,13 @@ public class AdditionalInformation extends DomainObject<Integer> {
 
 	public void setConvictionsText(String convictionsText) {
 		this.convictionsText = convictionsText;
+	}
+
+	public boolean isAcceptedTerms() {
+		return acceptedTerms;
+	}
+
+	public void setAcceptedTerms(boolean acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
 	}
 }

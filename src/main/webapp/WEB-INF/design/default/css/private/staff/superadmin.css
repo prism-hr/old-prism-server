@@ -24,7 +24,7 @@ div.left-column .field { margin-left: 100px !important; }
 
 /* Table of existing users. */
 #existingUsers { border: none; margin: -12px -11px 0; padding: 0; position: relative; }
-section.form-rows #existingUsers { margin-bottom: 5px; }
+section.form-rows #existingUsers { margin-bottom: 10px; }
 #existingUsers .arrow { background: url(../../../images/button_arrow.png) no-repeat; display: inline-block; height: 20px; width: 20px; }
 
 /* User's roles as icons. */

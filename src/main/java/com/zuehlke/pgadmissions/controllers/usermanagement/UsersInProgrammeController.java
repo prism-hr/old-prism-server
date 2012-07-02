@@ -50,7 +50,7 @@ public class UsersInProgrammeController {
 		List<RegisteredUser> allUsersForProgram = userService.getAllUsersForProgram(selectedProgram);
 		List<RegisteredUser> allUserWhoAreNotSuperadminsOnly = new ArrayList<RegisteredUser>();
 		for (RegisteredUser registeredUser : allUsersForProgram) {
-			if( !registeredUser.getAuthoritiesForProgram(selectedProgram).isEmpty()){
+			if( !registeredUser.getAuthoritiesForProgram(selectedProgram).isEmpty() && !allUserWhoAreNotSuperadminsOnly.contains(registeredUser)){
 				allUserWhoAreNotSuperadminsOnly.add(registeredUser);
 			}
 		}

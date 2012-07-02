@@ -235,9 +235,9 @@
             <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
             <#include "/private/common/modal_window.ftl">
             <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
-              <input type="hidden" id="wapplicationFormId" name="applicationId"   value="${applicationForm.applicationNumber}"/>
+              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
               <button id="withdrawButton" class="red">Withdraw</button>
-              <button id="saveAndClose" type="button">Save &amp; Close</a>
+              <button id="saveAndClose" type="button">Save &amp; Close</button>
             </form>                                      
             <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     
             <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">

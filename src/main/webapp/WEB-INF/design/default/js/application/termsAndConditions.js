@@ -15,7 +15,7 @@ $("input[name*='acceptTermsCB']").click(function() {
 			url:"/pgadmissions/acceptTerms", 
 			data:{  
 				applicationId: $("#ATapplicationFormId").val(), 
-				acceptedTerms: $("#acceptTermsValue").val()
+				acceptedTermsOnSubmission: $("#acceptTermsValue").val()
 			},
 			success: function(data) {}
 		});

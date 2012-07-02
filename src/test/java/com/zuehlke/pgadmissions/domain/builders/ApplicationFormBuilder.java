@@ -329,7 +329,7 @@ public class ApplicationFormBuilder {
 		application.setAdditionalInformation(info);
 		application.getNotificationRecords().addAll(notificationRecords);
 		application.setLastUpdated(lastUpdated);
-		application.setAcceptedTerms(acceptedTerms);
+		application.setAcceptedTermsOnSubmission(acceptedTerms);
 		application.getApplicationComments().addAll(comments);
 		application.getInterviews().addAll(interviews);
 		application.getApprovalRounds().addAll(approvalRounds);

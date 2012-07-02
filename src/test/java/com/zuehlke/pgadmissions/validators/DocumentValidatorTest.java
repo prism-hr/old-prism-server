@@ -84,7 +84,16 @@ public class DocumentValidatorTest {
 		
 	
 	}
+	@Test
+	public void shouldAllowDotsInFilelanes() {
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(document, "document");
+		
+		document.setFileName("bob_v1.1.pdf");			
+		documentValidator.validate(document, mappingResult);
+		Assert.assertEquals(0, mappingResult.getErrorCount());
+		
 	
+	}
 
 	@Before
 	public void setup() {

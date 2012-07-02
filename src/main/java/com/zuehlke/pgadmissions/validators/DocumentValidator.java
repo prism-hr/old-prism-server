@@ -29,7 +29,7 @@ public class DocumentValidator implements Validator {
 			if (document.getFileName().indexOf(".") < 0) {
 				errors.rejectValue("fileName", "file.upload.notPDF");
 			} else {
-				String extension = document.getFileName().substring(document.getFileName().indexOf(".") + 1, document.getFileName().length());
+				String extension = document.getFileName().substring(document.getFileName().lastIndexOf(".") + 1, document.getFileName().length());
 				if (!Arrays.asList(EXTENSION_WHITE_LIST).contains(extension)) {
 					errors.rejectValue("fileName", "file.upload.notPDF");
 				}

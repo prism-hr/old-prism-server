@@ -191,8 +191,6 @@ table.data-table .editButton{
 
 /* Upload fields. */
 
-section.form-rows .field a.uploaded-filename,
-section.form-rows .field a.button-delete { display: none; }
 section.form-rows .field .data-table a.button-delete { display: inline-block; }
 
 /* Show only the file link when a file is uploaded. */

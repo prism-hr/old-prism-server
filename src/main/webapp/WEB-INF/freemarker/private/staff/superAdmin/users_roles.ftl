@@ -21,7 +21,7 @@
 						<colgroup>
 							<col style="width: 20px;" />
 							<col style="width: 472px;" />
-							<col style="width: 220px;" />
+							<col style="width: 240px;" />
 						</colgroup>
 						<tbody>
 							<#list usersInRoles as userInRole>

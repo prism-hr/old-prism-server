@@ -461,6 +461,27 @@ function markSectionError(section_id)
 }
 
 
+// ------------------------------------------------------------------------------
+// "Unmark" a section.
+// ------------------------------------------------------------------------------
+function unmarkSection(section_id)
+{
+	var $section = $(section_id);
+	
+	// Unmark the terms box.
+	var $terms = $('.terms-box', $section);
+	$terms.removeAttr('style');
+	
+	// Remove validation errors.
+	$('span.invalid', $section).remove();
+	
+	// Revert the info bar.
+	var $infobar = $('.section-info-bar', $section);
+	$infobar.removeClass('section-error-bar').addClass('section-info-bar');
+	$('span.error-hint', $infobar).remove();
+}
+
+
 function clearForm($form)
 {
 	var $fields = $form.find('input[type!="hidden"], select, textarea');
@@ -483,6 +504,9 @@ function clearForm($form)
 	// Remove any uploaded files in field rows.
 	$('div.field', $form).removeClass('uploaded');
 	$('div.field .uploaded-files', $form).html('');
+	
+	// Remove any validation errors.
+	$('span.invalid', $form).remove();
 }
 
 

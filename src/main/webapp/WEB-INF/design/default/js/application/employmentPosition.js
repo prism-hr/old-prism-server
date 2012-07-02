@@ -110,6 +110,7 @@ $(document).ready(function(){
 			}
 			else
 			{
+				unmarkSection('#positionSection');
 				$('#positionCloseButton').trigger('click');
 			}
 		}

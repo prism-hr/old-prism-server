@@ -176,6 +176,7 @@ $(document).ready(function(){
 			}
 			else
 			{
+				unmarkSection('#qualificationsSection');
 				$('#qualificationsCloseButton').trigger('click');
 			}
 		}

@@ -127,7 +127,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#fundingSaveCloseButton').click(function()
 	{
-		if ($("#acceptTermsFDValue").val() =='NO')
+		if ($("#acceptTermsFDValue").val() == 'NO' && !isFormEmpty('#referencesSection form'))
 		{ 
 			// Highlight the information bar and terms box.
 			markSectionError('#fundingSection');

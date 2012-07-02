@@ -128,11 +128,21 @@ a.button { display: inline-block; padding-top: 2px; padding-bottom: 2px; /*verti
 
 span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical-align: middle; }
 
-.button-edit, .button-delete, .button-question, .button-responded, .button-show { background-repeat: no-repeat; cursor: pointer; display: inline-block; height: 24px; /*margin-top: -4px;*/ overflow: hidden; text-indent: 99px; vertical-align: middle; width: 24px; }
-.button-edit { background-image: url(../../images/icon_round_edit.png); }
-.button-delete { background-image: url(../../images/icon_round_delete.png); }
-.button-show { background-image: url(../../images/icon_round_show.png); }
-.button-responded { background-image: url(../../images/icon_round_tick.png); }
+.button-edit, .button-delete, .button-question, .button-responded, .button-show {
+	background: url(../../images/icon_round.png) no-repeat;
+	cursor: pointer;
+	display: inline-block;
+	height: 24px;
+	overflow: hidden;
+	text-indent: 30px;
+	vertical-align: middle;
+	white-space: nowrap;
+	width: 25px;
+}
+.button-edit { background-position: 0 0; }
+.button-delete { background-position: -33px 0; }
+.button-show { background-position: -66px 0; }
+.button-responded { background-position: -97px 0; }
 .button-question { background-image: url(../../images/button_question.png); margin-top: 0; width: 20px; height: 20px; }
 
 table.existing .button-edit, table.existing .button-delete { margin: 3px 0; }

@@ -30,7 +30,7 @@ public class InterviewCommentBuilder {
 		return this;
 	}
 	
-	public InterviewCommentBuilder willingToSupervice(Boolean willingToSupervice) {
+	public InterviewCommentBuilder willingToSupervise(Boolean willingToSupervice) {
 		this.willingToSupervice = willingToSupervice;
 		return this;
 	}

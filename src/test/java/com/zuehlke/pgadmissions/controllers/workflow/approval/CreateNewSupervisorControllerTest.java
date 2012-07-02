@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers.workflow.interview;
+package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -20,15 +20,14 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-public class CreateNewInterviewerControllerTest {
+public class CreateNewSupervisorControllerTest {
 	
-	private CreateNewInterviewerController controller;
+	private CreateNewSupervisorController controller;
 	private UserService userServiceMock;	
 	private BindingResult bindingResultMock;	
 	private ApplicationsService applicationsServiceMock;
@@ -42,10 +41,10 @@ public class CreateNewInterviewerControllerTest {
 		RegisteredUser suggestedUser = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		RegisteredUser user = new RegisteredUserBuilder().id(6).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, application)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
-		ModelAndView modelAndView = controller.createNewInterviewerUser(suggestedUser, bindingResultMock, application);
+		ModelAndView modelAndView = controller.createNewSupervisorUser(suggestedUser, bindingResultMock, application);
 		Assert.assertEquals("/private/staff/reviewer/reviewer_json", modelAndView.getViewName());
 		assertEquals(user, modelAndView.getModel().get("user"));
 		assertTrue((Boolean)modelAndView.getModel().get("isNew"));
@@ -61,7 +60,7 @@ public class CreateNewInterviewerControllerTest {
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingUser);
 		EasyMock.replay(userServiceMock);
 
-		ModelAndView modelAndView = controller.createNewInterviewerUser(suggestedUser, bindingResultMock, application);
+		ModelAndView modelAndView = controller.createNewSupervisorUser(suggestedUser, bindingResultMock, application);
 		Assert.assertEquals("/private/staff/reviewer/reviewer_json", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
 		assertEquals(existingUser, modelAndView.getModel().get("user"));
@@ -77,27 +76,27 @@ public class CreateNewInterviewerControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
 		EasyMock.replay(bindingResultMock);
-		ModelAndView modelAndView = controller.createNewInterviewerUser(user, bindingResultMock, null);
-		Assert.assertEquals("/private/staff/interviewers/create_interviewer_section", modelAndView.getViewName());
+		ModelAndView modelAndView = controller.createNewSupervisorUser(user, bindingResultMock, null);
+		Assert.assertEquals("/private/staff/supervisors/create_supervisor_section", modelAndView.getViewName());
 
 	}
 	
 	@Test
-	public void shouldGetCreateInterviewersSection() {		
-		Assert.assertEquals("/private/staff/interviewers/create_interviewer_section", controller.getCreateInterviewerSection());
+	public void shouldGetCreateSupervisorsSection() {		
+		Assert.assertEquals("/private/staff/supervisors/create_supervisor_section", controller.getCreateSupervisorSection());
 	}
 	@Test
 	public void shouldBindValidator() {		
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(newUserValidatorMock);
 		EasyMock.replay(binderMock);
-		controller.registerInterviewerValidators(binderMock);
+		controller.registerSupervisorValidators(binderMock);
 		EasyMock.verify(binderMock);
 	}
 	
 	@Test
-	public void shouldGetNewUserAsInterviewer() {		
-		RegisteredUser reviewer = controller.getInterviewer();
+	public void shouldGetNewUserAsSupervisor() {		
+		RegisteredUser reviewer = controller.getSupervisor();
 		assertNull(reviewer.getId());
 	}
 
@@ -117,12 +116,12 @@ public class CreateNewInterviewerControllerTest {
 	}
 
 	@Test
-	public void shouldGetApplicationFromIdForInterviewer() {
+	public void shouldGetApplicationFromIdForSupervisor() {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
+		EasyMock.expect(currentUserMock.isSupervisorOfApplicationForm(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUserMock);
 
@@ -140,13 +139,13 @@ public class CreateNewInterviewerControllerTest {
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrInterviewerOfApplicationProgram() {
+	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrSupervisorOfApplicationProgram() {
 
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
+		EasyMock.expect(currentUserMock.isSupervisorOfApplicationForm(applicationForm)).andReturn(false);
 
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUserMock);
@@ -165,6 +164,6 @@ public class CreateNewInterviewerControllerTest {
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		EasyMock.replay(userServiceMock);
-		controller = new CreateNewInterviewerController(applicationsServiceMock, userServiceMock,  newUserValidatorMock);
+		controller = new CreateNewSupervisorController(applicationsServiceMock, userServiceMock,  newUserValidatorMock);
 	}
 }

@@ -716,4 +716,16 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return false;
 	}
+
+	public boolean isSupervisorInApprovalRound(ApprovalRound approvalRound) {
+		if(approvalRound == null){
+			return false;
+		}
+		for (Supervisor supervisor : approvalRound.getSupervisors()) {
+			if(this.equals(supervisor.getUser())){
+				return true;
+			}
+		}
+		return false;
+	}
 }

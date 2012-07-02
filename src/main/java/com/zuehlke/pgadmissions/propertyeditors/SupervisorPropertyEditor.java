@@ -59,17 +59,11 @@ public class SupervisorPropertyEditor extends PropertyEditorSupport {
 			throw new IllegalArgumentException("no such applications: " + split[0]);
 		}
 
-		setValue(findExistingOrCreateNewSupervisor(user, applicationForm));
+		setValue(findCreateNewSupervisor(user));
 	}
 
-	private Supervisor findExistingOrCreateNewSupervisor(RegisteredUser user, ApplicationForm applicationForm) {
-		if (applicationForm.getLatestApprovalRound() != null) {
-			for (Supervisor existingSupervisor : applicationForm.getLatestApprovalRound().getSupervisors()) {
-				if (user.equals(existingSupervisor.getUser())) {
-					return existingSupervisor;
-				}
-			}
-		}
+	private Supervisor findCreateNewSupervisor(RegisteredUser user) {
+
 		Supervisor supervisor = new Supervisor();		
 		supervisor.setUser(user);
 		return supervisor;

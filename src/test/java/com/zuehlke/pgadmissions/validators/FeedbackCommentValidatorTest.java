@@ -154,7 +154,7 @@ public class FeedbackCommentValidatorTest {
 	public void setup() {
 		validator = new FeedbackCommentValidator();
 		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidateForProgramme(false).suitableCandidateForUCL(false).willingToInterview(true).decline(false).toReviewComment();
-		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervice(true).decline(false).toInterviewComment();
+		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervise(true).decline(false).toInterviewComment();
 		referenceComment = new ReferenceCommentBuilder().comment("reference comment").suitableForProgramme(false).suitableForUcl(false).toReferenceComment();
 	}
 }

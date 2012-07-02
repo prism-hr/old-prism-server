@@ -1,11 +1,12 @@
 $(document).ready(function()
 {
+	getSupervisorsSection();
+	getCreateSupervisorsSection();
 	
 	// -----------------------------------------------------------------------------------------
 	// Add supervisor
 	// -----------------------------------------------------------------------------------------
-	$('#addSupervisorBtn').click(function()
-	{
+	$('#assignSupervisorsToAppSection').on('click', '#addSupervisorBtn', function(){	
 		var selectedSupervisors = $('#programSupervisors').val();
 		if (selectedSupervisors)
 		{
@@ -31,8 +32,8 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------------------
 	// Remove supervisor
 	// -----------------------------------------------------------------------------------------
-	$('#removeSupervisorBtn').click(function()
-	{
+	$('#assignSupervisorsToAppSection').on('click', '#removeSupervisorBtn', function(){
+	
 		var selectedSupervisors = $('#applicationSupervisors').val();
 		if (selectedSupervisors)
 		{
@@ -51,35 +52,100 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------------------
 	// Create a new supervisor
 	// -----------------------------------------------------------------------------------------
-	$('#createSupervisor').click(function()
+
+	$('#createsupervisorsection').on('click','#createSupervisor', function()
 	{
-		$('#applicationSupervisors option').each(function()
-		{
-			var ids = $(this).val();
-		 	var user = ids.substring(ids.indexOf("|") + 1);
-			$('#postSupervisorForm').append("<input name='pendingSupervisor' type='hidden' value='" + user + "'/>");	
+		$('#createsupervisorsection').append('<div class="ajax" />');
+		var postData = {
+			applicationId : $('#applicationId').val(),
+			firstName: $('#newSupervisorFirstName').val(),
+			lastName: $('#newSupervisorLastName').val(),
+			email: $('#newSupervisorEmail').val()				
+		}
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url:"/pgadmissions/approval/createSupervisor",
+			data:	$.param(postData),
+			success: function(data)
+			{	
+				var newSuperviosr;
+				try{
+					newSuperviosr = jQuery.parseJSON(data);	
+				}catch(err){
+					
+					$('#createsupervisorsection').html(data);
+					addToolTips();
+					return;
+				}
+				if(newSuperviosr.isNew){
+					$('#previous').append('<option value="' + $('#applicationId').val() + '|' + newSuperviosr.id + '" category="previous" disabled="disabled">' +
+							newSuperviosr.firstname + ' ' + newSuperviosr.lastname+ '</option>');
+					$('#applicationSupervisors').append('<option value="' + $('#applicationId').val() + '|' + newSuperviosr.id + '">' +
+							newSuperviosr.firstname + ' ' + newSuperviosr.lastname+ '</option>');
+					$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
+					$('#add-info-bar-div').html('New user ' + newSuperviosr.toString + ' added as supervisor');
+					
+				}else{
+					addExistingUserToSupervisorsLists(newSuperviosr);
+				}
+				
+				getCreateSupervisorsSection();		
+				
+			},
+		      complete: function()
+		      {
+				 $('#createsupervisorsection div.ajax').remove();
+		      }
 		});
-		$('#postSupervisorForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
-		$('#postSupervisorForm').append("<input name='approvalRoundId' type='hidden' value='" +  $('#approvalRoundId').val() + "'/>");
-		$('#postSupervisorForm').append("<input name='firstName' type='hidden' value='" +  $('#newSupervisorFirstName').val() + "'/>");
-		$('#postSupervisorForm').append("<input name='lastName' type='hidden' value='" +  $('#newSupervisorLastName').val() + "'/>");
-		$('#postSupervisorForm').append("<input name='email' type='hidden' value='" +  $('#newSupervisorEmail').val() + "'/>");		
 		
-		$('#postSupervisorForm').submit();
 	});
+
 	
 
 	$('#moveToApprovalBtn').click(function()
 	{
-		$('#applicationSupervisors option').each(function()
-		{
-			var ids = $(this).val();
-			var user = ids.substring(ids.indexOf("|") + 1);
-			$('#postApprovalForm').append("<input name='pendingSupervisors' type='hidden' value='" + user + "'/>");	
-			$('#postApprovalForm').append("<input name='supervisors' type='hidden' value='" +  $(this).val() + "'/>");
+		
+		$('#approvalsection').append('<div class="ajax" />');
+		var url = "/pgadmissions/approval/move";
+	
+		$('#applicationSupervisors option').each(function(){	
+			$('#postApprovalData').append("<input name='supervisors' type='hidden' value='" +  $(this).val() + "'/>");
 		});
-		$('#postApprovalForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");				
-		$('#postApprovalForm').submit();
+		
+		var postData = {
+				applicationId : $('#applicationId').val(),
+				supervisors: ''
+		}
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  }
+			  },
+			url: url,
+			data:	$.param(postData) + "&" + $('input[name="supervisors"]').serialize(),
+			success: function(data)
+			{	
+				if(data == "OK"){					
+					window.location.href = '/pgadmissions/applications?messageCode=move.approval&application=' + $('#applicationId').val();
+				
+				}else{
+					$('#assignSupervisorsToAppSection').html(data);
+					$('#postApprovalData').html('');
+				}
+				addToolTips();
+			},
+		      complete: function()
+		      {
+					$('#approvalsection div.ajax').remove();
+		      }
+		});
 	});
 		
 		
@@ -87,3 +153,79 @@ $(document).ready(function()
 });
 
 
+
+function getSupervisorsSection(){
+	$('#approvalsection').append('<div class="ajax" />');
+	
+	var url  = "/pgadmissions/approval/supervisors_section";
+
+	$.ajax({
+		type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url: url +"?applicationId=" + $('#applicationId').val(), 
+		success: function(data)
+		{
+			$('#assignSupervisorsToAppSection').html(data);			
+			addToolTips();			
+		},
+	    complete: function()
+	    {
+			$('#approvalsection div.ajax').remove();
+	    }
+	});
+}
+
+
+function getCreateSupervisorsSection(){
+	$('#createsupervisorsection').append('<div class="ajax" />');
+	
+	$.ajax({
+		type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/approval/create_supervisor_section?applicationId=" + $('#applicationId').val(), 
+		success: function(data)
+		{
+			$('#createsupervisorsection div.ajax').remove();
+			$('#createsupervisorsection').html(data);
+		}
+	});
+}
+
+function addExistingUserToSupervisorsLists(newSupervisor){
+	
+	if($('#applicationSupervisors option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').length > 0){
+		$('#add-info-bar-div').html(newSupervisor.toString + ' is already selected as supervisor');
+		
+		return;
+	}
+	
+
+	if($('#default option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').length > 0){		
+		$('#default option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').attr("selected", 'selected');		
+		$('#addSupervisorBtn').trigger('click');
+		$('#add-info-bar-div').html('Default supervisor ' + newSupervisor.toString + ' selected as supervisor');
+		return;
+	}	
+
+	if($('#previous option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').length > 0){
+		$('#previous option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').attr("selected", 'selected');		
+		$('#addSupervisorBtn').trigger('click');
+		$('#add-info-bar-div').html('Previous sueprvisor ' + newSupervisor.toString + ' selected as supervisor');
+		return;
+	}
+	
+	$('#previous').append('<option value="' + $('#applicationId').val() + '|' + newSupervisor.id + '" category="previous" disabled="disabled">' +
+			newSupervisor.firstname + ' ' + newSupervisor.lastname+ '</option>');
+	$('#applicationSupervisors').append('<option value="' + $('#applicationId').val() + '|' + newSupervisor.id + '">' +
+			newSupervisor.firstname + ' ' + newSupervisor.lastname+ '</option>');
+	$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
+	$('#add-info-bar-div').html('Existing user ' + newSupervisor.toString + ' added as supervisor');
+}

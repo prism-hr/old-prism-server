@@ -99,10 +99,10 @@ $(document).ready(function()
 				}
 				addToolTips();
 			},
-      complete: function()
-      {
-				$('#reviewsection div.ajax').remove();
-      }
+		      complete: function()
+		      {
+						$('#reviewsection div.ajax').remove();
+		      }
 		});
 	});
 });

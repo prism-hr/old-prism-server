@@ -27,8 +27,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-@Controller
-@RequestMapping("/approval")
+
 public class OldCreateNewSupervisorController extends OldApprovalController {
 	
 	

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers.workflow.interview;
+package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
 import javax.validation.Valid;
 
@@ -16,44 +16,41 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
-@RequestMapping("/interview")
-public class CreateNewInterviewerController {
-
-
-	private static final String CREATE_INTERVIEWER_SECTION = "/private/staff/interviewers/create_interviewer_section";
+@RequestMapping("/approval")
+public class CreateNewSupervisorController {
+	private static final String CREATE_SUPERVISOR_SECTION = "/private/staff/supervisors/create_supervisor_section";
 	private static final String JSON_VIEW = "/private/staff/reviewer/reviewer_json";
 	private final UserService userService;
 	private final ApplicationsService applicationsService;
-	private final NewUserByAdminValidator interviewerValidator;
+	private final NewUserByAdminValidator supervisorValidator;
 
-	CreateNewInterviewerController() {
+	CreateNewSupervisorController() {
 		this(null, null, null);
 	}
 
 	@Autowired
-	public CreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator interviewerValidator) {
+	public CreateNewSupervisorController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator) {
 				this.applicationsService = applicationsService;
 				this.userService = userService;
-				this.interviewerValidator = interviewerValidator;
+				this.supervisorValidator = supervisorValidator;
 			
 		
 	}
 
-	@RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
-	public ModelAndView createNewInterviewerUser(@Valid @ModelAttribute("interviewer") RegisteredUser suggestedNewInterviewerUser, BindingResult bindingResult,
+	@RequestMapping(value = "/createSupervisor", method = RequestMethod.POST)
+	public ModelAndView createNewSupervisorUser(@Valid @ModelAttribute("supervisor") RegisteredUser suggestedNewSupervisorUser, BindingResult bindingResult,
 			@ModelAttribute("applicationForm") ApplicationForm applicationForm) {
 		if (bindingResult.hasErrors()) {
-			return new ModelAndView(CREATE_INTERVIEWER_SECTION);
+			return new ModelAndView(CREATE_SUPERVISOR_SECTION);
 		}
 		ModelAndView modelAndView = new ModelAndView(JSON_VIEW);
-		RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(suggestedNewInterviewerUser.getEmail());
+		RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(suggestedNewSupervisorUser.getEmail());
 		if (existingUser != null) {
 			modelAndView.getModel().put("isNew", false);		
 			modelAndView.getModel().put("user", existingUser);
@@ -61,26 +58,26 @@ public class CreateNewInterviewerController {
 		}
 		
 		modelAndView.getModel().put("isNew", true);
-		RegisteredUser newUser = userService.createNewUserInRole(suggestedNewInterviewerUser.getFirstName(), suggestedNewInterviewerUser.getLastName(), suggestedNewInterviewerUser.getEmail(),
-				Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, applicationForm);
+		RegisteredUser newUser = userService.createNewUserInRole(suggestedNewSupervisorUser.getFirstName(), suggestedNewSupervisorUser.getLastName(), suggestedNewSupervisorUser.getEmail(),
+				Authority.SUPERVISOR,null, applicationForm);
 		modelAndView.getModel().put("user", newUser);
 		return modelAndView;
 	}
 
 
-	@RequestMapping(method = RequestMethod.GET, value = "create_interviewer_section")
-	public String getCreateInterviewerSection() {
-			return CREATE_INTERVIEWER_SECTION;
+	@RequestMapping(method = RequestMethod.GET, value = "create_supervisor_section")
+	public String getCreateSupervisorSection() {
+			return CREATE_SUPERVISOR_SECTION;
 	}
 	
-	@ModelAttribute("interviewer")
-	public RegisteredUser getInterviewer() {
+	@ModelAttribute("supervisor")
+	public RegisteredUser getSupervisor() {
 		return new RegisteredUser();
 	}
 	
-	@InitBinder(value = "interviewer")
-	public void registerInterviewerValidators(WebDataBinder binder) {
-		binder.setValidator(interviewerValidator);
+	@InitBinder(value = "supervisor")
+	public void registerSupervisorValidators(WebDataBinder binder) {
+		binder.setValidator(supervisorValidator);
 
 	}
 	
@@ -90,7 +87,7 @@ public class CreateNewInterviewerController {
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null
 				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
-						.isInterviewerOfApplicationForm(application))) {
+						.isSupervisorOfApplicationForm(application))) {
 			throw new ResourceNotFoundException();
 		}
 		return application;

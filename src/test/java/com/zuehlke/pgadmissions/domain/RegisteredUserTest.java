@@ -319,7 +319,25 @@ public class RegisteredUserTest {
 		assertFalse(reviewerUser.isInterviewerInInterview(null));
 	}
 	
+	@Test
+	public void shouldReturnTrueInfUserIsSupvisorOfApprovalRound(){
+		RegisteredUser supervisorUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.SUPERVISOR).toRole()).toUser();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(supervisorUser).toSupervisor()).toApprovalRound();		
+		assertTrue(supervisorUser.isSupervisorInApprovalRound(approvalRound));
+	}
 	
+	@Test
+	public void shouldReturnFalseInfUserIsNotSupvisorOfApprovalRound(){
+		RegisteredUser supervisorUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.SUPERVISOR).toRole()).toUser();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().toApprovalRound();		
+		assertFalse(supervisorUser.isSupervisorInApprovalRound(approvalRound));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfApprovalRoundIsNull(){
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.SUPERVISOR).toRole()).toUser();				
+		assertFalse(reviewerUser.isSupervisorInApprovalRound(null));
+	}
 	@Test
 	public void shouldReturnFalseIfUserIsApproverInApplication() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();

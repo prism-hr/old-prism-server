@@ -1,13 +1,5 @@
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
-<#assign avaliableOptionsSize = (programmeSupervisors?size + programmeSupervisors?size + 4)/>
-<#if (avaliableOptionsSize > 25)>
-	<#assign avaliableOptionsSize = 25 />
-</#if> 
-<#assign selectedOptionsSize = (applicationSupervisors?size + pendingSupervisors?size) + 1/>
-<#if (selectedOptionsSize > 25)>
-	<#assign selectedOptionsSize = 25 />
-</#if> 
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -56,161 +48,27 @@
 				<!-- content box -->
 				<div class="content-box">
 					<div class="content-box-inner">
-
-						<div id="programme-details">			          
-						    	
-							<div class="row">
-								<label class="label">Programme</label>
-								${applicationForm.program.code} - ${applicationForm.program.title}
-							</div>
+						<#include "/private/common/parts/application_info.ftl"/>
+    					<input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
 							
-							<div class="row">
-								<label class="label">Application Number</label>
-								${applicationForm.applicationNumber} 
-							</div>
-							
-							<#if applicationForm.isSubmitted()>
-							<div class="row">
-								<label>Submitted</label>
-								${(applicationForm.submittedDate?string("dd MMM yyyy"))!}
-							</div>
-							</#if>
-						</div>
-						
-						<br />
-							
-							<section class="form-rows">
+							<section class="form-rows"  id="approvalsection">
 								<h2 class="no-arrow">
 									Assign Supervisors
 								</h2>
 								<div>
 									<form>
 									
-										<div class="section-info-bar">
+										<div class="section-info-bar" id="add-info-bar-div">
 											Assign supervisors to the application here. You may also create new supervisors.
 										</div>
 									
 										<div class="row-group" id="assignSupervisorsToAppSection">			
-											<div class="row">
-												<span class="plain-label">Assign Supervisors<em>*</em></span>
-												<span class="hint" data-desc=""></span>
-												<div class="field">
-													<select id="programSupervisors" class="list-select-from" class="max" multiple="multiple" size="${avaliableOptionsSize}">
-														<optgroup id="default" label="Default supervisors">
-														<#list programmeSupervisors as supervisor>
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html}</option>
-														</#list>
-														</optgroup>
-														<optgroup id="previous" label="Previous supervisors">
-														<#list previousSupervisors as supervisor>
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" category="previous">${supervisor.firstName?html} ${supervisor.lastName?html}</option>
-														</#list>
-														<#list applicationSupervisors as supervisor>
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}" class="selected" disabled="disabled">
-																${supervisor.firstName?html} ${supervisor.lastName?html}
-															</option>
-														</#list>
-														<#list pendingSupervisors as unsaved>
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(unsaved.id)}" class="selected" disabled="disabled">
-																${unsaved.firstName?html} ${unsaved.lastName?html}
-															</option>
-														</#list>
-														<#list willingToSuperviseUsers as willingUser>					
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(willingUser.id)}" class="selected" disabled="disabled">
-																${willingUser.firstName?html} ${willingUser.lastName?html}
-															</option>
-														</#list>
-														</optgroup>
-													</select>
-												</div>
-											</div>
-						
-					
-											<!-- Available Supervisor Buttons -->
-											<div class="row addremove-buttons list-select-buttons">
-												<div class="field">
-													<span>
-														<button class="blue" type="button" id="addSupervisorBtn"><span class="icon-down"></span> Add</button>
-														<button type="button" id="removeSupervisorBtn"><span class="icon-up"></span> Remove</button>
-													</span>
-												</div>
-											</div>
-						
-											<!-- Already supervisors of this application -->
-											<div class="row">
-												<div class="field">
-													<select id="applicationSupervisors" class="list-select-to" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
-														<#list applicationSupervisors as supervisor>
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.id)}">
-																${supervisor.firstName?html} ${supervisor.lastName?html}
-															</option>
-														</#list>
-														<#list pendingSupervisors as unsaved>
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(unsaved.id)}">
-																${unsaved.firstName?html} ${unsaved.lastName?html}
-															</option>
-														</#list>
-														<#list willingToSuperviseUsers as willingUser>					
-															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(willingUser.id)}">
-																${willingUser.firstName?html} ${willingUser.lastName?html}
-															</option>
-														</#list>
-													</select>
-												</div>
-											</div>
-											<@spring.bind "approvalRound.supervisors" /> 
-										 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											
 										</div>
 										
 										<!-- Create supervisor -->
-										<div class="row-group">
-<#--
-											<#if mesage??>			
-												<p>${message?html}</p>
-											</#if>
--->
-											<#if RequestParameters.message??>			
-												<p>${RequestParameters.message?html}</p>
-											</#if>
-											<p>
-												<strong>Create New Supervisor</strong>
-											</p>									
+										<div class="row-group" id ="createsupervisorsection">
 											
-											<div class="row">
-												<label class="plain-label">Supervisor First Name<em>*</em></label> 
-												<span class="hint" data-desc=""></span>
-													<div class="field">
-														<input class="full" type="text" name="newSupervisorFirstName" id="newSupervisorFirstName" value="${(supervisor.firstName?html)!}"/>
-													</div>
-													<@spring.bind "supervisor.firstName" /> 
-												 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
-											</div>
-											
-											<div class="row">
-												<label class="plain-label">Supervisor Last Name<em>*</em></label>
-												<span class="hint" data-desc=""></span>
-												<div class="field">
-													<input class="full" type="text" name="newSupervisorLastName" id="newSupervisorLastName" value="${(supervisor.lastName?html)!}"/>			                                      
-												</div>
-												<@spring.bind "supervisor.lastName" /> 
-												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-											</div>
-											
-											<div class="row">
-												<label class="plain-label">Email<em>*</em></label>
-												<span class="hint" data-desc=""></span>
-												<div class="field">
-													<input class="full" type="text"  name="newSupervisorEmail" id="newSupervisorEmail" value="${(supervisor.email?html)!}"/>			                                         
-												</div>
-												<@spring.bind "supervisor.email" /> 
-												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-											</div>
-										
-											<div class="row">
-												<div class="field">
-													<button class="blue" type="button" id="createSupervisor">Add</button>
-												</div>
-											</div>
 										</div>
 															
 										<div class="buttons">
@@ -225,9 +83,7 @@
 							</div>
 						</section>
 						
-						<form id="postApprovalForm" method="post" action ="<@spring.url '/approval/move'/>" >
-							
-						</form>
+						<div id="postApprovalData"></div>
 						<form id="postSupervisorForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/approval/assignNewSupervisor'/>" <#else> action ="<@spring.url '/approval/createSupervisor'/>" </#if>>				
 					
 				</div>

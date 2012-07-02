@@ -28,8 +28,7 @@ import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-@Controller
-@RequestMapping("/approval")
+
 public class OldMoveToApprovalController extends OldApprovalController {
 
 	protected final String REQUEST_APROVAL_DETAILS_VIEW_NAME = "/private/staff/approver/request_restart_approve_page";

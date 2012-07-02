@@ -170,8 +170,8 @@ public class ApplicationFormTest {
 		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).toReviewComment();
 		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
 		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).toReviewComment();
-		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervice(true).id(12).user(reviewerUserTwo).toInterviewComment();
-		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervice(false).id(12).user(reviewerUserOne).toInterviewComment();
+		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).toInterviewComment();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).toInterviewComment();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).toApplicationForm();
 		
@@ -192,7 +192,7 @@ public class ApplicationFormTest {
 		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).toReviewComment();
 		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
 		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).toReviewComment();
-		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervice(false).id(12).user(reviewerUserOne).toInterviewComment();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).toInterviewComment();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review1, review2, review3, interviewComment1).toApplicationForm();
 		
@@ -213,8 +213,8 @@ public class ApplicationFormTest {
 		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).toReviewComment();
 		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
 		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).toReviewComment();
-		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervice(true).id(12).user(reviewerUserTwo).toInterviewComment();
-		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervice(false).id(12).user(reviewerUserOne).toInterviewComment();
+		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).toInterviewComment();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).toInterviewComment();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).toApplicationForm();
 		

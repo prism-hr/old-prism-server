@@ -75,8 +75,13 @@ public class ApprovalRound extends DomainObject<Integer> {
 		return supervisors;
 	}
 
-	public void setSupervisors(List<Supervisor> supervisors) {
-		this.supervisors = supervisors;
+	public void setSupervisors(List<Supervisor> supervisors) {		
+		this.supervisors.clear();
+		for (Supervisor supervisor : supervisors) {
+			if(supervisor != null){
+				this.supervisors.add(supervisor);
+			}
+		}
 	}
 
 }

@@ -27,7 +27,7 @@ public class SupervisorPropertyEditorTest {
 	private EncryptionHelper encryptionHelper;
 
 	@Test
-	public void shouldCreateNewSupervisorWithUserAndSetAsValueIfUserNotSupervisorInLatestRoundOfApplication() {
+	public void shouldCreateNewSupervisorWithUserAndSetAsValue() {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(1);
@@ -43,23 +43,7 @@ public class SupervisorPropertyEditorTest {
 		assertEquals(user, supervisor.getUser());
 	}
 
-	@Test
-	public void shouldReturnExistingSupervisorIfUserSupervisorInLatestRoundOfApplication() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		Supervisor supervisor = new SupervisorBuilder().id(3).user(user).toSupervisor();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).toApprovalRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).latestApprovalRound(approvalRound).toApplicationForm();
-		EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(1);
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
-		EasyMock.replay(userServiceMock, applicationsServiceMock, encryptionHelper);
-
-		editor.setAsText("2|enc");
-
-		EasyMock.verify(userServiceMock, applicationsServiceMock, encryptionHelper);
-		Supervisor returnedSupervisor = (Supervisor) editor.getValue();
-		assertEquals(supervisor, returnedSupervisor);
-	}
+	
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfNotCorrectFormat() {

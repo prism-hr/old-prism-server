@@ -109,16 +109,16 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#addFundingButton').click(function()
 	{
-		if ($('#acceptTermsFDValue').length != 0 && $("#acceptTermsFDValue").val() =='NO')
+		/*if ($('#acceptTermsFDValue').length != 0 && $("#acceptTermsFDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
 			markSectionError('#fundingSection');
 		}
 		else
-		{
+		{*/
 			$("span[name='nonAcceptedFD']").html('');
 			postFundingData('add');
-		}
+		//}
 	});
 	
 	
@@ -133,7 +133,7 @@ $(document).ready(function(){
 			markSectionError('#fundingSection');
 		}
 		else
-		{
+		{*/
 			$("span[name='nonAcceptedFD']").html('');
 
 			// Check for a "dirty" employment position form. If there is data try to submit it.
@@ -146,7 +146,7 @@ $(document).ready(function(){
 				unmarkSection('#fundingSection');
 				$('#fundingCloseButton').trigger('click');
 			}
-		}
+		//}
 	});
 	
 	
@@ -222,7 +222,13 @@ $(document).ready(function(){
 function postFundingData(message)
 {
 	$('#fundingSection > div').append('<div class="ajax" />');
-
+	var acceptedTheTerms;
+	if ($("#acceptTermsFDValue").val() == 'NO'){
+		acceptedTheTerms = false;
+	}
+	else{
+		acceptedTheTerms = true;
+	}
 	$.ajax({
 		type: 'POST',
 		 statusCode: {
@@ -240,21 +246,23 @@ function postFundingData(message)
 			applicationId:  $('#applicationId').val(),
 			application:  $('#applicationId').val(),	
 			document: $('#document_SUPPORTING_FUNDING').val(),
-			message:message
+			message:message,
+			acceptedTerms: acceptedTheTerms
 		},
 		success: function(data)
 		{
+			
 			$('#fundingSection').html(data);
-			markSectionError('#fundingSection');
-	
-			if (message == 'close')
+			var errorCount = $('#fundingSection .invalid:visible').length;
+			if (message == 'close' && errorCount == 0)
 			{
-				// Close the section only if there are no errors.
-				var errorCount = $('#fundingSection .invalid:visible').length;
-				if (errorCount == 0)
-				{
-					$('#funding-H2').trigger('click');
-				}
+				// Close the section only if there are no errors.	
+				$('#funding-H2').trigger('click');
+				
+			}
+			if(errorCount > 0){
+				markSectionError('#fundingSection');
+				
 			}
 		},
     complete: function()

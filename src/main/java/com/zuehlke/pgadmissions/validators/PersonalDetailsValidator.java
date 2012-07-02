@@ -12,7 +12,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 
 @Component
-public class PersonalDetailsValidator implements Validator {
+public class PersonalDetailsValidator extends FormSectionObjectValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -21,7 +21,11 @@ public class PersonalDetailsValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+	
 		PersonalDetails personalDetail = (PersonalDetails) target;
+		if(personalDetail.getApplication() != null){
+			super.validate(target, errors);
+		}
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");

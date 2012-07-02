@@ -206,29 +206,16 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#personalDetailsSaveButton').on("click", function()
 	{	
-		if ($("#acceptTermsPEDValue").val() == 'NO')
-		{ 
-			$('#personalDetailsSection .terms-box').css({borderColor: 'red', color: 'red'});
+	
+		$("span[name='nonAcceptedPED']").html('');
 
-			var $infobar = $('#pres-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-			}
-			addToolTips();
-		}
-		else
-		{
-			$("span[name='nonAcceptedPED']").html('');
-
-			// Attempt saving of "dirty" nationalities.
-			$('#addCandidateNationalityButton').trigger('click');
-			$('#addMaternalNationalityButton').trigger('click');
-			$('#addPaternalNationalityButton').trigger('click');
-			
-			postPersonalDetailsData('close');
-		}
+		// Attempt saving of "dirty" nationalities.
+		$('#addCandidateNationalityButton').trigger('click');
+		$('#addMaternalNationalityButton').trigger('click');
+		$('#addPaternalNationalityButton').trigger('click');
+		
+		postPersonalDetailsData('close');
+	
 
 	});
 	
@@ -306,7 +293,13 @@ function postPersonalDetailsData(message){
 		$('#existingPaternalNationalities').append(html);
 	}
 	
-
+	var acceptedTheTerms;
+	if ($("#acceptTermsPEDValue").val() == 'NO'){
+		acceptedTheTerms = false;
+	}
+	else{
+		acceptedTheTerms = true;
+	}
 	//general post data
 	var postData ={ 
 			firstName: $("#firstName").val(), 
@@ -324,7 +317,8 @@ function postPersonalDetailsData(message){
 			paternalGuardianNationalities:"",
 			ethnicity: $("#ethnicity").val(), 
 			disability: $("#disability").val(), 
-			message: message
+			message: message,
+			acceptedTerms: acceptedTheTerms
 			
 		};
 	
@@ -362,15 +356,17 @@ function postPersonalDetailsData(message){
 			 success: function(data)
 			 {
 			    $('#personalDetailsSection').html(data);
-					markSectionError('#personalDetailsSection');
+				
 
 					if (message == 'close')
 					{
 						// Close the section only if there are no errors.
-						var errorCount = $('#personalDetailsSection .invalid:visible').length;
+						var errorCount = $('#personalDetailsSection .invalid:visible').length  ;
 						if (errorCount == 0)
 						{
 							$('#personalDetails-H2').trigger('click');
+						}else{
+							markSectionError('#personalDetailsSection');
 						}
 					}
 			  },

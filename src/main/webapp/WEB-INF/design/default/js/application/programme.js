@@ -295,15 +295,7 @@ $(document).ready(function()
 	{
 		if ($("#acceptTermsPDValue").val() == 'NO')
 		{ 
-//			$('#programmeDetailsSection .terms-box').css({borderColor: 'red', color: 'red'});
-//				
-//			var $infobar = $('#prog-info-bar-div.section-info-bar');
-//			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-//			if ($infobar)
-//			{
-//				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-//				progImgCount = progImgCount + 1;
-//			}
+
 			postProgrammeData('open');
 			addToolTips();
 		}
@@ -419,7 +411,7 @@ function postProgrammeData(message)
 		success: function(data)
 			{
 				$('#programmeDetailsSection').html(data);
-				markSectionError('#programmeDetailsSection');
+			
 				
 				if (message == 'close')
 				{
@@ -428,6 +420,8 @@ function postProgrammeData(message)
 					if (errorCount == 0)
 					{
 						$('#programme-H2').trigger('click');
+					}else{
+						markSectionError('#programmeDetailsSection');
 					}
 				}
 			},

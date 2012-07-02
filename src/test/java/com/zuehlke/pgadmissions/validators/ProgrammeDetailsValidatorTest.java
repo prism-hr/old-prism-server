@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
@@ -42,6 +43,7 @@ public class ProgrammeDetailsValidatorTest {
 	private ProgramInstance programInstance;
 	private ProgramInstanceDAO programInstanceDAOMock;
 	private Program program;
+	private ApplicationForm form;
 
 	@Test
 	public void shouldSupportProgrammeDetails() {
@@ -171,6 +173,38 @@ public class ProgrammeDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("programmeDetails.studyOption.invalid", mappingResult.getFieldError("studyOption").getCode());
 	}
+	
+	@Test
+	public void shouldRejectIfApplicationSubmittedAndTermsAcceptedIsFalse() {
+
+		form.setStatus(ApplicationFormStatus.VALIDATION);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
+		programmeDetailsValidator.validate(programmeDetail, mappingResult);
+
+		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("acceptedTerms").getCode());
+	}
+	@Test
+	public void shouldNotRejectIfApplicationsubmittedAndTermsAcceptedIsTrue() {
+
+		programmeDetail.setAcceptedTerms(true);
+		form.setStatus(ApplicationFormStatus.VALIDATION);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
+		programmeDetailsValidator.validate(programmeDetail, mappingResult);
+
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+
+
+	}
+	@Test
+	public void shouldNotRejectIfApplicationUnsubmittedAndTermsAcceptedIsFalse() {
+
+		form.setStatus(ApplicationFormStatus.UNSUBMITTED);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
+		programmeDetailsValidator.validate(programmeDetail, mappingResult);
+
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
 
 	@Before
 	public void setup() throws ParseException {
@@ -182,7 +216,7 @@ public class ProgrammeDetailsValidatorTest {
 		programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME)
 				.applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
-		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicant(currentUser).toApplicationForm();
+		form = new ApplicationFormBuilder().id(2).program(program).applicant(currentUser).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
 		programmeDetail = new ProgrammeDetailsBuilder().id(5).suggestedSupervisors(suggestedSupervisor).programmeName("programmeName")
 				.referrer(Referrer.OPTION_1).startDate(DateUtils.addDays(new Date(),10)).applicationForm(form)
 				.studyOption(StudyOption.FULL_TIME).toProgrammeDetails();

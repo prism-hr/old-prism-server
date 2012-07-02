@@ -144,7 +144,6 @@
 								</div><!-- .row-group -->
 				
 								<div class="buttons">
-									<button type="button" id="clear" class="clear">Clear</button>
 									<button type="submit" class="blue">Submit</button>
 								</div>
 									

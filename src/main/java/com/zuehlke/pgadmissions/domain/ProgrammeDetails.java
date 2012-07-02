@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
@@ -23,11 +24,13 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 @Entity(name = "APPLICATION_FORM_PROGRAMME_DETAIL")
 @Access(AccessType.FIELD)
-public class ProgrammeDetails extends DomainObject<Integer> {
+public class ProgrammeDetails extends DomainObject<Integer> implements FormSectionObject {
 
 
 	private static final long serialVersionUID = -5997103825068065955L;
 
+	@Transient
+	private boolean acceptedTerms;
 
 	@Override
 	public void setId(Integer id) {
@@ -68,6 +71,7 @@ public class ProgrammeDetails extends DomainObject<Integer> {
 	@JoinColumn(name = "programme_detail_id")
 	private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
 
+	
 	public String getProgrammeName() {
 		return programmeName;
 	}
@@ -135,6 +139,14 @@ public class ProgrammeDetails extends DomainObject<Integer> {
 	
 	public boolean hasSupervisors(){
 		return !suggestedSupervisors.isEmpty();
+	}
+
+	public boolean isAcceptedTerms() {
+		return acceptedTerms;
+	}
+
+	public void setAcceptedTerms(boolean acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
 	}
 
 }

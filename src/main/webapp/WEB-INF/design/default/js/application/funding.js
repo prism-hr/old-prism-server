@@ -139,6 +139,7 @@ $(document).ready(function(){
 			}
 			else
 			{
+				unmarkSection('#fundingSection');
 				$('#fundingCloseButton').trigger('click');
 			}
 		}

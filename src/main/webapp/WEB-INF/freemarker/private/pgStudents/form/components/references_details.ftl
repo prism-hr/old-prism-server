@@ -43,7 +43,7 @@
 					<#if existingReferee.editable>
 						<a name="editRefereeLink" data-desc="Edit" id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a>
           <#else>
-						<a name="editRefereeLink" data-desc="Show" id="referee_${encExistingRefereeId}" class="button-edit button-hint">show</a>
+						<a name="editRefereeLink" data-desc="Show" id="referee_${encExistingRefereeId}" class="button-show button-hint">show</a>
           </#if>
 				</td>
 				<td>

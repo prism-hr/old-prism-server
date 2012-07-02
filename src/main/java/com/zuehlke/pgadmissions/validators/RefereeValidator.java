@@ -9,7 +9,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.Referee;
 
 @Service
-public class RefereeValidator implements Validator {
+public class RefereeValidator extends FormSectionObjectValidator implements Validator {
 
 	private static final int MAXIMUM_ADDRESS_CHARS = 500;
 
@@ -20,6 +20,7 @@ public class RefereeValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		super.validate(target, errors);
 		Referee referee = (Referee) target;
 		if (!EmailValidator.getInstance().isValid(referee.getEmail())) {
 			errors.rejectValue("email", "text.email.notvalid");

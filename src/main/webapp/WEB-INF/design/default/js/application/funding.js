@@ -251,7 +251,6 @@ function postFundingData(message)
 		},
 		success: function(data)
 		{
-			
 			$('#fundingSection').html(data);
 			var errorCount = $('#fundingSection .invalid:visible').length;
 			if (message == 'close' && errorCount == 0)

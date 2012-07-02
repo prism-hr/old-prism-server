@@ -43,6 +43,10 @@
 
 						<div>
 						
+							<div class="section-info-bar">
+								Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
+							</div>
+
 							<!-- Table of users. -->
 							<div id="existingUsers" class="tableContainer"></div>
 							
@@ -53,10 +57,6 @@
 							
 							<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
 							
-								<div class="section-info-bar">
-									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
-								</div>
-
 								<div class="row-group">
 								
 									<div class="row programme">

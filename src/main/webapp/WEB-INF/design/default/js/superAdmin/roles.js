@@ -7,7 +7,8 @@ $(document).ready(function()
 	loadUsersForProgram();
 	$('#programs').change(function()
 	{
-		 loadUsersForProgram()
+		$('#editRoles .invalid').remove();
+		loadUsersForProgram();
 	});
 	
 	// ------------------------------------------------------------------------------

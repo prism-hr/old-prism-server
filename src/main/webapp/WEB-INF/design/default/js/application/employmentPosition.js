@@ -8,6 +8,7 @@ $(document).ready(function(){
 	// Current employment checkbox
 	$('#current').click(function()
 	{
+		$('#position-enddate-error').remove();
 		if ($('#current:checked').val() !== undefined) 
 		{
 			// checked

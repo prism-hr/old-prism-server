@@ -18,6 +18,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$("input[name*='currentQualificationCB']").click(function()
 	{
+		$('#qualification-awarddate-error').remove();
 		if ($("#currentQualification").val() =='YES')
 		{
 			// Uncheck the box

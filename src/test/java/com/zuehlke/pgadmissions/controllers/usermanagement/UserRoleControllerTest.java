@@ -201,7 +201,7 @@ public class UserRoleControllerTest {
 	}
 
 	@Test
-	public void shouldUpdateRolesForUserIfUserAlreadyExists() {
+	public void shouldUpdateRolesForUserIfUserAlreadyExistsButNotInRole() {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 

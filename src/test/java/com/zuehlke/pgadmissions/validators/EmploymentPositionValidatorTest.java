@@ -9,11 +9,13 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
+import org.apache.struts.action.ActionFormBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 
@@ -159,7 +161,9 @@ public class EmploymentPositionValidatorTest {
 	public void setup() throws ParseException{
 		
 		positionValidator = new EmploymentPositionValidator();
+	
 		position = new EmploymentPosition();
+		position.setApplication(new ApplicationFormBuilder().id(4).toApplicationForm());
 		position.setEmployerName("Mark");
 		position.setEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		position.setLanguage(new LanguageBuilder().id(3).toLanguage());

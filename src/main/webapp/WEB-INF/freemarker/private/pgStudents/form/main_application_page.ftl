@@ -135,7 +135,7 @@
       <div id="tools">
         <ul class="left">
           <li class="icon-print"><a target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
-          <li class="icon-feedback"><a title="Send Feedback" href="https://docs.google.com/spreadsheet/viewform?formkey=dDNPWWt4MTJ2TzBTTzQzdUx6MlpvWVE6MQ&amp;entry_2=/pgadmissions/application&amp;entry_3=undefined&amp;entry_4=undefined&amp;entry_5=undefined&amp;entry_6=undefined">Send Feedback</a></li>
+          <li class="icon-feedback"><a title="Send Feedback" href="mailto:prism@ucl.ac.uk?subject=Feedback">Send Feedback</a></li>
         </ul>
       </div>
 

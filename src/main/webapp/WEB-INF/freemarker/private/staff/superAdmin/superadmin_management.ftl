@@ -84,7 +84,7 @@
 												</tr>
 										</tbody>
 									</table>
-								</div>
+								</div><!-- #existingUsers -->
 
 								<div class="row-group">
 								
@@ -130,7 +130,7 @@
 										</div>
 									</div>
 			
-								</div>
+								</div><!-- .row-group -->
 								
 								<div class="buttons">
 									<button type="reset" id="clear" class="clear">Clear</button>

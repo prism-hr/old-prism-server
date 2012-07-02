@@ -75,7 +75,13 @@
         <label class="plain-label grey-label">Project</label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
         <div class="field">
-          <input class="full" id="projectName" name="projectName" type="text" value="${(applicationForm.projectTitle?html)!'Not Specified'}" disabled="disabled"/>
+        	<#if applicationForm.projectTitle?has_content>
+        		<#assign project = true>
+        	<#else>
+        		<#assign project = false>
+        	</#if>
+        	
+          <input class="full" id="projectName" name="projectName" type="text" value="<#if project>${(applicationForm.projectTitle?html)}<#else>Not Required</#if>" disabled="disabled"/>
         </div>
       </div>
   

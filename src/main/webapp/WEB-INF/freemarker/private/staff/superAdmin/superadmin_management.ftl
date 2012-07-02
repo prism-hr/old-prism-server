@@ -33,7 +33,7 @@
 
 					<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/superadmins" method="POST">
 		
-						<section class="form-rows">
+						<section id="superadmins" class="form-rows">
 							<h2>Manage Superadministrators</h2>
 
 							<div>
@@ -84,7 +84,7 @@
 												</tr>
 										</tbody>
 									</table>
-								</div>
+								</div><!-- #existingUsers -->
 
 								<div class="row-group">
 								
@@ -130,7 +130,7 @@
 										</div>
 									</div>
 			
-								</div>
+								</div><!-- .row-group -->
 								
 								<div class="buttons">
 									<button type="reset" id="clear" class="clear">Clear</button>

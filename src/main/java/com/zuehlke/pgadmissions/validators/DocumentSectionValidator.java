@@ -8,7 +8,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 
 @Component
-public class DocumentSectionValidator implements Validator {
+public class DocumentSectionValidator extends FormSectionObjectValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -17,6 +17,7 @@ public class DocumentSectionValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		super.validate(target, errors);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalStatement", "file.upload.empty");
 
 	}

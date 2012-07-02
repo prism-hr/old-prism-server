@@ -99,7 +99,7 @@ public class UserService {
 	}
 
 	
-	@Transactional
+
 	public RegisteredUser getCurrentUser() {
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		return userDAO.get(currentUser.getId());

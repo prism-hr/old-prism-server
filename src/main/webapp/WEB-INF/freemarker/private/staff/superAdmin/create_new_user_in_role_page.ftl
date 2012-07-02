@@ -39,27 +39,24 @@
 					
 					<section class="form-rows">
 																								
-						<h2 class="no-arrow">
-							Manage Users
-						</h2>
+						<h2 class="no-arrow">Manage Users</h2>
 
-						<!-- Table of users. -->
-						<div id="existingUsers" class="tableContainer"></div>
+						<div>
 						
-						<form id="removeForm"  action="/pgadmissions/manageUsers/remove" method="POST">
-							<input type="hidden" id="deleteFromUser" name="user" value=""/>						
-							<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
-						</form>
-					</section>
-						
-					<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
-						<section class="form-rows">
-							<div>
+							<div class="section-info-bar">
+								Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
+							</div>
+
+							<!-- Table of users. -->
+							<div id="existingUsers" class="tableContainer"></div>
 							
-								<div class="section-info-bar">
-									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
-								</div>
-
+							<form id="removeForm" action="/pgadmissions/manageUsers/remove" method="POST">
+								<input type="hidden" id="deleteFromUser" name="user" value=""/>						
+								<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
+							</form>
+							
+							<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
+							
 								<div class="row-group">
 								
 									<div class="row programme">
@@ -152,9 +149,9 @@
 									<button type="submit" class="blue">Submit</button>
 								</div>
 								
-							</div>
-						</section>
-					</form>
+							</form>
+						</div>
+					</section>
 			
 				</div><!-- .content-box-inner -->
 			</div><!-- .content-box -->

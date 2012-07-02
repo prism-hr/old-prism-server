@@ -13,13 +13,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity(name="APPLICATION_FORM_EMPLOYMENT_POSITION")
 @Access(AccessType.FIELD) 
-public class EmploymentPosition extends DomainObject<Integer>{
+public class EmploymentPosition extends DomainObject<Integer> implements FormSectionObject{
 
 	private static final long serialVersionUID = 4492119755495402951L;
 
+	@Transient
+	private boolean acceptedTerms;
+	
 	@Column(name="employer_name")
 	private String employerName;
 	
@@ -132,6 +136,14 @@ public class EmploymentPosition extends DomainObject<Integer>{
 
 	public void setCurrent(boolean current) {
 		this.current = current;
+	}
+
+	public boolean isAcceptedTerms() {
+		return acceptedTerms;
+	}
+
+	public void setAcceptedTerms(boolean acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
 	}
 
 

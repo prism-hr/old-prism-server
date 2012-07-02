@@ -47,7 +47,6 @@
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
 									<div class="box">
-										<h3>Interview</h3>
 										<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
 										<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
 										<div class="added">

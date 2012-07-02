@@ -19,6 +19,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -31,10 +32,13 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD)
-public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm> {
+public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm>, FormSectionObject {
 
 	private static final long serialVersionUID = -7671357234815343496L;
 
+	@Transient
+	private boolean acceptedTerms;
+	
 	@Column(name = "application_number")
 	private String applicationNumber;
 
@@ -655,6 +659,19 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setAdminRequestedRegistry(RegisteredUser adminRequestedRegistry) {
 		this.adminRequestedRegistry = adminRequestedRegistry;
+	}
+
+	public boolean isAcceptedTerms() {
+		return acceptedTerms;
+	}
+
+	public void setAcceptedTerms(boolean acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
+	}
+
+	@Override
+	public ApplicationForm getApplication() {
+		return this;
 	}
 
 }

@@ -78,7 +78,7 @@ $(document).ready(function()
 	// --------------------------------------------------------------------------------
 	$('#documentsSaveButton').click(function()
 	{
-		if ($("#acceptTermsDDValue").val() == 'NO')
+		/*if ($("#acceptTermsDDValue").val() == 'NO')
 		{ 
 			// Highlight the information bar and terms box.
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
@@ -93,10 +93,10 @@ $(document).ready(function()
 			addToolTips();
 		}
 		else
-		{
+		{*/
 			$("span[name='nonAcceptedDD']").html('');
 			postDocumentData('close');
-		}
+		//}
 	});
 	addToolTips();
 
@@ -113,7 +113,13 @@ $(document).ready(function()
 function postDocumentData(message)
 {
 	$('#documentSection > div').append('<div class="ajax" />');
-	
+	var acceptedTheTerms;
+	if ($("#acceptTermsDDValue").val() == 'NO'){
+		acceptedTheTerms = false;
+	}
+	else{
+		acceptedTheTerms = true;
+	}
 	$.ajax({
 		type: 'POST',
 		 statusCode: {
@@ -126,12 +132,13 @@ function postDocumentData(message)
 			applicationId:  $('#applicationId').val(),	
 			cv: $('#document_CV').val(),
 			personalStatement: $('#document_PERSONAL_STATEMENT').val(),
-			message: message
+			message: message,
+			acceptedTerms: acceptedTheTerms
 		},
 		success: function(data)
 		{
 			$('#documentSection').html(data);
-			markSectionError('#documentSection');
+		
 
 			if (message == 'close')
 			{
@@ -140,6 +147,8 @@ function postDocumentData(message)
 				if (errorCount == 0)
 				{
 					$('#documents-H2').trigger('click');
+				}else{
+					markSectionError('#documentSection');
 				}
 			}
 		},

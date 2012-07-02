@@ -38,10 +38,6 @@
 
 							<div>
 							
-								<div class="section-info-bar">
-									Manage superadministrators. You can also <a class="proceed-link" href="<@spring.url '/manageUsers/edit'/>">manage programme roles.</a>
-								</div>
-
 								<div id="existingUsers">
 									<table class="data" border="0">
 										<colgroup>
@@ -85,6 +81,10 @@
 										</tbody>
 									</table>
 								</div><!-- #existingUsers -->
+
+								<div class="section-info-bar">
+									Manage superadministrators. You can also <a class="proceed-link" href="<@spring.url '/manageUsers/edit'/>">manage programme roles.</a>
+								</div>
 
 								<div class="row-group">
 								

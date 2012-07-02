@@ -857,9 +857,6 @@ div.ajax {
 #view-toolbar { top: 126px; }
 #view-toolbar li.tool-button a { background: #444; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
 
-span.uploaded-file { display: block; padding: 1px; }
-span.uploaded-files .uploaded-file:last-child { margin-bottom: 5px; }
-
 /* To provide same style for command line. */
 a.proceed-link { color: #00F; }
 a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }

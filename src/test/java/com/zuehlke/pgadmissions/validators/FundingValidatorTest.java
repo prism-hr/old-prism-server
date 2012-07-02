@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
@@ -107,6 +108,7 @@ public class FundingValidatorTest {
 	public void setup() throws ParseException{
 		validator = new FundingValidator();
 		funding = new Funding();
+		funding.setApplication(new ApplicationFormBuilder().id(3).toApplicationForm());
 		funding.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
 		funding.setDescription("Description");
 		funding.setId(2);

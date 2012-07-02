@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
@@ -20,9 +21,12 @@ import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
 @Entity(name="APPLICATION_FORM_FUNDING")
 @Access(AccessType.FIELD) 
-public class Funding extends DomainObject<Integer> {
+public class Funding extends DomainObject<Integer> implements FormSectionObject{
 
 	private static final long serialVersionUID = -3074034984017639671L;
+	
+	@Transient
+	private boolean acceptedTerms;
 	
 	@Column(name="award_type")
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.FundingTypeEnumUserType")
@@ -106,5 +110,13 @@ public class Funding extends DomainObject<Integer> {
 	
 	public void setDocument(Document document) {
 		this.document = document;
+	}
+
+	public boolean isAcceptedTerms() {
+		return acceptedTerms;
+	}
+
+	public void setAcceptedTerms(boolean acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
 	}
 }

@@ -123,12 +123,12 @@ public class RefereeController {
 
 
 	@ModelAttribute
-	public Referee getReferee(@RequestParam(required=false) String encryptedRefereeId) {
-		if (encryptedRefereeId == null) {
+	public Referee getReferee(@RequestParam(required=false) String refereeId) {
+		if (refereeId == null) {
 			return new Referee();
 		}
-		Integer refereeId = encryptionHelper.decryptToInteger(encryptedRefereeId);
-		Referee referee = refereeService.getRefereeById(refereeId);
+		Integer id = encryptionHelper.decryptToInteger(refereeId);
+		Referee referee = refereeService.getRefereeById(id);
 		if (referee == null) {
 			throw new ResourceNotFoundException();
 		}

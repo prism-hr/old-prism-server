@@ -66,24 +66,28 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('a[name="deleteQualificationButton"]').click(function()
 	{
-
-			var id = $(this).attr("id").replace("qualification_", "");
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/deleteentity/qualification",
-				data:	{
-						id: id	
-					}, 
-				success:	function(data) {
-						$('#qualificationsSection').html(data);
-					}	
-					
-			});
+		var id = $(this).attr("id").replace("qualification_", "");
+		$('#qualificationsSection > div').append('<div class="ajax" />');
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+					401: function() {
+						window.location.reload();
+					}
+				},
+			url:"/pgadmissions/deleteentity/qualification",
+			data:	{
+					id: id	
+				}, 
+			success:	function(data) {
+					$('#qualificationsSection').html(data);
+				},
+			completed: function()
+			{
+				$('#qualificationsSection div.ajax').remove();
+			}
+				
+		});
 	});
 	
 
@@ -190,6 +194,7 @@ $(document).ready(function(){
 	{
 		var id = this.id;
 		id = id.replace('qualification_', '');	
+		$('#qualificationsSection > div').append('<div class="ajax" />');
 		$.ajax({
 			 type: 'GET',
 			 statusCode: {
@@ -231,6 +236,10 @@ $(document).ready(function(){
 					
 					// Cheap way of changing the button text.
 					$('#addQualificationButton').html('Update');
+				},
+				completed: function()
+				{
+					$('#qualificationsSection div.ajax').remove();
 				}
 		});
 	});

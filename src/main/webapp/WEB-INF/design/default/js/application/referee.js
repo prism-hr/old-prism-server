@@ -7,32 +7,48 @@ $(document).ready(function()
 	
 	limitTextArea();
 	
+	// -------------------------------------------------------------------------------
+	// Close button.
+	// -------------------------------------------------------------------------------
 	$('#refereeCloseButton').click(function(){
 		$('#referee-H2').trigger('click');
 		return false;
 	});
 	
-	$('a[name="deleteRefereeButton"]').click( function(){	
-				var id = $(this).attr("id").replace("referee_", "");
-				$.ajax({
-					type: 'POST',
-					 statusCode: {
-						  401: function() {
-							  window.location.reload();
-						  }
-					  },
-					url:"/pgadmissions/deleteentity/referee",
-					data:{
-						id: id	
-					}, 
-					
-					success:function(data) {
-						$('#referencesSection').html(data);
-					}	
-					
-				});
+	
+	// -------------------------------------------------------------------------------
+	// Delete a referee.
+	// -------------------------------------------------------------------------------
+	$('a[name="deleteRefereeButton"]').click(function()
+	{	
+		var id = $(this).attr("id").replace("referee_", "");
+		$('#referencesSection > div').append('<div class="ajax" />');
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+				401: function()
+				{
+					window.location.reload();
+				}
+			},
+			url:"/pgadmissions/deleteentity/referee",
+			data:{
+				id: id	
+			}, 
+			success:function(data)
+			{
+				$('#referencesSection').html(data);
+			},
+			completed: function()
+			{
+				$('#referencesSection div.ajax').remove();
+			}
+		});
 	});
 	
+	// -------------------------------------------------------------------------------
+	// "Accept terms" checkbox.
+	// -------------------------------------------------------------------------------
 	$("input[name*='acceptTermsRDCB']").click(function() {
 		if ($("#acceptTermsRDValue").val() =='YES'){
 			$("#acceptTermsRDValue").val("NO");
@@ -64,6 +80,9 @@ $(document).ready(function()
 		}
 		});
 	
+	// -------------------------------------------------------------------------------
+	// Save button.
+	// -------------------------------------------------------------------------------
 	$('#refereeSaveAndCloseButton').click(function()
 	{
 		if ($("#acceptTermsRDValue").val() =='NO')
@@ -99,6 +118,10 @@ $(document).ready(function()
 		}
 	});
 	
+
+	// -------------------------------------------------------------------------------
+	// Add a referee.
+	// -------------------------------------------------------------------------------
 	$('#addReferenceButton').click(function(){
 		if( $('#acceptTermsRDValue').length != 0  && $("#acceptTermsRDValue").val() =='NO'){ 
 			//$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
@@ -145,26 +168,37 @@ $(document).ready(function()
 		});
 	});
 	
+
+	// -------------------------------------------------------------------------------
+	// Edit a referee.
+	// -------------------------------------------------------------------------------
 	$('a[name="editRefereeLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('referee_', '');	
+		$('#referencesSection > div').append('<div class="ajax" />');
 		$.ajax({
-			 type: 'GET',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  }
-			  },
-				url:"/pgadmissions/update/getReferee",
-				data:{
-					applicationId:  $('#applicationId').val(),
-					refereeId: id,
-					message: 'edit',					
-					cacheBreaker: new Date().getTime()
-				},
-				success: function(data) {
-					$('#referencesSection').html(data);
+		 type: 'GET',
+		 statusCode: {
+				401: function()
+				{
+					window.location.reload();
 				}
+			},
+			url:"/pgadmissions/update/getReferee",
+			data:{
+				applicationId:  $('#applicationId').val(),
+				refereeId: id,
+				message: 'edit',					
+				cacheBreaker: new Date().getTime()
+			},
+			success: function(data)
+			{
+				$('#referencesSection').html(data);
+			},
+			completed: function()
+			{
+				$('#referencesSection div.ajax').remove();
+			}
 		});
 	});
 	

@@ -152,8 +152,8 @@ public class RefereeControllerTest {
 	}
 
 	@Test
-	public void shouldReturnNewRefereeIfIdIsNull() {
-		Referee returnedReferee = controller.getReferee(null);
+	public void shouldReturnNewRefereeIfIdIsBlank() {
+		Referee returnedReferee = controller.getReferee("");
 		assertNull(returnedReferee.getId());
 	}
 

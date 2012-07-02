@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,8 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
+
+import freemarker.template.utility.StringUtil;
 @RequestMapping("/update")
 @Controller
 public class RefereeController {
@@ -124,7 +127,7 @@ public class RefereeController {
 
 	@ModelAttribute
 	public Referee getReferee(@RequestParam(required=false) String refereeId) {
-		if (refereeId == null) {
+		if (StringUtils.isBlank(refereeId) ) {
 			return new Referee();
 		}
 		Integer id = encryptionHelper.decryptToInteger(refereeId);

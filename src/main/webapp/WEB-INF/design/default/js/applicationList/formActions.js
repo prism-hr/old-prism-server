@@ -4,8 +4,6 @@ $(document).ready(function()
 	// Modal window functionality.
 	setupModalBox();
 	
-	populateApplicationList(true);
-
 	// --------------------------------------------------------------------------------
 	// AJAX ACTIVITY
 	// --------------------------------------------------------------------------------
@@ -18,7 +16,8 @@ $(document).ready(function()
 	{
 		$('div.ajax', this).remove();
 	});
-	
+
+	populateApplicationList(true);
 	
 	// --------------------------------------------------------------------------------
 	// TABLE SORTING

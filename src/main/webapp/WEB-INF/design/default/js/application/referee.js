@@ -85,12 +85,8 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	$('#refereeSaveAndCloseButton').click(function()
 	{
-		if ($("#acceptTermsRDValue").val() =='NO')
+		if ($("#acceptTermsRDValue").val() == 'NO' && !isFormEmpty('#referencesSection form'))
 		{ 
-			// Highlight the information bar and terms box.
-//			var $form = $('#referencesSection form');
-//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
-			
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
 			var $infobar = $('#ref-info-bar-div.section-info-bar');

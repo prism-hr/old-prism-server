@@ -46,24 +46,28 @@ $(document).ready(function(){
 	// Delete existing funding.
 	// -------------------------------------------------------------------------------
 	$('a[name="deleteFundingButton"]').click( function(){	
-			var id = $(this).attr("id").replace("funding_", "");
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/deleteentity/funding",
-				data:	{
-						id: id	
-					}, 
-					
-				success:	function(data) {
-						$('#fundingSection').html(data);
-					}	
-					
-			});
+		var id = $(this).attr("id").replace("funding_", "");
+		$('#fundingSection > div').append('<div class="ajax" />');
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+					401: function() {
+						window.location.reload();
+					}
+				},
+			url:"/pgadmissions/deleteentity/funding",
+			data:	{
+					id: id	
+				}, 
+				
+			success:	function(data) {
+					$('#fundingSection').html(data);
+				},
+			completed: function()
+			{
+				$('#fundingSection div.ajax').remove();
+			}
+		});
 	});
 	
 
@@ -153,25 +157,30 @@ $(document).ready(function(){
 	{
 		var id = this.id;
 		id = id.replace('funding_', '');	
+		$('#fundingSection > div').append('<div class="ajax" />');
 		$.ajax({
-			 	type: 'GET',
-			 	statusCode: {
-			 		401: function() {
-			 			window.location.reload();
-			 		}
-			 	},
-				url:"/pgadmissions/update/getFunding",
-				data:{
-					applicationId:  $('#applicationId').val(),
-					fundingId: id,
-					message: 'edit',					
-					cacheBreaker: new Date().getTime()
-				},
-				success:function(data)
-				{
-					$('#fundingSection').html(data);
-					$('#addFundingButton').html('Update');
+			type: 'GET',
+			statusCode: {
+				401: function() {
+					window.location.reload();
 				}
+			},
+			url:"/pgadmissions/update/getFunding",
+			data:{
+				applicationId:  $('#applicationId').val(),
+				fundingId: id,
+				message: 'edit',					
+				cacheBreaker: new Date().getTime()
+			},
+			success:function(data)
+			{
+				$('#fundingSection').html(data);
+				$('#addFundingButton').html('Update');
+			},
+			completed: function()
+			{
+				$('#fundingSection div.ajax').remove();
+			}
 		});
 	});
 	

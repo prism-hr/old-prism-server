@@ -30,23 +30,28 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="deleteEmploymentButton"]').click( function(){	
-			var id = $(this).attr("id").replace("position_", "");
-			$.ajax({
-				type: 'POST',
-				statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  }
-				},
-				url:"/pgadmissions/deleteentity/employment",
-				data:{
-					id: id	
-				}, 				
-				success:function(data) {
-					$('#positionSection').html(data);
-				}	
-					
-			});
+		var id = $(this).attr("id").replace("position_", "");
+		$('#positionSection > div').append('<div class="ajax" />');
+		$.ajax({
+			type: 'POST',
+			statusCode: {
+				401: function() {
+					window.location.reload();
+				}
+			},
+			url:"/pgadmissions/deleteentity/employment",
+			data:{
+				id: id	
+			}, 				
+			success:function(data) {
+				$('#positionSection').html(data);
+			},
+			completed: function()
+			{
+				$('#positionSection div.ajax').remove();
+			}
+				
+		});
 	});
 	
 	$("input[name*='acceptTermsEPCB']").click(function() {
@@ -143,31 +148,35 @@ $(document).ready(function(){
 	$('a[name="positionEditButton"]').click(function(){
 		var id = this.id;
 		id = id.replace('position_', '');	
-
+		$('#positionSection > div').append('<div class="ajax" />');
 		$.ajax({
-			 type: 'GET',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  }
-			  },
-			  url: "/pgadmissions/update/getEmploymentPosition",
-			  data:	{
-					applicationId:  $('#applicationId').val(), 
-					employmentId: id,
-					message: 'edit',					
-					cacheBreaker: new Date().getTime()
-				}, 
-			  success:function(data) {								
-					$('#positionSection').html(data);
-					var curruntPos = $('#current').is(':checked');
-					if(curruntPos == true){
-						$('#position_endDate').attr('disabled','disabled');
-						$('#posi-end-date-lb').addClass('grey-label');
-						$('#posi-end-date-lb em').hide();
-					}
-					$('#addPosisionButton').html('Update');
+		 type: 'GET',
+		 statusCode: {
+				401: function() {
+					window.location.reload();
 				}
+			},
+			url: "/pgadmissions/update/getEmploymentPosition",
+			data:	{
+				applicationId:  $('#applicationId').val(), 
+				employmentId: id,
+				message: 'edit',					
+				cacheBreaker: new Date().getTime()
+			}, 
+			success:function(data) {								
+				$('#positionSection').html(data);
+				var curruntPos = $('#current').is(':checked');
+				if(curruntPos == true){
+					$('#position_endDate').attr('disabled','disabled');
+					$('#posi-end-date-lb').addClass('grey-label');
+					$('#posi-end-date-lb em').hide();
+				}
+				$('#addPosisionButton').html('Update');
+			},
+			completed: function()
+			{
+				$('#positionSection div.ajax').remove();
+			}
 		});
 	});
 

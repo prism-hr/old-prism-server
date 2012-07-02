@@ -35,15 +35,6 @@ $(document).ready(function()
     bindDatePickers();
   }
   
-	// ------------------------------------------------------------------------------
-	// Adding style to delete button to make it free from inherited style
-	// ------------------------------------------------------------------------------
-  var styleMap = {
-    'padding':'0',
-      'background' : 'none'
-  } 
-  $('.button-delete').parent().css(styleMap);
-  
   // ------------------------------------------------------------------------------
   // Toolbar button action for jumping to a specific part of the application form.
   // ------------------------------------------------------------------------------

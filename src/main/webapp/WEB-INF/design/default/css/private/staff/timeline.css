@@ -56,7 +56,8 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses ul .box .title { background: #AAA; }
 #timeline-statuses ul .box p { background-image: none !important; font-size: 12px; font-weight: normal; padding: 10px; }
 
-#timeline-statuses .box ul.uploads { background: url(../../../images/icon_downloads.png) no-repeat 12px 11px; }
+#timeline-statuses .box ul.uploads { padding-left: 10px; }
+#timeline-statuses .box ul.uploads li { background: url(../../../images/icon_downloads.png) no-repeat 12px 11px; display: block; line-height: 18px; margin-bottom: 5px; padding-left: 30px; }
 
 #timeline-statuses ul.status-info .box h3 { margin: 0; padding: 10px; }
 #timeline-statuses ul.status-info .added { background: url(../../../images/icon_added_users.png) no-repeat 12px 11px; padding: 10px 10px 10px 40px; }

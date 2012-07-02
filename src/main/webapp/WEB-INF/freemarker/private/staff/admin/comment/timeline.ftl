@@ -81,7 +81,7 @@
 							</ul>
 							</#if>
 							
-							<#elseif timelineObject.status?? &&   timelineObject.status == 'REJECTED'>
+							<#elseif timelineObject.status?? && timelineObject.status == 'REJECTED'>
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
 									<div class="box">

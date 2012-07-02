@@ -177,7 +177,7 @@ $(document).ready(function()
 		var appListValue = $('#appList').val();
 		if (appListValue != '')
 		{
-			window.location.href = "/pgadmissions/print/all?appList="+$('#appList').val();
+			window.open("/pgadmissions/print/all?appList="+$('#appList').val(), '_blank');
 		}
 	});
 

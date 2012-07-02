@@ -38,7 +38,7 @@ $(document).ready(function()
 
 function loadUsersForProgram()
 {
-	$('#existingUsers').append('<div class="ajax" />');
+	$('#editRoles').append('<div class="ajax" />');
 	
 	$.ajax({
 		 type: 'GET',
@@ -66,6 +66,10 @@ function loadUsersForProgram()
 					$('#existingUsers table').show();
 				}
 				addToolTips();
+			},
+			completed: function()
+			{
+				$('#editRoles div.ajax').remove();
 			}
 	});	
 }

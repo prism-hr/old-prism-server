@@ -192,8 +192,8 @@
         <label class="plain-label">Is this supervisor aware of your application?</label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
         <div class="field">
-          <label><input type="radio" name="awareSupervisor" value="YES" /> Yes</label>
-          <label><input type="radio" name="awareSupervisor" value="NO" /> No</label>
+          <label><input id="awareYes" type="radio" name="awareSupervisor" value="YES" /> Yes</label>
+          <label><input id="awareNo" type="radio" name="awareSupervisor" value="NO" /> No</label>
            <span class="invalid" name="superAware" style="display:none;"></span>
         </div>
       </div>
@@ -238,7 +238,7 @@
 
     <div class="buttons">
       <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-      <button class="clear" type="button" id="programmeCancelButton" name="programmeCancelButton" value="cancel">Clear</button>
+      <button type="button" id="programmeClearButton" name="programmeClearButton" value="clear">Clear</button>
       </#if>    
       <button class="blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</button>
       <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>

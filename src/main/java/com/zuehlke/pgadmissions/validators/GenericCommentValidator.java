@@ -12,7 +12,7 @@ public class GenericCommentValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(Comment.class);
+		return Comment.class.isAssignableFrom(clazz);
 	}
 
 	@Override

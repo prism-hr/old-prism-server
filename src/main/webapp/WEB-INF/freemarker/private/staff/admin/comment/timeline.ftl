@@ -104,7 +104,7 @@
 			            	<#assign role = "interviewer"/>    
 			            <#elseif comment.type == 'APPROVAL'>
 			            	<#assign role = "approver"/>                
-			            <#elseif comment.type == 'APPROVAL_EVALUATION'>
+			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART'>
 			            	<#assign role = "approver"/>                
 			            </#if>
 			            <li>                          
@@ -127,7 +127,7 @@
 			                <#elseif comment.type == 'REVIEW'>
 			                	<#include "timeline_snippets/review_comment.ftl"/>
 			                <#elseif comment.type == 'INTERVIEW'>
-			                	<#include "timeline_snippets/interview_comment.ftl"/>                  
+			                	<#include "timeline_snippets/interview_comment.ftl"/> 				                	                 
 			                </#if>
 			              </div>
 			            </li>

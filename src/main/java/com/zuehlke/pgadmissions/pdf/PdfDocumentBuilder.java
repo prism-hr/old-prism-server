@@ -830,7 +830,7 @@ public class PdfDocumentBuilder {
 
 			table.writeSelectedRows(0, -1, document.left(), document.top() + 55f, writer.getDirectContent());
 
-			Image image = Image.getInstance(this.getClass().getResource("/logo.jpg"));
+			Image image = Image.getInstance(this.getClass().getResource("/prism_logo.png"));
 			image.scalePercent(30f);
 
 			image.setAbsolutePosition(document.right() - image.getWidth() * 0.3f, document.top() + 10f);

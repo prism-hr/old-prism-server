@@ -161,7 +161,7 @@ $(document).ready(function()
 				'<td>' +
 				'<a class="button-edit" data-desc="Edit" id="us_'+unsavedSupervisors+'" name="editSupervisorLink">edit</a> ' +
 				'<a class="button-delete" data-desc="Delete" id="usd_'+unsavedSupervisors+'" name="deleteSupervisor">delete</a>' +
-				'<input type="hidden" name="sId" id="us_'+unsavedSupervisors+'_supervisorId" value="'+unsavedSupervisors+'" />' +
+				'<input type="hidden" name="sId" id="us_'+unsavedSupervisors+'_supervisorId" value="" />' +
 				'<input type="hidden" name="sFN" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 				'<input type="hidden" name="sLN" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 				'<input type="hidden" name="sEM" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								

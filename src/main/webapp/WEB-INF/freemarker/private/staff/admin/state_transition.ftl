@@ -64,7 +64,7 @@
 						<#if applicationForm.isInState('VALIDATION')>
 							Validate Application
 						<#elseif applicationForm.isInState('REVIEW')>
-							Review Application
+							Evaluate Application Reviews
 						<#elseif applicationForm.isInState('INTERVIEW')>
 							Evaluate Interview Outcomes
 						<#elseif applicationForm.isInState('APPROVAL')>

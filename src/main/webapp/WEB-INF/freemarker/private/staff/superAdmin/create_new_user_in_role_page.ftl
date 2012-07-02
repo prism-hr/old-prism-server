@@ -36,27 +36,25 @@
 			<div class="content-box">
 				<div class="content-box-inner">
 					
+					<!-- Remove form. -->
+					<form id="removeForm" action="/pgadmissions/manageUsers/remove" method="POST">
+						<input type="hidden" id="deleteFromUser" name="user" value=""/>						
+						<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
+					</form>
 					
-					<section class="form-rows">
-																								
-						<h2 class="no-arrow">Manage Users</h2>
-
-						<div>
-						
-							<div class="section-info-bar">
-								Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
-							</div>
-
-							<!-- Table of users. -->
-							<div id="existingUsers" class="tableContainer"></div>
-							
-							<form id="removeForm" action="/pgadmissions/manageUsers/remove" method="POST">
-								<input type="hidden" id="deleteFromUser" name="user" value=""/>						
-								<input type="hidden" id="deleteFromProgram" name="selectedProgram" value=""/>
-							</form>
-							
-							<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
-							
+					<form id="editRoles" name="editRoles" action="/pgadmissions/manageUsers/edit" method="POST">
+					
+						<section class="form-rows">
+							<h2 class="no-arrow">Manage Users</h2>
+	
+							<div>
+								<div class="section-info-bar">
+									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
+								</div>
+	
+								<!-- Table of users. -->
+								<div id="existingUsers" class="tableContainer"></div>
+								
 								<div class="row-group">
 								
 									<div class="row programme">
@@ -80,7 +78,7 @@
 									</div>
 									
 								</div>
-		
+			
 								<div class="row-group">
 								
 									<h3><#if userDTO.newUser>Add New User<#else>Edit User Roles</#if></h3>
@@ -108,7 +106,7 @@
 											</#list>
 										</div>
 									</div>
-			
+				
 									<div class="row">
 										<span class="plain-label">Email<em>*</em></span>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
@@ -136,22 +134,24 @@
 											</#list>
 										</div>
 									</div>
-																		
+																			
 									<div class="row">
 										<div class="field">
 											<button class="blue" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
 										</div>
 									</div>
-								</div>
-			
+									
+								</div><!-- .row-group -->
+				
 								<div class="buttons">
 									<button type="button" id="clear" class="clear">Clear</button>
 									<button type="submit" class="blue">Submit</button>
 								</div>
-								
-							</form>
-						</div>
-					</section>
+									
+							</div>
+						</section>
+						
+					</form>
 			
 				</div><!-- .content-box-inner -->
 			</div><!-- .content-box -->

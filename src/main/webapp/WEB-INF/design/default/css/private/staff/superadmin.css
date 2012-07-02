@@ -46,4 +46,5 @@ section.form-rows #existingUsers { margin-bottom: 5px; }
 #existingUsers table { margin-bottom: 0; }
 #existingUsers td.scrollparent { padding: 0; }
 #existingUsers .scroll { border-bottom: 1px solid #999; max-height: 155px; overflow: auto; } /* roughly five rows high. */
+#superadmins #existingUsers .scroll { max-height: 135px; } /* adjustment for missing edit/delete buttons. */
 #existingUsers .scroll table { border-collapse: collapse; width: 100%; }

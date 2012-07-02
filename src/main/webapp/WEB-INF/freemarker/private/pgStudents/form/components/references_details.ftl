@@ -353,17 +353,17 @@
     </#if>    
   </div>
 
-  <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED') && (referee.id?? || applicationForm.referees?size &lt; 3)>
+  <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
   <div class="row-group terms-box">
     <div class="row">
-      <span class="terms-label">
+      <span class="terms-label<#if applicationForm.referees?size &lt; 3> grey-label</#if>">
         I understand that in accepting this declaration I am confirming
         that the information contained in this section is true and accurate. 
         I am aware that any subsequent offer of study may be retracted at any time
         if any of the information contained is found to be misleading or false.
       </span>
       <div class="terms-field">
-        <input type="checkbox" name="acceptTermsRDCB" id="acceptTermsRDCB"/>
+        <input type="checkbox" name="acceptTermsRDCB" id="acceptTermsRDCB"<#if applicationForm.referees?size &lt; 3> disabled="disabled"</#if> />
       </div>
       <input type="hidden" name="acceptTermsRDValue" id="acceptTermsRDValue"/>
     </div>          

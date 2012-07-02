@@ -1,12 +1,12 @@
   <!-- Footer. -->
   <div id="footer">
     <ul>
-      <li><a href="#">Disclaimer</a></li>
-      <li><a href="#">Freedom of Information</a></li>
-      <li><a href="#">Accessibility</a></li>
-      <li><a href="#">Privacy</a></li>
-      <li><a href="#">Advanced Search</a></li>
-      <li><a href="#">Contact Us</a></li>
+      <li><a href="http://www.ucl.ac.uk/disclaimer/">Disclaimer</a></li>
+      <li><a href="http://www.ucl.ac.uk/foi/">Freedom of Information</a></li>
+      <li><a href="http://www.ucl.ac.uk/accessibility/">Accessibility</a></li>
+      <li><a href="http://www.ucl.ac.uk/privacy/">Privacy</a></li>
+      <li><a href="http://www.ucl.ac.uk/cookies/">Advanced Search</a></li>
+      <li><a href="mailto:prism@ucl.ac.uk">Contact Us</a></li>
     </ul>
 		
 		<p>

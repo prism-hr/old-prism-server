@@ -122,7 +122,7 @@
 									</div>
 		
 									<div class="row">
-										<span class="plain-label">Roles</span>
+										<span class="plain-label">Roles<em>*</em></span>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.roles'/>"></span>
 										<div class="field">
 											<select multiple size="5" id="roles" name="selectedAuthorities" class="max">

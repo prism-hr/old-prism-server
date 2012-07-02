@@ -123,6 +123,7 @@ public class AddressController {
 	public AddressSectionDTO getAddressDTO(String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		AddressSectionDTO sectionDTO = new AddressSectionDTO();
+		sectionDTO.setApplication(applicationForm);
 		Address contactAddress = applicationForm.getContactAddress();
 		if (contactAddress != null) {
 			sectionDTO.setContactAddressCountry(contactAddress.getCountry());

@@ -68,7 +68,7 @@
 						<#elseif applicationForm.isInState('INTERVIEW')>
 							Evaluate Interview Outcomes
 						<#elseif applicationForm.isInState('APPROVAL')>
-							Approve Or Reject Application
+							Approve Application
 						</#if>
 						</h2>
 		

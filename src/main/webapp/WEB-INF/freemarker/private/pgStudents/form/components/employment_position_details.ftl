@@ -137,7 +137,7 @@
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerAddress'/>"></span>
                 <div class="field">
                    <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-                  		<textarea cols="70" rows="3" class="max"  ='1000' id="position_employer_address" 
+                  		<textarea cols="80" rows="5" class="max"  ='1000' id="position_employer_address" 
                   		name="position_employer_address" 
                   		placeholder="Employer's address">${(employmentPosition.employerAddress?html)!}</textarea>
 						
@@ -192,7 +192,7 @@
                   		name="position_remit" 
                   		placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}</textarea>
 					 <#else>
-					    <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_remit" 
+					    <textarea readonly="readonly" cols="80" rows="5" class="max" id="position_remit" 
                         name="position_remit" 
                         placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}</textarea>  
 					 </#if> 

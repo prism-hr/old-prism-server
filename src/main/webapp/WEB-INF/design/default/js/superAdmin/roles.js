@@ -38,8 +38,7 @@ $(document).ready(function()
 
 function loadUsersForProgram()
 {
-	$('#existingUsers').append('<div class="ajax" />')
-										 .css({ height: 80 });
+	$('#existingUsers').append('<div class="ajax" />');
 	
 	$.ajax({
 		 type: 'GET',

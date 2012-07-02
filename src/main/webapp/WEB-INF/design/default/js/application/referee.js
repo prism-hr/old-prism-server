@@ -85,8 +85,10 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	$('#refereeSaveAndCloseButton').click(function()
 	{
-		if ($("#acceptTermsRDValue").val() == 'NO' && !isFormEmpty('#referencesSection form'))
+		if ($("#acceptTermsRDValue").val() =='NO')
+	/*	if ($("#acceptTermsRDValue").val() =='NO')
 		{ 
+			// Highlight the information bar and terms box.
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
 			var $infobar = $('#ref-info-bar-div.section-info-bar');
@@ -100,7 +102,7 @@ $(document).ready(function()
 			
 		}
 		else
-		{
+		{*/
 			$("span[name='nonAcceptedRD']").html('');
 			// Check for a "dirty" referee form. If there is data try to submit it.
 			if ($('#referencesSection table.existing tbody tr').length < 3 || !isFormEmpty('#referencesSection form'))
@@ -111,7 +113,7 @@ $(document).ready(function()
 			{
 				$('#refereeCloseButton').trigger('click');
 			}
-		}
+		//}
 	});
 	
 
@@ -119,7 +121,7 @@ $(document).ready(function()
 	// Add a referee.
 	// -------------------------------------------------------------------------------
 	$('#addReferenceButton').click(function(){
-		if( $('#acceptTermsRDValue').length != 0  && $("#acceptTermsRDValue").val() =='NO'){ 
+		/*if( $('#acceptTermsRDValue').length != 0  && $("#acceptTermsRDValue").val() =='NO'){ 
 			//$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
 //			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
@@ -135,10 +137,10 @@ $(document).ready(function()
 			addToolTips();
 			
 		}
-		else{
+		else{*/
 			$("span[name='nonAcceptedRD']").html('');
 			postRefereeData("add");
-		}
+		//}
 		
 	});
 
@@ -206,7 +208,13 @@ $(document).ready(function()
 });
 
 function postRefereeData(message){
-	
+	var acceptedTheTerms;
+	if ($("#acceptTermsRDValue").val() == 'NO'){
+		acceptedTheTerms = false;
+	}
+	else{
+		acceptedTheTerms = true;
+	}
 	var postData ={ 
 			firstname: $("#ref_firstname").val(),
 			lastname: $("#ref_lastname").val(), 
@@ -220,7 +228,8 @@ function postRefereeData(message){
 			application:  $('#applicationId').val(),	
 			refereeId: $("#refereeId").val(),
 			phoneNumber: $("#refPhoneNumber").val(),
-			message:message
+			message:message,
+			acceptedTerms: acceptedTheTerms
 	}
 
 	$('#referencesSection > div').append('<div class="ajax" />');
@@ -236,18 +245,18 @@ function postRefereeData(message){
 		data: $.param(postData),			
 		success:function(data) {
 				$('#referencesSection').html(data);
-				markSectionError('#referencesSection');
-
-				if (message == 'close')
+				
+				var errorCount = $('#referencesSection .invalid:visible').length;
+				var referenceCount = $('#referencesSection table.existing tbody tr').length;				
+					
+				if (message == 'close' && errorCount == 0 && referenceCount >= 3)
 				{
-					// Close the section only if there are no errors.
-					var errorCount = $('#referencesSection .invalid:visible').length;
-					var referenceCount = $('#referencesSection table.existing tbody tr').length;
-					if (errorCount == 0 && referenceCount >= 3)
-					{
-						$('#refereeCloseButton').trigger('click');
-					}
+					$('#refereeCloseButton').trigger('click');
 				}
+				if(errorCount > 0){
+					markSectionError('#referencesSection');
+				}
+		
 			},
     complete: function()
     {

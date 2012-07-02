@@ -13,15 +13,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
 @Entity(name = "APPLICATION_FORM_REFEREE")
 @Access(AccessType.FIELD)
-public class Referee extends DomainObject<Integer> {
+public class Referee extends DomainObject<Integer> implements FormSectionObject{
 
 	private static final long serialVersionUID = 4591043630090924738L;
 
+	@Transient
+	private boolean acceptedTerms;
+	
 	@Column(name = "last_notified")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastNotified;
@@ -209,6 +213,14 @@ public class Referee extends DomainObject<Integer> {
 	public boolean hasResponded() {
 		return isDeclined() || hasProvidedReference();
 		
+	}
+
+	public boolean isAcceptedTerms() {
+		return acceptedTerms;
+	}
+
+	public void setAcceptedTerms(boolean acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
 	}
 
 }

@@ -354,7 +354,13 @@
   </div>
 
   <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
-  <div class="row-group terms-box">
+  	<@spring.bind "referee.acceptedTerms" />
+   	<#if spring.status.errorMessages?size &gt; 0>        
+	    <div class="row-group terms-box invalid" >
+
+  	<#else>
+		<div class="row-group terms-box" >
+ 	 </#if>
     <div class="row">
       <span class="terms-label<#if applicationForm.referees?size &lt; 3> grey-label</#if>">
         I understand that in accepting this declaration I am confirming

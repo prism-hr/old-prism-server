@@ -32,6 +32,9 @@ $(document).ready(function()
 	});
 	
 	
+	// -----------------------------------------------------------------------------------------
+	// Create interviewer button.
+	// -----------------------------------------------------------------------------------------
 	$('#createinterviewersection').on('click','#createInterviewer', function()
 			{
 				$('#createinterviewersection').append('<div class="ajax" />');
@@ -105,10 +108,12 @@ $(document).ready(function()
 	});
 
 	
-	
+	// -----------------------------------------------------------------------------------------
+	// Submit button.
+	// -----------------------------------------------------------------------------------------
 	$('#moveToInterviewBtn').click(function()
 	{
-
+		
 		$('#interviewsection').append('<div class="ajax" />');
 		var url = "/pgadmissions/interview/move";
 		

@@ -177,6 +177,10 @@ $(document).ready(function()
 				$(this).prop('checked', false);
 			});
 		}
+		else
+		{
+			markSectionError('#programmeDetailsSection');
+		}
 	});
 
 
@@ -272,6 +276,11 @@ $(document).ready(function()
 			$('#updateSupervisorButton').hide();
 			$('#addSupervisorButton').show();
 		}
+		else
+		{
+			markSectionError('#programmeDetailsSection');
+		}
+		
 		$("input[name='awareSupervisor']").each(function()
 		{
 			$(this).prop('checked', false);

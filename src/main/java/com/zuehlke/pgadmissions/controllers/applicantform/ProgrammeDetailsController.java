@@ -64,8 +64,8 @@ public class ProgrammeDetailsController {
 	}
 
 	@RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
-	public String editProgrammeDetails(@RequestParam Boolean acceptedTerms, @Valid ProgrammeDetails programmeDetails, BindingResult result, ModelMap modelMap) {
-		modelMap.put("termsError", false);
+	public String editProgrammeDetails( @Valid ProgrammeDetails programmeDetails, BindingResult result) {
+		
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
@@ -73,15 +73,10 @@ public class ProgrammeDetailsController {
 			throw new CannotUpdateApplicationException();
 		}
 		if (result.hasErrors()) {
-			if(!acceptedTerms){
-				//modelMap.put("termsError", true);
-			}
+			
 			return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
 		}
-		if(!acceptedTerms){
-			//modelMap.put("termsError", true);
-			return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
-		}
+
 		programmeDetailsService.save(programmeDetails);
 		programmeDetails.getApplication().setLastUpdated(new Date());
 		applicationsService.save(programmeDetails.getApplication());

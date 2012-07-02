@@ -58,7 +58,7 @@ public class ProgrammeDetailsControllerTest {
 				.applicationForm(new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.APPROVED).toApplicationForm()).toProgrammeDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(programmeDetailsServiceMock, errors);
-		controller.editProgrammeDetails(true, programmeDetails, errors, new ModelMap());
+		controller.editProgrammeDetails( programmeDetails, errors);
 		EasyMock.verify(programmeDetailsServiceMock);
 
 	}
@@ -66,7 +66,7 @@ public class ProgrammeDetailsControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
 		currentUser.getRoles().clear();
-		controller.editProgrammeDetails(true, null, null, new ModelMap());
+		controller.editProgrammeDetails( null, null);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -208,7 +208,7 @@ public class ProgrammeDetailsControllerTest {
 		programmeDetailsServiceMock.save(programmeDetails);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(programmeDetailsServiceMock,applicationsServiceMock, errors);
-		String view = controller.editProgrammeDetails(true,programmeDetails, errors, new ModelMap());
+		String view = controller.editProgrammeDetails(programmeDetails, errors);
 		EasyMock.verify(programmeDetailsServiceMock, applicationsServiceMock);
 		assertEquals("redirect:/update/getProgrammeDetails?applicationId=ABC", view);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
@@ -222,40 +222,13 @@ public class ProgrammeDetailsControllerTest {
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 		ModelMap modelMap = new ModelMap();
 		EasyMock.replay(programmeDetailsServiceMock, errors);
-		String view = controller.editProgrammeDetails(true,programmeDetails, errors, modelMap);
+		String view = controller.editProgrammeDetails(programmeDetails, errors);
 		EasyMock.verify(programmeDetailsServiceMock);
 		assertEquals("/private/pgStudents/form/components/programme_details", view);
-		assertEquals(false, modelMap.get("termsError"));
+	
 	}
 	
-	@Test
-	public void shouldNotSaveAndReturnToViewIfNotAcceptedTermsAndNoErrors() {
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).toApplicationForm())
-				.toProgrammeDetails();
-		BindingResult errors = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errors.hasErrors()).andReturn(false);
-		ModelMap modelMap = new ModelMap();
-		EasyMock.replay(programmeDetailsServiceMock, errors);
-		String view = controller.editProgrammeDetails(false,programmeDetails, errors, modelMap);
-		EasyMock.verify(programmeDetailsServiceMock);
-		assertEquals("/private/pgStudents/form/components/programme_details", view);
-		assertEquals(true, modelMap.get("termsError"));
-	}
 
-	@Test
-	public void shouldNotSaveAndReturnToViewIfNotAcceptedTermsAndHasErrors() {
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).toApplicationForm())
-				.toProgrammeDetails();
-		BindingResult errors = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errors.hasErrors()).andReturn(true);
-		
-		EasyMock.replay(programmeDetailsServiceMock, errors);
-		ModelMap modelMap = new ModelMap();
-		String view = controller.editProgrammeDetails(false,programmeDetails, errors, modelMap);
-		EasyMock.verify(programmeDetailsServiceMock);
-		assertEquals("/private/pgStudents/form/components/programme_details", view);
-		assertEquals(true, modelMap.get("termsError"));
-	}
 	
 	@Before
 	public void setUp() {

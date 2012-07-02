@@ -8,8 +8,9 @@ public class AddressSectionDTO {
 	private Country currentAddressCountry;
 	private String contactAddressLocation;
 	private Country contactAddressCountry;
-	private boolean sameAddress;;
-
+	private boolean sameAddress;
+	
+	
 	public String getCurrentAddressLocation() {
 		return currentAddressLocation;
 	}

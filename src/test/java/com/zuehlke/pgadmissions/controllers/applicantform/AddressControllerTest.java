@@ -189,7 +189,7 @@ public class AddressControllerTest {
 		EasyMock.replay(applicationsServiceMock, currentUser);
 
 		AddressSectionDTO returnedAddress = controller.getAddressDTO("1");
-
+		assertEquals(applicationForm, returnedAddress.getApplication());
 		assertNull(returnedAddress.getContactAddressLocation());
 		assertNull(returnedAddress.getContactAddressCountry());
 

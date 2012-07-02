@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
@@ -19,12 +20,14 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Entity(name="APPLICATION_FORM_QUALIFICATION")
 @Access(AccessType.FIELD) 
-public class Qualification extends DomainObject<Integer>{
+public class Qualification extends DomainObject<Integer> implements FormSectionObject {
 	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -8949535622435302565L;
+	
+	
+	@Transient
+	private boolean acceptedTerms;
 	
 	@ManyToOne
 	@JoinColumn(name = "proof_of_award_id")
@@ -177,6 +180,14 @@ public class Qualification extends DomainObject<Integer>{
 
 	public void setProofOfAward(Document proofOfAward) {
 		this.proofOfAward = proofOfAward;
+	}
+
+	public boolean isAcceptedTerms() {
+		return acceptedTerms;
+	}
+
+	public void setAcceptedTerms(boolean acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
 	}
 
 

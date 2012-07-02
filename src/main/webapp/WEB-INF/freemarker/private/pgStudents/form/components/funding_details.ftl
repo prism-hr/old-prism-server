@@ -153,7 +153,7 @@
         <span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
         <div class="field<#if funding.document??> uploaded</#if>" id="fundingUploadFields">          
           <input id="fundingDocument" data-type="SUPPORTING_FUNDING" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>          
-          <span id="fundingUploadedDocument">
+          <span id="fundingUploadedDocument" class="uploaded-file">
             <input type="hidden" class="file" id="document_SUPPORTING_FUNDING" value="${(encrypter.encrypt(funding.document.id))!}"/>
           <#if funding.document??>
             <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(funding.document.id)}" data-desc="Proof of Award" class="uploaded-filename" target="_blank">${funding.document.fileName}</a>
@@ -185,7 +185,13 @@
 
 
     <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
-    <div class="row-group terms-box">
+  				<@spring.bind "funding.acceptedTerms" />
+		       	<#if spring.status.errorMessages?size &gt; 0>        
+				    <div class="row-group terms-box invalid" >
+		
+		      	<#else>
+		    		<div class="row-group terms-box" >
+		     	 </#if>
       <div class="row">
         <span class="terms-label">
           I understand that in accepting this declaration I am confirming

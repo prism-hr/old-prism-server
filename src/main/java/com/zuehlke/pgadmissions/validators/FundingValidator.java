@@ -6,11 +6,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-
 import com.zuehlke.pgadmissions.domain.Funding;
 
 @Component
-public class FundingValidator implements Validator {
+public class FundingValidator extends FormSectionObjectValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -19,6 +18,7 @@ public class FundingValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		super.validate(target, errors);
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "type", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "text.field.empty");

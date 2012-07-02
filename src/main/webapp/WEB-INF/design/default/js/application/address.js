@@ -73,11 +73,9 @@ $(document).ready(function(){
 	
 	$('#addressSaveAndAddButton').click(function()
 	{
-		if( $("#acceptTermsADValue").val() =='NO')
+	/*	if( $("#acceptTermsADValue").val() =='NO')
 		{ 
-			// Highlight the information bar and terms box.
-//			var $form = $('#addressSection form');
-//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+
 			
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
@@ -92,10 +90,10 @@ $(document).ready(function(){
 			
 		}
 		else
-		{
+		{*/
 			$("span[name='nonAcceptedAD']").html('');
 			postAddressData("close");
-		}
+		//}
 	});
 	
 	$("#sameAddressCB").click(function() {
@@ -152,6 +150,13 @@ $(document).ready(function(){
 
 function postAddressData(message)
 {
+	var acceptedTheTerms;
+	if ($("#acceptTermsADValue").val() == 'NO'){
+		acceptedTheTerms = false;
+	}
+	else{
+		acceptedTheTerms = true;
+	}
 	$('#addressSection > div').append('<div class="ajax" />');
 
 	$.ajax({
@@ -168,11 +173,12 @@ function postAddressData(message)
 			contactAddressLocation: $("#contactAddressLocation").val(),
 			contactAddressCountry: $("#contactAddressCountry").val(),
 			applicationId:  $('#applicationId').val(),
-			message:message
+			message:message,
+			acceptedTerms: acceptedTheTerms
 		},
 		success: function(data) {
 			$('#addressSection').html(data);
-			markSectionError('#addressSection');
+		
 	
 			if (message == 'close')
 			{
@@ -181,6 +187,8 @@ function postAddressData(message)
 				if (errorCount == 0)
 				{
 					$('#address-H2').trigger('click');
+				}else{
+					markSectionError('#addressSection');
 				}
 			}
 		},

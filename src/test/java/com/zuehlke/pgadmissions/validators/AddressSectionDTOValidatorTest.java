@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 
 
@@ -88,8 +89,10 @@ public class AddressSectionDTOValidatorTest {
 	@Before
 	public void setup(){
 		validator = new AddressSectionDTOValidator();
+	
 		
 		address = new AddressSectionDTO();
+		address.setApplication(new ApplicationFormBuilder().id(8).toApplicationForm());
 		address.setContactAddressLocation("London");
 		address.setContactAddressCountry(new Country());
 		address.setCurrentAddressLocation("New York");

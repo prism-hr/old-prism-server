@@ -7,7 +7,8 @@ $(document).ready(function()
 	{
 		if ($('#status').val() != '')
 		{
-			var message = 'Confirm you want to move this application to the ' + $('#status').val() + ' stage.';
+			var state		= $('#status').val().toLowerCase().capitalize();
+			var message = 'Confirm you want to move this application to the ' + state + ' stage.<br />You will not be able to reverse this decision!';
 			modalPrompt(message, changeState);
 			return;
 		}

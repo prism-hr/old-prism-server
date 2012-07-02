@@ -58,19 +58,16 @@
 														<table>
 															<colgroup>
 																<col style="width: 20px;" />
-																<col style="width: 472px;" />
-																<col style="width: 240px;" />
+																<col style="width: 672px;" />
+																<col style="width: 40px;" />
 															</colgroup>
 															<tbody>
 																<#list superadmins as superadmin>
 																<tr>
 																	<td><span class="arrow">&nbsp;</span></td>
-																	<td scope="col">${(superadmin.firstName?html)!} ${(superadmin.lastName?html)!} (${(superadmin.email?html)!} )</td>
+																	<td scope="col">${(superadmin.firstName?html)!} ${(superadmin.lastName?html)!} (${(superadmin.email?html)!})</td>
 																	<td scope="col">
-	<#--
-																		<a class="button-edit" data-desc="Edit" href="<@spring.url '/manageUsers/edit?programCode=${selectedProgram.code}&user=${encrypter.encrypt(userInRole.id)}'/>">Edit</a>
-																		<a class="button-delete" data-desc="Remove" href="#" name="removeuser" id="remove_${encrypter.encrypt(userInRole.id)}">Remove</a>
-	-->
+																		<a class="button-delete" data-desc="Remove" href="#" name="removeuser" id="remove_${encrypter.encrypt(superadmin.id)}">Remove</a>
 																	</td>
 																</tr>
 																</#list>
@@ -156,7 +153,6 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>
 
 </body>
 </html>

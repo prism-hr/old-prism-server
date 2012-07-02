@@ -202,6 +202,11 @@ section.form-rows .field.uploaded input { display: none; }
 section.form-rows .field.uploaded a.uploaded-filename { display: inline-block; }
 section.form-rows .field.uploaded a { display: inline-block; vertical-align: top; }
 
+section.form-rows .field span.uploaded-file { display: none; }
+section.form-rows .field.uploaded span.uploaded-file { display: block; padding: 1px; }
+section.form-rows .field span.uploaded-files .uploaded-file:last-child { margin-bottom: 5px; }
+
+
 /* Deleted uploads. */
 section.form-rows .field.upload-delete a { display: none !important; }
 section.form-rows .field.upload-delete input[type="file"] { display: inline-block !important; }

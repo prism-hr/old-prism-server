@@ -70,28 +70,27 @@
               </#if>
               
             
-			<div id="table-bar">
-			
-				<!-- Download button. -->
-				<#if (applications?size > 0)>
-				<a target="_blank" name="downloadAll" id="downloadAll" data-desc="Download selected">Download</a>
-				</#if>
-
-				<!-- Search/filter box. -->
-				<div id="search-box"> 
-					<input type="text" id="searchTerm" name="searchTerm" placeholder="Filter by..." />
-					<select name="searchCategory" id="searchCategory">
-						<option value="">Column...</option>
-						<#list searchCategories as category>
-						<option value="${category}">${category.displayValue()}</option>               
-						</#list>
-					</select>
-					<button class="blue" type="button" id="search-go">Go</button>
-					<button type="button" id="search-reset">Clear</button>
-		
-				</div>
+							<div id="table-bar">
+							
+								<!-- Download button. -->
+								<#if (applications?size > 0)>
+								<a target="_blank" name="downloadAll" id="downloadAll" data-desc="Download selected">Download</a>
+								</#if>
 				
-			</div>
+								<!-- Search/filter box. -->
+								<div id="search-box"> 
+									<input type="text" id="searchTerm" name="searchTerm" placeholder="Filter by..." />
+									<select name="searchCategory" id="searchCategory">
+										<option value="">Column...</option>
+										<#list searchCategories as category>
+										<option value="${category}">${category.displayValue()}</option>               
+										</#list>
+									</select>
+									<button class="blue" type="button" id="search-go">Go</button>
+									<button type="button" id="search-reset">Clear</button>
+								</div>
+								
+							</div>
             
               <table class="data" border="0" >
                 <colgroup>

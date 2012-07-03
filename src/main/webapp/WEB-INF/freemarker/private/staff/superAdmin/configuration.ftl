@@ -155,14 +155,9 @@
 												<div class="row">
 													<div class="field">
 														<table id="registryUsers">
-															<colgroup>
-																<col style="width: 300px;" />
-																<col style="width: 40px;" />
-															</colgroup>
 															<thead>
 																<tr>
 																	<th>Name</th>
-																	<th>&nbsp;</th>
 																</tr>
 															</thead>
 															<tbody>

@@ -128,11 +128,9 @@
 		</#if>  
 	
 		<div class="buttons">
-<#--
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 			<button class="clear" id="informationCancelButton" type="button" name="informationCancelButton">Clear</button>
 			</#if>                
--->
 			<button class="blue" id="additionalCloseButton" type="button">Close</button>
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 			<button class="blue" id="informationSaveButton" type="button">Save</button>

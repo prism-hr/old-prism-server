@@ -318,9 +318,7 @@
 
 			<div class="buttons">
 				<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-<#--
 				<button class="clear" type="button" id="positionCancelButton" name="positionCancelButton">Clear</button>
--->
 				<button class="blue" type="button" id="positionCloseButton" name="positionCloseButton">Close</button>
 				<button class="blue" type="button" value="add" id="positionSaveAndCloseButton" name="positionSaveAndCloseButton">Save</button>
 				<#else>

@@ -184,9 +184,7 @@
 		
 		<div class="buttons">
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-<#--
 			<button class="clear" type="button" id="addressClearButton" name="addressClearButton">Clear</button>
--->
 			<button class="blue" type="button" id="addressCloseButton" name="addressCloseButton">Close</button>
 			<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save</button>
 			<#else>

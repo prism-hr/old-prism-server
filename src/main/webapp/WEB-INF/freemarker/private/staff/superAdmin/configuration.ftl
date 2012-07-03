@@ -166,7 +166,7 @@
 																		<div class="scroll">
 																			<table>
 																				<colgroup>
-																					<col style="width: 300px;" />
+																					<col />
 																					<col style="width: 30px;" />
 																				</colgroup>
 																				<tbody>

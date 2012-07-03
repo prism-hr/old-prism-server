@@ -119,20 +119,37 @@ $(document).ready(function()
 	/* Add button. */
 	$('#registryUsers').on('click', '#registryUserAdd', function()
 	{
-		// do validation
-		$('#registryUsers tbody').append('<tr>'
- 			+ '<td>'
-      + '${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})'
-      + '</td>'
-      + '<td>'
-      + '<button class="button-delete" type="button" data-desc="Remove">Remove</button>'
-      + '<input type="hidden" name="firstname" value="' + $('#reg-firstname').val() + '" />'
-      + '<input type="hidden" name="lastname" value="' + $('#reg-lastname').val() + '" />'
-      + '<input type="hidden" name="email" value="' + $('#reg-email').val() + '" />'
-      + '<input type="hidden" name="id" value="" />'
-      + '</td>'
-      + '</tr>');
-		$('#reg-firstname, #reg-lastname, #reg-email').val('');
+		var errors = false;
+		$('#registryUsersForm span.invalid').remove();
+		
+		// Validation on any entered details.
+		if (!validateEmail($('#reg-email').val()))
+		{
+			$('#reg-email').after('<span class="invalid">You must enter a valid email address.</span>');
+			errors = true;
+		}
+		if ($('#reg-firstname').val() == "" || $('#reg-lastname').val() == "")
+		{
+			$('#reg-lastname').after('<span class="invalid">You must make an entry.</span>');
+			errors = true;
+		}
+
+		if (!errors)
+		{
+			$('#registryUsers tbody').append('<tr>'
+				+ '<td>'
+				+ '${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})'
+				+ '</td>'
+				+ '<td>'
+				+ '<button class="button-delete" type="button" data-desc="Remove">Remove</button>'
+				+ '<input type="hidden" name="firstname" value="' + $('#reg-firstname').val() + '" />'
+				+ '<input type="hidden" name="lastname" value="' + $('#reg-lastname').val() + '" />'
+				+ '<input type="hidden" name="email" value="' + $('#reg-email').val() + '" />'
+				+ '<input type="hidden" name="id" value="" />'
+				+ '</td>'
+				+ '</tr>');
+			$('#reg-firstname, #reg-lastname, #reg-email').val('');
+		}
 	});
 	
 	

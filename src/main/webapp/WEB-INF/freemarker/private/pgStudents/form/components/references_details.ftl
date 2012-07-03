@@ -378,9 +378,7 @@
 
   <div class="buttons">
     <#if applicationForm.modifiable>
-<#--
       <button class="clear" type="button" id="refereeCancelButton" name="refereeCancelButton">Clear</button>
--->
       <button class="blue" type="button" id="refereeCloseButton" name="refereeCloseButton">Close</button>
       <button class="blue" type="button" id="refereeSaveAndCloseButton" value="close">Save</button>
     <#else>

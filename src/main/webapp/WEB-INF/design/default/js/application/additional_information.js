@@ -11,25 +11,9 @@ $(document).ready(function(){
 		return false;
 	});
 	
-	$('a[name="informationCancelButton"]').click(function(){
+	$('#informationClearButton').click(function(){
 
-		$.ajax({
-			 type: 'GET',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  }
-			  },
-			  url: "/pgadmissions/update/getAdditionalInformation",
-			  data:{
-					applicationId:  $('#applicationId').val(),
-					message: 'cancel',					
-					cacheBreaker: new Date().getTime() 
-				}, 
-			  success: function(data) {
-					$('#additionalInformationSection').html(data);
-				}	
-		});
+		 loadAdditionalInformationSection(true);
 	});
 	
 	$("input[name$='convictionRadio']").click(function()

@@ -103,7 +103,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertNull(application.getPersonalDetails().getId());
 		assertEquals(applicationAdmin, application.getApplicationAdministrator());
 		assertEquals("ABC", application.getApplicationNumber());
-		assertEquals("researchHomePage", application.getResearchHomePage());
+		assertEquals("http://researchHomePage", application.getResearchHomePage());
 	}
 
 	@Test

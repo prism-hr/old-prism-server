@@ -92,7 +92,7 @@
 </div>
 
 <div class="row">
-	<label class="plain-label normal">Interviewer Location<em>*</em></label>
+	<label class="plain-label normal">Interviewer Location</label>
 	<span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
 	<div class="field">
 		<#if assignOnly?? && assignOnly>

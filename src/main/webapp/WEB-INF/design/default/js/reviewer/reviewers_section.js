@@ -23,6 +23,7 @@ $(document).ready(function()
 				}
 			});
 			$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
+			 resetReviewersErrors();
 		}
 	});
 	
@@ -45,8 +46,9 @@ $(document).ready(function()
 			});
 			$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
 		}
+		resetReviewersErrors();
 	});
 
-		
+	
 	
 });

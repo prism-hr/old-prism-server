@@ -28,6 +28,7 @@ $(document).ready(function()
 			});
 			//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
 			$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+			resetInterviwersErrors();
 		}
 	});
 	
@@ -73,7 +74,7 @@ $(document).ready(function()
 						}else{
 							addExistingUserToInterviewersLists(newInterviewer);
 						}
-						
+						resetInterviwersErrors();
 						getCreateInterviewersSection();			
 						
 					},
@@ -104,6 +105,7 @@ $(document).ready(function()
 			});
 			//$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
 			$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+			resetInterviwersErrors();
 		}
 	});
 
@@ -257,4 +259,10 @@ function addExistingUserToInterviewersLists(newInterviewer){
 			newInterviewer.firstname + ' ' + newInterviewer.lastname+ '</option>');
 	$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
 	$('#add-info-bar-div').html('Existing user ' + newInterviewer.toString + ' added as interviewer');
+}
+
+function resetInterviwersErrors(){
+	if( $('#applicationInterviewers option').size() > 0){
+		$('#interviewersErrorSpan').remove();
+	}
 }

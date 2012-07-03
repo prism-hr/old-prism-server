@@ -43,7 +43,7 @@ $(document).ready(function()
 				}else{
 					addExistingUserToReviewersLists(newReviewer);
 				}
-				
+				resetReviewersErrors();
 				getCreateReviewersSection();		
 				
 			},
@@ -185,4 +185,10 @@ function addExistingUserToReviewersLists(newReviewer){
 			newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
 	$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
 	$('#add-info-bar-div').html('Existing user ' + newReviewer.toString + ' added as reviewer');
+}
+
+function resetReviewersErrors(){
+	if( $('#applicationReviewers option').size() > 0){
+		$('#reviwersErrorSpan').remove();
+	}
 }

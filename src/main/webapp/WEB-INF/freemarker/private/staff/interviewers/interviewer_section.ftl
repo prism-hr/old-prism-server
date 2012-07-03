@@ -49,7 +49,7 @@
 			</#list>
 		</select>
 		<@spring.bind "interview.interviewers" /> 
-		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+		<#list spring.status.errorMessages as error> <span class="invalid" id="interviewersErrorSpan">${error}</span></#list>
 	</div>
 </div>
 </div>

@@ -380,6 +380,16 @@ $(document).ready(function()
 		}
 		
 	});
+	
+	
+	// Clear buttons.
+	$(document).on('click', 'button.clear', function()
+	{
+		var $section = $(this).closest('section');
+		var id = $section.attr('id');
+		clearSection(id);
+	});
+
 });
 
 function closeSections()
@@ -402,3 +412,22 @@ function checkLoadedSections()
 	}
 }
 
+
+// ------------------------------------------------------------------------------
+// Clear form functionality.
+// ------------------------------------------------------------------------------
+function clearSection(section_id)
+{
+	var $section = $('#' + section_id);
+	
+	/*
+	switch (section_id)
+	{
+		case 'programmeDetailsSection':
+		
+	}
+	*/
+	
+	// Empty all the fields, except for disabled ones.
+	$('input, textarea, select').not(':disabled').val('');
+}

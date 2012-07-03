@@ -39,9 +39,13 @@
         <tr>
           <td><a class="row-arrow">-</a></td>
           <td>
+						<#if existingFunding.document??>
             <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(existingFunding.document.id)}" data-desc="Proof of Award" class="button-hint" target="_blank">
               ${existingFunding.type.displayValue} (&pound;${(existingFunding.value?html)!})
             </a>
+						<#else>
+							${existingFunding.type.displayValue} (&pound;${(existingFunding.value?html)!}) - no document!
+						</#if>
           </td>
           <td>${existingFunding.awardDate?string('dd MMM yyyy')}</td>
           <td>                                                  

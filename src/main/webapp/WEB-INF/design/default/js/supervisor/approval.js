@@ -25,6 +25,7 @@ $(document).ready(function()
 				}
 			});
 			$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
+			 resetSupervisorsErrors();
 		}
 	});
 	
@@ -45,6 +46,7 @@ $(document).ready(function()
 																												 .removeAttr('disabled');
 			});
 			$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
+			resetSupervisorsErrors();
 		}
 	});
 
@@ -93,7 +95,7 @@ $(document).ready(function()
 				}else{
 					addExistingUserToSupervisorsLists(newSuperviosr);
 				}
-				
+				resetSupervisorsErrors();
 				getCreateSupervisorsSection();		
 				
 			},
@@ -228,4 +230,10 @@ function addExistingUserToSupervisorsLists(newSupervisor){
 			newSupervisor.firstname + ' ' + newSupervisor.lastname+ '</option>');
 	$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
 	$('#add-info-bar-div').html('Existing user ' + newSupervisor.toString + ' added as supervisor');
+}
+
+function resetSupervisorsErrors(){
+	if( $('#applicationSupervisors option').size() > 0){
+		$('#supervisorsErrorSpan').remove();
+	}
 }

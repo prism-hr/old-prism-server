@@ -147,6 +147,66 @@
 										</form>
 
 										<!-- Add Registry Users -->
+										<form id="registryUsersForm" id="section-users">
+											<div class="row-group">
+											
+												<div class="row">
+													<div class="field">
+														
+														<table id="registryUsers">
+															<colgroup>
+																<col />
+																<col />
+															</colgroup>
+															<thead>
+																<tr>
+																	<th>Name</th>
+																	<th>&nbsp;</th>
+																</tr>
+															</thead>
+															<tbody>
+															
+															</tbody>
+														</table>
+														
+														<input type="hidden" name="registryUsers" id= "registryUsers" />
+													</div>
+												</div>
+
+												<!-- Entry form. -->
+												<div class="row">
+													<span class="plain-label">First Name</span>
+													<span class="hint" data-desc="<@spring.message 'configuration.firstName'/>"></span>
+													<div class="field">	
+														<input type="text" class="full" id="reg-firstname" name="regUserFirstname" />
+													</div>
+												</div><!-- .row -->
+												
+												<div class="row">
+													<span class="plain-label">Last Name</span>
+													<span class="hint" data-desc="<@spring.message 'configuration.lastName'/>"></span>
+													<div class="field">	
+														<input type="text" class="full" id="reg-lastname" name="regUserLastname" />
+													</div>
+												</div><!-- .row -->
+												
+												<div class="row">
+													<span class="plain-label">Email Address</span>
+													<span class="hint" data-desc="<@spring.message 'configuration.email'/>"></span>
+													<div class="field">	
+														<input type="text" class="full" id="reg-email" name="regUserEmail" />
+													</div>
+												</div><!-- .row -->
+
+											
+												<div class="buttons">						        		
+													<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
+												</div>
+
+											</div>
+										</form>
+										
+<#--
 										<form id="addRegistryForm" id="section-users">
 											<span class="invalid" name="threeMaxMessage"></span>
 
@@ -238,13 +298,13 @@
 												</div><!-- .row -->
 
 												<input type="hidden" name="registryUsers" id= "registryUsers" />
-												
 												<div class="buttons">						        		
-	<#--										<button type="button" id="cancelRegistryBtn" value="cancel" class="clear">Clear</button> -->
+										<button type="button" id="cancelRegistryBtn" value="cancel" class="clear">Clear</button>
 													<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
 												</div>
 
 											</div><!-- .row-group -->
+-->												
 									
 										</form>
 									</div>

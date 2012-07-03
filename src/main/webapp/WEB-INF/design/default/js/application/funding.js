@@ -85,21 +85,7 @@ $(document).ready(function(){
 			$("#acceptTermsFDValue").val("YES");
 			fundImgCount = 0;
 			
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/acceptTerms",
-				data:{  
-					applicationId: $("#applicationId").val(), 
-					acceptedTerms: $("#acceptTermsFDValue").val()
-				},
-				success:function(data) {
-				}
-			});
+		
 		}
 		});
 	

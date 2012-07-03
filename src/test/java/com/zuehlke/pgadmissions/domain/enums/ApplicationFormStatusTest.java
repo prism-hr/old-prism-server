@@ -21,25 +21,25 @@ public class ApplicationFormStatusTest {
 	@Test
 	public void shouldReturnRejectedReviewApprovedAndInterviewForValidationState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.VALIDATION);
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.REJECTED},avaialbleStati);
 	}
 	
 	@Test
 	public void shouldReturnRejectedReviewApprovedAndInterviewForReviewState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.REVIEW);
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.REJECTED},avaialbleStati);
 	}
 	
 	@Test
 	public void shouldReturnRejectedApprovedAndInterviewForInterviewState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.INTERVIEW);
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.REJECTED},avaialbleStati);
 	}
 	
 	@Test
 	public void shouldReturnRejectedApprovedForApprovalState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.APPROVAL);
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.APPROVED},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED},avaialbleStati);
 	}
 	
 	@Test

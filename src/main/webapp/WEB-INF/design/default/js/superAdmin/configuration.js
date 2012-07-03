@@ -117,7 +117,7 @@ $(document).ready(function()
 	});
 	
 	/* Add button. */
-	$('#registryUsers').on('click', '#registryUserAdd', function()
+	$('#registryUserAdd').click(function()
 	{
 		var errors = false;
 		$('#registryUsersForm span.invalid').remove();

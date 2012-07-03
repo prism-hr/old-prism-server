@@ -56,7 +56,7 @@
 			<option value="restartApproval">Restart Approval</option>
 		</#if>  
 		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
-			<option value="validate">Approve or Reject</option>
+			<option value="validate">Approve</option>
 		</#if>    												
 		</select>
 

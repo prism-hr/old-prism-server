@@ -22,29 +22,7 @@ $(document).ready(function()
 	 loadPersonalDetails();
 	
 	/* Address. */
-	$.ajax({
-		 type: 'GET',
-		 statusCode: {
-			  401: function() {
-				  window.location.reload();
-			  }
-		  },
-			url:"/pgadmissions/update/getAddress",
-			data:{
-				applicationId:  $('#applicationId').val(),				
-				errorCode: $('#addressError').val(),
-				cacheBreaker:  new Date().getTime() 
-			},
-			success:function(data)
-			{
-				$('#addressSection').prepend(data);
-				checkLoadedSections();
-				if ($('#addressSection .section-error-bar').length == 0)
-				{
-					$('#address-H2').trigger('click');
-				}
-			}
-	});
+	 loadAddresSection();
 	
 	/* Qualifications. */
 	$.ajax({
@@ -447,6 +425,42 @@ function loadPersonalDetails(clear){
 					}
 				}
 				
+			}
+	});
+}
+
+function loadAddresSection(clear){
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+			url:"/pgadmissions/update/getAddress",
+			data:{
+				applicationId:  $('#applicationId').val(),				
+				errorCode: $('#addressError').val(),
+				cacheBreaker:  new Date().getTime() 
+			},
+			success:function(data)
+			{
+				$('#addressSection').html(data);
+				checkLoadedSections();
+				if(clear){
+					$('#currentAddressLocation').empty();
+					$('#currentAddressCountry').val('');
+					$('#contactAddressLocation').empty();
+					$('#contactAddressLocation').removeAttr('disabled');
+					$('#contactAddressCountry').val('');
+					$('#contactAddressCountry').removeAttr('disabled');
+					$('#sameAddressCB').prop('checked', false);
+				}else{
+					if ($('#addressSection .section-error-bar').length == 0)
+					{
+						$('#address-H2').trigger('click');
+					}
+				}
 			}
 	});
 }

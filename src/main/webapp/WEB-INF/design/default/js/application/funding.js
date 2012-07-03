@@ -174,26 +174,9 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	// Clear button.
 	// -------------------------------------------------------------------------------
-	$('a[name="fundingCancelButton"]').click(function()
+	$('#fundingClearButton').click(function()
 	{
-		$.ajax({
-				type: 'GET',
-				statusCode: {
-					401: function() {
-						window.location.reload();
-					}
-				},
-				url:"/pgadmissions/update/getFunding",
-				data:{
-					applicationId:  $('#applicationId').val(),
-					message: 'cancel',					
-					cacheBreaker: new Date().getTime()
-				},
-				success: function(data)
-				{
-					$('#fundingSection').html(data);
-				}
-		});
+		 loadFundingSection(true);
 	});
 	
 	bindDatePicker('#fundingAwardDate');

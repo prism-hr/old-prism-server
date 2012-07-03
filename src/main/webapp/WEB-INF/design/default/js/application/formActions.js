@@ -15,8 +15,7 @@ $(document).ready(function()
 		$('.content-box-inner').append('<div class="ajax" />');
 	}
 	
-	loadProgrammeSection();
-	
+	loadProgrammeSection();	
 	
 	/* Personal Details. */
 	 loadPersonalDetails();
@@ -31,55 +30,11 @@ $(document).ready(function()
 	 loadEmploymentSection();
 	
 	/* Funding. */
-	$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() {
-					window.location.reload();
-				}
-			},
-			url:"/pgadmissions/update/getFunding",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: false,
-				cacheBreaker: new Date().getTime() 									
-			},
-			success:function(data)
-			{
-				$('#fundingSection').html(data);
-				checkLoadedSections();
-				if ($('#fundingSection .section-error-bar').length == 0)
-				{
-					$('#funding-H2').trigger('click');
-				}
-			}
-	});
+	 loadFundingSection();
 	
 	/* Referees. */
-	$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() {
-					window.location.reload();
-				}
-			},
-			url:"/pgadmissions/update/getReferee",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: $('#refereesError').val(),
-				cacheBreaker: new Date().getTime() 
-			},
-			success:function(data)
-			{
-				$('#referencesSection').prepend(data);
-				checkLoadedSections();
-				if ($('#referencesSection .section-error-bar').length == 0)
-				{
-					$('#referee-H2').trigger('click');
-				}
-			}
-	});
-
+	 loadReferenceSection();
+	 
 	/* Documents. */
 	$.ajax({
 			type: 'GET',
@@ -480,5 +435,63 @@ function loadEmploymentSection(clear){
 				}
 			}
 		}
-});
+	});
+}
+
+function loadFundingSection(clear){
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() {
+				window.location.reload();
+			}
+		},
+		url:"/pgadmissions/update/getFunding",
+		data:{
+			applicationId:  $('#applicationId').val(),
+			errorCode: false,
+			cacheBreaker: new Date().getTime() 									
+		},
+		success:function(data)
+		{
+			$('#fundingSection').html(data);
+			checkLoadedSections();
+			if(!clear){
+				if ($('#fundingSection .section-error-bar').length == 0)
+				{
+					$('#funding-H2').trigger('click');
+				}
+			}
+		}
+	});
+}
+
+
+function loadReferenceSection(clear){
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() {
+				window.location.reload();
+			}
+		},
+		url:"/pgadmissions/update/getReferee",
+		data:{
+			applicationId:  $('#applicationId').val(),
+			errorCode: $('#refereesError').val(),
+			cacheBreaker: new Date().getTime() 
+		},
+		success:function(data)
+		{
+			$('#referencesSection').html(data);
+			checkLoadedSections();
+			if(!clear){
+			if ($('#referencesSection .section-error-bar').length == 0)
+				{
+					$('#referee-H2').trigger('click');
+				}
+			}
+		}
+	});
+
 }

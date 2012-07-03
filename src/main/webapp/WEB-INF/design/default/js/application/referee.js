@@ -133,24 +133,8 @@ $(document).ready(function()
 
 
 	
-	$('a[name="refereeCancelButton"]').click(function(){
-		$.ajax({
-			 type: 'GET',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  }
-			  },
-				url:"/pgadmissions/update/getReferee",
-				data:{
-					applicationId:  $('#applicationId').val(),
-					message: 'cancel',					
-					cacheBreaker: new Date().getTime()
-				},
-				success: function(data) {
-					$('#referencesSection').html(data);
-				}
-		});
+	$('#refereeClearButton').click(function(){
+		loadReferenceSection(true);
 	});
 	
 

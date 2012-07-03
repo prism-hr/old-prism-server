@@ -30,7 +30,7 @@ public class ReviewRoundValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewRound, "reviewers");
 		reviewRoundValidator.validate(reviewRound, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("reviewround.reviewers.notempty", mappingResult.getFieldError("reviewers").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("reviewers").getCode());
 	}
 	@Before
 	public void setup(){

@@ -49,7 +49,8 @@
 			</#list>
 
 		</select>
+		<@spring.bind "approvalRound.supervisors" /> 
+ 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 	</div>
+
 </div>
-<@spring.bind "approvalRound.supervisors" /> 
- <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>

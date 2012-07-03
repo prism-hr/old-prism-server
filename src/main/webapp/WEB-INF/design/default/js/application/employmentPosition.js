@@ -165,24 +165,8 @@ $(document).ready(function(){
 		});
 	});
 
-	$('a[name="positionCancelButton"]').click(function(){
-		$.ajax({
-			 type: 'GET',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  }
-			  },
-			  url: "/pgadmissions/update/getEmploymentPosition",
-			  data:	{
-					applicationId:  $('#applicationId').val(),
-					message: 'cancel',					
-					cacheBreaker: new Date().getTime()
-				}, 
-			  success:function(data) {
-					$('#positionSection').html(data);
-				}
-		});		
+	$('#positionclearButton').click(function(){
+		 loadEmploymentSection(true);
 		
 	});
 

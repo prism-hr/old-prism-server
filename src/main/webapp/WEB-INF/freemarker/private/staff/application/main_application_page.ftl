@@ -31,6 +31,12 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/qualifications.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/references.css' />"/>
 
+
+<!-- Scripts -->
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -118,23 +124,19 @@
           <section id="additionalInformationSection" class="form-rows lightblue">
             <#include "/private/staff/application/components/additional_information.ftl"/>
           </section>
-          
+          <#include "/private/staff/admin/comment/timeline_only.ftl"/>
         </div><!-- .content-box-inner -->
       </div><!-- .content-box -->
     
     </article>
   
   </div>
-  
+  <input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
   <#include "/private/common/global_footer.ftl"/>
   
 </div>
 
-<!-- Scripts -->
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
+
 
 </body>
 </html>

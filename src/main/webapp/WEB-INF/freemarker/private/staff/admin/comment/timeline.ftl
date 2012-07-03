@@ -12,7 +12,7 @@
       <ul id="timeline-statuses">
       
         <#list timelineObjects as timelineObject>  
-	        <#if timelineObject.type != 'reference' ||  !user.isRefereeOfApplicationForm(applicationForm)>      
+	        <#if timelineObject.type != 'reference' ||  user.hasStaffRightsOnApplicationForm(applicationForm)>      
 		        <li class="${timelineObject.type}">
 		          <div class="box">
 		            <div class="title">
@@ -24,7 +24,7 @@
 		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p>  
 							</div>
 		        
-							<#if timelineObject.reviewRound?? && user != applicationForm.applicant  && !user.isRefereeOfApplicationForm(applicationForm)>
+							<#if timelineObject.reviewRound?? && user != applicationForm.applicant  && user.hasStaffRightsOnApplicationForm(applicationForm)>
 							<#if timelineObject.reviewRound.reviewers?? && timelineObject.reviewRound.reviewers?size &gt; 0>
 							<ul class="status-info">
 								<li class="${timelineObject.type}">

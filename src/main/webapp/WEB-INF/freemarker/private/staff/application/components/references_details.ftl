@@ -108,17 +108,7 @@
         <div class="field" id="ref_messenger">${(referee.messenger?html)!"Not Provided"}</div>
       </div>
     
-      <div class="admin_row">
-        <span class="admin_row_label">Document</span>
-        <#if referee.hasProvidedReference() >
-        <div class="field">
-          <a href="<@spring.url '/download/reference?referenceId=${encrypter.encrypt(referee.reference.id)}'/>" target="_blank">
-          ${referee.reference.document.fileName?html}</a>
-        </div>
-        <#else> 
-        <div class="field" id="referenceDocument">Not Provided</div> 
-        </#if>
-      </div>                  
+                
 
     </div>
     

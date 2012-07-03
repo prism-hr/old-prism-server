@@ -728,4 +728,23 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return false;
 	}
+
+	public boolean hasStaffRightsOnApplicationForm(ApplicationForm applicationForm) {
+		if(hasAdminRightsOnApplication(applicationForm)){
+			return true;
+		}
+		if(isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)){
+			return true;
+		}
+		if(isInterviewerOfApplicationForm(applicationForm)){
+			return true;
+		}
+		if(isSupervisorOfApplicationForm(applicationForm)){
+			return true;
+		}
+		if(isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())){
+			return true;
+		}
+		return false;
+	}
 }

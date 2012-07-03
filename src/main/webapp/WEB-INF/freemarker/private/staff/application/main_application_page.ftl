@@ -105,7 +105,7 @@
             <#include "/private/staff/application/components/funding_details.ftl"/>
           </section>
           
-          <#if !user.isRefereeOfApplicationForm(applicationForm) || user.isInRole('SUPERADMINISTRATOR') >
+         <#if user.hasStaffRightsOnApplicationForm(applicationForm)>
           <section class="form-rows navy">
             <#include "/private/staff/application/components/references_details.ftl"/>
           </section>

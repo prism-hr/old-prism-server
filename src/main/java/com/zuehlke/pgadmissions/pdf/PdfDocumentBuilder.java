@@ -117,7 +117,7 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 		
-		if(SecurityContextHolder.getContext().getAuthentication() != null){
+		if(SecurityContextHolder.getContext().getAuthentication() != null && ((RegisteredUser)SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)){
 			
 			addReferencesSection(application, document);
 			

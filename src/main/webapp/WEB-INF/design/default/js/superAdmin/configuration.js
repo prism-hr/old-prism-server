@@ -156,14 +156,12 @@ $(document).ready(function()
 	/* Submit button. */
 	$('#submitRUBtn').click(function()
 	{
-		var rows = new Array;
-		
 		$('#registryUsersForm').css({ position: 'relative' }).append('<div class="ajax" />');
 		
 		$('#registryUsersForm input.registryUsers').remove();
 		
 		// Grab the hidden field values from the table.
-		$('#registryUsers tbody tr').each(function()
+		$('#registryUsers .scroll tbody tr').each(function()
 		{
 			var $row = $(this);
 			var id = $('input[name="id"]', $row).val();

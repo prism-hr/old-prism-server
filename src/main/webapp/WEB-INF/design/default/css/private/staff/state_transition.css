@@ -20,4 +20,4 @@ label.label { font-weight: bold; }
 #wrapper section div.row { margin-bottom: 0 !important; }
 
 
-#registryUsers .scroll { height: 200px; overflow-y: auto; width: 360px; }
+#registryUsers .scroll { height: 200px; overflow-x: hidden; overflow-y: auto; width: 360px; }

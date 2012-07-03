@@ -113,10 +113,11 @@
 												</div>
 											</div>
 											
+<#--
 											<div class="buttons">						        		
 												<button type="button" id="cancelBadge" value="cancel" class="clear">Clear</button>				        
 											</div>
-											
+-->											
 										</form>
 									</div>
 								</section>

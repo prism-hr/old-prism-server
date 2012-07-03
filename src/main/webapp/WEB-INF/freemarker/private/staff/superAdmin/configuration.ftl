@@ -155,11 +155,6 @@
 												<div class="row">
 													<div class="field">
 														<table id="registryUsers">
-															<thead>
-																<tr>
-																	<th>Name</th>
-																</tr>
-															</thead>
 															<tbody>
 																<tr>
 																	<td>

@@ -264,7 +264,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public void updateCurrentUserAndSendEmailNotification(RegisteredUser user) {
+	public void updateCurrentUser(RegisteredUser user) {
 			RegisteredUser currentUser = getCurrentUser();
 			currentUser.setFirstName(user.getFirstName());
 			currentUser.setLastName(user.getLastName());

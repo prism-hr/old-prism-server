@@ -596,7 +596,7 @@ public class UserServiceTest {
 		
 		EasyMock.replay(encryptionUtilsMock);
 
-		userServiceWithCurrentUserOverride.updateCurrentUserAndSendEmailNotification(userOne);
+		userServiceWithCurrentUserOverride.updateCurrentUser(userOne);
 		EasyMock.verify(encryptionUtilsMock);
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
@@ -620,7 +620,7 @@ public class UserServiceTest {
 		};
 		RegisteredUser userOne = new RegisteredUserBuilder().username("one").email("two").password("").id(5).toUser();
 		userServiceWithCurrentUserOverride.save(currentUser);
-		userServiceWithCurrentUserOverride.updateCurrentUserAndSendEmailNotification(userOne);
+		userServiceWithCurrentUserOverride.updateCurrentUser(userOne);
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
 		assertEquals("12", currentUser.getPassword());

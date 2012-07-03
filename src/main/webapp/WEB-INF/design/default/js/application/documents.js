@@ -16,29 +16,13 @@ $(document).ready(function()
 	// --------------------------------------------------------------------------------
 	// Clear button
 	// --------------------------------------------------------------------------------
-	/*
-	$('#documentsCancelButton').click(function()
+	
+	$('#documentsClearButton').click(function()
 	{
-		$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function()
-				{
-					window.location.reload();
-				}
-			},
-			url: "/pgadmissions/update/getDocuments",
-			data:	{
-				applicationId: $('#applicationId').val(),
-				message: 'cancel'
-			}, 
-			success: function(data)
-			{
-				$('#documentSection').html(data);
-			}
-		});
+	
+		loadDocumentsSection(true);
 	});
-	*/
+
 	
 	// --------------------------------------------------------------------------------
 	// 

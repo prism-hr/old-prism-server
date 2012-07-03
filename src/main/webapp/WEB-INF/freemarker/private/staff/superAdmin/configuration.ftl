@@ -150,9 +150,9 @@
 										<!-- Add Registry Users -->
 										<form id="registryUsersForm" id="section-users">
 											<div class="row-group">
-												<h3>Admissions Contacts</h3>
 
 												<div class="row">
+													<span class="label"><b>Admissions Contacts</b></h3>
 													<div class="field">
 														<table id="registryUsers">
 															<tbody>

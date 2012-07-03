@@ -74,14 +74,7 @@ public class InterviewValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("timeMinutes").getCode());
 	}
-	@Test
-	public void shouldRejectIfURLIsEmpty() {
-		interview.setLocationURL(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "locationURL");
-		interviewValidator.validate(interview, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("locationURL").getCode());
-	}
+
 	
 	@Test
 	public void shouldRejectIfInterviewersListIsEmpty() {

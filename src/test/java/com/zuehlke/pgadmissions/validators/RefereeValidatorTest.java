@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 import static org.junit.Assert.assertTrue;
 import junit.framework.Assert;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -10,14 +11,19 @@ import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class RefereeValidatorTest {
 
 	
 	private Referee referee;
 	private RefereeValidator refereeValidator;
+	private UserService userServiceMock;
+	private RegisteredUser currentUser;
 	
 	@Test
 	public void shouldSupportRefereeValidator() {
@@ -87,7 +93,14 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 	}
-	
+	@Test
+	public void shouldRejectIfEmailSameAsCurrentUser() {
+		referee.setEmail("me@test.com");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "email");
+		refereeValidator.validate(referee, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("text.email.notyourself", mappingResult.getFieldError("email").getCode());
+	}
 	@Test
 	public void shouldRejectIfNoTelephone() {
 		referee.setPhoneNumber(null);
@@ -111,11 +124,15 @@ public class RefereeValidatorTest {
 	
 	@Before
 	public void setup(){
+		userServiceMock = EasyMock.createMock(UserService.class);
+		currentUser = new RegisteredUserBuilder().id(9).email("me@test.com").toUser();
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).email("email@test.com").firstname("bob")
 				.lastname("smith").addressCountry(new Country()).addressLocation("london").jobEmployer("zuhlke").jobTitle("se")
 				.messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
 		
-		refereeValidator = new RefereeValidator();
+		refereeValidator = new RefereeValidator(userServiceMock);
 	}
 	
 }

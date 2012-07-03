@@ -12,6 +12,9 @@ $(document).ready(function()
 			modalPrompt(message, changeState);
 			return;
 		}
+		//fire the change state to submit and get validation messages
+		changeState();
+	
 	});
 
 

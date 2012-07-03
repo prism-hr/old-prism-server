@@ -33,7 +33,7 @@ public class InterviewValidator implements Validator {
 			errors.rejectValue("interviewDueDate", "date.field.notfuture");
 		}
 		if(interview.getInterviewers().isEmpty()){
-			errors.rejectValue("interviewers", "interview.interviewers.notempty");
+			errors.rejectValue("interviewers", "dropdown.radio.select.none");
 		}
 	}
 	

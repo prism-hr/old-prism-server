@@ -20,7 +20,7 @@ public class ReviewRoundValidator implements Validator {
 		ReviewRound reviewRound = (ReviewRound) target;
 
 		if (reviewRound.getReviewers().isEmpty()) {
-			errors.rejectValue("reviewers", "reviewround.reviewers.notempty");
+			errors.rejectValue("reviewers", "dropdown.radio.select.none");
 		}
 
 	}

@@ -61,9 +61,9 @@ public class ApplicationFormValidator implements Validator {
 		if (applicationForm.getReferees().size() < 3) {
 			errors.rejectValue("referees", "user.referees.notvalid");
 		}
-//		if (applicationForm.getAcceptedTerms() == CheckedStatus.NO) {
-//			errors.rejectValue("acceptedTerms", "application.acceptedTerms.unchecked");
-//		}
+		if (applicationForm.getAcceptedTermsOnSubmission() == CheckedStatus.NO) {
+			errors.rejectValue("acceptedTermsOnSubmission", "text.field.empty");
+		}
 		if (programmeDetails != null && programmeDetails.getStudyOption() != null) {
 			List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(applicationForm.getProgram(), programmeDetails.getStudyOption());
 			if (programInstances == null || programInstances.isEmpty()) {

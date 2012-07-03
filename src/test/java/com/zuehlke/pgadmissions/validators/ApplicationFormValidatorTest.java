@@ -192,19 +192,19 @@ public class ApplicationFormValidatorTest {
 
 	}
 	
-//	@Test
-//	public void shouldRejectIfNotAcceptedTheTerms() {
-//		applicationForm.setAcceptedTerms(CheckedStatus.NO);
-//		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "acceptedTerms");
-//		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetails.getStudyOption())).andReturn(
-//				Arrays.asList(programInstance));
-//		EasyMock.replay(programInstanceDAOMock);
-//		validator.validate(applicationForm, mappingResult);
-//		EasyMock.verify(programInstanceDAOMock);
-//		Assert.assertEquals(1, mappingResult.getErrorCount());
-//		Assert.assertEquals("application.acceptedTerms.unchecked", mappingResult.getFieldError("acceptedTerms").getCode());
-//		
-//	}
+	@Test
+	public void shouldRejectIfNotAcceptedTheTerms() {
+		applicationForm.setAcceptedTermsOnSubmission(CheckedStatus.NO);
+		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "acceptedTermsOnSubmission");
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetails.getStudyOption())).andReturn(
+				Arrays.asList(programInstance));
+		EasyMock.replay(programInstanceDAOMock);
+		validator.validate(applicationForm, mappingResult);
+		EasyMock.verify(programInstanceDAOMock);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("acceptedTermsOnSubmission").getCode());
+		
+	}
 	@Before
 	public void setup() throws ParseException {
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);

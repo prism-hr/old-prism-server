@@ -22,79 +22,13 @@ $(document).ready(function()
 	 loadPersonalDetails();
 	
 	/* Address. */
-	$.ajax({
-		 type: 'GET',
-		 statusCode: {
-			  401: function() {
-				  window.location.reload();
-			  }
-		  },
-			url:"/pgadmissions/update/getAddress",
-			data:{
-				applicationId:  $('#applicationId').val(),				
-				errorCode: $('#addressError').val(),
-				cacheBreaker:  new Date().getTime() 
-			},
-			success:function(data)
-			{
-				$('#addressSection').prepend(data);
-				checkLoadedSections();
-				if ($('#addressSection .section-error-bar').length == 0)
-				{
-					$('#address-H2').trigger('click');
-				}
-			}
-	});
+	 loadAddresSection();
 	
-	/* Qualifications. */
-	$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() {
-					window.location.reload();
-				}
-			},
-			url:"/pgadmissions/update/getQualification",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: false,
-				cacheBreaker: new Date().getTime() 				
-			},
-			success: function(data)
-			{
-				$('#qualificationsSection').prepend(data);
-				checkLoadedSections();
-				if ($('#qualificationsSection .section-error-bar').length == 0)
-				{
-					$('#qualifications-H2').trigger('click');
-				}
-			}
-	});
-	
+	/* Qualifications. */	
+	 loadQualificationsSection();
+	 
 	/* (Employment) Position. */
-	$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() {
-					window.location.reload();
-				}
-			},
-			url:"/pgadmissions/update/getEmploymentPosition",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: false,
-				cacheBreaker: new Date().getTime() 									
-			},
-			success: function(data)
-			{
-				$('#positionSection').prepend(data);
-				checkLoadedSections();
-				if ($('#positionSection .section-error-bar').length == 0)
-				{
-					$('#position-H2').trigger('click');
-				}
-			}
-	});
+	 loadEmploymentSection();
 	
 	/* Funding. */
 	$.ajax({
@@ -112,7 +46,7 @@ $(document).ready(function()
 			},
 			success:function(data)
 			{
-				$('#fundingSection').prepend(data);
+				$('#fundingSection').html(data);
 				checkLoadedSections();
 				if ($('#fundingSection .section-error-bar').length == 0)
 				{
@@ -449,4 +383,102 @@ function loadPersonalDetails(clear){
 				
 			}
 	});
+}
+
+function loadAddresSection(clear){
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+			url:"/pgadmissions/update/getAddress",
+			data:{
+				applicationId:  $('#applicationId').val(),				
+				errorCode: $('#addressError').val(),
+				cacheBreaker:  new Date().getTime() 
+			},
+			success:function(data)
+			{
+				$('#addressSection').html(data);
+				checkLoadedSections();
+				if(clear){
+					$('#currentAddressLocation').empty();
+					$('#currentAddressCountry').val('');
+					$('#contactAddressLocation').empty();
+					$('#contactAddressLocation').removeAttr('disabled');
+					$('#contactAddressCountry').val('');
+					$('#contactAddressCountry').removeAttr('disabled');
+					$('#sameAddressCB').prop('checked', false);
+				}else{
+					if ($('#addressSection .section-error-bar').length == 0)
+					{
+						$('#address-H2').trigger('click');
+					}
+				}
+			}
+	});
+}
+
+
+function loadQualificationsSection(clear){
+	var data = {
+			applicationId:  $('#applicationId').val(),
+			errorCode: false,
+			cacheBreaker: new Date().getTime() 				
+		};
+
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() {
+				window.location.reload();
+			}
+		},
+		url:"/pgadmissions/update/getQualification",
+		data:data,
+		success: function(data)
+		{
+			$('#qualificationsSection').html(data);
+			checkLoadedSections();
+			if(clear){
+				
+			}else{
+			
+				if ($('#qualificationsSection .section-error-bar').length == 0)
+				{
+					$('#qualifications-H2').trigger('click');
+				}
+			}
+		}
+	});
+}
+
+function loadEmploymentSection(clear){
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() {
+				window.location.reload();
+			}
+		},
+		url:"/pgadmissions/update/getEmploymentPosition",
+		data:{
+			applicationId:  $('#applicationId').val(),
+			errorCode: false,
+			cacheBreaker: new Date().getTime() 									
+		},
+		success: function(data)
+		{
+			$('#positionSection').html(data);
+			checkLoadedSections();
+			if(!clear){
+				if ($('#positionSection .section-error-bar').length == 0)		
+				{
+					$('#position-H2').trigger('click');
+				}
+			}
+		}
+});
 }

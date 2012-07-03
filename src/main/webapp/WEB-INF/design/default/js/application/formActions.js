@@ -400,12 +400,14 @@ function loadProgrammeSection(clear){
 			}, 
 		  success: function(data)
 			{
-			  	$('#programmeDetailsSection').empty();
-				$('#programmeDetailsSection').prepend(data);
+				//$('#programmeDetailsSection').hide();
+			  	//$('#programmeDetailsSection').empty();
+				$('#programmeDetailsSection').html(data);
 				checkLoadedSections();
 				if(clear){
-					$("#updateSupervisorButton").hide();
 					$("#addSupervisorButton").show();
+					$("#updateSupervisorButton").hide();
+
 					
 					$("#studyOption").val("");
 					$("#startDate").val("");
@@ -416,6 +418,7 @@ function loadProgrammeSection(clear){
 					$("#awareYes").prop('checked', false);
 					$("#awareNo").prop('checked', false);
 				}
+			//	$('#programmeDetailsSection').show();
 			}	
 	});
 	

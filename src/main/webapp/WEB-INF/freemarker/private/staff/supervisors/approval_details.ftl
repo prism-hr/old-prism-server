@@ -12,6 +12,10 @@
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/application.css'/>" />
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />" />
 		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/approval.js'/>"></script>
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
@@ -87,7 +91,8 @@
 						
 						<div id="postApprovalData"></div>
 						<form id="postSupervisorForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/approval/assignNewSupervisor'/>" <#else> action ="<@spring.url '/approval/createSupervisor'/>" </#if>>				
-					
+							
+  				<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 				</div>
 				<!-- .content-box-inner -->
 		</div>
@@ -101,10 +106,6 @@
 
 </div>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/approval.js'/>"></script>
 </body>
 </html>
 </section>

@@ -12,7 +12,11 @@
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/global_private.css'/>" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/application.css'/>" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />" />
-
+<script type="text/javascript"  src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script src="http://malsup.github.com/jquery.form.js"></script> 
+<script type="text/javascript"  src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+<script type="text/javascript"  src="<@spring.url '/design/default/js/reviewer/review.js'/>"></script>
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -52,7 +56,7 @@
         
  		<#include "/private/common/parts/application_info.ftl"/>
     		<input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
-          <section class="form-rows violet" id="reviewsection">
+          <section class="form-rows" id="reviewsection">
 			<h2 class="no-arrow">Assign Reviewers</h2>
             <div>
               <form>
@@ -81,7 +85,7 @@
     
           <div id="postReviewData"></div>
           <input type="hidden" id="assign" value="${assignOnly?string}"/>
-  
+  		<#include "/private/staff/admin/comment/timeline_application.ftl"/>
         </div><!-- .content-box-inner -->
       </div><!-- .content-box -->
     
@@ -93,11 +97,7 @@
   
 </div>
 
-<script type="text/javascript"  src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script src="http://malsup.github.com/jquery.form.js"></script> 
-<script type="text/javascript"  src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-<script type="text/javascript"  src="<@spring.url '/design/default/js/reviewer/review.js'/>"></script>
+
 </body>
 </html>
 </section>

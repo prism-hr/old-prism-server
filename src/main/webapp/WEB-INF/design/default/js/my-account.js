@@ -31,10 +31,10 @@ $(document).ready(function(){
 				$('#accountdetails').html(data);
 				addToolTips();
 			},
-      complete: function()
-      {
+	      complete: function()
+	      {
 				$('#accountdetails div.ajax').remove();
-      }
+	      }
 		});
 	});
 	

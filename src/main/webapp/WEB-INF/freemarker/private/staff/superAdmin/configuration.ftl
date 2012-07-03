@@ -167,29 +167,31 @@
 															</thead>
 															<tbody>
 																<tr>
-																	<td class="scroll">
-																		<table>
-																			<colgroup>
-																				<col style="width: 300px;" />
-																				<col style="width: 40px;" />
-																			</colgroup>
-																			<tbody>
-																			<#list allRegistryUsers! as regUser>
-																				<tr>
-																					<td>
-																						${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
-																					</td>
-																					<td>
-																						<button class="button-delete" type="button" data-desc="Remove">Remove</button>
-																						<input type="hidden" name="firstname" value="${regUser.firstname!}" />
-																						<input type="hidden" name="lastname" value="${regUser.lastname!}" />
-																						<input type="hidden" name="email" value="${regUser.email!}" />
-																						<input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
-																					</td>
-																				</tr>
-																			</#list>
-																			</tbody>
-																		</table>
+																	<td>
+																		<div class="scroll">
+																			<table>
+																				<colgroup>
+																					<col style="width: 300px;" />
+																					<col style="width: 40px;" />
+																				</colgroup>
+																				<tbody>
+																				<#list allRegistryUsers! as regUser>
+																					<tr>
+																						<td>
+																							${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
+																						</td>
+																						<td>
+																							<button class="button-delete" type="button" data-desc="Remove">Remove</button>
+																							<input type="hidden" name="firstname" value="${regUser.firstname!}" />
+																							<input type="hidden" name="lastname" value="${regUser.lastname!}" />
+																							<input type="hidden" name="email" value="${regUser.email!}" />
+																							<input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
+																						</td>
+																					</tr>
+																				</#list>
+																				</tbody>
+																			</table>
+																		</div>
 																	</td>
 																</tr>
 															</tbody>

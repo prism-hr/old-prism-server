@@ -116,6 +116,26 @@ $(document).ready(function()
 		$row.remove();
 	});
 	
+	/* Add button. */
+	$('#registryUsers').on('click', '#registryUserAdd', function()
+	{
+		// do validation
+		$('#registryUsers tbody').append('<tr>'
+ 			+ '<td>'
+      + '${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})'
+      + '</td>'
+      + '<td>'
+      + '<button class="button-delete" type="button" data-desc="Remove">Remove</button>'
+      + '<input type="hidden" name="firstname" value="' + $('#reg-firstname').val() + '" />'
+      + '<input type="hidden" name="lastname" value="' + $('#reg-lastname').val() + '" />'
+      + '<input type="hidden" name="email" value="' + $('#reg-email').val() + '" />'
+      + '<input type="hidden" name="id" value="" />'
+      + '</td>'
+      + '</tr>');
+		$('#reg-firstname, #reg-lastname, #reg-email').val('');
+	});
+	
+	
 	/* Submit button. */
 	$('#submitRUBtn').click(function()
 	{

@@ -18,31 +18,8 @@ $(document).ready(function()
 	loadProgrammeSection();
 	
 	
-	
 	/* Personal Details. */
-	$.ajax({
-		 type: 'GET',
-		 statusCode: {
-			  401: function() {
-				  window.location.reload();
-			  }
-		  },
-			url:"/pgadmissions/update/getPersonalDetails",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: $('#personalDetailsError').val(),
-				cacheBreaker: new Date().getTime() 
-			},
-			success: function(data)
-			{
-				$('#personalDetailsSection').prepend(data);
-				checkLoadedSections();
-				if ($('#personalDetailsSection .section-error-bar').length == 0)
-				{
-					$('#personalDetails-H2').trigger('click');
-				}
-			}
-	});
+	 loadPersonalDetails();
 	
 	/* Address. */
 	$.ajax({
@@ -400,8 +377,7 @@ function loadProgrammeSection(clear){
 			}, 
 		  success: function(data)
 			{
-				//$('#programmeDetailsSection').hide();
-			  	//$('#programmeDetailsSection').empty();
+			
 				$('#programmeDetailsSection').html(data);
 				checkLoadedSections();
 				if(clear){
@@ -418,9 +394,59 @@ function loadProgrammeSection(clear){
 					$("#awareYes").prop('checked', false);
 					$("#awareNo").prop('checked', false);
 				}
-			//	$('#programmeDetailsSection').show();
+		
 			}	
 	});
 	
 }
 
+function loadPersonalDetails(clear){
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+			url:"/pgadmissions/update/getPersonalDetails",
+			data:{
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#personalDetailsError').val(),
+				cacheBreaker: new Date().getTime() 
+			},
+			success: function(data)
+			{
+				$('#personalDetailsSection').html(data);
+				checkLoadedSections();
+				if(clear){
+					$("input[name*='genderRadio']").prop('checked', false);
+					$("#dateOfBirth").val("");
+					$("#country").val("");
+					$("#candidateNationalityCountry").val("");					
+					$("#maternalNationalityCountry").val("");
+					
+					$("#paternalNationalityCountry").val("");
+					$("#englishFirstLanguageYes").prop('checked', false);
+					$("#englishFirstLanguageNo").prop('checked', false);
+					
+					$("#residenceCountry").val("");
+					
+					$("#requiresVisaYes").prop('checked', false);
+					$("#requiresVisaNo").prop('checked', false);
+					
+					$("#pd_telephone").val("");
+					
+					$("#pd_messenger").val("");
+					
+					$("#ethnicity").val("");
+					$("#disability").val("");
+				}else{
+					if ($('#personalDetailsSection .section-error-bar').length == 0)
+					{
+						$('#personalDetails-H2').trigger('click');
+					}
+				}
+				
+			}
+	});
+}

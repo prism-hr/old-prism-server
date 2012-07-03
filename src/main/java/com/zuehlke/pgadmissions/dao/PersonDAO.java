@@ -35,5 +35,6 @@ private final SessionFactory sessionFactory;
 	public List<Person> getAllPersons() {
 		return (List<Person>) sessionFactory.getCurrentSession().createCriteria(Person.class).list();
 	}
+	
 
 }

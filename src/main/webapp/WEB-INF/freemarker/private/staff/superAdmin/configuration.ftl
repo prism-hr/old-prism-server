@@ -167,7 +167,7 @@
 																			<table>
 																				<colgroup>
 																					<col style="width: 300px;" />
-																					<col style="width: 40px;" />
+																					<col style="width: 30px;" />
 																				</colgroup>
 																				<tbody>
 																				<#list allRegistryUsers! as regUser>

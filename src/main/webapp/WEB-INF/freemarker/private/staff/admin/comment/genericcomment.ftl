@@ -82,7 +82,9 @@
 												</div>
 											         
 												<div class="buttons">						        		
+<#--
 													<button class="clear" type="button" value="cancel">Clear</button>
+-->
 													<button class="blue" type="submit" value="Submit">Submit</button>						        
 												</div>
 											</form>

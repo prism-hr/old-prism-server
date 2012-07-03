@@ -209,7 +209,9 @@
 
     <div class="buttons">
       <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+<#--
       <button class="clear" type="button" id="fundingCancelButton" name="fundingCancelButton">Clear</button>
+-->
       <button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
       <button class="blue" type="button" id="fundingSaveCloseButton" value="close">Save</button>
       <#else>

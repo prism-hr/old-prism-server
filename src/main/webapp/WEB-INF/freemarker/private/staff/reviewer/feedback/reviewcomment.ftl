@@ -153,7 +153,9 @@
 										</div>
 	
 										<div class="buttons">						        		
+<#--
 											<button type="button" id="cancelReviewBtn" value="cancel" class="clear">Clear</button>
+-->
 											<button class="blue" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>						        
 										</div>
 									</form>

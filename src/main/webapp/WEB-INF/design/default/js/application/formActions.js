@@ -24,55 +24,11 @@ $(document).ready(function()
 	/* Address. */
 	 loadAddresSection();
 	
-	/* Qualifications. */
-	$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() {
-					window.location.reload();
-				}
-			},
-			url:"/pgadmissions/update/getQualification",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: false,
-				cacheBreaker: new Date().getTime() 				
-			},
-			success: function(data)
-			{
-				$('#qualificationsSection').prepend(data);
-				checkLoadedSections();
-				if ($('#qualificationsSection .section-error-bar').length == 0)
-				{
-					$('#qualifications-H2').trigger('click');
-				}
-			}
-	});
-	
+	/* Qualifications. */	
+	 loadQualificationsSection();
+	 
 	/* (Employment) Position. */
-	$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() {
-					window.location.reload();
-				}
-			},
-			url:"/pgadmissions/update/getEmploymentPosition",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: false,
-				cacheBreaker: new Date().getTime() 									
-			},
-			success: function(data)
-			{
-				$('#positionSection').prepend(data);
-				checkLoadedSections();
-				if ($('#positionSection .section-error-bar').length == 0)
-				{
-					$('#position-H2').trigger('click');
-				}
-			}
-	});
+	 loadEmploymentSection();
 	
 	/* Funding. */
 	$.ajax({
@@ -90,7 +46,7 @@ $(document).ready(function()
 			},
 			success:function(data)
 			{
-				$('#fundingSection').prepend(data);
+				$('#fundingSection').html(data);
 				checkLoadedSections();
 				if ($('#fundingSection .section-error-bar').length == 0)
 				{
@@ -463,4 +419,66 @@ function loadAddresSection(clear){
 				}
 			}
 	});
+}
+
+
+function loadQualificationsSection(clear){
+	var data = {
+			applicationId:  $('#applicationId').val(),
+			errorCode: false,
+			cacheBreaker: new Date().getTime() 				
+		};
+
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() {
+				window.location.reload();
+			}
+		},
+		url:"/pgadmissions/update/getQualification",
+		data:data,
+		success: function(data)
+		{
+			$('#qualificationsSection').html(data);
+			checkLoadedSections();
+			if(clear){
+				
+			}else{
+			
+				if ($('#qualificationsSection .section-error-bar').length == 0)
+				{
+					$('#qualifications-H2').trigger('click');
+				}
+			}
+		}
+	});
+}
+
+function loadEmploymentSection(clear){
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() {
+				window.location.reload();
+			}
+		},
+		url:"/pgadmissions/update/getEmploymentPosition",
+		data:{
+			applicationId:  $('#applicationId').val(),
+			errorCode: false,
+			cacheBreaker: new Date().getTime() 									
+		},
+		success: function(data)
+		{
+			$('#positionSection').html(data);
+			checkLoadedSections();
+			if(!clear){
+				if ($('#positionSection .section-error-bar').length == 0)		
+				{
+					$('#position-H2').trigger('click');
+				}
+			}
+		}
+});
 }

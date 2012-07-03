@@ -234,25 +234,9 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	// Clear button.
 	// -------------------------------------------------------------------------------
-	$('a[name="qualificationCancelButton"]').click(function()
+	$('#qualificationClearButton').click(function()
 	{
-		$.ajax({
-			 type: 'GET',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  }
-			  },
-				url:"/pgadmissions/update/getQualification",
-				data:{
-					applicationId:  $('#applicationId').val(),
-					message: 'cancel',					
-					cacheBreaker: new Date().getTime()
-				},
-				success:function(data) {
-					$('#qualificationsSection').html(data);
-				}
-		});
+		loadQualificationsSection(true);
 	});
 
 	

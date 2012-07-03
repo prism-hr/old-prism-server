@@ -172,26 +172,7 @@
           <span class="invalid-submit">Some required fields are missing, please review your application form.<p></p></span>
           </#if>
 
-          <div id="programme-details">                
-            <div class="row">
-              <label class="label">Programme</label>
-              ${applicationForm.program.title}
-            </div>
-
-            <div class="row">
-              <label class="label">Application Number</label>
-              ${applicationForm.applicationNumber} 
-            </div>
-
-            <#if applicationForm.isSubmitted()>
-            <div class="row">
-              <label>Submitted</label>
-              ${(applicationForm.submittedDate?string("dd MMM yyyy"))!}
-            </div>
-            </#if>
-          </div>
-
-          <hr />
+		<#include "/private/common/parts/application_info.ftl"/>
           <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 
           <!-- Programme Details -->

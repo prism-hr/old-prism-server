@@ -356,17 +356,7 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	$('#programmeClearButton').click(function(){
 		
-		$("#updateSupervisorButton").hide();
-		$("#addSupervisorButton").show();
-		
-		$("#studyOption").val("");
-		$("#startDate").val("");
-		$("#referrer").val("");
-		$("#supervisorFirstname").val("");
-		$("#supervisorLastname").val("");
-		$("#supervisorEmail").val("");
-		$("#awareYes").prop('checked', false);
-		$("#awareNo").prop('checked', false);
+		loadProgrammeSection(true);
 		
 	});
 

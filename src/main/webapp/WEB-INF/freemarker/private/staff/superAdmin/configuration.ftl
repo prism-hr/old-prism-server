@@ -196,7 +196,7 @@
 
 												<!-- Entry form. -->
 												<div class="row">
-													<span class="plain-label">First Name</span>
+													<span class="plain-label">First Name<em>*</em></span>
 													<span class="hint" data-desc="<@spring.message 'configuration.firstName'/>"></span>
 													<div class="field">	
 														<input type="text" class="full" id="reg-firstname" name="regUserFirstname" />
@@ -204,7 +204,7 @@
 												</div><!-- .row -->
 												
 												<div class="row">
-													<span class="plain-label">Last Name</span>
+													<span class="plain-label">Last Name<em>*</em></span>
 													<span class="hint" data-desc="<@spring.message 'configuration.lastName'/>"></span>
 													<div class="field">	
 														<input type="text" class="full" id="reg-lastname" name="regUserLastname" />
@@ -212,7 +212,7 @@
 												</div><!-- .row -->
 												
 												<div class="row">
-													<span class="plain-label">Email Address</span>
+													<span class="plain-label">Email Address<em>*</em></span>
 													<span class="hint" data-desc="<@spring.message 'configuration.email'/>"></span>
 													<div class="field">	
 														<input type="text" class="full" id="reg-email" name="regUserEmail" />

@@ -29,7 +29,7 @@
 
 
 <!-- Available Supervisor Buttons -->
-<div class="row addremove-buttons list-select-buttons">
+<div class="row list-select-buttons">
 	<div class="field">
 		<span>
 			<button class="blue" type="button" id="addSupervisorBtn"><span class="icon-down"></span> Add</button>

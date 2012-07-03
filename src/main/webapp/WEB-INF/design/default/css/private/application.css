@@ -212,15 +212,8 @@ section.form-rows .field.upload-delete a { display: none !important; }
 section.form-rows .field.upload-delete input[type="file"] { display: inline-block !important; }
 
 
-.addremove-buttons .field { border-top: 2px solid #999; margin-top: 25px; text-align: center; width: 400px; }
-.addremove-buttons .field span { background: #FFF; display: block; margin: -18px auto 0; padding: 4px; width: 180px; }
-.addremove-buttons .field button { margin: 0 5px; }
-
-
-/* Withdraw button */
+/* Withdraw button. */
 #withdrawButton { float: left; }
-
-
 
 /* Selecting lists of users. */
 select.list-select-from,

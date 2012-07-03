@@ -36,29 +36,7 @@ $(document).ready(function()
 	 loadReferenceSection();
 	 
 	/* Documents. */
-	$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() {
-					window.location.reload();
-				}
-			},
-			url:"/pgadmissions/update/getDocuments",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: $('#personalStatementError').val(),
-				cacheBreaker:new Date().getTime() 
-			},
-			success:function(data)
-			{
-				$('#documentSection').prepend(data);
-				checkLoadedSections();
-				if ($('#documentSection .section-error-bar').length == 0)
-				{
-					$('#documents-H2').trigger('click');
-				}
-			}
-	});
+	 loadDocumentsSection();
 	
 	/* Additional Information. */
 	$.ajax({
@@ -494,4 +472,40 @@ function loadReferenceSection(clear){
 		}
 	});
 
+}
+
+function loadDocumentsSection(clear){
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() {
+				window.location.reload();
+			}
+		},
+		url:"/pgadmissions/update/getDocuments",
+		data:{
+			applicationId:  $('#applicationId').val(),
+			errorCode: $('#personalStatementError').val(),
+			cacheBreaker:new Date().getTime() 
+		},
+		success:function(data)
+		{
+			$('#documentSection').html(data);
+			checkLoadedSections();
+			if(clear){
+				$('#psUploadFields').removeClass("uploaded");
+				$('#document_PERSONAL_STATEMENT').val('');
+				$('#psLink').remove();
+				
+				$('#cvUploadFields').removeClass("uploaded");
+				$('#document_CV').val('');
+				$('#cvLink').remove();
+			}else{
+				if ($('#documentSection .section-error-bar').length == 0)
+				{
+					$('#documents-H2').trigger('click');
+				}
+			}
+		}
+	});
 }

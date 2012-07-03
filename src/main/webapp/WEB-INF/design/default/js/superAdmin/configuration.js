@@ -136,7 +136,7 @@ $(document).ready(function()
 
 		if (!errors)
 		{
-			$('#registryUsers tbody').append('<tr>'
+			$('#registryUsers .scroll tbody').append('<tr>'
 				+ '<td>'
 				+ $('#reg-firstname').val() + ' ' + $('#reg-lastname').val() + ' (' + $('#reg-email').val() + ')'
 				+ '</td>'

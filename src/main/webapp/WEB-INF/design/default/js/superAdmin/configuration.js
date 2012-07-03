@@ -138,7 +138,7 @@ $(document).ready(function()
 		{
 			$('#registryUsers tbody').append('<tr>'
 				+ '<td>'
-				+ '${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})'
+				+ $('#reg-firstname').val() + ' ' + $('#reg-lastname').val() + ' (' + $('#reg-email').val() + ')'
 				+ '</td>'
 				+ '<td>'
 				+ '<button class="button-delete" type="button" data-desc="Remove">Remove</button>'

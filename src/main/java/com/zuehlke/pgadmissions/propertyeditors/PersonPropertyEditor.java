@@ -14,14 +14,14 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @Component
 public class PersonPropertyEditor extends PropertyEditorSupport {
-	
+
 	private EncryptionHelper encryptionHelper;
 
 	@Autowired
 	public PersonPropertyEditor(EncryptionHelper encryptionHelper) {
 		this.encryptionHelper = encryptionHelper;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setAsText(String jsonStirng) throws IllegalArgumentException {
@@ -31,11 +31,10 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 				return;
 			}
 			ObjectMapper objectMapper = new ObjectMapper();
-			
-			Map<String, Object> properties = objectMapper.readValue(jsonStirng,
-					Map.class);
+
+			Map<String, Object> properties = objectMapper.readValue(jsonStirng, Map.class);
 			Person registryUser = new Person();
-			registryUser.setFirstname(((String)properties.get("firstname")));
+			registryUser.setFirstname(((String) properties.get("firstname")));
 			registryUser.setLastname(((String) properties.get("lastname")));
 			registryUser.setEmail(((String) properties.get("email")));
 			if (StringUtils.isNotBlank((String) properties.get("id"))) {
@@ -53,11 +52,8 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 			return null;
 		}
 		Person person = (Person) getValue();
-		return "{\"id\": \""
-				+ encryptionHelper.encrypt(person.getId()) + "\",\"firstname\": \""
-				+ person.getFirstname() + "\",\"lastname\": \""
-				+ person.getLastname() + "\",\"email\": \""
-				+ person.getEmail() + "\"}";
-		
+		return "{\"id\": \"" + encryptionHelper.encrypt(person.getId()) + "\",\"firstname\": \"" + person.getFirstname() + "\",\"lastname\": \""
+				+ person.getLastname() + "\",\"email\": \"" + person.getEmail() + "\"}";
+
 	}
 }

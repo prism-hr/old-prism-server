@@ -15,29 +15,7 @@ $(document).ready(function()
 		$('.content-box-inner').append('<div class="ajax" />');
 	}
 	
-	
-	/* Programme Details. */
-	$.ajax({
-		 type: 'GET',
-		 statusCode: {
-			  401: function() {
-				  window.location.reload();
-			  }
-		  },
-		  url: "/pgadmissions/update/getProgrammeDetails",
-		  data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: $('#programDetailsError').val(),
-				studyOptionError: $('#studyOptionError').val(),
-				programError: $('#programError').val(),
-				cacheBreaker: new Date().getTime() 
-			}, 
-		  success: function(data)
-			{
-				$('#programmeDetailsSection').prepend(data);
-				checkLoadedSections();
-			}	
-	});
+	loadProgrammeSection();
 	
 	
 	
@@ -380,16 +358,6 @@ $(document).ready(function()
 		}
 		
 	});
-	
-	
-	// Clear buttons.
-	$(document).on('click', 'button.clear', function()
-	{
-		var $section = $(this).closest('section');
-		var id = $section.attr('id');
-		clearSection(id);
-	});
-
 });
 
 function closeSections()
@@ -413,21 +381,43 @@ function checkLoadedSections()
 }
 
 
-// ------------------------------------------------------------------------------
-// Clear form functionality.
-// ------------------------------------------------------------------------------
-function clearSection(section_id)
-{
-	var $section = $('#' + section_id);
+function loadProgrammeSection(clear){
+	/* Programme Details. */
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		  url: "/pgadmissions/update/getProgrammeDetails",
+		  data:{
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#programDetailsError').val(),
+				studyOptionError: $('#studyOptionError').val(),
+				programError: $('#programError').val(),
+				cacheBreaker: new Date().getTime() 
+			}, 
+		  success: function(data)
+			{
+			  	$('#programmeDetailsSection').empty();
+				$('#programmeDetailsSection').prepend(data);
+				checkLoadedSections();
+				if(clear){
+					$("#updateSupervisorButton").hide();
+					$("#addSupervisorButton").show();
+					
+					$("#studyOption").val("");
+					$("#startDate").val("");
+					$("#referrer").val("");
+					$("#supervisorFirstname").val("");
+					$("#supervisorLastname").val("");
+					$("#supervisorEmail").val("");
+					$("#awareYes").prop('checked', false);
+					$("#awareNo").prop('checked', false);
+				}
+			}	
+	});
 	
-	/*
-	switch (section_id)
-	{
-		case 'programmeDetailsSection':
-		
-	}
-	*/
-	
-	// Empty all the fields, except for disabled ones.
-	$('input, textarea, select').not(':disabled').val('');
 }
+

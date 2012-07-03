@@ -100,6 +100,13 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/modal_window.css' />"/>
 
+
+<!-- Scripts -->
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>    
+<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>  
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/withdraw_modal_window.js'/>"></script>
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -239,7 +246,7 @@
             </form>
             </#if>
           </div>
-
+		<#include "/private/staff/admin/comment/timeline_only.ftl"/>
         </div><!-- .content-box-inner -->
 
       </div><!-- .content-box -->
@@ -252,12 +259,7 @@
 
 </div>
 
-<!-- Scripts -->
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>    
-<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>  
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/withdraw_modal_window.js'/>"></script>
+
 
 </body>
 </html>

@@ -13,20 +13,15 @@
 
 <div>
   <form>
-    <#if (errorCode?? && errorCode=="true") || (termsError?? && termsError)>
-    <div class="section-error-bar">
-			<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>               
-			<span class="invalid-info-text"><@spring.message 'programmeDetails.project'/></span>
-    </div>
+    <#if (errorCode?? && errorCode=="true")>
+	    <div class="section-error-bar">
+				<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>               
+				<span class="invalid-info-text"><@spring.message 'programmeDetails.project'/></span>
+	    </div>
     <#else>
-    <#if termsError?? && termsError>
-    		<div id="prog-info-bar-div" class="section-error-bar">
-      <#else>
-		    <div id="prog-info-bar-div" class="section-info-bar">
-      </#if>
-    
-      <@spring.message 'programmeDetails.project'/>
-    </div>  
+    	<div id="prog-info-bar-div" class="section-info-bar">
+     		 <@spring.message 'programmeDetails.project'/>
+    	</div>  
     </#if>
   
     <div class="row-group">

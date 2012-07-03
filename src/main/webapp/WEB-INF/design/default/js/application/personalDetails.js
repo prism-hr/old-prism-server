@@ -199,32 +199,11 @@ $(document).ready(function(){
 		if ($("#acceptTermsPEDValue").val() =='YES'){
 			$("#acceptTermsPEDValue").val("NO");
 		} else {	
-			$("#acceptTermsPEDValue").val("YES");
+			$("#acceptTermsPEDValue").val("YES");			
 			
-			/*
-			$(".terms-box").attr('style','');
-			$("#pres-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#pres-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#pres-info-bar-div .row span.error-hint").remove();
-			*/
 			persImgCount = 0;
 			
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/acceptTerms", 
-				data:{  
-					applicationId: $("#applicationId").val(), 
-					acceptedTerms: $("#acceptTermsPEDValue").val()
-				},
-				success:function(data) {
-				}
-			});
-		}
+			}
 		});
 	
 

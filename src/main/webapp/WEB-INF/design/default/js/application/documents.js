@@ -55,21 +55,7 @@ $(document).ready(function()
 			
 			addImgCount = 0;
 			
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function()
-						{
-						  window.location.reload();
-					  }
-				  },
-				url: "/pgadmissions/acceptTerms", 
-				data:{  
-					applicationId: $("#applicationId").val(), 
-					acceptedTerms: $("#acceptTermsDDValue").val()
-				},
-				success: function(data) {}
-			});
+			
 		}
 	});
 	

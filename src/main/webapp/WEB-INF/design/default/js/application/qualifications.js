@@ -106,20 +106,6 @@ $(document).ready(function(){
 
 			qualImgCount = 0;
 			
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/acceptTerms",
-				data:{  
-					applicationId: $("#applicationId").val(), 
-					acceptedTerms: $("#acceptTermsQDValue").val()
-				},
-				success: function(data) {}
-			});
 		}
 	});
 	

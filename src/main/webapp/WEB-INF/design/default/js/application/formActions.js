@@ -251,7 +251,8 @@ $(document).ready(function()
 			},
 			url:"/pgadmissions/acceptTerms/getTermsAndConditions",
 			data:{
-				applicationId:  $('#applicationId').val()
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#termsAndConditionsError').val()
 			},
 			success: function(data)
 			{
@@ -293,17 +294,20 @@ $(document).ready(function()
 	// --------------------------------------------------------------------------------
 	$('#submitAppButton').click(function()
 	{
-		if ($("#acceptTermsValue").val() == 'NO')
+		/*if ($("#acceptTermsValue").val() == 'NO')
 		{ 
 			$("#acceptTermsSection .row-group").css({borderColor: 'red'});
 			$('.terms-label').css({color: 'red'});
 		}
 		else
-		{
+		{*/
 			$("span[name='nonAccepted']").html('');
+			$('#submitApplicationForm').append('<input type="hidden" name="acceptedTermsOnSubmission" value="'+$('#acceptTermsValue').val() +'"/>');
 			$('div.content-box-inner').append('<div class="ajax" />');
+			
 			$('#submitApplicationForm').submit();
-		}
+			
+		//}
 	});
 	
 	/* Cases for comment section */

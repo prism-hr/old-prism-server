@@ -70,6 +70,12 @@
 <#else>
   <#assign additionalInformationError = false/>
 </#if>
+<@spring.bind "applicationForm.acceptedTermsOnSubmission" />
+<#if spring.status.errorMessages?has_content >
+  <#assign termsAndConditionsError = true/>
+<#else>
+  <#assign termsAndConditionsError = false/>
+</#if>
 <#-- Personal Details Rendering -->
 <html>
 <head>
@@ -119,6 +125,7 @@
 <input type="hidden" id="studyOptionError" value="${studyOptionError?string}"/>
 <input type="hidden" id="programError" value="${programError?string}"/>
 <input type="hidden" id="additionalInformationError" value="${additionalInformationError?string}"/>
+<input type="hidden" id="termsAndConditionsError" value="${termsAndConditionsError?string}"/>
 
 <div id="wrapper">
       

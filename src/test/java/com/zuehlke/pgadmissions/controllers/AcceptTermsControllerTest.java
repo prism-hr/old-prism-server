@@ -87,6 +87,7 @@ public class AcceptTermsControllerTest {
 		acceptTermsController.getAcceptedTermsView();
 	}
 
+
 	@Before
 	public void setUp() {
 

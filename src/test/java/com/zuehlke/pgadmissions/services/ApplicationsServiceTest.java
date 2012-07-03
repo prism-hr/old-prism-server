@@ -178,7 +178,7 @@ public class ApplicationsServiceTest {
 		assertEquals("KLOP-2012-000024", returnedForm.getApplicationNumber());
 		assertEquals(batchDeadline, returnedForm.getBatchDeadline());
 		assertEquals(projectTitle, returnedForm.getProjectTitle());
-		assertEquals(researchHomePage, returnedForm.getResearchHomePage());
+		assertEquals("http://" + researchHomePage, returnedForm.getResearchHomePage());
 	}
 
 	@Test

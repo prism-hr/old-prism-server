@@ -170,7 +170,7 @@
 																					<col style="width: 30px;" />
 																				</colgroup>
 																				<tbody>
-																				<#-- list allRegistryUsers! as regUser>
+																				<#list allRegistryUsers! as regUser>
 																					<tr>
 																						<td>
 																							${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
@@ -183,7 +183,7 @@
 																							<input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
 																						</td>
 																					</tr>
-																				</#list -->
+																				</#list>
 																				</tbody>
 																			</table>
 																		</div>

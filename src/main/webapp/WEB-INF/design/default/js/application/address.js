@@ -53,23 +53,8 @@ $(document).ready(function(){
 			*/
 			addrImgCount = 0;
 
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/acceptTerms", 
-				data:{  
-					applicationId: $("#applicationId").val(), 
-					acceptedTerms: $("#acceptTermsADValue").val()
-				},
-				success: function(data) {
-				}
-			});
 		}
-		});
+	});
 	
 	$('#addressSaveAndAddButton').click(function()
 	{

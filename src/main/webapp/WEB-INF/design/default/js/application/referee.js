@@ -63,20 +63,7 @@ $(document).ready(function()
 			*/
 			refImgCount = 0;
 			
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/acceptTerms",
-				data:{  
-					applicationId: $("#applicationId").val(), 
-					acceptedTerms: $("#acceptTermsRDValue").val()
-				},
-				success:function(data) {}
-			});
+		
 		}
 		});
 	

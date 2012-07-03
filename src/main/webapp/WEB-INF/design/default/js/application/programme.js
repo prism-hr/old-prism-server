@@ -67,21 +67,6 @@ $(document).ready(function()
 
 			progImgCount = 0;
 			
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/acceptTerms",
-				data:
-				{  
-					applicationId: $("#applicationId").val(), 
-					acceptedTerms: $("#acceptTermsPDValue").val()
-				},
-				success: function(data) {}
-			});
 		}
 	});
 	
@@ -432,17 +417,16 @@ function postProgrammeData(message)
 			{
 				$('#programmeDetailsSection').html(data);
 			
-				
-				if (message == 'close')
+				var errorCount = $('#programmeDetailsSection .invalid:visible').length;
+				if (message == 'close' && errorCount == 0)
 				{
 					// Close the section only if there are no errors.
-					var errorCount = $('#programmeDetailsSection .invalid:visible').length;
-					if (errorCount == 0)
-					{
-						$('#programme-H2').trigger('click');
-					}else{
-						markSectionError('#programmeDetailsSection');
-					}
+					$('#programme-H2').trigger('click');
+				}
+				if(errorCount >0){
+					
+					markSectionError('#programmeDetailsSection');
+					
 				}
 			},
     complete: function()

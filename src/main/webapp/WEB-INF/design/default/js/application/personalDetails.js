@@ -3,13 +3,6 @@ $(document).ready(function(){
 	
 	var persImgCount = 0;
 	
-	//Adjust CSS to display multiple values in one line, delimited by comma ','
-	// in admin view.
-	$(".half,.multiples").each(function()
-	{
-		$(this).css({ display: 'inline' });
-	});
-	
 	$("#acceptTermsPEDValue").val("NO");
 
 

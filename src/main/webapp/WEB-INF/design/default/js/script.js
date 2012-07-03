@@ -381,7 +381,7 @@ function doUpload($upload_field)
 			else
 			{
 				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
-				$hfParent.html(data).show();
+				$hfParent.html(data);
 				$container.addClass('uploaded');
 				var doc_type = $upload_field.attr('data-reference');
 				$('a.button-delete', $hfParent).attr({ 'data-desc': 'Delete ' + doc_type })

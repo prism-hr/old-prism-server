@@ -168,7 +168,7 @@ $(document).ready(function()
 			var firstname = $('input[name="firstname"]', $row).val();
 			var lastname = $('input[name="lastname"]', $row).val();
 			var email = $('input[name="email"]', $row).val();
-			var obj = "{id: '" + id + "', firstname: '" + firstname + "', lastname: '" + lastname + "', email: '" + email + "'}";
+			var obj = "{'id': '" + id + "', 'firstname': '" + firstname + "', 'lastname': '" + lastname + "', 'email': '" + email + "'}";
 			$('#registryUsersForm').append('<input type="hidden" class="registryUsers" name="registryUsers" value="' + obj + '" />');
 		});
 		

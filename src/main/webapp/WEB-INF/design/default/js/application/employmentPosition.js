@@ -68,20 +68,7 @@ $(document).ready(function(){
 			*/
 			empImgCount = 0;
 			
-			$.ajax({
-				type: 'POST',
-				statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				},
-				url:"/pgadmissions/acceptTerms", 
-				data:{  
-					applicationId: $("#applicationId").val(), 
-					acceptedTerms: $("#acceptTermsEPValue").val()
-				},
-				success:function(data) {}
-			});
+			
 		}
 		});
 	

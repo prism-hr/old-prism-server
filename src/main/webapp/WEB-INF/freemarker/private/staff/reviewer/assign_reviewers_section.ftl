@@ -40,9 +40,9 @@
   <!-- Already reviewers of this application -->
 <div class="row">
 	<div class="field">
-	  <select id="applicationReviewers" class="list-select-to" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
+	  <select id="applicationReviewers" class="list-select-to" multiple="multiple"  size="${selectedOptionsSize}">
 		  <#list reviewRound.reviewers as reviewer>
-			    <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.user.id)}">
+			    <option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.user.id)}" <#if assignOnly?? && assignOnly> disabled="disabled"</#if>>
 			      ${reviewer.user.firstName?html} ${reviewer.user.lastName?html}
 			    </option>
 		  </#list>	  

@@ -1,0 +1,2 @@
+UPDATE APPLICATION_FORM SET APPLICATION_FORM.project_title = (select PROJECT.title from PROJECT where APPLICATION_FORM.project_id = PROJECT.id )
+;

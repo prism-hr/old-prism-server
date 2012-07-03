@@ -158,6 +158,8 @@ $(document).ready(function()
 	{
 		var rows = new Array;
 		
+		$('#registryUsersForm').css({ position: 'relative' }).append('<div class="ajax" />');
+		
 		$('#registryUsersForm input.registryUsers').remove();
 		
 		// Grab the hidden field values from the table.
@@ -172,7 +174,6 @@ $(document).ready(function()
 			$('#registryUsersForm').append('<input type="hidden" class="registryUsers" name="registryUsers" value="' + obj + '" />');
 		});
 		
-		$('#registryUsersForm').css({ position: 'relative' }).append('<div class="ajax" />');
 		$.ajax({
 			type: 'POST',
 			statusCode: {

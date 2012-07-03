@@ -39,29 +39,7 @@ $(document).ready(function()
 	 loadDocumentsSection();
 	
 	/* Additional Information. */
-	$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() {
-					window.location.reload();
-				}
-			},
-			url:"/pgadmissions/update/getAdditionalInformation",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode:  $('#additionalInformationError').val(),
-				cacheBreaker: new Date().getTime() 								
-			},
-			success: function(data)
-			{
-				$('#additionalInformationSection').prepend(data);
-				checkLoadedSections();
-				if ($('#additionalInformationSection .section-error-bar').length == 0)
-				{
-					$('#additional-H2').trigger('click');
-				}
-			}
-	});
+	 loadAdditionalInformationSection();
 	
 	/* Terms and conditions. */
 	$.ajax({
@@ -508,4 +486,39 @@ function loadDocumentsSection(clear){
 			}
 		}
 	});
+}
+
+
+function loadAdditionalInformationSection(clear){
+	$.ajax({
+		type: 'GET',
+		statusCode: {
+			401: function() {
+				window.location.reload();
+			}
+		},
+		url:"/pgadmissions/update/getAdditionalInformation",
+		data:{
+			applicationId:  $('#applicationId').val(),
+			errorCode:  $('#additionalInformationError').val(),
+			cacheBreaker: new Date().getTime() 								
+		},
+		success: function(data)
+		{
+			$('#additionalInformationSection').html(data);
+			checkLoadedSections();
+			if(clear){
+				$('#informationText').empty();
+				$('#convictionsText').empty();
+				$('input[name="convictionRadio"]').prop('checked', false);
+				$('#convictionsText').attr("disabled","disabled");
+			}
+			else{
+				if ($('#additionalInformationSection .section-error-bar').length == 0)
+				{
+					$('#additional-H2').trigger('click');
+				}
+			}
+		}
+});
 }

@@ -164,6 +164,7 @@ $(document).ready(function()
 		}
 		else
 		{
+			$('#acceptTermsPDCB').prop('checked', false);
 			markSectionError('#programmeDetailsSection');
 		}
 	});

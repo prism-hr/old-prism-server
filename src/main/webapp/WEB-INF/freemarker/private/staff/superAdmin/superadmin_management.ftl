@@ -59,16 +59,12 @@
 															<colgroup>
 																<col style="width: 20px;" />
 																<col style="width: 672px;" />
-																<col style="width: 40px;" />
 															</colgroup>
 															<tbody>
 																<#list superadmins as superadmin>
 																<tr>
 																	<td><span class="arrow">&nbsp;</span></td>
 																	<td scope="col">${(superadmin.firstName?html)!} ${(superadmin.lastName?html)!} (${(superadmin.email?html)!})</td>
-																	<td scope="col">
-																		<a class="button-delete" data-desc="Remove" href="#" name="removeuser" id="remove_${encrypter.encrypt(superadmin.id)}">Remove</a>
-																	</td>
 																</tr>
 																</#list>
 															</tbody>

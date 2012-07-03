@@ -89,7 +89,7 @@ public class InterviewValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewers");
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("interview.interviewers.notempty", mappingResult.getFieldError("interviewers").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("interviewers").getCode());
 	}
 	
 	@Before

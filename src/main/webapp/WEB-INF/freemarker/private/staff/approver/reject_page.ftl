@@ -20,7 +20,10 @@
 		<link type="text/css" rel="stylesheet"
 				href="<@spring.url '/design/default/css/actions.css' />" />
 		
-		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/approver/reject_page.js'/>"></script>
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
@@ -44,7 +47,7 @@
 			<div id="middle">
 
 				<#include "/private/common/parts/nav_with_user_info.ftl"/>
-       <@header/>
+      			 <@header/>
 				<!-- Main content area. -->
 				<article id="content" role="main">
 
@@ -59,30 +62,11 @@
 				<div class="content-box">
 					<div class="content-box-inner">
 				
-						<div id="programme-details">			          
-						    	
-					    	<div class="row">
-					        	<label class="label">Programme</label>
-					           	${applicationForm.program.code} - ${applicationForm.program.title}
-					        </div>
-					            
-					        <div class="row">
-					        	<label class="label">Application Number</label>
-					            ${applicationForm.applicationNumber} 
-					        </div>
-					        
-					        <#if applicationForm.isSubmitted()>
-					        	<div class="row">
-					            	<label>Submitted</label>
-					              	${(applicationForm.submittedDate?string("dd MMM yyyy"))!}
-					            </div>
-					        </#if>
-						</div>
-						<hr />
+		   			 <#include "/private/common/parts/application_info.ftl"/>
 						
 						<@spring.bind "applicationForm.*" />
 						<@spring.bind "availableReasons.*" />
-						<section class="form-rows violet">
+						<section class="form-rows">
 							<h2 class="no-arrow">
 								Reject Applicant
 							</h2>
@@ -126,10 +110,8 @@
 									</div>
 
 									<div class="buttons">
-<#--
-										<button class="clear" type="button" value="cancel">Clear</button>
--->
-										<button type="submit" id="rejectButton" class="blue">Reject application</button>
+
+										<button type="submit" id="rejectButton" class="blue">Submit</button>
 									</div>
 									
 									<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/> 
@@ -139,7 +121,7 @@
 					
 					</div>
 					<!-- #actions -->
-
+				<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 				</div>
 				<!-- .content-box-inner -->
 		</div>
@@ -153,9 +135,6 @@
 
 </div>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/approver/reject_page.js'/>"></script>
+
 </body>
 </html>

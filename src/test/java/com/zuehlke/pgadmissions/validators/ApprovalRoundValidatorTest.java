@@ -30,7 +30,7 @@ public class ApprovalRoundValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "supervisors");
 		approvalRoundValidator.validate(approvalRound, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("approvalround.supervisors.notempty", mappingResult.getFieldError("supervisors").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("supervisors").getCode());
 	}
 	@Before
 	public void setup(){

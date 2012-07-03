@@ -20,7 +20,7 @@ public class ApprovalRoundValidator implements Validator {
 		ApprovalRound approvalRound = (ApprovalRound) target;
 
 		if (approvalRound.getSupervisors().isEmpty()) {
-			errors.rejectValue("supervisors", "approvalround.supervisors.notempty");
+			errors.rejectValue("supervisors", "dropdown.radio.select.none");
 		}
 
 	}

@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -51,15 +50,21 @@ public class AccountController {
 		if(bindingResult.hasErrors()){
 			return ACCOUNT_SECTION;
 		}
-		if(userService.isAccountChanged(user)){
-			userService.updateCurrentUserAndSendEmailNotification(user);
-		}
+		
+		userService.updateCurrentUser(user);
+		
 		return "redirect:/myAccount/section?messageCode=account.updated";
 	}
 
 	@ModelAttribute(value="updatedUser")
 	public RegisteredUser getUpdatedUser() {
-		return new RegisteredUser();
+		RegisteredUser registeredUser = new RegisteredUser();		
+		RegisteredUser currentUser = getUser();
+		registeredUser.setFirstName(currentUser.getFirstName());
+		registeredUser.setLastName(currentUser.getLastName());
+		registeredUser.setEmail(currentUser.getEmail());
+		registeredUser.setPassword(currentUser.getPassword());
+		return registeredUser;
 	}
 	
 	@ModelAttribute(value="user")

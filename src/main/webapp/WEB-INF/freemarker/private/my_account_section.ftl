@@ -16,7 +16,7 @@
 				<span id="email-lbl" class="plain-label">First Name</span>
 				<span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
 				<div class="field">	
-					<input class="full" type="text" id="firstName" value="${user.firstName}" />
+					<input class="full" type="text" id="firstName" value="${updatedUser.firstName}" />
 				</div>
 				<@spring.bind "updatedUser.firstName" />
 				<#list spring.status.errorMessages as error>
@@ -30,7 +30,7 @@
 				<span id="email-lbl" class="plain-label">Last Name</span>
 				<span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
 				<div class="field">	
-					<input class="full" type="text" id="lastName" value="${user.lastName}" />
+					<input class="full" type="text" id="lastName" value="${updatedUser.lastName}" />
 				</div>
 				<@spring.bind "updatedUser.lastName" />
 				<#list spring.status.errorMessages as error>
@@ -44,7 +44,7 @@
 				<span id="email-lbl" class="plain-label">Email</span>
 				<span class="hint" data-desc="<@spring.message 'myaccount.email'/>"></span>
 				<div class="field">	
-					<input class="full" type="text" id="email" value="${user.email}" />
+					<input class="full" type="text" id="email" value="${updatedUser.email}" />
 				</div>
 				<@spring.bind "updatedUser.email" />
 				<#list spring.status.errorMessages as error>

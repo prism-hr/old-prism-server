@@ -57,6 +57,7 @@ public class AccountValidator implements Validator {
 		}
 		boolean passwordFieldsFilled = StringUtils.isNotBlank(updatedUser.getConfirmPassword()) && StringUtils.isNotBlank(updatedUser.getNewPassword()) && StringUtils.isNotBlank(updatedUser.getPassword());
 		if(passwordFieldsFilled && !encryptionUtils.getMD5Hash(updatedUser.getPassword()).equals(existingUser.getPassword())){
+		
 			errors.rejectValue("password", "account.currentpassword.notmatch");
 		}
 		
@@ -87,7 +88,7 @@ public class AccountValidator implements Validator {
 			errors.rejectValue("email", "text.email.notvalid");
 		}
 		
-	}
+	}  
 
 	public RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();

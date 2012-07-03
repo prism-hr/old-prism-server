@@ -108,34 +108,54 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------
 	// Registry users
 	// -----------------------------------------------------------------------------
+	
+	// Delete buttons
+	$('#registryUsers').on('click', '.button-delete', function()
+	{
+		var $row = $(this).closest('tr');
+		$row.remove();
+	});
+	
+	/* Submit button. */
 	$('#submitRUBtn').click(function()
 	{
-		$("#registryUsers").html('');
-		var validationErrors = appendRegistryUsersJSON();
-		var registryUsers = $('[input[name="registryUsers"]');
-		if (!validationErrors)
+		var rows = new Array;
+		
+		$('#registryUsersForm input.registryUsers').remove();
+		
+		// Grab the hidden field values from the table.
+		$('#registryUsers tbody tr').each(function()
 		{
-			$('#section-users').css({ position: 'relative' }).append('<div class="ajax" />');
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/configuration/submitRegistryUsers", 
-				data:registryUsers.serialize(),
-				success:function(data)
+			var $row = $(this);
+			var id = $('input[name="id"]', $row).val();
+			var firstname = $('input[name="firstname"]', $row).val();
+			var lastname = $('input[name="lastname"]', $row).val();
+			var email = $('input[name="email"]', $row).val();
+			var obj = '{"id":"' + id + '","firstname":"' + firstname + '","lastname":"' + lastname + '","email":"' + email + '"}';
+			$('#registryUsersForm').append('<input class="registryUsers" name="registryUsers" value="' + obj + '" />');
+		});
+		
+		$('#registryUsersForm').css({ position: 'relative' }).append('<div class="ajax" />');
+		$.ajax({
+			type: 'POST',
+			statusCode: {
+				401: function()
 				{
-					//window.location.href = "/pgadmissions/applications";
-					addToolTips();
-				},
-        complete: function()
-        {
-					$('#section-users div.ajax').remove();
-        }
-			});
-		}
+					window.location.reload();
+				}
+			},
+			url:  "/pgadmissions/configuration/submitRegistryUsers", 
+			data: $('#registryUsersForm input.registryUsers').serialize(),
+			success: function(data)
+			{
+				addToolTips();
+			},
+			complete: function()
+			{
+				$('#registryUsersForm div.ajax').remove();
+			}
+		});
+
 	});
 });
 

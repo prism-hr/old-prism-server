@@ -18,28 +18,7 @@ $(document).ready(function(){
 	
 	$('#personalDetailsClearButton').click(function(){
 		
-		$("input[name*='genderRadio']").prop('checked', false);
-		$("#dateOfBirth").val("");
-		$("#country").val("");
-		$("#candidateNationalityCountry").val("");
-		
-		$("#maternalNationalityCountry").val("");
-		
-		$("#paternalNationalityCountry").val("");
-		$("#englishFirstLanguageYes").prop('checked', false);
-		$("#englishFirstLanguageNo").prop('checked', false);
-		
-		$("#residenceCountry").val("");
-		
-		$("#requiresVisaYes").prop('checked', false);
-		$("#requiresVisaNo").prop('checked', false);
-		
-		$("#pd_telephone").val("");
-		
-		$("#pd_messenger").val("");
-		
-		$("#ethnicity").val("");
-		$("#disability").val("");
+		loadPersonalDetails(true);
 		
 	});
 

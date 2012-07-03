@@ -197,7 +197,7 @@
         <span class="supervisorAction"></span>       
         <div class="field">
           <button id="updateSupervisorButton" class="blue" type="button" style="display:none;">Update</button>
-          <button id="addSupervisorButton" class="blue" type="button" style="display:none;">Add</button>
+          <button id="addSupervisorButton" class="blue" type="button">Add</button>
         </div>
       </div>
       </#if>

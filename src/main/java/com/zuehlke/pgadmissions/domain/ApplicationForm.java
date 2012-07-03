@@ -638,7 +638,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public String getResearchHomePage() {
-		return researchHomePage;
+		if(researchHomePage == null || researchHomePage.startsWith("http://") ||researchHomePage.startsWith("https://")  ){
+			return researchHomePage;
+		}
+		return "http://" + researchHomePage;
 	}
 
 	public void setResearchHomePage(String researchHomePage) {

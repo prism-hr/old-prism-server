@@ -15,56 +15,11 @@ $(document).ready(function()
 		$('.content-box-inner').append('<div class="ajax" />');
 	}
 	
-	
-	/* Programme Details. */
-	$.ajax({
-		 type: 'GET',
-		 statusCode: {
-			  401: function() {
-				  window.location.reload();
-			  }
-		  },
-		  url: "/pgadmissions/update/getProgrammeDetails",
-		  data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: $('#programDetailsError').val(),
-				studyOptionError: $('#studyOptionError').val(),
-				programError: $('#programError').val(),
-				cacheBreaker: new Date().getTime() 
-			}, 
-		  success: function(data)
-			{
-				$('#programmeDetailsSection').prepend(data);
-				checkLoadedSections();
-			}	
-	});
-	
+	loadProgrammeSection();
 	
 	
 	/* Personal Details. */
-	$.ajax({
-		 type: 'GET',
-		 statusCode: {
-			  401: function() {
-				  window.location.reload();
-			  }
-		  },
-			url:"/pgadmissions/update/getPersonalDetails",
-			data:{
-				applicationId:  $('#applicationId').val(),
-				errorCode: $('#personalDetailsError').val(),
-				cacheBreaker: new Date().getTime() 
-			},
-			success: function(data)
-			{
-				$('#personalDetailsSection').prepend(data);
-				checkLoadedSections();
-				if ($('#personalDetailsSection .section-error-bar').length == 0)
-				{
-					$('#personalDetails-H2').trigger('click');
-				}
-			}
-	});
+	 loadPersonalDetails();
 	
 	/* Address. */
 	$.ajax({
@@ -380,16 +335,6 @@ $(document).ready(function()
 		}
 		
 	});
-	
-	
-	// Clear buttons.
-	$(document).on('click', 'button.clear', function()
-	{
-		var $section = $(this).closest('section');
-		var id = $section.attr('id');
-		clearSection(id);
-	});
-
 });
 
 function closeSections()
@@ -413,21 +358,95 @@ function checkLoadedSections()
 }
 
 
-// ------------------------------------------------------------------------------
-// Clear form functionality.
-// ------------------------------------------------------------------------------
-function clearSection(section_id)
-{
-	var $section = $('#' + section_id);
-	
-	/*
-	switch (section_id)
-	{
-		case 'programmeDetailsSection':
+function loadProgrammeSection(clear){
+	/* Programme Details. */
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		  url: "/pgadmissions/update/getProgrammeDetails",
+		  data:{
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#programDetailsError').val(),
+				studyOptionError: $('#studyOptionError').val(),
+				programError: $('#programError').val(),
+				cacheBreaker: new Date().getTime() 
+			}, 
+		  success: function(data)
+			{
+			
+				$('#programmeDetailsSection').html(data);
+				checkLoadedSections();
+				if(clear){
+					$("#addSupervisorButton").show();
+					$("#updateSupervisorButton").hide();
+
+					
+					$("#studyOption").val("");
+					$("#startDate").val("");
+					$("#referrer").val("");
+					$("#supervisorFirstname").val("");
+					$("#supervisorLastname").val("");
+					$("#supervisorEmail").val("");
+					$("#awareYes").prop('checked', false);
+					$("#awareNo").prop('checked', false);
+				}
 		
-	}
-	*/
+			}	
+	});
 	
-	// Empty all the fields, except for disabled ones.
-	$('input, textarea, select').not(':disabled').val('');
+}
+
+function loadPersonalDetails(clear){
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+			url:"/pgadmissions/update/getPersonalDetails",
+			data:{
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#personalDetailsError').val(),
+				cacheBreaker: new Date().getTime() 
+			},
+			success: function(data)
+			{
+				$('#personalDetailsSection').html(data);
+				checkLoadedSections();
+				if(clear){
+					$("input[name*='genderRadio']").prop('checked', false);
+					$("#dateOfBirth").val("");
+					$("#country").val("");
+					$("#candidateNationalityCountry").val("");					
+					$("#maternalNationalityCountry").val("");
+					
+					$("#paternalNationalityCountry").val("");
+					$("#englishFirstLanguageYes").prop('checked', false);
+					$("#englishFirstLanguageNo").prop('checked', false);
+					
+					$("#residenceCountry").val("");
+					
+					$("#requiresVisaYes").prop('checked', false);
+					$("#requiresVisaNo").prop('checked', false);
+					
+					$("#pd_telephone").val("");
+					
+					$("#pd_messenger").val("");
+					
+					$("#ethnicity").val("");
+					$("#disability").val("");
+				}else{
+					if ($('#personalDetailsSection .section-error-bar').length == 0)
+					{
+						$('#personalDetails-H2').trigger('click');
+					}
+				}
+				
+			}
+	});
 }

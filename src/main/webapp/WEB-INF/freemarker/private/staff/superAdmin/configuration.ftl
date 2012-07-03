@@ -149,7 +149,8 @@
 										<!-- Add Registry Users -->
 										<form id="registryUsersForm" id="section-users">
 											<div class="row-group">
-											
+												<h3>Admissions Contacts</h3>
+
 												<div class="row">
 													<div class="field">
 														
@@ -165,7 +166,16 @@
 																</tr>
 															</thead>
 															<tbody>
-															
+															<#list allRegistryUsers as regUser>
+																<tr>
+																	<td>
+																		${regUser.firstname} ${regUser.lastname} (${regUser.email})
+																	</td>
+																	<td>
+																		<button class="button-delete" type="button" data-desc="Remove">Remove</button>
+																	</td>
+																</tr>
+															</#list>
 															</tbody>
 														</table>
 														
@@ -195,6 +205,12 @@
 													<span class="hint" data-desc="<@spring.message 'configuration.email'/>"></span>
 													<div class="field">	
 														<input type="text" class="full" id="reg-email" name="regUserEmail" />
+													</div>
+												</div><!-- .row -->
+
+												<div class="row">
+													<div class="field">	
+														<button class="blue" type="button" id="registryUserAdd">Add</button>
 													</div>
 												</div><!-- .row -->
 

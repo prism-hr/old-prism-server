@@ -113,8 +113,7 @@ public class UserRoleController {
 			
 		}
 		RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
-		if (existingUser != null) {
-	
+		if (existingUser != null) {	
 			userService.updateUserWithNewRoles(existingUser, userDTO.getSelectedProgram(), userDTO.getSelectedAuthorities());
 		} else {
 			existingUser = userService.createNewUserForProgramme(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), userDTO.getSelectedProgram(),

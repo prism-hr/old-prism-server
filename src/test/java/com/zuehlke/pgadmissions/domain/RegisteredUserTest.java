@@ -1068,4 +1068,5 @@ public class RegisteredUserTest {
 		assertTrue(user.hasStaffRightsOnApplicationForm(applicationForm));
 
 	}
+	
 }

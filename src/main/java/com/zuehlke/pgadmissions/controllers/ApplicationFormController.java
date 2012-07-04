@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.InvalidParameterFormatException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -61,7 +62,7 @@ public class ApplicationFormController {
 		if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()) {
 			return new ModelAndView(PROGRAM_DOES_NOT_EXIST);
 		}		
-		
+	
 		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, batchDeadline, projectTitle, researchHomePage);
 
 		return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());

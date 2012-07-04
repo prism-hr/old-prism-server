@@ -69,7 +69,7 @@
 													<input type="hidden" name="applicationId" id="applicationId" value="${(applicationForm.applicationNumber)!}"/>
 													<div class="row">
 														<span class="plain-label">Reason<em>*</em></span>
-														<span class="hint" data-desc=""></span>
+														<span class="hint" data-desc="<@spring.message 'approval.restartReason'/>"></span>
 														<div class="field">		            				
 															<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 															<@spring.bind "comment.comment" /> 

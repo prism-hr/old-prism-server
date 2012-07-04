@@ -68,7 +68,7 @@
 													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 													<div class="row">
 														<span class="plain-label">Comment<em>*</em></span>
-														<span class="hint" data-desc=""></span>
+														<span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
 														<div class="field">		            				
 															<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 															<@spring.bind "comment.comment" /> 

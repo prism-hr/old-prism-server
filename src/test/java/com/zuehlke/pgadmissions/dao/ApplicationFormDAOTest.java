@@ -1542,7 +1542,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	public void shouldReturnApplicationFormDueRegistryNotification() {
 		Date now = Calendar.getInstance().getTime();
 		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().registryUsersNotified(true).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().registryUsersDueNotification(true).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
 				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
 		save(applicationForm);
 
@@ -1558,7 +1558,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	public void shouldNotReturnApplicationFormNotDueRegistryNotification() {
 		Date now = Calendar.getInstance().getTime();
 		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().registryUsersNotified(false).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().registryUsersDueNotification(false).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
 				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
 		save(applicationForm);
 		

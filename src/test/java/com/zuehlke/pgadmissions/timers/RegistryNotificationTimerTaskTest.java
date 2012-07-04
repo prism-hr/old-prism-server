@@ -70,7 +70,7 @@ public class RegistryNotificationTimerTaskTest {
 			registryTask.run();
 
 			EasyMock.verify(applicationServiceMock, sessionFactoryMock, sessionMock, mailSenderMock, tx1, tx2);
-			Assert.assertTrue(application.getRegistryUsersNotified());
+			Assert.assertFalse(application.getRegistryUsersDueNotification());
 		}
 
 		@Test

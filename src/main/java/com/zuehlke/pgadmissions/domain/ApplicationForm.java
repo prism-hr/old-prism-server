@@ -43,7 +43,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	private String applicationNumber;
 
 	@Column(name = "registry_users_notified")
-	private Boolean registryUsersNotified;
+	private Boolean registryUsersDueNotification;
 
 	@ManyToOne
 	@JoinColumn(name = "app_administrator_id")
@@ -648,12 +648,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.researchHomePage = researchHomePage;
 	}
 
-	public Boolean getRegistryUsersNotified() {
-		return registryUsersNotified;
+	public Boolean getRegistryUsersDueNotification() {
+		return registryUsersDueNotification;
 	}
 
-	public void setRegistryUsersNotified(Boolean registryUsersNotified) {
-		this.registryUsersNotified = registryUsersNotified;
+	public void setRegistryUsersDueNotification(Boolean registryUsersNotified) {
+		this.registryUsersDueNotification = registryUsersNotified;
 	}
 
 	public RegisteredUser getAdminRequestedRegistry() {

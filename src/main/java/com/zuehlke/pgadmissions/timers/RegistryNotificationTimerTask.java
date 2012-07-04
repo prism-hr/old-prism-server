@@ -41,7 +41,7 @@ public class RegistryNotificationTimerTask extends TimerTask {
 					sessionFactory.getCurrentSession().refresh(applicationForm);
 					try {
 						registryMailSender.sendApplicationToRegistryContacts(applicationForm);
-						applicationForm.setRegistryUsersNotified(true);
+						applicationForm.setRegistryUsersDueNotification(false);
 						applicationsService.save(applicationForm);
 						transaction.commit();
 						log.info("notification sent to registry persons for application " + applicationForm.getApplicationNumber());

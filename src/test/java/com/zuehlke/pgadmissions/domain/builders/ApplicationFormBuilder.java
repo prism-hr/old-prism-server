@@ -75,8 +75,8 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder registryUsersNotified(Boolean registryUsersNotified) {
-		this.registryUsersNotified = registryUsersNotified;
+	public ApplicationFormBuilder registryUsersDueNotification(Boolean registryUsersDueNotification) {
+		this.registryUsersNotified = registryUsersDueNotification;
 		return this;
 	}
 	
@@ -345,7 +345,7 @@ public class ApplicationFormBuilder {
 		
 		application.setRejectNotificationDate(rejectNotificationDate);
 		
-		application.setRegistryUsersNotified(registryUsersNotified);
+		application.setRegistryUsersDueNotification(registryUsersNotified);
 		application.setAdminRequestedRegistry(adminRequestedRegistry);
 		return application;
 	}

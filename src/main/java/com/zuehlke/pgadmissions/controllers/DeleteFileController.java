@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -19,15 +20,17 @@ public class DeleteFileController {
 	private final DocumentService documentService;
 	private final UserService userService;
 	private final EncryptionHelper encryptionHelper;
+	private final ApplicationsService applicationsService;
 
 	DeleteFileController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public DeleteFileController(DocumentService documentService, UserService userService, EncryptionHelper encryptionHelper) {
+	public DeleteFileController(DocumentService documentService, UserService userService, ApplicationsService applicationsService, EncryptionHelper encryptionHelper) {
 		this.documentService = documentService;
 		this.userService = userService;
+		this.applicationsService = applicationsService;
 		this.encryptionHelper = encryptionHelper;
 
 	}

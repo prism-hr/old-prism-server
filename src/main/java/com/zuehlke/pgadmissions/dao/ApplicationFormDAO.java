@@ -362,7 +362,7 @@ public class ApplicationFormDAO {
 		return sessionFactory
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class)
-				.add(Restrictions.eq("registryUsersNotified", true)).list();
+				.add(Restrictions.eq("registryUsersDueNotification", true)).list();
 	}
 
 }

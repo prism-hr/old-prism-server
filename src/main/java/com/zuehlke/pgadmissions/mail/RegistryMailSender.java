@@ -68,7 +68,6 @@ public class RegistryMailSender extends MailSender {
 				ccAdminAddres,
 				pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber() + ".pdf",
 						pdfDocumentBuilder.buildPdf(applicationForm)));
-		System.err.println("mimeMessagePreparator: " + mimeMessagePreparator);
 		javaMailSender.send(mimeMessagePreparator);
 
 	}

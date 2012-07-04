@@ -5,7 +5,6 @@ import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
@@ -19,17 +18,16 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 public class RefereeValidatorTest {
 
-	
 	private Referee referee;
 	private RefereeValidator refereeValidator;
 	private UserService userServiceMock;
 	private RegisteredUser currentUser;
-	
+
 	@Test
 	public void shouldSupportRefereeValidator() {
 		assertTrue(refereeValidator.supports(Referee.class));
 	}
-	
+
 	@Test
 	public void shouldRejectIfFirstNameIsEmpty() {
 		referee.setFirstname(null);
@@ -56,8 +54,7 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("addressLocation").getCode());
 	}
-	
-	
+
 	@Test
 	public void shouldRejectIfAddressCountryIsEmpty() {
 		referee.setAddressCountry(null);
@@ -66,7 +63,6 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("addressCountry").getCode());
 	}
-	
 
 	@Test
 	public void shouldRejectIfJobEmployeeIsEmpty() {
@@ -76,6 +72,7 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("jobEmployer").getCode());
 	}
+
 	@Test
 	public void shouldRejectIfJobTitleIsEmpty() {
 		referee.setJobTitle(null);
@@ -83,16 +80,23 @@ public class RefereeValidatorTest {
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("jobTitle").getCode());
-	}	
-		
+	}
+
 	@Test
 	public void shouldRejectIfEmailNotValidEmail() {
 		referee.setEmail("nonvalidemail");
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("nonvalidemail")).andReturn(null).anyTimes();
+		EasyMock.replay(userServiceMock);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "email");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 	}
+
+	
+
 	@Test
 	public void shouldRejectIfEmailSameAsCurrentUser() {
 		referee.setEmail("me@test.com");
@@ -101,6 +105,7 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.email.notyourself", mappingResult.getFieldError("email").getCode());
 	}
+
 	@Test
 	public void shouldRejectIfNoTelephone() {
 		referee.setPhoneNumber(null);
@@ -109,11 +114,11 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("phoneNumber").getCode());
 	}
-	
+
 	@Test
 	public void shouldRejectIfAddressTooLong() {
 		StringBuilder addressLoc = new StringBuilder();
-		for (int i = 0; i <=500; i++) {
+		for (int i = 0; i <= 500; i++) {
 			addressLoc.append("a");
 		}
 		referee.setAddressLocation(addressLoc.toString());
@@ -121,18 +126,18 @@ public class RefereeValidatorTest {
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
-	
+
 	@Before
-	public void setup(){
+	public void setup() {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		currentUser = new RegisteredUserBuilder().id(9).email("me@test.com").toUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).email("email@test.com").firstname("bob")
-				.lastname("smith").addressCountry(new Country()).addressLocation("london").jobEmployer("zuhlke").jobTitle("se")
-				.messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
-		
+				.lastname("smith").addressCountry(new Country()).addressLocation("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress")
+				.phoneNumber("hallihallo").toReferee();
+
 		refereeValidator = new RefereeValidator(userServiceMock);
 	}
-	
+
 }

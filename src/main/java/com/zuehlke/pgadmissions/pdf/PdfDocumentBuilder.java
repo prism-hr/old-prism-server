@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -58,9 +60,10 @@ public class PdfDocumentBuilder {
 	private final BaseColor grayColor = new BaseColor(220, 220, 220);
 
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
-	private HashMap<Integer, com.zuehlke.pgadmissions.domain.Document> bookmarkMap;
+	private HashMap<Integer, Object> bookmarkMap;
 	private int appendixCounter = 1;
 	private HeaderEvent headerEvent;
+	private int pageCounter = 0;
 
 	public byte[] buildPdf(ApplicationForm... applications) {
 		try {
@@ -69,8 +72,10 @@ public class PdfDocumentBuilder {
 			PdfWriter writer = PdfWriter.getInstance(document, baos);
 			document.open();
 			for (ApplicationForm applicationForm : applications) {
+		
 				buildDocument(applicationForm, document, writer);
 				document.newPage();
+			
 			}
 			document.close();
 			return baos.toByteArray();
@@ -80,8 +85,9 @@ public class PdfDocumentBuilder {
 	}
 
 	private void buildDocument(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
-		bookmarkMap = new HashMap<Integer, com.zuehlke.pgadmissions.domain.Document>();
+		bookmarkMap = new HashMap<Integer, Object>();
 		appendixCounter = 1;
+		
 		Chunk submittedDateHeader = null;
 		if (application.getSubmittedDate() != null) {
 			submittedDateHeader = new Chunk(new SimpleDateFormat("dd MMMM yyyy").format(application.getSubmittedDate()), smallerFont);
@@ -116,11 +122,12 @@ public class PdfDocumentBuilder {
 		addFundingSection(application, document, writer);
 
 		addSectionSeparators(document);
-		
-		if(SecurityContextHolder.getContext().getAuthentication() != null && ((RegisteredUser)SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)){
-			
+
+		if (SecurityContextHolder.getContext().getAuthentication() != null
+				&& ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)) {
+
 			addReferencesSection(application, document);
-			
+
 		}
 
 		addSectionSeparators(document);
@@ -135,11 +142,8 @@ public class PdfDocumentBuilder {
 
 		addSupportingDocuments(application, document, writer);
 
-	
-		
-	}
 
-	
+	}
 
 	private void addSectionSeparators(Document document) throws DocumentException {
 		document.add(new Paragraph(" "));
@@ -472,7 +476,7 @@ public class PdfDocumentBuilder {
 				if (qualification.isQualificationCompleted()) {
 					table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
 					bookmarkMap.put(appendixCounter++, qualification.getProofOfAward());
-					
+
 				} else {
 					table.addCell(newTableCell("Not Awarded", smallGrayFont));
 				}
@@ -580,10 +584,9 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell(simpleDateFormat.format(funding.getAwardDate()), smallFont));
 
 				table.addCell(newTableCell("Proof Of Award", smallBoldFont));
-				
+
 				table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
 				bookmarkMap.put(appendixCounter++, funding.getDocument());
-				
 
 				document.add(table);
 				document.add(new Paragraph(" "));
@@ -637,17 +640,17 @@ public class PdfDocumentBuilder {
 
 				table.addCell(newTableCell("Skype", smallBoldFont));
 				table.addCell(newTableCell(referee.getMessenger(), smallFont));
-				
+
 				RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-					if (!currentUser.isInRole(Authority.APPLICANT) && !currentUser.isRefereeOfApplicationForm(application)) {
-						table.addCell(newTableCell("Reference", smallBoldFont));
-						if (referee.getReference() != null) {
-							table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
-							bookmarkMap.put(appendixCounter++, referee.getReference().getDocuments().get(0));
-						} else {
-							table.addCell(newTableCell(null, smallFont));
-						}
+				if (!currentUser.isInRole(Authority.APPLICANT) && currentUser.hasAdminRightsOnApplication(application)) {
+					table.addCell(newTableCell("Reference", smallBoldFont));
+					if (referee.getReference() != null) {
+						table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
+						bookmarkMap.put(appendixCounter++, referee.getReference());
+					} else {
+						table.addCell(newTableCell(null, smallFont));
 					}
+				}
 				document.add(table);
 				document.add(new Paragraph(" "));
 			}
@@ -720,44 +723,80 @@ public class PdfDocumentBuilder {
 			IOException {
 
 		Set<Integer> keySet = bookmarkMap.keySet();
-		
+
 		for (Integer integer : keySet) {
 			document.newPage();
 			headerEvent.setAddHeaderAndFooter(true);
-			com.zuehlke.pgadmissions.domain.Document doc = bookmarkMap.get(integer);			
-			document.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
-			if(DocumentType.PERSONAL_STATEMENT == doc.getType()){
-				document.add(new Chunk(" - Personal Statement"));
-			}
-			else if(DocumentType.CV == doc.getType()){
-				document.add(new Chunk(" - CV"));
-			}
-			else if(DocumentType.SUPPORTING_FUNDING == doc.getType()){				
-				document.add(new Chunk(" - Funding proof of award"));
-			}
-			else if(DocumentType.PROOF_OF_AWARD == doc.getType()){
-				document.add(new Chunk(" - Qualification proof of award"));
-			}
-			else if(DocumentType.REFERENCE == doc.getType()){				
+			Object obj = bookmarkMap.get(integer);
+			if(obj instanceof com.zuehlke.pgadmissions.domain.Document){
+				com.zuehlke.pgadmissions.domain.Document doc = (com.zuehlke.pgadmissions.domain.Document) obj;
+				if (doc != null) {
+					document.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
+					if (DocumentType.PERSONAL_STATEMENT == doc.getType()) {
+						document.add(new Chunk(" - Personal Statement"));
+					} else if (DocumentType.CV == doc.getType()) {
+						document.add(new Chunk(" - CV"));
+					} else if (DocumentType.SUPPORTING_FUNDING == doc.getType()) {
+						document.add(new Chunk(" - Funding proof of award"));
+					} else if (DocumentType.PROOF_OF_AWARD == doc.getType()) {
+						document.add(new Chunk(" - Qualification proof of award"));
+					}
+					readPdf(document, doc, writer);
+				}
+			}else if( obj instanceof ReferenceComment){
+				ReferenceComment reference = (ReferenceComment) obj;
+				document.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
+				
 				document.add(new Chunk(" - Reference"));
+				document.add(new Paragraph(" "));
+				document.add(new Paragraph(" "));
+				document.add(new Paragraph(" "));
+				document.add(new Paragraph(" "));
+				PdfPTable table = new PdfPTable(1);
+				table.setWidthPercentage(100f);
+				table.addCell(newTableCell("REFERENCE", boldFont, BaseColor.GRAY));
+				document.add(table);
+				document.add(new Paragraph(" "));
+				table = new PdfPTable(2);
+				table.setWidthPercentage(100f);
+				table.addCell(newTableCell("Referee", smallBoldFont));
+				table.addCell(newTableCell(reference.getReferee().getFirstname() + " " + reference.getReferee().getLastname(), smallFont));
+				table.addCell(newTableCell("Comment", smallBoldFont));
+				table.addCell(newTableCell(reference.getComment(), smallFont));
+				table.addCell(newTableCell("Is the applicant suitable for postgraduate study at UCL?", smallBoldFont));
+				if(reference.getSuitableForUCL()!= null && reference.getSuitableForUCL()){
+					table.addCell(newTableCell("Yes", smallFont));
+				}else{
+					table.addCell(newTableCell("No", smallFont));
+				}
+				table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study programme?", smallBoldFont));
+				if(reference.getSuitableForProgramme()!= null && reference.getSuitableForProgramme()){
+					table.addCell(newTableCell("Yes", smallFont));
+				}else{
+					table.addCell(newTableCell("No", smallFont));
+				}
+				document.add(table);
+				for (com.zuehlke.pgadmissions.domain.Document refDocument : reference.getDocuments()) {
+					readPdf(document, refDocument, writer);
+				}
+				
 			}
-			readPdf(document, doc, writer);
+			
 		}
 
 	}
 
-
 	private void readPdf(Document document, com.zuehlke.pgadmissions.domain.Document doc, PdfWriter writer) throws IOException {
 		PdfReader pdfReader = new PdfReader(doc.getContent());
 		PdfContentByte cb = writer.getDirectContent();
-		
+
 		for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
 			document.newPage();
 			headerEvent.setAddHeaderAndFooter(false);
 			PdfImportedPage page = writer.getImportedPage(pdfReader, i);
 			cb.addTemplate(page, 0, 0);
 		}
-		
+
 	}
 
 	private class HeaderEvent extends PdfPageEventHelper {
@@ -766,7 +805,7 @@ public class PdfDocumentBuilder {
 		private final Chunk applicationHeader;
 		private final Chunk submittedDateHeader;
 		private boolean addHeaderAndFooter = true;
-
+		private boolean first  = true;
 		public HeaderEvent(Chunk programmeHeader, Chunk applicationHeader, Chunk submittedDateHeader) {
 
 			this.programmeHeader = programmeHeader;
@@ -776,20 +815,24 @@ public class PdfDocumentBuilder {
 
 		@Override
 		public void onEndPage(PdfWriter writer, Document document) {
+			if(first){
+				pageCounter = document.getPageNumber();
+				first = false;
+			}
 			try {
 				if (addHeaderAndFooter) {
-					addHeaderToPage(writer, document);			
+					addHeaderToPage(writer, document);
 					addFooterToPage(writer, document);
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
-			} 
+			}
 		}
 
 		private void addFooterToPage(PdfWriter writer, Document document) {
 			LineSeparator lineSeparator = new LineSeparator();
 			lineSeparator.drawLine(writer.getDirectContent(), document.left(), document.right(), document.bottom() - 15f);
-			Phrase footerPhrase = new Phrase("Page " + document.getPageNumber(), smallerFont);
+			Phrase footerPhrase = new Phrase("Page " + (1 + document.getPageNumber() - pageCounter), smallerFont);
 			ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, footerPhrase, document.left(), document.bottom() - 25f, 0);
 		}
 
@@ -831,15 +874,14 @@ public class PdfDocumentBuilder {
 			table.writeSelectedRows(0, -1, document.left(), document.top() + 55f, writer.getDirectContent());
 
 			Image image = Image.getInstance(this.getClass().getResource("/prism_logo.png"));
-			image.scalePercent(30f);
+			image.scalePercent(50f);
 
-			image.setAbsolutePosition(document.right() - image.getWidth() * 0.3f, document.top() + 10f);
+			image.setAbsolutePosition(document.right() - image.getWidth() * 0.5f, document.top() + 20f);
 			document.add(image);
 			LineSeparator lineSeparator = new LineSeparator();
 			lineSeparator.drawLine(writer.getDirectContent(), document.left(), document.right(), document.top() + 10f);
 		}
 
-	
 		public void setAddHeaderAndFooter(boolean addHeader) {
 			this.addHeaderAndFooter = addHeader;
 		}

@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -69,7 +71,7 @@ public class PrintController {
 			}
 
 		}
-		sendPDF(response, "", builder.buildPdf(applicationList.toArray(new ApplicationForm[] {})));
+		sendPDF(response,getTimestamp(), builder.buildPdf(applicationList.toArray(new ApplicationForm[] {})));
 
 	}
 
@@ -77,7 +79,7 @@ public class PrintController {
 		response.setHeader("Expires", "0");
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
 		response.setHeader("Pragma", "public");
-		response.setHeader("Content-Disposition", "inline; filename=\"application" + pdfFileNamePostFix + ".pdf\"");
+		response.setHeader("Content-Disposition", "inline; filename=\"UCL_PRISM_" + pdfFileNamePostFix + ".pdf\"");
 		response.setContentType("application/pdf");
 		response.setContentLength(pdf.length);
 		ServletOutputStream out = null;
@@ -97,5 +99,9 @@ public class PrintController {
 
 			}
 		}
+	}
+	
+	String getTimestamp(){
+		return new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
 	}
 }

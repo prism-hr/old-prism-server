@@ -81,7 +81,7 @@ public class PrintControllerTest {
 		assertEquals("0", response.getHeader("Expires"));
 		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
 		assertEquals("public", response.getHeader("Pragma"));
-		assertEquals("inline; filename=\"application23.pdf\"", response.getHeader("Content-Disposition"));
+		assertEquals("inline; filename=\"UCL_PRISM_23.pdf\"", response.getHeader("Content-Disposition"));
 		assertEquals("application/pdf", response.getContentType());
 		assertEquals(bytes.length, response.getContentLength());
 		
@@ -114,7 +114,7 @@ public class PrintControllerTest {
 		assertEquals("0", response.getHeader("Expires"));
 		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
 		assertEquals("public", response.getHeader("Pragma"));
-		assertEquals("inline; filename=\"application.pdf\"", response.getHeader("Content-Disposition"));
+		assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
 		assertEquals("application/pdf", response.getContentType());
 		assertEquals(bytes.length, response.getContentLength());
 
@@ -146,7 +146,7 @@ public class PrintControllerTest {
 		assertEquals("0", response.getHeader("Expires"));
 		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
 		assertEquals("public", response.getHeader("Pragma"));
-		assertEquals("inline; filename=\"application.pdf\"", response.getHeader("Content-Disposition"));
+		assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
 		assertEquals("application/pdf", response.getContentType());
 		assertEquals(bytes.length, response.getContentLength());
 	}
@@ -177,7 +177,7 @@ public class PrintControllerTest {
 		assertEquals("0", response.getHeader("Expires"));
 		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
 		assertEquals("public", response.getHeader("Pragma"));
-		assertEquals("inline; filename=\"application.pdf\"", response.getHeader("Content-Disposition"));
+		assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
 		assertEquals("application/pdf", response.getContentType());
 		assertEquals(bytes.length, response.getContentLength());
 	}
@@ -186,7 +186,14 @@ public class PrintControllerTest {
 		applicationSevice = EasyMock.createMock(ApplicationsService.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		controller = new PrintController(applicationSevice, pdfDocumentBuilderMock, userServiceMock);
+		controller = new PrintController(applicationSevice, pdfDocumentBuilderMock, userServiceMock){
+
+			@Override
+			String getTimestamp() {
+				return "timestamp";
+			}
+			
+		};
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

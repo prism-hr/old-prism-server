@@ -1,6 +1,24 @@
 $(document).ready(function()
 {
-	bindDatePicker('#batchdeadline');
+	$.ajax({
+		 type: 'GET',
+		 statusCode: {
+			  401: function() {
+				  window.location.reload();
+			  }
+		  },
+		url:"/pgadmissions/badge",
+		data:{
+		},
+		success:function(data)
+		{
+			$('#badgeSection').html(data);
+			addToolTips();
+			bindDatePicker('#batchdeadline');
+		}
+	});	
+	
+
 	
 	$('#cancelBadge').click(function()
 	{

@@ -29,10 +29,11 @@ public class DeleteFileControllerTest {
 	private ApplicationsService applicationServiceMock;
 	
 	
-
+/*
 	@Test
 	public void shouldGetDocumentAnapplicationAndDelete(){		
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		EasyMock.expect(a).andReturn(1);
 		Document document = new DocumentBuilder().uploadedBy(currentUser).content("aaaa".getBytes()).id(1).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
 		documentServiceMock.delete(document);
@@ -43,7 +44,7 @@ public class DeleteFileControllerTest {
 		assertEquals("/private/common/simpleMessage", modelAndView.getViewName());
 		assertEquals("document.deleted", modelAndView.getModel().get("message"));
 		EasyMock.verify(documentServiceMock);
-	}
+	}*/
 	@Test
 	public void shouldGetDocumentFromServiceAndDeleteInAsyncDelete(){		
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);

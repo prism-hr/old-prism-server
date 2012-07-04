@@ -32,8 +32,8 @@
 						<input type="hidden" class="file" id="document_PERSONAL_STATEMENT" value="${(encrypter.encrypt(applicationForm.personalStatement.id))!}"/>
 						<input type="hidden" name="MAX_FILE_SIZE" value="500" />
 						<a id="psLink" class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.personalStatement.id))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a>
-						<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-						<a data-desc="Change Personal Statement" class="button-delete button-hint">delete</a>
+						<#if applicationForm.personalStatement?? && !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+						<a id="deletePs" data-desc="Change Personal Statement" class="button-delete button-hint">delete</a>
 						</#if>
 					</span>
 					<span id="psDocumentProgress" class="progress" style="display: none;"></span>					
@@ -56,8 +56,8 @@
 					<span id="cvUploadedDocument">
 						<input type="hidden" class="file" id="document_CV" value="${(encrypter.encrypt(applicationForm.cv.id))!}"/>
 						<a id="cvLink" class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.cv.id))!}'/>">${(applicationForm.cv.fileName)!}</a>
-						<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-						<a  data-desc="Change CV" class="button-delete button-hint">delete</a>
+						<#if  applicationForm.cv??  !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+						<a id="deleteCv" data-desc="Change CV" class="button-delete button-hint">delete</a>
 						</#if>
 					</span>
 					<span id="cvDocumentProgress" class="progress" style="display: none;"></span>					

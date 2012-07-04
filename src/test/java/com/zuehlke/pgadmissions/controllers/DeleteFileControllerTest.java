@@ -9,8 +9,10 @@ import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -29,22 +31,33 @@ public class DeleteFileControllerTest {
 	private ApplicationsService applicationServiceMock;
 	
 	
-/*
+
 	@Test
-	public void shouldGetDocumentAnapplicationAndDelete(){		
-		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-		EasyMock.expect(a).andReturn(1);
-		Document document = new DocumentBuilder().uploadedBy(currentUser).content("aaaa".getBytes()).id(1).toDocument();
-		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
-		documentServiceMock.delete(document);
-		EasyMock.replay(documentServiceMock,encryptionHelperMock);
-		
-		ModelAndView modelAndView = controller.deletePersonalStatement("encryptedId", "applicationNumber");
-		
-		assertEquals("/private/common/simpleMessage", modelAndView.getViewName());
-		assertEquals("document.deleted", modelAndView.getModel().get("message"));
+	public void shouldGetDocumentAnapplicationAndDeletePersonalStatement(){			
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("applicationNumber")).andReturn(applicationForm);
+	
+		documentServiceMock.deletePersonalStatement(applicationForm);
+		EasyMock.replay( applicationServiceMock, documentServiceMock);
+	
+		assertEquals("/private/common/ajax_OK", controller.deletePersonalStatement( "applicationNumber"));	
 		EasyMock.verify(documentServiceMock);
-	}*/
+	}
+	
+
+	@Test
+	public void shouldGetDocumentAndapplicationAndDeleteCv(){			
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("applicationNumber")).andReturn(applicationForm);
+	
+		documentServiceMock.deleteCV(applicationForm);
+		EasyMock.replay( applicationServiceMock, documentServiceMock);
+	
+		assertEquals("/private/common/ajax_OK", controller.deleteCV( "applicationNumber"));	
+		EasyMock.verify(documentServiceMock);
+	}
 	@Test
 	public void shouldGetDocumentFromServiceAndDeleteInAsyncDelete(){		
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);

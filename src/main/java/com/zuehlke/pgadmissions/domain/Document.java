@@ -34,6 +34,7 @@ public class Document extends DomainObject<Integer> {
 	private Qualification qualification;
 
 	
+
 	@Column(name = "uploaded_time_stamp", insertable = false)
 	@Generated(GenerationTime.INSERT)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -122,6 +123,7 @@ public class Document extends DomainObject<Integer> {
 	public void setQualification(Qualification qualification) {
 		this.qualification = qualification;
 	}
+
 
 	
 }

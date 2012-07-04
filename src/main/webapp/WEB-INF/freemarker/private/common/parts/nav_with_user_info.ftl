@@ -13,7 +13,6 @@
 			<li <#if activeTab=="applications">class="current"</#if>><a href="<@spring.url '/applications'/>">My Applications </a></li>    
 			<#if user?? && (user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR'))>
 			<li <#if activeTab=="users">class="current"</#if>><a href="<@spring.url '/manageUsers/edit'/>">Manage Users</a></li>
-			<li <#if activeTab=="badge">class="current"</#if>><a href="<@spring.url '/badge'/>">Badge</a></li>
 			</#if>
 			<#if user?? && (user.isInRole('SUPERADMINISTRATOR'))>
 			<li  <#if activeTab=="config">class="current"</#if>><a href="<@spring.url '/configuration'/>">Configuration</a></li>

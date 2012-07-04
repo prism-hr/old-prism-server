@@ -24,6 +24,7 @@
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/configuration.js' />"></script> 
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge.js'/>"></script>
 	    
 	    
 	</head>
@@ -227,7 +228,20 @@
 
 											</div>
 										</form>
+										</div>
+								</section>
+										<section class="form-rows">
+									<h2>Badge</h2>
+									
+									<div>
+										<div class="section-info-bar">
+											Configure your 'apply now' badge. You embed this on external web pages to enable your programme to accept applications.
+										</div>
+										<form id = "badgeSection">
 										
+											
+										
+										</form>
 									</div>
 								</section>
 							

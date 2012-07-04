@@ -128,7 +128,12 @@ $(document).ready(function()
 			$('#reg-email').after('<span class="invalid">You must enter a valid email address.</span>');
 			errors = true;
 		}
-		if ($('#reg-firstname').val() == "" || $('#reg-lastname').val() == "")
+		if ($('#reg-firstname').val() == "")
+		{
+			$('#reg-firstname').after('<span class="invalid">You must make an entry.</span>');
+			errors = true;
+		}
+		if ( $('#reg-lastname').val() == "")
 		{
 			$('#reg-lastname').after('<span class="invalid">You must make an entry.</span>');
 			errors = true;

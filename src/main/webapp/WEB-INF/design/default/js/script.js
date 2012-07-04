@@ -286,7 +286,7 @@ function fixedTip($object, text)
 // ------------------------------------------------------------------------------
 // Set up a div.field container with a file INPUT field for AJAX uploading.
 // ------------------------------------------------------------------------------
-function watchUpload($field)
+function watchUpload($field, $deleteFunction)
 {
   var $container  = $field.parent('div.field');
   
@@ -294,7 +294,11 @@ function watchUpload($field)
   $container.on('click', '.button-delete', function()
   {
     var $hidden  = $container.find('input.file');
-		deleteUploadedFile($hidden);
+    	if(!$deleteFunction){
+    		deleteUploadedFile($hidden);
+    	}else{
+    		$deleteFunction();
+    	}
 		
 		$hidden.val(''); // clear field value.
 	  $container.removeClass('uploaded');
@@ -313,7 +317,11 @@ function watchUpload($field)
     var $hidden  = $container.find('input.file');
 		if (input.files[0].size < 10485760) // 10MB in bytes
     {
-			deleteUploadedFile($hidden);
+			if(!$deleteFunction){
+	    		deleteUploadedFile($hidden);
+	    	}else{
+	    		$deleteFunction();
+	    	}
 			$field.attr("readonly", "readonly");
 			$container.addClass('posting');
 			doUpload($(input));

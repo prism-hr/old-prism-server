@@ -46,4 +46,15 @@ public class DeleteFileController {
 
 
 	}
+	@RequestMapping(value="deletePersonalStatement", method = RequestMethod.POST)
+	public String deletePersonalStatement(@RequestParam("application") String applicationNumber) {
+		documentService.deletePersonalStatement(applicationsService.getApplicationByApplicationNumber(applicationNumber));
+		return "/private/common/ajax_OK";
+	}
+
+	@RequestMapping(value="deleteCV", method = RequestMethod.POST)
+	public String deleteCV(@RequestParam("application") String applicationNumber) {
+		documentService.deleteCV(applicationsService.getApplicationByApplicationNumber(applicationNumber));
+		return "/private/common/ajax_OK";
+	}
 }

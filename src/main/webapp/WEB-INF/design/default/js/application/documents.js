@@ -71,8 +71,8 @@ $(document).ready(function()
 	addToolTips();
 
   // Generic file upload solution...
-	watchUpload($('#cvDocument'));
-	watchUpload($('#psDocument'));
+	watchUpload($('#cvDocument'), cvDelete);
+	watchUpload($('#psDocument'), psDelete);
 
 });
 
@@ -144,10 +144,14 @@ function cvDelete()
 					  window.location.reload();
 				  }
 			  },
-			url:"/pgadmissions/delete/asyncdelete",
+			url:"/pgadmissions/delete/deleteCV",
 			data: {
-				documentId: $('#document_CV').val()
-			}				
+				application: $('#applicationId').val()
+			},
+			success: function(data){
+				$('#cvLink').remove();
+				$('#deleteCv').remove();
+			}
 		});
 	}
 }
@@ -196,10 +200,14 @@ function psDelete()
 					  window.location.reload();
 				  }
 			  },
-			url: "/pgadmissions/delete/asyncdelete",
+			url: "/pgadmissions/delete/deletePersonalStatement",
 			data: {
-				documentId: $('#document_PERSONAL_STATEMENT').val()
-			}				
+				application: $('#applicationId').val()
+			},
+			success: function(data){
+				$('#psLink').remove();
+				$('#deletePs').remove();
+			}
 		});
 	}
 }

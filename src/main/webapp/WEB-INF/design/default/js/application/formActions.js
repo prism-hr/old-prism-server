@@ -231,7 +231,7 @@ function loadProgrammeSection(clear){
 
 					
 					$("#studyOption").val("");
-					$("#startDate").val("");
+					$("#startDate").val("01 Oct 2012");
 					$("#referrer").val("");
 					$("#supervisorFirstname").val("");
 					$("#supervisorLastname").val("");

@@ -1,7 +1,8 @@
+<#import "/spring.ftl" as spring />
 <#list applications as application>
 <tr id="row_${application.applicationNumber}" name="applicationRow">
 	<td class="centre">
-		<input type="checkbox" name="appDownload" title="Select to download" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" />
+		<input type="checkbox" name="appDownload" title="<@spring.message 'myApps.toggle'/>" id="appDownload_${application.applicationNumber}" value="${application.applicationNumber}" />
 	</td>
 	<td class="applicant-name">
 		<#if !user.isInRole('APPLICANT')>

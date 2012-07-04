@@ -74,7 +74,7 @@
 							
 								<!-- Download button. -->
 								<#if (applications?size > 0)>
-								<a target="_blank" name="downloadAll" id="downloadAll" data-desc="Download selected">Download</a>
+								<a target="_blank" name="downloadAll" id="downloadAll" data-desc="<@spring.message 'myApps.downloadAll'/>">Download</a>
 								</#if>
 				
 								<!-- Search/filter box. -->
@@ -104,7 +104,7 @@
                 <thead>
                   <tr>
                     <th class="centre" scope="col">
-                      <input type="checkbox" name="select-all" data-desc="Select to download all" id="select-all" />
+                      <input type="checkbox" name="select-all" data-desc="<@spring.message 'myApps.toggleAll'/>" id="select-all" />
                       <input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" />
                       <input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" />
                       <input type="hidden" id="block-index" name="block-index" value="1" />

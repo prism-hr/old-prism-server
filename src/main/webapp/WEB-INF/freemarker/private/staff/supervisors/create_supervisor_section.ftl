@@ -5,7 +5,7 @@
 
 <div class="row">
 	<label class="plain-label">Supervisor First Name<em>*</em></label> 
-	<span class="hint" data-desc=""></span>
+	<span class="hint" data-desc="<@spring.message 'assignSupervisor.firstName'/>"></span>
 		<div class="field">
 			<input class="full" type="text" name="newSupervisorFirstName" id="newSupervisorFirstName" value="${(supervisor.firstName?html)!}"/>		
 			<@spring.bind "supervisor.firstName" /> 
@@ -15,7 +15,7 @@
 
 <div class="row">
 	<label class="plain-label">Supervisor Last Name<em>*</em></label>
-	<span class="hint" data-desc=""></span>
+	<span class="hint" data-desc="<@spring.message 'assignSupervisor.lastName'/>"></span>
 	<div class="field">
 		<input class="full" type="text" name="newSupervisorLastName" id="newSupervisorLastName" value="${(supervisor.lastName?html)!}"/>	
 		<@spring.bind "supervisor.lastName" /> 
@@ -26,7 +26,7 @@
 
 <div class="row">
 	<label class="plain-label">Email<em>*</em></label>
-	<span class="hint" data-desc=""></span>
+	<span class="hint" data-desc="<@spring.message 'assignSupervisor.email'/>"></span>
 	<div class="field">
 		<input class="full" type="text"  name="newSupervisorEmail" id="newSupervisorEmail" value="${(supervisor.email?html)!}"/>			      
 		<@spring.bind "supervisor.email" /> 

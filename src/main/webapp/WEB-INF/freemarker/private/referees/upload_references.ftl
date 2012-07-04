@@ -56,7 +56,7 @@
 											<div class="row-group">
 											<div class="row"> 
 												<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>
-												<span class="hint" data-desc=""></span>
+												<span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
 												<div class="field">		            				
 													<textarea name="comment" id="comment" class="max" rows="6" cols="80" >${(comment.comment?html)!}</textarea>
 													<@spring.bind "comment.comment" /> 
@@ -73,7 +73,7 @@
 											
 												<div class="row">
 													<span id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></span>
-													<span class="hint" data-desc=""></span>
+													<span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPG'/>"></span>
 													<div class="field">
 														<label><input type="radio" name="suitableForUCL" value="true" id="suitableRB_true"
 														<#if comment.isSuitableForUCLSet() && comment.suitableForUCL> checked="checked"</#if>
@@ -87,7 +87,7 @@
 												</div>
 											<div class="row row multi-line">
 												<span id="supervise-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
-												<span class="hint" data-desc=""></span>
+												<span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPGP'/>"></span>
 												<div class="field">
 													<label><input type="radio" name="suitableForProgramme" value="true" id="willingRB_true"
 													<#if comment.isSuitableForProgrammeSet() && comment.suitableForProgramme> checked="checked"</#if> 

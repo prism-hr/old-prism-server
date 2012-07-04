@@ -21,14 +21,17 @@
       <col style="width: 30px" />
       <col/>
       <col style="width: 30px" />
+     
       <col style="width: 30px" />
+    
     </colgroup>
   
     <thead>
       <tr>
         <th id="primary-header" colspan="2">Reference</th>
-        <th>&nbsp;</th>  
+        <th>&nbsp;</th>          
         <th id="last-col">&nbsp;</th>
+
       </tr>
     </thead>
 
@@ -49,8 +52,9 @@
 				<td>
           <#if existingReferee.declined || existingReferee.hasProvidedReference()>
 						<span class="button-responded" data-desc="Responded">Responded</span>
-          <#else>
-            <a name="deleteRefereeButton" data-desc="Delete" id="referee_${encExistingRefereeId}" class="button-delete button-hint">delete</a>
+          <#elseif applicationForm.isInState('UNSUBMITTED')>
+            <a name="deleteRefereeButton" data-desc="Delete" id="referee_${encExistingRefereeId}" class="button-delete button-hint">delete</a>        
+         
           </#if>
 				</td>
       </tr>    
@@ -362,14 +366,14 @@
 		<div class="row-group terms-box" >
  	 </#if>
     <div class="row">
-      <span class="terms-label<#if applicationForm.referees?size &lt; 3> grey-label</#if>">
+      <span class="terms-label<#if applicationForm.referees?size &gt; 3> grey-label</#if>">
         I understand that in accepting this declaration I am confirming
         that the information contained in this section is true and accurate. 
         I am aware that any subsequent offer of study may be retracted at any time
         if any of the information contained is found to be misleading or false.
       </span>
       <div class="terms-field">
-        <input type="checkbox" name="acceptTermsRDCB" id="acceptTermsRDCB"<#if applicationForm.referees?size &lt; 3> disabled="disabled"</#if> />
+        <input type="checkbox" name="acceptTermsRDCB" id="acceptTermsRDCB"<#if applicationForm.referees?size &gt; 3> disabled="disabled"</#if> />
       </div>
       <input type="hidden" name="acceptTermsRDValue" id="acceptTermsRDValue"/>
     </div>          

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -87,7 +86,7 @@ public class PdfDocumentBuilder {
 	private void buildDocument(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
 		bookmarkMap = new HashMap<Integer, Object>();
 		appendixCounter = 1;
-		
+		addCoverPage(application, document);
 		Chunk submittedDateHeader = null;
 		if (application.getSubmittedDate() != null) {
 			submittedDateHeader = new Chunk(new SimpleDateFormat("dd MMMM yyyy").format(application.getSubmittedDate()), smallerFont);
@@ -99,6 +98,8 @@ public class PdfDocumentBuilder {
 				submittedDateHeader);
 		writer.setPageEvent(headerEvent);
 
+
+		
 		addProgrammeSection(application, document);
 
 		addSectionSeparators(document);
@@ -143,6 +144,33 @@ public class PdfDocumentBuilder {
 		addSupportingDocuments(application, document, writer);
 
 
+	}
+
+	private void addCoverPage(ApplicationForm application, Document document) throws DocumentException {
+		document.newPage();
+		document.add(new Paragraph(" "));
+		document.add(new Paragraph(" "));
+
+		PdfPTable table = new PdfPTable(1);
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("APPLICATION", boldFont, BaseColor.GRAY));
+		document.add(table);
+		document.add(new Paragraph(" "));
+		table = new PdfPTable(2);
+		table.setWidthPercentage(100f);
+		table.addCell(newTableCell("Applicant", smallBoldFont));
+		table.addCell(newTableCell(application.getApplicant().getFirstName() + " " + application.getApplicant().getLastName(), smallFont));
+		table.addCell(newTableCell("Programme", smallBoldFont));
+		table.addCell(newTableCell(application.getProgram().getTitle() , smallFont));
+		table.addCell(newTableCell("Application Number", smallBoldFont));
+		table.addCell(newTableCell(application.getApplicationNumber(), smallFont));
+		if (application.getSubmittedDate() != null) {
+			table.addCell(newTableCell("Submission date", smallBoldFont));
+			table.addCell(newTableCell(new SimpleDateFormat("dd MMMM yyyy").format(application.getSubmittedDate()), smallFont));
+		} 
+		
+		document.add(table);
+		document.newPage();
 	}
 
 	private void addSectionSeparators(Document document) throws DocumentException {

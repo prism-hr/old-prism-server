@@ -9,7 +9,7 @@
 </#if> 
 <div class="row">
 	<span class="plain-label">Assign Supervisors<em>*</em></span>
-	<span class="hint" data-desc=""></span>
+	<span class="hint" data-desc="<@spring.message 'assignSupervisor.defaultSupervisors'/>"></span>
 	<div class="field">
 		<select id="programSupervisors" class="list-select-from" class="max" multiple="multiple" size="${avaliableOptionsSize}">
 			<optgroup id="default" label="Default supervisors">

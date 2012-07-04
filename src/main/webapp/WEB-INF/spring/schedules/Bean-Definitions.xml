@@ -6,7 +6,7 @@
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
-		<constructor-arg index="2" ref="mailRegistryUserDAO" />
+		<constructor-arg index="2" ref="mailPesronService" />
 		<constructor-arg index="3" ref="mailUserService" />
 		<constructor-arg index="4" ref="messageSource" />
 		<constructor-arg index="5" ref="mailPdfDocumentBuilder" />
@@ -24,6 +24,11 @@
 	<bean id="mailRegistryUserDAO" class="com.zuehlke.pgadmissions.dao.PersonDAO"
 		autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	
+	<bean id="mailPesronService" class="com.zuehlke.pgadmissions.services.PersonService"
+		autowire-candidate="false">
+		<constructor-arg ref="mailRegistryUserDAO" />
 	</bean>
 	<bean id="mailServiceForTimers" class="com.zuehlke.pgadmissions.services.MailService"
 		autowire-candidate="false">

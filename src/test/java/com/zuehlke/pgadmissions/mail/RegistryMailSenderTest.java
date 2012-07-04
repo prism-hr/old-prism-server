@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.services.PersonService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -40,7 +41,7 @@ public class RegistryMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private RegistryMailSender registryMailSender;
-	private PersonDAO registryUserDAOMock;
+	private PersonService personServiceMock;
 	private UserService userServiceMock;
 	private MessageSource msgSourceMock;
 	private PdfDocumentBuilder pdfDocumentBuilderMock;
@@ -80,7 +81,7 @@ public class RegistryMailSenderTest {
 	public void shoulSendMailToRegistryContacts() throws MalformedURLException, DocumentException, IOException {
 		final Map<String, Object> model = new HashMap<String, Object>();
 
-		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, registryUserDAOMock, userServiceMock, msgSourceMock,pdfDocumentBuilderMock, pdfAttachmentInputSourceFactoryMock) {
+		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, personServiceMock, userServiceMock, msgSourceMock,pdfDocumentBuilderMock, pdfAttachmentInputSourceFactoryMock) {
 
 			@Override
 			public Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser currentAdminUser, List<Person> registryContacts) {
@@ -91,8 +92,8 @@ public class RegistryMailSenderTest {
 
 		Person registryUser1 = new PersonBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").toPerson();
 		Person registryUser2 = new PersonBuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").toPerson();
-		EasyMock.expect(registryUserDAOMock.getAllPersons()).andReturn(Arrays.asList(registryUser1, registryUser2));
-		EasyMock.replay(registryUserDAOMock);
+		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(Arrays.asList(registryUser1, registryUser2));
+		EasyMock.replay(personServiceMock);
 
 		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().adminRequestedRegistry(currentAdminUser).id(1).program(new ProgramBuilder().title("program name").toProgram()).applicationNumber("application number")
@@ -130,11 +131,11 @@ public class RegistryMailSenderTest {
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		registryUserDAOMock = EasyMock.createMock(PersonDAO.class);
+		personServiceMock = EasyMock.createMock(PersonService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
 		pdfAttachmentInputSourceFactoryMock = EasyMock.createMock(PdfAttachmentInputSourceFactory.class);
-		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, registryUserDAOMock, userServiceMock, msgSourceMock,pdfDocumentBuilderMock, pdfAttachmentInputSourceFactoryMock);
+		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, personServiceMock, userServiceMock, msgSourceMock,pdfDocumentBuilderMock, pdfAttachmentInputSourceFactoryMock);
 	}
 }

@@ -21,14 +21,14 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.services.PersonService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Component
 public class RegistryMailSender extends MailSender {
 
-	private final PersonDAO registryUserDAO;
-	private final UserService userService;
+	private final PersonService personService;
 	private final PdfDocumentBuilder pdfDocumentBuilder;
 	private final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory;
 
@@ -37,18 +37,17 @@ public class RegistryMailSender extends MailSender {
 	}
 
 	@Autowired
-	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, PersonDAO registryUserDAO,
+	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, PersonService personService,
 			UserService userService, MessageSource msgSource, PdfDocumentBuilder pdfDocumentBuilder,
 			PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
-		this.registryUserDAO = registryUserDAO;
-		this.userService = userService;
+		this.personService = personService;
 		this.pdfDocumentBuilder = pdfDocumentBuilder;
 		this.pdfAttachmentInputSourceFactory = pdfAttachmentInputSourceFactory;
 	}
 
 	public void sendApplicationToRegistryContacts(ApplicationForm applicationForm) throws MalformedURLException, DocumentException, IOException {
-		List<Person> registryContacts = registryUserDAO.getAllPersons();
+		List<Person> registryContacts = personService.getAllRegistryUsers();
 		InternetAddress[] toAddresses = new InternetAddress[registryContacts.size()];
 		int counter = 0;
 		for (Person registryUser : registryContacts) {

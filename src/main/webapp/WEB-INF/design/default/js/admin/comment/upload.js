@@ -68,11 +68,12 @@ function commentDocumentUpload()
 			data:{type:'COMMENT'},
 			success: function(data)
 			{
-				var $invalid = $(data).children('span.invalid');
-				if ($invalid.length > 0)
+				var invalid = data.indexOf('<span class="invalid');
+				if (invalid >= 0)
 				{
 					// Display error message.
-					$('#uploadFields').append($invalid);
+					var msg = data.substr(invalid);
+					$('#uploadFields').append(msg);
 				}
 				else
 				{

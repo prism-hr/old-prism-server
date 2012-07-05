@@ -18,6 +18,7 @@ $(document).ready(function()
 		}
 	});	
 	
+	$('#html').autosize();
 
 	
 	$('#cancelBadge').click(function()

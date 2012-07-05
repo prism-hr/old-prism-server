@@ -5,18 +5,21 @@ $(document).ready(function(){
 		window.location.href = "/pgadmissions/reviewFeedback?applicationId=" +  $('#applicationId').val();
 	});	
 	
-	$('#submitReviewFeedback').click(function() {
-						
+	$('#submitReviewFeedback').click(function()
+	{
+		var message = 'Please confirm you want to submit this review.';
+		var onOk    = function()
+		{
 			$('#reviewForm').append("<input type='hidden' name='type' value='REVIEW'/>");
-			
-			
-			if ($('#decline:checked').length > 0) {
+			if ($('#decline:checked').length > 0)
+			{
 				$('#reviewForm').append("<input type='hidden' name='decline' value='true'/>");
-				
 			}
-
-			
 			$('#reviewForm').submit();
+		};
+		var onCancel = function(){};
+		
+		modalPrompt(message, onOk, onCancel);
 	});	
 	
 	$('#decline').click(function()

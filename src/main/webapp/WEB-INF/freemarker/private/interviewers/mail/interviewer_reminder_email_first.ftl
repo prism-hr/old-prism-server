@@ -26,11 +26,25 @@
 							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
 						</font>
 			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/interviewFeedback?applicationId=${application.applicationNumber}">Provide feedback</a>
-			      		</font>
-			      	</p>
+			      	
+				    <br>  	
+					<p>
+		              <!-- Button -->
+		              <table border="0" cellpadding="0" cellspacing="0">
+		              	<tr>
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
+		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
+		                    <font face="Arial, Helvetica, sans-serif" size="2">
+		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+		                      	href="${host}/pgadmissions/interviewFeedback?applicationId=${application.applicationNumber}"><b>Provide Feedback</b></a>
+		                    </font>
+		                  </td>
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
+		                </tr>
+		              </table>
+					</p>
+					</br>
+			      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
 			      	</p>

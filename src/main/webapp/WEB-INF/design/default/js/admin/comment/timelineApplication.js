@@ -87,11 +87,6 @@ $(document).ready(function()
 								 if (strValue.match("Not Provided"))
 								 {
 									 $(this).toggleClass('grey-label');
-									 var labelValue = $(this).prev().text();
-									 if (labelValue.match("Additional Information"))
-									 {
-										 $(this).prev().css("font-weight","bold");
-									 }
 								 }
 							});
 							addToolTips();

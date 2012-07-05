@@ -136,9 +136,8 @@ section.form-rows label.label { font-weight: bold; }
 	padding-bottom: 10px;
 }
 
-.grey-label{
-	color: #AAAAAA;
-}
+.grey-label { color: #AAA; }
+.grey-label em { color: #AAA !important; }
 
 
 section.form-rows .field .max { width: 330px; }

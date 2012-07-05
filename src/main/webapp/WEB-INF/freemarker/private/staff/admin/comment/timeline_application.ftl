@@ -11,5 +11,7 @@
 		<li><a href="#application" id="applicationBtn">Application</a></li>
 	</ul>
 	<div class="tab-page" id="timeline"></div>
-	<div class="tab-page" id="application"></div>
+	<div class="tab-page" id="application">
+		<div class="ajax"></div>
+	</div>
 </div>

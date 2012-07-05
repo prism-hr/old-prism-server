@@ -12,7 +12,7 @@ $(document).ready(function()
 		$(this).parent('li').addClass('current');
 		
 		$('#application').hide();
-		$('#timeline').show();
+		$('#timeline').append('<div class="ajax" />').show();
 		
 		$.ajax({
 			 type: 'GET',

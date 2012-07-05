@@ -106,31 +106,30 @@ public class TimelineServiceTest {
 		assertEquals(userOne, timelinePhaseFour.getAuthor());
 
 	}
-	
+
 	@Test
-	public void shouldAddCreatedPhaseIfUserIsApplicant() throws ParseException{
+	public void shouldAddCreatedPhaseIfUserIsApplicant() throws ParseException {
 		Date creationDate = format.parse("01 03 2012 14:02:03");
 		Date submissionDate = format.parse("01 04 2012 14:02:03");
-		
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();		
-		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1).toEvent();
 
+		RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();
+		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1)
+				.toEvent();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).appDate(creationDate).applicant(currentUser).toApplicationForm();
 		applicationForm.getEvents().clear();
-		applicationForm.getEvents().addAll(Arrays.asList( validationPhaseEnteredEvent));
+		applicationForm.getEvents().addAll(Arrays.asList(validationPhaseEnteredEvent));
 
 		List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
 		assertEquals(2, objects.size());
 		TimelinePhase timelinePhaseTwo = (TimelinePhase) objects.get(0);
 		assertEquals(ApplicationFormStatus.VALIDATION, timelinePhaseTwo.getStatus());
-		
+
 		TimelinePhase timelinePhaseOne = (TimelinePhase) objects.get(1);
 		assertEquals(creationDate, timelinePhaseOne.getEventDate());
-		assertEquals(currentUser, timelinePhaseOne.getAuthor());		
+		assertEquals(currentUser, timelinePhaseOne.getAuthor());
 		assertEquals(ApplicationFormStatus.UNSUBMITTED, timelinePhaseOne.getStatus());
-				
-	
+
 	}
 
 	@Test
@@ -139,20 +138,21 @@ public class TimelineServiceTest {
 		Date validatedDate = format.parse("03 04 2012 09:14:12");
 		Date referenceDate = format.parse("03 04 2012 11:00:45");
 		Date commentDate = format.parse("03 04 2012 15:14:12");
-		
+
 		Event reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2)
 				.toReviewStateChangeEvent();
 
 		Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).toReferee()).id(4).toEvent();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(reviewPhaseEnteredEvent, referenceEvent).comments(new CommentBuilder().date(commentDate).toComment()).toApplicationForm();
+		Comment comment = new CommentBuilder().date(commentDate).toComment();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(reviewPhaseEnteredEvent, referenceEvent).comments(comment)
+				.toApplicationForm();
 
 		List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
 		assertEquals(2, objects.size());
 
-		assertTrue(objects.get(0) instanceof TimelinePhase);
-		assertTrue(objects.get(1) instanceof TimelineReference);
-		
+		assertTrue(objects.get(1) instanceof TimelinePhase);
+		assertTrue(objects.get(0) instanceof TimelineReference);
 
 	}
 
@@ -237,7 +237,7 @@ public class TimelineServiceTest {
 		Date commentDateThree = format.parse("03 04 2012 17:01:41");
 		Comment commentThree = new CommentBuilder().date(commentDateThree).id(5).toComment();
 
-		//reference comments should be ignored
+		// reference comments should be ignored
 		Date commentDateFour = format.parse("03 04 2012 16:00:00");
 		Comment referenceComment = new ReferenceCommentBuilder().date(commentDateFour).id(5).toReferenceComment();
 
@@ -265,37 +265,39 @@ public class TimelineServiceTest {
 		assertEquals(commentOne, iterator.next());
 
 	}
+
 	@Test
-	public void shouldSetRejectedByApproverTrueIfRejectUserIsApproverInProgram(){
+	public void shouldSetRejectedByApproverTrueIfRejectUserIsApproverInProgram() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).toApplicationForm();
 		EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
 		EasyMock.replay(userMock);
-		
-		Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).toEvent();		
+
+		Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).toEvent();
 		applicationForm.getEvents().add(event);
 
 		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
 		TimelinePhase phase = (TimelinePhase) phases.get(0);
-		assertTrue(phase.isRejectedByApprover());		
+		assertTrue(phase.isRejectedByApprover());
 	}
-	
+
 	@Test
-	public void shouldSetRejectedByApproverFalseIfRejectUserIsNOTApproverInProgram(){
+	public void shouldSetRejectedByApproverFalseIfRejectUserIsNOTApproverInProgram() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).toApplicationForm();
 		EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
 		EasyMock.replay(userMock);
-		
-		Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).toEvent();		
+
+		Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).toEvent();
 		applicationForm.getEvents().add(event);
 
 		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
 		TimelinePhase phase = (TimelinePhase) phases.get(0);
-		assertFalse(phase.isRejectedByApprover());		
+		assertFalse(phase.isRejectedByApprover());
 	}
+
 	@Before
 	public void setup() {
 		format = new SimpleDateFormat("dd MM yyyy HH:mm:ss");

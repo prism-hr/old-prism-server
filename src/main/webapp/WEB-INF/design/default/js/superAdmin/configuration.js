@@ -114,13 +114,23 @@ $(document).ready(function()
 	{
 		var $row = $(this).closest('tr');
 		$row.remove();
+		updateRegistryForm();
 	});
 	
 	/* Add button. */
 	$('#registryUserAdd').click(function()
 	{
+		
 		var errors = false;
 		$('#registryUsersForm span.invalid').remove();
+		
+		// Allow a maximum of three users.
+		var user_count = $('#registryUsers .scroll tr').length;
+		if (user_count >= 3)
+		{
+			$('#reg-email').after('<span class="invalid">Only three registry users can be specified.</span>');
+			return;
+		}
 		
 		// Validation on any entered details.
 		if (!validateEmail($('#reg-email').val()))
@@ -154,6 +164,7 @@ $(document).ready(function()
 				+ '</td>'
 				+ '</tr>');
 			$('#reg-firstname, #reg-lastname, #reg-email').val('');
+			updateRegistryForm();
 		}
 	});
 	
@@ -195,12 +206,30 @@ $(document).ready(function()
 			complete: function()
 			{
 				$('#registryUsersForm div.ajax').remove();
+				updateRegistryForm();
 			}
 		});
 
 	});
 });
 
+
+function updateRegistryForm()
+{
+	var user_count = $('#registryUsers .scroll tr').length;
+	if (user_count >= 3)
+	{
+		$('#reg-firstname').attr('disabled', 'disabled');
+		$('#reg-lastname').attr('disabled', 'disabled');
+		$('#reg-email').attr('disabled', 'disabled');
+	}
+	else
+	{
+		$('#reg-firstname').removeAttr('disabled');
+		$('#reg-lastname').removeAttr('disabled');
+		$('#reg-email').removeAttr('disabled');
+	}
+}
 
 function validateReminderInterval()
 {

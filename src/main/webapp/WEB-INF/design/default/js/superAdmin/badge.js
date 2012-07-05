@@ -18,9 +18,6 @@ $(document).ready(function()
 		}
 	});	
 	
-	$('#html').autosize();
-
-	
 	$('#cancelBadge').click(function()
 	{
 		$('#programme').val('');
@@ -32,12 +29,6 @@ $(document).ready(function()
 	});
 
 	$(document).on('change', '#programme, #project, #programhome, #batchdeadline', updateBadge);	
-/*
- 	$('#programme').change(updateBadge);
- 	$('#project').change(updateBadge);
- 	$('#programhome').change(updateBadge);
- 	$('#batchdeadline').change(updateBadge);
-*/ 	
 });
 	
 function updateBadge()
@@ -59,8 +50,7 @@ function updateBadge()
 		},
 		success:function(data)
 		{
-			$('#html').val(data);
-			addToolTips();
+			$('#html').val(data).autosize();
 		}
 	});	
 	/*

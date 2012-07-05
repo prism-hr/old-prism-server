@@ -16,10 +16,9 @@ $(document).ready(function(){
 	});
 
 	
-	$('#personalDetailsClearButton').click(function(){
-		
+	$('#personalDetailsClearButton').click(function()
+	{
 		loadPersonalDetails(true);
-		
 	});
 
 	// -------------------------------------------------------------------------------
@@ -73,7 +72,7 @@ $(document).ready(function(){
 				'	<div class="nationality-item">'+
 				'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='candidateNationalities' value='" +$('#candidateNationalityCountry option:selected').val()+ "'/>" +
-	  		'		<a class="button-delete" data-desc="Delete">Delete</a><br/>'+
+	  		'		<button class="button-delete" data-desc="Delete">Delete</button><br/>'+
 	  		'	</div>';
 				$('#my-nationality-div').append(html);
 				$('#nationality-em').remove();
@@ -110,7 +109,7 @@ $(document).ready(function(){
 				'	<div class="nationality-item">'+
 				'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='maternalGuardianNationalities' value='" +$('#maternalNationalityCountry option:selected').val()+ "'/>" +
-	  		'		<a class="button-delete" data-desc="Delete">Delete</a><br/>'+
+	  		'		<button class="button-delete" data-desc="Delete">Delete</button><br/>'+
 	  		'	</div>';
 				$('#maternal-nationality-div').append(html);
 				addToolTips();
@@ -144,7 +143,7 @@ $(document).ready(function(){
 				'	<div class="nationality-item">'+
 				'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='paternalGuardianNationalities' value='" +$('#paternalNationalityCountry option:selected').val()+ "'/>" +
-	  		'		<a class="button-delete" data-desc="Delete">Delete</a><br/>'+
+	  		'		<button class="button-delete" data-desc="Delete">Delete</button><br/>'+
 	  		'	</div>';
 				$('#paternal-nationality-div').append(html);
 				addToolTips();
@@ -157,7 +156,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	// Remove a nationality (all sections).
 	// -------------------------------------------------------------------------------
-	$(document).on('click', '.nationality-item a.button-delete', function()
+	$(document).on('click', '.nationality-item button.button-delete', function()
 	{
 		$(this).parent().remove();
 		return false;
@@ -184,7 +183,6 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#personalDetailsSaveButton').on("click", function()
 	{	
-	
 		$("span[name='nonAcceptedPED']").html('');
 
 		// Attempt saving of "dirty" nationalities.
@@ -193,8 +191,6 @@ $(document).ready(function(){
 		$('#addPaternalNationalityButton').trigger('click');
 		
 		postPersonalDetailsData('close');
-	
-
 	});
 	
 
@@ -245,37 +241,38 @@ $(document).ready(function(){
 });
 
 
-function postPersonalDetailsData(message){
+function postPersonalDetailsData(message)
+{
 
 	//candidate nationalities
-	if( $('#candidateNationalityCountry option:selected').val()!= ''){
+	if ($('#candidateNationalityCountry option:selected').val()!= '')
+	{
 		var html = 	"<span><input type='hidden' name='candidateNationalities' value='" +$('#candidateNationalityCountry option:selected').val() + "'/>" + '</span>';
-			
-		
 		$('#existingCandidateNationalities').append(html);
 	}
 	
 
 	//maternal nationalities
-	if( $('#maternalNationalityCountry option:selected').val()!= ''){
+	if ($('#maternalNationalityCountry option:selected').val()!= '')
+	{
 		var html = 	"<span><input type='hidden' name='maternalGuardianNationalities' value='"  +$('#maternalNationalityCountry option:selected').val() + "'/></span>";
-		
 		$('#existingMaternalNationalities').append(html);
 	}
 	
 	//paternal nationalities
-	if( $('#paternalNationalityCountry option:selected').val()!= ''){
-		
+	if ($('#paternalNationalityCountry option:selected').val()!= '')
+	{
 		var html = 	"<span><input type='hidden' name='paternalGuardianNationalities' value='{" +$('#paternalNationalityCountry option:selected').val() + "'/></span>";
-		
 		$('#existingPaternalNationalities').append(html);
 	}
 	
 	var acceptedTheTerms;
-	if ($("#acceptTermsPEDValue").val() == 'NO'){
+	if ($("#acceptTermsPEDValue").val() == 'NO')
+	{
 		acceptedTheTerms = false;
 	}
-	else{
+	else
+	{
 		acceptedTheTerms = true;
 	}
 	//general post data
@@ -301,17 +298,20 @@ function postPersonalDetailsData(message){
 		};
 	
 
-	if ($('input:radio[name=englishFirstLanguage]:checked').length > 0) {
+	if ($('input:radio[name=englishFirstLanguage]:checked').length > 0)
+	{
 		postData.englishFirstLanguage = $('input:radio[name=englishFirstLanguage]:checked').val();
 	}
 	
 
-	if ($('input:radio[name=requiresVisa]:checked').length > 0 ) {
+	if ($('input:radio[name=requiresVisa]:checked').length > 0 )
+	{
 		postData.requiresVisa = $('input:radio[name=requiresVisa]:checked').val();
 	}
 	
-	var gender =  $("input[name='genderRadio']:checked").val();
-	if(gender){
+	var gender = $("input[name='genderRadio']:checked").val();
+	if (gender)
+	{
 		postData.gender = gender;
 	}
 	
@@ -321,33 +321,34 @@ function postPersonalDetailsData(message){
 	$.ajax({ 
 		type: 'POST',
 		 statusCode: {
-			  401: function() {
-				  window.location.reload();
-			  }
-		  },
-			url:"/pgadmissions/update/editPersonalDetails" ,
-			data:$.param(postData) + 
-			"&" + $('input[name="candidateNationalities"]').serialize()+
-			"&" + $('input[name="maternalGuardianNationalities"]').serialize()+
-			"&" + $('input[name="paternalGuardianNationalities"]').serialize(),
-			
-			 success: function(data)
-			 {
-			    $('#personalDetailsSection').html(data);
-				
-
-					if (message == 'close')
-					{
-						// Close the section only if there are no errors.
-						var errorCount = $('#personalDetailsSection .invalid:visible').length  ;
-						if (errorCount == 0)
-						{
-							$('#personalDetails-H2').trigger('click');
-						}else{
-							markSectionError('#personalDetailsSection');
-						}
-					}
-			  },
+			401: function() {
+				window.location.reload();
+			}
+		},
+		url:"/pgadmissions/update/editPersonalDetails" ,
+		data:$.param(postData) + 
+		"&" + $('input[name="candidateNationalities"]').serialize()+
+		"&" + $('input[name="maternalGuardianNationalities"]').serialize()+
+		"&" + $('input[name="paternalGuardianNationalities"]').serialize(),
+		
+		success: function(data)
+		{
+			$('#personalDetailsSection').html(data);
+		
+			if (message == 'close')
+			{
+				// Close the section only if there are no errors.
+				var errorCount = $('#personalDetailsSection .invalid:visible').length;
+				if (errorCount == 0)
+				{
+					$('#personalDetails-H2').trigger('click');
+				}
+				else
+				{
+					markSectionError('#personalDetailsSection');
+				}
+			}
+		},
     complete: function()
     {
       $('#personalDetailsSection div.ajax').remove();

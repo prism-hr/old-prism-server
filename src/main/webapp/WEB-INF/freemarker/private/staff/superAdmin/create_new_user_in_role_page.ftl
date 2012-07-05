@@ -146,10 +146,6 @@
 									
 								</div><!-- .row-group -->
 				
-								<div class="buttons">
-									<button type="submit" class="blue">Submit</button>
-								</div>
-									
 							</div>
 						</section>
 						

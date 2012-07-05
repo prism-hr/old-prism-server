@@ -60,7 +60,7 @@ public class UserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getUsersInRole(Role role) {
-		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.eq("id", role.getId())).list();
+		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.eq("id", role.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 
 	}
 

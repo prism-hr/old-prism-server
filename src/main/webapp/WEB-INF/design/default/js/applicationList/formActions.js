@@ -134,8 +134,8 @@ $(document).ready(function()
 	{
 		var length = $('#searchTerm').val().length;
 		var column = $('#searchCategory').val();
-		$('#search-go').toggleClass('disabled', length < 3 && column == '');
-		$('#search-reset').toggleClass('disabled', length > 0 && column != '');
+		$('#search-go').toggleClass('disabled', length < 3 || column == '');
+		$('#search-reset').toggleClass('disabled', length > 0 || column != '');
 	});
 	
 

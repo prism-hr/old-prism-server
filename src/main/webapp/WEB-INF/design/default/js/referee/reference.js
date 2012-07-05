@@ -18,16 +18,21 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('#declineReference').click(function(){
-		if(confirm("Decline to at as a referee. Are you sure?")){
-			$('#declineForm').submit();
-		}
+	$('#declineReference').click(function()
+	{
+		var message = "Decline to at as a referee. Are you sure?";
+		var onOkay  = function() { $('#declineForm').submit(); };
+		
+		modalPrompt(message, onOk, onCancel);
 	});
 	
 });
-function referenceDelete(){
-	
-	if($('#document_REFERENCE') && $('#document_REFERENCE').val() && $('#document_REFERENCE').val() != ''){
+
+
+function referenceDelete()
+{
+	if ($('#document_REFERENCE') && $('#document_REFERENCE').val() && $('#document_REFERENCE').val() != '')
+	{
 		$.ajax({
 			type: 'POST',
 			 statusCode: {

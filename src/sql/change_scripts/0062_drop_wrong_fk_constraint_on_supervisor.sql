@@ -1,0 +1,1 @@
+ALTER TABLE SUPERVISOR DROP COLUMN personal_detail_id, DROP FOREIGN KEY application_form_personal_detail_supervisor_fk, ADD COLUMN programme_detail_id INTEGER UNSIGNED, ADD CONSTRAINT application_form_programme_detail_supervisor_fk FOREIGN KEY (programme_detail_id) REFERENCES APPLICATION_FORM_PROGRAMME_DETAIL(id);

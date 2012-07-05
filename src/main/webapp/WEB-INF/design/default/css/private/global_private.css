@@ -121,6 +121,7 @@ button.red, a.button.red {
 	background: #E64E56;
 	background: -moz-linear-gradient(center top , #E64E56 0%, #E64E56 50%, #CC2C17 51%, #CC2C17 100%) repeat scroll 0 0 transparent;
 }
+button.disabled { cursor: default; opacity: 0.5; }
 
 button span { background: url(../../images/bg_button_icon.png) no-repeat; display: inline-block; height: 10px; margin-top: -2px; overflow: hidden; text-indent: 999px; vertical-align: middle; width: 10px; }
 button.plus span { background-position: 0 -10px; }

@@ -22,6 +22,7 @@ $(document).ready(function(){
 	{
 		var message = "Decline to at as a referee. Are you sure?";
 		var onOk    = function() { $('#declineForm').submit(); };
+		var onCancel = function() { };
 		
 		modalPrompt(message, onOk, onCancel);
 	});

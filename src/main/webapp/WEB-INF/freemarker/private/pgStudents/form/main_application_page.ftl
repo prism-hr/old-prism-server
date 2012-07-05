@@ -218,6 +218,8 @@
           <section id="additionalInformationSection" class="folding form-rows lightblue" <#if additionalInformationError> error</#if>>
           </section>
 
+          <hr />
+          
           <#if applicationForm.isInState('UNSUBMITTED')>
           <!-- Terms -->
           <section id="acceptTermsSection" class="folding form-rows lightgrey">

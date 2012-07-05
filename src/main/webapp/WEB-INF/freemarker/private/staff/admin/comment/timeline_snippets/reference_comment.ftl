@@ -11,7 +11,7 @@
 				<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 			</div>	            
 <#if timelineObject.referee.declined>
-			<p><em>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee<em></p>
+			<p><em>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee</em></p>
 <#else>  	          
 			<p><em>${(timelineObject.referee.reference.comment?html)!}</em></p>
 	<#if timelineObject.referee.reference.documents?? && timelineObject.referee.reference.documents?size &gt; 0>

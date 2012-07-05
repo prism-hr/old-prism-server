@@ -1,15 +1,17 @@
 <#assign role = "referee"/>
-<#assign comment = timelineObject.referee.reference/>    
+<#if !timelineObject.referee.declined>
+	<#assign comment = timelineObject.referee.reference/>
+</#if>    
 <ul>            
 	<li>                          
 		<div class="box">
 			<div class="title">
 				<span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
 				<span class="name">${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
-				<span class="datetime">${timelineObject.referee.reference.date?string('dd MMM yy')} at ${timelineObject.referee.reference.date?string('HH:mm')}</span>
+				<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 			</div>	            
 <#if timelineObject.referee.declined>
-			<p><em>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee<em></p>
+			<p><em>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee</em></p>
 <#else>  	          
 			<p><em>${(timelineObject.referee.reference.comment?html)!}</em></p>
 	<#if timelineObject.referee.reference.documents?? && timelineObject.referee.reference.documents?size &gt; 0>

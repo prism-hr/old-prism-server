@@ -25,6 +25,7 @@ $(document).ready(function(){
 		var onCancel = function() { };
 		
 		modalPrompt(message, onOk, onCancel);
+		return false;
 	});
 	
 });

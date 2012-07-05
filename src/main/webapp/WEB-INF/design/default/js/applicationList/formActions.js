@@ -130,11 +130,12 @@ $(document).ready(function()
 		populateApplicationList(true);
 	});
 	
-	$('#search-box, #searchCategory').on('change', '#searchTerm', function()
+	$('#search-box').on('change, keypress', '#searchTerm, #searchCategory', function()
 	{
-		var length = $(this).val().length;
-		$('#search-go').toggleClass('disabled', length < 3);
-		$('#search-reset').toggleClass('disabled', length > 0);
+		var length = $('#searchTerm').val().length;
+		var column = $('#searchCategory').val();
+		$('#search-go').toggleClass('disabled', length < 3 && column == '');
+		$('#search-reset').toggleClass('disabled', length > 0 && column != '');
 	});
 	
 

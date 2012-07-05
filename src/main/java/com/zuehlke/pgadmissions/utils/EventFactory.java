@@ -65,7 +65,7 @@ public class EventFactory {
 
 	public Event createEvent(Referee referee) {
 		ReferenceEvent event = new ReferenceEvent();		
-		event.setUser(userService.getCurrentUser());
+		event.setUser(referee.getUser());
 		event.setDate(new Date());
 		event.setReferee(referee);
 		return event;

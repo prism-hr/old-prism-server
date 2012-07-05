@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
@@ -55,7 +56,7 @@ public class ApplicationFormDAO {
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getAllApplications() {
 		return sessionFactory.getCurrentSession()
-				.createCriteria(ApplicationForm.class).list();
+				.createCriteria(ApplicationForm.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 
 	}
 
@@ -64,7 +65,7 @@ public class ApplicationFormDAO {
 			ApplicationForm application) {
 		return sessionFactory.getCurrentSession()
 				.createCriteria(Qualification.class)
-				.add(Restrictions.eq("application", application)).list();
+				.add(Restrictions.eq("application", application)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -103,7 +104,7 @@ public class ApplicationFormDAO {
 						Subqueries.notExists(anyRemindersCriteria
 								.setProjection(Projections
 										.property("notificationRecord.id")))))
-				.list();
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 
 	}
 
@@ -120,7 +121,7 @@ public class ApplicationFormDAO {
 				.add(Restrictions.lt("notificationRecord.date",
 						twentyFourHoursAgo))
 				.add(Restrictions.ltProperty("notificationRecord.date",
-						"lastUpdated")).list();
+						"lastUpdated")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 
 	}
 
@@ -167,6 +168,7 @@ public class ApplicationFormDAO {
 						invalidStateList)))
 				.add(Subqueries.exists(reviewEventsCriteria
 						.setProjection(Projections.property("event.id"))))
+						.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
 
@@ -175,7 +177,7 @@ public class ApplicationFormDAO {
 		if (user.isInRole(Authority.APPLICANT)) {
 			return sessionFactory.getCurrentSession()
 					.createCriteria(ApplicationForm.class)
-					.add(Restrictions.eq("applicant", user)).list();
+					.add(Restrictions.eq("applicant", user)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 
 		}
 		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
@@ -183,14 +185,14 @@ public class ApplicationFormDAO {
 					.getCurrentSession()
 					.createCriteria(ApplicationForm.class)
 					.add(Restrictions.not(Restrictions.eq("status",
-							ApplicationFormStatus.UNSUBMITTED))).list();
+							ApplicationFormStatus.UNSUBMITTED))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		}
 
 		if (user.isInRole(Authority.REFEREE)) {
 			return sessionFactory.getCurrentSession()
 					.createCriteria(ApplicationForm.class)
 					.createAlias("referees", "referee")
-					.add(Restrictions.eq("referee.user", user)).list();
+					.add(Restrictions.eq("referee.user", user)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		}
 
 		List<ApplicationForm> apps = new ArrayList<ApplicationForm>();
@@ -236,7 +238,7 @@ public class ApplicationFormDAO {
 				.createCriteria(ApplicationForm.class)
 				.add(Restrictions.not(Restrictions.eq("status",
 						ApplicationFormStatus.UNSUBMITTED)))
-				.add(Restrictions.eq("applicationAdministrator", user)).list();
+				.add(Restrictions.eq("applicationAdministrator", user)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -248,7 +250,7 @@ public class ApplicationFormDAO {
 				.add(Restrictions.not(Restrictions.eq("status",
 						ApplicationFormStatus.UNSUBMITTED)))
 				.add(Restrictions.in("program",
-						user.getProgramsOfWhichAdministrator())).list();
+						user.getProgramsOfWhichAdministrator())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -259,7 +261,7 @@ public class ApplicationFormDAO {
 				.createCriteria(ApplicationForm.class)
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
 				.add(Restrictions.in("program",
-						user.getProgramsOfWhichApprover())).list();
+						user.getProgramsOfWhichApprover())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -270,7 +272,7 @@ public class ApplicationFormDAO {
 				.add(Restrictions.eq("status", ApplicationFormStatus.REVIEW))
 				.createAlias("latestReviewRound", "latestReviewRound")
 				.createAlias("latestReviewRound.reviewers", "reviewer")
-				.add(Restrictions.eq("reviewer.user", user)).list();
+				.add(Restrictions.eq("reviewer.user", user)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -282,7 +284,7 @@ public class ApplicationFormDAO {
 				.add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
 				.createAlias("latestInterview", "latestInterview")
 				.createAlias("latestInterview.interviewers", "interviewer")
-				.add(Restrictions.eq("interviewer.user", user)).list();
+				.add(Restrictions.eq("interviewer.user", user)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -291,7 +293,7 @@ public class ApplicationFormDAO {
 		List<ApplicationForm> result = session
 				.createCriteria(ApplicationForm.class)
 				.add(Restrictions.eq("status", ApplicationFormStatus.REJECTED))
-				.add(Restrictions.isNull("rejectNotificationDate")).list();
+				.add(Restrictions.isNull("rejectNotificationDate")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		return result;
 	}
 
@@ -336,7 +338,7 @@ public class ApplicationFormDAO {
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
 				.add(Subqueries.notExists(appronalNotificationCriteria
 						.setProjection(Projections
-								.property("notificationRecord.id")))).list();
+								.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -354,7 +356,7 @@ public class ApplicationFormDAO {
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVED))
 				.add(Subqueries.notExists(appronalNotificationCriteria
 						.setProjection(Projections
-								.property("notificationRecord.id")))).list();
+								.property("notificationRecord.id")))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -362,7 +364,7 @@ public class ApplicationFormDAO {
 		return sessionFactory
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class)
-				.add(Restrictions.eq("registryUsersDueNotification", true)).list();
+				.add(Restrictions.eq("registryUsersDueNotification", true)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 }

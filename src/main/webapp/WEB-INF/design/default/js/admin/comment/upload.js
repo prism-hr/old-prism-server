@@ -21,8 +21,9 @@ $(document).ready(function(){
 	
 });
 
-function commentDocumentDelete(){
-	 var id = $(this).attr("id");
+function commentDocumentDelete()
+{
+	var id = $(this).attr("id");
 	$.ajax({
 		type: 'POST',
 		 statusCode: {
@@ -45,7 +46,8 @@ function commentDocumentDelete(){
 function commentDocumentUpload()
 {	
 	
-	$("#commentDocumentProgress").ajaxStart(function(){
+	$("#commentDocumentProgress").ajaxStart(function()
+	{
 		$(this).show();
 	})
 	.ajaxComplete(function(){
@@ -64,12 +66,21 @@ function commentDocumentUpload()
 			fileElementId:'commentDocument',	
 			dataType:'text',
 			data:{type:'COMMENT'},
-			success: function (data)
-			{		
-				$('#commentUploadedDocument').append(data);
-				$('#uploadFields').addClass('uploaded');
-				$('#commentUploadedDocument').show();
-				
+			success: function(data)
+			{
+				var $invalid = $(data).find('span.invalid');
+				if ($invalid.length > 0)
+				{
+					// Display error message.
+					$('#uploadFields').append($invalid);
+				}
+				else
+				{
+					// Display the uploaded file.
+					$('#commentUploadedDocument').append(data);
+					$('#uploadFields').addClass('uploaded');
+					$('#commentUploadedDocument').show();
+				}
 			}
 		}
 	);

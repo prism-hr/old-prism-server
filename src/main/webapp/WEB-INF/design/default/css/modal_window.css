@@ -77,7 +77,16 @@
 /* Buttons */
 #dialog-box a { text-decoration: none; }
 #dialog-box a.default-button {
-	background: -moz-linear-gradient(center top , #00BCF1 0%, #0098D8 50%, #0073BD 51%, #008FD5 100%) repeat scroll 0 0 transparent;
+	background: #00bcf1; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYmNmMSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzAwOThkOCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUxJSIgc3RvcC1jb2xvcj0iIzAwNzNiZCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDhmZDUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top,  #00bcf1 0%, #0098d8 50%, #0073bd 51%, #008fd5 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00bcf1), color-stop(50%,#0098d8), color-stop(51%,#0073bd), color-stop(100%,#008fd5)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #00bcf1 0%,#0098d8 50%,#0073bd 51%,#008fd5 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #00bcf1 0%,#0098d8 50%,#0073bd 51%,#008fd5 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #00bcf1 0%,#0098d8 50%,#0073bd 51%,#008fd5 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #00bcf1 0%,#0098d8 50%,#0073bd 51%,#008fd5 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00bcf1', endColorstr='#008fd5',GradientType=0 ); /* IE6-8 */
 	border: 2px solid #FFF;
 	border-radius: 11px 11px 11px 11px;
 	box-shadow: 0 0 3px 0 #999999;
@@ -91,7 +100,16 @@
 	width: 60px;
 }
 #dialog-box a.red-button {
-	background: -moz-linear-gradient(center top , #E64E56 0%, #E64E56 50%, #CC2C17 51%, #CC2C17 100%) repeat scroll 0 0 transparent;
+	background: #e64e56; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2U2NGU1NiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2U2NGU1NiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUxJSIgc3RvcC1jb2xvcj0iI2NjMmMxNyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjYzJjMTciIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top,  #e64e56 0%, #e64e56 50%, #cc2c17 51%, #cc2c17 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e64e56), color-stop(50%,#e64e56), color-stop(51%,#cc2c17), color-stop(100%,#cc2c17)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #e64e56 0%,#e64e56 50%,#cc2c17 51%,#cc2c17 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #e64e56 0%,#e64e56 50%,#cc2c17 51%,#cc2c17 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #e64e56 0%,#e64e56 50%,#cc2c17 51%,#cc2c17 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #e64e56 0%,#e64e56 50%,#cc2c17 51%,#cc2c17 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e64e56', endColorstr='#cc2c17',GradientType=0 ); /* IE6-8 */
 }
 
 #dialog-box #horizontal-separator {

@@ -24,6 +24,7 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Your password has been reset, your new password is: ${newPassword}</font>
 			      	</p>
+			    <br>  	
 				<p>
 	              <!-- Button -->
 	              <table border="0" cellpadding="0" cellspacing="0">
@@ -38,7 +39,7 @@
 	                </tr>
 	              </table>
 				</p>
-
+				</br>
 					      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>

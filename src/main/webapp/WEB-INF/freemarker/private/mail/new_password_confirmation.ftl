@@ -24,11 +24,21 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Your password has been reset, your new password is: ${newPassword}</font>
 			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/login">Login to UCL Prism</a>
-			      		</font>
-			      	</p>
+				<p>
+	              <!-- Button -->
+	              <table border="0" cellpadding="0" cellspacing="0">
+	              	<tr>
+	                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
+	                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
+	                    <font face="Arial, Helvetica, sans-serif" size="2">
+	                      <a style="color: #FFFFFF; text-decoration: none;" href="${host}/pgadmissions/login"><b>Login to UCL Prism</b></a>
+	                    </font>
+	                  </td>
+	                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
+	                </tr>
+	              </table>
+				</p>
+
 					      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>

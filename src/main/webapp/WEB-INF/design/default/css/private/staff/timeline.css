@@ -1,5 +1,14 @@
-table{ border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
-table thead th {
+
+/* Timeline tab ------------------------------------------------------------------------------------------- */
+#timelineview { clear: both; margin-top: 20px; }
+#timelineview ul.tabs { list-style: none; margin: 0 0 0 -4px; height: 34px; overflow: hidden; }
+#timelineview ul.tabs li { background: url(../../../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; float: left; margin: 5px 5px 0; padding: 0; }
+#timelineview ul.tabs li.current { background-position: 0 -31px; }
+#timelineview ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; padding: 0 10px; }
+
+/* Timeline tables ---------------------------------------------------------------------------------------- */
+#timelineview table { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
+#timelineview table thead th {
 	background: rgb(124,124,124); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
 	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdjN2M3YyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2JjYmNiYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM3YzdjN2MiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
@@ -12,19 +21,9 @@ table thead th {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7c7c7c', endColorstr='#7c7c7c',GradientType=0 ); /* IE6-8 */
 	cursor: pointer; font-weight: bold; text-align: left; padding: 5px 3px;
 }
-table th, table td { padding: 7px; vertical-align: middle; }
-table tr td, table tr th { border-bottom: 1px solid #999; }
-table tbody td { background: url(../../../images/bg_table_row.jpg) repeat-x 0 100%; }
-table select { width: 100%; }
-table thead th.headerSortDown, table thead th.headerSortUp { background-color: #06C; color: #FFF; }
-
-
-/* Timeline tab ------------------------------------------------------------------------------------------- */
-#timelineview { clear: both; margin-top: 20px; }
-#timelineview ul.tabs { list-style: none; margin: 0 0 0 -4px; height: 34px; overflow: hidden; }
-#timelineview ul.tabs li { background: url(../../../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; float: left; margin: 5px 5px 0; padding: 0; }
-#timelineview ul.tabs li.current { background-position: 0 -31px; }
-#timelineview ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; padding: 0 10px; }
+#timelineview table th, #timelineview table td { padding: 7px; vertical-align: middle; }
+#timelineview table tr td, #timelineview table tr th { border-bottom: 1px solid #999; }
+#timelineview table tbody td { background: url(../../../images/bg_table_row.jpg) repeat-x 0 100%; }
 
 #timelineview .tab-page { clear: both; padding-top: 5px; }
 

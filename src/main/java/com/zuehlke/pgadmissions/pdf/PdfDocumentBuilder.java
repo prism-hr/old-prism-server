@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -44,10 +45,11 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.PDFException;
+import com.zuehlke.pgadmissions.timers.RegistryNotificationTimerTask;
 
 @Component
 public class PdfDocumentBuilder {
-
+	private final Logger log = Logger.getLogger(PdfDocumentBuilder.class);
 	private static Font boldFont = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 	private static Font smallBoldFont = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 	private static Font smallFont = new Font(FontFamily.HELVETICA, 10, Font.NORMAL);
@@ -72,7 +74,11 @@ public class PdfDocumentBuilder {
 			document.open();
 			for (ApplicationForm applicationForm : applications) {
 		
-				buildDocument(applicationForm, document, writer);
+				try {
+					buildDocument(applicationForm, document, writer);
+				} catch (Exception e) {
+					log.warn("Error in generating pdf for application " + applicationForm.getApplicationNumber(), e);
+				}
 				document.newPage();
 			
 			}

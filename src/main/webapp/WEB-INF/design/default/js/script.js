@@ -556,6 +556,15 @@ function modalPosition()
 
 function modalPrompt(message, okay, cancel)
 {
+	if (okay == 'undefined')
+	{
+		okay = function() {};
+	}
+	if (cancel == 'undefined')
+	{
+		cancel = function() {};
+	}
+	
 	$('#dialog-header').html("Please Confirm!");
 	$('#dialog-message').html(message);
 

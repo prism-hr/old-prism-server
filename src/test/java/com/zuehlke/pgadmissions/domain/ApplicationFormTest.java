@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
@@ -112,15 +113,19 @@ public class ApplicationFormTest {
 	}
 	
 	@Test
-	public void shouldSeeNoCommentsIfRefereeOnly(){		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(new CommentBuilder().id(4).toComment()).toApplicationForm();
-		RegisteredUser user = new RegisteredUserBuilder().id(6).referees(new RefereeBuilder().application(applicationForm).toReferee()).role(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
-		assertTrue(applicationForm.getVisibleComments(user).isEmpty());
-	}
-
-
+	public void shouldSeeOwnCommentOnlyfRefereeOnly(){		
+		Comment comment = new CommentBuilder().id(4).toComment();
+		RegisteredUser user = new RegisteredUserBuilder().id(6).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
+		Referee referee = new RefereeBuilder().user(user).toReferee();
+		user.getReferees().add(referee);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(comment).referees(referee).toApplicationForm();
+		referee.setApplication(applicationForm);
+		ReferenceComment referenceComment = new ReferenceCommentBuilder().id(5).referee(referee).toReferenceComment();
+		applicationForm.getApplicationComments().add(referenceComment);
 	
-
+		assertEquals(1, applicationForm.getVisibleComments(user).size());
+		assertTrue(applicationForm.getVisibleComments(user).contains(referenceComment));
+	}
 	
 
 	@Test

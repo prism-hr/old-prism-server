@@ -12,7 +12,7 @@
       <ul id="timeline-statuses">
       
         <#list timelineObjects as timelineObject>  
-	        <#if timelineObject.type != 'reference' ||  user.hasStaffRightsOnApplicationForm(applicationForm)>      
+	        <#if timelineObject.type != 'reference' ||  user.hasStaffRightsOnApplicationForm(applicationForm) || (timelineObject.referee?? && timelineObject.referee.user == user)>      
 		        <li class="${timelineObject.type}">
 		          <div class="box">
 		            <div class="title">
@@ -132,8 +132,9 @@
 			            </li>
 		            </#list>                       
 		          </ul>
-		          <#elseif timelineObject.referee?? && (user != applicationForm.applicant && user.hasStaffRightsOnApplicationForm(applicationForm))>
+		          <#elseif timelineObject.referee?? && ((user != applicationForm.applicant && user.hasStaffRightsOnApplicationForm(applicationForm)) || timelineObject.referee.user == user)>
 		            	<#include "timeline_snippets/reference_comment.ftl"/>	         
+		            	
 		          </#if> 
 		        </li>
 	        </#if>

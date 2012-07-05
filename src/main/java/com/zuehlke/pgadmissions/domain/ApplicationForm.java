@@ -379,6 +379,16 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public List<Comment> getVisibleComments(RegisteredUser user) {
 
+		if(user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)){
+			List<Comment> comments = new ArrayList<Comment>();
+			for (Comment comment : applicationComments) {
+				if(comment instanceof ReferenceComment && ((ReferenceComment)comment).getReferee().getUser().equals(user)){
+					comments.add(comment);
+				}
+			}
+			Collections.sort(comments);
+			return comments;
+		}
 		if (user.isInRole(Authority.APPLICANT) 
 				|| !user.hasStaffRightsOnApplicationForm(this)) {
 			return new ArrayList<Comment>();

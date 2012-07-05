@@ -17,7 +17,7 @@
 	<td class="centre">
 		<select class="actionType" name="app_[${application.applicationNumber}]">
 		<option>Select.. </option> 
-		<option value="view">View<#if user.isInRole('APPLICANT') && application.isModifiable()> / Edit</#if></option>
+		<option value="view">View<#if user == application.applicant && application.isModifiable()> / Edit</#if></option>
 
 		<#if  user.hasAdminRightsOnApplication(application) && application.isInState('VALIDATION')> 
 			<option value="validate">Validate</option>
@@ -43,7 +43,7 @@
 		<#if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && application.isModifiable() && !user.getRefereeForApplicationForm(application).hasResponded()  )>
 			<option value="reference">Add Reference</option>
 		</#if>      												
-		<#if (user.isInRole('APPLICANT') && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>
+		<#if (user == application.applicant && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>
 			<option value="withdraw">Withdraw</option>
 		</#if>      												
 		<#if (user.hasAdminRightsOnApplication(application) && application.isInState('APPROVAL'))>

@@ -96,7 +96,7 @@
 		          <ul>
 		            <#list timelineObject.comments as comment>
 			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION'>                                                    
-			           		<#assign role = "admin"/>     
+			           		<#assign role = "administrator"/>     
 			            <#elseif comment.type == 'REVIEW'>
 			            	<#assign role = "reviewer"/>
 			            <#elseif comment.type == 'INTERVIEW'>

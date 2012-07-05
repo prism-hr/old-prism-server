@@ -798,7 +798,7 @@ span.icon-role {
 	white-space: nowrap;
 	width: 24px;
 }
-span.icon-role.admin { background-image: url(../../images/role_admin.png); }
+span.icon-role.administrator { background-image: url(../../images/role_admin.png); }
 span.icon-role.reviewer { background-image: url(../../images/role_reviewer.png); }
 span.icon-role.interviewer { background-image: url(../../images/role_interviewer.png); }
 span.icon-role.approver { background-image: url(../../images/role_approver.png); }

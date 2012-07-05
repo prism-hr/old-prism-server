@@ -77,7 +77,7 @@ $(document).ready(function()
 				break;
 			case 'withdraw':
 				
-				var message  = 'Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application.';
+				var message  = 'Are you sure you want to withdraw the application? <b>You will not be able to submit a withdrawn application.</b>';
 				var onOk     = function()
 				{
 					$.ajax({

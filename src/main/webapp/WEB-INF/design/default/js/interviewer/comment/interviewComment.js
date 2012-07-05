@@ -1,80 +1,79 @@
-$(document).ready(function(){
-
+$(document).ready(function()
+{
 	
-	$('#cancelInterviewFeedbackBtn').click(function() {
+	$('#cancelInterviewFeedbackBtn').click(function()
+	{
 		window.location.href = "/pgadmissions/interviewFeedback?applicationId=" +  $('#applicationId').val();
 	});	
 	
-	$('#submitInterviewFeedback').click(function() {
+	$('#submitInterviewFeedback').click(function()
+	{
+		var message = 'Please confirm you want to submit this interview feedback.';
+		var onOk    = function()
+		{
+			$('#interviewForm').append("<input type='hidden' name='type' value='INTERVIEW'/>");		
+			if ($('#decline:checked').length > 0)
+			{
+				$('#interviewForm').append("<input type='hidden' name='decline' value='true'/>");			
+			}
+			$('#interviewForm').submit();
+		};
+		var onCancel = function()
+		{
+			$('div.content-box-inner div.ajax').remove();
+		};
 		
-		$('#interviewForm').append("<input type='hidden' name='type' value='INTERVIEW'/>");		
-		
-		if ($('#decline:checked').length > 0) {
-			$('#interviewForm').append("<input type='hidden' name='decline' value='true'/>");			
-		}
-		
-		/*if ($('input:radio[name=willingToSupervise]:checked').length > 0) {
-			
-			$('#interviewForm').append("<input type='hidden' name='willingToSupervise' value='"+ $('input:radio[name=willingToSupervise]:checked').val() +"'/>");
-		}
-		if ($('input:radio[name=suitableCandidate]:checked').length > 0) {				
-			$('#interviewForm').append("<input type='hidden' name='suitableCandidate' value='"+ $('input:radio[name=suitableCandidate]:checked').val() +"'/>");
-		}*/
-		
-		$('#interviewForm').submit();
+		modalPrompt(message, onOk, onCancel);
 	});	
 	
-
-	
 	$('#decline').click(function()
+	{
+		if ($(this).is(':checked'))
 		{
-			if ($(this).is(':checked'))
-			{
-				// Comment field.
-				$("#comment-lbl").addClass("grey-label");
-				$("#comment-lbl em").remove();
-				$("#review-comment").val("");
-				$("#review-comment").addClass("grey-label");
-				$("#review-comment").attr("disabled", "disabled");
-				
-				// "Willing to supervise" radio buttons.
-				$("#supervise-lbl").addClass("grey-label");
-				$("#supervise-lbl em").remove();
-				$('input[name="willingToSupervise"]').removeAttr("checked")
-				                                     .addClass("grey-label")
-													 .attr("disabled", "disabled");
-				$('input[name="willingToSupervise"]').parent().addClass("grey-label");
+			// Comment field.
+			$("#comment-lbl").addClass("grey-label");
+			$("#comment-lbl em").remove();
+			$("#review-comment").val("");
+			$("#review-comment").addClass("grey-label");
+			$("#review-comment").attr("disabled", "disabled");
 			
-				// "Suitable for UCL" radio buttons.			
-				$("#suitable-lbl").addClass("grey-label");
-				$("#suitable-lbl em").remove();
-				$('input[name="suitableCandidate"]').removeAttr("checked")
-				                                    .addClass("grey-label")
-													.attr("disabled", "disabled");
-				$('input[name="suitableCandidate"]').parent().addClass("grey-label");
+			// "Willing to supervise" radio buttons.
+			$("#supervise-lbl").addClass("grey-label");
+			$("#supervise-lbl em").remove();
+			$('input[name="willingToSupervise"]').removeAttr("checked")
+																					 .addClass("grey-label")
+												                   .attr("disabled", "disabled");
+			$('input[name="willingToSupervise"]').parent().addClass("grey-label");
 			
-				//remove validation messages
-				$('span[class="invalid"]').html('');
-				
-			}
-			else
-			{
-				//comment field
-				$("#comment-lbl").append('<em>*</em>').removeClass("grey-label");
-				$("#review-comment").removeClass("grey-label").removeAttr("disabled");
-				
-				// "Willing to interview" radio buttons.
-				$("#supervise-lbl").append('<em>*</em>').removeClass("grey-label");
-				$('input[name="willingToSupervise"]').addClass("grey-label")
-				                                     .removeAttr("disabled");
-				$('input[name="willingToSupervise"]').parent().removeClass("grey-label");
+			// "Suitable for UCL" radio buttons.			
+			$("#suitable-lbl").addClass("grey-label");
+			$("#suitable-lbl em").remove();
+			$('input[name="suitableCandidate"]').removeAttr("checked")
+																					.addClass("grey-label")
+													                .attr("disabled", "disabled");
+			$('input[name="suitableCandidate"]').parent().addClass("grey-label");
+			
+			//remove validation messages
+			$('span[class="invalid"]').html('');
+		}
+		else
+		{
+			//comment field
+			$("#comment-lbl").append('<em>*</em>').removeClass("grey-label");
+			$("#review-comment").removeClass("grey-label").removeAttr("disabled");
+			
+			// "Willing to interview" radio buttons.
+			$("#supervise-lbl").append('<em>*</em>').removeClass("grey-label");
+			$('input[name="willingToSupervise"]').addClass("grey-label")
+																					 .removeAttr("disabled");
+			$('input[name="willingToSupervise"]').parent().removeClass("grey-label");
 
-				// "Suitable for UCL" radio buttons.			
-				$("#suitable-lbl").append('<em>*</em>').removeClass("grey-label");
-				$('input[name="suitableCandidate"]').removeClass("grey-label")
-				                                    .removeAttr("disabled");
-				$('input[name="suitableCandidate"]').parent().removeClass("grey-label");
-			}
-		});
+			// "Suitable for UCL" radio buttons.			
+			$("#suitable-lbl").append('<em>*</em>').removeClass("grey-label");
+			$('input[name="suitableCandidate"]').removeClass("grey-label")
+																					.removeAttr("disabled");
+			$('input[name="suitableCandidate"]').parent().removeClass("grey-label");
+		}
+	});
 	
 });

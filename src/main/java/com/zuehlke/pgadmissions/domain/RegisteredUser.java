@@ -465,6 +465,17 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return false;
 
 	}
+	public boolean isPastOrPresentInterviewerOfApplicationForm(ApplicationForm applicationForm) {
+		for (Interview interview : applicationForm.getInterviews()) {
+			for (Interviewer interviewer : interview.getInterviewers()) {
+				if (interviewer != null && this.equals(interviewer.getUser())) {
+					return true;
+				}
+			}
+		}
+		return false;
+
+	}
 
 	public boolean isSupervisorOfApplicationForm(ApplicationForm form) {
 		ApprovalRound approvalRound = form.getLatestApprovalRound();
@@ -478,6 +489,19 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return false;
 
 	}
+	
+	public boolean isPastOrPresentSupervisorOfApplicationForm(ApplicationForm applicationForm) {
+		for (ApprovalRound approvalRound : applicationForm.getApprovalRounds()) {
+			for (Supervisor supervisor : approvalRound.getSupervisors()) {
+				if (supervisor != null && this.equals(supervisor.getUser())) {
+					return true;
+				}
+			}
+		}
+		return false;
+
+	}
+
 
 	public boolean isInterviewerOfProgram(Program program) {
 		for (RegisteredUser interviewer : program.getInterviewers()) {
@@ -733,13 +757,13 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		if(hasAdminRightsOnApplication(applicationForm)){
 			return true;
 		}
-		if(isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)){
+		if(isPastOrPresentReviewerOfApplicationForm(applicationForm)){
 			return true;
 		}
-		if(isInterviewerOfApplicationForm(applicationForm)){
+		if(isPastOrPresentInterviewerOfApplicationForm(applicationForm)){
 			return true;
 		}
-		if(isSupervisorOfApplicationForm(applicationForm)){
+		if(isPastOrPresentSupervisorOfApplicationForm(applicationForm)){
 			return true;
 		}
 		if(isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())){

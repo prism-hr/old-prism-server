@@ -132,7 +132,7 @@
 			            </li>
 		            </#list>                       
 		          </ul>
-		          <#elseif timelineObject.referee?? && user != applicationForm.applicant && !user.isRefereeOfApplicationForm(applicationForm)>
+		          <#elseif timelineObject.referee?? && (user != applicationForm.applicant && user.hasStaffRightsOnApplicationForm(applicationForm))>
 		            	<#include "timeline_snippets/reference_comment.ftl"/>	         
 		          </#if> 
 		        </li>

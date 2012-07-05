@@ -18,14 +18,7 @@
 		<select class="actionType" name="app_[${application.applicationNumber}]">
 		<option>Select.. </option> 
 		<option value="view">View<#if user.isInRole('APPLICANT') && application.isModifiable()> / Edit</#if></option>
-<#--
-		<#if !user.isInRole('APPLICANT')>
-		<option value="print">Download</option>
-		</#if>   
-		<#if user.isInRole('APPLICANT')>
-			<option value="progress">View progress</option>
-		</#if>   
--->
+
 		<#if  user.hasAdminRightsOnApplication(application) && application.isInState('VALIDATION')> 
 			<option value="validate">Validate</option>
 		</#if>
@@ -35,7 +28,7 @@
 		<#if user.hasAdminRightsOnApplication(application) && application.isInState('INTERVIEW')> 
 			<option value="validate">Evaluate interview feedback</option>
 		</#if>
-		<#if !user.isInRole('APPLICANT') && !user.isRefereeOfApplicationForm(application)>
+		<#if !user.isInRole('APPLICANT') && user.hasAdminRightsOnApplication(application)>
 			<option value="comment">Comment</option>								    				
 		</#if>      												
 		<#if (user.isReviewerInLatestReviewRoundOfApplicationForm(application)&& application.isInState('REVIEW') && user.hasRespondedToProvideReviewForApplication(application))>

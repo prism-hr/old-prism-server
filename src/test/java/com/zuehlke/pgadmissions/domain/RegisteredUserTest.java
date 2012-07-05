@@ -1012,7 +1012,7 @@ public class RegisteredUserTest {
 		Reviewer reviewer = new ReviewerBuilder().id(1).user(user).toReviewer();
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).reviewers(reviewer).toReviewRound();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().toProgram()).status(ApplicationFormStatus.VALIDATION)
-				.latestReviewRound(reviewRound).toApplicationForm();
+				.reviewRounds(reviewRound).toApplicationForm();
 		assertTrue(user.hasStaffRightsOnApplicationForm(applicationForm));
 
 	}
@@ -1023,7 +1023,7 @@ public class RegisteredUserTest {
 		Interviewer interviewer = new InterviewerBuilder().id(1).user(user).toInterviewer();
 		Interview interview = new InterviewBuilder().id(4).interviewers(interviewer).toInterview();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().toProgram()).status(ApplicationFormStatus.VALIDATION)
-				.latestInterview(interview).toApplicationForm();
+				.interviews(interview).toApplicationForm();
 		assertTrue(user.hasStaffRightsOnApplicationForm(applicationForm));
 
 	}
@@ -1035,7 +1035,7 @@ public class RegisteredUserTest {
 		Supervisor supervisor = new SupervisorBuilder().id(1).user(user).toSupervisor();
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(4).supervisors(supervisor).toApprovalRound();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().toProgram()).status(ApplicationFormStatus.VALIDATION)
-				.latestApprovalRound(approvalRound).toApplicationForm();
+				.approvalRounds(approvalRound).toApplicationForm();
 		assertTrue(user.hasStaffRightsOnApplicationForm(applicationForm));
 
 	}
@@ -1064,7 +1064,7 @@ public class RegisteredUserTest {
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).reviewers(reviewer).toReviewRound();
 		Referee referee = new RefereeBuilder().id(7).user(user).toReferee();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().toProgram()).status(ApplicationFormStatus.VALIDATION)
-				.latestReviewRound(reviewRound).referees(referee).toApplicationForm();
+				.reviewRounds(reviewRound).referees(referee).toApplicationForm();
 		assertTrue(user.hasStaffRightsOnApplicationForm(applicationForm));
 
 	}

@@ -112,7 +112,7 @@ public class ApplicationFormTest {
 	}
 	
 	@Test
-	public void shouldSeeNoCommentsIfReferee(){		
+	public void shouldSeeNoCommentsIfRefereeOnly(){		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(new CommentBuilder().id(4).toComment()).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(6).referees(new RefereeBuilder().application(applicationForm).toReferee()).role(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
 		assertTrue(applicationForm.getVisibleComments(user).isEmpty());
@@ -124,10 +124,10 @@ public class ApplicationFormTest {
 	
 
 	@Test
-	public void shouldSeeAllCommentsIfNotApplicantOrReferee() throws ParseException{
+	public void shouldSeeAllCommentsIfNotApplicantOrRefereeOnly() throws ParseException{
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
 		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).id(7).toUser();
+		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().referees().roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole(), new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).id(7).toUser();
 		
 		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
 		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
@@ -136,7 +136,8 @@ public class ApplicationFormTest {
 		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUserOne).toReviewer(),new ReviewerBuilder().user( reviewerUserTwo).toReviewer()).toReviewRound();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
-		
+		Referee referee = new RefereeBuilder().application(applicationForm).toReferee();
+		reviewerUserTwo.getReferees().add(referee);
 		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerUserTwo);
 		assertEquals(3, visibleComments.size());		
 	}

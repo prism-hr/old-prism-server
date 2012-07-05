@@ -162,7 +162,7 @@ function validateStateChange()
 
 	if ($('#status').val() == '')
 	{
-		$('#comment').after('<span class="invalid">You must make a selection.</span>');
+		$('#status').after('<span class="invalid">You must make a selection.</span>');
 		errors++;
 	}
 

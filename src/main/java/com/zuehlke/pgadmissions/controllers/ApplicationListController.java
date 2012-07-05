@@ -43,6 +43,7 @@ public class ApplicationListController {
 
 	@RequestMapping(value = "/section", method = RequestMethod.GET)
 	public String getApplicationListSection() {
+		System.err.println("returning view " + APPLICATION_LIST_SECTION_VIEW_NAME);
 		return APPLICATION_LIST_SECTION_VIEW_NAME;
 	}
 
@@ -63,6 +64,7 @@ public class ApplicationListController {
 			@RequestParam(required = false) Integer blockCount) {
 
 		int blockIx = blockCount == null ? 1 : blockCount;
+		System.err.println("getting applications");
 		return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, order, blockIx);
 	}
 

@@ -37,22 +37,64 @@
 					<p>
 		      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with UCL Prism, please do so by clicking the link below:</font>
 		      		</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}">Register</a>
-			      		</font>
-			      	</p>
+		      		
+				    <br>  	
+					<p>
+		              <!-- Button -->
+		              <table border="0" cellpadding="0" cellspacing="0">
+		              	<tr>
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
+		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
+		                    <font face="Arial, Helvetica, sans-serif" size="2">
+		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+		                      	href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}"><b>Register</b></a>
+		                    </font>
+		                  </td>
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
+		                </tr>
+		              </table>
+					</p>
+					</br>			      	
+		      		
 			      	</#if>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}">Add Reference</a>
-			      		</font>
-			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2"> 
-			      			<a href="${host}/pgadmissions/decline/reference?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode}">Decline</a>
-			      		</font>
-			      	</p>
+			      	
+				    <br>  	
+					<p>
+		              <!-- Button -->
+		              <table border="0" cellpadding="0" cellspacing="0">
+		              	<tr>
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
+		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
+		                    <font face="Arial, Helvetica, sans-serif" size="2">
+		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+		                      	href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}"><b>Add Reference</b></a>
+		                    </font>
+		                  </td>
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
+		                </tr>
+		              </table>
+					</p>
+					</br>			      	
+
+
+				    <br>  	
+					<p>
+		              <!-- Button -->
+		              <table border="0" cellpadding="0" cellspacing="0">
+		              	<tr>
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left-grey.gif" width="13" height="29" alt="" /></td>
+		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre-grey.gif) repeat-x;" align="center">
+		                    <font face="Arial, Helvetica, sans-serif" size="2">
+		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+		                      	href="${host}/pgadmissions/decline/reference?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode}"><b>Decline</b></a>
+		                    </font>
+		                  </td>
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right-grey.gif" width="13" height="29" alt="" /></td>
+		                </tr>
+		              </table>
+					</p>
+					</br>			      	
+		      		
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will continue to send reminders until you respond to this request.</font>
 			      	</p>

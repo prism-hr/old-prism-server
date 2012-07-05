@@ -115,7 +115,7 @@ $(document).ready(function()
 	// --------------------------------------------------------------------------------
 	// SEARCH / FILTERING
 	// --------------------------------------------------------------------------------
-	$('#search-go').click(function()
+	$('#search-go').addClass('disabled').click(function()
 	{
 		if ($('#searchTerm').val().length < 3 || $('#searchCategory').val() == '')
 		{
@@ -124,9 +124,17 @@ $(document).ready(function()
 		}
 		populateApplicationList();
 	});
-	$('#search-reset').click(function()
+	
+	$('#search-reset').addClass('disabled').click(function()
 	{
 		populateApplicationList(true);
+	});
+	
+	$('#search-box, #searchCategory').on('change', '#searchTerm', function()
+	{
+		var length = $(this).val().length;
+		$('#search-go').toggleClass('disabled', length < 3);
+		$('#search-reset').toggleClass('disabled', length > 0);
 	});
 	
 

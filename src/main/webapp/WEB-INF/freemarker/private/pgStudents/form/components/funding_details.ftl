@@ -22,7 +22,8 @@
         <col style="width: 30px" />
         <col />
         <col style="width: 150px" />
-        <col style="width: 60px" />
+   		<col style="width: 30px" />
+		<col style="width: 30px" />
       </colgroup>
             
       <thead>
@@ -31,6 +32,7 @@
           <th>Funding</th>
           <th>Awarded</th>
           <th>&nbsp;</th>
+           <th>&nbsp;</th>
         </tr>
       </thead>
 
@@ -39,18 +41,20 @@
         <tr>
           <td><a class="row-arrow">-</a></td>
           <td>
-						<#if existingFunding.document??>
-            <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(existingFunding.document.id)}" data-desc="Proof of Award" class="button-hint" target="_blank">
-              ${existingFunding.type.displayValue} (&pound;${(existingFunding.value?html)!})
-            </a>
-						<#else>
-							${existingFunding.type.displayValue} (&pound;${(existingFunding.value?html)!}) - no document!
-						</#if>
+			<#if existingFunding.document??>
+	            <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(existingFunding.document.id)}" data-desc="Proof of Award" class="button-hint" target="_blank">
+	              ${existingFunding.type.displayValue} (&pound;${(existingFunding.value?html)!})
+	            </a>
+			<#else>
+				${existingFunding.type.displayValue} (&pound;${(existingFunding.value?html)!}) - no document!
+			</#if>
           </td>
           <td>${existingFunding.awardDate?string('dd MMM yyyy')}</td>
           <td>                                                  
             <a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-edit button-hint">edit</a>
-            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+          </td>
+          <td>
+          	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
             <a name="deleteFundingButton" data-desc="Delete" id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-delete button-hint">delete</a>
             </#if>
           </td>

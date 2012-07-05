@@ -36,7 +36,12 @@ $(document).ready(function(){
 			{
 				$('#uploadFields').addClass('upload-delete');
 				$('#uploadFields a.button-edit').hide();
+				
 			}
+			if($('#document_PROOF_OF_AWARD').length > 0){
+				$('#document_PROOF_OF_AWARD').val('');
+			}
+			
 		}
 		else
 		{		

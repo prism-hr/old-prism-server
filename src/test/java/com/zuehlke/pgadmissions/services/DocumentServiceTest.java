@@ -9,16 +9,21 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
+import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 
 public class DocumentServiceTest {
 
 	private DocumentDAO documentDAOMock;
 	private DocumentService documentService;
 	private ApplicationFormDAO applicationDAOMock;
+	private QualificationDAO qualificationDAOMock;
+	
 
 	@Test
 	public void shouldRemovePersonalStatementFromApplicationAndDelete(){
@@ -66,6 +71,29 @@ public class DocumentServiceTest {
 	}
 	
 	@Test
+	public void shouldRemoveQualificationProtofOfAwardAndDelete(){
+		Document document = new DocumentBuilder().id(1).toDocument();
+		Qualification qualification = new QualificationBuilder().id(1).proofOfAward(document).toQualification();
+		documentDAOMock.deleteDocument(document);
+		qualificationDAOMock.save(qualification);
+		EasyMock.replay(documentDAOMock, qualificationDAOMock);
+		documentService.deleteQualificationProofOfAward(qualification);
+		EasyMock.verify(documentDAOMock, qualificationDAOMock);
+		assertNull(qualification.getProofOfAward());		
+	}
+
+	@Test
+	public void shouldNotFailIfQualificationProofOfAwardIsNull(){
+		
+		Qualification qualification = new QualificationBuilder().id(1).toQualification();
+		qualificationDAOMock.save(qualification);
+		EasyMock.replay(documentDAOMock, qualificationDAOMock);
+		documentService.deleteQualificationProofOfAward(qualification);
+		EasyMock.verify(documentDAOMock, qualificationDAOMock);
+	
+	}
+	
+	@Test
 	public void shouldDelegateSaveToDAO() {
 
 		Document document = new DocumentBuilder().id(1).toDocument();
@@ -101,6 +129,7 @@ public class DocumentServiceTest {
 	public void setup() {
 		documentDAOMock = EasyMock.createMock(DocumentDAO.class);
 		applicationDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		documentService = new DocumentService(documentDAOMock, applicationDAOMock);
+		qualificationDAOMock = EasyMock.createMock(QualificationDAO.class);
+		documentService = new DocumentService(documentDAOMock, applicationDAOMock, qualificationDAOMock);
 	}
 }

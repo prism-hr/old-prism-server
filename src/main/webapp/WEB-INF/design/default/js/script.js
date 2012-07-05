@@ -299,9 +299,14 @@ function watchUpload($field, $deleteFunction)
     	}else{
     		$deleteFunction();
     	}
-		
+
+    	 $container.find('span a').each(function(){
+    		 $(this).remove();
+    	 });
+		 
+	
 		$hidden.val(''); // clear field value.
-	  $container.removeClass('uploaded');
+		$container.removeClass('uploaded');
 		
 		// Replace the file field with a fresh copy (that's the only way we can set its value to empty).
 		var id		= $field.attr('id');
@@ -315,7 +320,7 @@ function watchUpload($field, $deleteFunction)
   {
     var input    = this.children[0];
     var $hidden  = $container.find('input.file');
-		if (input.files[0].size < 10485760) // 10MB in bytes
+    if (input.files[0].size < 10485760) // 10MB in bytes
     {
 			if(!$deleteFunction){
 	    		deleteUploadedFile($hidden);
@@ -341,7 +346,7 @@ function watchUpload($field, $deleteFunction)
 function deleteUploadedFile($hidden_field)
 {
 	if ($hidden_field && $hidden_field.val() != '')
-  {
+	{
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
@@ -351,6 +356,8 @@ function deleteUploadedFile($hidden_field)
 			  },
 			url:"/pgadmissions/delete/asyncdelete",
 			data: { documentId: $hidden_field.val() }
+			
+			
 		});
 	}
 }

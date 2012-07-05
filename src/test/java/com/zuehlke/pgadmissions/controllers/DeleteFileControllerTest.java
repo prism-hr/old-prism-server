@@ -58,6 +58,21 @@ public class DeleteFileControllerTest {
 		assertEquals("/private/common/ajax_OK", controller.deleteCV( "applicationNumber"));	
 		EasyMock.verify(documentServiceMock);
 	}
+	
+	@Test
+	public void shouldGetQualificationAndDelteProofOfAward(){			
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("applicationNumber")).andReturn(applicationForm);
+	
+		documentServiceMock.deleteCV(applicationForm);
+		EasyMock.replay( applicationServiceMock, documentServiceMock);
+	
+		assertEquals("/private/common/ajax_OK", controller.deleteCV( "applicationNumber"));	
+		EasyMock.verify(documentServiceMock);
+	}
+	
+	
 	@Test
 	public void shouldGetDocumentFromServiceAndDeleteInAsyncDelete(){		
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);

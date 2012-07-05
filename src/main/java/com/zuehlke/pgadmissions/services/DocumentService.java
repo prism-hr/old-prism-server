@@ -6,23 +6,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
+import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Qualification;
 
 @Service
 public class DocumentService {
 
 	private final DocumentDAO documentDAO;
 	private final ApplicationFormDAO applicationFormDAO;
+	private final QualificationDAO qualificationDAO;
 
 	DocumentService() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public DocumentService(DocumentDAO documentDAO, ApplicationFormDAO applicationFormDAO) {
+	public DocumentService(DocumentDAO documentDAO, ApplicationFormDAO applicationFormDAO, QualificationDAO qualificationDAO) {
 		this.documentDAO = documentDAO;
 		this.applicationFormDAO = applicationFormDAO;
+		this.qualificationDAO = qualificationDAO;
 
 	}
 
@@ -61,5 +65,16 @@ public class DocumentService {
 			documentDAO.deleteDocument(cv);
 		}
 
+	}
+	
+	@Transactional
+	public void deleteQualificationProofOfAward(Qualification qualification) {
+		Document proofOfAward = qualification.getProofOfAward();
+		qualification.setProofOfAward(null);
+		qualificationDAO.save(qualification);
+		if(proofOfAward != null){
+			documentDAO.deleteDocument(proofOfAward);
+		}
+		
 	}
 }

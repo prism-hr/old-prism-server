@@ -72,7 +72,7 @@ $(document).ready(function(){
 				'	<div class="nationality-item">'+
 				'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='candidateNationalities' value='" +$('#candidateNationalityCountry option:selected').val()+ "'/>" +
-	  		'		<a class="button-delete" data-desc="Delete">Delete</a><br/>'+
+	  		'		<button class="button-delete" data-desc="Delete">Delete</button><br/>'+
 	  		'	</div>';
 				$('#my-nationality-div').append(html);
 				$('#nationality-em').remove();
@@ -109,7 +109,7 @@ $(document).ready(function(){
 				'	<div class="nationality-item">'+
 				'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='maternalGuardianNationalities' value='" +$('#maternalNationalityCountry option:selected').val()+ "'/>" +
-	  		'		<a class="button-delete" data-desc="Delete">Delete</a><br/>'+
+	  		'		<button class="button-delete" data-desc="Delete">Delete</button><br/>'+
 	  		'	</div>';
 				$('#maternal-nationality-div').append(html);
 				addToolTips();
@@ -143,7 +143,7 @@ $(document).ready(function(){
 				'	<div class="nationality-item">'+
 				'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='paternalGuardianNationalities' value='" +$('#paternalNationalityCountry option:selected').val()+ "'/>" +
-	  		'		<a class="button-delete" data-desc="Delete">Delete</a><br/>'+
+	  		'		<button class="button-delete" data-desc="Delete">Delete</button><br/>'+
 	  		'	</div>';
 				$('#paternal-nationality-div').append(html);
 				addToolTips();

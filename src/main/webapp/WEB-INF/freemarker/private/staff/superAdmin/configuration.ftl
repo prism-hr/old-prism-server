@@ -104,16 +104,10 @@
 												</#list>
 												<input type="hidden" name="stagesDuration" id= "stagesDuration" />
 
-												<div class="buttons">						        		
-	<#--										<button type="button" id="cancelDurationBtn" value="cancel" class="clear">Clear</button> -->
-													<button class="blue" id="submitDurationStages" type="button" value="Submit">Submit</button>						        
-												</div>
 											</div><!-- .row-group -->
-										
-										</form>
 
 										<!-- Configure Reminder Interval -->
-										<form>
+											
 											<div class="row-group" id="section-reminders">
 												<h3>Task Notifications</h3>
 
@@ -138,18 +132,9 @@
 													</div>
 												</div><!-- .row -->
 												
-												<div class="buttons">						        		
-	<#--										<button type="button" id="cancelReminderBtn" value="cancel" class="clear">Clear</button> -->
-													<button class="blue" id="submitRIBtn" type="button" value="Submit">Submit</button>						        
-												</div>
-											
 											</div><!-- .row-group -->
 											
-										</form>
-										
-
 										<!-- Add Registry Users -->
-										<form id="registryUsersForm" id="section-users">
 											<div class="row-group">
 
 												<div class="row">
@@ -221,14 +206,14 @@
 													</div>
 												</div><!-- .row -->
 
-											
-												<div class="buttons">						        		
-													<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
-												</div>
-
 											</div>
+											
+											<div class="buttons">						        		
+													<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
+											</div>
+											
 										</form>
-										</div>
+									</div>
 								</section>
 										<section class="form-rows">
 									<h2>Badge</h2>

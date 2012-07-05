@@ -15,7 +15,7 @@
     
   <div class="row">
     <label>Submitted</label>
-    ${(applicationForm.submittedDate?string("dd MMM yyyy"))!}
+    ${(applicationForm.submittedDate?string("dd MMM yyyy"))!"In Progress"}
   </div>
 </div>
 <hr/>

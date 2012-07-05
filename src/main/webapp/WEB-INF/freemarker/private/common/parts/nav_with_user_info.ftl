@@ -26,7 +26,7 @@
 			<#elseif user??>
 			${user.firstName!} ${' '} ${user.lastName!}
 			</#if>
-			<a class="button blue user-logout" href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
+			<a class="button user-logout" href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
 		</div>
 	</nav>
 			      

@@ -153,7 +153,7 @@
 											<div class="row-group">
 
 												<div class="row">
-													<span class="label"><b>Admissions Contacts</b></h3>
+													<span class="label"><b>Admissions Contacts</b></span>
 													<div class="field">
 														<table id="registryUsers">
 															<tbody>

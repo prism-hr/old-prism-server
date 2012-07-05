@@ -69,14 +69,14 @@
 		              <!-- Button -->
 		              <table border="0" cellpadding="0" cellspacing="0">
 		              	<tr>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left-grey.gif" width="13" height="29" alt="" /></td>
+		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre-grey.gif) repeat-x;" align="center">
 		                    <font face="Arial, Helvetica, sans-serif" size="2">
 		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
 		                      	href="${host}/pgadmissions/rejectApplication?applicationId=${application.applicationNumber}"><b>Reject</b></a>
 		                    </font>
 		                  </td>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
+		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right-grey.gif" width="13" height="29" alt="" /></td>
 		                </tr>
 		              </table>
 					</p>

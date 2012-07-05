@@ -57,6 +57,7 @@ function commentDocumentUpload()
 		
 	});
 
+	$('#uploadFields').addClass('posting');
 	$.ajaxFileUpload
 	(
 		{
@@ -82,6 +83,10 @@ function commentDocumentUpload()
 					$('#uploadFields').addClass('uploaded');
 					$('#commentUploadedDocument').show();
 				}
+			},
+			complete: function()
+			{
+				$('#uploadFields').removeClass('posting');
 			}
 		}
 	);

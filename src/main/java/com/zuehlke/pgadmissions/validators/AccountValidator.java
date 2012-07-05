@@ -78,12 +78,11 @@ public class AccountValidator implements Validator {
 			errors.rejectValue("newPassword", "user.password.nonalphanumeric");
 		}
 		
-		List<RegisteredUser> allUsers = userService.getAllUsers();
-		allUsers.remove(existingUser);
-		for (RegisteredUser user : allUsers) {
-			if(user.getUsername().equals(updatedUser.getEmail()))
+		RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
+		if(userWithSameEmail != null && !userWithSameEmail.equals(existingUser)){
 				errors.rejectValue("email", "user.email.alreadyexists");
 		}
+		
 		if (!EmailValidator.getInstance().isValid(updatedUser.getEmail())) {
 			errors.rejectValue("email", "text.email.notvalid");
 		}

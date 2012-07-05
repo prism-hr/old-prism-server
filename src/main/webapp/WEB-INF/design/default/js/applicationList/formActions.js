@@ -128,6 +128,7 @@ $(document).ready(function()
 	$('#search-reset').addClass('disabled').click(function()
 	{
 		populateApplicationList(true);
+		$('#searchTerm, #searchCategory').addClass('disabled');
 	});
 	
 	$('#search-box').on('change, keypress', '#searchTerm, #searchCategory', function()

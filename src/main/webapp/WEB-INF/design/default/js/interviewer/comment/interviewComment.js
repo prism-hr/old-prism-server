@@ -24,6 +24,7 @@ $(document).ready(function()
 		};
 		
 		modalPrompt(message, onOk, onCancel);
+		return false;
 	});	
 	
 	$('#decline').click(function()

@@ -101,15 +101,16 @@ public class EventFactoryTest {
 	
 	@Test
 	public void shouldReturnReferencEvent() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).toUser();
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 	
-		Referee referee = new RefereeBuilder().id(1).toReferee();
+		Referee referee = new RefereeBuilder().id(1).user(refereeUser).toReferee();
 		Event event = eventFactory.createEvent( referee);
 		assertTrue(event instanceof ReferenceEvent);
 		ReferenceEvent referenceEvent = (ReferenceEvent) event;
-		assertEquals(user, referenceEvent.getUser());
+		assertEquals(refereeUser, referenceEvent.getUser());
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(referenceEvent.getDate(), Calendar.DATE));		
 		assertEquals(referee, referenceEvent.getReferee());
 	}

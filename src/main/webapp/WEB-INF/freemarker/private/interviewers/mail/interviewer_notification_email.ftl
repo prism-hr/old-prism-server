@@ -30,11 +30,25 @@
 			      		<p>
 			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with UCL Prism, please do so by clicking the link below:</font>
 			      		</p>
-				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">
-				      			<a href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}">Register</a>
-				      		</font>
-				      	</p>
+			      		
+					    <br>  	
+						<p>
+			              <!-- Button -->
+			              <table border="0" cellpadding="0" cellspacing="0">
+			              	<tr>
+			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
+			                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
+			                    <font face="Arial, Helvetica, sans-serif" size="2">
+			                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+			                      	href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"><b>Register</b></a>
+			                    </font>
+			                  </td>
+			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
+			                </tr>
+			              </table>
+						</p>
+						</br>
+			      		
 			      	</#if>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${interviewer.interview.interviewTime} on ${interviewer.interview.interviewDueDate?string("dd MMM yyyy")}.</font>
@@ -42,16 +56,29 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${interviewer.interview.furtherDetails?html}</font>
 			      	</p>
-			      	<#if interviewer.interview.locationURL??>
+			      	<#if interviewer.interview.locationURL?has_content>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${interviewer.interview.locationURL}">Location details</a></font>
+				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${interviewer.interview.locationURL}">Location Details</a></font>
 				      	</p>
 				    </#if>
-			        <p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">View application</a>
-			      		</font>
-			      	</p>
+				    
+					    <br>  	
+						<p>
+			              <!-- Button -->
+			              <table border="0" cellpadding="0" cellspacing="0">
+			              	<tr>
+			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
+			                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
+			                    <font face="Arial, Helvetica, sans-serif" size="2">
+			                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+			                      	href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"><b>View Application</b></a>
+			                    </font>
+			                  </td>
+			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
+			                </tr>
+			              </table>
+						</p>
+						</br>				    
 			      	<p>
 			      	  <font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to attend.</font>
 			      	</p>

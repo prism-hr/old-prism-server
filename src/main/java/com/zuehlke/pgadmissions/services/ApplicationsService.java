@@ -113,7 +113,7 @@ public class ApplicationsService {
 
 		List<ApplicationForm> matchingApplications = new ArrayList<ApplicationForm>();
 		List<ApplicationForm> visibleApplications = applicationFormDAO.getVisibleApplications(user);
-		System.err.println("visible APplications: " + visibleApplications.size(););
+		System.err.println("visible APplications: " + visibleApplications.size());
 		if (searchCategory == null) {
 			matchingApplications = visibleApplications;
 		} else {

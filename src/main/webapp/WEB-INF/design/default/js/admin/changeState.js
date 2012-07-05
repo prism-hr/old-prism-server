@@ -154,13 +154,13 @@ function validateStateChange()
 	var errors = 0;
 	$('#commentsection span.invalid').remove();
 	
-	if ($('#comment').val() = '')
+	if ($('#comment').val() == '')
 	{
 		$('#comment').after('<span class="invalid">You must make an entry.</span>');
 		errors++;
 	}
 
-	if ($('#status').val() = '')
+	if ($('#status').val() == '')
 	{
 		$('#comment').after('<span class="invalid">You must make a selection.</span>');
 		errors++;

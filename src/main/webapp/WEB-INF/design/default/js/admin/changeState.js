@@ -14,7 +14,7 @@ $(document).ready(function()
 		}
 		//fire the change state to submit and get validation messages
 		//changeState();
-	
+		return false;
 	});
 
 

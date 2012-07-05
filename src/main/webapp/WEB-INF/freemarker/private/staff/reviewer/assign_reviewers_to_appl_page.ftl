@@ -54,17 +54,17 @@
       <div class="content-box">
         <div class="content-box-inner">
         
- 		<#include "/private/common/parts/application_info.ftl"/>
-    		<input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
+          <#include "/private/common/parts/application_info.ftl"/>
+          <input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
           <section class="form-rows" id="reviewsection">
-			<h2 class="no-arrow">Assign Reviewers</h2>
+            <h2 class="no-arrow">Assign Reviewers</h2>
             <div>
               <form>
               
-				<div id="add-info-bar-div" class="section-info-bar">
-					Assign reviewers to the application here. You may also create new reviewers.
-				</div>  
-					
+                <div id="add-info-bar-div" class="section-info-bar">
+                  Assign reviewers to the application here. You may also create new reviewers.
+                </div>  
+          
                 <div id="assignReviewersToAppSection" class="row-group">
                     
                 </div>
@@ -73,10 +73,9 @@
        
                 </div>
                 
-               	<div class="buttons">
-                  	<button value="cancel" name="" id="" type="reset">Clear</button>
-                    <button class="blue" type="button" id="moveToReviewBtn">Submit</button>
-                 </div>
+                 <div class="buttons">
+                  <button class="blue" type="button" id="moveToReviewBtn">Submit</button>
+                </div>
                 <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
     
               </form>
@@ -85,7 +84,7 @@
     
           <div id="postReviewData"></div>
           <input type="hidden" id="assign" value="${assignOnly?string}"/>
-  		<#include "/private/staff/admin/comment/timeline_application.ftl"/>
+          <#include "/private/staff/admin/comment/timeline_application.ftl"/>
         </div><!-- .content-box-inner -->
       </div><!-- .content-box -->
     
@@ -96,8 +95,5 @@
 <#include "/private/common/global_footer.ftl"/>
   
 </div>
-
-
 </body>
 </html>
-</section>

@@ -113,7 +113,7 @@ public class ApplicationsService {
 
 		List<ApplicationForm> matchingApplications = new ArrayList<ApplicationForm>();
 		List<ApplicationForm> visibleApplications = applicationFormDAO.getVisibleApplications(user);
-		System.err.println("visible APplications: " + visibleApplications.size());
+
 		if (searchCategory == null) {
 			matchingApplications = visibleApplications;
 		} else {
@@ -154,9 +154,9 @@ public class ApplicationsService {
 			}
 		}
 		matchingApplications = sortApplicationList(matchingApplications, sortCategory, sortOrder);
-		System.err.println("matchingApplications APplications: " + matchingApplications.size());
+
 		matchingApplications = reduceApplicationListSize(matchingApplications, blockCount);
-		System.err.println("reduced APplications: " + matchingApplications.size());
+		
 		return matchingApplications;
 	}
 

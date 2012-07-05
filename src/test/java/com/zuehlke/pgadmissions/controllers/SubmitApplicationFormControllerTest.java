@@ -60,9 +60,14 @@ public class SubmitApplicationFormControllerTest {
 	}
 
 	@Test
-	public void shouldReturnStudenApplicationViewOnGetForApplicant() {
-		String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().id(1).toApplicationForm());
+	public void shouldReturnStudenApplicationViewOnGetForApplicantOfApplciation() {
+		String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().applicant(student).id(1).toApplicationForm());
 		assertEquals("/private/pgStudents/form/main_application_page", view);
+	}
+	@Test
+	public void shouldReturnAdminApplicationViewOnGetForApplicantButNotOfApplication() {
+		String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().id(6).toUser()).id(1).toApplicationForm());
+		assertEquals("/private/staff/application/main_application_page", view);
 	}
 	@Test
 	public void shouldReturnAdminApplicationViewOnGetForApplicantForEndStateApp() {

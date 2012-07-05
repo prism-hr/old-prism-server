@@ -175,9 +175,16 @@ public class ApplicationFormDAO {
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
 		if (user.isInRole(Authority.APPLICANT)) {
-			return sessionFactory.getCurrentSession()
-					.createCriteria(ApplicationForm.class)
-					.add(Restrictions.eq("applicant", user)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+			//the only other role permitted if you are an applicant 
+			//is referee
+			List<ApplicationForm> applications = applicationsOfWhichApplicant(user);
+			 List<ApplicationForm> applicationsOfWhichReferee = applicationsOfWhichReferee(user);
+			 for (ApplicationForm applicationForm : applicationsOfWhichReferee) {
+				if(!applications.contains(applicationForm)){
+					applications.add(applicationForm);
+				}
+			}
+			return applications;
 
 		}
 		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
@@ -188,16 +195,22 @@ public class ApplicationFormDAO {
 							ApplicationFormStatus.UNSUBMITTED))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		}
 
+		List<ApplicationForm> apps = new ArrayList<ApplicationForm>();
 		if (user.isInRole(Authority.REFEREE)) {
-			return sessionFactory.getCurrentSession()
-					.createCriteria(ApplicationForm.class)
-					.createAlias("referees", "referee")
-					.add(Restrictions.eq("referee.user", user)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+			 if(!applicationsOfWhichReferee(user).isEmpty()){
+				 apps.addAll(applicationsOfWhichReferee(user));
+			 }
 		}
 
-		List<ApplicationForm> apps = new ArrayList<ApplicationForm>();
+	
 		if (!user.getProgramsOfWhichAdministrator().isEmpty()) {
-			apps.addAll(getSubmittedApplicationsInProgramsOfWhichAdmin(user));
+			List<ApplicationForm> submittedApplicationsInProgramsOfWhichAdmin = getSubmittedApplicationsInProgramsOfWhichAdmin(user);
+			for (ApplicationForm applicationForm : submittedApplicationsInProgramsOfWhichAdmin) {
+				if(!apps.contains(applicationForm)){
+					apps.add(applicationForm);
+				}
+			}
+		
 		}
 		List<ApplicationForm> applicationsOfWhichApplicationAdministrator = getSubmittedApplicationsOfWhichApplicationAdministrator(user);
 		for (ApplicationForm applicationForm : applicationsOfWhichApplicationAdministrator) {
@@ -228,6 +241,19 @@ public class ApplicationFormDAO {
 			}
 		}
 		return apps;
+	}
+
+	private List<ApplicationForm> applicationsOfWhichReferee(RegisteredUser user) {
+		return sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.createAlias("referees", "referee")
+				.add(Restrictions.eq("referee.user", user)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	}
+
+	private List<ApplicationForm> applicationsOfWhichApplicant(RegisteredUser user) {
+		return sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("applicant", user)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")

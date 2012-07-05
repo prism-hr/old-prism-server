@@ -94,7 +94,7 @@ public class SubmitApplicationFormController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
-		if(getCurrentUser().isInRole(Authority.APPLICANT) && applicationForm.isModifiable()){
+		if(applicationForm != null && applicationForm.getApplicant() != null && applicationForm.getApplicant().equals(getCurrentUser()) && applicationForm.isModifiable()){
 			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
 		}
 		if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {

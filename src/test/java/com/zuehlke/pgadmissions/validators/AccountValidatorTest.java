@@ -102,7 +102,6 @@ public class AccountValidatorTest {
 		Assert.assertEquals("account.currentpassword.notmatch", mappingResult.getFieldError("password").getCode());
 	}
 	
-	@Test
 	public void shouldRejectIfNewAndConfirmPasswordsNotSame() {
 		user.setConfirmPassword("password");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");

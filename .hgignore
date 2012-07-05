@@ -209,6 +209,7 @@ docs/Regression test.docx
 docs/~$research_programmes_20120224.xlsx
 *.bat
 chromedriver.log
+docs/launch/Launch 1.wmv.old
 syntax: regexp
 target/*
 

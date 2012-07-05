@@ -218,9 +218,9 @@
           <section id="additionalInformationSection" class="folding form-rows lightblue" <#if additionalInformationError> error</#if>>
           </section>
 
+          <#if applicationForm.isInState('UNSUBMITTED')>
           <hr />
           
-          <#if applicationForm.isInState('UNSUBMITTED')>
           <!-- Terms -->
           <section id="acceptTermsSection" class="folding form-rows lightgrey">
           </section>
@@ -248,7 +248,9 @@
             </form>
             </#if>
           </div>
-		<#include "/private/staff/admin/comment/timeline_only.ftl"/>
+					
+					<#include "/private/staff/admin/comment/timeline_only.ftl"/>
+					
         </div><!-- .content-box-inner -->
 
       </div><!-- .content-box -->

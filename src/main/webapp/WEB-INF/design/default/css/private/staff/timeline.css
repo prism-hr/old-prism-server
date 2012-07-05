@@ -101,6 +101,9 @@
 #timeline-statuses .approved ul .box .title { background: #B6DDE9; }
 
 
+#timeline p.datetime { background: url(../../../images/icon_calendar.png) no-repeat; padding-left: 40px; }
+#timeline p.location { background: url(../../../images/icon_location.png) no-repeat; padding-left: 40px; }
+
 /* Application tab ---------------------------------------------------------------------------------------- */
 #application div.admin_row .admin_row_label,
 #application div.admin_row .admin_header { line-height: 1.2; }

@@ -46,7 +46,7 @@
 	<label class="plain-label">Badge HTML</label>
 	<span class="hint" data-desc="<@spring.message 'badge.html'/>"></span>
 	<div class="field">
-		<textarea readonly="readonly" id="html" rows="15" cols="70"></textarea>
+		<textarea readonly="readonly" id="html" rows="10" cols="70"></textarea>
 	</div>
 </div>
 

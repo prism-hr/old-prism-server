@@ -47,8 +47,8 @@
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
 									<div class="box">
-										<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
-										<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
+										<p class="datetime">${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
+										<p class="location"><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
 										<div class="added">
 											<#assign size_users = timelineObject.interview.interviewers?size>
 											<#list timelineObject.interview.interviewers as interviewer>

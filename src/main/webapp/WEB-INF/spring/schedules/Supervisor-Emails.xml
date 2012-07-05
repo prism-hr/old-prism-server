@@ -12,7 +12,7 @@
 
 	<bean id="supervisorNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="3000" />
-		<property name="period" value="300000" />
+		<property name="period" value="60000" />
 		<property name="timerTask" ref="supervisorNotificationTimerTask" />
 	</bean>
 

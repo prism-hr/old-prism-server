@@ -19,7 +19,7 @@
 
 	<bean id="applicantSubmissionNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10500" />
-		<property name="period" value="300000" />
+		<property name="period" value="60000" />
 		<property name="timerTask" ref="applicantSubmissionNotificationTimerTask" />
 	</bean>
 	
@@ -39,7 +39,7 @@
 
 	<bean id="moveToReviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10000" />
-		<property name="period" value="300000" />
+		<property name="period" value="60000" />
 		<property name="timerTask" ref="moveToReviewNotificationTimerTask" />
 	</bean>
 
@@ -59,7 +59,7 @@
 
 	<bean id="moveToRejectNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="1000" />
-		<property name="period" value="300000" />
+		<property name="period" value="60000" />
 		<property name="timerTask" ref="moveToRejectNotificationTimerTask" />
 	</bean>
 
@@ -80,7 +80,7 @@
 
 	<bean id="moveToInterviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10000" />
-		<property name="period" value="300000" />
+		<property name="period" value="60000" />
 		<property name="timerTask" ref="moveToInterviewNotificationTimerTask" />
 	</bean>
 	
@@ -100,7 +100,7 @@
 
 	<bean id="moveToApprovalNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10000" />
-		<property name="period" value="300000" />
+		<property name="period" value="60000" />
 		<property name="timerTask" ref="moveToApprovalNotificationTimerTask" />
 	</bean>
 	
@@ -120,7 +120,7 @@
 
 	<bean id="moveToApprovedNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10000" />
-		<property name="period" value="300000" />
+		<property name="period" value="60000" />
 		<property name="timerTask" ref="moveToApprovedNotificationTimerTask" />
 	</bean>
 </beans>

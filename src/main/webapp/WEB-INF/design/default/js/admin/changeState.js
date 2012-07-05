@@ -5,7 +5,7 @@ $(document).ready(function()
 	// ------------------------------------------------------------------------------
 	$('#changeStateButton').click(function()
 	{
-		if ($('#status').val() != '')
+		if (validateStateChange())
 		{
 			var state		= $('#status').val().toLowerCase().capitalize();
 			var message = 'Confirm you want to move this application to the ' + state + ' stage.<br />You will not be able to reverse this decision!';
@@ -13,7 +13,7 @@ $(document).ready(function()
 			return;
 		}
 		//fire the change state to submit and get validation messages
-		changeState();
+		//changeState();
 	
 	});
 
@@ -146,4 +146,25 @@ function changeState()
 			});
 		}
 	}
+}
+
+
+function validateStateChange()
+{
+	var errors = 0;
+	$('#commentsection span.invalid').remove();
+	
+	if ($('#comment').val() = '')
+	{
+		$('#comment').after('<span class="invalid">You must enter a value.</span>');
+		errors++;
+	}
+
+	if ($('#status').val() = '')
+	{
+		$('#comment').after('<span class="invalid">You must select a value.</span>');
+		errors++;
+	}
+
+	return (errors == 0);
 }

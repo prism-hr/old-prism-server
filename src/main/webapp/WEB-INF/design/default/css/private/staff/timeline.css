@@ -1,0 +1,111 @@
+table{ border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
+table thead th {
+	background: rgb(124,124,124); /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdjN2M3YyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2JjYmNiYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM3YzdjN2MiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top,  rgba(124,124,124,1) 0%, rgba(188,188,188,1) 50%, rgba(124,124,124,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(124,124,124,1)), color-stop(50%,rgba(188,188,188,1)), color-stop(100%,rgba(124,124,124,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* IE10+ */
+	background: linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7c7c7c', endColorstr='#7c7c7c',GradientType=0 ); /* IE6-8 */
+	cursor: pointer; font-weight: bold; text-align: left; padding: 5px 3px;
+}
+table th, table td { padding: 7px; vertical-align: middle; }
+table tr td, table tr th { border-bottom: 1px solid #999; }
+table tbody td { background: url(../../../images/bg_table_row.jpg) repeat-x 0 100%; }
+table select { width: 100%; }
+table thead th.headerSortDown, table thead th.headerSortUp { background-color: #06C; color: #FFF; }
+
+
+/* Timeline tab ------------------------------------------------------------------------------------------- */
+#timelineview { clear: both; margin-top: 20px; }
+#timelineview ul.tabs { list-style: none; margin: 0 0 0 -4px; height: 34px; overflow: hidden; }
+#timelineview ul.tabs li { background: url(../../../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; float: left; margin: 5px 5px 0; padding: 0; }
+#timelineview ul.tabs li.current { background-position: 0 -31px; }
+#timelineview ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; padding: 0 10px; }
+
+#timelineview .tab-page { clear: both; padding-top: 5px; }
+
+
+/* Timeline comments -------------------------------------------------------------------------------------- */
+#timeline-statuses { list-style: none; margin: 0; padding: 0; }
+#timeline-statuses ul { list-style: none; margin-left: 90px; }
+
+#timeline-statuses .box { background: #CCC; margin-bottom: 10px; }
+#timeline-statuses .box .title { background: #999; font-weight: bold; line-height: 24px; overflow: hidden; padding: 5px; }
+#timeline-statuses .box .title .name { margin-left: 4px; }
+#timeline-statuses .box .title .datetime { float: right; margin-right: 5px; }
+#timeline-statuses .box p { line-height: 1.2; margin: 0; padding: 5px 10px 0 30px; }
+#timeline-statuses .box p.highlight { font-size: 16px; font-weight: bold; margin: 0; padding: 10px 25px 10px 10px; }
+#timeline-statuses .box h3 { line-height: 1.2; margin-bottom: 0; margin-top: .5em; padding: 0 10px; }
+#timeline-statuses .box label { display: inline-block; margin-right: 1em; }
+#timeline-statuses .box label input { vertical-align: middle; }
+#timeline-statuses .box ul { margin: 0 30px; padding: 10px 0; }
+#timeline-statuses .box ul li { margin-bottom: .25em; }
+
+#timeline-statuses .box h3.answer { line-height: 1; margin-top: 0; padding-bottom: 10px; padding-left: 40px; }
+#timeline-statuses .box h3.answer span { background: url(../../../images/icon_answers.png) no-repeat; display: inline-block; height: 17px; margin: 0 10px 0 -30px; vertical-align: text-top; width: 19px; }
+#timeline-statuses .box h3.answer.unsure span { background-position: 0 0; }
+#timeline-statuses .box h3.answer.no span { background-position: -19px 0; }
+#timeline-statuses .box h3.answer.home span { background-position: -38px 0; }
+#timeline-statuses .box h3.answer.overseas span { background-position: -57px 0; }
+#timeline-statuses .box h3.answer.yes span { background-position: -76px 0; }
+
+#timeline-statuses ul .box .title { background: #AAA; }
+#timeline-statuses ul .box p { background-image: none !important; font-size: 12px; font-weight: normal; padding: 10px; }
+
+#timeline-statuses .box ul.uploads { padding-bottom: 10px; padding-left: 10px; }
+#timeline-statuses .box ul.uploads li { background: url(../../../images/icon_downloads.png) no-repeat 1px 0; display: block; line-height: 15px; margin-bottom: 10px; padding-left: 32px; }
+
+#timeline-statuses ul.status-info .box h3 { margin: 0; padding: 10px; }
+#timeline-statuses ul.status-info .added { background: url(../../../images/icon_added_users.png) no-repeat 12px 11px; padding: 10px 10px 10px 40px; }
+
+#timeline-statuses ul .box ul { margin: 0; padding: 10px 0 20px 40px; }
+#timeline-statuses ul .box li { display: inline-block; margin-right: 20px; }
+
+#timeline-statuses .validation .box { background: #FDDB91; }
+#timeline-statuses .validation .box .title { background: #FBBE1E; }
+#timeline-statuses .validation .box p.highlight { background-image: url(../../../images/bg_status_validation.gif); }
+#timeline-statuses .validation ul .box { background-color: #FFECBF; }
+#timeline-statuses .validation ul .box .title { background: #FECB61; }
+
+#timeline-statuses .review .box { background: #C2DCEB; }
+#timeline-statuses .review .box .title { background: #A8CBDE; }
+#timeline-statuses .review .box p.highlight { background-image: url(../../../images/bg_status_review.gif); }
+#timeline-statuses .review ul .box { background-color: #E6F2F8; }
+#timeline-statuses .review ul .box .title { background: #AED5E7; }
+
+#timeline-statuses .interview .box { background: #D6DFAE; }
+#timeline-statuses .interview .box .title { background: #C5CE88; }
+#timeline-statuses .interview .box p.highlight { background-image: url(../../../images/bg_status_interview.gif); }
+#timeline-statuses .interview ul .box { background-color: #E8EDD1; }
+#timeline-statuses .interview ul .box .title { background: #CCD495; }
+
+#timeline-statuses .approval .box { background: #EAEB93; }
+#timeline-statuses .approval .box .title { background: #DCDD28; }
+#timeline-statuses .approval .box p.highlight { background-image: url(../../../images/bg_status_approval.gif); }
+#timeline-statuses .approval ul .box { background-color: #F5F7CF; }
+#timeline-statuses .approval ul .box .title { background: #E4E466; }
+
+#timeline-statuses .rejected .box { background: #E0CED7; }
+#timeline-statuses .rejected .box .title { background: #C3ABBB; }
+#timeline-statuses .rejected .box p.highlight { background-image: url(../../../images/bg_status_rejected.gif); }
+#timeline-statuses .rejected ul .box { background-color: #EEE3E8; }
+#timeline-statuses .rejected ul .box .title { background: #D6BFCA; }
+
+#timeline-statuses .approved .box { background: #B6DDE9; }
+#timeline-statuses .approved .box .title { background: #74C0D2; }
+#timeline-statuses .approved .box p.highlight { background-image: url(../../../images/bg_status_approved.gif); }
+#timeline-statuses .approved ul .box { background-color: #DBEEF5; }
+#timeline-statuses .approved ul .box .title { background: #B6DDE9; }
+
+
+/* Application tab ---------------------------------------------------------------------------------------- */
+#application div.admin_row .admin_row_label,
+#application div.admin_row .admin_header { line-height: 1.2; }
+#application div.admin_row .admin_row_label { margin: 4px 0; }
+#application div.admin_row .field { line-height: 1.2; margin: 4px 0 4px 235px; padding: 0; }
+
+#application div.buttons { display: none !important; }

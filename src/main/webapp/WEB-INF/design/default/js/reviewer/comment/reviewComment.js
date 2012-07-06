@@ -98,7 +98,7 @@ function validateReview()
 		errors++;
 	}
 
-	if ($('input[name="suitableCandidateForProgramme"]:checked').val() == '')
+	if ($('input[name=suitableCandidateForProgramme]:checked').val() == '')
 	{
 		$('#field-issuitableprog').append('<span class="invalid">You must make a selection.</span>');
 		errors++;

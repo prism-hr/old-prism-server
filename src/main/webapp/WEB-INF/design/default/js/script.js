@@ -276,14 +276,14 @@ function fixedTip($object, text)
 		},
 		style: 'tooltip-pgr ui-tooltip-shadow',
 		show: {
-			when: 'click'
+			when: 'click, mouseenter',
+			ready: true
 		},
 		hide: false
 	};
 
 	$object.removeData('qtip')
-	       .qtip(tooltipSettings)
-				 .show();
+	       .qtip(tooltipSettings);
 }
 
 

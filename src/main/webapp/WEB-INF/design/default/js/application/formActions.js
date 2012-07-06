@@ -180,6 +180,10 @@ $(document).ready(function()
 		}
 		
 	});
+	
+
+	
+	
 });
 
 function closeSections()

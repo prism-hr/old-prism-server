@@ -1,5 +1,3 @@
-			<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/modal_window.css' />"/>
-
 			<div id="dialog-overlay"></div>
 		
 			<div id="dialog-box">

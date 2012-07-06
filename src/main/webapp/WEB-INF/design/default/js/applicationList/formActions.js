@@ -235,7 +235,10 @@ function populateApplicationList(reset)
 			{
 				$('#applicationListSection').html(data);
 				addToolTips();
-				$('div.fetching').remove();
+			},
+			complete: function()
+			{
+				$('.content-box-inner div.fetching').remove();
 			}			
 	});
 }

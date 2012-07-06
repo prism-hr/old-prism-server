@@ -93,7 +93,7 @@ $(document).ready(function()
 	$('#submitRUBtn').click(function()
 	{
 		
-		$('#configSection').css({ position: 'relative' }).append('<div class="ajax" />');
+		$('#configForm').append('<div class="ajax" />');
 		
 		$('#regContactData input.registryUsers').remove();
 		
@@ -139,7 +139,7 @@ $(document).ready(function()
 					},
 					complete: function()
 					{
-						$('#configSection div.ajax').remove();
+						$('#configForm div.ajax').remove();
 						updateRegistryForm();
 					}
 				});

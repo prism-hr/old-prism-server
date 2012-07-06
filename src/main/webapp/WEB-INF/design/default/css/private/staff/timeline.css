@@ -7,7 +7,7 @@
 #timelineview ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; margin-bottom: -5px; padding: 0 10px; }
 #timelineview ul.tabs li.current a { margin-bottom: 0; }
 
-#timelineview .tab-page { clear: both; padding-top: 5px; position: relative; }
+#timelineview .tab-page { clear: both; padding-top: 8px; position: relative; }
 
 
 /* Timeline comments -------------------------------------------------------------------------------------- */

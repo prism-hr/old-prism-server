@@ -86,7 +86,7 @@
 #timeline-statuses ul .box p.datetime,
 #timeline-statuses ul .box p.location { padding-left: 40px; position: relative; }
 #timeline-statuses ul .box p.datetime span,
-#timeline-statuses ul .box p.location span { background: no-repeat 10px 7px; position: absolute; left: 5px; top: 3px; width: 24px; height: 24px; display: block; }
+#timeline-statuses ul .box p.location span { background: no-repeat 3px; position: absolute; left: 8px; top: 4px; width: 24px; height: 24px; display: block; }
 #timeline-statuses ul .box p.datetime span { background-image: url(../../../images/icon_calendar.png); }
 #timeline-statuses ul .box p.location span { background-image: url(../../../images/icon_location.png); }
 

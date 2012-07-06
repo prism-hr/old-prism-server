@@ -18,4 +18,3 @@
     ${(applicationForm.submittedDate?string("dd MMM yyyy"))!"In Progress"}
   </div>
 </div>
-<hr/>

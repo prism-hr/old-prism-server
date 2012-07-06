@@ -16,36 +16,15 @@ $(document).ready(function(){
 	});
 
 	
-	$('#personalDetailsClearButton').click(function()
-	{
-		loadPersonalDetails(true);
-	});
-
 	// -------------------------------------------------------------------------------
 	// Clear button.
 	// -------------------------------------------------------------------------------
-//	$('#personalDetailsCancelButton').click(function()
-//	{
-//		$.ajax({
-//			 	type: 'GET',
-//			 	statusCode: {
-//			 		401: function() {
-//			 			window.location.reload();
-//			 		}
-//			 	},
-//				url:"/pgadmissions/update/getPersonalDetails",
-//				data:{
-//					applicationId:  $('#applicationId').val(),					
-//					cacheBreaker: new Date().getTime()					
-//				},
-//				success: function(data) {
-//					$('#personalDetailsSection').html(data);
-//				}
-//		});
-//	});
-	
+	$('#personalDetailsClearButton').click(function()
+	{
+		$('#personalDetailsSection > div').append('<div class="ajax" />');
+		loadPersonalDetails(true);
+	});
 
-	
 	
 	// -------------------------------------------------------------------------------
 	// Add a nationality (candidate).

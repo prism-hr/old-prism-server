@@ -9,7 +9,7 @@ $(document).ready(function(){
 	{
 		if (!validateReview())
 		{
-			return;
+			return false;
 		}
 		
 		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
@@ -92,19 +92,19 @@ function validateReview()
 		errors++;
 	}
 
-	if ($('input[name="suitableCandidateForUcl"]').val() == '')
+	if ($('input[name="suitableCandidateForUcl"]:checked').val() == '')
 	{
 		$('#field-issuitableucl').append('<span class="invalid">You must make a selection.</span>');
 		errors++;
 	}
 
-	if ($('input[name="suitableCandidateForProgramme"]').val() == '')
+	if ($('input[name="suitableCandidateForProgramme"]:checked').val() == '')
 	{
 		$('#field-issuitableprog').append('<span class="invalid">You must make a selection.</span>');
 		errors++;
 	}
 	
-	if ($('input[name="willingToInterview"]').val() == '')
+	if ($('input[name="willingToInterview"]:checked').val() == '')
 	{
 		$('#field-wouldinterview').append('<span class="invalid">You must make a selection.</span>');
 		errors++;

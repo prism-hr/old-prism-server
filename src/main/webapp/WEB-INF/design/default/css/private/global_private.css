@@ -55,7 +55,7 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 #middle > header nav ul li.current a { background-position: 0 0; color: #000; } 
 
 #middle > header nav .user { float: right; font-size: 12pt; }
-#middle > header nav .user a.user-logout { font-size: 9pt; margin-right: 5px; margin-bottom: 7px;}
+#middle > header nav .user a.user-logout { font-size: 9pt; margin-right: 5px; margin-bottom: 4px;}
 
 
 /* Content area ------------------------------------------------------------------------------------------- */

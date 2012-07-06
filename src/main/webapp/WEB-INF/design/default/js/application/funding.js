@@ -95,16 +95,8 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#addFundingButton').click(function()
 	{
-		/*if ($('#acceptTermsFDValue').length != 0 && $("#acceptTermsFDValue").val() =='NO')
-		{ 
-			// Highlight the information bar and terms box.
-			markSectionError('#fundingSection');
-		}
-		else
-		{*/
-			$("span[name='nonAcceptedFD']").html('');
-			postFundingData('add');
-		//}
+		$("span[name='nonAcceptedFD']").html('');
+		postFundingData('add');
 	});
 	
 	
@@ -176,7 +168,8 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#fundingClearButton').click(function()
 	{
-		 loadFundingSection(true);
+		$('#fundingSection > div').append('<div class="ajax" />');
+		loadFundingSection(true);
 	});
 	
 	bindDatePicker('#fundingAwardDate');

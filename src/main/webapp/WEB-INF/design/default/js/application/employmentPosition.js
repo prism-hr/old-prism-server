@@ -138,7 +138,8 @@ $(document).ready(function(){
 			{								
 				$('#positionSection').html(data);
 				var curruntPos = $('#current').is(':checked');
-				if(curruntPos == true){
+				if (curruntPos == true)
+				{
 					$('#position_endDate').attr('disabled','disabled');
 					$('#posi-end-date-lb').addClass('grey-label');
 					$('#posi-end-date-lb em').hide();
@@ -158,7 +159,8 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#positionclearButton').click(function()
 	{
-		 loadEmploymentSection(true);
+		$('#positionSection > div').append('<div class="ajax" />');
+		loadEmploymentSection(true);
 	});
 
 	bindDatePicker('#position_startDate');

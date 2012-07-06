@@ -56,6 +56,9 @@ $(document).ready(function(){
 				$('#my-nationality-div').append(html);
 				$('#nationality-em').remove();
 				addToolTips();
+				
+				// Reset field.
+				$('#candidateNationalityCountry option:selected').removeAttr('selected');
 			}
 
 		}

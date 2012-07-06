@@ -158,7 +158,8 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#positionclearButton').click(function()
 	{
-		 loadEmploymentSection(true);
+		$('#positionSection > div').append('<div class="ajax" />');
+		loadEmploymentSection(true);
 	});
 
 	bindDatePicker('#position_startDate');

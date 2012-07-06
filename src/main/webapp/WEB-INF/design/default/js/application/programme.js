@@ -155,10 +155,7 @@ $(document).ready(function()
 			addToolTips();
 		
 			$('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
-			$("input[name='awareSupervisor']").each(function()
-			{				 
-				$(this).prop('checked', false);
-			});
+			$("input[name='awareSupervisor']").removeAttr('checked');
 		}
 		else
 		{
@@ -260,16 +257,14 @@ $(document).ready(function()
 			// restore add button.
 			$('#updateSupervisorButton').hide();
 			$('#addSupervisorButton').show();
+			
+			$("input[name='awareSupervisor']").removeAttr('checked');
 		}
 		else
 		{
 			markSectionError('#programmeDetailsSection');
 		}
 		
-		$("input[name='awareSupervisor']").each(function()
-		{
-			$(this).prop('checked', false);
-		});
 	});
 
 

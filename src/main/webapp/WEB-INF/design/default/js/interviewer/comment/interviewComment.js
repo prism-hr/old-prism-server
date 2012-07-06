@@ -8,7 +8,7 @@ $(document).ready(function()
 	
 	$('#submitInterviewFeedback').click(function()
 	{
-		var message = 'Please confirm you want to submit this interview feedback.';
+		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()
 		{
 			$('#interviewForm').append("<input type='hidden' name='type' value='INTERVIEW'/>");		

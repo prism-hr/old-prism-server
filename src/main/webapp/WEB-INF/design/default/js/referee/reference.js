@@ -1,4 +1,5 @@
-$(document).ready(function(){
+$(document).ready(function()
+{
 
 	$('#referenceUploadFields').on('change','#referenceDocument', function(event)
 	{	
@@ -20,7 +21,7 @@ $(document).ready(function(){
 	
 	$('#declineReference').click(function()
 	{
-		var message = "Decline to at as a referee. Are you sure?";
+		var message = "Decline to act as a referee. Are you sure?";
 		var onOk    = function() { $('#declineForm').submit(); };
 		var onCancel = function() { };
 		
@@ -54,10 +55,12 @@ function referenceDelete()
 function referenceUpload()
 {	
 	
-	$("#referenceDocumentProgress").ajaxStart(function(){
+	$("#referenceDocumentProgress").ajaxStart(function()
+	{
 		$(this).show();
 	})
-	.ajaxComplete(function(){
+	.ajaxComplete(function()
+	{
 		$(this).hide();
 		$('#referenceDocumentProgress').html("");
 		

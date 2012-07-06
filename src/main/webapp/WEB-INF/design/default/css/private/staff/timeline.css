@@ -7,7 +7,7 @@
 #timelineview ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; padding: 0 10px; }
 
 /* Timeline tables ---------------------------------------------------------------------------------------- */
-#timelineview table { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
+#timelineview table { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; }
 #timelineview table thead th {
 	background: rgb(124,124,124); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
@@ -21,7 +21,7 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7c7c7c', endColorstr='#7c7c7c',GradientType=0 ); /* IE6-8 */
 	cursor: pointer; font-weight: bold; text-align: left; padding: 5px 3px;
 }
-#timelineview table th, #timelineview table td { padding: 7px; vertical-align: middle; }
+#timelineview table th, #timelineview table td { line-height: 1; vertical-align: middle; }
 #timelineview table tr td, #timelineview table tr th { border-bottom: 1px solid #999; }
 #timelineview table tbody td { background: url(../../../images/bg_table_row.jpg) repeat-x 0 100%; }
 

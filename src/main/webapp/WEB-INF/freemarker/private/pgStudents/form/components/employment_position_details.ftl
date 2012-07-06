@@ -287,7 +287,7 @@
 	           	<!-- Add another button -->
 	            <div class="row">
 	            	<div class="field">
-	                	<button type="button" id="addPosisionButton" class="blue">Add</button>
+	                	<button type="button" id="addPosisionButton" class="blue"><#if employmentPosition?? && employmentPosition.id??>Update<#else>Add</#if></button>
 	                </div>
 	            </div>
            		</#if>

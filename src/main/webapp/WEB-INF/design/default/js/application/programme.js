@@ -202,22 +202,22 @@ $(document).ready(function()
 		$("#supervisors").show();
 		if ($('#supervisorFirstname').val() == "")
 		{
-			$("span[name='superFirstname']").html('You must make an entry.').show();
-			errors++;
-		}		
-		if ($("input[name='awareSupervisor']:checked").val() == undefined)
-		{
-			$("span[name='superAware']").html('You must make a selection.').show();
+			$('#supervisorFirstname').after('<span class="invalid">You must make an entry.</span>').show();
 			errors++;
 		}		
 		if ($('#supervisorLastname').val() == "")
 		{
-			$("span[name='superLastname']").html('You must make an entry.').show();
+			$('#supervisorLastname').after('<span class="invalid">You must make an entry.</span>').show();
 			errors++;
 		}		
+		if ($("input[name='awareSupervisor']:checked").val() == undefined)
+		{
+			$('#awareNo').parent().after('<span class="invalid">You must make a selection.</span>').show();
+			errors++;
+		}	
 		if (!validateEmail($('#supervisorEmail').val()))
 		{
-			$("span[name='superEmail']").html('You must enter a valid email address.').show();
+			$('#supervisorEmail').after('<span class="invalid">You must enter a valid email address.</span>').show();
 			errors++;
 		}
 		

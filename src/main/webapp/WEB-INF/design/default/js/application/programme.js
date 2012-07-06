@@ -56,17 +56,7 @@ $(document).ready(function()
 		else
 		{	
 			$("#acceptTermsPDValue").val("YES");
-			
-			// Remove any styling from the terms box.
-			//$('#programmeDetailsSection .terms-box').attr('style','');
-			/*
-			$("#prog-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#prog-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#prog-info-bar-div .row span.error-hint").remove();
-			*/
-
 			progImgCount = 0;
-			
 		}
 	});
 	
@@ -134,7 +124,6 @@ $(document).ready(function()
 		
 		if (errors == 0)
 		{
-			//replaceWithLoader($(this));
 			$("#supervisors").show();
 			var isAware = $("input[name='awareSupervisor']:checked").val(); 
 			var awareState = (isAware == "YES" ? "aware" : "unaware");
@@ -184,7 +173,8 @@ $(document).ready(function()
 		var s_email			= $('input[name="sEM"]', $edit_row).val();
 		var s_aware			= $('input[name="sAS"]', $edit_row).val();
 		
-		//$('input[name="suggestedSupervisors"]', $edit_row).val('');
+		// Remove validation errors.
+		$('#supervisor_div span.invalid').remove();
 		
 		$("#supervisorId").val(s_id);
 		$("#supervisorFirstname").val(s_firstname);

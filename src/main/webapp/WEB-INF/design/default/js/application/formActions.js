@@ -10,8 +10,14 @@ $(document).ready(function()
 	// LOAD APPLICATION FORM SECTIONS
 	// --------------------------------------------------------------------------------
 	
-	if ($('section.folding').length > 0)
+	if ($('#timeline').length > 0)
 	{
+		// Timeline is on the page, so place the loading prompt inside the application tab.
+		$('#applicationTab').append('<div class="ajax" />');
+	}
+	else
+	{
+		// Place the loading prompt in the main section.
 		$('.content-box-inner').append('<div class="ajax" />');
 	}
 	
@@ -202,7 +208,16 @@ function checkLoadedSections()
 	sections--;
 	if (sections <= 0)
 	{
-		$('.content-box-inner div.ajax').remove();
+		if ($('#timeline').length > 0)
+		{
+			// Timeline is on the page, so place the loading prompt inside the application tab.
+			$('#applicationTab div.ajax').remove();
+		}
+		else
+		{
+			// Place the loading prompt in the main section.
+			$('.content-box-inner div.ajax').remove();
+		}
 	}
 }
 

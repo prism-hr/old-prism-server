@@ -236,13 +236,10 @@ function populateApplicationList(reset)
 		  data:options, 
 		  success: function(data)
 			{
+				$('.content-box-inner div.fetching').remove();
 				$('#applicationListSection').html(data);
 				addToolTips();
-			},
-			complete: function()
-			{
-				$('.content-box-inner div.fetching').remove();
-			}			
+			}		
 	});
 }
 

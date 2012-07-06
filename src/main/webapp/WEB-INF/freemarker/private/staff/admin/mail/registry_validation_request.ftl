@@ -49,7 +49,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Please contact me should you have any questions.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards, <br />${sender.firstName}</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />${sender.firstName}</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

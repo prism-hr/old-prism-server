@@ -21,38 +21,43 @@
 		      		<h1 style="font-size: 12pt;">
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
+		      		
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to confirm that your Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been authorised.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our Programme Director has completed their assessment of your Application ${application.applicationNumber} for UCL  
+				      		  <#if application.researchHomePage??>
+				      		  	<a href="${application.researchHomePage}">${application.program.title}</a>
+				      		  <#else>
+				      		  	${application.program.title}
+				      		  </#if>.
+			      		  </font>
+							
 			      	</p>
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this does not constitute a legally binding offer of study.</b></font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been advanced to UCL Admissions for verification. If this is successful, you will receive an offer of study.</font>
 			      	</p>
+
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions will now evaluate your application and generate an offer of study.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this does not constitute a legally binding offer of study and no offer of study is valid until provided in writing by UCL Admissions.</b></font>
 			      	</p>
-			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>You must be in possession of an offer of study in order to enrol.</b></font>
-			      	</p>
+			      	
 			      	<p>
 			      		  <font face="Arial, Helvetica, sans-serif" size="2">Your offer of study will contain enrolment instructions and details of any conditions that you must meet in order to be permitted to enrol.</font>
 			      	</p>
+
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">You should expect to receive notification from UCL admissions within --AdmissionsOfferServiceLevel--.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>You must be in possession of an offer of study in order to enrol.</b></font>
 			      	</p>
+
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on your application, you should now refer them to one of the following UCL Admissions contacts:
-				      		<ul>			
-				      		<#list registryContacts as contact>      		
-								<li><a href="mailto: ${contact.email}">${contact.firstname} ${contact.lastname}</a></li>
-							</#list>
-				      		</ul>			      		  
-			      		  </font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions aim to be in contact with you within <<AdmissionsOfferServiceLevel>>. Should you have any further questions on your application, you should refer them by email to admissions@ucl.ac.uk</font>
 			      	</p>
+
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Your candidate number for their reference is --SitsApplicationId--. Please quote this number in all correspondence with them.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Your candidate number for UCL Admissions is --SitsApplicationId--. Please quote this number in all correspondence with them.</b></font>
 			      	</p>
+		      		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

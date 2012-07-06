@@ -1,5 +1,5 @@
 <#if comment.decline>
-<p>Declined to act as reviewer on this occasion.</p>
+<p class="declined">Declined to act as reviewer on this occasion.</p>
 <#else>
 <h3 class="answer <#if comment.suitableCandidateForUcl?? && comment.suitableCandidateForUcl?string == 'true'>yes<#else>no</#if>">
 	<span data-desc="<#if comment.suitableCandidateForUcl?? && comment.suitableCandidateForUcl?string == 'true'>Yes<#else>No</#if>"></span> Is the applicant suitable for postgraduate study at UCL?

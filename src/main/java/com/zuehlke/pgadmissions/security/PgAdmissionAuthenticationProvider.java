@@ -47,6 +47,7 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 
 	private UserDetails findAndValidateUser(Authentication preProcessToken) throws NoSuchAlgorithmException {
 		String username = (String) preProcessToken.getPrincipal();
+
 		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 		if (!userDetails.isEnabled()) {
 			throw new DisabledException("account \"" + username + "\" disabled");

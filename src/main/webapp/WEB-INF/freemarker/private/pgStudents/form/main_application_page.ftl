@@ -180,7 +180,7 @@
           <span class="invalid-submit">Some required fields are missing, please review your application form.<p></p></span>
           </#if>
 
-					<#include "/private/common/parts/application_info.ftl"/>
+		<#include "/private/common/parts/application_info.ftl"/>
           <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 					<div id="timelineview">
 						<ul class="tabs">				
@@ -239,7 +239,6 @@
 		            <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
 		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
 		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-		              <button id="withdrawButton" class="red">Withdraw</button>
 		              <button id="saveAndClose" type="button">Save &amp; Close</button>
 		            </form>                                      
 		            <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     

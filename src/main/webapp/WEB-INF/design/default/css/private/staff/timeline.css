@@ -82,6 +82,7 @@
 #timeline-statuses .approved ul .box .title { background: #B6DDE9; }
 
 #timeline-statuses ul .box p.datetime { background: url(../../../images/icon_calendar.png) no-repeat 10px 6px; padding-left: 40px; }
+#timeline-statuses ul .box p.declined { background: url(../../../images/icon_declined.png) no-repeat 10px 6px; padding-left: 40px; }
 #timeline-statuses ul .box p.location { background: url(../../../images/icon_location.png) no-repeat 10px 7px; padding-left: 40px; }
 
 /* Application tab ---------------------------------------------------------------------------------------- */

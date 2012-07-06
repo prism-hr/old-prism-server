@@ -89,6 +89,15 @@ $(document).ready(function()
 		{
 			$("#supervisors").hide();
 		}
+
+		// Remove validation errors.
+		$('#supervisor_div span.invalid').remove();
+		
+		$("#supervisorId").val('');
+		$("#supervisorFirstname").val('');
+		$("#supervisorLastname").val('');
+		$("#supervisorEmail").val('');
+		$("input[name='awareSupervisor']").removeAttr('checked');
 	});
 	
 	

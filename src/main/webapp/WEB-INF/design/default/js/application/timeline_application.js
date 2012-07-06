@@ -19,12 +19,7 @@ $(document).ready(function()
 		// Set the current tab.
 		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
-	
-		
 		$('#applicationTab').hide();
-	
-			
-		
 		$('#timeline').append('<div class="ajax" />').show();
 		
 		$.ajax({
@@ -58,4 +53,5 @@ $(document).ready(function()
 		return false;
 	});
 	
+	$('#timelineBtn').trigger('click');
 });

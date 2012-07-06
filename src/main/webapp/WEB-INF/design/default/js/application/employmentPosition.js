@@ -5,7 +5,9 @@ $(document).ready(function(){
 	$("#acceptTermsEPValue").val("NO");
 	limitTextArea();
 	
-	// Current employment checkbox
+	// -------------------------------------------------------------------------------
+	// Current employment checkbox.
+	// -------------------------------------------------------------------------------
 	$('#current').click(function()
 	{
 		$('#position-enddate-error').remove();
@@ -14,7 +16,7 @@ $(document).ready(function(){
 			// checked
 			$("#posi-end-date-lb").text("End Date").addClass("grey-label");
 			$('#position_endDate').attr("disabled", "disabled")
-                                  .val(''); // empty date field.
+                            .val(''); // empty date field.
 		}
 		else
 		{
@@ -24,120 +26,104 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('#positionCloseButton').click(function(){
+	
+	// -------------------------------------------------------------------------------
+	// Close button.
+	// -------------------------------------------------------------------------------
+	$('#positionCloseButton').click(function()
+	{
 		$('#position-H2').trigger('click');
 		return false;
 	});
 	
-	$('a[name="deleteEmploymentButton"]').click( function(){	
+	
+	// -------------------------------------------------------------------------------
+	// Delete employment button.
+	// -------------------------------------------------------------------------------
+	$('a[name="deleteEmploymentButton"]').click( function()
+	{	
 		var id = $(this).attr("id").replace("position_", "");
 		$('#positionSection > div').append('<div class="ajax" />');
 		$.ajax({
 			type: 'POST',
 			statusCode: {
-				401: function() {
+				401: function()
+				{
 					window.location.reload();
 				}
 			},
 			url:"/pgadmissions/deleteentity/employment",
-			data:{
+			data: {
 				id: id	
 			}, 				
-			success:function(data) {
+			success: function(data)
+			{
 				$('#positionSection').html(data);
 			},
 			completed: function()
 			{
 				$('#positionSection div.ajax').remove();
 			}
-				
 		});
 	});
 	
-	$("input[name*='acceptTermsEPCB']").click(function() {
-		if ($("#acceptTermsEPValue").val() =='YES'){
-			$("#acceptTermsEPValue").val("NO");
-		} else {	
-			$("#acceptTermsEPValue").val("YES");
-			
-			/*
-			$(".terms-box").attr('style','');
-			$("#emp-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#emp-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#emp-info-bar-div .row span.error-hint").remove();
-			*/
-			empImgCount = 0;
-			
-			
-		}
-		});
 	
-	$('#positionSaveAndCloseButton').click(function(){
-		/*if ($("#acceptTermsEPValue").val() =='NO')
-		{ 
-			// Highlight the information bar and terms box.
-			
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			var $infobar = $('#emp-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				empImgCount = empImgCount + 1;
-			}
-			addToolTips();
-			
+	// -------------------------------------------------------------------------------
+	// "Accept terms" checkbox.
+	// -------------------------------------------------------------------------------
+	$("input[name*='acceptTermsEPCB']").click(function()
+	{
+		if ($("#acceptTermsEPValue").val() =='YES')
+		{
+			$("#acceptTermsEPValue").val("NO");
 		}
 		else
-		{*/
-			$("span[name='nonAcceptedEP']").html('');
-
-			// Check for a "dirty" employment position form. If there is data try to submit it.
-			if (!isFormEmpty('#positionSection'))
-			{
-				postEmploymentData('close');
-			}
-			else
-			{
-				unmarkSection('#positionSection');
-				$('#positionCloseButton').trigger('click');
-			}
-		//}
-	});
-
-	$('#addPosisionButton').click(function(){
-		/*if($('#acceptTermsEPValue').length != 0  &&  $("#acceptTermsEPValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			var $infobar = $('#emp-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				empImgCount = empImgCount + 1;
-			}
-			addToolTips();
-			
+		{	
+			$("#acceptTermsEPValue").val("YES");
+			empImgCount = 0;
 		}
-		else{*/
-			$("span[name='nonAcceptedEP']").html('');
-			postEmploymentData('add');
-		//}
 	});
+
+	
+	// -------------------------------------------------------------------------------
+	// Save button.
+	// -------------------------------------------------------------------------------
+	$('#positionSaveAndCloseButton').click(function()
+	{
+		$("span[name='nonAcceptedEP']").html('');
+
+		// Check for a "dirty" employment position form. If there is data try to submit it.
+		if (!isFormEmpty('#positionSection'))
+		{
+			postEmploymentData('close');
+		}
+		else
+		{
+			unmarkSection('#positionSection');
+			$('#positionCloseButton').trigger('click');
+		}
+	});
+
+	$('#addPosisionButton').click(function()
+	{
+		$("span[name='nonAcceptedEP']").html('');
+		postEmploymentData('add');
+	});
+
 
 	// -------------------------------------------------------------------------------
 	// Edit existing funding.
 	// -------------------------------------------------------------------------------
-	$('a[name="positionEditButton"]').click(function(){
+	$('a[name="positionEditButton"]').click(function()
+	{
 		var id = this.id;
 		id = id.replace('position_', '');	
 		$('#positionSection > div').append('<div class="ajax" />');
 		$.ajax({
 		 type: 'GET',
 		 statusCode: {
-				401: function() {
+				401: function()
+				{
 					window.location.reload();
 				}
 			},
@@ -148,7 +134,8 @@ $(document).ready(function(){
 				message: 'edit',					
 				cacheBreaker: new Date().getTime()
 			}, 
-			success:function(data) {								
+			success: function(data)
+			{								
 				$('#positionSection').html(data);
 				var curruntPos = $('#current').is(':checked');
 				if(curruntPos == true){
@@ -165,11 +152,14 @@ $(document).ready(function(){
 		});
 	});
 
-	$('#positionclearButton').click(function(){
-		 loadEmploymentSection(true);
-		
-	});
 
+	// -------------------------------------------------------------------------------
+	// Clear button.
+	// -------------------------------------------------------------------------------
+	$('#positionclearButton').click(function()
+	{
+		 loadEmploymentSection(true);
+	});
 
 	bindDatePicker('#position_startDate');
 	bindDatePicker('#position_endDate');
@@ -177,29 +167,38 @@ $(document).ready(function(){
 
 });
 
-function postEmploymentData(message){
+
+// -------------------------------------------------------------------------------
+// Posting employment position data.
+// -------------------------------------------------------------------------------
+function postEmploymentData(message)
+{
 	var current = false;
-	if ($('#current:checked').val() !== undefined) {
+	if ($('#current:checked').val() !== undefined)
+	{
 		 current = true;
 	}
 
 	$('#positionSection > div').append('<div class="ajax" />');
 	var acceptedTheTerms;
-	if ($("#acceptTermsEPValue").val() == 'NO'){
+	if ($("#acceptTermsEPValue").val() == 'NO')
+	{
 		acceptedTheTerms = false;
 	}
-	else{
+	else
+	{
 		acceptedTheTerms = true;
 	}
 	$.ajax({
 		type: 'POST',
 		 statusCode: {
-			  401: function() {
+			  401: function()
+				{
 				  window.location.reload();
 			  }
 		  },
 		url:"/pgadmissions/update/editEmploymentPosition",
-		data:{ 
+		data: { 
 			position: $("#position_title").val(),
 			startDate: $("#position_startDate").val(), 
 			endDate: $("#position_endDate").val(), 
@@ -215,16 +214,17 @@ function postEmploymentData(message){
 			message:message,
 			acceptedTerms: acceptedTheTerms
 		},
-	   success: function(data) {
+	   success: function(data)
+		 {
 				$('#positionSection').html(data);
 			
 				var errorCount = $('#positionSection .invalid:visible').length;
 				if (message == 'close' && errorCount == 0)
 				{
 					$('#position-H2').trigger('click');
-					
 				}
-				if(errorCount > 0){
+				if (errorCount > 0)
+				{
 					markSectionError('#positionSection');
 				}
       },

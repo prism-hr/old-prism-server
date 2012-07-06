@@ -139,6 +139,7 @@ span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical
 	cursor: pointer;
 	display: inline-block;
 	height: 24px;
+	margin: 3px 0;
 	overflow: hidden;
 	text-indent: 30px;
 	vertical-align: middle;

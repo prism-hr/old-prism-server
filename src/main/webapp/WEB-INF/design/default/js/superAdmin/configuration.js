@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-	$('#configsection div.ajax').remove();
+	$('#configsection').append('<div class="ajax" />');
 	$.ajax({
 		type: 'GET',
 		statusCode: {
@@ -19,6 +19,7 @@ $(document).ready(function()
 		complete: function()
 		{
 			$('#configsection div.ajax').remove();
+			updateRegistryForm();
 
 		}
 	});

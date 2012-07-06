@@ -8,6 +8,11 @@ $(document).ready(function()
 	
 	$('#submitInterviewFeedback').click(function()
 	{
+		if (!validateFeedback())
+		{
+			return false;
+		}
+		
 		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()
 		{
@@ -78,3 +83,36 @@ $(document).ready(function()
 	});
 	
 });
+
+
+function validateFeedback()
+{
+	var errors = 0;
+	$('#interviewForm span.invalid').remove();
+	
+	if ($('#interview-comment').val() == '')
+	{
+		$('#interview-comment').after('<span class="invalid">You must make an entry.</span>');
+		errors++;
+	}
+
+	if ($('input[name="suitableCandidateForUcl"]:checked').length == 0)
+	{
+		$('#field-issuitableucl').append('<span class="invalid">You must make a selection.</span>');
+		errors++;
+	}
+
+	if ($('input[name="suitableCandidateForProgramme"]:checked').length == 0)
+	{
+		$('#field-issuitableprog').append('<span class="invalid">You must make a selection.</span>');
+		errors++;
+	}
+	
+	if ($('input[name="willingToSupervise"]:checked').length == 0)
+	{
+		$('#field-wouldsupervise').append('<span class="invalid">You must make a selection.</span>');
+		errors++;
+	}
+	
+	return (errors == 0);
+}

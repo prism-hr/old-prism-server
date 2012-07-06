@@ -73,7 +73,7 @@
 												<div class="row">
 													<span id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></span>
 													<span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPG'/>"></span>
-													<div class="field">
+													<div class="field" id="field-issuitableucl">
 														<label><input type="radio" name="suitableForUCL" value="true" id="suitableRB_true"
 														<#if comment.isSuitableForUCLSet() && comment.suitableForUCL> checked="checked"</#if>
 														/> Yes</label> 
@@ -84,7 +84,7 @@
 															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 														</div>
 												</div>
-											<div class="row row multi-line">
+											<div class="row multi-line" id="field-issuitableprog">
 												<span id="supervise-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
 												<span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPGP'/>"></span>
 												<div class="field">

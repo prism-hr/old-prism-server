@@ -76,7 +76,7 @@ $(document).ready(function()
 						}
 						resetInterviwersErrors();
 						getCreateInterviewersSection();			
-						
+						addToolTips();
 					},
 				      complete: function()
 				      {
@@ -159,6 +159,7 @@ $(document).ready(function()
 						changeYear: true,
 						yearRange: '1900:c+20' });
 				}
+				addToolTips();
 			},
 		      complete: function()
 		      {

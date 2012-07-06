@@ -13,8 +13,7 @@
     <!-- Styles for Application List Page -->
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application_list.css' />"/>
-		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/modal_window.css' />"/>
-    <!-- Styles for Application List Page -->
+		<!-- Styles for Application List Page -->
 
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -50,7 +49,6 @@
  
         <!-- Main content area. -->
         <article id="content" role="main">
-					<#include "/private/common/modal_window.ftl">
           
           <!-- content box -->
           <input type="hidden" id="appList" name="appList" />

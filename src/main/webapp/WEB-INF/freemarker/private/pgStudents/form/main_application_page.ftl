@@ -98,7 +98,6 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/qualifications.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/references.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
-<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/modal_window.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/timeline.css' />"/>
 
 <!-- Scripts -->
@@ -242,7 +241,6 @@
 	          
 		          <div class="buttons">
 		            <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
-		            <#include "/private/common/modal_window.ftl">
 		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
 		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 		              <button id="withdrawButton" class="red">Withdraw</button>

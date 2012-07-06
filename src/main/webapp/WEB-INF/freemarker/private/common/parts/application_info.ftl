@@ -16,5 +16,6 @@
   <div class="row">
     <label>Submitted</label>
     ${(applicationForm.submittedDate?string("dd MMM yyyy"))!"In Progress"}
+      <#include "/private/common/actions.ftl"/>
   </div>
 </div>

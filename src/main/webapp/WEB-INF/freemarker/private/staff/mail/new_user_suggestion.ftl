@@ -28,25 +28,19 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Register to start using UCL Prism in this role.</font>
 			      	</p>
 			      	
+					    <br>  	
+							<p>
+			              		<!-- Button -->
+							    <a href="${host}/pgadmissions/register?activationCode=${newUser.activationCode}" title="Register">
+							    	<img width="102" height="36" alt="Register" src="${host}/pgadmissions/design/default/images/email/register.png">
+							    </a>
+							</p>
+						</br>			      		
+			      	
+			      	
 				    <br>  	
-					<p>
-		              <!-- Button -->
-		              <table border="0" cellpadding="0" cellspacing="0">
-		              	<tr>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-		                    <font face="Arial, Helvetica, sans-serif" size="2">
-		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-		                      	href="${host}/pgadmissions/register?activationCode=${newUser.activationCode}"><b>(Continue to Application)</b></a>
-		                    </font>
-		                  </td>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-		                </tr>
-		              </table>
-					</p>
-					</br>			      	
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

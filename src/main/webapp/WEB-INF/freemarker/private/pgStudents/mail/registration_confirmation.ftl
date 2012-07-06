@@ -22,29 +22,19 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your registration for UCL Prism. To login and continue, please verify your registration. You will be asked to provide your username and password.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your registration for UCL Prism. To login and -- Context --, please confirm your registration. You will be asked to login.</font>
 			      	</p>
-			      	
-			      	<br>  	
-					<p>
-		              <!-- Button -->
-		              <table border="0" cellpadding="0" cellspacing="0">
-		              	<tr>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-		                    <font face="Arial, Helvetica, sans-serif" size="2">
-		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-		                      	href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}"><b>Continue</b></a>
-		                    </font>
-		                  </td>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-		                </tr>
-		              </table>
-					</p>
-					</br>
-			      						      	
+
+					    <br>  	
+							<p>
+			              		<!-- Button -->
+							    <a href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}" title="Confirm Registration">
+							    	<img width="170" height="36" alt="Register" src="${host}/pgadmissions/design/default/images/email/confirm_registration.png">
+							    </a>
+							</p>
+						</br>			      		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

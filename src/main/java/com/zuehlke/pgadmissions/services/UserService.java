@@ -278,14 +278,6 @@ public class UserService {
 	}
 	
 
-
-	public boolean isAccountChanged(RegisteredUser user){
-		return !getCurrentUser().getEmail().equals(user.getEmail()) 
-				|| !getCurrentUser().getFirstName().equals(user.getFirstName())
-				|| !getCurrentUser().getLastName().equals(user.getLastName())
-				|| (!StringUtils.isBlank(user.getNewPassword()) && !getCurrentUser().getPassword().equals(encryptionUtils.getMD5Hash(user.getNewPassword())));
-	}
-
 	@Transactional
 	public void resetPassword(String email) {
 		RegisteredUser storedUser = userDAO.getUserByEmail(email);

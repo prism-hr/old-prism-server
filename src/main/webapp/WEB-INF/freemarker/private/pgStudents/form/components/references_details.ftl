@@ -21,9 +21,7 @@
       <col style="width: 30px" />
       <col/>
       <col style="width: 30px" />
-     
       <col style="width: 30px" />
-    
     </colgroup>
   
     <thead>

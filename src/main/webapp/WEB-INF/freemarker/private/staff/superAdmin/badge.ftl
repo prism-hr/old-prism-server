@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
-<form id="applyForm" action="${host}<@spring.url '/apply/new'/>" method="POST" target="blank">
+<form id="applyForm" action="${host}<@spring.url '/apply/new'/>" method="post" target="_blank">
 	<input type="hidden" id="program" name="program" value="${(program.code?html)!}" />
 	<input type="hidden" id="programhome" name="programhome" value="${RequestParameters.programhome!}" />
 	<input type="hidden" id="projectTitle" name="projectTitle" value="${RequestParameters.project!}" />

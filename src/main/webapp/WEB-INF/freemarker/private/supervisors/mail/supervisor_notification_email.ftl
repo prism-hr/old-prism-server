@@ -21,40 +21,31 @@
 		      		<h1 style="font-size: 12pt;">
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${supervisor.user.firstName?html},</font>
 		      		</h1>
+		      		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to confirm your intention to supervise ${application.applicant.firstName?html} ${application.applicant.lastName?html} in connection with their Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to confirm your intention to supervise ${application.applicant.firstName?html} ${application.applicant.lastName?html} for study on UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
 			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The application is undergoing authorisation by the study programme director. We aim to be back in contact with the outcome of this process by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
+	
+				    <p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">heir Application ${application.applicationNumber} is undergoing approval by the Programme Director. We aim to be back in contact with the outcome of their assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
 			      	</p>
+	
 			      	<#if !supervisor.user?? || !supervisor.user.enabled >
-			      		<p>
-			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with UCL Prism, please do so by clicking the link below:</font>
-			      		</p>
 			      		
-				    <br>  	
-					<p>
-		              <!-- Button -->
-		              <table border="0" cellpadding="0" cellspacing="0">
-		              	<tr>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-		                    <font face="Arial, Helvetica, sans-serif" size="2">
-		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-		                      	href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}"><b>Register</b></a>
-		                    </font>
-		                  </td>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-		                </tr>
-		              </table>
-					</p>
-					</br>			      		
+					    <br>  	
+							<p>
+			              		<!-- Button -->
+							    <a href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}" title="View Application">
+							    	<img width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png">
+							    </a>
+							</p>
+						</br>			      		
 			      	</#if>
 				    <p>
 			      	  <font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to supervise.</font>
 			      	</p>  	
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

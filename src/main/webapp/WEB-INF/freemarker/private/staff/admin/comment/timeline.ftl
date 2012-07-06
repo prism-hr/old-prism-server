@@ -12,7 +12,7 @@
       <ul id="timeline-statuses">
       
         <#list timelineObjects as timelineObject>  
-	        <#if timelineObject.type != 'reference' ||  user.hasStaffRightsOnApplicationForm(applicationForm) || (timelineObject.referee?? && timelineObject.referee.user == user)>      
+	        <#if timelineObject.type != 'reference' ||  user.hasStaffRightsOnApplicationForm(applicationForm) || user != applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
 		        <li class="${timelineObject.type}">
 		          <div class="box">
 		            <div class="title">

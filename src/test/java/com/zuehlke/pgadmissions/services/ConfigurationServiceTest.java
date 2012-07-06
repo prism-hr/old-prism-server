@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -56,6 +57,19 @@ public class ConfigurationServiceTest {
 	
 	@Test
 	public void shouldSaveConfigurationObjects(){
+		final Person registryUserOne = new PersonBuilder().id(1).toPerson();
+		final Person registryUserTwo = new PersonBuilder().id(2).toPerson();
+		final Person registryUserThree  = new PersonBuilder().id(3).toPerson();
+
+		service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, personDAOMock){
+
+			@Override
+			public List<Person> getAllRegistryUsers() {
+			
+				return Arrays.asList(registryUserOne, registryUserThree);
+			}
+			
+		};
 		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS).toStageDuration();
 		StageDuration oldValidationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(5).unit(DurationUnitEnum.WEEKS).toStageDuration();
 		StageDuration interviewDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(3).unit(DurationUnitEnum.WEEKS).toStageDuration();
@@ -66,12 +80,10 @@ public class ConfigurationServiceTest {
 		stageDurationDAOMock.save(oldValidationDuration);
 		stageDurationDAOMock.save(interviewDuration);
 
-		Person registryUserOne = new PersonBuilder().id(1).toPerson();
-		Person registryUserTwo = new PersonBuilder().id(2).toPerson();
 		
 		personDAOMock.save(registryUserOne);
 		personDAOMock.save(registryUserTwo);
-		
+		personDAOMock.delete(registryUserThree);
 		ReminderInterval reminderInterval = new ReminderInterval();
 		reminderInterval.setId(1);
 	

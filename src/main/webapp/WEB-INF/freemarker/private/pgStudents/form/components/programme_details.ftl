@@ -161,7 +161,6 @@
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
         <div class="field">
           <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
-          <span class="invalid" name="superFirstname" style="display:none;"></span>
         </div>
       </div>
       
@@ -170,7 +169,6 @@
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
         <div class="field"> 
           <input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
-          <span class="invalid" name="superLastname" style="display:none;"></span>
         </div>
       </div>
   
@@ -179,7 +177,6 @@
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
         <div class="field">
           <input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
-          <span class="invalid" name="superEmail" style="display:none;" ></span>
         </div>
       </div>
   
@@ -189,7 +186,6 @@
         <div class="field">
           <label><input id="awareYes" type="radio" name="awareSupervisor" value="YES" /> Yes</label>
           <label><input id="awareNo" type="radio" name="awareSupervisor" value="NO" /> No</label>
-           <span class="invalid" name="superAware" style="display:none;"></span>
         </div>
       </div>
   

@@ -172,9 +172,10 @@ $(document).ready(function()
 	/* Submit button. */
 	$('#submitRUBtn').click(function()
 	{
-		$('#registryUsersForm').css({ position: 'relative' }).append('<div class="ajax" />');
 		
-		$('#registryUsersForm input.registryUsers').remove();
+		$('#configForm').css({ position: 'relative' }).append('<div class="ajax" />');
+		
+		$('#regContactData input.registryUsers').remove();
 		
 		// Grab the hidden field values from the table.
 		$('#registryUsers .scroll tbody tr').each(function()
@@ -186,29 +187,44 @@ $(document).ready(function()
 			var email = $('input[name="email"]', $row).val();
 		
 			var obj = '{"id": "' + id + '","firstname": "' + firstname + '", "lastname": "' + lastname + '", "email": "' + email + '"}';
-			$('#registryUsersForm').append("<input type='hidden' class='registryUsers' name='registryUsers' value='" + obj + "' />");
+			$('#regContactData').append("<input type='hidden' class='registryUsers' name='registryUsers' value='" + obj + "' />");
 		});
 		
-		$.ajax({
-			type: 'POST',
-			statusCode: {
-				401: function()
-				{
-					window.location.reload();
-				}
-			},
-			url:  "/pgadmissions/configuration/submitRegistryUsers", 
-			data: $('#registryUsersForm input.registryUsers').serialize(),
-			success: function(data)
-			{
-				addToolTips();
-			},
-			complete: function()
-			{
-				$('#registryUsersForm div.ajax').remove();
-				updateRegistryForm();
-			}
-		});
+		$("#stagesDuration").html('');
+		var stageValidationErrors = appendStagesJSON();
+		var stages = $('[input[name="stagesDuration"]');
+		var reminderValidationErrors = validateReminderInterval();
+		var postData = {
+				id : $('#reminderIntervalId').val(),
+				duration : $('#reminderIntervalDuration').val(),
+				unit : $('#reminderUnit').val()
+			};
+		if(!stageValidationErrors && !reminderValidationErrors)
+		{
+			
+			$.ajax({
+					type: 'POST',
+					statusCode: {
+						401: function()
+						{
+							window.location.reload();
+						}
+					},
+					url:  "/pgadmissions/configuration/", 
+					data: $.param(postData) +"&" +  $('#regContactData input.registryUsers').serialize()  +"&" +  stages.serialize(),
+					success: function(data)
+					{
+						addToolTips();
+					},
+					complete: function()
+					{
+						$('#configForm div.ajax').remove();
+						updateRegistryForm();
+					}
+				});
+		
+		}
+
 
 	});
 });
@@ -390,4 +406,13 @@ function validateEmail(email)
 	var result = pattern.test(email);
 	return result;
 } 
-	
+
+function getStageDurationData(){
+	$("#stagesDuration").html('');
+	var validationErrors = appendStagesJSON();
+	var stages = $('[input[name="stagesDuration"]');
+	if (!validationErrors)
+	{
+		return stages.serialize();
+	}
+}

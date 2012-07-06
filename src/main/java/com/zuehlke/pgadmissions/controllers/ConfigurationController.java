@@ -1,18 +1,18 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.rmi.activation.ActivationGroup_Stub;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
-import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
@@ -25,112 +25,96 @@ import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
-import com.zuehlke.pgadmissions.services.PersonService;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping("/configuration")
 public class ConfigurationController {
 
-	private final StageDurationDAO stateDurationDao;
 	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
 	private final StageDurationPropertyEditor stageDurationPropertyEditor;
-	private final ReminderIntervalDAO reminderIntervalDAO;
-	private final PersonService registryUserService;
+
 	private final PersonPropertyEditor registryPropertyEditor;
 	private final UserService userService;
-	
-	ConfigurationController(){
-		this(null, null, null, null, null, null);
+	private final ConfigurationService configurationService;
+
+	ConfigurationController() {
+		this(null, null, null, null);
 	}
-	
+
 	@Autowired
-	public ConfigurationController(StageDurationDAO stateDurationDao, StageDurationPropertyEditor stageDurationPropertyEditor, ReminderIntervalDAO reminderIntervalDAO, PersonService registryUserService,
-			PersonPropertyEditor registryPropertyEditor, UserService userService) {
-		this.stateDurationDao = stateDurationDao;
+	public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor, PersonPropertyEditor registryPropertyEditor,
+			UserService userService, ConfigurationService configurationService) {
+
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
-		this.reminderIntervalDAO = reminderIntervalDAO;
-		this.registryUserService = registryUserService;
+
 		this.registryPropertyEditor = registryPropertyEditor;
 		this.userService = userService;
+		this.configurationService = configurationService;
 	}
-	
-	@InitBinder
+
+	@InitBinder(value = "stageDurationDTO")
 	public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(StageDuration.class, stageDurationPropertyEditor);
 	}
-	
-	
-	@InitBinder(value="registryDTO")
+
+	@InitBinder(value = "registryUserDTO")
 	public void registerValidatorsAndPropertyEditorsForRegistryUsers(WebDataBinder binder) {
 		binder.registerCustomEditor(Person.class, registryPropertyEditor);
 	}
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String getAssignStagesDurationStage(ModelMap modelMap) {
-		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-			throw new ResourceNotFoundException();
-		}
-		populateModelMap(modelMap);
-		return CONFIGURATION_VIEW_NAME;
-	}
-	
-	@RequestMapping(value="/submit", method = RequestMethod.POST)
-	public String submitStagesDurations(StageDurationDTO stageDurationDTO, ModelMap modelMap) {
-		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-			throw new ResourceNotFoundException();
-		}
-		List<StageDuration> stagesDuration = stageDurationDTO.getStagesDuration();
-		for (StageDuration stageDuration : stagesDuration) {
-			stateDurationDao.save(stageDuration);
-		}
-		populateModelMap(modelMap);
-		return CONFIGURATION_VIEW_NAME;
-	}
-	
-	@RequestMapping(value="/submitReminderInterval", method = RequestMethod.POST)
-	public String submitReminderInterval(ReminderInterval reminderInterval, ModelMap modelMap) {
-		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-			throw new ResourceNotFoundException();
-		}
-		
-		reminderIntervalDAO.save(reminderInterval);
-		
-		populateModelMap(modelMap);
-		return CONFIGURATION_VIEW_NAME;
-	}
-	
-	@RequestMapping(value="/submitRegistryUsers", method = RequestMethod.POST)
-	public String submitregistryUsers(@ModelAttribute("registryDTO") RegistryUserDTO registryUserDTO, ModelMap modelMap) {
-		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-			throw new ResourceNotFoundException();
-		}
-		List<Person> registryUsers = registryUserDTO.getRegistryUsers();
-		for (Person registryUser : registryUsers) {
-			registryUserService.save(registryUser);
-		}
-		populateModelMap(modelMap);
-		return CONFIGURATION_VIEW_NAME;
-	}
-	
 
+	@RequestMapping(method = RequestMethod.GET)
+	public String getConfigurationPage() {
+		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+			throw new ResourceNotFoundException();
+		}
+
+		return CONFIGURATION_VIEW_NAME;
+	}
+
+
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public String submit(@ModelAttribute StageDurationDTO stageDurationDto, @ModelAttribute RegistryUserDTO registryUserDTO, @ModelAttribute ReminderInterval reminderInterval) {
+		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval);
+		return CONFIGURATION_VIEW_NAME;
+
+	}
 	
 	@ModelAttribute("stages")
 	public ApplicationFormStatus[] getConfigurableStages() {
 		return ApplicationFormStatus.getConfigurableStages();
-	}
-	
-	private void populateModelMap(ModelMap modelMap) {
-		modelMap.put("stages", getConfigurableStages());
-		modelMap.put("units", DurationUnitEnum.values());
-		modelMap.put("durationDAO", stateDurationDao);
-		modelMap.put("intervalDAO", reminderIntervalDAO);
-		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
 	}
 
 	@ModelAttribute("user")
 	public RegisteredUser getUser() {
 		return userService.getCurrentUser();
 	}
+
+	@ModelAttribute("stageDurations")
+	public Map<String, StageDuration> getStageDurations() {
+		Map<ApplicationFormStatus, StageDuration> stageDurations = configurationService.getStageDurations();
+		Map<String, StageDuration> durations = new HashMap<String, StageDuration>();
+		for (ApplicationFormStatus status : stageDurations.keySet()) {
+			durations.put(status.toString(), stageDurations.get(status));
+		}
+		return durations;
+	}
+
+	@ModelAttribute("reminderInterval")
+	public ReminderInterval getReminderInterval() {
+		return configurationService.getReminderInterval();
+	}
+
+	@ModelAttribute("allRegistryUsers")
+	public List<Person> getAllRegistryContacts() {
+		return configurationService.getAllRegistryUsers();
+	}
 	
+	@ModelAttribute("units")
+	public DurationUnitEnum[] getUnits() {
+		return DurationUnitEnum.values();
+	}
+
 }

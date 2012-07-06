@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.PersonService;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSenderTest {
@@ -42,7 +42,7 @@ public class ApplicantMailSenderTest {
 	private ApplicantMailSender applicantMailSender;
 	private ApplicationsService applicationServiceMock;
 	private MessageSource msgSourceMock;
-	private PersonService personServiceMock;
+	private ConfigurationService personServiceMock;
 
 	@Before
 	public void setUp() {
@@ -50,7 +50,7 @@ public class ApplicantMailSenderTest {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-		personServiceMock = EasyMock.createMock(PersonService.class);
+		personServiceMock = EasyMock.createMock(ConfigurationService.class);
 		
 		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,applicationServiceMock, msgSourceMock, personServiceMock);
 	}

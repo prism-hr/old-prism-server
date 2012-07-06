@@ -61,7 +61,7 @@
 									<h2>Configuration</h2>
 									
 									<div>
-										<form>
+										<form id="configForm">
 
 											<div class="section-info-bar">
 												Edit the system configuration. <strong>Be aware that this will change the system behaviour for all programmes.</strong>
@@ -82,8 +82,8 @@
 													<span class="hint" data-desc="<@spring.message 'configuration.validationDuration'/> ${stage.displayValue()} stage."></span>
 													<div class="field">	
 														<input type="hidden" id="stage" name="stage" value="${stage}" />
-														<#if durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).duration??>  				
-														<input type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${durationDAO.getByStatus(stage).duration?string("######")}" />
+														<#if stageDurations[stage]?? && stageDurations[stage].duration??>  				
+														<input type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${stageDurations[stage].duration?string("######")}" />
 														<#else>
 														<input type="text" size="4" id="${stage}_duration" name="${stage}_duration"  />
 														</#if>
@@ -91,7 +91,7 @@
 															<option value="">Select...</option>
 															<#list units as unit>
 															<option value="${unit}"
-															<#if  durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).unit?? && durationDAO.getByStatus(stage).unit == unit>
+															<#if  stageDurations[stage]?? && stageDurations[stage].unit?? && stageDurations[stage].unit == unit>
 																	selected="selected"
 															</#if>>
 																${unit.displayValue()}</option>               
@@ -116,12 +116,12 @@
 													<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
 													<div class="field">	
 														<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
-														<input type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration?string("######"))!}" />
+														<input type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(reminderInterval.duration?string("######"))!}" />
 														<select name="reminderUnit" id="reminderUnit">
 															<option value="">Select...</option>
 														<#list units as unit>
 															<option value="${unit}"
-															<#if  intervalDAO.getReminderInterval()?? && intervalDAO.getReminderInterval().unit?? && intervalDAO.getReminderInterval().unit == unit>
+															<#if  reminderInterval?? && reminderInterval.unit?? && reminderInterval.unit == unit>
 																selected="selected"
 															</#if>>
 															${unit.displayValue()}</option>               
@@ -205,7 +205,7 @@
 														<button class="blue" type="button" id="registryUserAdd">Add</button>
 													</div>
 												</div><!-- .row -->
-
+												<div id = "regContactData"></div>
 											</div>
 											
 											<div class="buttons">						        		

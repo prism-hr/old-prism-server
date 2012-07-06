@@ -9,6 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
@@ -16,10 +17,12 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 public class PersonPropertyEditor extends PropertyEditorSupport {
 
 	private EncryptionHelper encryptionHelper;
+	private final PersonDAO personDAO;
 
 	@Autowired
-	public PersonPropertyEditor(EncryptionHelper encryptionHelper) {
+	public PersonPropertyEditor(EncryptionHelper encryptionHelper, PersonDAO personDAO) {
 		this.encryptionHelper = encryptionHelper;
+		this.personDAO = personDAO;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -33,13 +36,16 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 			ObjectMapper objectMapper = new ObjectMapper();
 
 			Map<String, Object> properties = objectMapper.readValue(jsonStirng, Map.class);
-			Person registryUser = new Person();
+			Person registryUser = null;
+			if (StringUtils.isNotBlank((String) properties.get("id"))) {
+				registryUser = personDAO.getPersonWithId(encryptionHelper.decryptToInteger((String) properties.get("id")));
+			}else{
+				registryUser = new Person();	
+			}
+			
 			registryUser.setFirstname(((String) properties.get("firstname")));
 			registryUser.setLastname(((String) properties.get("lastname")));
 			registryUser.setEmail(((String) properties.get("email")));
-			if (StringUtils.isNotBlank((String) properties.get("id"))) {
-				registryUser.setId(encryptionHelper.decryptToInteger((String) properties.get("id")));
-			}
 			setValue(registryUser);
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);

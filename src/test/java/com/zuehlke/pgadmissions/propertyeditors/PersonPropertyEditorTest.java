@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.propertyeditors;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -7,6 +8,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -14,18 +16,21 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 public class PersonPropertyEditorTest {
 	private PersonPropertyEditor editor;
 	private EncryptionHelper encryptionHelperMock;
+	private PersonDAO personDAOMock;
 
 	@Test
 	public void shouldParseAndSetAsValue() {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(234);
 		EasyMock.replay(encryptionHelperMock);
-
+		Person existingPerson = new PersonBuilder().id(234).toPerson();
+		EasyMock.expect(personDAOMock.getPersonWithId(234)).andReturn(existingPerson);
+		EasyMock.replay(personDAOMock);
 		editor.setAsText("{\"id\": \"enc\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" }");
 		
 		EasyMock.verify(encryptionHelperMock);
 		Person expected = new PersonBuilder().id(234).firstname("Mark").lastname("Johnson").email("test@gmail.com").toPerson();
 		Person registryUser = (Person) editor.getValue();
-
+		assertSame(existingPerson, registryUser);
 		assertEquals(expected.getFirstname(), registryUser.getFirstname());
 		assertEquals(expected.getLastname(), registryUser.getLastname());
 		assertEquals(expected.getEmail(), registryUser.getEmail());
@@ -33,7 +38,7 @@ public class PersonPropertyEditorTest {
 
 	@Test
 	public void shouldParseEmptyIdAsNull() {
-		editor.setAsText("{\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\"}");
+		editor.setAsText("{\"id\": \"\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\"}");
 		Person registryUser = (Person) editor.getValue();
 		assertNull(registryUser.getId());
 	}
@@ -75,6 +80,7 @@ public class PersonPropertyEditorTest {
 	@Before
 	public void setup() {
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-		editor = new PersonPropertyEditor(encryptionHelperMock);
+		personDAOMock = EasyMock.createMock(PersonDAO.class);
+		editor = new PersonPropertyEditor(encryptionHelperMock, personDAOMock);
 	}
 }

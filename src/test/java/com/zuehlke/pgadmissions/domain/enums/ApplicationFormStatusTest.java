@@ -53,7 +53,7 @@ public class ApplicationFormStatusTest {
 	@Test
 	public void shouldGetConfigurableStages() {
 		ApplicationFormStatus[] configurableStages = ApplicationFormStatus.getConfigurableStages();
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},configurableStages);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,ApplicationFormStatus.INTERVIEW,  ApplicationFormStatus.APPROVAL, },configurableStages);
 	
 	}
 }

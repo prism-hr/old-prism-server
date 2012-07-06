@@ -6,7 +6,7 @@
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
-		<constructor-arg index="2" ref="mailPesronService" />
+		<constructor-arg index="2" ref="mailConfigurationService" />
 		<constructor-arg index="3" ref="mailUserService" />
 		<constructor-arg index="4" ref="messageSource" />
 		<constructor-arg index="5" ref="mailPdfDocumentBuilder" />
@@ -25,9 +25,23 @@
 		autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail" />
 	</bean>
-	
-	<bean id="mailPesronService" class="com.zuehlke.pgadmissions.services.PersonService"
+		
+	<bean id="mailStageDurationDAO" class="com.zuehlke.pgadmissions.dao.StageDurationDAO"
 		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	
+		<bean id="mailReminderIntervalDAO" class="com.zuehlke.pgadmissions.dao.ReminderIntervalDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	
+	
+	
+	<bean id="mailConfigurationService" class="com.zuehlke.pgadmissions.services.ConfigurationService"
+		autowire-candidate="false">
+		<constructor-arg ref="mailStageDurationDAO" />
+		<constructor-arg ref="mailReminderIntervalDAO" />
 		<constructor-arg ref="mailRegistryUserDAO" />
 	</bean>
 	<bean id="mailServiceForTimers" class="com.zuehlke.pgadmissions.services.MailService"
@@ -72,7 +86,7 @@
 		<constructor-arg index="1" ref="mailSender" />
 		<constructor-arg index="2" ref="mailApplicationsService" />
 		<constructor-arg index="3" ref="messageSource" />
-		<constructor-arg index="4" ref="mailPersonService" />
+		<constructor-arg index="4" ref="mailConfigurationService" />
 	</bean>
 
 	<bean id="adminMailSender" class="com.zuehlke.pgadmissions.mail.AdminMailSender"
@@ -81,7 +95,7 @@
 		<constructor-arg index="1" ref="mailSender" />
 		<constructor-arg index="2" ref="mailApplicationsService" />
 		<constructor-arg index="3" ref="messageSource" />
-		<constructor-arg index="4" ref="mailPersonService" />
+		<constructor-arg index="4" ref="mailConfigurationService" />
 	</bean>
 
 	<bean id="approverMailSender" class="com.zuehlke.pgadmissions.mail.ApproverAdminMailSender"
@@ -168,8 +182,5 @@
 		autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail" />
 	</bean>
-	<bean id="mailPersonService" class="com.zuehlke.pgadmissions.services.PersonService"
-		autowire-candidate="false">
-		<constructor-arg ref="mailPersonDAO" />
-	</bean>
+
 </beans>

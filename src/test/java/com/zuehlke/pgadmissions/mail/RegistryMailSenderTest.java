@@ -21,7 +21,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.itextpdf.text.DocumentException;
-import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -32,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
-import com.zuehlke.pgadmissions.services.PersonService;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -41,7 +40,7 @@ public class RegistryMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private RegistryMailSender registryMailSender;
-	private PersonService personServiceMock;
+	private ConfigurationService personServiceMock;
 	private UserService userServiceMock;
 	private MessageSource msgSourceMock;
 	private PdfDocumentBuilder pdfDocumentBuilderMock;
@@ -131,7 +130,7 @@ public class RegistryMailSenderTest {
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		personServiceMock = EasyMock.createMock(PersonService.class);
+		personServiceMock = EasyMock.createMock(ConfigurationService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);

@@ -11,22 +11,21 @@ import com.zuehlke.pgadmissions.domain.Person;
 @Repository
 public class PersonDAO {
 
-private final SessionFactory sessionFactory;
-	
-	PersonDAO(){
+	private final SessionFactory sessionFactory;
+
+	PersonDAO() {
 		this(null);
 	}
-	
+
 	@Autowired
 	public PersonDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
+
 	public Person getPersonWithId(Integer id) {
-		return (Person) sessionFactory.getCurrentSession().get(
-				Person.class, id);
+		return (Person) sessionFactory.getCurrentSession().get(Person.class, id);
 	}
-	
+
 	public void save(Person person) {
 		sessionFactory.getCurrentSession().saveOrUpdate(person);
 	}
@@ -35,6 +34,10 @@ private final SessionFactory sessionFactory;
 	public List<Person> getAllPersons() {
 		return (List<Person>) sessionFactory.getCurrentSession().createCriteria(Person.class).list();
 	}
-	
+
+	public void delete(Person person) {
+		sessionFactory.getCurrentSession().delete(person);
+
+	}
 
 }

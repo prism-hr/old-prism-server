@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -21,5 +22,20 @@ public class PersonDAOTest extends AutomaticRollbackTestCase {
 		PersonDAO registryUserDAO = new PersonDAO(sessionFactory);
 		Person returnedRegistryUser = registryUserDAO.getPersonWithId(registryUser.getId());
 		assertEquals(registryUser, returnedRegistryUser);
+	}
+	
+	@Test
+	public void shouldDeletePerson(){
+		Person registryUser = new PersonBuilder().id(1).firstname("john").lastname("mark").email("email").toPerson();
+		sessionFactory.getCurrentSession().save(registryUser);
+		flushAndClearSession();
+		
+		PersonDAO registryUserDAO = new PersonDAO(sessionFactory);
+		Integer id = registryUser.getId();
+		Person returnedRegistryUser = registryUserDAO.getPersonWithId(id);
+		registryUserDAO.delete(returnedRegistryUser);
+		
+		flushAndClearSession();
+		assertNull( registryUserDAO.getPersonWithId(id));
 	}
 }

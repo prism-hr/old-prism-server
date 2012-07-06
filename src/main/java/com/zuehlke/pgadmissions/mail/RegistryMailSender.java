@@ -15,20 +15,19 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.DocumentException;
-import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
-import com.zuehlke.pgadmissions.services.PersonService;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Component
 public class RegistryMailSender extends MailSender {
 
-	private final PersonService personService;
+	private final ConfigurationService personService;
 	private final PdfDocumentBuilder pdfDocumentBuilder;
 	private final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory;
 
@@ -37,7 +36,7 @@ public class RegistryMailSender extends MailSender {
 	}
 
 	@Autowired
-	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, PersonService personService,
+	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ConfigurationService personService,
 			UserService userService, MessageSource msgSource, PdfDocumentBuilder pdfDocumentBuilder,
 			PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);

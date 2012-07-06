@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.PersonService;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class AdminMailSenderTest {
@@ -48,7 +48,7 @@ public class AdminMailSenderTest {
 	private AdminMailSender adminMailSender;
 	private MessageSource msgSourceMock;
 	private ApplicationsService applicationServiceMock;
-	private PersonService personServiceMock;
+	private ConfigurationService personServiceMock;
 
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
@@ -589,7 +589,7 @@ public class AdminMailSenderTest {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
-		personServiceMock = EasyMock.createMock(PersonService.class);
+		personServiceMock = EasyMock.createMock(ConfigurationService.class);
 
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,// 
 				applicationServiceMock, msgSourceMock, personServiceMock);

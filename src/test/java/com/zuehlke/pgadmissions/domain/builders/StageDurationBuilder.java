@@ -9,7 +9,8 @@ public class StageDurationBuilder {
 	private ApplicationFormStatus stage;
 	private Integer duration;
 	private DurationUnitEnum unit;
-	
+;
+
 	public StageDurationBuilder stage(ApplicationFormStatus stage) {
 		this.stage = stage;
 		return this;

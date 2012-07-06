@@ -48,8 +48,10 @@ public class ConfigurationControllerTest {
 
 	private ConfigurationService configurationServiceMock;
 
+	private RegisteredUser admin;
+
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundIfNotSuperAdmin() {
+	public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).username("aa").email("aa@gmail.com").firstName("mark").lastName("ham")
 				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 
@@ -66,11 +68,26 @@ public class ConfigurationControllerTest {
 		assertEquals(CONFIGURATION_VIEW_NAME, view);
 	}
 	@Test
+	public void shouldGetConfigurationPageIfAdmin() {
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
+		EasyMock.replay(userServiceMock);
+		String view = controller.getConfigurationPage();
+		assertEquals(CONFIGURATION_VIEW_NAME, view);
+	}
+	@Test
 	public void shouldGetConfigurationSectionIfSuperAdmin() {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(superAdmin).anyTimes();
 		EasyMock.replay(userServiceMock);
 		String view = controller.getConfigurationSection();
 		assertEquals(CONFIGURATION_SECTION_NAME, view);
+	}
+	
+	@Test
+	public void shouldGetSimpleMessageViewIfNotSuperdmin() {
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
+		EasyMock.replay(userServiceMock);
+		String view = controller.getConfigurationSection();
+		assertEquals("/private/common/simpleMessage", view);
 	}
 	@Test
 	public void shouldRegistorPropertyEditorForStageDurations() {
@@ -166,6 +183,40 @@ public class ConfigurationControllerTest {
 
 	}
 
+	@Test(expected=ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfNotSueradmin() {
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
+		EasyMock.replay(userServiceMock);
+		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS)
+				.toStageDuration();
+		StageDuration interviewDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(3).unit(DurationUnitEnum.WEEKS)
+				.toStageDuration();
+
+		StageDurationDTO stageDurationDto = new StageDurationDTO();
+		List<StageDuration> stageDurationList = Arrays.asList(validationDuration, interviewDuration);
+		stageDurationDto.setStagesDuration(stageDurationList);
+	
+		Person registryUserOne = new PersonBuilder().id(1).toPerson();
+		Person registryUserTwo = new PersonBuilder().id(2).toPerson();
+
+		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
+		List<Person> registryContactList = Arrays.asList(registryUserOne, registryUserTwo);
+		registryUserDTO.setRegistryUsers(registryContactList);
+		
+		
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		
+
+		
+		EasyMock.replay(configurationServiceMock);
+		
+		controller.submit(stageDurationDto, registryUserDTO , reminderInterval );
+		
+		EasyMock.verify(configurationServiceMock);
+
+	}
+
 	
 
 	@Test
@@ -189,6 +240,9 @@ public class ConfigurationControllerTest {
 
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
 				.role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
+		
+		admin = new RegisteredUserBuilder().id(3).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
+				.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 
 	}
 }

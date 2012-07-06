@@ -55,12 +55,6 @@ $(document).ready(function()
 		} else {	
 			$("#acceptTermsRDValue").val("YES");
 			
-			/*
-			$(".terms-box").attr('style','');
-			$("#ref-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#ref-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#ref-info-bar-div .row span.error-hint").remove();
-			*/
 			refImgCount = 0;
 			
 		
@@ -107,33 +101,15 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	// Add a referee.
 	// -------------------------------------------------------------------------------
-	$('#addReferenceButton').click(function(){
-		/*if( $('#acceptTermsRDValue').length != 0  && $("#acceptTermsRDValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
-//			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			var $infobar = $('#ref-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				refImgCount = refImgCount + 1;
-			}
-			addToolTips();
-			
-		}
-		else{*/
-			$("span[name='nonAcceptedRD']").html('');
-			postRefereeData("add");
-		//}
-		
+	$('#addReferenceButton').click(function()
+	{
+		$("span[name='nonAcceptedRD']").html('');
+		postRefereeData("add");
 	});
 
-
-	
-	$('#refereeClearButton').click(function(){
+	$('#refereeClearButton').click(function()
+	{
+		$('#referencesSection > div').append('<div class="ajax" />');
 		loadReferenceSection(true);
 	});
 	

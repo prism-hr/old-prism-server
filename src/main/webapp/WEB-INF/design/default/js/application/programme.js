@@ -344,10 +344,10 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	// Clear Programme Details button.
 	// -------------------------------------------------------------------------------
-	$('#programmeClearButton').click(function(){
-		
+	$('#programmeClearButton').click(function()
+	{
+		$('#programmeDetailsSection > div').append('<div class="ajax" />');
 		loadProgrammeSection(true);
-		
 	});
 
 	

@@ -175,22 +175,20 @@
       <div class="content-box">
         <div class="content-box-inner">
         	
-		
-        
           <@spring.bind "applicationForm.*" />
           <#if spring.status.errorMessages?has_content  >
           <span class="invalid-submit">Some required fields are missing, please review your application form.<p></p></span>
           </#if>
 
-			<#include "/private/common/parts/application_info.ftl"/>
+					<#include "/private/common/parts/application_info.ftl"/>
           <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-			<div id="timelineview">
-		    	<ul class="tabs">				
-					<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
-					<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
-				</ul>
+					<div id="timelineview">
+						<ul class="tabs">				
+							<li><a href="#application" id="applicationBtn">Application</a></li>
+							<li class="current"><a href="#timeline" id="timelineBtn">Timeline</a></li>
+						</ul>
 				
-				<div class="tab-page" id="applicationTab">
+						<div class="tab-page" id="applicationTab">
 	
 		          <!-- Programme Details -->
 		          <section id="programmeDetailsSection" class="folding form-rows violet <#if programDetailsError || studyOptionError>error</#if>">                      
@@ -237,8 +235,6 @@
 			         	<hr />
 		          </#if>  
 		
-	
-	          
 		          <div class="buttons">
 		            <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
 		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
@@ -260,10 +256,10 @@
 		          </div>
 		          		          
 	         	</div>
-				<div class="tab-page" id="timeline">
-
-				</div>
-			</div><!-- timlelint -->
+						<div class="tab-page" id="timeline">
+		
+						</div>
+					</div><!-- timleline -->
 			
         </div><!-- .content-box-inner -->
 
@@ -276,8 +272,6 @@
   <#include "/private/common/global_footer.ftl"/>
 
 </div>
-
-
 
 </body>
 </html>

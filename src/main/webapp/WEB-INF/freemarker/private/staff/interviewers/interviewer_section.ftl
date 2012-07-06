@@ -78,7 +78,7 @@
 </div>
 
 <div class="row">
-	<label class="plain-label normal">Interview Instructions<em>*</em></label>
+	<label class="plain-label normal">Interview Instructions for Candidate<em>*</em></label>
 	<span class="hint" data-desc="<@spring.message 'assignInterviewer.instructions'/>"></span>
 	<div class="field">
 		<#if assignOnly?? && assignOnly>
@@ -92,7 +92,7 @@
 </div>
 
 <div class="row">
-	<label class="plain-label normal">Interviewer Location</label>
+	<label class="plain-label normal">Interview Location</label>
 	<span class="hint" data-desc="<@spring.message 'assignInterviewer.location'/>"></span>
 	<div class="field">
 		<#if assignOnly?? && assignOnly>

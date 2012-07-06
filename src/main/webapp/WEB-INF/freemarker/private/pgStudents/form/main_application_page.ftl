@@ -176,7 +176,7 @@
         <div class="content-box-inner">
         	
           <@spring.bind "applicationForm.*" />
-          <#if spring.status.errorMessages?has_content  >
+          <#if spring.status.errorMessages?has_content>
           <span class="invalid-submit">Some required fields are missing, please review your application form.<p></p></span>
           </#if>
 

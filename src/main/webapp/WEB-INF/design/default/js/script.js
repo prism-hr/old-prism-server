@@ -274,7 +274,11 @@ function fixedTip($object, text)
 				method: 'flip shift'
 			},
 		},
-		style: 'tooltip-pgr ui-tooltip-shadow'
+		style: 'tooltip-pgr ui-tooltip-shadow',
+		show: {
+			when: 'click'
+		},
+		hide: false
 	};
 
 	$object.removeData('qtip')

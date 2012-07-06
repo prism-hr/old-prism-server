@@ -128,10 +128,10 @@ $(document).ready(function()
 	$('#search-reset').addClass('disabled').click(function()
 	{
 		populateApplicationList(true);
-		$('#searchTerm, #searchCategory').addClass('disabled');
+		$('#search-go, #search-reset').addClass('disabled');
 	});
 	
-	$('#search-box').on('change, keypress', '#searchTerm, #searchCategory', function()
+	$('#search-box').on('change keypress', '#searchTerm, #searchCategory', function()
 	{
 		var length = $('#searchTerm').val().length;
 		var column = $('#searchCategory').val();

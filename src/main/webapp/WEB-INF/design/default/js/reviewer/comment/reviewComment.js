@@ -7,7 +7,7 @@ $(document).ready(function(){
 	
 	$('#submitReviewFeedback').click(function()
 	{
-		var message = 'Please confirm you want to submit this review.';
+		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()
 		{
 			$('#reviewForm').append("<input type='hidden' name='type' value='REVIEW'/>");

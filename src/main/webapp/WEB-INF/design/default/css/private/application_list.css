@@ -100,3 +100,5 @@ span.icon-status.approval { background-position: 0 -200px; }
 #search-box select { margin: 0 10px; padding: 2px; width: 160px; }
 #search-box button { margin-top: -2px; }
 #search-box .invalid { display: block; margin-left: 147px; margin-top: 5px; padding: 3px; text-align: left; }
+
+div.fetching { text-align: center; font-weight: bold; padding: 5px; }

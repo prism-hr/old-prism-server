@@ -163,7 +163,6 @@
     <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>
-    <script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/referee/reference.js'/>"></script>
   </body>
 </html>

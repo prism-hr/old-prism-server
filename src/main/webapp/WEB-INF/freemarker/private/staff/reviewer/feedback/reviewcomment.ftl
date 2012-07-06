@@ -24,7 +24,6 @@
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/reviewer/comment/reviewComment.js' />"></script> 
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
 	    
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>

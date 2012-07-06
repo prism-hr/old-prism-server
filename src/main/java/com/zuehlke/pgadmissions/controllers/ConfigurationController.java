@@ -66,7 +66,7 @@ public class ConfigurationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String getConfigurationPage() {
-		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMINISTRATOR) ) {
 			throw new ResourceNotFoundException();
 		}
 
@@ -74,12 +74,19 @@ public class ConfigurationController {
 	}
 	@RequestMapping(method = RequestMethod.GET, value="config_section")
 	public String getConfigurationSection() {		
+		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)  ) {
+			return "/private/common/simpleMessage";
+		}
+
 		return CONFIGURATION_SECTION_NAME;
 	}
 
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@ModelAttribute StageDurationDTO stageDurationDto, @ModelAttribute RegistryUserDTO registryUserDTO, @ModelAttribute ReminderInterval reminderInterval) {
+		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)  ) {
+			throw new ResourceNotFoundException();
+		}
 		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval);
 		return "redirect:/configuration/config_section";
 

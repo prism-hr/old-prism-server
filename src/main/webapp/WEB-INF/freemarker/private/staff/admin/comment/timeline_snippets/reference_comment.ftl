@@ -12,7 +12,7 @@
 			</div>	     
 			<#if user != applicationForm.applicant && ( user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)>   
 				<#if timelineObject.referee.declined>
-					<p class="declined"><em>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee</em></p>
+					<p class="declined"><em>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee.</em></p>
 				<#else>  	          
 					<p><em>${(timelineObject.referee.reference.comment?html)!}</em></p>
 						<#if timelineObject.referee.reference.documents?? && timelineObject.referee.reference.documents?size &gt; 0>

@@ -7,7 +7,8 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	// Close button.
 	// -------------------------------------------------------------------------------
-	$('#qualificationsCloseButton').click(function(){
+	$('#qualificationsCloseButton').click(function()
+	{
 		$('#qualifications-H2').trigger('click');
 		return false;
 	});
@@ -34,14 +35,17 @@ $(document).ready(function(){
 			
 			if ($('#uploadFields').hasClass('uploaded'))
 			{
-				$('#uploadFields').addClass('upload-delete');
-				$('#uploadFields a.button-edit').hide();
+				// Delete any uploaded file.
+				ajaxProofOfAwardDelete();
 				
-			}
-			if($('#document_PROOF_OF_AWARD').length > 0){
-				$('#document_PROOF_OF_AWARD').val('');
+				$('#uploadFields').removeClass('uploaded');
+				$('#uploadFields a.button-edit').hide();
 			}
 			
+			if ($('#document_PROOF_OF_AWARD').length > 0)
+			{
+				$('#document_PROOF_OF_AWARD').val('');
+			}
 		}
 		else
 		{		
@@ -61,8 +65,6 @@ $(document).ready(function(){
 				$('#uploadFields a.button-edit').show();
 			}
 		}
-		
-	
 	});
 
 	
@@ -120,24 +122,8 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#addQualificationButton').click(function()
 	{
-		/*if ($('#acceptTermsQDValue').length != 0 &&  $("#acceptTermsQDValue").val() =='NO')
-		{
-			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			var $infobar = $('#qual-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				qualImgCount = qualImgCount + 1;
-			}
-			addToolTips();
-		}
-		else
-		{*/
-			$("span[name='nonAcceptedQD']").html('');
-			postQualificationData('add');
-		//}
+		$("span[name='nonAcceptedQD']").html('');
+		postQualificationData('add');
 	});
 	
 
@@ -146,35 +132,18 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#qualificationsSaveButton').click(function()
 	{
-		/*if ($("#acceptTermsQDValue").val() =='NO')
-		{ 
-			// Highlight the information bar and terms box.
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			var $infobar = $('#qual-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				qualImgCount = qualImgCount + 1;
-			}
-			addToolTips();
+		$("span[name='nonAcceptedQD']").html('');
+		
+		// Check for a "dirty" qualification form. If there is data try to submit it.
+		if (!isFormEmpty('#qualificationsSection form'))
+		{
+			postQualificationData('close');
 		}
 		else
-		{*/
-			$("span[name='nonAcceptedQD']").html('');
-			
-			// Check for a "dirty" qualification form. If there is data try to submit it.
-			if (!isFormEmpty('#qualificationsSection form'))
-			{
-				postQualificationData('close');
-			}
-			else
-			{
-				unmarkSection('#qualificationsSection');
-				$('#qualificationsCloseButton').trigger('click');
-			}
-		//}
+		{
+			unmarkSection('#qualificationsSection');
+			$('#qualificationsCloseButton').trigger('click');
+		}
 	});
 	
 
@@ -267,12 +236,13 @@ function postQualificationData(message)
 	$.ajax({
 		type: 'POST',
 		 statusCode: {
-			  401: function() {
+			  401: function()
+				{
 				  window.location.reload();
 			  }
 		  },
-		url:"/pgadmissions/update/editQualification",
-		data:{  
+		url: "/pgadmissions/update/editQualification",
+		data: {  
 			qualificationSubject: $("#qualificationSubject").val(), 
 			qualificationInstitution: $("#qualificationInstitution").val(), 
 			qualificationType: $("#qualificationType").val(),
@@ -290,7 +260,8 @@ function postQualificationData(message)
 			message:message,
 			acceptedTerms: acceptedTheTerms
 		},
-		success:function(data) {
+		success: function(data)
+		{
 			$('#qualificationsSection').html(data);
 			var errorCount = $('#qualificationsSection .invalid:visible').length;
 	
@@ -301,7 +272,8 @@ function postQualificationData(message)
 					$('#qualifications-H2').trigger('click');
 						
 			}
-			if(errorCount > 0){
+			if (errorCount > 0)
+			{
 				markSectionError('#qualificationsSection');
 			}
 		},
@@ -311,24 +283,28 @@ function postQualificationData(message)
     }
 	});
 }
-function ajaxProofOfAwardDelete(){
-	
-	if($('#profOfAwardId') && $('#profOfAwardId').val() && $('#profOfAwardId').val() != ''){
+
+function ajaxProofOfAwardDelete()
+{
+	if ($('#profOfAwardId') && $('#profOfAwardId').val() && $('#profOfAwardId').val() != '')
+	{
 		$.ajax({
 			type: 'POST',
 			 statusCode: {
-				  401: function() {
+				  401: function()
+					{
 					  window.location.reload();
 				  }
 			  },
-			url:"/pgadmissions/delete/asyncdelete",
-			data:{
+			url: "/pgadmissions/delete/asyncdelete",
+			data: {
 				documentId: $('#profOfAwardId').val()				
 			}				
 		});
 
 	}
 }
+
 function ajaxProofOfAwardUpload()
 {	
 	// Showing/hiding progress bar when we're uploading the file via AJAX.	

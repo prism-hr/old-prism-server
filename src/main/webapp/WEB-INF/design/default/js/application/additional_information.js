@@ -11,9 +11,10 @@ $(document).ready(function(){
 		return false;
 	});
 	
-	$('#informationClearButton').click(function(){
-
-		 loadAdditionalInformationSection(true);
+	$('#informationClearButton').click(function()
+	{
+		$('#additionalInformationSection > div').append('<div class="ajax" />');
+		loadAdditionalInformationSection(true);
 	});
 	
 	$("input[name$='convictionRadio']").click(function()
@@ -38,105 +39,85 @@ $(document).ready(function(){
 		}
 	});
 	
-	$("input[name*='acceptTermsAIDCB']").click(function() {
-		if ($("#acceptTermsAIDValue").val() =='YES'){
+	$("input[name*='acceptTermsAIDCB']").click(function()
+	{
+		if ($("#acceptTermsAIDValue").val() =='YES')
+		{
 			$("#acceptTermsAIDValue").val("NO");
-		} else {
+		}
+		else
+		{
 			$("#acceptTermsAIDValue").val("YES");
 
-			/*
-			$(".terms-box").attr('style','');
-			$("#add-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#add-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#add-info-bar-div .row span.error-hint").remove();
-			*/
 			addImgCount = 0;
-			
-			
 		}
 		});
 	
 	
-	$('#informationSaveButton').click(function(){
+	$('#informationSaveButton').click(function()
+	{
 		var hasConvictions = null;
-		if ($('#convictionRadio_true:checked').val() !== undefined) {
+		if ($('#convictionRadio_true:checked').val() !== undefined)
+		{
 			hasConvictions = true;
 		}
-		if ($('#convictionRadio_false:checked').val() !== undefined) {
+		if ($('#convictionRadio_false:checked').val() !== undefined)
+		{
 			hasConvictions = false;
 		}
-		/*if ($("#acceptTermsAIDValue").val() =='NO')
-		{ 
-			// Highlight the information bar and terms box.
-//			var $form = $('#additionalInformationSection form');
-//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
-			
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			var $infobar = $('#add-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				addImgCount = addImgCount + 1;
-			}
-			addToolTips();
-			
-		}
-		else
-		{*/
 
 		var acceptedTheTerms;
-		if ($("#acceptTermsAIDValue").val() == 'NO'){
+		if ($("#acceptTermsAIDValue").val() == 'NO')
+		{
 			acceptedTheTerms = false;
 		}
-		else{
+		else
+		{
 			acceptedTheTerms = true;
 		}
 			
 		$("span[name='nonAcceptedAID']").html('');
-			$('#additionalInformationSection > div').append('<div class="ajax" />');
+		$('#additionalInformationSection > div').append('<div class="ajax" />');
 
-			$.ajax({
-				type: 'POST',
-				 statusCode: {
-					  401: function() {
-						  window.location.reload();
-					  }
-				  },
-				url:"/pgadmissions/update/editAdditionalInformation",
-				data:{ 
-					informationText: $("#informationText").val(),
-					convictions: hasConvictions,
-					convictionsText: $("#convictionsText").val(),
-					applicationId:  $('#applicationId').val(),
-					application:  $('#applicationId').val(),
-					message:'close',
-					acceptedTerms: acceptedTheTerms
-				},
-			
-				success:function(data)
-				{
-					$('#additionalInformationSection').html(data);
-				
-					// Close the section only if there are no errors.
-					var errorCount = $('#additionalInformationSection .invalid:visible').length;
-					if (errorCount == 0)
+		$.ajax({
+			type: 'POST',
+			 statusCode: {
+					401: function()
 					{
-						$('#additional-H2').trigger('click');
-					}else{
-						markSectionError('#additionalInformationSection');
-						
+						window.location.reload();
 					}
 				},
-		        complete: function()
-		        {
-							$('#additionalInformationSection div.ajax').remove();
-		        }
-			});
-	//	}
-
+			url:"/pgadmissions/update/editAdditionalInformation",
+			data: { 
+				informationText: $("#informationText").val(),
+				convictions: hasConvictions,
+				convictionsText: $("#convictionsText").val(),
+				applicationId:  $('#applicationId').val(),
+				application:  $('#applicationId').val(),
+				message:'close',
+				acceptedTerms: acceptedTheTerms
+			},
 		
+			success:function(data)
+			{
+				$('#additionalInformationSection').html(data);
+			
+				// Close the section only if there are no errors.
+				var errorCount = $('#additionalInformationSection .invalid:visible').length;
+				if (errorCount == 0)
+				{
+					$('#additional-H2').trigger('click');
+				}
+				else
+				{
+					markSectionError('#additionalInformationSection');
+				}
+			},
+			complete: function()
+			{
+				$('#additionalInformationSection div.ajax').remove();
+			}
+		});
 	});
 	
 	addToolTips();

@@ -210,6 +210,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#qualificationClearButton').click(function()
 	{
+		$('#qualificationsSection > div').append('<div class="ajax" />');
 		loadQualificationsSection(true);
 	});
 

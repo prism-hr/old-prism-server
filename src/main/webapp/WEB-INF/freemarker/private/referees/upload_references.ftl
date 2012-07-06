@@ -40,8 +40,7 @@
           
 						<div class="content-box">
 							<div class="content-box-inner">
-								<#include "/private/common/modal_window.ftl">
-                				 <#include "/private/common/parts/application_info.ftl"/>
+								<#include "/private/common/parts/application_info.ftl"/>
                 
 								<!---------- Reference -------------->
 								<section class="form-rows">
@@ -81,7 +80,7 @@
 														/> Yes</label> 
 														<label><input type="radio" name="suitableForUCL" value="false" id="suitableRB_false"
 														<#if comment.isSuitableForUCLSet() && !comment.suitableForUCL> checked="checked"</#if>
-														/> No</label> 
+														/> No</label>
 														<@spring.bind "comment.suitableForUCL" /> 
 															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 														</div>

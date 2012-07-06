@@ -11,8 +11,6 @@
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/field_controls.css' />"/>
     
-    <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/modal_window.css' />"/>
-    
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->

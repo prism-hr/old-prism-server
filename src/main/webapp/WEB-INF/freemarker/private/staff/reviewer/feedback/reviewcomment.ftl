@@ -58,7 +58,6 @@
 					<!-- content box -->				      
 					<div class="content-box">
 						<div class="content-box-inner">
-					   <#include "/private/common/modal_window.ftl">
 						 <#include "/private/common/parts/application_info.ftl"/>
 						 <!--	if user is reviewer in program and haven't already declined-->	
 							<#if !user.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)>			        		

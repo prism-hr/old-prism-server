@@ -14,7 +14,6 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
-<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/modal_window.css' />"/>
 <!-- Styles for Application List Page -->
 
 <!--[if lt IE 9]>
@@ -56,7 +55,6 @@
 			<!-- content box -->				      
 			<div class="content-box">
 				<div class="content-box-inner">
-					<#include "/private/common/modal_window.ftl">
 					<#include "/private/common/parts/application_info.ftl"/>
 					
 					<section id="commentsection" class="form-rows">

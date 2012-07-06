@@ -92,19 +92,19 @@ function validateReview()
 		errors++;
 	}
 
-	if ($('input[name="suitableCandidateForUcl"]:checked').val() == '')
+	if ($('input[name="suitableCandidateForUcl"]:checked').length == 0)
 	{
 		$('#field-issuitableucl').append('<span class="invalid">You must make a selection.</span>');
 		errors++;
 	}
 
-	if ($('input[name=suitableCandidateForProgramme]:checked').val() == '')
+	if ($('input[name="suitableCandidateForProgramme"]:checked').length == 0)
 	{
 		$('#field-issuitableprog').append('<span class="invalid">You must make a selection.</span>');
 		errors++;
 	}
 	
-	if ($('input[name="willingToInterview"]:checked').val() == '')
+	if ($('input[name="willingToInterview"]:checked').length == 0)
 	{
 		$('#field-wouldinterview').append('<span class="invalid">You must make a selection.</span>');
 		errors++;

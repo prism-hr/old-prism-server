@@ -107,7 +107,7 @@
 											<div class="row">
 												<span id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></span>
 												<span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPG'/>"></span>
-												<div class="field">
+												<div class="field" id="field-issuitableucl">
 													<label><input type="radio" name="suitableCandidateForUcl" value="true" id="suitableRB_true"
 													<#if comment.suitableCandidateForUcl?? && comment.suitableCandidateForUcl> checked="checked"</#if>
 													/> Yes</label> 
@@ -122,7 +122,7 @@
 											<div class="row multi-line">
 												<span id="suitable-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
 												<span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPGP'/>"></span>
-												<div class="field">
+												<div class="field" id="field-issuitableprog">
 													<label><input type="radio" name="suitableCandidateForProgramme" value="true" id="suitableRB_true"
 													<#if comment.suitableCandidateForProgramme?? && comment.suitableCandidateForProgramme> checked="checked"</#if>
 													/> Yes</label> 
@@ -137,7 +137,7 @@
 											<div class="row multi-line">
 												<span id="supervise-lbl" class="plain-label">Would you like to interview the applicant with a view to working with them?<em>*</em></span>
 												<span class="hint" data-desc="<@spring.message 'review.interview'/>"></span>
-												<div class="field">
+												<div class="field" id="field-wouldinterview">
 													<label><input type="radio" name="willingToInterview" value="true" id="willingRB_true"
 													<#if comment.willingToInterviewSet && comment.willingToInterview> checked="checked"</#if> 
 													/> Yes</label> 

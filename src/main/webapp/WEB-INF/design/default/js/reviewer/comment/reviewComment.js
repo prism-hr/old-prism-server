@@ -7,6 +7,11 @@ $(document).ready(function(){
 	
 	$('#submitReviewFeedback').click(function()
 	{
+		if (!validateReview())
+		{
+			return;
+		}
+		
 		var message = 'Please confirm that you are satisfied with your comments. <b>You will not be able to change them.</b>';
 		var onOk    = function()
 		{
@@ -75,3 +80,35 @@ $(document).ready(function(){
 	});
 	
 });
+
+function validateReview()
+{
+	var errors = 0;
+	$('#reviewForm span.invalid').remove();
+	
+	if ($('#review-comment').val() == '')
+	{
+		$('#review-comment').after('<span class="invalid">You must make an entry.</span>');
+		errors++;
+	}
+
+	if ($('input[name="suitableCandidateForUcl"]').val() == '')
+	{
+		$('#field-issuitableucl').append('<span class="invalid">You must make a selection.</span>');
+		errors++;
+	}
+
+	if ($('input[name="suitableCandidateForProgramme"]').val() == '')
+	{
+		$('#field-issuitableprog').append('<span class="invalid">You must make a selection.</span>');
+		errors++;
+	}
+	
+	if ($('input[name="willingToInterview"]').val() == '')
+	{
+		$('#field-wouldinterview').append('<span class="invalid">You must make a selection.</span>');
+		errors++;
+	}
+	
+	return (errors == 0);
+}

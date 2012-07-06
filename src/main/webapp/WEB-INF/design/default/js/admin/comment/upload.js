@@ -6,7 +6,7 @@ $(document).ready(function(){
 		
 		if (this.files[0].size < 10485760)
 		{
-			$('#commentDocumentProgress').html("uploading file...");
+			//$('#commentDocumentProgress').html("uploading file...");
 			$('#commentDocument').attr("readonly", "readonly");
 			commentDocumentUpload();
 			$('#commentDocument').removeAttr("readonly");
@@ -66,7 +66,7 @@ function commentDocumentDelete()
 function commentDocumentUpload()
 {	
 	
-	$("#commentDocumentProgress").ajaxStart(function()
+	/*$("#commentDocumentProgress").ajaxStart(function()
 	{
 		$(this).show();
 	})
@@ -75,9 +75,9 @@ function commentDocumentUpload()
 		$('#commentDocumentProgress').html("");
 		$('#commentDocument').val("");
 		
-	});
+	});*/
 
-	$('#uploadFields').addClass('posting');
+	$('#uploadFields').removeClass('uploaded').addClass('posting');
 	$.ajaxFileUpload
 	(
 		{
@@ -106,6 +106,7 @@ function commentDocumentUpload()
 			},
 			complete: function()
 			{
+				$('#commentDocument').val("");
 				$('#uploadFields').removeClass('posting');
 			}
 		}

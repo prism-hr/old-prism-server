@@ -41,7 +41,7 @@ public class ConfigurationControllerTest {
 	private StageDurationPropertyEditor stageDurationPropertyEditorMock;
 
 	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
-
+	private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
 
 	private PersonPropertyEditor registryPropertyEditorMock;
 	private UserService userServiceMock;
@@ -65,7 +65,13 @@ public class ConfigurationControllerTest {
 		String view = controller.getConfigurationPage();
 		assertEquals(CONFIGURATION_VIEW_NAME, view);
 	}
-
+	@Test
+	public void shouldGetConfigurationSectionIfSuperAdmin() {
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(superAdmin).anyTimes();
+		EasyMock.replay(userServiceMock);
+		String view = controller.getConfigurationSection();
+		assertEquals(CONFIGURATION_SECTION_NAME, view);
+	}
 	@Test
 	public void shouldRegistorPropertyEditorForStageDurations() {
 		WebDataBinder dataBinderMock = EasyMock.createMock(WebDataBinder.class);
@@ -152,9 +158,11 @@ public class ConfigurationControllerTest {
 		configurationServiceMock.saveConfigurations(stageDurationList, registryContactList, reminderInterval);
 		
 		EasyMock.replay(configurationServiceMock);
+		
 		String view = controller.submit(stageDurationDto, registryUserDTO , reminderInterval );
+		
 		EasyMock.verify(configurationServiceMock);
-		assertEquals(CONFIGURATION_VIEW_NAME, view);
+		assertEquals( "redirect:/configuration/config_section", view);
 
 	}
 

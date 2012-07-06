@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.rmi.activation.ActivationGroup_Stub;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class ConfigurationController {
 
 	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
+	private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
 	private final StageDurationPropertyEditor stageDurationPropertyEditor;
 
 	private final PersonPropertyEditor registryPropertyEditor;
@@ -72,13 +72,16 @@ public class ConfigurationController {
 
 		return CONFIGURATION_VIEW_NAME;
 	}
-
+	@RequestMapping(method = RequestMethod.GET, value="config_section")
+	public String getConfigurationSection() {		
+		return CONFIGURATION_SECTION_NAME;
+	}
 
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@ModelAttribute StageDurationDTO stageDurationDto, @ModelAttribute RegistryUserDTO registryUserDTO, @ModelAttribute ReminderInterval reminderInterval) {
 		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval);
-		return CONFIGURATION_VIEW_NAME;
+		return "redirect:/configuration/config_section";
 
 	}
 	
@@ -116,5 +119,7 @@ public class ConfigurationController {
 	public DurationUnitEnum[] getUnits() {
 		return DurationUnitEnum.values();
 	}
+
+	
 
 }

@@ -10,7 +10,7 @@
 				<span class="name">${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
 				<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 			</div>	     
-			<#if user != applicationForm.applicant >   
+			<#if user != applicationForm.applicant && ( user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)>   
 				<#if timelineObject.referee.declined>
 					<p class="declined"><em>${timelineObject.referee.user.firstName?html} ${timelineObject.referee.user.lastName?html} declined to act as referee</em></p>
 				<#else>  	          

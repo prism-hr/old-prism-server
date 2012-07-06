@@ -22,7 +22,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed that the interview of ${application.applicant.firstName?html} ${application.applicant.lastName?html} in connection with Application ${application.applicationNumber} for UCL 
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview of ${application.applicant.firstName?html} ${application.applicant.lastName?html} in connection with Application ${application.applicationNumber} for UCL 
 			      			<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has taken place.</font>
 			      	</p>
 			      	<p>

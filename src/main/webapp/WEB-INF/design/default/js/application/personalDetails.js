@@ -95,6 +95,9 @@ $(document).ready(function(){
 	  		'	</div>';
 				$('#maternal-nationality-div').append(html);
 				addToolTips();
+
+				// Reset field.
+				$('#maternalNationalityCountry option:selected').removeAttr('selected');
 			}
 		}
 	});
@@ -129,6 +132,9 @@ $(document).ready(function(){
 	  		'	</div>';
 				$('#paternal-nationality-div').append(html);
 				addToolTips();
+
+				// Reset field.
+				$('#paternalNationalityCountry option:selected').removeAttr('selected');
 			}
 
 		}
@@ -140,6 +146,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$(document).on('click', '.nationality-item button.button-delete', function()
 	{
+		$(this).closest('select').children('option:selected').removeAttr('selected');
 		$(this).parent().remove();
 		return false;
 	});

@@ -22,37 +22,32 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to confirm that your Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to approval.  At this stage, your study programme director evaluates and authorises your application.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our --Context-- have completed their assessment of your Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>. We are pleased to inform you that they have recommended that you be recruited to the programme.</font>
 			      	</p>
+		      		
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this does not constitute a legally binding offer of study.</b></font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this does not constitute a legally binding offer of study and no offer of study is valid until provided in writing by UCL Admissions.</b></font>
 			      	</p>
+		      		 
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Your study programme director will authorise your application. Following this, your application will be passed to UCL Admissions to generate your offer of study.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our Programme Director will now make a final assessment of your application and determine whether to advance it to UCL Admissions for verification.</font>
 			      	</p>
+		      		 
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>You must be in possession of an offer of study in order to enrol.</b></font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">We aim to be back in contact with the outcome of this assessment by close of business on --ReviewStageDeadline--.</font>
 			      	</p>
 			      	
-				    <br>  	
-					<p>
-		              <!-- Button -->
-		              <table border="0" cellpadding="0" cellspacing="0">
-		              	<tr>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-		                    <font face="Arial, Helvetica, sans-serif" size="2">
-		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-		                      	href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"><b>View Application</b></a>
-		                    </font>
-		                  </td>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-		                </tr>
-		              </table>
-					</p>
-					</br>			      	
+						<br>
+							<p>
+				            	<!-- Button -->
+								<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View/Update Application">
+									<img width="193" height="36" alt="View/Update Application" src="${host}/pgadmissions/design/default/images/email/view_update_app.png">
+								</a>
+							</p>
+						</br>			      	
+			      	
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

@@ -129,7 +129,7 @@
 									</div>
 									
 									<div class="row multi-line">
-										<span id="supervise-lbl" class="plain-label">Would you like to admit the applicant as their supervisor/programme director?<em>*</em></span>
+										<span id="supervise-lbl" class="plain-label">Would you like to supervise/direct the applicant?<em>*</em></span>
 										<span class="hint" data-desc="<@spring.message 'interviewOutcome.admit'/>"></span>
 										<div class="field" id="field-wouldsupervise">
 											<label><input type="radio" name="willingToSupervise" value="true" id="willingRB_true"

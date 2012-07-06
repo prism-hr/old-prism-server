@@ -23,58 +23,41 @@
 		      		</h1>
 					<#if user.isInRoleInProgram('APPROVER', application.program)> 
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">It is recommended that ${application.applicant.firstName?html} ${application.applicant.lastName?html} be admitted to UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
+				      		<font face="Arial, Helvetica, sans-serif" size="2">It is recommended that ${application.applicant.firstName?html} ${application.applicant.lastName?html} be recruited to UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
 				      	</p>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must authorise their Application ${application.applicationNumber} for it to be passed to UCL Admissions to generate a legally binding offer of study.</b></font>
+				      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must now evaluate their Application ${application.applicationNumber} and select the next action.</b></font>
 				      	</p>
 				      	
-					    <br>  	
-						<p>
-			              <!-- Button -->
-			              <table border="0" cellpadding="0" cellspacing="0">
-			              	<tr>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-			                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-			                    <font face="Arial, Helvetica, sans-serif" size="2">
-			                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-			                      	href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}"><b>Approve Application</b></a>
-			                    </font>
-			                  </td>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-			                </tr>
-			              </table>
-						</p>
+						<br>
+							<p>
+				            	<!-- Button -->
+								<a href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}" title="Evaluate Application">
+									<img width="168" height="36" alt="Evaluate Application" src="${host}/pgadmissions/design/default/images/email/evaluate_app.png">
+								</a>
+							</p>
 						</br>
-				      	
+									      	
+	     				<p>
+				      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
+				      	</p>				      	
 					<#else>
 			      		<p>
 				      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} has now been moved to approval. You can view the application below.</font>
 				      	</p>
-				      	
-					    <br>  	
-						<p>
-			              <!-- Button -->
-			              <table border="0" cellpadding="0" cellspacing="0">
-			              	<tr>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-			                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-			                    <font face="Arial, Helvetica, sans-serif" size="2">
-			                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-			                      	href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"><b>View Application</b></a>
-			                    </font>
-			                  </td>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-			                </tr>
-			              </table>
-						</p>
+
+						<br>
+							<p>
+				            	<!-- Button -->
+								<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View Application">
+									<img width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png">
+								</a>
+							</p>
 						</br>				      	
 					</#if>
+			 
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
-			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

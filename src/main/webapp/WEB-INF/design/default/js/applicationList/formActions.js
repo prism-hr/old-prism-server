@@ -218,6 +218,9 @@ function populateApplicationList(reset)
 	};
 	
 	$('#search-box span.invalid').remove();
+	
+	// We're fetching more applications.
+	$('.content-box-inner').append('<div class="fetching">Fetching more applications...</div>');
 
 	$.ajax({
 		 type: 'GET',
@@ -232,6 +235,7 @@ function populateApplicationList(reset)
 			{
 				$('#applicationListSection').html(data);
 				addToolTips();
+				$('div.fetching').remove();
 			}			
 	});
 }

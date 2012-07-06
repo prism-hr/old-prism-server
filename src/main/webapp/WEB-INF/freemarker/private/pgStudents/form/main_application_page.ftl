@@ -99,7 +99,7 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/references.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/modal_window.css' />"/>
-
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/timeline.css' />"/>
 
 <!-- Scripts -->
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
@@ -107,6 +107,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>  
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/withdraw_modal_window.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/timeline_application.js'/>"></script>
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -174,83 +175,98 @@
       <!-- content box -->
       <div class="content-box">
         <div class="content-box-inner">
+        	
+		
+        
           <@spring.bind "applicationForm.*" />
           <#if spring.status.errorMessages?has_content  >
           <span class="invalid-submit">Some required fields are missing, please review your application form.<p></p></span>
           </#if>
 
-		<#include "/private/common/parts/application_info.ftl"/>
+			<#include "/private/common/parts/application_info.ftl"/>
           <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+			<div id="timelineview">
+		    	<ul class="tabs">				
+					<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
+					<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
+				</ul>
+				
+				<div class="tab-page" id="applicationTab">
+	
+		          <!-- Programme Details -->
+		          <section id="programmeDetailsSection" class="folding form-rows violet <#if programDetailsError || studyOptionError>error</#if>">                      
+		          </section>
+		          
+		          <!-- Personal Details -->
+		          <section id="personalDetailsSection" class="folding form-rows purple <#if personalDetailsError>error</#if>">
+		          </section>
+		          
+		          <!-- Address -->                      
+		          <section id="addressSection" class="folding form-rows red <#if currentAddressError || contactAddressError>error</#if>">                         
+		          </section>
+		          
+		          <!-- Qualifications -->
+		          <section id="qualificationsSection" class="folding form-rows orange">
+		          </section>
+		          
+		          <!-- Employment -->
+		          <section id="positionSection" class="folding form-rows yellow">
+		          </section>
+		          
+		          <!-- Funding -->
+		          <section id="fundingSection" class="folding form-rows green">                     
+		          </section>
+		          
+		          <!-- References -->
+		          <section id="referencesSection" class="folding form-rows navy <#if refereesError> error</#if>">
+		          </section>
+		          
+		          <!-- documents -->
+		          <section id="documentSection" class="folding form-rows blue <#if personalStatementError>error</#if>">              
+		          </section>
+		          
+		          <!-- Additional Information -->
+		          <section id="additionalInformationSection" class="folding form-rows lightblue" <#if additionalInformationError> error</#if>>
+		          </section>
+		
+		          <hr />
+		          
+		          <#if applicationForm.isInState('UNSUBMITTED')>
+			          <!-- Terms -->
+			          <section id="acceptTermsSection" class="folding form-rows lightgrey">
+			          </section>
+			         	<hr />
+		          </#if>  
+		
+	
+	          
+		          <div class="buttons">
+		            <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
+		            <#include "/private/common/modal_window.ftl">
+		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
+		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+		              <button id="withdrawButton" class="red">Withdraw</button>
+		              <button id="saveAndClose" type="button">Save &amp; Close</button>
+		            </form>                                      
+		            <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     
+		            <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
+		              <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+		              <button id="saveAndClose" type="button">Save &amp; Close</button>
+		              <button id="submitAppButton" type="button" class="blue">Submit</button>
+		            </form>
+		            <#else>
+		            <form>
+		              <button id="saveAndClose" type="button">Save &amp; Close</a>
+		            </form>
+		            </#if>
+		          </div>
+		          		          
+	         	</div>
+				<div class="tab-page" id="timeline">
 
-          <!-- Programme Details -->
-          <section id="programmeDetailsSection" class="folding form-rows violet <#if programDetailsError || studyOptionError>error</#if>">                      
-          </section>
-          
-          <!-- Personal Details -->
-          <section id="personalDetailsSection" class="folding form-rows purple <#if personalDetailsError>error</#if>">
-          </section>
-          
-          <!-- Address -->                      
-          <section id="addressSection" class="folding form-rows red <#if currentAddressError || contactAddressError>error</#if>">                         
-          </section>
-          
-          <!-- Qualifications -->
-          <section id="qualificationsSection" class="folding form-rows orange">
-          </section>
-          
-          <!-- Employment -->
-          <section id="positionSection" class="folding form-rows yellow">
-          </section>
-          
-          <!-- Funding -->
-          <section id="fundingSection" class="folding form-rows green">                     
-          </section>
-          
-          <!-- References -->
-          <section id="referencesSection" class="folding form-rows navy <#if refereesError> error</#if>">
-          </section>
-          
-          <!-- documents -->
-          <section id="documentSection" class="folding form-rows blue <#if personalStatementError>error</#if>">              
-          </section>
-          
-          <!-- Additional Information -->
-          <section id="additionalInformationSection" class="folding form-rows lightblue" <#if additionalInformationError> error</#if>>
-          </section>
-
-          <#if applicationForm.isInState('UNSUBMITTED')>
-          <hr />
-          
-          <!-- Terms -->
-          <section id="acceptTermsSection" class="folding form-rows lightgrey">
-          </section>
-          </#if>  
-
-          <hr />
-          
-          <div class="buttons">
-            <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
-            <#include "/private/common/modal_window.ftl">
-            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
-              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-              <button id="withdrawButton" class="red">Withdraw</button>
-              <button id="saveAndClose" type="button">Save &amp; Close</button>
-            </form>                                      
-            <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     
-            <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
-              <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-              <button id="saveAndClose" type="button">Save &amp; Close</button>
-              <button id="submitAppButton" type="button" class="blue">Submit</button>
-            </form>
-            <#else>
-            <form>
-              <button id="saveAndClose" type="button">Save &amp; Close</a>
-            </form>
-            </#if>
-          </div>
-					
-					<#include "/private/staff/admin/comment/timeline_only.ftl"/>
-					
+				</div>
+			</div><!-- timlelint -->
+			
         </div><!-- .content-box-inner -->
 
       </div><!-- .content-box -->

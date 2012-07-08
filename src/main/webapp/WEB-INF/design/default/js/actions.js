@@ -63,6 +63,7 @@ $(document).ready(function()
 						}, 
 						success: function(data)
 						{
+							
 							window.location.href = "/pgadmissions/applications?messageCode=application.withdrawn&applicationId=" + id;
 						},
 			            complete: function()

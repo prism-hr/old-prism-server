@@ -57,6 +57,8 @@
 				<ref bean="approverApprovalReminderSchedule"/> 
 				<ref bean="moveToApprovedNotificationSchedule"/> 
 				<ref bean="registryNotificationSchedule"/> 
+				<ref bean="approvalRestartRequestNotificationSchedule"/>
+				<ref bean="approvalRestartRequestReminderSchedule"/>
 			</list>
 		</property>
 	</bean>

@@ -62,6 +62,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	private RegisteredUser reviewerUser;
 	private RegisteredUser interviewerUser;
 	private RegisteredUser applicationAdmin;
+	private RegisteredUser approver;
 
 	@Test
 	public void shouldSaveAndLoadApplicationForm() throws ParseException {
@@ -76,6 +77,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setApplicationAdministrator(applicationAdmin);
 		application.setApplicationNumber("ABC");
 		application.setResearchHomePage("researchHomePage");
+		application.setPendingApprovalRestart(true);
 		assertNotNull(application.getPersonalDetails());
 		assertNull(application.getId());
 
@@ -104,6 +106,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(applicationAdmin, application.getApplicationAdministrator());
 		assertEquals("ABC", application.getApplicationNumber());
 		assertEquals("http://researchHomePage", application.getResearchHomePage());
+		assertTrue(application.isPendingApprovalRestart());
 	}
 
 	@Test
@@ -421,7 +424,25 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		
 	}
-
+	@Test
+	public void shouldSaveAndLoadApplicationFormWithApproverRequestingRestart() {
+		ApplicationForm application = new ApplicationForm();
+		application.setProgram(program);
+		application.setApplicant(user);
+		application.setApproverRequestedRestart(approver);
+		
+	
+		save(application);
+		
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		
+		assertEquals(approver, reloadedApplication.getApproverRequestedRestart());
+		
+		
+	}
+	
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
@@ -436,9 +457,13 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		applicationAdmin = new RegisteredUserBuilder().firstName("joan").lastName("arc").email("act@test.com").username("arc").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		
+		approver = new RegisteredUserBuilder().firstName("het").lastName("get").email("het@test.com").username("hed").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		
+		
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 
-		save(user, reviewerUser, program, interviewerUser, applicationAdmin);
+		save(user, reviewerUser, program, interviewerUser, applicationAdmin, approver);
 
 		flushAndClearSession();
 	}

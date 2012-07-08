@@ -87,7 +87,25 @@ public class ApplicationsServiceTest {
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(applicationsList, appsDueRegistryNotification);
 	}
-
+	@Test
+	public void shouldGetAllApplicationsDueApprovalRestartRequestNotification() {
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2).toApplicationForm());
+		EasyMock.expect(applicationFormDAOMock.getApplicationsDueApprovalRequestNotification()).andReturn(applicationsList);
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> appsDueNotification = applicationsService.getApplicationsDueApprovalRestartRequestNotification();
+		EasyMock.verify(applicationFormDAOMock);
+		assertSame(applicationsList, appsDueNotification);
+	}
+	
+	@Test
+	public void shouldGetAllApplicationsDueApprovalRestartRequestReminder() {
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2).toApplicationForm());
+		EasyMock.expect(applicationFormDAOMock.getApplicationDueApprovalRestartRequestReminder()).andReturn(applicationsList);
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> appsDueNotification = applicationsService.getApplicationsDueApprovalRestartRequestReminder();
+		EasyMock.verify(applicationFormDAOMock);
+		assertSame(applicationsList, appsDueNotification);
+	}
 	@Test
 	public void shouldGetApplicationsOrderedByCreationDateThenSubmissionDateFirst() throws ParseException {
 

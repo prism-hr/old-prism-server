@@ -13,13 +13,9 @@
     ${applicationForm.applicationNumber}
   </div>
     
-  <div class="row half">
+  <div class="row">
     <label>Submitted</label>
-    ${(applicationForm.submittedDate?string("dd MMM yyyy"))!"In Progress"}    
+    ${(applicationForm.submittedDate?string("dd MMM yyyy"))!"In Progress"}
+      <#include "/private/common/actions.ftl"/>
   </div>
-  <span style="float:right">
-   <label>Actions:</label>
-	<#include "/private/common/actions.ftl"/>   
-   </span>
-
 </div>

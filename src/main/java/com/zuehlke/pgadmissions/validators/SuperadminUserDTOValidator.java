@@ -45,7 +45,7 @@ public class SuperadminUserDTOValidator implements Validator {
 		if (StringUtils.isNotBlank(user.getEmail())) {
 			RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(user.getEmail());
 			if (existingUser != null && existingUser.isInRole(Authority.APPLICANT)) {
-				errors.rejectValue("email", "text.email.applicant", new Object[]{user.getEmail()}, "Cannot add applicant to role");
+				errors.rejectValue("email", "text.email.applicant");
 			}
 		}
 	}

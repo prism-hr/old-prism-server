@@ -5,12 +5,11 @@
 	<bean id="registryMailSender" class="com.zuehlke.pgadmissions.mail.RegistryMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
-		<constructor-arg index="1" ref="mailSender" />
-		<constructor-arg index="2" ref="mailConfigurationService" />
-		<constructor-arg index="3" ref="mailUserService" />
-		<constructor-arg index="4" ref="messageSource" />
-		<constructor-arg index="5" ref="mailPdfDocumentBuilder" />
-		<constructor-arg index="6" ref="mailPdfAttachmentInputSourceFactory" />
+		<constructor-arg index="1" ref="mailSender" />		
+		<constructor-arg index="2" ref="mailUserService" />
+		<constructor-arg index="3" ref="messageSource" />
+		<constructor-arg index="4" ref="mailPdfDocumentBuilder" />
+		<constructor-arg index="5" ref="mailPdfAttachmentInputSourceFactory" />
 	</bean>
 
 	<bean id="mailPdfAttachmentInputSourceFactory" class="com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory"
@@ -181,6 +180,15 @@
 	<bean id="mailPersonDAO" class="com.zuehlke.pgadmissions.dao.PersonDAO"
 		autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	
+	<bean id="mailCommentFactory" class="com.zuehlke.pgadmissions.utils.CommentFactory" autowire-candidate="false"/>
+	
+	<bean id="approvalRestartRequestMailSender" class="com.zuehlke.pgadmissions.mail.ApprovalRestartRequestMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="messageSource" />
 	</bean>
 
 </beans>

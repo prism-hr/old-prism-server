@@ -251,6 +251,14 @@ public class RegisteredUserTest {
 		assertTrue(approver.canSee(applicationForm));
 
 	}
+	@Test
+	public void shouldReturnTrueIfUserIsSupervisorOfApplication() {
+		RegisteredUser supervisorUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.SUPERVISOR).toRole()).toUser();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(supervisorUser).toSupervisor()).toApprovalRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(approvalRound).status(ApplicationFormStatus.APPROVAL)
+				.toApplicationForm();
+		assertTrue(supervisorUser.canSee(applicationForm));
+	}
 
 	@Test
 	public void shouldReturnFalseIfUserIsNotApproverOfProgramToWhichApplicationBelongs() {
@@ -1030,11 +1038,11 @@ public class RegisteredUserTest {
 	
 
 	@Test
-	public void shouldHaveStaffRigstIfSuperviros() {
-		RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+	public void shouldHaveStaffRigstIfSupervisor() {
+		RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().authorityEnum(Authority.SUPERVISOR).toRole()).toUser();
 		Supervisor supervisor = new SupervisorBuilder().id(1).user(user).toSupervisor();
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(4).supervisors(supervisor).toApprovalRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().toProgram()).status(ApplicationFormStatus.VALIDATION)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().toProgram()).status(ApplicationFormStatus.APPROVAL)
 				.approvalRounds(approvalRound).toApplicationForm();
 		assertTrue(user.hasStaffRightsOnApplicationForm(applicationForm));
 
@@ -1050,13 +1058,14 @@ public class RegisteredUserTest {
 
 	}
 	@Test
-	public void shouldHaveStaffRigstIfSuperadming() {
+	public void shouldHaveStaffRightsIfSuperadmin() {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().toProgram())
 				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(user.hasStaffRightsOnApplicationForm(applicationForm));
 
 	}
+	
 	@Test
 	public void shouldHaveStaffRigstIfReviewerAndReferee() {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole(), new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();

@@ -33,30 +33,7 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for postgraduate research study. If you feel unable to do this, you may also decline. <b>Be aware that declining to provide a review may reduce the applicant's chances of securing a study place.</b></font>
 			      	</p>
-			      	<#if !reviewer.user?? || !reviewer.user.enabled>
-			      		<p>
-			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with UCL Prism, please do so by clicking the link below:</font>
-			      		</p>
-			      		
-					    <br>  	
-						<p>
-			              <!-- Button -->
-			              <table border="0" cellpadding="0" cellspacing="0">
-			              	<tr>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-			                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-			                    <font face="Arial, Helvetica, sans-serif" size="2">
-			                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-			                      	href="${host}/pgadmissions/register?activationCode=${reviewer.user.activationCode}"><b>Register</b></a>
-			                    </font>
-			                  </td>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-			                </tr>
-			              </table>
-						</p>
-						</br>			      	
-			      		
-			      	</#if>
+			      
 			      	
 					    <br>  	
 						<p>
@@ -66,8 +43,12 @@
 			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
 			                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
 			                    <font face="Arial, Helvetica, sans-serif" size="2">
-			                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-			                      	href="${host}/pgadmissions/reviewFeedback?applicationId=${application.applicationNumber}"><b>Provide Feedback</b></a>
+			                            <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+			                       	 <#if !reviewer.user?? || !reviewer.user.enabled>
+			                       	 	href="${host}/pgadmissions/register?activationCode=${reviewer.user.activationCode}"
+			                       	 <#else>
+			                      		href="${host}/pgadmissions/reviewFeedback?applicationId=${application.applicationNumber}"
+			                      	</#if>><b>Provide Feedback</b></a>
 			                    </font>
 			                  </td>
 			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>

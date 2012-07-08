@@ -25,31 +25,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We can confirm the arrangements for your interview of ${applicant.firstName?html} ${applicant.lastName?html} in connection with Application ${application.applicationNumber} for UCL 
 							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
 			      		</font>
-			      	</p>
-			      	<#if !interviewer.user.enabled>
-			      		<p>
-			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with UCL Prism, please do so by clicking the link below:</font>
-			      		</p>
-			      		
-					    <br>  	
-						<p>
-			              <!-- Button -->
-			              <table border="0" cellpadding="0" cellspacing="0">
-			              	<tr>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-			                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-			                    <font face="Arial, Helvetica, sans-serif" size="2">
-			                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-			                      	href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"><b>Register</b></a>
-			                    </font>
-			                  </td>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-			                </tr>
-			              </table>
-						</p>
-						</br>
-			      		
-			      	</#if>
+			      
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${interviewer.interview.interviewTime} on ${interviewer.interview.interviewDueDate?string("dd MMM yyyy")}.</font>
 			      	</p>
@@ -71,7 +47,11 @@
 			                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
 			                    <font face="Arial, Helvetica, sans-serif" size="2">
 			                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-			                      	href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"><b>View Application</b></a>
+			                      <#if !interviewer.user.enabled>
+			                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"
+			                      <#else>
+			                      		href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"
+			                      </#if>><b>View Application</b></a>
 			                    </font>
 			                  </td>
 			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>

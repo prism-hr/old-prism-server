@@ -103,43 +103,7 @@ public class MailService {
 		}
 	}
 
-	@Transactional
-	public void sendRequestRestartApproval(ApplicationForm form, RegisteredUser userRequesting) {
-		Program program = form.getProgram();
-
-		List<RegisteredUser> adminRecipients = program.getAdministrators();
-		RegisteredUser applicationAdmin = form.getApplicationAdministrator();
-
-		String subject = resolveMessage("application.request.restart.approval", form.getApplicationNumber(), program.getTitle());
-		String template = "private/staff/admin/mail/restart_approval_request.ftl";
-		Map<String, Object> model = createModel(form);
-		model.put("approver", userRequesting);
-		
-		try {
-			if (applicationAdmin == null) { // send email to all program administrators
-				for (RegisteredUser admin : adminRecipients) {
-					InternetAddress toAddress = createAddress(admin);
-
-					model.put("admin", admin);
-					delegateToMailSender(toAddress, null, subject, template, model);
-				}
-			} else { // send one email to application admin, CC to program admins
-				InternetAddress[] ccAddresses = new InternetAddress[adminRecipients.size()];
-				int index = 0;
-				for (RegisteredUser admin : adminRecipients) {
-					ccAddresses[index] = createAddress(admin);
-					index++;
-				}
-				InternetAddress toAddress = createAddress(applicationAdmin);
-				model.put("admin", applicationAdmin);
-				delegateToMailSender(toAddress, ccAddresses, subject, template, model);
-			}
-		} catch (Throwable e) {
-			e.printStackTrace();
-			log.warn("error while sending email", e);
-		}
-	}
-
+	
 	private void internalSendWithdraw(RegisteredUser recipient, ApplicationForm application) {
 		try {
 			Map<String, Object> model = createModel(application);

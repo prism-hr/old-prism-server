@@ -18,7 +18,7 @@ $(document).ready(function()
 		},
 		complete: function()
 		{
-			$('.content-box-inner div.ajax').remove();
+			$('div.ajax').remove();
 			updateRegistryForm();
 
 		}

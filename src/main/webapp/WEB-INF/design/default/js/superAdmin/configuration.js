@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-	$('.content-box-inner').parent().append('<div class="ajax" />');
+	$('.content-box-inner').append('<div class="ajax" />');
 	$.ajax({
 		type: 'GET',
 		statusCode: {

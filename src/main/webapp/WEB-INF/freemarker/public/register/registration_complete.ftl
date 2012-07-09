@@ -39,7 +39,7 @@
           <div class="content">
             <h1>Almost there...</h1>
             <p>To activate your account please check your emails and click on the activation link.</p>
-            <p class="buttons"><a class="button blue" href="/pgadmissions/register/resendConfirmation?activationCode=${pendingUser.activationCode}">Resend email</a></p>
+            <p class="buttons"><a id="resend" class="button blue" href="/pgadmissions/register/resendConfirmation?activationCode=${pendingUser.activationCode}">Resend email</a></p>
           </div>
         </div>
         
@@ -57,6 +57,7 @@
 	
 		</div>
 		<!-- Scripts -->
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/register_applicant.js'/>"></script>
 	</body>
 </html>

@@ -20,5 +20,14 @@ $(document).ready(function()
 			e.target.value = e.target.defaultValue;
 	}); 
 
+
+	// Resend confirmation email button.
+	$('#resend').click(function()
+	{
+		var $this = $(this);
+		var url		= $this.attr('href');
+		$this.replaceWith('<img src="/pgadmissions/design/default/images/ajax-loader-file" />');
+		window.location.href = url;
+	});
   
 });

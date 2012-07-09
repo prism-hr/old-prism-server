@@ -115,7 +115,7 @@ $(document).ready(function()
 	// -----------------------------------------------------------------------------------------
 	$('#moveToInterviewBtn').click(function()
 	{
-		
+		$('#interviewsection span.invalid').remove();
 		$('#interviewsection').append('<div class="ajax" />');
 		var url = "/pgadmissions/interview/move";
 		

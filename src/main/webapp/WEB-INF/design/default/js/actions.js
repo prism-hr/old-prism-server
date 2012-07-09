@@ -1,6 +1,7 @@
 
 $(document).ready(function()
-{// --------------------------------------------------------------------------------
+{
+	// --------------------------------------------------------------------------------
 	// APPLICATION ACTIONS
 	// --------------------------------------------------------------------------------
 	$(document).on('change', 'select.actionType', function()
@@ -63,25 +64,21 @@ $(document).ready(function()
 						}, 
 						success: function(data)
 						{
-							
 							window.location.href = "/pgadmissions/applications?messageCode=application.withdrawn&applicationId=" + id;
 						},
-			            complete: function()
-			            {
+						complete: function()
+						{
 							$('div.content-box-inner div.ajax').remove();
-			            }
+						}
 					});
 			
 				};
 				var onCancel = function()
 				{
 					$('div.content-box-inner div.ajax').remove();
-					
 				};
 				
 				modalPrompt(message, onOk, onCancel);
-			
-				
 				break;
 		}
 	});

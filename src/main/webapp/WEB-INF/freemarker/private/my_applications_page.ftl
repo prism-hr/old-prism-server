@@ -19,11 +19,12 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
   
-      <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>      
-      <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
-      <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-      <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
-      <script type="text/javascript" src="<@spring.url '/design/default/js/scrollpagination.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>      
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/scrollpagination.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>
   </head>
   
   <!--[if IE 9]>

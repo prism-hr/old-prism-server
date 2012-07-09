@@ -52,7 +52,7 @@ public class RejectService {
 		if (approver == null) {
 			throw new IllegalArgumentException("approver must not be null!");
 		}
-		if (!(application.getProgram().isApprover(approver) || application.getProgram().isAdministrator(approver))) {
+		if (!(application.getProgram().isApprover(approver) || approver.hasAdminRightsOnApplication(application))) {
 			throw new IllegalArgumentException("approver is not an approver or administrator in the program of the application!");
 		}
 		application.setApprover(approver);

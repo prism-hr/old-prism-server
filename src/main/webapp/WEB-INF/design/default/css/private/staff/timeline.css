@@ -19,7 +19,6 @@
 #timeline-statuses .box .title .name { margin-left: 4px; }
 #timeline-statuses .box .title .datetime { float: right; margin-right: 5px; }
 #timeline-statuses .box p { line-height: 1.2; margin: 0; padding: 5px 10px 0 30px; }
-#timeline-statuses .box p:last-child { padding-bottom: 0 !important; }
 #timeline-statuses .box p.highlight { background-image: url(../../../images/bg_status_default.gif); font-size: 16px; font-weight: bold; margin: 0; padding: 10px 25px 10px 10px; }
 #timeline-statuses .box h3 { line-height: 1.2; margin-bottom: 0; margin-top: .5em; padding: 0 10px; }
 #timeline-statuses .box label { display: inline-block; margin-right: 1em; }
@@ -35,8 +34,10 @@
 #timeline-statuses .box h3.answer.overseas span { background-position: -57px 0; }
 #timeline-statuses .box h3.answer.yes span { background-position: -76px 0; }
 
+#timeline-statuses ul .box { padding-bottom: 10px; }
 #timeline-statuses ul .box .title { background: #AAA; }
 #timeline-statuses ul .box p { font-size: 12px; font-weight: normal; padding: 10px; }
+#timeline-statuses ul .box p:last-child { padding-bottom: 0 !important; }
 
 #timeline-statuses .box ul.uploads { padding: 0 0 4px 10px; }
 #timeline-statuses .box ul.uploads li { background: url(../../../images/icon_downloads.png) no-repeat 1px 0; display: block; line-height: 15px; margin-bottom: 10px; padding-left: 32px; }

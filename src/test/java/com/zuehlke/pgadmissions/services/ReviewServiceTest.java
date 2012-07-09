@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
@@ -34,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 public class ReviewServiceTest {
@@ -102,8 +105,10 @@ public class ReviewServiceTest {
 
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).toApplicationForm();
+		applicationForm.getNotificationRecords().add(new NotificationRecordBuilder().id(2).notificationType(NotificationType.REVIEW_REMINDER).toNotificationRecord());
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
 				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
+		
 		reviewRoundDAOMock.save(reviewRound);
 		applicationFormDAOMock.save(applicationForm);
 		
@@ -122,6 +127,7 @@ public class ReviewServiceTest {
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(event, applicationForm.getEvents().get(0));
 		EasyMock.verify(reviewRoundDAOMock, applicationFormDAOMock);
+		assertTrue(applicationForm.getNotificationRecords().isEmpty());
 
 	}
 

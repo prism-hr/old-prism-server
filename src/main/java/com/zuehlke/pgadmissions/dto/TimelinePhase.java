@@ -21,6 +21,7 @@ public class TimelinePhase extends TimelineObject {
 	
 	private SortedSet<Comment> comments = new TreeSet<Comment>();
 	private boolean rejectedByApprover;
+	private String messageCode = null;
 	
 	public ApplicationFormStatus getStatus() {
 		return status;
@@ -74,6 +75,9 @@ public class TimelinePhase extends TimelineObject {
 	}
 
 	public String getMessageCode() {
+		if(messageCode != null){
+			return messageCode;
+		}
 		return "timeline.phase." + status.displayValue().toLowerCase().replace(" ", "_");
 	}
 
@@ -108,6 +112,11 @@ public class TimelinePhase extends TimelineObject {
 
 	public boolean isRejectedByApprover() {
 		return rejectedByApprover;
+	}
+
+	public void setMessageCode(String messageCode) {
+		this.messageCode = messageCode;
+		
 	}
 
 	

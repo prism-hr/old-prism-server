@@ -20,8 +20,7 @@
     <colgroup>
       <col style="width: 30px" />
       <col/>
-      <col style="width: 30px" />
-      <col style="width: 30px" />
+      <col style="width: 60px" />
     </colgroup>
   
     <thead>
@@ -29,7 +28,6 @@
         <th id="primary-header" colspan="2">Reference</th>
         <th>&nbsp;</th>          
         <th id="last-col">&nbsp;</th>
-
       </tr>
     </thead>
 
@@ -43,16 +41,13 @@
 				<td>
 					<#if existingReferee.editable>
 						<a name="editRefereeLink" data-desc="Edit" id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a>
-          <#else>
+          <#elseif existingReferee.declined || existingReferee.hasProvidedReference()>
+						<a name="editRefereeLink" id="referee_${encExistingRefereeId}" class="button-responded" data-desc="Responded">Responded</a>
+					<#else>
 						<a name="editRefereeLink" data-desc="Show" id="referee_${encExistingRefereeId}" class="button-show button-hint">show</a>
           </#if>
-				</td>
-				<td>
-          <#if existingReferee.declined || existingReferee.hasProvidedReference()>
-						<span class="button-responded" data-desc="Responded">Responded</span>
-          <#elseif applicationForm.isInState('UNSUBMITTED')>
+          <#if applicationForm.isInState('UNSUBMITTED')>
             <a name="deleteRefereeButton" data-desc="Delete" id="referee_${encExistingRefereeId}" class="button-delete button-hint">delete</a>        
-         
           </#if>
 				</td>
       </tr>    

@@ -1,6 +1,7 @@
 $(document).ready(function()
 {
-	$('#configsection').append('<div class="ajax" />');
+	$('#configsection').css({ position: 'relative' })
+                     .append('<div class="ajax" />');
 	$.ajax({
 		type: 'GET',
 		statusCode: {

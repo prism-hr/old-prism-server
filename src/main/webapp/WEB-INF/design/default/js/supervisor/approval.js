@@ -90,7 +90,7 @@ $(document).ready(function()
 					$('#applicationSupervisors').append('<option value="' + $('#applicationId').val() + '|' + newSuperviosr.id + '">' +
 							newSuperviosr.firstname + ' ' + newSuperviosr.lastname+ '</option>');
 					$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
-					$('#add-info-bar-div').html('New user ' + newSuperviosr.toString + ' added as supervisor');
+					
 					
 				}else{
 					addExistingUserToSupervisorsLists(newSuperviosr);
@@ -204,7 +204,7 @@ function getCreateSupervisorsSection(){
 function addExistingUserToSupervisorsLists(newSupervisor){
 	
 	if($('#applicationSupervisors option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').length > 0){
-		$('#add-info-bar-div').html(newSupervisor.toString + ' is already selected as supervisor');
+		
 		
 		return;
 	}
@@ -213,14 +213,14 @@ function addExistingUserToSupervisorsLists(newSupervisor){
 	if($('#default option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').length > 0){		
 		$('#default option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').attr("selected", 'selected');		
 		$('#addSupervisorBtn').trigger('click');
-		$('#add-info-bar-div').html('Default supervisor ' + newSupervisor.toString + ' selected as supervisor');
+		
 		return;
 	}	
 
 	if($('#previous option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').length > 0){
 		$('#previous option[value="' + $('#applicationId').val() + '|' + newSupervisor.id + '"]').attr("selected", 'selected');		
 		$('#addSupervisorBtn').trigger('click');
-		$('#add-info-bar-div').html('Previous sueprvisor ' + newSupervisor.toString + ' selected as supervisor');
+		
 		return;
 	}
 	
@@ -229,7 +229,7 @@ function addExistingUserToSupervisorsLists(newSupervisor){
 	$('#applicationSupervisors').append('<option value="' + $('#applicationId').val() + '|' + newSupervisor.id + '">' +
 			newSupervisor.firstname + ' ' + newSupervisor.lastname+ '</option>');
 	$('#applicationSupervisors').attr("size", $('#applicationSupervisors option').size() + 1);
-	$('#add-info-bar-div').html('Existing user ' + newSupervisor.toString + ' added as supervisor');
+	
 }
 
 function resetSupervisorsErrors(){

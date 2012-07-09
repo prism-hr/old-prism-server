@@ -268,6 +268,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 
+		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+		if (latestApprovalRound != null && (applicationForm.getStatus() == ApplicationFormStatus.APPROVAL  ||applicationForm.getStatus() == ApplicationFormStatus.APPROVED )  ) {
+			for (Supervisor surevisor : latestApprovalRound.getSupervisors()) {
+				if (this.equals(surevisor.getUser())) {
+					return true;
+				}
+			}
+		}
 		if (isInRole(Authority.APPROVER) && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
 			if (applicationForm.getProgram().isApprover(this)) {
 				return true;

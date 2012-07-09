@@ -70,7 +70,7 @@ $(document).ready(function()
 							$('#applicationInterviewers').append('<option value="'  + newInterviewer.id + '">' +
 									newInterviewer.firstname + ' ' + newInterviewer.lastname+ '</option>');
 							$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
-							$('#add-info-bar-div').html('New user ' + newInterviewer.toString + ' added as interviewer');
+						
 						}else{
 							addExistingUserToInterviewersLists(newInterviewer);
 						}
@@ -235,7 +235,7 @@ function getCreateInterviewersSection(){
 function addExistingUserToInterviewersLists(newInterviewer){
 	
 	if($('#applicationInterviewers option[value="' + newInterviewer.id + '"]').length > 0){
-		$('#add-info-bar-div').html(newInterviewer.toString + ' is already selected as interviewer');
+	
 		return;
 	}
 	
@@ -243,14 +243,14 @@ function addExistingUserToInterviewersLists(newInterviewer){
 	if($('#default option[value="' + newInterviewer.id + '"]').length > 0){		
 		$('#default option[value="' + newInterviewer.id + '"]').attr("selected", 'selected');		
 		$('#addInterviewerBtn').trigger('click');
-		$('#add-info-bar-div').html('Default interviewer ' + newInterviewer.toString + ' selected as interviewer');
+	
 		return;
 	}	
 
 	if($('#previous option[value="' + newInterviewer.id + '"]').length > 0){
 		$('#previous option[value="'+ newInterviewer.id + '"]').attr("selected", 'selected');		
 		$('#addInterviewerBtn').trigger('click');
-		$('#add-info-bar-div').html('Previous interviewer ' + newInterviewer.toString + ' selected as interviewer');
+	
 		return;
 	}
 	
@@ -259,7 +259,7 @@ function addExistingUserToInterviewersLists(newInterviewer){
 	$('#applicationInterviewers').append('<option value="'  + newInterviewer.id + '">' +
 			newInterviewer.firstname + ' ' + newInterviewer.lastname+ '</option>');
 	$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
-	$('#add-info-bar-div').html('Existing user ' + newInterviewer.toString + ' added as interviewer');
+	
 }
 
 function resetInterviwersErrors(){

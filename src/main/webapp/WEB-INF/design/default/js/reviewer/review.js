@@ -37,8 +37,7 @@ $(document).ready(function()
 							newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
 					$('#applicationReviewers').append('<option value="' + $('#applicationId').val() + '|' + newReviewer.id + '">' +
 							newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
-					$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
-					$('#add-info-bar-div').html('New user ' + newReviewer.toString + ' added as reviewer');
+					$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);					
 					
 				}else{
 					addExistingUserToReviewersLists(newReviewer);
@@ -159,7 +158,7 @@ function getCreateReviewersSection(){
 function addExistingUserToReviewersLists(newReviewer){
 	
 	if($('#applicationReviewers option[value="' + $('#applicationId').val() + '|' + newReviewer.id + '"]').length > 0){
-		$('#add-info-bar-div').html(newReviewer.toString + ' is already selected as reviewer');
+		
 		
 		return;
 	}
@@ -168,14 +167,14 @@ function addExistingUserToReviewersLists(newReviewer){
 	if($('#default option[value="' + $('#applicationId').val() + '|' + newReviewer.id + '"]').length > 0){		
 		$('#default option[value="' + $('#applicationId').val() + '|' + newReviewer.id + '"]').attr("selected", 'selected');		
 		$('#addReviewerBtn').trigger('click');
-		$('#add-info-bar-div').html('Default reviewer ' + newReviewer.toString + ' selected as reviewer');
+	
 		return;
 	}	
 
 	if($('#previous option[value="' + $('#applicationId').val() + '|' + newReviewer.id + '"]').length > 0){
 		$('#previous option[value="' + $('#applicationId').val() + '|' + newReviewer.id + '"]').attr("selected", 'selected');		
 		$('#addReviewerBtn').trigger('click');
-		$('#add-info-bar-div').html('Previous reviewer ' + newReviewer.toString + ' selected as reviewer');
+	
 		return;
 	}
 	
@@ -184,7 +183,7 @@ function addExistingUserToReviewersLists(newReviewer){
 	$('#applicationReviewers').append('<option value="' + $('#applicationId').val() + '|' + newReviewer.id + '">' +
 			newReviewer.firstname + ' ' + newReviewer.lastname+ '</option>');
 	$('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
-	$('#add-info-bar-div').html('Existing user ' + newReviewer.toString + ' added as reviewer');
+
 }
 
 function resetReviewersErrors(){

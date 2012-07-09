@@ -73,7 +73,7 @@ public class EvaluationTransitionController extends StateTransitionController {
 			commentService.save(newComment);
 			if (newComment instanceof ApprovalEvaluationComment) {
 				ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
-				System.out.println(approvalComment.getNextStatus());
+				
 				if(ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()){
 					approvalService.moveToApproved(applicationForm);
 					modelMap.put("messageCode", "move.approved");

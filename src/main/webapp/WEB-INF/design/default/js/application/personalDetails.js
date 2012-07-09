@@ -146,9 +146,9 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$(document).on('click', '.nationality-item button.button-delete', function()
 	{
-		var $option = $(this).closest('select').children('option:selected');
+		var $option = $(this).closest('field').children('select option:selected');
 		var value   = $option.attr('value');
-		var label   = $(this).closest('label.full').text();
+		var label   = $(this).parent().children('label.full').text();
 		console.log('label: '+label+', value: '+value);
 		if (label == value)
 		{

@@ -317,7 +317,7 @@ table.data thead th.headerSortUp span.arrow { background-position: 100% -2px; }
 table.data thead th.headerSortDown span.arrow { background-position: 100% -19px; }
 
 
-#programme-details { overflow: hidden; }
+#programme-details { margin-bottom: 10px; overflow: hidden; }
 #programme-details .row { line-height: 20px; padding: 3px 0; }
 #programme-details .row input { padding: 2px; }
 #programme-details .row label { font-weight: bold; display: inline-block; min-width: 140px; }

@@ -146,7 +146,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$(document).on('click', '.nationality-item button.button-delete', function()
 	{
-		var $select = $(this).closest('field').find('select');
+		var $select = $(this).parent().parent().next('select');
 		var $field  = $(this).parent().find('input:hidden');
 		console.log($select);
 		console.log($field);

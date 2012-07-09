@@ -320,7 +320,8 @@ function watchUpload($field, $deleteFunction)
 
   $container.on('change', $field, function()
   {
-    var input    = this.children[0];
+		var $input   = $(this);
+    var input    = $(this)[0];
     var $hidden  = $container.find('input.file');
     if (input.files[0].size < 10485760) // 10MB in bytes
     {

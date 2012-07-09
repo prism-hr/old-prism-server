@@ -26,7 +26,7 @@ $(document).ready(function()
 	{
 		var $this = $(this);
 		var url		= $this.attr('href');
-		$this.replaceWith('<img src="/pgadmissions/design/default/images/ajax-loader-file" />');
+		$this.replaceWith('<img src="/pgadmissions/design/default/images/ajax-loader-file.gif" />');
 		window.location.href = url;
 	});
   

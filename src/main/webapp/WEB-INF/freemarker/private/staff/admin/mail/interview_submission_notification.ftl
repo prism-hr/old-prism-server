@@ -30,7 +30,7 @@
 						<br>
 							<p>
 				            	<!-- Button -->
-								<a href="${host}/pgadmissions/comment?applicationId=${application.applicationNumber}" title="View Application">
+								<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View Application">
 									<img width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png">
 								</a>
 							</p>

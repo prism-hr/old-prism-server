@@ -12,8 +12,10 @@ import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
@@ -58,6 +60,11 @@ public class InterviewService {
 		applicationForm.setLatestInterview(interview);
 		applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
 		applicationForm.getEvents().add(eventFactory.createEvent(interview));
+		NotificationRecord interviewReminderRecord = applicationForm.getNotificationForType(NotificationType.INTERVIEW_REMINDER);
+		if(interviewReminderRecord != null){
+			 applicationForm.getNotificationRecords().remove(interviewReminderRecord);
+		}
+		
 		applicationFormDAO.save(applicationForm);
 		
 	}

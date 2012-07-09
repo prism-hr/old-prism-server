@@ -34,7 +34,7 @@ public class TimelinePhaseTest {
 	}
 
 	@Test
-	public void shouldReturnMessageCodeFromType() {
+	public void shouldReturnMessageCodeFromTypeIfNotSet() {
 		TimelinePhase timelinePhase = new TimelinePhase();
 		timelinePhase.setStatus(ApplicationFormStatus.VALIDATION);
 		assertEquals("timeline.phase.validation", timelinePhase.getMessageCode());
@@ -51,7 +51,13 @@ public class TimelinePhaseTest {
 		timelinePhase.setStatus(ApplicationFormStatus.UNSUBMITTED);
 		assertEquals("timeline.phase.not_submitted", timelinePhase.getMessageCode());
 	}
-
+	@Test
+	public void shouldReturnMessageCodeFromTypeIfTypeSet() {
+		TimelinePhase timelinePhase = new TimelinePhase();
+		timelinePhase.setMessageCode("messageCode");
+		assertEquals("messageCode", timelinePhase.getMessageCode());
+	}
+	
 	@Test
 	public void shouldSetMostRecentActivityDateAsMostRecentCommentDate() throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy HH:mm:ss");

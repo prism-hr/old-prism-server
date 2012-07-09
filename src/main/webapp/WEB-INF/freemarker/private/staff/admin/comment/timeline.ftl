@@ -90,8 +90,8 @@
 								<li class="${timelineObject.type}">
 									<div class="box">
 										<div class="title">
-											<#-- span class="icon-role ${role}" data-desc="${role?cap_first}"></span -->
-											<span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="<#if timelineObject.userCapacity == 'admin'>Administrator<#else>${timelineObject.userCapacity?cap_first}</#if>"></span>
+											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 										</div>
 										<p>
 											<strong>Reason for rejection</strong><br />

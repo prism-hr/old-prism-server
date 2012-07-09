@@ -9,8 +9,11 @@ $(document).ready(function()
 	// --------------------------------------------------------------------------------
 	$('div.content-box-inner').ajaxStart(function()
 	{
-		$(this).css({ position: 'relative' })
-					 .append('<div class="ajax" />');
+		if ($('div.content-box-inner div.ajax').length == 0)
+		{
+			$(this).css({ position: 'relative' })
+						 .append('<div class="ajax" />');
+		}
 	})
 	.ajaxComplete(function()
 	{

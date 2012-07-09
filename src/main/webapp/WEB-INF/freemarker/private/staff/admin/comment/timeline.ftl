@@ -90,7 +90,7 @@
 								<li class="${timelineObject.type}">
 									<div class="box">
 										<div class="title">
-											<span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
+											<#-- span class="icon-role ${role}" data-desc="${role?cap_first}"></span -->
 											<span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
 										</div>
 										<p>

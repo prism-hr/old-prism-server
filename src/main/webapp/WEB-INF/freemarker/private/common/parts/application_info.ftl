@@ -17,9 +17,8 @@
     <label>Submitted</label>
     ${(applicationForm.submittedDate?string("dd MMM yyyy"))!"In Progress"}    
   </div>
-  <span style="float:right">
-   <label>Actions:</label>
+	
+  <div style="float:right">
 	<#include "/private/common/actions.ftl"/>   
-   </span>
-
+  </div>
 </div>

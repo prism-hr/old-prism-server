@@ -21,8 +21,9 @@
 		      		<h1 style="font-size: 12pt;">
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${interviewer.user.firstName?html},</font>
 		      		</h1>
+		      		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is a reminder to provide feedback on your recent interview with ${applicant.firstName?html} ${applicant.lastName?html} in connection with Application ${application.applicationNumber} for UCL 
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that we require your feedback on your interview of ${applicant.firstName?html} ${applicant.lastName?html} in connection with Application ${application.applicationNumber} for UCL 
 							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
 						</font>
 			      	</p>
@@ -35,22 +36,23 @@
 		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
 		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
 		                    <font face="Arial, Helvetica, sans-serif" size="2">
-		                       <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+		                    <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
 			                      <#if !interviewer.user.enabled>
 			                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"
 			                      <#else>
-			                      		href="${host}/pgadmissions/interviewFeedback&applicationId=${application.applicationNumber}"
+			                      		href="${host}/pgadmissions/interviewFeedback?applicationId=${application.applicationNumber}"
 			                      </#if>>
-		                   		<b>Provide Feedback</b></a>
+		                   	<b>Provide Feedback</b></a>
 		                    </font>
 		                  </td>
 		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
 		                </tr>
 		              </table>
 					</p>
-					</br>			      	
+					</br>
+			      	
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We will continue to send reminders until you respond to this request.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>

@@ -298,6 +298,34 @@ public class TimelineServiceTest {
 		assertFalse(phase.isRejectedByApprover());
 	}
 
+	@Test
+	public void shouldSetMessageCodeOntimelinePhasesForApprovalRestarts() throws ParseException{
+	
+			Date firstApprovalDate = format.parse("01 03 2012 14:02:03");
+			Date secondApprovalDate = format.parse("01 04 2012 14:02:03");
+			Date thirdApprovalDate = format.parse("05 04 2012 14:02:03");
+			
+
+			Event approvalEventOne = new StateChangeEventBuilder().date(firstApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(1)
+					.toEvent();
+			Event approvalEventTwo = new StateChangeEventBuilder().date(secondApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(2)
+					.toEvent();
+			Event approvalEventThree = new StateChangeEventBuilder().date(thirdApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(3)
+					.toEvent();
+
+			ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(approvalEventOne, approvalEventTwo, approvalEventThree).toApplicationForm();
+
+			List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
+			assertEquals(3, objects.size());
+			TimelinePhase timelinePhaseOne = (TimelinePhase) objects.get(0);
+			assertEquals("timeline.phase.approval.restart", timelinePhaseOne.getMessageCode());
+			TimelinePhase timelinePhaseTwo = (TimelinePhase) objects.get(1);
+			assertEquals("timeline.phase.approval.restart", timelinePhaseTwo.getMessageCode());
+			TimelinePhase timelinePhaseThree = (TimelinePhase) objects.get(2);
+			assertEquals("timeline.phase.approval", timelinePhaseThree.getMessageCode());
+			
+
+	}
 	@Before
 	public void setup() {
 		format = new SimpleDateFormat("dd MM yyyy HH:mm:ss");

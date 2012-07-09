@@ -19,14 +19,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.validators.RejectionValidator;
 
 @Controller
@@ -35,7 +33,6 @@ public class RejectApplicationController {
 
 	private static final String REJECT_VIEW_NAME = "private/staff/approver/reject_page";
 	private static final String NEXT_VIEW_NAME = "redirect:/applications";
-	private static final String REJECTION_MAIL_TEMPLATE = "private/pgStudents/mail/rejected_notification";
 	private final RejectService rejectService;
 	
 

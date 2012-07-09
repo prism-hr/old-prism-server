@@ -146,14 +146,14 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$(document).on('click', '.nationality-item button.button-delete', function()
 	{
-		var $option = $(this).closest('select').children('option:selected');
-		console.log($option);
-		var value   = $option.text();
-		var label   = $(this).parent().children('label.full').text();
-		console.log('label: '+label+', value: '+value);
-		if (label == value)
+		var $select = $(this).closest('select');
+		var $field  = $(this).closest('input:hidden');
+		console.log($select);
+		console.log($field);
+		console.log('label: '+$select.val()+', value: '+$field.val());
+		if ($select.val() == $field.val())
 		{
-			$option.removeAttr('selected');
+			$select.val('');
 		}
 		$(this).parent().remove();
 		return false;

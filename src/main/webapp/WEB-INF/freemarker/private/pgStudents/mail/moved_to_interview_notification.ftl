@@ -40,33 +40,29 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.latestInterview.furtherDetails?html}</font>
 			      	</p>
 			      	<#if application.latestInterview.locationURL??>
-				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${application.latestInterview.locationURL}">Location details</a></font>
-				      	</p>
+				      	
+				        <p>
+				          <!-- Button -->
+							<a href="${application.latestInterview.locationURL}" title="Get Directions">
+				            	<img border="0" style="border: none;" width="133" height="36" alt="Get Directions" src="${host}/pgadmissions/design/default/images/email/get_directions.png" />
+				          	</a>
+				        </p>
+				      	
 				      </#if>
+
+				        <p>
+				          <!-- Button -->
+							<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View/Update Application">
+				            	<img border="0" style="border: none;" width="193" height="36" alt="View/Update Application" src="${host}/pgadmissions/design/default/images/email/view_update_app.png" />
+				          	</a>
+				        </p>
+
 				      
-				    <br>  	
-					<p>
-		              <!-- Button -->
-		              <table border="0" cellpadding="0" cellspacing="0">
-		              	<tr>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-		                    <font face="Arial, Helvetica, sans-serif" size="2">
-		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-		                      	href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"><b>View Application</b></a>
-		                    </font>
-		                  </td>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-		                </tr>
-		              </table>
-					</p>
-					</br>				      
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to attend.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

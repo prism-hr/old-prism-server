@@ -22,37 +22,27 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>			      	
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The review period for ${application.applicant.firstName?html} ${application.applicant.lastName?html} Application ${application.applicationNumber} for UCL 
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that the review period for ${application.applicant.firstName?html} ${application.applicant.lastName?html} Application ${application.applicationNumber} for UCL 
 							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has expired.</font>
 			      	</p>
 			      	<p>			      	
 			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must now evaluate the feedback and select the next action.</b></font>
 			      	</p>
-			      	
-				    <br>  	
-					<p>
-		              <!-- Button -->
-		              <table border="0" cellpadding="0" cellspacing="0">
-		              	<tr>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-		                    <font face="Arial, Helvetica, sans-serif" size="2">
-		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-		                      	href="${host}/pgadmissions/progress?application=${application.applicationNumber}"><b>Evaluate Feedback</b></a>
-		                    </font>
-		                  </td>
-		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-		                </tr>
-		              </table>
-					</p>
-					</br>
+
+			        <p>
+			          <!-- Button -->
+						<a href="${host}/pgadmissions/progress?application=${application.applicationNumber}" title="Evaluate Feedback">
+			            	<img border="0" style="border: none;" width="164" height="36" alt="Evaluate Feedback" src="${host}/pgadmissions/design/default/images/email/evaluate_feedback.png" />
+			          	</a>
+			        </p>
+
 								      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

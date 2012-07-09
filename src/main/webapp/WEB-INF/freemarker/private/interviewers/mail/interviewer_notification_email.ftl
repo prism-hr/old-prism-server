@@ -33,37 +33,36 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${interviewer.interview.furtherDetails?html}</font>
 			      	</p>
 			      	<#if interviewer.interview.locationURL?has_content>
-				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${interviewer.interview.locationURL}">Location Details</a></font>
-				      	</p>
+				      	
+				        <p>
+				          <!-- Button -->
+							<a href="${interviewer.interview.locationURL}" title="Get Directions">
+				            	<img border="0" style="border: none;" width="133" height="36" alt="Get Directions" src="${host}/pgadmissions/design/default/images/email/get_directions.png" />
+				          	</a>
+				        </p>
+				      	
 				    </#if>
-				    
-					    <br>  	
-						<p>
-			              <!-- Button -->
-			              <table border="0" cellpadding="0" cellspacing="0">
-			              	<tr>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-left.gif" width="13" height="29" alt="" /></td>
-			                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
-			                    <font face="Arial, Helvetica, sans-serif" size="2">
-			                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+
+				        <p>
+				          <!-- Button -->
+							<a 
 			                      <#if !interviewer.user.enabled>
 			                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"
 			                      <#else>
 			                      		href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"
-			                      </#if>><b>View Application</b></a>
-			                    </font>
-			                  </td>
-			                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>
-			                </tr>
-			              </table>
-						</p>
-						</br>				    
+			                      </#if>								
+								 
+								  title="View Application">
+								 
+				            	<img border="0" style="border: none;" width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png" />
+				          	</a>
+				        </p>
+				    
 			      	<p>
 			      	  <font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to attend.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

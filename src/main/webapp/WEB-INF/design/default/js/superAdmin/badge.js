@@ -53,6 +53,6 @@ function updateBadge()
 			$('#html').val(data).autosize();
 		}
 	});	
-	/*
+
 
 };

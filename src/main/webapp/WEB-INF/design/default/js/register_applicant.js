@@ -24,9 +24,8 @@ $(document).ready(function()
 	// Resend confirmation email button.
 	$('#resend').click(function()
 	{
-		var $this = $(this);
-		var url		= $this.attr('href');
-		$this.replaceWith('<img src="/pgadmissions/design/default/images/ajax-loader-file.gif" />');
+		var url = $(this).attr('href');
+		$('#site-message').append('<div class="ajax" />');
 		window.location.href = url;
 	});
   

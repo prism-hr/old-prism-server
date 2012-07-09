@@ -480,7 +480,7 @@ function unmarkSection(section_id)
 	$('span.invalid', $section).remove();
 	
 	// Revert the info bar.
-	var $infobar = $('.section-info-bar', $section);
+	var $infobar = $('.section-error-bar', $section);
 	$infobar.removeClass('section-error-bar').addClass('section-info-bar');
 	$('span.error-hint', $infobar).remove();
 }

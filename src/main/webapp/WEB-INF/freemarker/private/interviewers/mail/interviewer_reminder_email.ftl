@@ -30,7 +30,8 @@
 			      	
 			        <p>
 			          <!-- Button -->
-			          <a	<#if !interviewer.user.enabled>
+			          <a	
+			          		<#if !interviewer.user.enabled>
 			                	href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"
 			                 <#else>
 			                 	href="${host}/pgadmissions/interviewFeedback?applicationId=${application.applicationNumber}"

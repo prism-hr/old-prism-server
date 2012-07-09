@@ -25,14 +25,12 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your registration for UCL Prism. To login and -- Context --, please confirm your registration. You will be asked to login.</font>
 			      	</p>
 
-					    <br>  	
 							<p>
 			              		<!-- Button -->
 							    <a href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}" title="Confirm Registration">
-							    	<img width="170" height="36" alt="Register" src="${host}/pgadmissions/design/default/images/email/confirm_registration.png">
+							    	<img border="0" style="border: none;" width="170" height="36" alt="Register" src="${host}/pgadmissions/design/default/images/email/confirm_registration.png">
 							    </a>
 							</p>
-						</br>			      		
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>

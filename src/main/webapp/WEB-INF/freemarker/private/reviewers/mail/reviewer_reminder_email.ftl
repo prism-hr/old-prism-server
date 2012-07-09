@@ -41,9 +41,7 @@
 								title="Provide Review">
 				            	<img border="0" style="border: none;" width="143" height="36" alt="Provide Review" src="${host}/pgadmissions/design/default/images/email/provide_review.png" />
 				          	</a>
-				        </p>
 
-				        <p>
 				          <!-- Button -->
 							<a href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}"
 								title="Decline">

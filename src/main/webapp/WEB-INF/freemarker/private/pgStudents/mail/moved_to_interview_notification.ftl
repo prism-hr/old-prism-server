@@ -39,18 +39,17 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.latestInterview.furtherDetails?html}</font>
 			      	</p>
+			      	
+			      	<p>
 			      	<#if application.latestInterview.locationURL??>
 				      	
-				        <p>
 				          <!-- Button -->
 							<a href="${application.latestInterview.locationURL}" title="Get Directions">
 				            	<img border="0" style="border: none;" width="133" height="36" alt="Get Directions" src="${host}/pgadmissions/design/default/images/email/get_directions.png" />
 				          	</a>
-				        </p>
 				      	
 				      </#if>
 
-				        <p>
 				          <!-- Button -->
 							<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View/Update Application">
 				            	<img border="0" style="border: none;" width="193" height="36" alt="View/Update Application" src="${host}/pgadmissions/design/default/images/email/view_update_app.png" />

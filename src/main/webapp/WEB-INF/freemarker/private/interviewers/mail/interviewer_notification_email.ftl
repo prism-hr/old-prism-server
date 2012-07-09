@@ -32,31 +32,32 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${interviewer.interview.furtherDetails?html}</font>
 			      	</p>
-			      	<#if interviewer.interview.locationURL?has_content>
-				      	
-				        <p>
-				          <!-- Button -->
-							<a href="${interviewer.interview.locationURL}" title="Get Directions">
-				            	<img border="0" style="border: none;" width="133" height="36" alt="Get Directions" src="${host}/pgadmissions/design/default/images/email/get_directions.png" />
-				          	</a>
-				        </p>
-				      	
-				    </#if>
+			      	
+						<p>
+				      		<#if interviewer.interview.locationURL?has_content>
+					      	
+					        
+					          <!-- Button -->
+								<a href="${interviewer.interview.locationURL}" title="Get Directions">
+					            	<img border="0" style="border: none;" width="133" height="36" alt="Get Directions" src="${host}/pgadmissions/design/default/images/email/get_directions.png" />
+					          	</a>
+					        
+					      	
+					    	</#if>
 
-				        <p>
-				          <!-- Button -->
-							<a 
-			                      <#if !interviewer.user.enabled>
-			                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"
-			                      <#else>
-			                      		href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"
-			                      </#if>								
-								 
-								  title="View Application">
-								 
-				            	<img border="0" style="border: none;" width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png" />
-				          	</a>
-				        </p>
+					          <!-- Button -->
+								<a 
+				                      <#if !interviewer.user.enabled>
+				                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"
+				                      <#else>
+				                      		href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"
+				                      </#if>								
+									 
+									  title="View Application">
+									 
+					            	<img border="0" style="border: none;" width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png" />
+					          	</a>
+					        </p>
 				    
 			      	<p>
 			      	  <font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to attend.</font>

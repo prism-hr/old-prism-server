@@ -29,14 +29,12 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must evaluate the feedback and select the next action.</b></font>
 			      	</p>
 			      	
-						<br>
 							<p>
 				            	<!-- Button -->
 								<a href="${host}/pgadmissions/progress/getPage?applicationId=${application.applicationNumber}" title="Evaluate Feedback">
-									<img width="164" height="36" alt="Evaluate Feedback" src="${host}/pgadmissions/design/default/images/email/evaluate_feedback.png">
+									<img border="0" style="border: none;" width="164" height="36" alt="Evaluate Feedback" src="${host}/pgadmissions/design/default/images/email/evaluate_feedback.png">
 								</a>
 							</p>
-						</br>			      	
 			      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>

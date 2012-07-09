@@ -107,6 +107,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>  
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/withdraw_modal_window.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/timeline_application.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->

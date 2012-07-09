@@ -28,14 +28,12 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Register to start using UCL Prism in this role.</font>
 			      	</p>
 			      	
-					    <br>  	
 							<p>
 			              		<!-- Button -->
 							    <a href="${host}/pgadmissions/register?activationCode=${newUser.activationCode}" title="Register">
-							    	<img width="102" height="36" alt="Register" src="${host}/pgadmissions/design/default/images/email/register.png">
+							    	<img border="0" style="border: none;" width="102" height="36" alt="Register" src="${host}/pgadmissions/design/default/images/email/register.png">
 							    </a>
 							</p>
-						</br>			      		
 			      	
 			      	
 				    <br>  	

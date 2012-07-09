@@ -22,6 +22,7 @@ $(document).ready(function()
 
 	populateApplicationList(true);
 	
+	
 	// --------------------------------------------------------------------------------
 	// TABLE SORTING
 	// --------------------------------------------------------------------------------
@@ -29,9 +30,6 @@ $(document).ready(function()
 	$('table.data thead th.sortable').prepend('<span />');
 	
 
-	
-	
-	
 	// --------------------------------------------------------------------------------
 	// SEARCH / FILTERING
 	// --------------------------------------------------------------------------------
@@ -86,6 +84,7 @@ $(document).ready(function()
 		$appList.val(list);
   });
   
+	
 	// --------------------------------------------------------------------------------
 	// SELECT APPLICATIONS
 	// --------------------------------------------------------------------------------
@@ -104,6 +103,7 @@ $(document).ready(function()
 		}
 	});
 
+
 	// --------------------------------------------------------------------------------
 	// DOWNLOAD SELECTED APPLICATIONS
 	// --------------------------------------------------------------------------------
@@ -117,7 +117,6 @@ $(document).ready(function()
 	});
 
 });
-
 
 
 function populateApplicationList(reset)
@@ -168,6 +167,7 @@ function populateApplicationList(reset)
 	});
 }
 
+
 function sortList(column)
 {
 	$('#block-index').val("1");
@@ -200,6 +200,7 @@ function sortList(column)
 	populateApplicationList();
 }
 
+
 function flipSortOrder()
 {
 	oldOrder = $('#sort-order').val();
@@ -213,7 +214,9 @@ function flipSortOrder()
 	}
 }
 
-$(function(){
+
+$(function()
+{
 	$('#applicationListSection').scrollPagination({
 		'callback' : function() {
 			var blockIndex = parseInt($('#block-index').val());

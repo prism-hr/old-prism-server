@@ -61,7 +61,7 @@
 									<div class="box">
 										<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
 										<p class="datetime"><span data-desc="Date and Time"></span> ${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
-										<p class="location"><span data-desc="Location"></span> <em>${timelineObject.interview.interviewLocation?html}</em></p>                  
+										<p class="location"><span data-desc="Location"></span> <em>${timelineObject.interview.locationURL?html}</em></p>                  
 									</div>
 								</li>
 							</ul>

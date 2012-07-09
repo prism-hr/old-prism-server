@@ -25,8 +25,8 @@
   
     <thead>
       <tr>
-        <th id="primary-header" colspan="2">Reference</th>
-        <th>&nbsp;</th>          
+        <th id="primary-header">&nbsp;</th>
+        <th>Reference</th>          
         <th id="last-col">&nbsp;</th>
       </tr>
     </thead>
@@ -359,7 +359,7 @@
 		<div class="row-group terms-box" >
  	 </#if>
     <div class="row">
-      <span class="terms-label<#if applicationForm.referees?size &gt; 3> grey-label</#if>">
+      <span class="terms-label<#if applicationForm.referees?size &gt;= 3> grey-label</#if>">
         I understand that in accepting this declaration I am confirming
         that the information contained in this section is true and accurate. 
         I am aware that any subsequent offer of study may be retracted at any time

@@ -184,8 +184,8 @@
           <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 					<div id="timelineview">
 						<ul class="tabs">				
-							<li><a href="#application" id="applicationBtn">Application</a></li>
-							<li class="current"><a href="#timeline" id="timelineBtn">Timeline</a></li>
+							<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
+							<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
 						</ul>
 				
 						<div class="tab-page" id="applicationTab">

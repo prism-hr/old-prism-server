@@ -65,7 +65,26 @@ public class TimelineService {
 		if (phase.getStatus() == ApplicationFormStatus.REJECTED && event.getUser().isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
 			phase.setRejectedByApprover(true);
 		}
+		if(((StateChangeEvent) event).getNewStatus().equals(ApplicationFormStatus.APPROVAL)){
+			if(!event.equals(getFirstApprovalEvent(applicationForm))){
+				phase.setMessageCode("timeline.phase.approval.restart");
+			}
+		}
 		return phase;
+	}
+
+	private Event getFirstApprovalEvent( ApplicationForm applicationForm){
+		Event firstevent = null;
+		List<Event> events = applicationForm.getEvents();
+		for (Event event : events) {
+			if(event instanceof StateChangeEvent && ((StateChangeEvent) event).getNewStatus().equals(ApplicationFormStatus.APPROVAL)){
+				if(firstevent == null  || firstevent.getDate().after(event.getDate())){
+					firstevent = event;
+				}		
+	
+			}
+		}
+		return firstevent;
 	}
 
 	private void setExitDates(List<TimelinePhase> phases) {

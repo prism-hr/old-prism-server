@@ -23,10 +23,12 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 public class InterviewServiceTest {
@@ -63,6 +65,8 @@ public class InterviewServiceTest {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
 		Interview interview = new InterviewBuilder().dueDate(dateFormat.parse("01 04 2012")).id(1).toInterview();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).toApplicationForm();
+		applicationForm.getNotificationRecords().add(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_REMINDER).toNotificationRecord());
+	
 		interviewDAOMock.save(interview);
 		applicationFormDAOMock.save(applicationForm);
 		InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).toInterviewStateChangeEvent();
@@ -79,6 +83,7 @@ public class InterviewServiceTest {
 		
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(interviewStateChangeEvent, applicationForm.getEvents().get(0));
+		assertTrue(applicationForm.getNotificationRecords().isEmpty());
 	}
 	
 	@Test

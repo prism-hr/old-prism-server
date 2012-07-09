@@ -53,5 +53,4 @@ $(document).ready(function()
 		return false;
 	});
 	
-	$('#timelineBtn').trigger('click');
 });

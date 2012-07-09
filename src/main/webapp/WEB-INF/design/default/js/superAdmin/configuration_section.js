@@ -161,12 +161,20 @@ function updateRegistryForm()
 		$('#reg-firstname').attr('disabled', 'disabled');
 		$('#reg-lastname').attr('disabled', 'disabled');
 		$('#reg-email').attr('disabled', 'disabled');
+		
+		$('#reg-firstname').parent().parent().children('.plain-label').addClass('grey-label');
+		$('#reg-lastname').parent().parent().children('.plain-label').addClass('grey-label');
+		$('#reg-email').parent().parent().children('.plain-label').addClass('grey-label');
 	}
 	else
 	{
 		$('#reg-firstname').removeAttr('disabled');
 		$('#reg-lastname').removeAttr('disabled');
 		$('#reg-email').removeAttr('disabled');
+
+		$('#reg-firstname').parent().parent().children('.plain-label').removeClass('grey-label');
+		$('#reg-lastname').parent().parent().children('.plain-label').removeClass('grey-label');
+		$('#reg-email').parent().parent().children('.plain-label').removeClass('grey-label');
 	}
 }
 

@@ -60,12 +60,12 @@ public class NewUserMailSenderTest {
 	@Test
 	public void shouldSendNotificationEmailToUser() throws UnsupportedEncodingException {
 		final Map<String, Object> model = new HashMap<String, Object>();
-
+		final Program program = new ProgramBuilder().id(1).title("program title").toProgram();
 		mailSender = new NewUserMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
 
 			@Override
 			public Map<String, Object> createModel(RegisteredUser user) {
-				model.put("program", "program name");
+				model.put("program", program);
 				model.put("newRoles", "user role");
 
 				return model;
@@ -73,7 +73,7 @@ public class NewUserMailSenderTest {
 		};
 
 		RegisteredUser admin = new RegisteredUserBuilder().id(2).toUser();
-		Program program = new ProgramBuilder().id(1).toProgram();
+		
 		Role role_1 = new RoleBuilder().id(4).authorityEnum(Authority.ADMINISTRATOR).toRole();
 		PendingRoleNotification roleNotification_1 = new PendingRoleNotificationBuilder().program(program).role(role_1).addedByUser(admin).toPendingRoleNotification();
 
@@ -91,7 +91,7 @@ public class NewUserMailSenderTest {
 
 		EasyMock.expect(msgSourceMock.getMessage(//
 				EasyMock.eq("registration.invitation"),// 
-				EasyMock.aryEq(new Object[] { "user role", "program name" }),// 
+				EasyMock.aryEq(new Object[] { "user role","program title" }),// 
 				EasyMock.eq((Locale) null))).andReturn("resolved subject");
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);

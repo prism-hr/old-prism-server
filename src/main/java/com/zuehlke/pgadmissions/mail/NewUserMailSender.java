@@ -9,6 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -42,7 +43,7 @@ public class NewUserMailSender extends MailSender {
 		Map<String, Object> model = createModel(user);
 		String subject = null;
 		if(model.get("program") != null){
-			subject = resolveMessage("registration.invitation", model.get("newRoles"), model.get("program"));
+			subject = resolveMessage("registration.invitation", model.get("newRoles"), ((Program)model.get("program")).getTitle());
 		}else{
 			subject = resolveMessage("registration.invitation.superadmin", model.get("newRoles"));
 		}

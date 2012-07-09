@@ -89,12 +89,13 @@ $(document).ready(function()
 	});
 	
 	
-	/* Submit button. */
+	// -----------------------------------------------------------------------------
+	// Submit button.
+	// -----------------------------------------------------------------------------
 	$('#submitRUBtn').click(function()
 	{
-		
-		$('#configForm').append('<div class="ajax" />');
-		
+		// REGISTRY USERS
+		// Remove the hidden fields generated when posting registry user info.
 		$('#regContactData input.registryUsers').remove();
 		
 		// Grab the hidden field values from the table.
@@ -105,23 +106,25 @@ $(document).ready(function()
 			var firstname = $('input[name="firstname"]', $row).val();
 			var lastname = $('input[name="lastname"]', $row).val();
 			var email = $('input[name="email"]', $row).val();
-		
 			var obj = '{"id": "' + id + '","firstname": "' + firstname + '", "lastname": "' + lastname + '", "email": "' + email + '"}';
 			$('#regContactData').append("<input type='hidden' class='registryUsers' name='registryUsers' value='" + obj + "' />");
 		});
 		
+		// STAGE DURATION
 		$("#stagesDuration").html('');
 		var stageValidationErrors = appendStagesJSON();
 		var stages = $('[input[name="stagesDuration"]');
 		var reminderValidationErrors = validateReminderInterval();
 		var postData = {
-				id : $('#reminderIntervalId').val(),
-				duration : $('#reminderIntervalDuration').val(),
-				unit : $('#reminderUnit').val()
+				id:       $('#reminderIntervalId').val(),
+				duration: $('#reminderIntervalDuration').val(),
+				unit:     $('#reminderUnit').val()
 			};
-		if(!stageValidationErrors && !reminderValidationErrors)
+		
+		if (!stageValidationErrors && !reminderValidationErrors)
 		{
-			
+			// Post the data.
+			$('#configForm').append('<div class="ajax" />');
 			$.ajax({
 					type: 'POST',
 					statusCode: {
@@ -143,7 +146,6 @@ $(document).ready(function()
 						updateRegistryForm();
 					}
 				});
-		
 		}
 
 

@@ -8,7 +8,7 @@ public class DirectURLsEnumTest {
 
 	@Test
 	public void shouldOutputCorrectDisplayValues(){
-		Assert.assertEquals("/interviewFeedback?applicationId=", DirectURLsEnum.ADD_INTERVIEW.displayValue());
+		Assert.assertEquals("/application?view=view&applicationId=", DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW.displayValue());
 		Assert.assertEquals("/reviewFeedback?applicationId=", DirectURLsEnum.ADD_REVIEW.displayValue());
 	}
 }

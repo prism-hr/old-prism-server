@@ -501,7 +501,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void shouldCreateUserWithDirectToLinkToAddInterview() {
+	public void shouldCreateUserWithDirectToLinkToViewapplication() {
 		
 		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(null);
 		RegisteredUser newUser = new RegisteredUserBuilder().id(5).toUser();
@@ -510,11 +510,11 @@ public class UserServiceTest {
 		
 		EasyMock.replay(userDAOMock, userFactoryMock);
 		
-		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, new ApplicationFormBuilder().id(1).applicationNumber("bob").toApplicationForm());
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.INTERVIEWER, DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, new ApplicationFormBuilder().id(1).applicationNumber("bob").toApplicationForm());
 		
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);				
-		assertEquals("/interviewFeedback?applicationId=bob", createdUser.getDirectToUrl());				
+		assertEquals("/application?view=view&applicationId=bob", createdUser.getDirectToUrl());				
 		
 		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
 		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());

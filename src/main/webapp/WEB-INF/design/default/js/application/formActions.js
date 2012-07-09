@@ -21,6 +21,7 @@ $(document).ready(function()
 		$('.content-box-inner').append('<div class="ajax" />');
 	}
 	
+	/* Programme Details. */
 	loadProgrammeSection();	
 	
 	/* Personal Details. */

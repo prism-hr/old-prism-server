@@ -146,7 +146,14 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$(document).on('click', '.nationality-item button.button-delete', function()
 	{
-		$(this).closest('select').children('option:selected').removeAttr('selected');
+		var $option = $(this).closest('select').children('option:selected');
+		var value   = $option.attr('value');
+		var label   = $(this).closest('label.full').text();
+		
+		if (label == value)
+		{
+			$option.removeAttr('selected');
+		}
 		$(this).parent().remove();
 		return false;
 	});

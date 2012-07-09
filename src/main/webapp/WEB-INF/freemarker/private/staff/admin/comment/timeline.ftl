@@ -61,7 +61,7 @@
 									<div class="box">
 										<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
 										<p class="datetime"><span data-desc="Date and Time"></span> ${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
-										<#if timelineObject.interview.locationURL??><p class="location"><span data-desc="Location"></span> ${timelineObject.interview.locationURL?html}</p></#if>
+										<#if timelineObject.interview.locationURL?length &gt; 0><p class="location"><span data-desc="Location"></span> ${timelineObject.interview.locationURL?html}</p></#if>
 									</div>
 								</li>
 							</ul>
@@ -125,7 +125,11 @@
 			                  <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
 			                </div>
 			                <#if comment.type == 'REQUEST_RESTART'><p><em>Requested restart of approval phase.</em></p></#if>
-			                <#if comment.comment?length &gt; 0><p><em>${(comment.comment?html)!}</em></p></#if>
+			                <#if comment.type == 'REQUEST_REFERRAL'>
+												<p class="referral"><em>${(comment.comment?html)!}</em></p>
+											<#elseif comment.comment?length &gt; 0>
+												<p><em>${(comment.comment?html)!}</em></p>
+											</#if>
 							<#if comment.documents?? && comment.documents?size &gt; 0>
 				                <ul class="uploads">                
 				                <#list comment.documents as document>

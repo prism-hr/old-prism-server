@@ -146,11 +146,10 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$(document).on('click', '.nationality-item button.button-delete', function()
 	{
+		// Clear the corresponding dropdown box if the deleted nationality is the same
+		// as the one currently selected.
 		var $select = $(this).parent().parent().next('select');
 		var $field  = $(this).parent().find('input:hidden');
-		console.log($select);
-		console.log($field);
-		console.log('label: '+$select.val()+', value: '+$field.val());
 		if ($select.val() == $field.val())
 		{
 			$select.val('');

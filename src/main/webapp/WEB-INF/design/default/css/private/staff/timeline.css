@@ -7,7 +7,7 @@
 #timelineview ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; margin-bottom: -5px; padding: 0 10px; }
 #timelineview ul.tabs li.current a { margin-bottom: 0; }
 
-#timelineview .tab-page { clear: both; padding-top: 8px; position: relative; }
+#timelineview .tab-page { clear: both; padding-top: 10px; position: relative; }
 
 
 /* Timeline comments -------------------------------------------------------------------------------------- */
@@ -84,11 +84,15 @@
 
 #timeline-statuses ul .box p.declined { background: url(../../../images/icon_declined.png) no-repeat 10px 8px; padding-left: 40px; }
 #timeline-statuses ul .box p.datetime,
-#timeline-statuses ul .box p.location { padding-left: 40px; position: relative; }
+#timeline-statuses ul .box p.location,
+#timeline-statuses ul .box p.restart,
+#timeline-statuses ul .box p.delegate { padding-left: 40px; position: relative; }
 #timeline-statuses ul .box p.datetime span,
 #timeline-statuses ul .box p.location span { background: no-repeat 3px; position: absolute; left: 8px; top: 4px; width: 24px; height: 24px; display: block; }
 #timeline-statuses ul .box p.datetime span { background-image: url(../../../images/icon_calendar.png); }
 #timeline-statuses ul .box p.location span { background-image: url(../../../images/icon_location.png); }
+#timeline-statuses ul .box p.restart span { background-image: url(../../../images/icon_restart.png); }
+#timeline-statuses ul .box p.delegate span { background-image: url(../../../images/icon_delegation.png); }
 
 /* Application tab ---------------------------------------------------------------------------------------- */
 #application div.admin_row .admin_row_label,

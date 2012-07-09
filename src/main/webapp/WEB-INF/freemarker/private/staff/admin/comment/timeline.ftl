@@ -89,8 +89,14 @@
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
 									<div class="box">
-										<h3>Reason:</h3>
-										<p>${applicationForm.rejection.rejectionReason.text?html}</p>                 
+										<div class="title">
+											<span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
+											<span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+										</div>
+										<p>
+											<strong>Reason for rejection</strong><br />
+											<em>${applicationForm.rejection.rejectionReason.text?html}</em>
+										</p>
 									</div>
 								</li>
 							</ul>

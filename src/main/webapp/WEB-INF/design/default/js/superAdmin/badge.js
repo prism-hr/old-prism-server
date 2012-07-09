@@ -53,11 +53,6 @@ function updateBadge()
 			$('#html').val(data).autosize();
 		}
 	});	
-	/*
-	$('#badge').attr("src", "/pgadmissions/badge/html?program=" + $('#programme').val() 
-		+ "&project=" +$('#project').val()
-		+ "&programhome=" +$('#programhome').val()
-		+ "&batchdeadline=" +$('#batchdeadline').val()
-		+ "&disable=true");
-	*/
+
+
 };

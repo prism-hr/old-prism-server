@@ -22,7 +22,7 @@
 
 	<bean id="newUserNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="4000" />
-		<property name="period" value="60000" />
+		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="newUserNotificationTimerTask" />
 	</bean>
 	

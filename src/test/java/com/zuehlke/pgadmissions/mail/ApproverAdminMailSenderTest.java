@@ -70,7 +70,7 @@ public class ApproverAdminMailSenderTest {
 		};
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approval.notification.approverAndAdmin"),// 
-				EasyMock.aryEq(new Object[] {"bob", "prg", "Jane", "Smith" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
+				EasyMock.aryEq(new Object[] {"bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
 
 		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr1, "subject", expTemplate, model, null)).andReturn(mimePrepMock);

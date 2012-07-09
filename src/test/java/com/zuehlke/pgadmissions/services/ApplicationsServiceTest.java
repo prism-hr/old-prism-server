@@ -199,49 +199,7 @@ public class ApplicationsServiceTest {
 		assertEquals("http://" + researchHomePage, returnedForm.getResearchHomePage());
 	}
 
-	@Test
-	public void shouldReturnCommingFromNullIfNoEvents(){		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REJECTED).toApplicationForm();
-		Assert.assertNull(applicationsService.getStageComingFrom(application));
-	}
 	
-
-	
-	@Test
-	public void shouldReturnPriorEventIfCurrentStagetNotRejectedAndNotApproval() throws ParseException{		
-		Event validationEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
-		Event reviewEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
-		Event approvalEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/05/05")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVAL).events(validationEvent, reviewEvent,approvalEvent).toApplicationForm();
-		Assert.assertEquals(ApplicationFormStatus.REVIEW, applicationsService.getStageComingFrom(application));
-	}
-	@Test
-	public void shouldReturCyurrentStatusIfNotStageApproval() throws ParseException{		
-		Event validationEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
-		Event reviewEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).events(validationEvent, reviewEvent).toApplicationForm();
-		Assert.assertEquals(ApplicationFormStatus.REVIEW, applicationsService.getStageComingFrom(application));
-	}
-	
-	@Test
-	public void shouldPreviousEventIfEventPriorToRejectionNotApproval() throws ParseException {
-		Event validationEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
-		Event reviewEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
-		Event rejectedEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/05/05")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REJECTED).events(validationEvent, rejectedEvent, reviewEvent).toApplicationForm();
-		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
-		Assert.assertEquals(ApplicationFormStatus.REVIEW, stage);
-	}
-	@Test
-	public void shouldReturnEventBeforePreviousEventIfEventPriorToRejectionIsApproval() throws ParseException {
-		Event validationEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
-		Event interviewEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.INTERVIEW).toEvent();
-		Event approvalEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/05/05")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
-		Event rejectedEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/06/06")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REJECTED).events(validationEvent, rejectedEvent, approvalEvent, interviewEvent).toApplicationForm();
-		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
-		Assert.assertEquals(ApplicationFormStatus.INTERVIEW, stage);
-	}
 
 	@Test
 	public void shouldThrowIllegalArgumentExceptionIfSearchTermNotSet() {

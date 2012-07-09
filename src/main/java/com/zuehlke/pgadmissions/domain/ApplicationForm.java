@@ -714,10 +714,51 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 			}
 		}
 		Collections.sort(requestRestartComments);
-		if(!requestRestartComments.isEmpty()){
+		if (!requestRestartComments.isEmpty()) {
 			return requestRestartComments.get(0);
 		}
 		return null;
+	}
+
+	public ApplicationFormStatus getOutcomeOfStage() {
+		if (ApplicationFormStatus.REVIEW == status) {
+			return resolveOutcomeOfStageForReviewStatus();
+		}
+		if (ApplicationFormStatus.INTERVIEW == status) {
+			return resolveOutcomeOfStageForInterviewStatus();
+		}
+		return resolveOutcomeOfStageForApprovalandRejectedStatus();
+	}
+
+	private ApplicationFormStatus resolveOutcomeOfStageForApprovalandRejectedStatus() {
+		if (approvalRounds.size()  > 1 && ApplicationFormStatus.APPROVAL == status) {
+			return ApplicationFormStatus.APPROVAL;
+		}
+		if(!interviews.isEmpty()){
+			return ApplicationFormStatus.INTERVIEW;
+		}
+		if(!reviewRounds.isEmpty()){
+			return ApplicationFormStatus.REVIEW;
+		}
+		return ApplicationFormStatus.VALIDATION;
+	}
+
+	private ApplicationFormStatus resolveOutcomeOfStageForInterviewStatus() {
+		if (interviews.size() > 1) {
+			return ApplicationFormStatus.INTERVIEW;
+		}
+		if (!reviewRounds.isEmpty()) {
+			return ApplicationFormStatus.REVIEW;
+		}
+		return ApplicationFormStatus.VALIDATION;
+	}
+
+	private ApplicationFormStatus resolveOutcomeOfStageForReviewStatus() {
+		if (reviewRounds.size() > 1) {
+			return ApplicationFormStatus.REVIEW;
+		}
+	
+		return ApplicationFormStatus.VALIDATION;
 	}
 
 }

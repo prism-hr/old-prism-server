@@ -79,24 +79,7 @@ public class RejectApplicationController {
 		return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
 	}
 
-	@RequestMapping(value = "/rejectionText", method = RequestMethod.POST)
-	public String getRejectionText(//
-			@ModelAttribute("applicationForm") ApplicationForm application,
-			@ModelAttribute("rejection") Rejection rejection,
-			ModelMap model) {
-
-		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
-		model.put("previousStage", stage);
-		model.put("application", application);
-		model.put("reason", rejection.getRejectionReason());
-		if(rejection.isIncludeProspectusLink()){
-			model.put("prospectusLink",Environment.getInstance().getUCLProspectusLink());
-		}
-		model.put("host", Environment.getInstance().getApplicationHostName());
-		model.put("adminsEmails", "some@email.com");
-
-		return REJECTION_MAIL_TEMPLATE;
-	}
+	
 
 	@ModelAttribute("availableReasons")
 	public List<RejectReason> getAvailableReasons() {

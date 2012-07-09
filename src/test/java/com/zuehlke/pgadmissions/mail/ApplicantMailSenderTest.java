@@ -64,8 +64,6 @@ public class ApplicantMailSenderTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram())//
 				.applicant(applicant).toApplicationForm();
 
-		EasyMock.expect(applicationServiceMock.getStageComingFrom(form)).andReturn(ApplicationFormStatus.INTERVIEW);
-		
 		List<Person> registryContacts = new ArrayList<Person>();
 		registryContacts.add(new PersonBuilder().id(123).toPerson());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
@@ -80,7 +78,7 @@ public class ApplicantMailSenderTest {
 		assertEquals(registryContacts, model.get("registryContacts"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 		assertNull(model.get("reasons"));
-		assertEquals(ApplicationFormStatus.INTERVIEW, model.get("previousStage"));
+		assertEquals(ApplicationFormStatus.VALIDATION, model.get("previousStage"));
 	}
 
 	@Test
@@ -97,7 +95,6 @@ public class ApplicantMailSenderTest {
 		rejection.setIncludeProspectusLink(true);
 		form.setRejection(rejection);
 
-		EasyMock.expect(applicationServiceMock.getStageComingFrom(form)).andReturn(ApplicationFormStatus.INTERVIEW);
 		
 		List<Person> registryContacts = new ArrayList<Person>();
 		registryContacts.add(new PersonBuilder().id(123).toPerson());
@@ -112,7 +109,7 @@ public class ApplicantMailSenderTest {
 		assertEquals(applicant, model.get("applicant"));
 		assertEquals(registryContacts, model.get("registryContacts"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
-		assertEquals(ApplicationFormStatus.INTERVIEW, model.get("previousStage"));
+		assertEquals(ApplicationFormStatus.VALIDATION, model.get("previousStage"));
 		assertEquals(reason, model.get("reason"));
 		assertEquals(Environment.getInstance().getUCLProspectusLink(), model.get("prospectusLink"));
 	}
@@ -136,9 +133,9 @@ public class ApplicantMailSenderTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("jane.smith@test.com", "Jane Smith");
 
-		EasyMock.expect(applicationServiceMock.getStageComingFrom(form)).andReturn(ApplicationFormStatus.REVIEW);
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("message.code"),// 
-				EasyMock.aryEq(new Object[] { "bob", "Some Program", "Jane", "Smith", "Review" }//
+				EasyMock.aryEq(new Object[] { "bob", "Some Program", "Jane", "Smith", "Validation" }//
 						), EasyMock.eq((Locale)null))).andReturn("resolved subject");
 		
 		EasyMock.expect(//

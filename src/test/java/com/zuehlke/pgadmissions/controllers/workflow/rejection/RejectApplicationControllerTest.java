@@ -303,31 +303,6 @@ public class RejectApplicationControllerTest {
 	}
 
 
-	// -------------------------------------------
-	// ------- retrieving email text:
-	
-
-
-	@Test
-	public void getRejectionText() {
-		RejectReason rejectReason = new RejectReasonBuilder().id(1).text("hi").toRejectReason();
-		Rejection rejection = new RejectionBuilder().id(4).rejectionReason(rejectReason).includeProspectusLink(true).toRejection();
-		EasyMock.expect(applicationServiceMock.getStageComingFrom(application)).andReturn(ApplicationFormStatus.REVIEW);
-		EasyMock.replay(applicationServiceMock);
-		ModelMap modelMap = new ModelMap();
-		
-		String nextView = controllerUT.getRejectionText(application,rejection, modelMap);
-
-		Assert.assertEquals(REJECT_EMAIL, nextView);
-		Assert.assertEquals(application, modelMap.get("application"));
-		
-		Assert.assertEquals(rejectReason, (RejectReason) modelMap.get("reason"));
-		Assert.assertEquals(ApplicationFormStatus.REVIEW, modelMap.get("previousStage"));
-		Assert.assertNotNull(modelMap.get("host"));
-		
-		Assert.assertNotNull(modelMap.get("adminsEmails"));
-		assertEquals(Environment.getInstance().getUCLProspectusLink(), modelMap.get("prospectusLink"));
-	}
 	
 	
 }

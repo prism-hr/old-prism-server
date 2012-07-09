@@ -45,7 +45,7 @@ public class ApproverAdminMailSender extends MailSender {
 		approversAndAdmins.addAll(application.getProgram().getApprovers());
 		approversAndAdmins.addAll(application.getProgram().getAdministrators());
 		Set<RegisteredUser> uniqueUsers = new HashSet<RegisteredUser>(approversAndAdmins);
-		ApplicationFormStatus previousStage = applicationService.getStageComingFrom(application);
+		ApplicationFormStatus previousStage = application.getOutcomeOfStage();
 		for (RegisteredUser user : uniqueUsers) {
 			InternetAddress toAddress = createAddress(user);
 			String subject = resolveMessage("approval.notification.approverAndAdmin", application, previousStage);

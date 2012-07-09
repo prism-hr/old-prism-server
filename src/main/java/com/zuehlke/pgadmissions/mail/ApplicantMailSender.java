@@ -49,7 +49,7 @@ public class ApplicantMailSender extends StateChangeMailSender {
 			}
 
 		}
-		model.put("previousStage", applicationsService.getStageComingFrom(form));
+		model.put("previousStage",form.getOutcomeOfStage());
 		return model;
 	}
 
@@ -61,8 +61,6 @@ public class ApplicantMailSender extends StateChangeMailSender {
 	}
 
 	private String resolveSubject(ApplicationForm form, String messageCode) {
-		ApplicationFormStatus previousStage = applicationsService.getStageComingFrom(form);
-
-		return resolveMessage(messageCode, form, previousStage);
+		return resolveMessage(messageCode, form, form.getOutcomeOfStage());
 	}
 }

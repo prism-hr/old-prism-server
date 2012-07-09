@@ -52,7 +52,7 @@ public class AdminMailSender extends StateChangeMailSender {
 	}
 
 	public void sendApproverApprovalReminder(ApplicationForm form, String messageCode, String templatename, Map<String, Object> model) {
-		ApplicationFormStatus previousStage = applicationService.getStageComingFrom(form);
+		ApplicationFormStatus previousStage = form.getOutcomeOfStage();
 		String subject = resolveMessage(messageCode, form, previousStage);
 		List<RegisteredUser> programApprovers = form.getProgram().getApprovers();
 		for (RegisteredUser approver : programApprovers) {
@@ -80,7 +80,7 @@ public class AdminMailSender extends StateChangeMailSender {
 		Map<String, Object> model = createModel(application);
 		model.put("approver", approver);
 		model.put("reason", application.getRejection().getRejectionReason());
-		model.put("previousStage", applicationService.getStageComingFrom(application));
+		model.put("previousStage",  application.getOutcomeOfStage());
 
 		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());
 		administrators.remove(approver);
@@ -103,7 +103,7 @@ public class AdminMailSender extends StateChangeMailSender {
 
 	private void internalSend(ApplicationForm form, List<RegisteredUser> adminRecipients, String messageCode, String template, Map<String, Object> model) {
 		RegisteredUser applicationAdmin = form.getApplicationAdministrator();
-		ApplicationFormStatus previousStage = applicationService.getStageComingFrom(form);
+		ApplicationFormStatus previousStage = form.getOutcomeOfStage();
 		
 		String subject = resolveMessage(messageCode, form, previousStage);
 		if (applicationAdmin == null) { // send email to all program administrators
@@ -134,7 +134,7 @@ public class AdminMailSender extends StateChangeMailSender {
 	public void sendAdminApprovedNotification(ApplicationForm application, RegisteredUser approver) {
 		Map<String, Object> model = createModel(application);
 		model.put("approver", approver);
-		model.put("previousStage", applicationService.getStageComingFrom(application));
+		model.put("previousStage", application.getOutcomeOfStage());
 		model.put("registryContacts", personService.getAllRegistryUsers());
 
 		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());

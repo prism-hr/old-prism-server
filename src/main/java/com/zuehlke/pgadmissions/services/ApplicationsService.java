@@ -75,23 +75,7 @@ public class ApplicationsService {
 		return applicationFormDAO.getApplicationsDueUpdateNotification();
 	}
 
-	public ApplicationFormStatus getStageComingFrom(ApplicationForm application) {
-		List<StateChangeEvent> events = application.getStateChangeEventsSortedByDate();
-		if (events.isEmpty() ) {
-			return null;
-		}
-		if (ApplicationFormStatus.REJECTED == application.getStatus()) {
-			StateChangeEvent stateChangeEvent = events.get(events.size() - 2);
-			if (stateChangeEvent.getNewStatus() != ApplicationFormStatus.APPROVAL) {
-				return stateChangeEvent.getNewStatus();
-			}
-			return events.get(events.size() - 3).getNewStatus();
-		}
-		if (ApplicationFormStatus.APPROVAL == application.getStatus()) {
-			return events.get(events.size() - 2).getNewStatus();		
-		}		
-		return application.getStatus();
-	}
+
 
 	/**
 	 * Returns all applications matching the given parameters

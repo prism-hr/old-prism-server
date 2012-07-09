@@ -20,33 +20,32 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
-import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Component
 public class RegistryMailSender extends MailSender {
 
-	private final ConfigurationService personService;
+
 	private final PdfDocumentBuilder pdfDocumentBuilder;
 	private final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory;
 
 	RegistryMailSender() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null,  null, null);
 	}
 
 	@Autowired
-	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ConfigurationService personService,
+	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, 
 			UserService userService, MessageSource msgSource, PdfDocumentBuilder pdfDocumentBuilder,
 			PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
-		this.personService = personService;
+
 		this.pdfDocumentBuilder = pdfDocumentBuilder;
 		this.pdfAttachmentInputSourceFactory = pdfAttachmentInputSourceFactory;
 	}
 
-	public void sendApplicationToRegistryContacts(ApplicationForm applicationForm) throws MalformedURLException, DocumentException, IOException {
-		List<Person> registryContacts = personService.getAllRegistryUsers();
+	public void sendApplicationToRegistryContacts(ApplicationForm applicationForm, List<Person> registryContacts) throws MalformedURLException, DocumentException, IOException {
+	
 		InternetAddress[] toAddresses = new InternetAddress[registryContacts.size()];
 		int counter = 0;
 		for (Person registryUser : registryContacts) {
@@ -92,4 +91,5 @@ public class RegistryMailSender extends MailSender {
 		}
 		return sb.toString();
 	}
+
 }

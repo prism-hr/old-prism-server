@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,22 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.utils.CommentFactory;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
@@ -35,33 +30,30 @@ public class ApprovalService {
 	private final ApplicationFormDAO applicationDAO;
 	private final ApprovalRoundDAO approvalRoundDAO;
 	private final StageDurationDAO stageDurationDAO;
-	private final MailService mailService;
+	
 	private final EventFactory eventFactory;
 	private final CommentDAO commentDAO;
-	private final CommentFactory commentFactory;
-	private final EncryptionHelper encryptionHelper;
+	
+	
 	private final UserService userService;
-	private final DocumentDAO documentDAO;
+	
 	private final SupervisorDAO supervisorDAO;
 
 	ApprovalService() {
-		this(null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO, MailService mailService,
-			EventFactory eventFactory, CommentDAO commentDAO, DocumentDAO documentDAO, CommentFactory commentFactory, EncryptionHelper encryptionHelper, SupervisorDAO supervisorDAO) {
+	public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO,
+			EventFactory eventFactory, CommentDAO commentDAO, SupervisorDAO supervisorDAO) {
 
 		this.userService = userService;
 		this.applicationDAO = applicationDAO;
 		this.approvalRoundDAO = approvalRoundDAO;
 		this.stageDurationDAO = stageDurationDAO;
-		this.mailService = mailService;
+	
 		this.eventFactory = eventFactory;
 		this.commentDAO = commentDAO;
-		this.documentDAO = documentDAO;
-		this.commentFactory = commentFactory;
-		this.encryptionHelper = encryptionHelper;
 		this.supervisorDAO = supervisorDAO;
 
 	}
@@ -70,13 +62,28 @@ public class ApprovalService {
 	public void moveApplicationToApproval(ApplicationForm application, ApprovalRound approvalRound) {
 		checkApplicationStatus(application);
 		application.setLatestApprovalRound(approvalRound);
+		
 		approvalRound.setApplication(application);
 		approvalRoundDAO.save(approvalRound);
 		StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
 		application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
 		application.setStatus(ApplicationFormStatus.APPROVAL);
 		application.getEvents().add(eventFactory.createEvent(approvalRound));
+		application.setPendingApprovalRestart(false);
+		resetRequestRestartNotificationRecords(application);
+		
 		applicationDAO.save(application);
+	}
+
+	private void resetRequestRestartNotificationRecords(ApplicationForm application) {
+		NotificationRecord restartRequestNotification = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
+		if(restartRequestNotification != null){
+			application.getNotificationRecords().remove(restartRequestNotification);
+		}
+		NotificationRecord restartRequestReminder = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
+		if(restartRequestReminder != null){
+			application.getNotificationRecords().remove(restartRequestReminder);
+		}
 	}
 
 	@Transactional
@@ -90,9 +97,11 @@ public class ApprovalService {
 		}
 		if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
 			throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", application.getApplicationNumber()));
-		}
-		mailService.sendRequestRestartApproval(application, approver);
+		}	
 		commentDAO.save(comment);
+		application.setPendingApprovalRestart(true);
+		application.setApproverRequestedRestart(approver);
+		applicationDAO.save(application);
 	}
 
 	private void checkApplicationStatus(ApplicationForm application) {

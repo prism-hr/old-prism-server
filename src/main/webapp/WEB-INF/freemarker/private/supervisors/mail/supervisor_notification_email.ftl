@@ -27,20 +27,25 @@
 			      	</p>
 	
 				    <p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">heir Application ${application.applicationNumber} is undergoing approval by the Programme Director. We aim to be back in contact with the outcome of their assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Their Application ${application.applicationNumber} is undergoing approval by the Programme Director. We aim to be back in contact with the outcome of their assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
 			      	</p>
 	
-			      	<#if !supervisor.user?? || !supervisor.user.enabled >
+		
 			      		
-					    <br>  	
-							<p>
-			              		<!-- Button -->
-							    <a href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}" title="View Application">
-							    	<img width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png">
-							    </a>
-							</p>
-						</br>			      		
-			      	</#if>
+				    <br>  	
+						<p>
+		              		<!-- Button -->
+		              		  <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
+			                       	 <#if !supervisor.user.enabled>
+			                       	 	href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}"
+			                       	 <#else>
+			                      		href="${host}/pgadmissions/application?applicationId=${application.applicationNumber}"
+			                      	</#if>><b>Provide Feedback</b>
+						    	<img width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png">
+						    </a>
+						</p>
+					</br>			      		
+			      
 				    <p>
 			      	  <font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to supervise.</font>
 			      	</p>  	

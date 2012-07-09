@@ -66,10 +66,22 @@ public class ApplicationFormBuilder {
 	private ApprovalRound latestApprovalRound;
 	private Rejection rejection;	
 	private RegisteredUser applicationAdministrator;
-	private RegisteredUser adminRequestedRegistry;
-	
+	private RegisteredUser adminRequestedRegistry;	
 	private String applicationNumber;
+	private boolean pendingApprovalRestart;
+	private RegisteredUser approverRequestedRestart = null;
 	
+	
+
+	public ApplicationFormBuilder approverRequestedRestart(RegisteredUser approverRequestedRestart) {
+		this.approverRequestedRestart = approverRequestedRestart;
+		return this;
+	}
+	
+	public ApplicationFormBuilder pendingApprovalRestart(boolean pendingApprovalRestart) {
+		this.pendingApprovalRestart = pendingApprovalRestart;
+		return this;
+	}
 	public ApplicationFormBuilder applicationNumber(String applicationNumber) {
 		this.applicationNumber = applicationNumber;
 		return this;
@@ -347,6 +359,8 @@ public class ApplicationFormBuilder {
 		
 		application.setRegistryUsersDueNotification(registryUsersNotified);
 		application.setAdminRequestedRegistry(adminRequestedRegistry);
+		application.setPendingApprovalRestart(pendingApprovalRestart);
+		application.setApproverRequestedRestart(approverRequestedRestart);
 		return application;
 	}
 }

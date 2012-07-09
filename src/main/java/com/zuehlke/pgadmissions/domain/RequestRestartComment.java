@@ -25,5 +25,8 @@ public class RequestRestartComment extends Comment {
 		return type;
 	}
 
+
+
+
 	
 }

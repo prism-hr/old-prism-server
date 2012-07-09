@@ -36,9 +36,16 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	private static final long serialVersionUID = -7671357234815343496L;
 
+	@Column(name = "pending_approval_restart")
+	private boolean pendingApprovalRestart;
+
+	@ManyToOne
+	@JoinColumn(name = "approver_requested_restart_id")
+	private RegisteredUser approverRequestedRestart = null;
+
 	@Transient
 	private boolean acceptedTerms;
-	
+
 	@Column(name = "application_number")
 	private String applicationNumber;
 
@@ -67,7 +74,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
 	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
-	
 	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "current_address_id")
@@ -101,10 +107,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@Column(name = "submitted_on_timestamp")
 	private Date submittedDate;
-	
+
 	@Column(name = "batch_deadline")
 	private Date batchDeadline;
-	
+
 	@Column(name = "last_updated")
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date lastUpdated;
@@ -116,14 +122,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@ManyToOne
 	@JoinColumn(name = "approver_user_id")
 	private RegisteredUser approver = null;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "admin_requested_registry_id")
 	private RegisteredUser adminRequestedRegistry = null;
 
 	@Column(name = "project_title")
 	private String projectTitle;
-
 
 	@Column(name = "research_home_page")
 	private String researchHomePage;
@@ -379,18 +384,17 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public List<Comment> getVisibleComments(RegisteredUser user) {
 
-		if(user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)){
+		if (user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)) {
 			List<Comment> comments = new ArrayList<Comment>();
 			for (Comment comment : applicationComments) {
-				if(comment instanceof ReferenceComment && ((ReferenceComment)comment).getReferee().getUser().equals(user)){
+				if (comment instanceof ReferenceComment && ((ReferenceComment) comment).getReferee().getUser().equals(user)) {
 					comments.add(comment);
 				}
 			}
 			Collections.sort(comments);
 			return comments;
 		}
-		if (user.isInRole(Authority.APPLICANT) 
-				|| !user.hasStaffRightsOnApplicationForm(this)) {
+		if (user.isInRole(Authority.APPLICANT) || !user.hasStaffRightsOnApplicationForm(this)) {
 			return new ArrayList<Comment>();
 		}
 
@@ -444,7 +448,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public void setStatus(ApplicationFormStatus status) {
 		this.status = status;
 	}
-
 
 	public boolean isInValidationStage() {
 		return status == ApplicationFormStatus.VALIDATION;
@@ -527,7 +530,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		for (Comment comment : applicationComments) {
 			if (comment instanceof ReviewComment) {
 				ReviewComment reviewComment = (ReviewComment) comment;
-				if (reviewComment.getWillingToInterview()!= null && reviewComment.getWillingToInterview()) {
+				if (reviewComment.getWillingToInterview() != null && reviewComment.getWillingToInterview()) {
 					usersWillingToInterview.add(reviewComment.getUser());
 				}
 			}
@@ -591,7 +594,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 			}
 		};
 		for (Event event : events) {
-			if(event instanceof StateChangeEvent){
+			if (event instanceof StateChangeEvent) {
 				stateChangeEvents.add((StateChangeEvent) event);
 			}
 		}
@@ -599,7 +602,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return stateChangeEvents;
 	}
 
-	
 	public Rejection getRejection() {
 		return rejection;
 	}
@@ -649,7 +651,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public String getResearchHomePage() {
-		if(researchHomePage == null || researchHomePage.startsWith("http://") ||researchHomePage.startsWith("https://")  ){
+		if (researchHomePage == null || researchHomePage.startsWith("http://") || researchHomePage.startsWith("https://")) {
 			return researchHomePage;
 		}
 		return "http://" + researchHomePage;
@@ -686,6 +688,36 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Override
 	public ApplicationForm getApplication() {
 		return this;
+	}
+
+	public boolean isPendingApprovalRestart() {
+		return pendingApprovalRestart;
+	}
+
+	public void setPendingApprovalRestart(boolean pendingApprovalRestart) {
+		this.pendingApprovalRestart = pendingApprovalRestart;
+	}
+
+	public RegisteredUser getApproverRequestedRestart() {
+		return approverRequestedRestart;
+	}
+
+	public void setApproverRequestedRestart(RegisteredUser approverRequestedRestart) {
+		this.approverRequestedRestart = approverRequestedRestart;
+	}
+
+	public RequestRestartComment getLatestsRequestRestartComment() {
+		List<RequestRestartComment> requestRestartComments = new ArrayList<RequestRestartComment>();
+		for (Comment comment : applicationComments) {
+			if (comment instanceof RequestRestartComment) {
+				requestRestartComments.add((RequestRestartComment) comment);
+			}
+		}
+		Collections.sort(requestRestartComments);
+		if(!requestRestartComments.isEmpty()){
+			return requestRestartComments.get(0);
+		}
+		return null;
 	}
 
 }

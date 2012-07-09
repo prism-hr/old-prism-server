@@ -9,6 +9,19 @@
 		<constructor-arg index="2" ref="mailApplicationDAO" />
 	</bean>
 
+	<bean id="approvalRestartRequestNotificationTimerTask"
+		class="com.zuehlke.pgadmissions.timers.ApprovalRestartRequestNotificationTimerTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="approvalRestartRequestMailSender" />
+		<constructor-arg index="2" ref="mailApplicationsService" />
+	</bean>
+	
+		<bean id="approvalRestartRequestReminderTimerTask"
+		class="com.zuehlke.pgadmissions.timers.ApprovalRestartRequestReminderTimerTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="approvalRestartRequestMailSender" />
+		<constructor-arg index="2" ref="mailApplicationsService" />
+	</bean>
 	<bean id="approverAdminApprovalNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10500" />
 		<property name="period" value="60000" />
@@ -33,4 +46,18 @@
 		<property name="period" value="60000" />
 		<property name="timerTask" ref="approverApprovalReminderTimerTask" />
 	</bean>
+	
+	<bean id="approvalRestartRequestNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="2000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="approvalRestartRequestNotificationTimerTask" />
+	</bean>
+	
+		<bean id="approvalRestartRequestReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="2000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="approvalRestartRequestReminderTimerTask" />
+	</bean>
+	
+	
 </beans>

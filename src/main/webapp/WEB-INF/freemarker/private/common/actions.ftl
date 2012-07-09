@@ -35,15 +35,13 @@
 		<#if (user == application.applicant && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>
 			<option value="withdraw">Withdraw</option>
 		</#if>      												
-		<#if (user.hasAdminRightsOnApplication(application) && application.isInState('APPROVAL'))>
+		<#if (user.hasAdminRightsOnApplication(application) && application.isPendingApprovalRestart())>
 			<option value="restartApproval">Restart Approval</option>
 		</#if>  
-		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
+		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL') && !application.isPendingApprovalRestart()>
 			<option value="validate">Approve</option>
 		</#if>    												
 </select>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>    
-<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+
 <script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>

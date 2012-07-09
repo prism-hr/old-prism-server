@@ -37,7 +37,7 @@
 		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
 		                    <font face="Arial, Helvetica, sans-serif" size="2">
 		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-		                      	href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"><b>View Application</b></a>
+		                      	href="${host}/pgadmissions/progress/getPage?applicationId=${application.applicationNumber}"><b>Evaluate Application</b></a>
 		                    </font>
 		                  </td>
 		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>

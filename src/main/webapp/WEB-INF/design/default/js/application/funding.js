@@ -105,6 +105,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#fundingSaveCloseButton').click(function()
 	{
+		/*
 		if ($("#acceptTermsFDValue").val() == 'NO' && !isFormEmpty('#fundingSection form'))
 		{ 
 			// Highlight the information bar and terms box.
@@ -112,6 +113,7 @@ $(document).ready(function(){
 		}
 		else
 		{
+		*/
 			$("span[name='nonAcceptedFD']").html('');
 
 			// Check for a "dirty" employment position form. If there is data try to submit it.
@@ -124,7 +126,9 @@ $(document).ready(function(){
 				unmarkSection('#fundingSection');
 				$('#fundingCloseButton').trigger('click');
 			}
+		/*
 		}
+		*/
 	});
 	
 	

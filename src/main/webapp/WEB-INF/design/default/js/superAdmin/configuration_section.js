@@ -183,7 +183,7 @@ function validateReminderInterval()
 	var validationErrors = false;
 	var reminderIntervalDuration = $('#reminderIntervalDuration').val();
 	var reminderIntervalUnit = $('#reminderUnit').val();
-	if (isNaN(reminderIntervalDuration) || reminderIntervalDuration == "")
+	if (isNaN(reminderIntervalDuration) || reminderIntervalDuration == "" || reminderIntervalDuration <= 0)
 	{
 		$("span[name='invalidDurationInterval']").html('You must enter a whole number greater that 0.');
 		$("span[name='invalidDurationInterval']").show();
@@ -194,7 +194,7 @@ function validateReminderInterval()
 		$("span[name='invalidDurationInterval']").html('');
 		$("span[name='invalidDurationInterval']").hide();
 	}
-	if (reminderIntervalUnit == "")
+	if (reminderIntervalUnit == "" && !validationErrors)
 	{
 		$("span[name='invalidUnitInterval']").html('You must make a selection.');
 		$("span[name='invalidUnitInterval']").show();
@@ -214,14 +214,16 @@ function appendStagesJSON()
 	var validationErrors = false;
 	var stages = document.getElementById("stages");
 	for (var i=0; i<stages.length; i++)
-	{
+	{	
+		var isStageDurationError = false;
 		var stageName = stages.options[i].value;
 		var stageDuration = $('#' + stageName + '_duration').val();
 		var stageUnit = $('#'+ stageName + '_unit').val();
-		if (isNaN(stageDuration) || stageDuration == "")
+		if (isNaN(stageDuration) || stageDuration == "" || stageDuration <= 0)
 		{
 			$("span[name='"+stageName+"_invalidDuration']").html('You must enter a whole number greater that 0.');
 			$("span[name='"+stageName+"_invalidDuration']").show();
+			isStageDurationError = true;
 			validationErrors = true;
 		}
 		else
@@ -229,7 +231,7 @@ function appendStagesJSON()
 			$("span[name='"+stageName+"_invalidDuration']").html('');
 			$("span[name='"+stageName+"_invalidDuration']").hide();
 		}
-		if (stageUnit == "")
+		if (stageUnit == "" &&  !isStageDurationError)
 		{
 			$("span[name='"+stageName+"_invalidUnit']").html('You must make a selection.');
 			$("span[name='"+stageName+"_invalidUnit']").show();

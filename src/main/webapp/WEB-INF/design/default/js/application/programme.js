@@ -273,27 +273,26 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	$('#programmeSaveButton').on("click",function()
 	{
+		$("span[name='nonAcceptedPD']").html('');
+		
+		// Check for a "dirty" supervisor form.
+		if (!isFormEmpty('#supervisor_div'))
+		{
+			$('#addSupervisorButton:visible, #updateSupervisorButton:visible').trigger('click'); // either add or update will be visible
+			// If there was an error submitting the non-empty form, don't continue.
+			if ($('#supervisor_div .invalid:visible').length > 0)
+			{
+				return false;
+			}
+		}
+		
 		if ($("#acceptTermsPDValue").val() == 'NO')
 		{ 
-
 			postProgrammeData('open');
 			addToolTips();
 		}
 		else
 		{
-			$("span[name='nonAcceptedPD']").html('');
-
-			// Check for a "dirty" supervisor form.
-			if (!isFormEmpty('#supervisor_div'))
-			{
-				$('#addSupervisorButton:visible, #updateSupervisorButton:visible').trigger('click'); // either add or update will be visible
-				// If there was an error submitting the non-empty form, don't continue.
-				if ($('#supervisor_div .invalid:visible').length > 0)
-				{
-					return false;
-				}
-			}
-			
 			postProgrammeData('close');
 		}
 	});	

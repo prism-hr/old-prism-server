@@ -37,14 +37,12 @@
 			      		  <font face="Arial, Helvetica, sans-serif" size="2">We aim to be back in contact with the outcome of this assessment by close of business on --ReviewStageDeadline--.</font>
 			      	</p>
 			      	
-						<br>
 							<p>
 				            	<!-- Button -->
 								<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View/Update Application">
-									<img width="193" height="36" alt="View/Update Application" src="${host}/pgadmissions/design/default/images/email/view_update_app.png">
+									<img border="0" style="border: none;" width="193" height="36" alt="View/Update Application" src="${host}/pgadmissions/design/default/images/email/view_update_app.png">
 								</a>
 							</p>
-						</br>			      	
 			      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>

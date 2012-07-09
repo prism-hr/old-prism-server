@@ -28,14 +28,12 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must authorise their Application ${application.applicationNumber} and select the next action.</b></font>
 			      	</p>
 			      	
-					<br>
 						<p>
 			            	<!-- Button -->
 							<a href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}" title="Approval">
-								<img width="167" height="36" alt="Approval" src="${host}/pgadmissions/design/default/images/email/approve_app.png">
+								<img border="0" style="border: none;" width="167" height="36" alt="Approval" src="${host}/pgadmissions/design/default/images/email/approve_app.png">
 							</a>
 						</p>
-					</br>	
 			      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will continue to send reminders until you respond to this request.</font>

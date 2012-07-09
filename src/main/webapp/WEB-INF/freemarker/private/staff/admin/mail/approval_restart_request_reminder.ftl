@@ -31,14 +31,12 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must restart the approval stage for the application to progress.</b></font>
 			      	</p>
 
-					<br>
-						<p>
-			            	<!-- Button -->
-							<a href="${host}/pgadmissions/approval/moveToApproval?applicationId=${application.applicationNumber}" title="Restart Approval">
-								<img width="150" height="36" alt="Restart Approval" src="${host}/pgadmissions/design/default/images/email/restart_approval.png">
-							</a>
-						</p>
-					</br>	
+					<p>
+			        	<!-- Button -->
+						<a href="${host}/pgadmissions/approval/moveToApproval?applicationId=${application.applicationNumber}" title="Restart Approval">
+							<img border="0" style="border: none;" width="150" height="36" alt="Restart Approval" src="${host}/pgadmissions/design/default/images/email/restart_approval.png">
+						</a>
+					</p>
 			      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>

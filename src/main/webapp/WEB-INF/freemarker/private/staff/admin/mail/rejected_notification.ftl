@@ -41,14 +41,12 @@
 			      		</font>
 			      	</p>
 			      	
-						<br>
 							<p>
 				            	<!-- Button -->
 								<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="Find Another Programme">
-									<img width="185" height="36" alt="Find Another Programme" src="${host}/pgadmissions/design/default/images/email/find_another_prog.png">
+									<img border="0" style="border: none;" width="185" height="36" alt="Find Another Programme" src="${host}/pgadmissions/design/default/images/email/find_another_prog.png">
 								</a>
 							</p>
-						</br>
 			      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

@@ -40,15 +40,19 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We regret to inform you that your application was rejected for the following reason: ${(reason.text?html)!}.</font>
 			      	</p>
 			      	<#if prospectusLink??>
-				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${prospectusLink}">Browse other progammes</a></font>
-				      	</p>
+				        <p>
+				          <!-- Button -->
+							<a href="${prospectusLink}" title="Find Another Programme">
+				            	<img border="0" style="border: none;" width="185" height="36" alt="Find Another Programme" src="${host}/pgadmissions/design/default/images/email/find_another_prog.png" />
+				          	</a>
+				        </p>
+			      	
 			      	</#if>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We wish you success in your search for postgraduate study.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Prism</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

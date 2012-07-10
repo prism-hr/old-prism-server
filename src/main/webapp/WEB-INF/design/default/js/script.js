@@ -409,7 +409,11 @@ function doUpload($upload_field)
 				$('a.button-delete', $hfParent).attr({ 'data-desc': 'Delete ' + doc_type })
                                        .qtip(tooltipSettings);
 			}
-    }
+    },
+		error: function()
+		{
+			$container.append('<span class="invalid">Upload failed; please retry.</span>');
+		}
   });
 }
 

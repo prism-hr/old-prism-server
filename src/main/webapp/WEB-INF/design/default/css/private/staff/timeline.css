@@ -104,7 +104,7 @@
 
 #timeline-statuses ul .box p.datetime span { background: url(../../../images/icon_calendar.png) no-repeat 2px 0; }
 #timeline-statuses ul .box p.declined span { background: url(../../../images/icon_declined.png) no-repeat; }
-#timeline-statuses ul .box p.delegate span { background: url(../../../images/icon_delegation.png) no-repeat; }
+#timeline-statuses ul .box p.delegate span { background: url(../../../images/icon_delegation.png) no-repeat 0 3px; }
 #timeline-statuses ul .box p.location span { background: url(../../../images/icon_location.png) no-repeat 2px 0; }
 #timeline-statuses ul .box p.referral span { background: url(../../../images/icon_referral.png) no-repeat 0 4px; }
 #timeline-statuses ul .box p.rejection span { background: url(../../../images/icon_rejection.png) no-repeat; }

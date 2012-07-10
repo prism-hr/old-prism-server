@@ -30,7 +30,7 @@
 			      	
 							<p>
 			              		<!-- Button -->
-							    <a href="${host}/pgadmissions/register?activationCode=${newUser.activationCode}" title="Register">
+							    <a style="text-decoration:none;" href="${host}/pgadmissions/register?activationCode=${newUser.activationCode}" title="Register">
 							    	<img border="0" style="border: none;" width="102" height="36" alt="Register" src="${host}/pgadmissions/design/default/images/email/register.png">
 							    </a>
 							</p>

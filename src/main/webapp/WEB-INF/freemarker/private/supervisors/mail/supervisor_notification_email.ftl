@@ -32,7 +32,7 @@
 	
 						<p>
 		              		<!-- Button -->
-		              		<a  
+		              		<a  style="text-decoration:none;" 
 			                       	 <#if !supervisor.user.enabled>
 			                       	 	href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}"
 			                       	 <#else>

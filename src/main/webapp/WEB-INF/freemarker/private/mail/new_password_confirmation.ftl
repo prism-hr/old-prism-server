@@ -31,7 +31,7 @@
 			        
 			        <p>
 			          <!-- Button -->
-			          <a href="${host}/pgadmissions/login" title="Login">
+			          <a style="text-decoration:none;" href="${host}/pgadmissions/login" title="Login">
 			            <img border="0" style="border: none;" width="99" height="36" alt="Login" src="${host}/pgadmissions/design/default/images/email/login.jpg" />
 			          </a>
 			        </p>

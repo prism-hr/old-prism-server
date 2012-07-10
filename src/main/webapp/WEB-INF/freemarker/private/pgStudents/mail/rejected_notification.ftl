@@ -42,7 +42,7 @@
 			      	<#if prospectusLink??>
 				        <p>
 				          <!-- Button -->
-							<a href="${prospectusLink}" title="Find Another Programme">
+							<a style="text-decoration:none;" href="${prospectusLink}" title="Find Another Programme">
 				            	<img border="0" style="border: none;" width="185" height="36" alt="Find Another Programme" src="${host}/pgadmissions/design/default/images/email/find_another_prog.png" />
 				          	</a>
 				        </p>

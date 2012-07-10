@@ -9,7 +9,7 @@
 		<title>UCL Postgraduate Admissions</title>
 		
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta http-equiv="X-UA-Compatible" content="IE=7,chrome=1" />
 		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 		

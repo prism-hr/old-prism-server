@@ -115,5 +115,8 @@
 	<mvc:view-controller path="/addReferences/referenceuploaded" view-name="private/referees/upload_success"/>
 	
 	<mvc:view-controller path="/comingsoon" view-name="public/common/coming_soon"/>
+	
+	<mvc:view-controller path="/error" view-name="public/error/error"/>
+	<mvc:view-controller path="/404" view-name="public/error/404"/>
 
 </beans>

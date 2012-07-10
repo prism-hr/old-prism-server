@@ -51,7 +51,7 @@
 								</div>
 								<div class="content">
 									<h1>Whoops</h1>
-									<p>Sorry, an error occurred while processing your request.</p>
+									<p>We are sorry, there has been a problem. Try back later.</p>
 									<input type="hidden" value="500"/>
 								</div>
 							</div>

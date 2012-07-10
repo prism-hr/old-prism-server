@@ -13,7 +13,7 @@
 				</#list>
 			</#if>
 		</span>
-		<input id="commentDocument" class="full" type="file" name="file" value="" />
+		<input id="commentDocument" class="full multiple" type="file" name="file" value="" />
 		<span id="commentDocumentProgress" style="display: none;" ></span>
 	</div>
 </div>

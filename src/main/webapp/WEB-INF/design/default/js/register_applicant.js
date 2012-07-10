@@ -21,6 +21,13 @@ $(document).ready(function()
 	}); 
 
 
+	$('#registration-box button').click(function()
+	{
+		$('#registration-box').append('<div class="ajax" />');
+		return true;
+	});
+  
+
 	// Resend confirmation email button.
 	$('#resend').click(function()
 	{

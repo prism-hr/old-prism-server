@@ -53,8 +53,7 @@ public abstract class ReviewController {
 
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null
-				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
-						.isReviewerInLatestReviewRoundOfApplicationForm(application))) {
+				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application))) {
 			throw new ResourceNotFoundException();
 		}
 		return application;

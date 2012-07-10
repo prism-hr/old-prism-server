@@ -99,6 +99,6 @@ public class ReviewCommentController {
 			return REVIEW_FEEDBACK_PAGE;
 		}
 		commentService.save(comment);		
-		return "redirect:/review/assignReviewers?applicationId=" + comment.getApplication().getApplicationNumber();
+		return "redirect:/applications?messageCode=review.feedback&application=" + comment.getApplication().getApplicationNumber();
 	}
 }

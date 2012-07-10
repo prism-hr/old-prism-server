@@ -21,6 +21,14 @@ $(document).ready(function()
 			$('div.ajax').remove();
 			updateRegistryForm();
 
+			// -----------------------------------------------------------------------------
+			// Restrict some text fields to numbers only.
+			// -----------------------------------------------------------------------------
+			$(document).on('keydown', 'input.numeric', function(event)
+			{
+				numbersOnly(event);
+			});
+
 		}
 	});
 	

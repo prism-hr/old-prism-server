@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class NewUserMailSender extends MailSender {
@@ -26,20 +27,34 @@ public class NewUserMailSender extends MailSender {
 		model.put("newUser", user);
 		model.put("admin", user.getPendingRoleNotifications().get(0).getAddedByUser());
 		model.put("program", user.getPendingRoleNotifications().get(0).getProgram());
-		StringBuilder sb = new StringBuilder();
-		for(int i = 0; i< user.getPendingRoleNotifications().size();i++ ){
-			if (i > 0 && i < user.getPendingRoleNotifications().size( ) - 1 ) {
-				sb.append(", ");
-			}
-			if ( user.getPendingRoleNotifications().size( )> 1 && i ==  (user.getPendingRoleNotifications().size( ) - 1)) {
-				sb.append(" and ");
-			}
-			sb.append(  StringUtils.capitalize(user.getPendingRoleNotifications().get(i).getRole().getAuthorityEnum().toString().toLowerCase()));
-		}
-		
-		model.put("newRoles", sb.toString());
+		String rolesString = constructRolesString(user);
+		model.put("newRoles", rolesString);
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		return model;
+	}
+
+	private String constructRolesString(RegisteredUser user) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < user.getPendingRoleNotifications().size(); i++) {
+			if (i > 0 && i < user.getPendingRoleNotifications().size() - 1) {
+				sb.append(", ");
+			}
+			if (user.getPendingRoleNotifications().size() > 1 && i == (user.getPendingRoleNotifications().size() - 1)) {
+				sb.append(" and ");
+			}
+			PendingRoleNotification pendingRoleNotification = user.getPendingRoleNotifications().get(i);
+			Authority authority = pendingRoleNotification.getRole().getAuthorityEnum();
+			if (authority == Authority.REVIEWER || authority == Authority.INTERVIEWER || authority == Authority.SUPERVISOR) {
+				sb.append("Default ");
+			}
+			sb.append(StringUtils.capitalize(authority.toString().toLowerCase()));
+			if (authority != Authority.SUPERADMINISTRATOR) {
+				sb.append(" for " + pendingRoleNotification.getProgram().getTitle());
+			}
+		}
+
+		String rolesString = sb.toString();
+		return rolesString;
 	}
 
 	public void sendNewUserNotification(RegisteredUser user) {
@@ -47,13 +62,13 @@ public class NewUserMailSender extends MailSender {
 
 		Map<String, Object> model = createModel(user);
 		String subject = null;
-		if(model.get("program") != null){
-			subject = resolveMessage("registration.invitation", model.get("newRoles"), ((Program)model.get("program")).getTitle());
-		}else{
+		if (model.get("program") != null) {
+			subject = resolveMessage("registration.invitation", model.get("newRoles"), ((Program) model.get("program")).getTitle());
+		} else {
 			subject = resolveMessage("registration.invitation.superadmin", model.get("newRoles"));
 		}
 
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,// 
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
 				"private/staff/mail/new_user_suggestion.ftl", model, null));
 	}
 }

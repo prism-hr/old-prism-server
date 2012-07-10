@@ -84,19 +84,28 @@
 #timeline-statuses .approved ul .box { background-color: #DBEEF5; }
 #timeline-statuses .approved ul .box .title { background: #B6DDE9; }
 
-#timeline-statuses ul .box p.referral { background: url(../../../images/icon_referral.png) no-repeat 10px 8px; padding-left: 40px; }
-#timeline-statuses ul .box p.declined { background: url(../../../images/icon_declined.png) no-repeat 10px 8px; padding-left: 40px; }
 
 #timeline-statuses ul .box p.datetime,
+#timeline-statuses ul .box p.declined,
+#timeline-statuses ul .box p.delegate,
 #timeline-statuses ul .box p.location,
-#timeline-statuses ul .box p.restart,
-#timeline-statuses ul .box p.delegate { padding: 5px 10px 5px 40px; position: relative; }
+#timeline-statuses ul .box p.referral,
+#timeline-statuses ul .box p.restart { padding: 5px 10px 5px 40px; position: relative; }
+
 #timeline-statuses ul .box p.datetime span,
-#timeline-statuses ul .box p.location span { background: no-repeat 3px; position: absolute; left: 8px; top: 0; width: 24px; height: 22px; display: block; }
+#timeline-statuses ul .box p.declined span,
+#timeline-statuses ul .box p.delegate span,
+#timeline-statuses ul .box p.location span,
+#timeline-statuses ul .box p.referral span,
+#timeline-statuses ul .box p.restart span { background: no-repeat 3px; position: absolute; left: 8px; top: 0; width: 24px; height: 22px; display: block; }
+
 #timeline-statuses ul .box p.datetime span { background-image: url(../../../images/icon_calendar.png); }
-#timeline-statuses ul .box p.location span { background-image: url(../../../images/icon_location.png); }
-#timeline-statuses ul .box p.restart span { background-image: url(../../../images/icon_restart.png); }
+#timeline-statuses ul .box p.declined span { background: url(../../../images/icon_declined.png) no-repeat 10px 8px;}
 #timeline-statuses ul .box p.delegate span { background-image: url(../../../images/icon_delegation.png); }
+#timeline-statuses ul .box p.location span { background-image: url(../../../images/icon_location.png); }
+#timeline-statuses ul .box p.referral span { background: url(../../../images/icon_referral.png) no-repeat 10px 8px; }
+#timeline-statuses ul .box p.restart span { background-image: url(../../../images/icon_restart.png); }
+
 
 /* Application tab ---------------------------------------------------------------------------------------- */
 #application div.admin_row .admin_row_label,

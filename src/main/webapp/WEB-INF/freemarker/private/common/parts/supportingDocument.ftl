@@ -2,7 +2,7 @@
 <span class="uploaded-file" name="supportingDocumentSpan">
 	<#if document?? && document.id??>
 		<#if document.type != 'COMMENT'>
-			<input type="text" class="file" id="document_${document.type}" value="${encrypter.encrypt(document.id)}" style="display:none" name="document"/>
+			<input type="text" class="file multiple" id="document_${document.type}" value="${encrypter.encrypt(document.id)}" style="display:none" name="document"/>
 			<#if document.type != 'REFERENCE' >
 				<a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a>
 				<a data-desc="Delete" class="button-delete button-hint">delete</a>

@@ -199,6 +199,7 @@ section.form-rows .field.posting * { display: none; }
 
 /* Show only the file link when a file is uploaded. */
 section.form-rows .field.uploaded input { display: none; }
+section.form-rows .field.uploaded input.multiple { display: block; }
 section.form-rows .field.uploaded a.uploaded-filename { display: inline-block; }
 section.form-rows .field.uploaded a { display: inline-block; vertical-align: top; }
 

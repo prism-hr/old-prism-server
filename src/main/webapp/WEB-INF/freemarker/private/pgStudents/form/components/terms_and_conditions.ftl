@@ -9,10 +9,8 @@
 			<div class="row">
 				<input type="hidden" id="ATapplicationFormId" name="applicationId" 	value="${applicationForm.applicationNumber}"/>
 				<span class="terms-label"  <#if errorCode?? && errorCode=="true">style="color: red" </#if>>
-			    	I understand that in accepting this declaration I am confirming
-					that the information contained in this application is true and accurate. 
-					I am aware that any subsequent offer of study may be retracted at any time
-					if any of the information contained is found to be misleading or false.
+					Confirm that the information that you have provided in this form is true and correct. 
+					Failure to provide true and correct information may result in a subsequent offer of study being withdrawn.				
 				</span>
 				<div class="terms-field" >
 					<input type="checkbox" name="acceptTermsCB" id="acceptTermsCB"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if> />

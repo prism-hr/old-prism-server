@@ -343,7 +343,7 @@
 					</#list>
 					
 					<div class="row">
-						 <label class="plain-label">Do you require a visa to study in the UK?<em>*</em></label>
+						<label class="plain-label">Do you require a visa to study in the UK?<em>*</em></label>
                    		<span class="hint"></span>
                    		<div class="field">                   			
                    			<label>
@@ -496,11 +496,11 @@
 		     	 </#if>
 					<div class="row">
 						<span class="terms-label">
-							I understand that in accepting this declaration I am confirming
-							that the information contained in this section is true and accurate. 
-							I am aware that any subsequent offer of study may be retracted at any time
-							if any of the information contained is found to be misleading or false.
+							Confirm that the information that you have provided in this section is true 
+							and correct. Failure to provide true and correct information may result in a 
+							subsequent offer of study being withdrawn.				
 						</span>
+
 						<div class="terms-field">
 							<input type="checkbox" name="acceptTermsPEDCB" id="acceptTermsPEDCB"/>
 						</div>

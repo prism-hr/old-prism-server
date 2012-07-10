@@ -22,7 +22,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our --Context-- have completed their assessment of your Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>. We are pleased to inform you that they have recommended that you be recruited to the programme.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our <#if previousStage == 'VALIDATION'>recruitment office<#elseif previousStage == 'REVIEW'>academic review panel<#elseif previousStage == 'INTErVIEW'>interview panel</#if> have completed their assessment of your Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>. We are pleased to inform you that they have recommended that you be recruited to the programme.</font>
 			      	</p>
 		      		
 			      	<p>
@@ -34,7 +34,7 @@
 			      	</p>
 		      		 
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">We aim to be back in contact with the outcome of this assessment by close of business on --ReviewStageDeadline--.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.</font>
 			      	</p>
 			      	
 							<p>

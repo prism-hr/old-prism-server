@@ -69,6 +69,10 @@ function commentDocumentDelete()
 		},
 		success: function(data) {			
 			$('#' +id).parent().remove()
+		},
+		error: function()
+		{
+			$container.append('<span class="invalid">Upload failed; please retry.</span>');
 		}
 	});
 

@@ -1,6 +1,6 @@
 <div id="programme-details">
   <div class="icon">
-		${applicationForm.status.displayValue()}
+		<span class="icon-status ${applicationForm.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${applicationForm.status.displayValue()}">${applicationForm.status.displayValue()}</span>
 	</div>
 
   <div class="row">

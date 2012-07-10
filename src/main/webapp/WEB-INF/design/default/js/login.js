@@ -19,6 +19,12 @@ $(document).ready(function()
 		if (e.target.value == '')
 			e.target.value = e.target.defaultValue;
 	}); 
-
+	
+	
+	$('#login-box button').click(function()
+	{
+		$('#login-box').append('<div class="ajax" />');
+		return true;
+	});
   
 });

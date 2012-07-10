@@ -31,7 +31,7 @@ public class ForgotPasswordController {
 	@RequestMapping(value = "resetPassword", method = RequestMethod.POST)
 	public String resetPassword(@RequestParam String email, ModelMap model) {
 		if (!EmailValidator.getInstance().isValid(email)) {
-			model.put("errorMessageCode", "user.email.invalid");
+			model.put("errorMessageCode", "text.email.notvalid");
 			return FORGOT_PW_VIEW_NAME;
 		}
 		model.put("email", email);

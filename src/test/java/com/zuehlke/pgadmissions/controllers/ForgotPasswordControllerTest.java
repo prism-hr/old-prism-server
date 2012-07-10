@@ -41,7 +41,7 @@ public class ForgotPasswordControllerTest {
 		
 		EasyMock.verify(userService);
 		Assert.assertEquals(FORGOT_PW_PAGE, viewName);
-		Assert.assertEquals("user.email.invalid", model.get("errorMessageCode"));
+		Assert.assertEquals("text.email.notvalid", model.get("errorMessageCode"));
 	}
 
 	@Test

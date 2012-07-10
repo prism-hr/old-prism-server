@@ -58,7 +58,7 @@
 		    	<td colspan="3"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" /></td>
 		  	</tr>
 		  	<tr>
-		    	<td colspan="3" bgcolor="#6D6E71" style="background-color: #6D6E71; line-height: 1; white-space: nowrap;">
+		    	<td colspan="3" bgcolor="#6D6E71" style="background-color: #6D6E71; line-heYight: 1; white-space: nowrap;">
             <table width="600" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td colspan="5"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="600" height="9" alt="" /></td>

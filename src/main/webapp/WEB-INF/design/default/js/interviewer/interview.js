@@ -59,6 +59,9 @@ $(document).ready(function()
 						  },
 						  400: function() {
 							  window.location.href = "/pgadmissions/400";
+						  },				  
+						  403: function() {
+							  window.location.href = "/pgadmissions/404";
 						  }
 					  },
 					url:"/pgadmissions/interview/createInterviewer",
@@ -154,6 +157,9 @@ $(document).ready(function()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url: url,
@@ -210,6 +216,9 @@ function getInterviewersAndDetailsSections(){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url: url +"?applicationId=" + $('#applicationId').val(), 
@@ -253,6 +262,9 @@ function getCreateInterviewersSection(){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url:"/pgadmissions/interview/create_interviewer_section?applicationId=" + $('#applicationId').val(), 

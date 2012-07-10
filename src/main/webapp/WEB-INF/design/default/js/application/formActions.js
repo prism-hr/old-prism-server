@@ -63,6 +63,9 @@ $(document).ready(function()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			},
 			url:"/pgadmissions/acceptTerms/getTermsAndConditions",
@@ -248,6 +251,9 @@ function loadProgrammeSection(clear){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		  url: "/pgadmissions/update/getProgrammeDetails",
@@ -298,6 +304,9 @@ function loadPersonalDetails(clear){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 			url:"/pgadmissions/update/getPersonalDetails",
@@ -358,6 +367,9 @@ function loadAddresSection(clear){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 			url:"/pgadmissions/update/getAddress",
@@ -410,6 +422,9 @@ function loadQualificationsSection(clear){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		},
 		url:"/pgadmissions/update/getQualification",
@@ -446,6 +461,9 @@ function loadEmploymentSection(clear){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		},
 		url:"/pgadmissions/update/getEmploymentPosition",
@@ -483,6 +501,9 @@ function loadFundingSection(clear){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		},
 		url:"/pgadmissions/update/getFunding",
@@ -521,6 +542,9 @@ function loadReferenceSection(clear){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		},
 		url:"/pgadmissions/update/getReferee",
@@ -559,6 +583,9 @@ function loadDocumentsSection(clear){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		},
 		url:"/pgadmissions/update/getDocuments",
@@ -605,6 +632,9 @@ function loadAdditionalInformationSection(clear){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		},
 		url:"/pgadmissions/update/getAdditionalInformation",

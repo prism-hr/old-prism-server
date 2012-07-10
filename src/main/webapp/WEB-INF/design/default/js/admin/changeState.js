@@ -58,6 +58,9 @@ $(document).ready(function()
 					  },
 					  400: function() {
 						  window.location.href = "/pgadmissions/400";
+					  },				  
+					  403: function() {
+						  window.location.href = "/pgadmissions/404";
 					  }
 				},
 			url:"/pgadmissions/registryHelpRequest",
@@ -150,6 +153,9 @@ function changeState()
 					  },
 					  400: function() {
 						  window.location.href = "/pgadmissions/400";
+					  },				  
+					  403: function() {
+						  window.location.href = "/pgadmissions/404";
 					  }
 				},
 				url:"/pgadmissions/delegate",

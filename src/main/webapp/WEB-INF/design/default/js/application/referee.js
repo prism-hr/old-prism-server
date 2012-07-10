@@ -38,6 +38,9 @@ $(document).ready(function()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			},
 			url:"/pgadmissions/deleteentity/referee",
@@ -145,6 +148,9 @@ $(document).ready(function()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			},
 			url:"/pgadmissions/update/getReferee",
@@ -213,6 +219,9 @@ function postRefereeData(message){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		 },
 		url:"/pgadmissions/update/editReferee" , 

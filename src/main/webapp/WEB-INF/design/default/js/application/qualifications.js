@@ -89,6 +89,9 @@ $(document).ready(function(){
 					  },
 					  400: function() {
 						  window.location.href = "/pgadmissions/400";
+					  },				  
+					  403: function() {
+						  window.location.href = "/pgadmissions/404";
 					  }
 				},
 			url:"/pgadmissions/deleteentity/qualification",
@@ -178,6 +181,9 @@ $(document).ready(function(){
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 				url:"/pgadmissions/update/getQualification",
@@ -267,6 +273,9 @@ function postQualificationData(message)
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url: "/pgadmissions/update/editQualification",
@@ -331,6 +340,9 @@ function ajaxProofOfAwardDelete()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url: "/pgadmissions/delete/asyncdelete",

@@ -65,7 +65,7 @@ public class NewUserMailSenderTest {
 		assertEquals(user, model.get("newUser"));
 		assertEquals(admin, model.get("admin"));
 		assertEquals(program, model.get("program"));
-		assertEquals("Superadministrator, Administrator for bob, Default Reviewer for bob, Default Interviewer for bob, Default Supervisor for bob and Approver for bob", model.get("newRoles"));
+		assertEquals("Superadministrator, Administrator, Default Reviewer, Default Interviewer, Default Supervisor and Approver for bob", model.get("newRoles"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 	}
 
@@ -103,7 +103,7 @@ public class NewUserMailSenderTest {
 
 		EasyMock.expect(msgSourceMock.getMessage(//
 				EasyMock.eq("registration.invitation"),// 
-				EasyMock.aryEq(new Object[] { "user role","program title" }),// 
+				EasyMock.aryEq(new Object[] { }),// 
 				EasyMock.eq((Locale) null))).andReturn("resolved subject");
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);

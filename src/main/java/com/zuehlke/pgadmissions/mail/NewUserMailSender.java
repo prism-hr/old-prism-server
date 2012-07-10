@@ -35,6 +35,7 @@ public class NewUserMailSender extends MailSender {
 
 	private String constructRolesString(RegisteredUser user) {
 		StringBuilder sb = new StringBuilder();
+		String programTitle = null;
 		for (int i = 0; i < user.getPendingRoleNotifications().size(); i++) {
 			if (i > 0 && i < user.getPendingRoleNotifications().size() - 1) {
 				sb.append(", ");
@@ -44,17 +45,20 @@ public class NewUserMailSender extends MailSender {
 			}
 			PendingRoleNotification pendingRoleNotification = user.getPendingRoleNotifications().get(i);
 			Authority authority = pendingRoleNotification.getRole().getAuthorityEnum();
+			if (authority != Authority.SUPERADMINISTRATOR && programTitle == null) {
+				programTitle = pendingRoleNotification.getProgram().getTitle();
+			}
 			if (authority == Authority.REVIEWER || authority == Authority.INTERVIEWER || authority == Authority.SUPERVISOR) {
+
 				sb.append("Default ");
 			}
 			sb.append(StringUtils.capitalize(authority.toString().toLowerCase()));
-			if (authority != Authority.SUPERADMINISTRATOR) {
-				sb.append(" for " + pendingRoleNotification.getProgram().getTitle());
-			}
-		}
 
-		String rolesString = sb.toString();
-		return rolesString;
+		}
+		if(programTitle != null){
+			sb.append(" for " + programTitle);
+		}
+		return sb.toString();
 	}
 
 	public void sendNewUserNotification(RegisteredUser user) {
@@ -63,7 +67,7 @@ public class NewUserMailSender extends MailSender {
 		Map<String, Object> model = createModel(user);
 		String subject = null;
 		if (model.get("program") != null) {
-			subject = resolveMessage("registration.invitation", model.get("newRoles"), ((Program) model.get("program")).getTitle());
+			subject = resolveMessage("registration.invitation");
 		} else {
 			subject = resolveMessage("registration.invitation.superadmin", model.get("newRoles"));
 		}

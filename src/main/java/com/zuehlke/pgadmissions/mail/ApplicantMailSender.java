@@ -41,6 +41,7 @@ public class ApplicantMailSender extends StateChangeMailSender {
 		model.put("registryContacts", personService.getAllRegistryUsers());
 		
 		model.put("host", Environment.getInstance().getApplicationHostName());
+		model.put("admissionOfferServiceLevel", Environment.getInstance().getAdmissionsOfferServiceLevel());
 
 		if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
 			model.put("reason", form.getRejection().getRejectionReason());

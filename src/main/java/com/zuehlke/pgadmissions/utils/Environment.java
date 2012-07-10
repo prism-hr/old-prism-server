@@ -11,6 +11,8 @@ public class Environment {
 	private String emailFromAddress;
 	private String emailToAddress;
 	private String uclProspectusLink;
+	private String admissionsOfferServieLevel;
+	private String admissionsValidationServiceLevel;
 	
 	private Environment() {
 		InputStream in = null;
@@ -22,6 +24,8 @@ public class Environment {
 			emailFromAddress = environmentProperties.getProperty("email.address.from");
 			emailToAddress = environmentProperties.getProperty("email.address.to");
 			uclProspectusLink = environmentProperties.getProperty("ucl.prospectus.url");
+			admissionsOfferServieLevel = environmentProperties.getProperty("admissions.servicelevel.offer");
+			 admissionsValidationServiceLevel = environmentProperties.getProperty("admissions.servicelevel.validation");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -56,5 +60,14 @@ public class Environment {
 
 	public String getUCLProspectusLink() {
 		return uclProspectusLink;
+	}
+
+	public String getAdmissionsOfferServiceLevel() {
+		
+		return admissionsOfferServieLevel;
+	}
+
+	public String getAdmissionsValidationServiceLevel() {		
+		return admissionsValidationServiceLevel;
 	}
 }

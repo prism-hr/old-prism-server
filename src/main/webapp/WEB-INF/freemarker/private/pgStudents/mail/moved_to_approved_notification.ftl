@@ -49,7 +49,7 @@
 			      	</p>
 
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions aim to be in contact with you within <<AdmissionsOfferServiceLevel>>. Should you have any further questions on your Application, you should refer them by email to admissions@ucl.ac.uk</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions aim to be in contact with you within ${admissionOfferServiceLevel}. Should you have any further questions on your Application, you should refer them by email to admissions@ucl.ac.uk</font>
 			      	</p>
 
 			      	<p>

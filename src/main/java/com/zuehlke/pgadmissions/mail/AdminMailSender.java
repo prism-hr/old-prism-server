@@ -38,6 +38,7 @@ public class AdminMailSender extends StateChangeMailSender {
 		model.put("application", applicationForm);
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		model.put("applicant", applicationForm.getApplicant());
+		model.put("admissionOfferServiceLevel", Environment.getInstance().getAdmissionsOfferServiceLevel());
 		return model;
 	}
 

@@ -19,4 +19,10 @@ $(document).ready(function()
 			e.target.value = e.target.defaultValue;
 	}); 
 
+	$('#registration-box button').click(function()
+	{
+		$('#registration-box').append('<div class="ajax" />');
+		return true;
+	});
+
 });

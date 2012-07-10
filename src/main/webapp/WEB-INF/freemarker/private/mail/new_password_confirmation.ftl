@@ -22,10 +22,13 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Your password has been reset, your new password is: ${newPassword}</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Your password has been reset. Your new password is: ${newPassword}.</font>
 			      	</p>
-			    <br>  	
-			    
+			        
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">WE RECOMMEND THAT YOU LOGIN AND CHANGE YOUR PASSWORD NOW.</font>
+			      	</p>
+			        
 			        <p>
 			          <!-- Button -->
 			          <a href="${host}/pgadmissions/login" title="Login">

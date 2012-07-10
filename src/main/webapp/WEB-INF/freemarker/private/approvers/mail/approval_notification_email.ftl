@@ -28,7 +28,7 @@
         </p>
         <p>
           <!-- Button -->
-			<a href="${host}/pgadmissions/progress/getPage?applicationId=${application.applicationNumber}" title="Evaluate Application">
+			<a style="text-decoration:none;" href="${host}/pgadmissions/progress/getPage?applicationId=${application.applicationNumber}" title="Evaluate Application">
             	<img border="0" style="border: none;" width="168" height="36" alt="Evaluate Application" src="${host}/pgadmissions/design/default/images/email/evaluate_app.png" />
           	</a>
         </p>

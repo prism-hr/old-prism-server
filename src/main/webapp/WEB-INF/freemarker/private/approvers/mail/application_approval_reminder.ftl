@@ -30,7 +30,7 @@
 			      	
 						<p>
 			            	<!-- Button -->
-							<a href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}" title="Approval">
+							<a style="text-decoration:none;" href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}" title="Approval">
 								<img border="0" style="border: none;" width="167" height="36" alt="Approval" src="${host}/pgadmissions/design/default/images/email/approve_app.png">
 							</a>
 						</p>

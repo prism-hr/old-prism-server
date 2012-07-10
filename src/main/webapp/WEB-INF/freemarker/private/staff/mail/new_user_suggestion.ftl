@@ -35,8 +35,6 @@
 							    </a>
 							</p>
 			      	
-			      	
-				    <br>  	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>

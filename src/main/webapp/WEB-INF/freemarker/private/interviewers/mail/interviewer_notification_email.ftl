@@ -38,7 +38,7 @@
 					      	
 					        
 					          <!-- Button -->
-								<a href="${interviewer.interview.locationURL}" title="Get Directions">
+								<a style="text-decoration:none;" href="${interviewer.interview.locationURL}" title="Get Directions">
 					            	<img border="0" style="border: none;" width="133" height="36" alt="Get Directions" src="${host}/pgadmissions/design/default/images/email/get_directions.png" />
 					          	</a>
 					        
@@ -46,7 +46,7 @@
 					    	</#if>
 
 					          <!-- Button -->
-								<a 
+								<a style="text-decoration:none;" 
 				                      <#if !interviewer.user.enabled>
 				                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"
 				                      <#else>

@@ -21,7 +21,7 @@ $(document).ready(function()
 	// --------------------------------------------------------------------------------
 	$('#search-go').addClass('disabled').click(function()
 	{
-		if ($('#searchTerm').val().length < 3 || $('#searchCategory').val() == '')
+		if ($('#searchTerm').val().length == 0 || $('#searchCategory').val() == '')
 		{
 			fixedTip($('#search-go'), 'You must specify your filter.');
 			return;
@@ -39,7 +39,7 @@ $(document).ready(function()
 	{
 		var length = $('#searchTerm').val().length;
 		var column = $('#searchCategory').val();
-		$('#search-go').toggleClass('disabled', length < 3 || column == '');
+		$('#search-go').toggleClass('disabled', length == 0 || column == '');
 		$('#search-reset').toggleClass('disabled', length == 0 && column == '');
 		
 		if ($('#search-go').not('.disabled'))

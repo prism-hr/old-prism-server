@@ -6,7 +6,7 @@
       <li><a href="http://www.ucl.ac.uk/accessibility/">Accessibility</a></li>
       <li><a href="http://www.ucl.ac.uk/privacy/">Privacy</a></li>
       <li><a href="http://ucl.ac.uk/advanced-search">Advanced Search</a></li>
-      <li><a href="mailto:prism@ucl.ac.uk">Contact Us</a></li>
+      <li><a href="mailto:prism@ucl.ac.uk" target="_blank">Contact Us</a></li>
     </ul>
 		
 		<p>

@@ -1,0 +1,173 @@
+package com.zuehlke.pgadmissions.services;
+
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
+import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.StageDurationDAO;
+import com.zuehlke.pgadmissions.dao.SupervisorDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.utils.EventFactory;
+
+@Service
+public class ApprovalService {
+
+	private final ApplicationFormDAO applicationDAO;
+	private final ApprovalRoundDAO approvalRoundDAO;
+	private final StageDurationDAO stageDurationDAO;
+	
+	private final EventFactory eventFactory;
+	private final CommentDAO commentDAO;
+	
+	
+	private final UserService userService;
+	
+	private final SupervisorDAO supervisorDAO;
+
+	ApprovalService() {
+		this(null, null, null, null, null, null, null);
+	}
+
+	@Autowired
+	public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO,
+			EventFactory eventFactory, CommentDAO commentDAO, SupervisorDAO supervisorDAO) {
+
+		this.userService = userService;
+		this.applicationDAO = applicationDAO;
+		this.approvalRoundDAO = approvalRoundDAO;
+		this.stageDurationDAO = stageDurationDAO;
+	
+		this.eventFactory = eventFactory;
+		this.commentDAO = commentDAO;
+		this.supervisorDAO = supervisorDAO;
+
+	}
+
+	@Transactional
+	public void moveApplicationToApproval(ApplicationForm application, ApprovalRound approvalRound) {
+		checkApplicationStatus(application);
+		application.setLatestApprovalRound(approvalRound);
+		
+		approvalRound.setApplication(application);
+		approvalRoundDAO.save(approvalRound);
+		StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
+		application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
+		application.setStatus(ApplicationFormStatus.APPROVAL);
+		application.getEvents().add(eventFactory.createEvent(approvalRound));
+		application.setPendingApprovalRestart(false);
+		resetRequestRestartNotificationRecords(application);
+		
+		applicationDAO.save(application);
+	}
+
+	private void resetRequestRestartNotificationRecords(ApplicationForm application) {
+		NotificationRecord restartRequestNotification = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
+		if(restartRequestNotification != null){
+			application.getNotificationRecords().remove(restartRequestNotification);
+		}
+		NotificationRecord restartRequestReminder = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
+		if(restartRequestReminder != null){
+			application.getNotificationRecords().remove(restartRequestReminder);
+		}
+	}
+
+	@Transactional
+	public void requestApprovalRestart(ApplicationForm application, RegisteredUser approver, Comment comment) {
+		if (!approver.isInRole(Authority.APPROVER)) {
+			throw new IllegalArgumentException(String.format("User %s is not an approver!", approver.getUsername()));
+		}
+		if (!approver.isInRoleInProgram(Authority.APPROVER, application.getProgram())) {
+			throw new IllegalArgumentException(String.format("User %s is not an approver in program %s!",//
+					approver.getUsername(), application.getProgram().getTitle()));
+		}
+		if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
+			throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", application.getApplicationNumber()));
+		}	
+		commentDAO.save(comment);
+		application.setPendingApprovalRestart(true);
+		application.setApproverRequestedRestart(approver);
+		applicationDAO.save(application);
+	}
+
+	private void checkApplicationStatus(ApplicationForm application) {
+		ApplicationFormStatus status = application.getStatus();
+		switch (status) {
+		case VALIDATION:
+		case REVIEW:
+		case INTERVIEW:
+		case APPROVAL:
+			break;
+		default:
+			throw new IllegalStateException(String.format("Application in invalid status: '%s'!", status));
+		}
+	}
+
+	@Transactional
+	public void save(ApprovalRound approvalRound) {
+		approvalRoundDAO.save(approvalRound);
+	}
+
+	@Transactional
+	public void moveApplicationToApproval(ApplicationForm application) {
+		StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
+		application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
+		application.setStatus(ApplicationFormStatus.APPROVAL);
+		applicationDAO.save(application);
+
+	}
+	@Transactional		
+	public void moveToApproved(ApplicationForm application) {
+		if(ApplicationFormStatus.APPROVAL != application.getStatus()){
+			throw new IllegalStateException();
+		}
+		application.setStatus(ApplicationFormStatus.APPROVED);
+		application.setApprover(userService.getCurrentUser());
+		application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
+		applicationDAO.save(application);
+	}
+	
+	@Transactional
+	public void addSupervisorInPreviousReviewRound(ApplicationForm applicationForm, RegisteredUser newUser) {
+		Supervisor supervisor = newSupervisor();
+		supervisor.setUser(newUser);
+		supervisorDAO.save(supervisor);
+		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+		if (latestApprovalRound == null){
+			ApprovalRound approvalRound = newApprovalRound();
+			approvalRound.getSupervisors().add(supervisor);
+			approvalRound.setApplication(applicationForm);
+			save(approvalRound);
+			applicationForm.setLatestApprovalRound(approvalRound);
+		}
+		else{
+			latestApprovalRound.getSupervisors().add(supervisor);
+			save(latestApprovalRound);
+		}
+		
+	}
+	
+	public Supervisor newSupervisor() {
+		return new Supervisor();
+	}
+
+	public ApprovalRound newApprovalRound() {
+		ApprovalRound approvalRound = new ApprovalRound();
+		return approvalRound;
+	}
+
+}

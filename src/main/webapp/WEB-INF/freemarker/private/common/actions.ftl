@@ -20,7 +20,7 @@
 		<#if !user.isInRole('APPLICANT') && user.hasAdminRightsOnApplication(application)>
 			<option value="comment">Comment</option>								    				
 		</#if>      												
-		<#if (user.isReviewerInLatestReviewRoundOfApplicationForm(application)&& application.isInState('REVIEW') && user.hasRespondedToProvideReviewForApplication(application))>
+		<#if (user.isReviewerInLatestReviewRoundOfApplicationForm(application)&& application.isInState('REVIEW') && user.hasRespondedToProvideReviewForApplicationLatestRound(application))>
 			<option value="assignReviewer">Assign Reviewer</option>
 		</#if>							                	   
 		<#if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplicationLatestRound(application))> 

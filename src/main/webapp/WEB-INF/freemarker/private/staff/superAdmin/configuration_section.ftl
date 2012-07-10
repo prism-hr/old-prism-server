@@ -25,9 +25,9 @@
 					<div class="field">	
 						<input type="hidden" id="stage" name="stage" value="${stage}" />
 						<#if stageDurations[stage]?? && stageDurations[stage].duration??>  				
-						<input type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${stageDurations[stage].duration?string("######")}" />
+						<input class="numeric" type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${stageDurations[stage].duration?string("######")}" />
 						<#else>
-						<input type="text" size="4" id="${stage}_duration" name="${stage}_duration"  />
+						<input class="numeric" type="text" size="4" id="${stage}_duration" name="${stage}_duration"  />
 						</#if>
 						<select name="${stage}_unit" id="${stage}_unit">
 							<option value="">Select...</option>
@@ -58,7 +58,7 @@
 					<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
 					<div class="field">	
 						<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
-						<input type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(reminderInterval.duration?string("######"))!}" />
+						<input class="numeric" type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(reminderInterval.duration?string("######"))!}" />
 						<select name="reminderUnit" id="reminderUnit">
 							<option value="">Select...</option>
 						<#list units as unit>

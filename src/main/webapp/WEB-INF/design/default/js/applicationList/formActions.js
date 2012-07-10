@@ -6,22 +6,6 @@ $(document).ready(function()
 	// Modal window functionality.
 	setupModalBox();
 	
-	// --------------------------------------------------------------------------------
-	// AJAX ACTIVITY
-	// --------------------------------------------------------------------------------
-	$('div.content-box-inner').ajaxStart(function()
-	{
-		if ($('div.content-box-inner div.ajax').length == 0)
-		{
-			$(this).css({ position: 'relative' })
-						 .append('<div class="ajax" />');
-		}
-	})
-	.ajaxComplete(function()
-	{
-		$('div.ajax', this).remove();
-	});
-
 	populateApplicationList(true);
 	
 	
@@ -148,6 +132,7 @@ function populateApplicationList(reset)
 	// We're fetching more applications.
 	if (fetches == 0)
 	{
+		$('div.content-box-inner').append('<div class="ajax" />');
 		$('.content-box-inner').append('<div class="fetching">Fetching more applications...</div>');
 	}
 	fetches++;
@@ -182,7 +167,7 @@ function populateApplicationList(reset)
 				fetches--;
 				if (fetches == 0)
 				{
-					$('.content-box-inner div.fetching').remove();
+					$('.content-box-inner div.fetching, .content-box-inner div.ajax').remove();
 					addToolTips();
 				}
 			}

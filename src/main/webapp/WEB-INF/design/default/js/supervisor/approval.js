@@ -78,6 +78,9 @@ $(document).ready(function()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url:"/pgadmissions/approval/createSupervisor",
@@ -146,6 +149,9 @@ $(document).ready(function()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url: url,
@@ -193,6 +199,9 @@ function getSupervisorsSection(){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url: url +"?applicationId=" + $('#applicationId').val(), 
@@ -226,6 +235,9 @@ function getCreateSupervisorsSection(){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url:"/pgadmissions/approval/create_supervisor_section?applicationId=" + $('#applicationId').val(), 

@@ -163,6 +163,9 @@ function populateApplicationList(reset)
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		  url: "/pgadmissions/applications/section",

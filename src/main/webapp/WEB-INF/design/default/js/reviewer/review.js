@@ -26,6 +26,9 @@ $(document).ready(function()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url:"/pgadmissions/review/createReviewer",
@@ -96,6 +99,9 @@ $(document).ready(function()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url: url,
@@ -148,6 +154,9 @@ function getReviewersSection(){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url: url +"?applicationId=" + $('#applicationId').val(), 
@@ -180,6 +189,9 @@ function getCreateReviewersSection(){
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url:"/pgadmissions/review/create_reviewer_section?applicationId=" + $('#applicationId').val(), 

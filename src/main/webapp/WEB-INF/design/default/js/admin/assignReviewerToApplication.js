@@ -45,6 +45,9 @@ $(document).ready(function() {
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url:"/pgadmissions/review/createReviewer", 
@@ -83,6 +86,9 @@ $(document).ready(function() {
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			  url:"/pgadmissions/review/moveApplicationToReview" , 

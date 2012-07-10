@@ -62,6 +62,9 @@ $(document).ready(function(){
 					  },
 					  400: function() {
 						  window.location.href = "/pgadmissions/400";
+					  },				  
+					  403: function() {
+						  window.location.href = "/pgadmissions/404";
 					  }
 				},
 			url:"/pgadmissions/deleteentity/funding",
@@ -163,6 +166,9 @@ $(document).ready(function(){
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			},
 			url:"/pgadmissions/update/getFunding",
@@ -227,6 +233,9 @@ function postFundingData(message)
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url:"/pgadmissions/update/editFunding",
@@ -282,6 +291,9 @@ function fundingDocumentDelete(){
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url:"/pgadmissions/delete/asyncdelete",

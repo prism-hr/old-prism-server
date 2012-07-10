@@ -132,6 +132,9 @@ $(document).ready(function(){
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			  url: "/pgadmissions/update/getAddress",
@@ -174,6 +177,9 @@ function postAddressData(message)
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url:"/pgadmissions/update/editAddress",

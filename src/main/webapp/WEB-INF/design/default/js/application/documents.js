@@ -104,6 +104,9 @@ function postDocumentData(message)
 			  },
 			  400: function() {
 				  window.location.href = "/pgadmissions/400";
+			  },				  
+			  403: function() {
+				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
 		url:"/pgadmissions/update/editDocuments",
@@ -160,6 +163,9 @@ function cvDelete()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url:"/pgadmissions/delete/deleteCV",
@@ -225,6 +231,9 @@ function psDelete()
 				  },
 				  400: function() {
 					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
 				  }
 			  },
 			url: "/pgadmissions/delete/deletePersonalStatement",

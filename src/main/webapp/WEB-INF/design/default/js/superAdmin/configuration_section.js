@@ -124,15 +124,6 @@ $(document).ready(function()
 				});
 		}
 
-
-		// -----------------------------------------------------------------------------
-		// Restrict some text fields to numbers only.
-		// -----------------------------------------------------------------------------
-		$('input.numeric').keydown(function(event)
-		{
-			numbersOnly(event);
-		});
-	
 	});
 });
 

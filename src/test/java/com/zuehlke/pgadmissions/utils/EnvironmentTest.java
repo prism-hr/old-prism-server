@@ -21,5 +21,13 @@ public class EnvironmentTest {
 		assertNotNull(Environment.getInstance().getUCLProspectusLink());
 	}
 
-
+	@Test
+	public void shouldGetAdmissionOfferServiceLevelFromPropertiesFile() {
+		assertNotNull(Environment.getInstance().getAdmissionsOfferServiceLevel());
+	}
+	
+	@Test
+	public void shouldGetAdmissionValidationServiceLevelFromPropertiesFile() {
+		assertNotNull(Environment.getInstance().getAdmissionsValidationServiceLevel());
+	}
 }

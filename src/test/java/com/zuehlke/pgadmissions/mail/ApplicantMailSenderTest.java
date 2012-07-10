@@ -77,6 +77,7 @@ public class ApplicantMailSenderTest {
 		assertEquals(applicant, model.get("applicant"));
 		assertEquals(registryContacts, model.get("registryContacts"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
+		assertEquals(Environment.getInstance().getAdmissionsOfferServiceLevel(), model.get("admissionOfferServiceLevel"));
 		assertNull(model.get("reasons"));
 		assertEquals(ApplicationFormStatus.VALIDATION, model.get("previousStage"));
 	}

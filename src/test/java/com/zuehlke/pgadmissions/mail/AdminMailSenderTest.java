@@ -62,6 +62,7 @@ public class AdminMailSenderTest {
 		Map<String, Object> model = adminMailSender.createModel(form);
 		assertEquals(form, model.get("application"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
+		assertEquals(Environment.getInstance().getAdmissionsOfferServiceLevel(), model.get("admissionOfferServiceLevel"));
 
 	}
 

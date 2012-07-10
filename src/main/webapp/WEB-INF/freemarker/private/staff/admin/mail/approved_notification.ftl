@@ -32,7 +32,7 @@
 			      	</p>
 			      	
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">The Application has been advanced to UCL Admissions for verification. If this is successful, an offer of study will be issued. UCL Admissions aim to be contact with their decision within --AdmissionsOfferServiceLevel--.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">The Application has been advanced to UCL Admissions for verification. If this is successful, an offer of study will be issued. UCL Admissions aim to be contact with their decision within ${admissionOfferServiceLevel}.</font>
 			      	</p>
 			      	
 			      	<p>

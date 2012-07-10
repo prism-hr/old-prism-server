@@ -124,9 +124,10 @@
 			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
 			                  <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
 			                </div>
-			                <#if comment.type == 'REQUEST_RESTART'><p class="restart"><em>Requested restart of approval phase.</em></p></#if>
-			                <#if comment.type == 'REQUEST_REFERRAL'>
-												<p class="referral"><em>${(comment.comment?html)!}</em></p>
+			                <#if comment.type == 'REQUEST_RESTART'>
+												<p class="restart"><span></span><em>Requested restart of approval phase.</em></p>
+			                <#elseif comment.comment?starts_with("Referred to admissions")>
+												<p class="referral"><span></span><em>${(comment.comment?html)!}</em></p>
 											<#elseif comment.comment?length &gt; 0>
 												<p><em>${(comment.comment?html)!}</em></p>
 											</#if>

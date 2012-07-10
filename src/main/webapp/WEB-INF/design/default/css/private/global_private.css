@@ -323,6 +323,7 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 #programme-details .row label { font-weight: bold; display: inline-block; min-width: 140px; }
 #programme-details .row label.checkbox { margin-left: 1em; min-width: 0; }
 #programme-details .half { width: 50%; float: left; }
+#programme-details .icons, #programme-details .actions { float: right; }
 
 
 

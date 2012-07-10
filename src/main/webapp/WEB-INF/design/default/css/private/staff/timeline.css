@@ -91,6 +91,7 @@
 #timeline-statuses ul .box p.delegate,
 #timeline-statuses ul .box p.location,
 #timeline-statuses ul .box p.referral,
+#timeline-statuses ul .box p.rejection,
 #timeline-statuses ul .box p.restart { padding: 10px 10px 5px 40px; position: relative; }
 
 #timeline-statuses ul .box p.datetime span,

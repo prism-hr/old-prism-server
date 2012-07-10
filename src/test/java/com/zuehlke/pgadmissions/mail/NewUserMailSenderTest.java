@@ -46,14 +46,17 @@ public class NewUserMailSenderTest {
 		Role role_2 = new RoleBuilder().authorityEnum(Authority.INTERVIEWER).id(3).toRole();
 		PendingRoleNotification roleNotification_2 = new PendingRoleNotificationBuilder().program(program).role(role_2).addedByUser(admin).toPendingRoleNotification();
 
-		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Smith").email("email@test.com").pendingRoleNotifications(roleNotification_1, roleNotification_2).toUser();
+		Role role_3 = new RoleBuilder().authorityEnum(Authority.REVIEWER).id(3).toRole();
+		PendingRoleNotification roleNotification_3 = new PendingRoleNotificationBuilder().program(program).role(role_3).addedByUser(admin).toPendingRoleNotification();
+		
+		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Smith").email("email@test.com").pendingRoleNotifications(roleNotification_1, roleNotification_2, roleNotification_3).toUser();
 
 		Map<String, Object> model = mailSender.createModel(user);
 
 		assertEquals(user, model.get("newUser"));
 		assertEquals(admin, model.get("admin"));
 		assertEquals(program, model.get("program"));
-		assertEquals("ADMINISTRATOR, INTERVIEWER", model.get("newRoles"));
+		assertEquals("Administrator, Interviewer and Reviewer", model.get("newRoles"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 	}
 

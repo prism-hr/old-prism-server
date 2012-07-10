@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -26,12 +27,16 @@ public class NewUserMailSender extends MailSender {
 		model.put("admin", user.getPendingRoleNotifications().get(0).getAddedByUser());
 		model.put("program", user.getPendingRoleNotifications().get(0).getProgram());
 		StringBuilder sb = new StringBuilder();
-		for (PendingRoleNotification pendingRoleNotification : user.getPendingRoleNotifications()) {
-			if (sb.length() > 0) {
+		for(int i = 0; i< user.getPendingRoleNotifications().size();i++ ){
+			if (i > 0 && i < user.getPendingRoleNotifications().size( ) - 1 ) {
 				sb.append(", ");
 			}
-			sb.append(pendingRoleNotification.getRole().getAuthorityEnum());
+			if ( user.getPendingRoleNotifications().size( )> 1 && i ==  (user.getPendingRoleNotifications().size( ) - 1)) {
+				sb.append(" and ");
+			}
+			sb.append(  StringUtils.capitalize(user.getPendingRoleNotifications().get(i).getRole().getAuthorityEnum().toString().toLowerCase()));
 		}
+		
 		model.put("newRoles", sb.toString());
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		return model;

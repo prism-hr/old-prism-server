@@ -76,20 +76,7 @@ public class ReviewControllerTest {
 
 	}
 
-	@Test
-	public void shouldGetApplicationFromIdForReviewer() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
-
-		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-		EasyMock.expect(currentUserMock.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationServiceMock, currentUserMock);
-
-		ApplicationForm returnedForm = controller.getApplicationForm("5");
-		assertEquals(applicationForm, returnedForm);
-
-	}
+	
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {

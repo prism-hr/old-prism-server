@@ -175,14 +175,14 @@ public class ReviewCommentControllerTest {
 	}
 	
 	@Test
-	public void shouldSaveCommentAndRedirectToAssignReviewersPageIfNoErrors(){
+	public void shouldSaveCommentAndRedirectApplicationsPagefNoErrors(){
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).toApplicationForm();
 		ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).toReviewComment();		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(comment);
 		EasyMock.replay(errorsMock, commentServiceMock);
-		assertEquals("redirect:/review/assignReviewers?applicationId=" + applicationForm.getApplicationNumber(), controller.addComment(comment, errorsMock));
+		assertEquals("redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber(), controller.addComment(comment, errorsMock));
 		EasyMock.verify(errorsMock, commentServiceMock);
 		
 	

@@ -58,7 +58,7 @@ $(document).ready(function(){
 				addToolTips();
 				
 				// Reset field.
-				$('#candidateNationalityCountry option:selected').removeAttr('selected');
+				$('#candidateNationalityCountry').val('');
 			}
 
 		}
@@ -97,7 +97,7 @@ $(document).ready(function(){
 				addToolTips();
 
 				// Reset field.
-				$('#maternalNationalityCountry option:selected').removeAttr('selected');
+				$('#maternalNationalityCountry').val('');
 			}
 		}
 	});

@@ -402,38 +402,40 @@ var firstAvailCol;if(typeof(matrix[rowIndex])=="undefined"){matrix[rowIndex]=[];
 (function(e,t){var n="hidden",r="border-box",i='<textarea style="position:absolute; top:-9999px; left:-9999px; right:auto; bottom:auto; -moz-box-sizing:content-box; -webkit-box-sizing:content-box; box-sizing:content-box; word-wrap:break-word; height:0 !important; min-height:0 !important; overflow:hidden">',s=["fontFamily","fontSize","fontWeight","fontStyle","letterSpacing","textTransform","wordSpacing","textIndent"],o="oninput",u="onpropertychange",a=e(i)[0];a.setAttribute(o,"return"),e.isFunction(a[o])||u in a?e.fn.autosize=function(t){return this.each(function(){function g(){var e,t;p||(p=!0,l.value=a.value,l.style.overflowY=a.style.overflowY,l.style.width=f.css("width"),l.scrollTop=0,l.scrollTop=9e4,e=l.scrollTop,t=n,e>h?(e=h,t="scroll"):e<c&&(e=c),a.style.overflowY=t,a.style.height=e+m+"px",setTimeout(function(){p=!1},1))}var a=this,f=e(a),l,c=f.height(),h=parseInt(f.css("maxHeight"),10),p,d=s.length,v,m=0;if(f.css("box-sizing")===r||f.css("-moz-box-sizing")===r||f.css("-webkit-box-sizing")===r)m=f.outerHeight()-f.height();if(f.data("mirror")||f.data("ismirror"))return;l=e(i).data("ismirror",!0).addClass(t||"autosizejs")[0],v=f.css("resize")==="none"?"none":"horizontal",f.data("mirror",e(l)).css({overflow:n,overflowY:n,wordWrap:"break-word",resize:v}),h=h&&h>0?h:9e4;while(d--)l.style[s[d]]=f.css(s[d]);e("body").append(l),u in a?o in a?a[o]=a.onkeyup=g:a[u]=g:a[o]=g,e(window).resize(g),f.bind("autosize",g),g()})}:e.fn.autosize=function(){return this}})(jQuery);
 
 /* ajaxFileUpload */
+
 jQuery.extend({
 	
-	createUploadIframe: function(id, uri)
+
+    createUploadIframe: function(id, uri)
 	{
-		//create frame
-		var frameId = 'jUploadFrame' + id;
-		var iframeHtml = '<iframe id="' + frameId + '" name="' + frameId + '" style="position:absolute; top:-9999px; left:-9999px"';
-		if(window.ActiveXObject)
-		{
-			if (typeof uri== 'boolean')
+			//create frame
+            var frameId = 'jUploadFrame' + id;
+            var iframeHtml = '<iframe id="' + frameId + '" name="' + frameId + '" style="position:absolute; top:-9999px; left:-9999px"';
+			if(window.ActiveXObject)
 			{
-				iframeHtml += ' src="' + 'javascript:false' + '"';
+                if(typeof uri== 'boolean'){
+					iframeHtml += ' src="' + 'javascript:false' + '"';
+
+                }
+                else if(typeof uri== 'string'){
+					iframeHtml += ' src="' + uri + '"';
+
+                }	
 			}
-			else if (typeof uri== 'string')
-			{
-				iframeHtml += ' src="' + uri + '"';
-			}	
-		}
-		iframeHtml += ' />';
-		jQuery(iframeHtml).appendTo(document.body);
-		return jQuery('#' + frameId).get(0);			
-	},
-	
-	createUploadForm: function(id, fileElementId, data)
+			iframeHtml += ' />';
+			jQuery(iframeHtml).appendTo(document.body);
+
+            return jQuery('#' + frameId).get(0);			
+    },
+    createUploadForm: function(id, fileElementId, data)
 	{
 		//create form	
 		var formId = 'jUploadForm' + id;
 		var fileId = 'jUploadFile' + id;
 		var form = jQuery('<form  action="" method="POST" name="' + formId + '" id="' + formId + '" enctype="multipart/form-data"></form>');	
-		if (data)
+		if(data)
 		{
-			for (var i in data)
+			for(var i in data)
 			{
 				jQuery('<input type="hidden" name="' + i + '" value="' + data[i] + '" />').appendTo(form);
 			}			
@@ -444,186 +446,164 @@ jQuery.extend({
 		jQuery(oldElement).before(newElement);
 		jQuery(oldElement).appendTo(form);
 
+
+		
 		//set attributes
 		jQuery(form).css('position', 'absolute');
 		jQuery(form).css('top', '-1200px');
 		jQuery(form).css('left', '-1200px');
 		jQuery(form).appendTo('body');		
 		return form;
-	},
+    },
 
-	ajaxFileUpload: function(s)
-	{
-		// TODO introduce global settings, allowing the client to modify them for all requests, not only timeout		
-		s = jQuery.extend({}, jQuery.ajaxSettings, s);
-		var id = new Date().getTime()        
+    ajaxFileUpload: function(s) {
+        // TODO introduce global settings, allowing the client to modify them for all requests, not only timeout		
+        s = jQuery.extend({}, jQuery.ajaxSettings, s);
+        var id = new Date().getTime()        
 		var form = jQuery.createUploadForm(id, s.fileElementId, (typeof(s.data)=='undefined'?false:s.data));
 		var io = jQuery.createUploadIframe(id, s.secureuri);
 		var frameId = 'jUploadFrame' + id;
 		var formId = 'jUploadForm' + id;		
-		// Watch for a new set of requests
-		if ( s.global && ! jQuery.active++ )
+        // Watch for a new set of requests
+        if ( s.global && ! jQuery.active++ )
 		{
 			jQuery.event.trigger( "ajaxStart" );
 		}            
-		var requestDone = false;
-		// Create the request object
-		var xml = {}   
-		if ( s.global )
-			jQuery.event.trigger("ajaxSend", [xml, s]);
-		// Wait for a response to come back
-		var uploadCallback = function(isTimeout)
+        var requestDone = false;
+        // Create the request object
+        var xml = {}   
+        if ( s.global )
+            jQuery.event.trigger("ajaxSend", [xml, s]);
+        // Wait for a response to come back
+        var uploadCallback = function(isTimeout)
 		{			
 			var io = document.getElementById(frameId);
-			try 
+            try 
 			{				
-				if (io.contentWindow)
+				if(io.contentWindow)
 				{
 					 xml.responseText = io.contentWindow.document.body?io.contentWindow.document.body.innerHTML:null;
-					 xml.responseXML = io.contentWindow.document.XMLDocument?io.contentWindow.document.XMLDocument:io.contentWindow.document;
-				}
-				else if(io.contentDocument)
+                	 xml.responseXML = io.contentWindow.document.XMLDocument?io.contentWindow.document.XMLDocument:io.contentWindow.document;
+					 
+				}else if(io.contentDocument)
 				{
-					xml.responseText = io.contentDocument.document.body?io.contentDocument.document.body.innerHTML:null;
-					xml.responseXML = io.contentDocument.document.XMLDocument?io.contentDocument.document.XMLDocument:io.contentDocument.document;
+					 xml.responseText = io.contentDocument.document.body?io.contentDocument.document.body.innerHTML:null;
+                	xml.responseXML = io.contentDocument.document.XMLDocument?io.contentDocument.document.XMLDocument:io.contentDocument.document;
 				}						
-			}
-			catch(e)
+            }catch(e)
 			{
-				//jQuery.handleError(s, xml, null, e);
+				jQuery.handleError(s, xml, null, e);
 			}
-			if ( xml || isTimeout == "timeout") 
+            if ( xml || isTimeout == "timeout") 
 			{				
-				requestDone = true;
-				var status;
-				try {
-					status = isTimeout != "timeout" ? "success" : "error";
-					// Make sure that the request was successful or notmodified
-					if ( status != "error" )
+                requestDone = true;
+                var status;
+                try {
+                    status = isTimeout != "timeout" ? "success" : "error";
+                    // Make sure that the request was successful or notmodified
+                    if ( status != "error" )
 					{
-						// process the data (runs the xml through httpData regardless of callback)
-						var data = jQuery.uploadHttpData( xml, s.dataType );    
-						// If a local callback was specified, fire it and pass it the data
-						if ( s.success )
-						{
-							s.success( data, status );
-						}
-
-						// Fire the global callback
-						if ( s.global )
-						{
-							jQuery.event.trigger( "ajaxSuccess", [xml, s] );
-						}
-						else
-						{
-							//jQuery.handleError(s, xml, status);
-						}
-					}
-				}
-				catch(e) 
+                        // process the data (runs the xml through httpData regardless of callback)
+                        var data = jQuery.uploadHttpData( xml, s.dataType );    
+                        // If a local callback was specified, fire it and pass it the data
+                        if ( s.success )
+                            s.success( data, status );
+    
+                        // Fire the global callback
+                        if( s.global )
+                            jQuery.event.trigger( "ajaxSuccess", [xml, s] );
+                    } else
+                        jQuery.handleError(s, xml, status);
+                } catch(e) 
 				{
-					status = "error";
-					//jQuery.handleError(s, xml, status, e);
-				}
+                    status = "error";
+                    jQuery.handleError(s, xml, status, e);
+                }
 
-				// The request was completed
-				if ( s.global )
-				{
-					jQuery.event.trigger( "ajaxComplete", [xml, s] );
-				}
+                // The request was completed
+                if( s.global )
+                    jQuery.event.trigger( "ajaxComplete", [xml, s] );
 
-				// Handle the global AJAX counter
-				if ( s.global && ! --jQuery.active )
-				{
-					jQuery.event.trigger( "ajaxStop" );
-				}
+                // Handle the global AJAX counter
+                if ( s.global && ! --jQuery.active )
+                    jQuery.event.trigger( "ajaxStop" );
 
-				// Process result
-				if ( s.complete )
-				{
-					s.complete(xml, status);
-				}
+                // Process result
+                if ( s.complete )
+                    s.complete(xml, status);
 
-				jQuery(io).unbind()
+                jQuery(io).unbind()
 
-				setTimeout(function()
-				{
-					try 
-					{
-						jQuery(io).remove();
-						jQuery(form).remove();	
-					}
-					catch(e) 
-					{
-						//jQuery.handleError(s, xml, null, e);
-					}
-				}, 100);
+                setTimeout(function()
+									{	try 
+										{
+											jQuery(io).remove();
+											jQuery(form).remove();	
+											
+										} catch(e) 
+										{
+											jQuery.handleError(s, xml, null, e);
+										}									
 
-				xml = null;
-			}
-		}
-		
-		// Timeout checker
-		if ( s.timeout > 0 ) 
+									}, 100)
+
+                xml = null
+
+            }
+        }
+        // Timeout checker
+        if ( s.timeout > 0 ) 
 		{
-			setTimeout(function()
-			{
-				// Check to see if the request is still happening
-				if ( !requestDone )
-				{
-					uploadCallback( "timeout" );
-				}
-			}, s.timeout);
-		}
-		
-		try 
+            setTimeout(function(){
+                // Check to see if the request is still happening
+                if( !requestDone ) uploadCallback( "timeout" );
+            }, s.timeout);
+        }
+        try 
 		{
+
 			var form = jQuery('#' + formId);
 			jQuery(form).attr('action', s.url);
 			jQuery(form).attr('method', 'POST');
 			jQuery(form).attr('target', frameId);
-			if (form.encoding)
+            if(form.encoding)
 			{
 				jQuery(form).attr('encoding', 'multipart/form-data');      			
-			}
-			else
+            }
+            else
 			{	
 				jQuery(form).attr('enctype', 'multipart/form-data');			
-			}			
-			jQuery(form).submit();
-		}
-		catch(e) 
+            }			
+            jQuery(form).submit();
+
+        } catch(e) 
 		{			
-			//jQuery.handleError(s, xml, null, e);
-		}
+            jQuery.handleError(s, xml, null, e);
+        }
 		
 		jQuery('#' + frameId).load(uploadCallback	);
-		return {abort: function () {}};	
-	},
+        return {abort: function () {}};	
 
-	uploadHttpData: function( r, type )
-	{
-		var data = !type;
-		data = type == "xml" || data ? r.responseXML : r.responseText;
-		// If the type is "script", eval it in global context
-		if ( type == "script" )
-		{
-			jQuery.globalEval( data );
-		}
-		// Get the JavaScript object, if JSON is used.
-		if ( type == "json" )
-		{
-			eval( "data = " + data );
-		}
-		// evaluate scripts within html
-		if ( type == "html" )
-		{
-			jQuery("<div>").html(data).evalScripts();
-		}
+    },
 
-		return data;
-	}
+    uploadHttpData: function( r, type ) {
+        var data = !type;
+        data = type == "xml" || data ? r.responseXML : r.responseText;
+        // If the type is "script", eval it in global context
+        if ( type == "script" )
+            jQuery.globalEval( data );
+        // Get the JavaScript object, if JSON is used.
+        if ( type == "json" )
+            eval( "data = " + data );
+        // evaluate scripts within html
+        if ( type == "html" )
+            jQuery("<div>").html(data).evalScripts();
+
+        return data;
+    }
 })
+
+
 
 
 // capitalise function.

@@ -18,7 +18,7 @@
 	</bean>
 
 	<bean id="applicantSubmissionNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10500" />
+		<property name="delay" value="${delay.11}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="applicantSubmissionNotificationTimerTask" />
 	</bean>
@@ -38,7 +38,7 @@
 	</bean>
 
 	<bean id="moveToReviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10000" />
+		<property name="delay" value="${delay.12}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="moveToReviewNotificationTimerTask" />
 	</bean>
@@ -58,7 +58,7 @@
 	</bean>
 
 	<bean id="moveToRejectNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="1000" />
+		<property name="delay" value="${delay.13}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="moveToRejectNotificationTimerTask" />
 	</bean>
@@ -79,7 +79,7 @@
 	</bean>
 
 	<bean id="moveToInterviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10000" />
+		<property name="delay" value="${delay.14}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="moveToInterviewNotificationTimerTask" />
 	</bean>
@@ -99,7 +99,7 @@
 	</bean>
 
 	<bean id="moveToApprovalNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10000" />
+		<property name="delay" value="${delay.15}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="moveToApprovalNotificationTimerTask" />
 	</bean>
@@ -119,7 +119,7 @@
 	</bean>
 
 	<bean id="moveToApprovedNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10000" />
+		<property name="delay" value="${delay.16}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="moveToApprovedNotificationTimerTask" />
 	</bean>

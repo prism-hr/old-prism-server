@@ -11,7 +11,7 @@
 	</bean>
 
 	<bean id="reviewerNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="3000" />
+		<property name="delay" value="${delay.26}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="reviewerNotificationTimerTask" />
 	</bean>
@@ -24,7 +24,7 @@
 	</bean>
 
 	<bean id="reviewerReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="4000" />
+		<property name="delay" value="${delay.27}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="reviewerReminderTimerTask" />
 	</bean>

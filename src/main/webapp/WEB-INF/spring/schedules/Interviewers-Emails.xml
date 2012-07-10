@@ -11,7 +11,7 @@
 	</bean>
 
 	<bean id="interviewerNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="3000" />
+		<property name="delay" value="${delay.21}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="interviewerNotificationTimerTask" />
 	</bean>
@@ -24,7 +24,7 @@
 	</bean>
 
 	<bean id="interviewerReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="4000" />
+		<property name="delay" value="${delay.22}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="interviewerReminderTimerTask" />
 	</bean>

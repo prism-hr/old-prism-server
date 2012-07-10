@@ -23,7 +23,7 @@
 		<constructor-arg index="2" ref="mailApplicationsService" />
 	</bean>
 	<bean id="approverAdminApprovalNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10500" />
+		<property name="delay" value="${delay.17}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="approverAdminApprovalNotificationTimerTask" />
 	</bean>
@@ -42,19 +42,19 @@
 	</bean>
 
 	<bean id="approverApprovalReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="2000" />
+		<property name="delay" value="${delay.18}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="approverApprovalReminderTimerTask" />
 	</bean>
 	
 	<bean id="approvalRestartRequestNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="2000" />
+		<property name="delay" value="${delay.19}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="approvalRestartRequestNotificationTimerTask" />
 	</bean>
 	
 		<bean id="approvalRestartRequestReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="2000" />
+		<property name="delay" value="${delay.20}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="approvalRestartRequestReminderTimerTask" />
 	</bean>

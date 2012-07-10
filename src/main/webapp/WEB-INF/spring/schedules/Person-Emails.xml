@@ -13,7 +13,7 @@
 	</bean>
 
 	<bean id="registryNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="2000" />
+		<property name="delay" value="${delay.23}" />
 		<property name="period" value="${email.schedule.period.milliseconds}" />
 		<property name="timerTask" ref="personNotificationTimerTask" />
 	</bean>

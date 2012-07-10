@@ -1,3 +1,5 @@
+var fetches = 0;
+
 $(document).ready(function()
 {
 
@@ -144,10 +146,11 @@ function populateApplicationList(reset)
 	$('#search-box span.invalid').remove();
 	
 	// We're fetching more applications.
-	if ($('.content-box-inner div.fetching').length == 0)
+	if (fetches == 0)
 	{
 		$('.content-box-inner').append('<div class="fetching">Fetching more applications...</div>');
 	}
+	fetches++;
 
 	$.ajax({
 		 type: 'GET',
@@ -169,13 +172,20 @@ function populateApplicationList(reset)
 			  }
 		  },
 		  url: "/pgadmissions/applications/section",
-		  data:options, 
+		  data: options, 
 		  success: function(data)
 			{
-				$('.content-box-inner div.fetching').remove();
 				$('#applicationListSection').html(data);
-				addToolTips();
-			}		
+			},
+			complete: function()
+			{
+				fetches--;
+				if (fetches == 0)
+				{
+					$('.content-box-inner div.fetching').remove();
+					addToolTips();
+				}
+			}
 	});
 }
 

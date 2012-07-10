@@ -1,4 +1,8 @@
 <div id="programme-details">
+  <div class="icon">
+		<img src="" data-desc="${application.status.displayValue()}" />${application.status.displayValue()}
+	</div>
+
   <div class="row">
     <label>Programme</label>
     <#if applicationForm.researchHomePage??>
@@ -18,7 +22,7 @@
     ${(applicationForm.submittedDate?string("dd MMM yyyy"))!"In Progress"}    
   </div>
 	
-  <div style="float:right">
+  <div class="actions">
 	<#include "/private/common/actions.ftl"/>   
   </div>
 </div>

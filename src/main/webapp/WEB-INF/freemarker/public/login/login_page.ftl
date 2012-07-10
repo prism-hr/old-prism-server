@@ -54,8 +54,8 @@
           <form id="loginForm" method="post" action="/pgadmissions/j_spring_security_check">
               <p>&gt; Login</p>
               
-              <input type="text" id="username_or_email" name="j_username" placeholder="Email address" />
-              <input type="password" id="password" name="j_password" placeholder="Password" />
+              <input type="text" id="username_or_email" name="j_username" placeholder="Email address" value="Email address" />
+              <input type="password" id="password" name="j_password" placeholder="Password" value="Password" />
               <#if RequestParameters.login_error??>
               <span class="invalid">Invalid username/password combination.</span>
               </#if>

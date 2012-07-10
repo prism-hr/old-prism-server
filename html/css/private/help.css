@@ -1,0 +1,15 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+#help-keyword, #help-results { background: #FFF;  padding: 20px; margin-bottom: 5px; }
+
+
+/* Autocomplete input box */
+ul.ui-autocomplete { box-shadow: 0 3px 6px #666; border-radius: 10px; font-size: 9pt; }
+ul.ui-autocomplete .ui-menu-item a { border-radius: 10px; font-weight: bold !important; padding-left: 20px; }
+
+/* Search resuls */
+#help-results {}
+#help-results h1 { font-size: 12pt; margin-bottom: 1em; }
+#help-results .result a { color: #0079C2; }

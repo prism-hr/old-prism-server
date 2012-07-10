@@ -39,11 +39,11 @@
 							<li>Does the applicant meet the required level of English language competence (yes/no/unsure*)?</li>
 							<li>What is the applicant's fee status (home/overseas)?</li>
 			      		</ul>
-			      		<br/><i>*e.g. Refer to Dean of Students.</i>
+			      		<i>*e.g. Refer to Dean of Students.</i>
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">To progress the Application without unreasonable delay to the applicant, we would hope to receive your response within <<AdmissionsValidationServiceLevel>>.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">To progress the Application without unreasonable delay to the applicant, we would value your response within <<AdmissionsValidationServiceLevel>>.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Please contact me should you have any questions.</font>

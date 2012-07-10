@@ -1,8 +1,5 @@
-
 <!DOCTYPE HTML>
-
 <#import "/spring.ftl" as spring />
-
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -33,7 +30,11 @@
 		      
 		      		<div class="content-box">
 		      			<div class="content-box-inner">
-		              		<h2>Sorry, this program is no longer available. </h2>	          			
+		              
+                  <div class="section-info-bar">
+                    Sorry, this program is no longer available.
+                  </div>
+                  
 		        		</div><!-- .content-box-inner -->
 		      		</div><!-- .content-box -->
 		      
@@ -54,6 +55,3 @@
 		
 	</body>
 </html>
-
-
-<html>

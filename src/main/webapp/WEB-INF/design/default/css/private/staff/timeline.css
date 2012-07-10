@@ -98,6 +98,7 @@
 #timeline-statuses ul .box p.delegate span,
 #timeline-statuses ul .box p.location span,
 #timeline-statuses ul .box p.referral span,
+#timeline-statuses ul .box p.rejection span,
 #timeline-statuses ul .box p.restart span { position: absolute; left: 10px; top: 6px; width: 20px; height: 22px; display: block; }
 
 #timeline-statuses ul .box p.datetime span { background: url(../../../images/icon_calendar.png) no-repeat 2px 0; }
@@ -105,6 +106,7 @@
 #timeline-statuses ul .box p.delegate span { background: url(../../../images/icon_delegation.png) no-repeat; }
 #timeline-statuses ul .box p.location span { background: url(../../../images/icon_location.png) no-repeat 2px 0; }
 #timeline-statuses ul .box p.referral span { background: url(../../../images/icon_referral.png) no-repeat 10px 8px; }
+#timeline-statuses ul .box p.rejection span { background: url(../../../images/icon_rejection.png) no-repeat; }
 #timeline-statuses ul .box p.restart span { background: url(../../../images/icon_restart.png) no-repeat 2px 0; }
 
 

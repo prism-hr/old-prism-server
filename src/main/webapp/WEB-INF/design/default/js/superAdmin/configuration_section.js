@@ -18,7 +18,7 @@ $(document).ready(function()
 	{
 		
 		var errors = false;
-		$('#registryUsersForm span.invalid').remove();
+		$('#section-registryusers span.invalid').remove();
 		
 		// Allow a maximum of three users.
 		var user_count = $('#registryUsers .scroll tr').length;

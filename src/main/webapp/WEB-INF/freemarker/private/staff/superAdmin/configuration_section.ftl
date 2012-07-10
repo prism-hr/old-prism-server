@@ -77,7 +77,7 @@
 			</div><!-- .row-group -->
 			
 		<!-- Add Registry Users -->
-			<div class="row-group">
+			<div class="row-group" id="section-registryusers">
 
 				<div class="row">
 					<span class="label"><b>Admissions Contacts</b></span>

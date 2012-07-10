@@ -22,7 +22,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your registration for UCL Prism. To login and <#if user.isInRole('APPLICANT')>complete your application<#elseif !user.directToUrl??>continue<#elseif user.directToUrl == 'ADD_REFERENCE'>complete your reference<#elseif user.directToUrl == 'ADD_REVIEW'>complete your review<#elseif user.directToUrl == 'VIEW_APPLIATION_PRIOR_TO_INTERVIEW'>view the application<#elseif user.directToUrl == 'VIEW_APPLIATION_AS_SUPERVISOR'>view the application</#if> please confirm your registration. You will be asked to login.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your registration for UCL Prism. To login and <#if user.isInRole('APPLICANT')>complete your application<#elseif !user.directToUrl??>continue<#elseif user.directToUrl?string == 'ADD_REFERENCE'>complete your reference<#elseif user.directToUrl?string == 'ADD_REVIEW'>complete your review<#elseif user.directToUrl?string == 'VIEW_APPLIATION_PRIOR_TO_INTERVIEW'>view the application<#elseif user.directToUrl?string == 'VIEW_APPLIATION_AS_SUPERVISOR'>view the application</#if> please confirm your registration. You will be asked to login.</font>
 			      	</p>
 
 							<p>

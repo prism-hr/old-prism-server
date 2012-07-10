@@ -28,7 +28,7 @@
 				      		  <br />An academic panel will now make a detailed assessment of your Application.
 				            <#else>
 				      		  Your Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to a further stage of academic review.
-				      		  <br /><p>An academic panel will now make a further detailed assessment of your Application.
+				      		  <p>An academic panel will now make a further detailed assessment of your Application.
 				            </#if>
 			            	We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.
 			            	</p>

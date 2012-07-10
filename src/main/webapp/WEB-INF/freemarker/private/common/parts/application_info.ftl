@@ -1,6 +1,6 @@
 <div id="programme-details">
   <div class="icon">
-		<img src="" data-desc="${application.status.displayValue()}" />${application.status.displayValue()}
+		${applicationForm.status.displayValue()}
 	</div>
 
   <div class="row">

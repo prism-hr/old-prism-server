@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -90,9 +91,7 @@ public class RegistrationService {
 	@Transactional
 	public void sendConfirmationEmail(RegisteredUser newUser) {
 		try {
-			Map<String, Object> model = modelMap();
-			model.put("user", newUser);
-			model.put("host", Environment.getInstance().getApplicationHostName());
+			Map<String, Object> model = populateModelForRegistrationConfirmation(newUser);
 
 			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
 
@@ -105,12 +104,36 @@ public class RegistrationService {
 		}
 	}
 
+	Map<String, Object> populateModelForRegistrationConfirmation(RegisteredUser newUser) {
+		Map<String, Object> model = modelMap();
+		model.put("user", newUser);
+		model.put("host", Environment.getInstance().getApplicationHostName());
+		model.put("action", getRegistrationConfirmationAction(newUser));
+		return model;
+	}
+
 	public RegisteredUser findUserForActivationCode(String activationCode) {
 		return userDAO.getUserByActivationCode(activationCode);
 	}
 
 	Map<String, Object> modelMap() {
 		return new HashMap<String, Object>();
+	}
+
+	protected String getRegistrationConfirmationAction(RegisteredUser user) {
+		if(user.isInRole(Authority.APPLICANT)){
+			return "complete your application";
+		}
+		if(user.getDirectToUrl() == null){
+			return "continue";
+		}
+		if(user.getDirectToUrl().startsWith(DirectURLsEnum.ADD_REFERENCE.displayValue())){
+			return "complete your reference";
+		}
+		if(user.getDirectToUrl().startsWith(DirectURLsEnum.ADD_REVIEW.displayValue())){
+			return "complete your review";
+		}
+		return "view the application";
 	}
 
 }

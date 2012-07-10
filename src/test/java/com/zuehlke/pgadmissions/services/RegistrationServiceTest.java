@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -140,6 +141,7 @@ public class RegistrationServiceTest {
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		assertEquals(newUser, modelMap.get("user"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), modelMap.get("host"));
+		
 
 	}
 
@@ -149,7 +151,7 @@ public class RegistrationServiceTest {
 		final Map<String, Object> modelMap = new HashMap<String, Object>();
 
 
-		final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
+		final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock, msgSourceMock) {
 
@@ -187,7 +189,7 @@ public class RegistrationServiceTest {
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		assertEquals(suggestedUser, modelMap.get("user"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), modelMap.get("host"));
-
+		assertEquals("complete your application", modelMap.get("action"));
 	}
 
 	@Test
@@ -272,6 +274,22 @@ public class RegistrationServiceTest {
 
 	}
 
+	@Test
+	public void shouldGenerateCorrectAtionContext(){
+		RegisteredUser user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.ADD_REFERENCE.displayValue() + "hi").toUser();
+		assertEquals("complete your reference", registrationService.getRegistrationConfirmationAction(user));
+		user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.ADD_REVIEW.displayValue() + "hi").toUser();
+		assertEquals("complete your review", registrationService.getRegistrationConfirmationAction(user));
+		user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW.displayValue() + "hi").toUser();
+		assertEquals("view the application", registrationService.getRegistrationConfirmationAction(user));
+		user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR.displayValue() + "hi").toUser();
+		assertEquals("view the application", registrationService.getRegistrationConfirmationAction(user));
+		user = new RegisteredUserBuilder().id(1).toUser();
+		assertEquals("continue", registrationService.getRegistrationConfirmationAction(user));
+		user = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		assertEquals("complete your application", registrationService.getRegistrationConfirmationAction(user));
+	}
+	
 	@Before
 	public void setup() {
 		userDAOMock = EasyMock.createMock(UserDAO.class);

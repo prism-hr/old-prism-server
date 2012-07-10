@@ -15,7 +15,6 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -38,20 +37,33 @@ public class UsersInProgrammeControllerTest {
 
 	
 	@Test
-	public void shouldReturnUsersForProgram() {
+	public void shouldReturnUsersForProgramOrderedByLastnaeFirstname() {
 		
 		Program program = new ProgramBuilder().id(5).toProgram();
 		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userOne.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
+		EasyMock.expect(userOne.getLastName()).andReturn("ZZZ").anyTimes();
+		EasyMock.expect(userOne.getFirstName()).andReturn("BBB").anyTimes();
+		
 		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userTwo.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
+		EasyMock.expect(userTwo.getLastName()).andReturn("ZZZ").anyTimes();
+		EasyMock.expect(userTwo.getFirstName()).andReturn("AAA").anyTimes();
+		
+		
+		RegisteredUser userThree = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userThree.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
+		EasyMock.expect(userThree.getLastName()).andReturn("AAA").anyTimes();
+		EasyMock.expect(userThree.getFirstName()).andReturn("GGG").anyTimes();
 		
 		EasyMock.expect(programsServiceMock.getProgramByCode("enc")).andReturn(program);
-		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
-		EasyMock.replay(userOne, userTwo, programsServiceMock, userServiceMock);
+		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo, userThree));
+		EasyMock.replay(userOne, userTwo,userThree, programsServiceMock, userServiceMock);
 		List<RegisteredUser> users = controller.getUsersInProgram("enc");		
-		assertEquals(2, users.size());
-		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
+		assertEquals(3, users.size());
+		assertEquals(userThree, users.get(0));
+		assertEquals(userTwo, users.get(1));
+		assertEquals(userOne, users.get(2));
 		
 	}
 	@SuppressWarnings("unchecked")

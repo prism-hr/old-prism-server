@@ -36,11 +36,12 @@
 
 #timeline-statuses ul .box { padding-bottom: 10px; }
 #timeline-statuses ul .box .title { background: #AAA; }
-#timeline-statuses ul .box p { font-size: 12px; font-weight: normal; padding: 10px; }
+#timeline-statuses ul .box p { font-size: 12px; font-weight: normal; padding: 10px 10px 5px; }
 #timeline-statuses ul .box p:last-child { padding-bottom: 0 !important; }
 
-#timeline-statuses .box ul.uploads { padding: 0 0 4px 10px; }
+#timeline-statuses .box ul.uploads { padding: 5px 0 5px 10px; }
 #timeline-statuses .box ul.uploads li { background: url(../../../images/icon_downloads.png) no-repeat 1px 0; display: block; line-height: 15px; margin-bottom: 10px; padding-left: 32px; }
+#timeline-statuses .box ul.uploads li:last-child { margin-bottom: 0; }
 
 #timeline-statuses ul.status-info .box h3 { margin: 0; padding: 10px; }
 #timeline-statuses ul.status-info .added { background: url(../../../images/icon_added_users.png) no-repeat 12px 11px; padding: 10px 10px 10px 40px; }
@@ -97,14 +98,14 @@
 #timeline-statuses ul .box p.delegate span,
 #timeline-statuses ul .box p.location span,
 #timeline-statuses ul .box p.referral span,
-#timeline-statuses ul .box p.restart span { background: no-repeat 3px; position: absolute; left: 8px; top: 0; width: 24px; height: 22px; display: block; }
+#timeline-statuses ul .box p.restart span { position: absolute; left: 8px; top: 6px; width: 24px; height: 22px; display: block; }
 
-#timeline-statuses ul .box p.datetime span { background-image: url(../../../images/icon_calendar.png); }
+#timeline-statuses ul .box p.datetime span { background: url(../../../images/icon_calendar.png) no-repeat; }
 #timeline-statuses ul .box p.declined span { background: url(../../../images/icon_declined.png) no-repeat 10px 8px;}
-#timeline-statuses ul .box p.delegate span { background-image: url(../../../images/icon_delegation.png); }
-#timeline-statuses ul .box p.location span { background-image: url(../../../images/icon_location.png); }
+#timeline-statuses ul .box p.delegate span { background: url(../../../images/icon_delegation.png) no-repeat; }
+#timeline-statuses ul .box p.location span { background: url(../../../images/icon_location.png) no-repeat; }
 #timeline-statuses ul .box p.referral span { background: url(../../../images/icon_referral.png) no-repeat 10px 8px; }
-#timeline-statuses ul .box p.restart span { background-image: url(../../../images/icon_restart.png); }
+#timeline-statuses ul .box p.restart span { background: url(../../../images/icon_restart.png) no-repeat; }
 
 
 /* Application tab ---------------------------------------------------------------------------------------- */

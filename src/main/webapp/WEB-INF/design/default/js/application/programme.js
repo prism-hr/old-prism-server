@@ -83,8 +83,6 @@ $(document).ready(function()
 		
 		var rowCount = $("#supervisors tbody tr").length;
 		
-		console.log(rowCount);
-		
 		if (rowCount == 0)
 		{
 			$("#supervisors").hide();
@@ -98,6 +96,10 @@ $(document).ready(function()
 		$("#supervisorLastname").val('');
 		$("#supervisorEmail").val('');
 		$("input[name='awareSupervisor']").removeAttr('checked');
+		
+		$("#addSupervisorButton").show();
+		$("#updateSupervisorButton").hide();
+
 	});
 	
 	

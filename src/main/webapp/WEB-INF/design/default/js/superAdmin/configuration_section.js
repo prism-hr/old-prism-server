@@ -1,30 +1,6 @@
 $(document).ready(function()
 {
 
-	
-	
-	$('#addAnother').click(function()
-	{
-		if (!$("div[id='secondRegistryUser']").is(':visible'))
-		{
-			$("div[id='secondRegistryUser']").show();
-		}
-		else if(!$("div[id='thirdRegistryUser']").is(':visible'))
-		{
-			$("div[id='thirdRegistryUser']").show();
-		}
-		else
-		{
-			$("div[id='secondRegistryUser']").show();
-			$("div[id='thirdRegistryUser']").show();
-			$("span[name='threeMaxMessage']").html("You cannot specify more than three registry users.");
-		}
-	});
-	
-
-	
-	
-
 	// -----------------------------------------------------------------------------
 	// Registry users
 	// -----------------------------------------------------------------------------
@@ -101,20 +77,20 @@ $(document).ready(function()
 		// Grab the hidden field values from the table.
 		$('#registryUsers .scroll tbody tr').each(function()
 		{
-			var $row = $(this);
-			var id = $('input[name="id"]', $row).val();
-			var firstname = $('input[name="firstname"]', $row).val();
-			var lastname = $('input[name="lastname"]', $row).val();
-			var email = $('input[name="email"]', $row).val();
-			var obj = '{"id": "' + id + '","firstname": "' + firstname + '", "lastname": "' + lastname + '", "email": "' + email + '"}';
+			var $row			= $(this);
+			var id				= $('input[name="id"]', $row).val();
+			var firstname	= $('input[name="firstname"]', $row).val();
+			var lastname	= $('input[name="lastname"]', $row).val();
+			var email			= $('input[name="email"]', $row).val();
+			var obj				= '{"id": "' + id + '","firstname": "' + firstname + '", "lastname": "' + lastname + '", "email": "' + email + '"}';
 			$('#regContactData').append("<input type='hidden' class='registryUsers' name='registryUsers' value='" + obj + "' />");
 		});
 		
 		// STAGE DURATION
 		$("#stagesDuration").html('');
-		var stageValidationErrors = appendStagesJSON();
-		var stages = $('[input[name="stagesDuration"]');
-		var reminderValidationErrors = validateReminderInterval();
+		var stageValidationErrors			= appendStagesJSON();
+		var stages										= $('[input[name="stagesDuration"]');
+		var reminderValidationErrors	= validateReminderInterval();
 		var postData = {
 				id:       $('#reminderIntervalId').val(),
 				duration: $('#reminderIntervalDuration').val(),
@@ -149,6 +125,14 @@ $(document).ready(function()
 		}
 
 
+		// -----------------------------------------------------------------------------
+		// Restrict some text fields to numbers only.
+		// -----------------------------------------------------------------------------
+		$('input.numeric').keydown(function(event)
+		{
+			numbersOnly(event);
+		});
+	
 	});
 });
 

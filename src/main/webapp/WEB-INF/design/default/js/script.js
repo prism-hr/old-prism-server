@@ -595,3 +595,28 @@ function modalPrompt(message, okay, cancel)
 	$('#dialog-overlay, #dialog-box').show();
 	modalPosition();
 }
+
+
+function numbersOnly(event)
+{
+	// http://stackoverflow.com/questions/995183/how-to-allow-only-numeric-0-9-in-html-inputbox-using-jquery
+	if (event.keyCode == 46 ||	// backspace
+			event.keyCode == 8 ||		// delete
+			event.keyCode == 9 ||		// tab
+			event.keyCode == 27 ||	// escape
+			event.keyCode == 13 || 	// enter
+			(event.keyCode == 65 && event.ctrlKey === true) || // Ctrl+A
+			(event.keyCode >= 35 && event.keyCode <= 39)) // home, end, left, right
+	{
+		// let it happen, don't do anything
+		return;
+	}
+	else
+	{
+		// Ensure that it is a number and stop the keypress.
+		if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 ))
+		{
+			event.preventDefault(); 
+		}   
+	}
+}

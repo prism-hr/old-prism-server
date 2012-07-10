@@ -98,8 +98,8 @@
 											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="<#if timelineObject.userCapacity == 'admin'>Administrator<#else>${timelineObject.userCapacity?cap_first}</#if>"></span>
 											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 										</div>
-										<p>
-											<strong>Reason for rejection</strong><br />
+										<p class="rejection">
+											<span></span>
 											<em>${applicationForm.rejection.rejectionReason.text?html}</em>
 										</p>
 									</div>

@@ -63,7 +63,7 @@ public class MailService {
 	public void sendApplicationUpdatedMailToAdmins(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 
-		String mailSubject = resolveMessage("application.update", form.getApplicationNumber(), form.getProgram().getTitle());
+		String mailSubject = resolveMessage("application.update", form.getApplicationNumber(), form.getProgram().getTitle(), form.getApplicant().getFirstName(), form.getApplicant().getLastName());
 		for (RegisteredUser admin : administrators) {
 			try {
 				Map<String, Object> model = createModel(form);
@@ -110,7 +110,7 @@ public class MailService {
 			model.put("user", recipient);
 
 			InternetAddress toAddress = createAddress(recipient);
-			String mailSubject = resolveMessage("application.withdrawal", application.getApplicationNumber(), application.getProgram().getTitle());
+			String mailSubject = resolveMessage("application.withdrawal", application.getApplicationNumber(), application.getProgram().getTitle(), application.getApplicant().getFirstName(), application.getApplicant().getLastName());
 
 			delegateToMailSender(toAddress, null, mailSubject, "private/staff/mail/application_withdrawn_notification.ftl", model);
 		} catch (Throwable e) {

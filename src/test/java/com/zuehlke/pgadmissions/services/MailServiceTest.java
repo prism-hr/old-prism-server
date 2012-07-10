@@ -65,7 +65,7 @@ public class MailServiceTest {
 		Program program = new ProgramBuilder().administrators(administratorOne, administratorTwo).title("program title").toProgram();
 	
 		NotificationRecord notificationRecord = new NotificationRecordBuilder().id(1).notificationType(NotificationType.UPDATED_NOTIFICATION).notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 06 2011")).toNotificationRecord();
-		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).notificationRecords(notificationRecord).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).notificationRecords(notificationRecord).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -74,7 +74,7 @@ public class MailServiceTest {
 		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
 			
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.update"), 
-				EasyMock.aryEq(new Object[] { "xyz", "program title" }), EasyMock.eq((Locale)null))).andReturn("update subject");
+				EasyMock.aryEq(new Object[] { "xyz", "program title" , "a", "b"}), EasyMock.eq((Locale)null))).andReturn("update subject");
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
@@ -97,7 +97,7 @@ public class MailServiceTest {
 	@Test
 	public void shouldSendWithdrawnNotificationToReferees() throws UnsupportedEncodingException {
 		Program program = new ProgramBuilder().title("title").toProgram();
-		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicationNumber("xyz").applicant(new RegisteredUser()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicationNumber("xyz").applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
 		
 		RegisteredUser refereeOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		RegisteredUser refereeTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
@@ -111,7 +111,7 @@ public class MailServiceTest {
 		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
-				EasyMock.aryEq(new Object[] { "xyz", "title" }), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
+				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
@@ -135,7 +135,7 @@ public class MailServiceTest {
 		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
 		Program program = new ProgramBuilder().administrators(admin1, admin2).title("title").toProgram();
 		
-		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -144,7 +144,7 @@ public class MailServiceTest {
 		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
-				EasyMock.aryEq(new Object[] { "xyz", "title" }), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
+				EasyMock.aryEq(new Object[] { "xyz", "title" ,"a", "b"}), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
@@ -168,7 +168,7 @@ public class MailServiceTest {
 		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
 		Program program = new ProgramBuilder().reviewers(reviewer1, reviewer2).title("title").toProgram();
 		
-		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -177,7 +177,7 @@ public class MailServiceTest {
 		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
-				EasyMock.aryEq(new Object[] { "xyz", "title" }), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
+				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),

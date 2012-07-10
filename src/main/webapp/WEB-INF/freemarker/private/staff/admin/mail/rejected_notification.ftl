@@ -30,7 +30,7 @@
 
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      	 		We regret to inform you that your application was unsuccessful.  
+			      	 		We regret to inform you that your Application was unsuccessful.  
 			      		</font>
 			      	</p>
 

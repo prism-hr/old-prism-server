@@ -26,7 +26,7 @@
 							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must now evaluate their application and select the next action.</b></font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must now evaluate their Application and select the next action.</b></font>
 			      	</p>
 			      	
 			        <p>

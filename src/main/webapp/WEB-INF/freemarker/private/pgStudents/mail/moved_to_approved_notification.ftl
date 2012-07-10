@@ -33,7 +33,7 @@
 							
 			      	</p>
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been advanced to UCL Admissions for verification. If this is successful, you will receive an offer of study.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your Application has been advanced to UCL Admissions for verification. If this is successful, you will receive an offer of study.</font>
 			      	</p>
 
 			      	<p>
@@ -49,7 +49,7 @@
 			      	</p>
 
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions aim to be in contact with you within <<AdmissionsOfferServiceLevel>>. Should you have any further questions on your application, you should refer them by email to admissions@ucl.ac.uk</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions aim to be in contact with you within <<AdmissionsOfferServiceLevel>>. Should you have any further questions on your Application, you should refer them by email to admissions@ucl.ac.uk</font>
 			      	</p>
 
 			      	<p>

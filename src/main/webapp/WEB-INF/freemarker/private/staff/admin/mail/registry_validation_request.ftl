@@ -27,7 +27,7 @@
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Please find attached their application.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Please find attached their Application.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We are unable to make a confident preliminary assessment of their student fees status and eligibility for postgraduate research study at UCL.</font>
@@ -43,7 +43,7 @@
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">To progress the application without unreasonable delay to the applicant, we would hope to receive your response within <<AdmissionsValidationServiceLevel>>.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">To progress the Application without unreasonable delay to the applicant, we would hope to receive your response within <<AdmissionsValidationServiceLevel>>.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Please contact me should you have any questions.</font>

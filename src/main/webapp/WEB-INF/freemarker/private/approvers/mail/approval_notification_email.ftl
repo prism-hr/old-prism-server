@@ -37,7 +37,7 @@
         </p>				      	
 <#else>
         <p>
-          <font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} has now been moved to approval. You can view the application below.</font>
+          <font face="Arial, Helvetica, sans-serif" size="2">The Application ${application.applicationNumber} has now been moved to approval. You can view the Application below.</font>
         </p>
         <p>
           <!-- Button -->

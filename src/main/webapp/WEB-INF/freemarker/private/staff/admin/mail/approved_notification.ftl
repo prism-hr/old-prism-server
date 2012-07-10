@@ -32,11 +32,11 @@
 			      	</p>
 			      	
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">The application has been advanced to UCL Admissions for verification. If this is successful, an offer of study will be issued. UCL Admissions aim to be contact with their decision within --AdmissionsOfferServiceLevel--.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">The Application has been advanced to UCL Admissions for verification. If this is successful, an offer of study will be issued. UCL Admissions aim to be contact with their decision within --AdmissionsOfferServiceLevel--.</font>
 			      	</p>
 			      	
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on the application, you should now refer them to one of the following UCL Admissions contacts:
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on the Application, you should now refer them to one of the following UCL Admissions contacts:
 				      		<ul>			
 				      		<#list registryContacts as contact>      		
 								<li><a href="mailto: ${contact.email}">${contact.firstname} ${contact.lastname}</a></li>

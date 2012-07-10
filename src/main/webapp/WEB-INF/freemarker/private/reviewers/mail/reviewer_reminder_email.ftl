@@ -28,7 +28,7 @@
 						</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been selected to review their application.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been selected to review their Application.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for postgraduate research study. If you feel unable to do this, you may also decline. <b>Be aware that declining to provide a review may reduce the applicant's chances of securing a study place.</b></font>

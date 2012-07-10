@@ -22,11 +22,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your application ${application.applicationNumber} for UCL 
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your Application ${application.applicationNumber} for UCL 
 							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>. <b>Please quote this number in all correspondence.</b></font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Our recruitment office will now make a preliminary assessment of your application. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Our recruitment office will now make a preliminary assessment of your Application. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.
 			      	</p>
 			      	
 			        <p>

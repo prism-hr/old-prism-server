@@ -28,7 +28,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2"><em>"${comment.comment?html}"</em></font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must restart the approval stage for the application to progress.</b></font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must restart the approval stage for the Application to progress.</b></font>
 			      	</p>
 
 					<p>

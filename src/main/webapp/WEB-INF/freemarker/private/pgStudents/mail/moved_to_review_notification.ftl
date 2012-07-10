@@ -24,11 +24,11 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 				      		<#if !previousStage?? || (previousStage.displayValue() = "Validation")>
-				      		  We are pleased to inform you that your application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to academic assessment.
-				      		  <br />An academic panel will now make a detailed assessment of your application.
+				      		  We are pleased to inform you that your Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to academic assessment.
+				      		  <br />An academic panel will now make a detailed assessment of your Application.
 				            <#else>
 				      		  Your Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if> has been advanced to a further stage of academic review.
-				      		  <br />An academic panel will now make a further detailed assessment of your application.
+				      		  <br />An academic panel will now make a further detailed assessment of your Application.
 				            </#if>
 			            	We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?string("dd MMM yyyy")}.
 			            </font>

@@ -39,24 +39,33 @@ public class NewUserMailSenderTest {
 	public void shouldReturnCorrectlyPopulatedModel() {
 
 		RegisteredUser admin = new RegisteredUserBuilder().id(2).toUser();
-		Program program = new ProgramBuilder().id(1).toProgram();
-		Role role_1 = new RoleBuilder().id(4).authorityEnum(Authority.ADMINISTRATOR).toRole();
+		Program program = new ProgramBuilder().id(1).title("bob").toProgram();
+		Role role_1 = new RoleBuilder().id(4).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
 		PendingRoleNotification roleNotification_1 = new PendingRoleNotificationBuilder().program(program).role(role_1).addedByUser(admin).toPendingRoleNotification();
 
-		Role role_2 = new RoleBuilder().authorityEnum(Authority.INTERVIEWER).id(3).toRole();
+		Role role_2 = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).id(3).toRole();
 		PendingRoleNotification roleNotification_2 = new PendingRoleNotificationBuilder().program(program).role(role_2).addedByUser(admin).toPendingRoleNotification();
 
-		Role role_3 = new RoleBuilder().authorityEnum(Authority.REVIEWER).id(3).toRole();
+		Role role_3 = new RoleBuilder().authorityEnum(Authority.REVIEWER).id(4).toRole();
 		PendingRoleNotification roleNotification_3 = new PendingRoleNotificationBuilder().program(program).role(role_3).addedByUser(admin).toPendingRoleNotification();
 		
-		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Smith").email("email@test.com").pendingRoleNotifications(roleNotification_1, roleNotification_2, roleNotification_3).toUser();
+		Role role_4 = new RoleBuilder().authorityEnum(Authority.INTERVIEWER).id(4).toRole();
+		PendingRoleNotification roleNotification_4 = new PendingRoleNotificationBuilder().program(program).role(role_4).addedByUser(admin).toPendingRoleNotification();
+		
+		Role role_5 = new RoleBuilder().authorityEnum(Authority.SUPERVISOR).id(5).toRole();
+		PendingRoleNotification roleNotification_5 = new PendingRoleNotificationBuilder().program(program).role(role_5).addedByUser(admin).toPendingRoleNotification();
+		
+		Role role_6 = new RoleBuilder().authorityEnum(Authority.APPROVER).id(5).toRole();
+		PendingRoleNotification roleNotification_6 = new PendingRoleNotificationBuilder().program(program).role(role_6).addedByUser(admin).toPendingRoleNotification();
+		
+		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Smith").email("email@test.com").pendingRoleNotifications(roleNotification_1, roleNotification_2, roleNotification_3, roleNotification_4, roleNotification_5, roleNotification_6).toUser();
 
 		Map<String, Object> model = mailSender.createModel(user);
 
 		assertEquals(user, model.get("newUser"));
 		assertEquals(admin, model.get("admin"));
 		assertEquals(program, model.get("program"));
-		assertEquals("Administrator, Interviewer and Reviewer", model.get("newRoles"));
+		assertEquals("Superadministrator, Administrator for bob, Default Reviewer for bob, Default Interviewer for bob, Default Supervisor for bob and Approver for bob", model.get("newRoles"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 	}
 

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.usermanagement;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -28,10 +30,10 @@ public class SuperadminController {
 	private final UserService userService;
 	private final SuperadminUserDTOValidator userDTOValidator;
 
-	SuperadminController(){
+	SuperadminController() {
 		this(null, null);
 	}
-	
+
 	@Autowired
 	public SuperadminController(UserService userService, SuperadminUserDTOValidator userDTOValidator) {
 		this.userService = userService;
@@ -49,7 +51,19 @@ public class SuperadminController {
 
 	@ModelAttribute("superadmins")
 	public List<RegisteredUser> getSuperadmins() {
-		return userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
+		List<RegisteredUser> superadmins = userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
+
+		Collections.sort(superadmins, new Comparator<RegisteredUser>() {
+
+			@Override
+			public int compare(RegisteredUser o1, RegisteredUser o2) {
+				if (!o1.getLastName().equals(o2.getLastName())) {
+					return o1.getLastName().compareTo(o2.getLastName());
+				}
+				return o1.getFirstName().compareTo(o2.getFirstName());
+			}
+		});
+		return superadmins;
 	}
 
 	@InitBinder(value = "userDTO")
@@ -73,16 +87,16 @@ public class SuperadminController {
 			existingUser = userService.createNewUserForProgramme(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), null,
 					Authority.SUPERADMINISTRATOR);
 		}
-	
+
 		return "redirect:/manageUsers/superadmins";
 
 	}
+
 	@ModelAttribute("userDTO")
 	public UserDTO getUserDTO() {
 		return new UserDTO();
 	}
 
-	
 	@ModelAttribute("user")
 	public RegisteredUser getUser() {
 		return userService.getCurrentUser();

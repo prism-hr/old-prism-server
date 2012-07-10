@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.controllers.usermanagement;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,16 @@ public class UsersInProgrammeController {
 				allUserWhoAreNotSuperadminsOnly.add(registeredUser);
 			}
 		}
+		Collections.sort(allUserWhoAreNotSuperadminsOnly, new Comparator<RegisteredUser>() {
+
+			@Override
+			public int compare(RegisteredUser o1, RegisteredUser o2) {
+				if(!o1.getLastName().equals(o2.getLastName())){
+					return o1.getLastName().compareTo(o2.getLastName());
+				}
+				return o1.getFirstName().compareTo(o2.getFirstName());
+			}
+		});
 		return allUserWhoAreNotSuperadminsOnly;
 
 	}

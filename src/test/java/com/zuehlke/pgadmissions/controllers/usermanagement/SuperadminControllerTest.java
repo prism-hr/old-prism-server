@@ -49,14 +49,17 @@ public class SuperadminControllerTest {
 	}
 
 	@Test
-	public void shouldReturnAllSuperadministrators() {
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(4).toUser();
-		EasyMock.expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo));
+	public void shouldReturnAllSuperadministratorsOrderbylastnameFirstname() {
+		RegisteredUser userOne = new RegisteredUserBuilder().id(1).lastName("ZZZZ").firstName("BBBB").toUser();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(4).lastName("ZZZZ").firstName("AAAA").toUser();
+		RegisteredUser userThree = new RegisteredUserBuilder().id(5).lastName("AA").firstName("GGG").toUser();
+		EasyMock.expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
 		EasyMock.replay(userServiceMock);
 		List<RegisteredUser> superadmins = controller.getSuperadmins();
-		assertEquals(2, superadmins.size());
-		assertTrue(superadmins.containsAll(Arrays.asList(userOne, userTwo)));
+		assertEquals(3, superadmins.size());
+		assertEquals(userThree, superadmins.get(0));
+		assertEquals(userTwo, superadmins.get(1));
+		assertEquals(userOne, superadmins.get(2));
 	}
 
 	public void shouldCreateNewUserInRoles() {

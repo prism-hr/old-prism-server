@@ -27,7 +27,7 @@
 
 							<p>
 			              		<!-- Button -->
-							    <a href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}" title="Confirm Registration">
+							    <a style="text-decoration:none;" href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}" title="Confirm Registration">
 							    	<img border="0" style="border: none;" width="170" height="36" alt="Register" src="${host}/pgadmissions/design/default/images/email/confirm_registration.png">
 							    </a>
 							</p>

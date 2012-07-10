@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -59,7 +60,7 @@ public class CreateNewSupervisorController {
 		
 		modelAndView.getModel().put("isNew", true);
 		RegisteredUser newUser = userService.createNewUserInRole(suggestedNewSupervisorUser.getFirstName(), suggestedNewSupervisorUser.getLastName(), suggestedNewSupervisorUser.getEmail(),
-				Authority.SUPERVISOR,null, applicationForm);
+				Authority.SUPERVISOR,DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR, applicationForm);
 		modelAndView.getModel().put("user", newUser);
 		return modelAndView;
 	}

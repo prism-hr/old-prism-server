@@ -50,6 +50,15 @@ $(document).ready(function()
 					 statusCode: {
 						  401: function() {
 							  window.location.reload();
+						  },
+						  500: function() {
+							  window.location.href = "/pgadmissions/error";
+						  },
+						  404: function() {
+							  window.location.href = "/pgadmissions/404";
+						  },
+						  400: function() {
+							  window.location.href = "/pgadmissions/400";
 						  }
 					  },
 					url:"/pgadmissions/interview/createInterviewer",
@@ -136,6 +145,15 @@ $(document).ready(function()
 			 statusCode: {
 				  401: function() {
 					  window.location.reload();
+				  },
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
 				  }
 			  },
 			url: url,
@@ -183,6 +201,15 @@ function getInterviewersAndDetailsSections(){
 		 statusCode: {
 			  401: function() {
 				  window.location.reload();
+			  },
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
 			  }
 		  },
 		url: url +"?applicationId=" + $('#applicationId').val(), 
@@ -217,6 +244,15 @@ function getCreateInterviewersSection(){
 		 statusCode: {
 			  401: function() {
 				  window.location.reload();
+			  },
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
 			  }
 		  },
 		url:"/pgadmissions/interview/create_interviewer_section?applicationId=" + $('#applicationId').val(), 

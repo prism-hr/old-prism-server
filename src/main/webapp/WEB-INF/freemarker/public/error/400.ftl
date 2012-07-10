@@ -52,7 +52,7 @@
 								<div class="content">
 									<h1>Whoops</h1>
 									<p>Sorry, an error occurred while processing your request.</p>
-									<input type="hidden" value="500"/>
+									<input type="hidden" value="400"/>
 								</div>
 							</div>
 

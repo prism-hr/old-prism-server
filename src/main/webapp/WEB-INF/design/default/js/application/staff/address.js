@@ -20,6 +20,15 @@ $(document).ready(function(){
 			 statusCode: {
 				  401: function() {
 					  window.location.reload();
+				  },
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
 				  }
 			  },
 			url:"/pgadmissions/update/editAddress",
@@ -48,6 +57,15 @@ $(document).ready(function(){
 			 statusCode: {
 				  401: function() {
 					  window.location.reload();
+				  },
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
 				  }
 			  },
 			url:"/pgadmissions/update/editAddress", 

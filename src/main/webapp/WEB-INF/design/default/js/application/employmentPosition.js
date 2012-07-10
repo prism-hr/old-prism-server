@@ -50,7 +50,16 @@ $(document).ready(function(){
 				401: function()
 				{
 					window.location.reload();
-				}
+				},
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
+				  }
 			},
 			url:"/pgadmissions/deleteentity/employment",
 			data: {
@@ -125,7 +134,16 @@ $(document).ready(function(){
 				401: function()
 				{
 					window.location.reload();
-				}
+				},
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
+				  }
 			},
 			url: "/pgadmissions/update/getEmploymentPosition",
 			data:	{
@@ -197,6 +215,15 @@ function postEmploymentData(message)
 			  401: function()
 				{
 				  window.location.reload();
+			  },
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
 			  }
 		  },
 		url:"/pgadmissions/update/editEmploymentPosition",

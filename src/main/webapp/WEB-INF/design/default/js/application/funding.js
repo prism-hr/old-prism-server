@@ -53,7 +53,16 @@ $(document).ready(function(){
 			 statusCode: {
 					401: function() {
 						window.location.reload();
-					}
+					},
+					  500: function() {
+						  window.location.href = "/pgadmissions/error";
+					  },
+					  404: function() {
+						  window.location.href = "/pgadmissions/404";
+					  },
+					  400: function() {
+						  window.location.href = "/pgadmissions/400";
+					  }
 				},
 			url:"/pgadmissions/deleteentity/funding",
 			data:	{
@@ -145,7 +154,16 @@ $(document).ready(function(){
 			statusCode: {
 				401: function() {
 					window.location.reload();
-				}
+				},
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
+				  }
 			},
 			url:"/pgadmissions/update/getFunding",
 			data:{
@@ -200,6 +218,15 @@ function postFundingData(message)
 		 statusCode: {
 			  401: function() {
 				  window.location.reload();
+			  },
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
 			  }
 		  },
 		url:"/pgadmissions/update/editFunding",
@@ -246,6 +273,15 @@ function fundingDocumentDelete(){
 			 statusCode: {
 				  401: function() {
 					  window.location.reload();
+				  },
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
 				  }
 			  },
 			url:"/pgadmissions/delete/asyncdelete",

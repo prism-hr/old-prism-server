@@ -54,7 +54,16 @@ $(document).ready(function()
 			statusCode: {
 				401: function() {
 					window.location.reload();
-				}
+				},
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
+				  }
 			},
 			url:"/pgadmissions/acceptTerms/getTermsAndConditions",
 			data:{
@@ -230,6 +239,15 @@ function loadProgrammeSection(clear){
 		 statusCode: {
 			  401: function() {
 				  window.location.reload();
+			  },
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
 			  }
 		  },
 		  url: "/pgadmissions/update/getProgrammeDetails",
@@ -271,6 +289,15 @@ function loadPersonalDetails(clear){
 		 statusCode: {
 			  401: function() {
 				  window.location.reload();
+			  },
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
 			  }
 		  },
 			url:"/pgadmissions/update/getPersonalDetails",
@@ -322,6 +349,15 @@ function loadAddresSection(clear){
 		 statusCode: {
 			  401: function() {
 				  window.location.reload();
+			  },
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
 			  }
 		  },
 			url:"/pgadmissions/update/getAddress",
@@ -365,7 +401,16 @@ function loadQualificationsSection(clear){
 		statusCode: {
 			401: function() {
 				window.location.reload();
-			}
+			},
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
+			  }
 		},
 		url:"/pgadmissions/update/getQualification",
 		data:data,
@@ -392,7 +437,16 @@ function loadEmploymentSection(clear){
 		statusCode: {
 			401: function() {
 				window.location.reload();
-			}
+			},
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
+			  }
 		},
 		url:"/pgadmissions/update/getEmploymentPosition",
 		data:{
@@ -420,7 +474,16 @@ function loadFundingSection(clear){
 		statusCode: {
 			401: function() {
 				window.location.reload();
-			}
+			},
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
+			  }
 		},
 		url:"/pgadmissions/update/getFunding",
 		data:{
@@ -449,7 +512,16 @@ function loadReferenceSection(clear){
 		statusCode: {
 			401: function() {
 				window.location.reload();
-			}
+			},
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
+			  }
 		},
 		url:"/pgadmissions/update/getReferee",
 		data:{
@@ -478,7 +550,16 @@ function loadDocumentsSection(clear){
 		statusCode: {
 			401: function() {
 				window.location.reload();
-			}
+			},
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
+			  }
 		},
 		url:"/pgadmissions/update/getDocuments",
 		data:{
@@ -515,7 +596,16 @@ function loadAdditionalInformationSection(clear){
 		statusCode: {
 			401: function() {
 				window.location.reload();
-			}
+			},
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
+			  }
 		},
 		url:"/pgadmissions/update/getAdditionalInformation",
 		data:{

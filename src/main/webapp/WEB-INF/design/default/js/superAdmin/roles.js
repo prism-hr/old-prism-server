@@ -46,6 +46,15 @@ function loadUsersForProgram()
 			  401: function()
 				{
 				  window.location.reload();
+			  },
+			  500: function() {
+				  window.location.href = "/pgadmissions/error";
+			  },
+			  404: function() {
+				  window.location.href = "/pgadmissions/404";
+			  },
+			  400: function() {
+				  window.location.href = "/pgadmissions/400";
 			  }
 		  },
 	 		url:"/pgadmissions/manageUsers/program",

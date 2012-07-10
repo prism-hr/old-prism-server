@@ -134,7 +134,7 @@ $(document).ready(function(){
 				addToolTips();
 
 				// Reset field.
-				$('#paternalNationalityCountry option:selected').removeAttr('selected');
+				$('#paternalNationalityCountry').val('');
 			}
 
 		}

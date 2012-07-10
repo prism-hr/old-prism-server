@@ -57,6 +57,7 @@ public class RegistryMailSenderTest {
 		assertEquals(currentAdminUser, model.get("sender"));
 		assertEquals("FirstName", model.get("recipients"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
+		assertEquals(Environment.getInstance().getAdmissionsValidationServiceLevel(), model.get("admissionsValidationServiceLevel"));
 	}
 
 	@Test

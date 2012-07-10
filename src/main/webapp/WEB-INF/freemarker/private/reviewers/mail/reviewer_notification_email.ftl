@@ -36,7 +36,7 @@
 			    
 				        <p>
 				          <!-- Button -->
-							<a 
+							<a style="text-decoration:none;" 
 							
 			                	<#if !reviewer.user?? || !reviewer.user.enabled>
 			                    	href="${host}/pgadmissions/register?activationCode=${reviewer.user.activationCode}"
@@ -49,7 +49,7 @@
 				          	</a>
 				          	
 				          <!-- Button -->
-							<a href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}"
+							<a style="text-decoration:none;" href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}"
 								title="Decline">
 				            	<img border="0" style="border: none;" width="143" height="36" alt="Decline" src="${host}/pgadmissions/design/default/images/email/decline.png" />
 				          	</a>

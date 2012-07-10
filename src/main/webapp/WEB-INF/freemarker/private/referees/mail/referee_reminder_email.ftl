@@ -36,7 +36,7 @@
 			      	
 			        <p>
 			          <!-- Button -->
-						<a 
+						<a style="text-decoration:none;" 
 							<#if  !referee.user.enabled>
 		                      	href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}"
 		                    <#else>
@@ -48,7 +48,7 @@
 			          	</a>
 			          	
 			          <!-- Button -->
-						<a href="${host}/pgadmissions/decline/reference?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode}" title="Decline">
+						<a style="text-decoration:none;" href="${host}/pgadmissions/decline/reference?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode}" title="Decline">
 			            	<img border="0" style="border: none;" width="100" height="36" alt="Decline" src="${host}/pgadmissions/design/default/images/email/decline.png" />
 			          	</a>
 			        </p>

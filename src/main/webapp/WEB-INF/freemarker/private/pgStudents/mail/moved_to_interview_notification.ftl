@@ -44,14 +44,14 @@
 			      	<#if application.latestInterview.locationURL??>
 				      	
 				          <!-- Button -->
-							<a href="${application.latestInterview.locationURL}" title="Get Directions">
+							<a style="text-decoration:none;" href="${application.latestInterview.locationURL}" title="Get Directions">
 				            	<img border="0" style="border: none;" width="133" height="36" alt="Get Directions" src="${host}/pgadmissions/design/default/images/email/get_directions.png" />
 				          	</a>
 				      	
 				      </#if>
 
 				          <!-- Button -->
-							<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View/Update Application">
+							<a style="text-decoration:none;" href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View/Update Application">
 				            	<img border="0" style="border: none;" width="193" height="36" alt="View/Update Application" src="${host}/pgadmissions/design/default/images/email/view_update_app.png" />
 				          	</a>
 				        </p>

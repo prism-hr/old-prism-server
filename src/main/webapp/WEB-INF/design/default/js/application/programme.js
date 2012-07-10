@@ -203,7 +203,7 @@ $(document).ready(function()
 	{
 		// Hide error messages.
 		var errors = 0;
-		$('table#supervisors span.invalid').html('').hide();
+		$("#supervisor_div span.invalid").remove();
 		
 		$("#supervisors").show();
 		if ($('#supervisorFirstname').val() == "")

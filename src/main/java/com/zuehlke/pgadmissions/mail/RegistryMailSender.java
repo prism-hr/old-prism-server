@@ -76,6 +76,7 @@ public class RegistryMailSender extends MailSender {
 		model.put("sender", currentAdminUser);
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		model.put("recipients", createRecipientString(registryContacts));
+		model.put("admissionsValidationServiceLevel", Environment.getInstance().getAdmissionsValidationServiceLevel());
 		return model;
 	}
 

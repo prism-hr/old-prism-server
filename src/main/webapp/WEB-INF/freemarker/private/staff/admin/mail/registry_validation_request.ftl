@@ -43,7 +43,7 @@
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">To progress the Application without unreasonable delay to the applicant, we would value your response within <<AdmissionsValidationServiceLevel>>.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">To progress the Application without unreasonable delay to the applicant, we would value your response within ${admissionsValidationServiceLevel}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Please contact me should you have any questions.</font>

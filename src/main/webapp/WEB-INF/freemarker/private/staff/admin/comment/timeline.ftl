@@ -59,6 +59,11 @@
 								</li>
 								<li class="${timelineObject.type}">
 									<div class="box">
+										<div class="title">
+											<span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="<#if timelineObject.userCapacity == 'admin'>Administrator<#else>${timelineObject.userCapacity?cap_first}</#if>"></span>
+											<span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
+											<span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
+										</div>
 										<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
 										<p class="datetime"><span data-desc="Date and Time"></span> ${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
 										<#if timelineObject.interview.locationURL?length &gt; 0><p class="location"><span data-desc="Location"></span> ${timelineObject.interview.locationURL?html}</p></#if>

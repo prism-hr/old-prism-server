@@ -45,7 +45,7 @@
 				          <!-- Button -->
 							<a style="text-decoration:none;" href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}"
 								title="Decline">
-				            	<img border="0" style="border: none;" width="143" height="36" alt="Decline" src="${host}/pgadmissions/design/default/images/email/decline.png" />
+				            	<img border="0" style="border: none;" width="100" height="36" alt="Decline" src="${host}/pgadmissions/design/default/images/email/decline.png" />
 				          	</a>
 				        </p>
 			      	

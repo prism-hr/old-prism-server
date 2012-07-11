@@ -7,7 +7,6 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -21,7 +20,6 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.InvalidParameterFormatException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -91,9 +89,13 @@ public class ApplicationFormController {
 			return null;
 		}
 		try {
-			batchDeadline = new SimpleDateFormat("dd-MMM-yyyy").parse(programDeadline);
-		} catch (ParseException e) {
-			throw new InvalidParameterFormatException(e);
+			batchDeadline = new SimpleDateFormat("dd MMM yyyy").parse(programDeadline);
+		} catch (ParseException ignore) {
+			try {
+				batchDeadline = new SimpleDateFormat("dd-MMM-yyyy").parse(programDeadline);
+			} catch (ParseException e) {
+				throw new InvalidParameterFormatException(e);			
+			}
 		}
 		return batchDeadline;
 	}

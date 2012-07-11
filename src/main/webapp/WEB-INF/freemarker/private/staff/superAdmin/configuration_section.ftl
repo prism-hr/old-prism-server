@@ -32,11 +32,13 @@
 						<select name="${stage}_unit" id="${stage}_unit">
 							<option value="">Select...</option>
 							<#list units as unit>
-							<option value="${unit}"
-							<#if  stageDurations[stage]?? && stageDurations[stage].unit?? && stageDurations[stage].unit == unit>
-									selected="selected"
-							</#if>>
-								${unit.displayValue()}</option>               
+								<#if unit != 'MINUTES'&& unit != 'HOURS'>
+									<option value="${unit}"
+									<#if  stageDurations[stage]?? && stageDurations[stage].unit?? && stageDurations[stage].unit == unit>
+											selected="selected"
+									</#if>>
+										${unit.displayValue()}</option>
+								 </#if>              
 							</#list>
 						</select>	
 						<span class="invalid" name="${stage}_invalidDuration" style="display:none;"></span>

@@ -92,7 +92,7 @@ public class PdfDocumentBuilder {
 	private void buildDocument(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
 		bookmarkMap = new HashMap<Integer, Object>();
 		appendixCounter = 1;
-		addCoverPage(application, document);
+		addCoverPage(application, writer, document);
 		Chunk submittedDateHeader = null;
 		if (application.getSubmittedDate() != null) {
 			submittedDateHeader = new Chunk(new SimpleDateFormat("dd MMMM yyyy").format(application.getSubmittedDate()), smallerFont);
@@ -152,8 +152,16 @@ public class PdfDocumentBuilder {
 
 	}
 
-	private void addCoverPage(ApplicationForm application, Document document) throws DocumentException {
+	private void addCoverPage(ApplicationForm application, PdfWriter writer, Document document) throws DocumentException, MalformedURLException, IOException {
 		document.newPage();
+
+		Image image = Image.getInstance(this.getClass().getResource("/prism_logo.png"));
+		image.scalePercent(50f);
+
+		image.setAbsolutePosition(document.right() - image.getWidth() * 0.5f, document.top() + 20f);
+		document.add(image);
+		LineSeparator lineSeparator = new LineSeparator();
+		lineSeparator.drawLine(writer.getDirectContent(), document.left(), document.right(), document.top() + 10f);
 		document.add(new Paragraph(" "));
 		document.add(new Paragraph(" "));
 

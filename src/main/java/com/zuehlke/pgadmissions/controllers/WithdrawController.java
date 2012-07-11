@@ -50,7 +50,6 @@ public class WithdrawController{
 		applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
 		applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
 		withdrawService.saveApplicationFormAndSendMailNotifications(applicationForm);
-		//modelMap.put("message", String.format("Application %s has been successfully withdrawn.", applicationForm.getApplicationNumber()));
 		return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
 	}
 	

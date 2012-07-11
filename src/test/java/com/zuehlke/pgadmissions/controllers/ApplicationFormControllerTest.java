@@ -59,8 +59,9 @@ public class ApplicationFormControllerTest {
 		EasyMock.verify(applicationsServiceMock);
 		
 	}
+	
 	@Test
-	public void shouldCreateNewApplicationFormWithBatchDeadline() throws ParseException {
+	public void shouldCreateNewApplicationFormWithBatchDeadlineInFirstAcceptedFormat() throws ParseException {
 
 		Program program = new ProgramBuilder().id(12).toProgram();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
@@ -75,6 +76,25 @@ public class ApplicationFormControllerTest {
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 		
 		applicationController.createNewApplicationForm("ABC", "02-Aug-2012", null, null);
+		EasyMock.verify(applicationsServiceMock);
+		
+	}
+	@Test
+	public void shouldCreateNewApplicationFormWithBatchDeadlineInSecondAcceptedFormat() throws ParseException {
+
+		Program program = new ProgramBuilder().id(12).toProgram();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date batchDeadline = dateFormat.parse("2012/08/02");
+		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(dateFormat.parse("2030/08/06")).toProgramInstance();
+		program.setInstances(Arrays.asList(programInstance));
+		
+		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program,batchDeadline, null, null)).andReturn(applicationForm);
+		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
+		
+		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
+		
+		applicationController.createNewApplicationForm("ABC", "02 Aug 2012", null, null);
 		EasyMock.verify(applicationsServiceMock);
 		
 	}

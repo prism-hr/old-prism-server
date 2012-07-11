@@ -272,7 +272,7 @@ function fixedTip($object, text)
 			viewport: $(window),
 			adjust: {
 				method: 'flip shift'
-			},
+			}
 		},
 		style: 'tooltip-pgr ui-tooltip-shadow',
 		show: {
@@ -322,21 +322,25 @@ function watchUpload($field, $deleteFunction)
   {
     var input    = this.children[0];
     var $hidden  = $container.find('input.file');
-    if (input.files[0].size < 10485760) // 10MB in bytes
+    var isOkSize = true;
+    try{
+    	isOkSize = input.files[0].size < 10485760;
+    }catch(error){
+    	alert(error)
+    }
+    if (isOkSize) // 10MB in bytes
     {
-			if (!$deleteFunction)
-			{
+		if (!$deleteFunction){
 	    	deleteUploadedFile($hidden);
 	    }
-			else
-			{
+		else{
 	    	$deleteFunction();
 	    }
-			$field.attr("readonly", "readonly");
-			$container.addClass('posting');
-			doUpload($(input));
-			$field.removeAttr("readonly");
-		 }
+		$field.attr("readonly", "readonly");
+		$container.addClass('posting');
+		doUpload($(input));
+		$field.removeAttr("readonly");
+	}
      else
      {
 			 $container.append('<span class="invalid">Document must be at most 10MB.</span>');

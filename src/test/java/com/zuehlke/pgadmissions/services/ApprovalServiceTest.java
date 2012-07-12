@@ -136,6 +136,8 @@ public class ApprovalServiceTest {
 				new NotificationRecordBuilder().id(2).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION).toNotificationRecord());
 		applicationForm.getNotificationRecords().add(
 				new NotificationRecordBuilder().id(5).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER).toNotificationRecord());
+		applicationForm.getNotificationRecords().add(
+				new NotificationRecordBuilder().id(4).notificationType(NotificationType.APPROVAL_NOTIFICATION).toNotificationRecord());
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
 				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
 		approvalRoundDAOMock.save(approvalRound);
@@ -147,6 +149,7 @@ public class ApprovalServiceTest {
 		EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
 
 		approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+		
 		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 2), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
 		assertEquals(applicationForm, approvalRound.getApplication());
 		assertEquals(approvalRound, applicationForm.getLatestApprovalRound());
@@ -157,6 +160,7 @@ public class ApprovalServiceTest {
 		EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock);
 		assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION));
 		assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER));
+		assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION));
 
 	}
 

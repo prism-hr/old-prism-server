@@ -31,7 +31,7 @@
 
 			        <p>
 			          <!-- Button -->
-						<a style="text-decoration:none;" href="${host}/pgadmissions/progress?application=${application.applicationNumber}" title="Evaluate Feedback">
+						<a style="text-decoration:none;" href="${host}/pgadmissions/progress/getPage?applicationId=${application.applicationNumber}" title="Evaluate Feedback">
 			            	<img border="0" style="border: none;" width="164" height="36" alt="Evaluate Feedback" src="${host}/pgadmissions/design/default/images/email/evaluate_feedback.png" />
 			          	</a>
 			        </p>

@@ -62,7 +62,7 @@ public class AdminApprovedNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx2);
 		
 		sessionMock.refresh(application);
-		mailSenderMock.sendAdminApprovedNotification(application, approver);
+		mailSenderMock.sendAdminAndSupervisorApprovedNotification(application, approver);
 		applicationDaoMock.save(application);
 
 		tx2.commit();
@@ -95,7 +95,7 @@ public class AdminApprovedNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx2);
 		
 		sessionMock.refresh(application);
-		mailSenderMock.sendAdminApprovedNotification(application, admin);
+		mailSenderMock.sendAdminAndSupervisorApprovedNotification(application, admin);
 		applicationDaoMock.save(application);
 
 		tx2.commit();
@@ -129,7 +129,7 @@ public class AdminApprovedNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx2);
 		
 		sessionMock.refresh(application);
-		mailSenderMock.sendAdminApprovedNotification(application, approver);
+		mailSenderMock.sendAdminAndSupervisorApprovedNotification(application, approver);
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 
 		tx2.rollback();

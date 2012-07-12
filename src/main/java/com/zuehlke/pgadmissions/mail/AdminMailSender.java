@@ -14,6 +14,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -21,12 +22,12 @@ import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class AdminMailSender extends StateChangeMailSender {
-	
+
 	private final ApplicationsService applicationService;
 	private final ConfigurationService personService;
-	
-	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,// 
-			ApplicationsService applicationService,MessageSource msgSource, ConfigurationService personService) {
+
+	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,//
+			ApplicationsService applicationService, MessageSource msgSource, ConfigurationService personService) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
 		this.applicationService = applicationService;
 		this.personService = personService;
@@ -45,9 +46,9 @@ public class AdminMailSender extends StateChangeMailSender {
 	@Override
 	public void sendMailsForApplication(ApplicationForm form, String messageCode, String templatename, NotificationType notificationType) {
 		Map<String, Object> model = createModel(form);
-		if(notificationType == NotificationType.APPROVAL_REMINDER){
+		if (notificationType == NotificationType.APPROVAL_REMINDER) {
 			sendApproverApprovalReminder(form, messageCode, templatename, model);
-		}else{
+		} else {
 			internalSend(form, messageCode, templatename, model);
 		}
 	}
@@ -61,7 +62,7 @@ public class AdminMailSender extends StateChangeMailSender {
 			model.put("approver", approver);
 			delegateToMailSender(toAddress, null, subject, templatename, model);
 		}
-		
+
 	}
 
 	public void sendAdminReviewNotification(ApplicationForm form, RegisteredUser reviewer) {
@@ -81,7 +82,7 @@ public class AdminMailSender extends StateChangeMailSender {
 		Map<String, Object> model = createModel(application);
 		model.put("approver", approver);
 		model.put("reason", application.getRejection().getRejectionReason());
-		model.put("previousStage",  application.getOutcomeOfStage());
+		model.put("previousStage", application.getOutcomeOfStage());
 
 		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());
 		administrators.remove(approver);
@@ -102,22 +103,23 @@ public class AdminMailSender extends StateChangeMailSender {
 		internalSend(applicationForm, programAdmins, messageCode, template, model);
 	}
 
-	private void internalSend(ApplicationForm form, List<RegisteredUser> adminRecipients, String messageCode, String template, Map<String, Object> model) {
+	private void internalSend(ApplicationForm form, List<RegisteredUser> recipients, String messageCode, String template, Map<String, Object> model) {
 		RegisteredUser applicationAdmin = form.getApplicationAdministrator();
 		ApplicationFormStatus previousStage = form.getOutcomeOfStage();
-		
+
 		String subject = resolveMessage(messageCode, form, previousStage);
-		if (applicationAdmin == null) { // send email to all program administrators
-			for (RegisteredUser admin : adminRecipients) {
+		if (applicationAdmin == null) { // send email to all program
+										// administrators
+			for (RegisteredUser admin : recipients) {
 				InternetAddress toAddress = createAddress(admin);
 
 				model.put("admin", admin);
 				delegateToMailSender(toAddress, null, subject, template, model);
 			}
 		} else { // send one email to application admin, CC to program admins
-			InternetAddress[] ccAddresses = new InternetAddress[adminRecipients.size()];
+			InternetAddress[] ccAddresses = new InternetAddress[recipients.size()];
 			int index = 0;
-			for (RegisteredUser admin : adminRecipients) {
+			for (RegisteredUser admin : recipients) {
 				ccAddresses[index] = createAddress(admin);
 				index++;
 			}
@@ -132,17 +134,26 @@ public class AdminMailSender extends StateChangeMailSender {
 		javaMailSender.send(msgPreparator);
 	}
 
-	public void sendAdminApprovedNotification(ApplicationForm application, RegisteredUser approver) {
+	public void sendAdminAndSupervisorApprovedNotification(ApplicationForm application, RegisteredUser approver) {
 		Map<String, Object> model = createModel(application);
 		model.put("approver", approver);
 		model.put("previousStage", application.getOutcomeOfStage());
 		model.put("registryContacts", personService.getAllRegistryUsers());
 
 		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());
+		if (application.getLatestApprovalRound() != null) {
+			List<Supervisor> supervisors = application.getLatestApprovalRound().getSupervisors();
+			for (Supervisor supervisor : supervisors) {
+				if (!administrators.contains(supervisor.getUser())) {
+					administrators.add(supervisor.getUser());
+				}
+			}
+		}
 		administrators.remove(approver);
+
 		if (!administrators.isEmpty()) {
 			internalSend(application, administrators, "approved.notification", "private/staff/admin/mail/approved_notification.ftl", model);
 		}
-		
+
 	}
 }

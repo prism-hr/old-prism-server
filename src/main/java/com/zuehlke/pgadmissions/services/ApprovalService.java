@@ -67,8 +67,10 @@ public class ApprovalService {
 		approvalRoundDAO.save(approvalRound);
 		StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
 		application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
+		if(application.getStatus() != ApplicationFormStatus.APPROVAL){
+			application.getEvents().add(eventFactory.createEvent(approvalRound));
+		}
 		application.setStatus(ApplicationFormStatus.APPROVAL);
-		application.getEvents().add(eventFactory.createEvent(approvalRound));
 		application.setPendingApprovalRestart(false);
 		resetRequestRestartNotificationRecords(application);
 		
@@ -122,14 +124,7 @@ public class ApprovalService {
 		approvalRoundDAO.save(approvalRound);
 	}
 
-	@Transactional
-	public void moveApplicationToApproval(ApplicationForm application) {
-		StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
-		application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
-		application.setStatus(ApplicationFormStatus.APPROVAL);
-		applicationDAO.save(application);
 
-	}
 	@Transactional		
 	public void moveToApproved(ApplicationForm application) {
 		if(ApplicationFormStatus.APPROVAL != application.getStatus()){

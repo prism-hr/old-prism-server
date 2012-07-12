@@ -74,7 +74,7 @@ public class ApprovalService {
 		}
 		application.setStatus(ApplicationFormStatus.APPROVAL);
 		application.setPendingApprovalRestart(false);
-		resetRequestRestartNotificationRecords(application);
+		resetNotificationRecords(application);
 		
 		applicationDAO.save(application);
 	}
@@ -94,7 +94,7 @@ public class ApprovalService {
 		}
 	}
 
-	private void resetRequestRestartNotificationRecords(ApplicationForm application) {
+	private void resetNotificationRecords(ApplicationForm application) {
 		NotificationRecord restartRequestNotification = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
 		if(restartRequestNotification != null){
 			application.getNotificationRecords().remove(restartRequestNotification);
@@ -102,6 +102,10 @@ public class ApprovalService {
 		NotificationRecord restartRequestReminder = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
 		if(restartRequestReminder != null){
 			application.getNotificationRecords().remove(restartRequestReminder);
+		}
+		NotificationRecord adminAndAproverNotificationRecord = application.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION);
+		if(adminAndAproverNotificationRecord != null){
+			application.getNotificationRecords().remove(adminAndAproverNotificationRecord);
 		}
 	}
 

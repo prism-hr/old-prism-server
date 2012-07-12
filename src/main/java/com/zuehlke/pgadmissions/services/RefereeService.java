@@ -220,11 +220,12 @@ public class RefereeService {
 	}
 
 	@Transactional
-	public void declineToActAsRefereeAndNotifiyApplicant(Referee referee) {
+	public void declineToActAsRefereeAndSendNotification(Referee referee) {
 		referee.setDeclined(true);
 		refereeDAO.save(referee);
 		addReferenceEventToApplication(referee);
-		sendMailToApplicant(referee);
+		sendMailToApplicant(referee);		
+		sendMailToAdministrators(referee);
 	}
 
 	private void addReferenceEventToApplication(Referee referee) {

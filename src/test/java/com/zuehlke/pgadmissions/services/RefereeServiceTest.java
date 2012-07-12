@@ -62,7 +62,7 @@ public class RefereeServiceTest {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
-		msgSourceMock = EasyMock.createMock(MessageSource.class);
+		msgSourceMock = EasyMock.createNiceMock(MessageSource.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
@@ -360,9 +360,10 @@ public class RefereeServiceTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void shouldSetDeclineAndSendDeclineNotification() throws UnsupportedEncodingException {
+	public void shouldSetDeclineAndSendDeclineNotificationToApplicant() throws UnsupportedEncodingException {
 
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+	
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
 		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").toProgram()).toApplicationForm();
 		referee.setApplication(form);
@@ -389,7 +390,7 @@ public class RefereeServiceTest {
 		
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock);
 
-		refereeService.declineToActAsRefereeAndNotifiyApplicant(referee);
+		refereeService.declineToActAsRefereeAndSendNotification(referee);
 
 		assertTrue(referee.isDeclined());
 		assertEquals(1, form.getEvents().size());
@@ -397,7 +398,46 @@ public class RefereeServiceTest {
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock,applicationFormDAOMock);
 
 	}
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldSetDeclineAndSendDeclineNotificationToAdmin() throws UnsupportedEncodingException {
 
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		RegisteredUser addmin = new RegisteredUserBuilder().id(43).firstName("bob").lastName("blogs").email("blogs@test.com").toUser();
+		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").administrators(addmin).toProgram()).toApplicationForm();
+		referee.setApplication(form);
+
+		refereeDAOMock.save(referee);
+
+		ReferenceEvent event = new ReferenceEventBuilder().id(4).toEvent();
+		EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
+		applicationFormDAOMock.save(form);
+		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
+
+		InternetAddress toAddress = new InternetAddress("blogs@test.com", "bob blogs");
+
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.provided.admin"),// 
+				EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
+
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), //
+				EasyMock.eq("subject"), //
+				EasyMock.eq("private/staff/admin/mail/reference_submit_confirmation.ftl"),//
+				EasyMock.isA(Map.class), //
+				(InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+		javaMailSenderMock.send(preparatorMock);
+
+		
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock);
+
+		refereeService.declineToActAsRefereeAndSendNotification(referee);
+
+		assertTrue(referee.isDeclined());
+		assertEquals(1, form.getEvents().size());
+		assertEquals(event, form.getEvents().get(0));
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock,applicationFormDAOMock);
+
+	}
 	@Test
 	public void shouldNotSendDeclineNotificationIfSaveFails()  {
 
@@ -412,7 +452,7 @@ public class RefereeServiceTest {
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
 
 		try {
-			refereeService.declineToActAsRefereeAndNotifiyApplicant(referee);
+			refereeService.declineToActAsRefereeAndSendNotification(referee);
 		} catch (Exception e) {
 			// expected..ignore
 		}
@@ -447,7 +487,7 @@ public class RefereeServiceTest {
 		EasyMock.expectLastCall().andThrow(new RuntimeException("OH no - email sending's gone wrong!!"));
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock);
 
-		refereeService.declineToActAsRefereeAndNotifiyApplicant(referee);
+		refereeService.declineToActAsRefereeAndSendNotification(referee);
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock);
 

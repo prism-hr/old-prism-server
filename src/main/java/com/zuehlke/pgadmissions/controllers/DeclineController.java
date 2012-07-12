@@ -68,7 +68,7 @@ public class DeclineController {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Referee referee = getReferee(activationCode, applicationForm);
 
-		refereeService.declineToActAsRefereeAndNotifiyApplicant(referee);
+		refereeService.declineToActAsRefereeAndSendNotification(referee);
 		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
 		return DECLINE_SUCCESS_VIEW_NAME;
 	}

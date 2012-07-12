@@ -265,13 +265,13 @@ public class MailServiceTest {
 	public void shouldSendWithdrawnNotificationToSupervisors() throws UnsupportedEncodingException {
 		
 		RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Supervisor interviewer1 = new SupervisorBuilder().id(1).user(supervisorUser1).toSupervisor();
-		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(interviewer1).toApprovalRound();
+		Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).toSupervisor();
+		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).toApprovalRound();
 
-		RegisteredUser interviewerUser3 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
-		Supervisor itnerviewer3 = new SupervisorBuilder().id(3).user(interviewerUser3).toSupervisor();
+		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
+		Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).toSupervisor();
 		
-		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors( itnerviewer3).toApprovalRound();
+		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors( supervisor3).toApprovalRound();
 		Program program = new ProgramBuilder().title("title").toProgram();
 		
 		

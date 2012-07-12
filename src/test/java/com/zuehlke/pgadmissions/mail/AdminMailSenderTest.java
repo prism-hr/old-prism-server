@@ -61,7 +61,8 @@ public class AdminMailSenderTest {
 		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").toUser();
 		RegisteredUser adminTwo = new RegisteredUserBuilder().id(8).email("alice@test.com").toUser();
 
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram())
+				.toApplicationForm();
 
 		Map<String, Object> model = adminMailSender.createModel(form);
 		assertEquals(form, model.get("application"));
@@ -91,11 +92,13 @@ public class AdminMailSenderTest {
 		InternetAddress toAddress2 = new InternetAddress("cc@test.com", "charlie crock");
 		String templatename = "private/staff/admin/mail/application_validation_reminder.ftl";
 
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("message.code"),// 
-				EasyMock.aryEq(new Object[] { "abc", "a program", "Jane", "Smith" , "Validation" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("message.code"),//
+				EasyMock.aryEq(new Object[] { "abc", "a program", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress1, null, "resolved subject", templatename, model, null)).andReturn(preparatorMock);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress2, null, "resolved subject", templatename, model, null)).andReturn(preparatorMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress1, null, "resolved subject", templatename, model, null)).andReturn(
+				preparatorMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress2, null, "resolved subject", templatename, model, null)).andReturn(
+				preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().times(2);
@@ -117,16 +120,17 @@ public class AdminMailSenderTest {
 
 		};
 		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(3234).applicant(new RegisteredUser()).applicationNumber("abc").program(new ProgramBuilder().id(23).title("laal").administrators(admin).toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(3234).applicant(new RegisteredUser()).applicationNumber("abc")
+				.program(new ProgramBuilder().id(23).title("laal").administrators(admin).toProgram()).toApplicationForm();
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(11).toUser();
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
 
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("review.provided.admin"),// 
-				EasyMock.aryEq(new Object[] { "abc", "laal" , null, null, "Validation"}), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("review.provided.admin"),//
+				EasyMock.aryEq(new Object[] { "abc", "laal", null, null, "Validation" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, null,//
-				"resolved subject",// 
+				"resolved subject",//
 				"private/staff/admin/mail/review_submission_notification.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
@@ -150,16 +154,17 @@ public class AdminMailSenderTest {
 
 		};
 		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicant(new RegisteredUser()).applicationNumber("abc").program(new ProgramBuilder().id(234).title("prg").administrators(admin).toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicant(new RegisteredUser()).applicationNumber("abc")
+				.program(new ProgramBuilder().id(234).title("prg").administrators(admin).toProgram()).toApplicationForm();
 		RegisteredUser interviewer = new RegisteredUserBuilder().id(11).toUser();
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
 
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("interview.feedback.notification"),// 
-				EasyMock.aryEq(new Object[] {"abc", "prg", null, null, "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("interview.feedback.notification"),//
+				EasyMock.aryEq(new Object[] { "abc", "prg", null, null, "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, null,// 
-				"subject",// 
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, null,//
+				"subject",//
 				"private/staff/admin/mail/interview_submission_notification.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
@@ -194,12 +199,14 @@ public class AdminMailSenderTest {
 			}
 
 		};
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("msgCode"),// 
-				EasyMock.aryEq(new Object[] { "abc", "prg", "Jane", "Smith","Validation"  }), EasyMock.eq((Locale) null))).andReturn("subject");
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("msgCode"),//
+				EasyMock.aryEq(new Object[] { "abc", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminOneAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminTwoAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminOneAdr, null, "subject", templatename, model, null)).andReturn(
+				preparatorMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminTwoAdr, null, "subject", templatename, model, null)).andReturn(
+				preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().times(2);
@@ -212,7 +219,7 @@ public class AdminMailSenderTest {
 	}
 
 	@Test
-	public void shouldSendApproveRejectReminderEmailToEachApprover() throws Exception {
+	public void shouldSendApproveReminderEmailToEachApprover() throws Exception {
 
 		final RegisteredUser approverOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		InternetAddress adminOneAdr = new InternetAddress("bb@test.com");
@@ -235,12 +242,14 @@ public class AdminMailSenderTest {
 
 		};
 
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("msgCode"),// 
-				EasyMock.aryEq(new Object[] { "abc", "prg", "Jane", "Smith","Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("msgCode"),//
+				EasyMock.aryEq(new Object[] { "abc", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminOneAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminTwoAdr, null, "subject", templatename, model, null)).andReturn(preparatorMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminOneAdr, null, "subject", templatename, model, null)).andReturn(
+				preparatorMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminTwoAdr, null, "subject", templatename, model, null)).andReturn(
+				preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().times(2);
@@ -274,8 +283,8 @@ public class AdminMailSenderTest {
 
 		};
 
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("msgCode"),// 
-				EasyMock.aryEq(new Object[] { "abc", "prg", "Jane", "Smith","Validation"  }), EasyMock.eq((Locale) null))).andReturn("subject");
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("msgCode"),//
+				EasyMock.aryEq(new Object[] { "abc", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(adminOneAdr, null, "subject", templatename, model, null)).andThrow(//
 				new RuntimeException("Aarrrggghhhhh.....it's all gone wrong!!"));
@@ -295,18 +304,33 @@ public class AdminMailSenderTest {
 	}
 
 	@Test
-	public void sendingRejectNotifications() throws Exception {
+	public void sendingRejectNotificationsToAdminsApproversAndSupervisors() throws Exception {
 		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
+		RegisteredUser approver = new RegisteredUserBuilder().firstName("George").lastName("Smith").email("george.smith@test.com").id(90).toUser();
 
-		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).toApplicationForm();
+		RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).toSupervisor();
+		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).toApprovalRound();
+
+		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
+		Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).toSupervisor();
+
+		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor3).toApprovalRound();
+
+		Program program = new ProgramBuilder().title("prg").administrators(admin).approver(approver).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().id(4).approvalRounds(previousApprovalRound, latestApprovalRound)
+				.latestApprovalRound(latestApprovalRound).applicationNumber("bob").applicant(applicant)
+				.program(program).toApplicationForm();
 
 		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
 		Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).toRejection();
 		application.setRejection(rejection);
 
-		RegisteredUser approver = new RegisteredUserBuilder().id(11).toUser();
+		
 		InternetAddress expAddr = new InternetAddress("bob@test.com", "bob the builder");
+		InternetAddress supAdd = new InternetAddress("Forse@test.com", "Fred Forse");
+		InternetAddress apprAdd = new InternetAddress("george.smith@test.com", "George Smith");
 
 		String expTemplate = "private/staff/admin/mail/rejected_notification.ftl";
 
@@ -320,91 +344,33 @@ public class AdminMailSenderTest {
 
 		};
 
-		//EasyMock.expect(applicationServiceMock.getStageComingFrom(application)).andReturn(ApplicationFormStatus.VALIDATION).times(2);
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("rejection.notification"),// 
-				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
+		//
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("rejection.notification.admin"),//
+				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
 
-		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
-		javaMailSenderMock.send(mimePrepMock);
-		EasyMock.expectLastCall();
-		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
+		MimeMessagePreparator mimePrepMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock1);
+		javaMailSenderMock.send(mimePrepMock1);
+
+		MimeMessagePreparator mimePrepMock2 = EasyMock.createMock(MimeMessagePreparator.class);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(supAdd, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock2);
+		javaMailSenderMock.send(mimePrepMock2);
+
+		MimeMessagePreparator mimePrepMock3 = EasyMock.createMock(MimeMessagePreparator.class);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(apprAdd, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock3);
+		javaMailSenderMock.send(mimePrepMock3);
+		
+		EasyMock.replay(mimePrepMock1, mimePrepMock2, mimePrepMock3, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
 
 		adminMailSender.sendAdminRejectNotification(application, approver);
 
-		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
+		EasyMock.verify(mimePrepMock1, mimePrepMock2, mimePrepMock3, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
 		Assert.assertEquals(approver, model.get("approver"));
 		Assert.assertEquals(reason, model.get("reason"));
 		Assert.assertEquals(ApplicationFormStatus.VALIDATION, model.get("previousStage"));
 	}
 
-	@Test
-	public void sendingRejectNotificationsOnlyToNotApproverAdmins() throws Exception {
-		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
-		RegisteredUser adminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
 
-		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(adminOne, adminTwo).toProgram()).toApplicationForm();
-
-		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
-		Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).toRejection();
-		application.setRejection(rejection);
-
-		InternetAddress expAddr = new InternetAddress("bob@test.com", "bob the builder");
-		String expTemplate = "private/staff/admin/mail/rejected_notification.ftl";
-
-		final Map<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
-			@Override
-			Map<String, Object> createModel(ApplicationForm form) {
-				Assert.assertNotNull(form);
-				return model;
-			}
-
-		};
-
-		//EasyMock.expect(applicationServiceMock.getStageComingFrom(application)).andReturn(ApplicationFormStatus.INTERVIEW).times(2);
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("rejection.notification"),// 
-				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith","Validation"}), EasyMock.eq((Locale) null))).andReturn("subject");
-
-		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
-		javaMailSenderMock.send(mimePrepMock);
-		EasyMock.expectLastCall();
-		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
-
-		adminMailSender.sendAdminRejectNotification(application, adminTwo);
-
-		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
-		Assert.assertEquals(adminTwo, model.get("approver"));
-		Assert.assertEquals(ApplicationFormStatus.VALIDATION, model.get("previousStage"));
-	}
-
-	@Test
-	public void sendingNoRejectNotificationsOnlyOneProgramAdminWhoApproved() throws Exception {
-		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne).toProgram()).toApplicationForm();
-
-		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
-		Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).toRejection();
-		application.setRejection(rejection);
-
-		final Map<String, Object> model = new HashMap<String, Object>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
-			@Override
-			Map<String, Object> createModel(ApplicationForm form) {
-				Assert.assertNotNull(form);
-				return model;
-			}
-
-		};
-
-		EasyMock.replay(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
-
-		adminMailSender.sendAdminRejectNotification(application, adminOne);
-
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
-	}
 
 	@Test
 	public void shouldSendReviewerAssignedEmailToEachAdmin() throws UnsupportedEncodingException {
@@ -418,16 +384,19 @@ public class AdminMailSenderTest {
 
 		};
 		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(213).applicationNumber("abc").program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).applicant(new RegisteredUser()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(213).applicationNumber("abc")
+				.program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).applicant(new RegisteredUser()).toApplicationForm();
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(11).toUser();
 		Reviewer reviewer = new ReviewerBuilder().id(1).user(reviewerUser).toReviewer();
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
 
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reviewer.assigned.admin"),// 
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reviewer.assigned.admin"),//
 				EasyMock.aryEq(new Object[] { "abc", "prg", null, null, "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, null, "subject", "private/staff/admin/mail/reviewer_assigned_notification.ftl", model, null)).andReturn(preparatorMock);
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, null, "subject",
+						"private/staff/admin/mail/reviewer_assigned_notification.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
@@ -446,7 +415,8 @@ public class AdminMailSenderTest {
 		Program program = new ProgramBuilder().title("prg").administrators(programAdminOne, programAdminTwo).toProgram();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
 
-		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(program).interviews(new InterviewBuilder().id(4).toInterview()).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(program)
+				.interviews(new InterviewBuilder().id(4).toInterview()).status(ApplicationFormStatus.REJECTED).toApplicationForm();
 
 		RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(32).email("dd@test.com").firstName("doris").lastName("day").toUser();
 		application.setApplicationAdministrator(applicationAdmin);
@@ -471,8 +441,7 @@ public class AdminMailSenderTest {
 		InternetAddress prgAdminOne = new InternetAddress("bob@test.com", "bob the builder");
 		InternetAddress prgAdminTwo = new InternetAddress("cc@test.com", "charlie crock");
 
-
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("rejection.notification"),// 
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("rejection.notification.admin"),//
 				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Interview" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
 		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
@@ -498,8 +467,9 @@ public class AdminMailSenderTest {
 		RegisteredUser adminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").toUser();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
 
-		ApplicationForm application = new ApplicationFormBuilder().id(4).interviews(new InterviewBuilder().id(4).toInterview()).status(ApplicationFormStatus.APPROVED).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(adminOne, adminTwo).toProgram()).toApplicationForm();
-
+		ApplicationForm application = new ApplicationFormBuilder().id(4).interviews(new InterviewBuilder().id(4).toInterview())
+				.status(ApplicationFormStatus.APPROVED).applicationNumber("bob").applicant(applicant)
+				.program(new ProgramBuilder().title("prg").administrators(adminOne, adminTwo).toProgram()).toApplicationForm();
 
 		InternetAddress expAddr = new InternetAddress("bob@test.com", "bob the builder");
 		String expTemplate = "private/staff/admin/mail/approved_notification.ftl";
@@ -513,18 +483,18 @@ public class AdminMailSenderTest {
 			}
 
 		};
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approved.notification"),// 
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approved.notification"),//
 				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Interview" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
 		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
 		javaMailSenderMock.send(mimePrepMock);
 		EasyMock.expectLastCall();
-		
+
 		List<Person> registryContacts = new ArrayList<Person>();
 		registryContacts.add(new PersonBuilder().id(123).toPerson());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
-		
+
 		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 
 		adminMailSender.sendAdminAndSupervisorApprovedNotification(application, adminTwo);
@@ -541,7 +511,7 @@ public class AdminMailSenderTest {
 		RegisteredUser supervisor1 = new RegisteredUserBuilder().email("bob1@test.com").firstName("bob1").lastName("the builder").id(12).toUser();
 		Supervisor sup1 = new SupervisorBuilder().id(1).user(supervisor1).toSupervisor();
 		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(sup1).toApprovalRound();
-		
+
 		RegisteredUser supervisor2 = new RegisteredUserBuilder().email("bob2@test.com").firstName("bob2").lastName("the builder").id(13).toUser();
 		Supervisor sup2 = new SupervisorBuilder().id(2).user(supervisor2).toSupervisor();
 		RegisteredUser supervisor3 = new RegisteredUserBuilder().email("bob3@test.com").firstName("bob3").lastName("the builder").id(14).toUser();
@@ -549,7 +519,9 @@ public class AdminMailSenderTest {
 		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(sup2, sup3).toApprovalRound();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
 
-		ApplicationForm application = new ApplicationFormBuilder().approvalRounds(previousApprovalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().approvalRounds(previousApprovalRound, latestApprovalRound)
+				.latestApprovalRound(latestApprovalRound).id(4).applicationNumber("bob").applicant(applicant)
+				.program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).toApplicationForm();
 
 		RegisteredUser approver = new RegisteredUserBuilder().id(11).toUser();
 
@@ -569,8 +541,7 @@ public class AdminMailSenderTest {
 
 		};
 
-
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approved.notification"),// 
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approved.notification"),//
 				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
 
 		MimeMessagePreparator mimePrepMock1 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -578,17 +549,19 @@ public class AdminMailSenderTest {
 		MimeMessagePreparator mimePrepMock3 = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock1);
 		javaMailSenderMock.send(mimePrepMock1);
-		
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(supAddr1, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock2);
+
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(supAddr1, null, "subject", expTemplate, model, null))
+				.andReturn(mimePrepMock2);
 		javaMailSenderMock.send(mimePrepMock2);
-		
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(supAddr2, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock3);
+
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(supAddr2, null, "subject", expTemplate, model, null))
+				.andReturn(mimePrepMock3);
 		javaMailSenderMock.send(mimePrepMock3);
-		
+
 		List<Person> registryContacts = new ArrayList<Person>();
 		registryContacts.add(new PersonBuilder().id(123).toPerson());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
-		
+
 		EasyMock.replay(mimePrepMock1, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 
 		adminMailSender.sendAdminAndSupervisorApprovedNotification(application, approver);
@@ -607,7 +580,7 @@ public class AdminMailSenderTest {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		personServiceMock = EasyMock.createMock(ConfigurationService.class);
 
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,// 
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,//
 				applicationServiceMock, msgSourceMock, personServiceMock);
 	}
 }

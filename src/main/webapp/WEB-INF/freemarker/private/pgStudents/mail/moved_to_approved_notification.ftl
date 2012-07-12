@@ -37,7 +37,7 @@
 			      	</p>
 
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this does not constitute a legally binding offer of study and no offer of study is valid until provided in writing by UCL Admissions.</b></font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this email does not constitute a legally binding offer of study and no offer of study is valid until provided in writing by UCL Admissions.</b></font>
 			      	</p>
 			      	
 			      	<p>

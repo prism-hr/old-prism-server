@@ -21,13 +21,16 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -35,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -523,7 +527,7 @@ public class AdminMailSenderTest {
 		
 		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 
-		adminMailSender.sendAdminApprovedNotification(application, adminTwo);
+		adminMailSender.sendAdminAndSupervisorApprovedNotification(application, adminTwo);
 
 		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 		Assert.assertEquals(adminTwo, model.get("approver"));
@@ -532,14 +536,26 @@ public class AdminMailSenderTest {
 	}
 
 	@Test
-	public void sendingApprovedNotifications() throws Exception {
+	public void sendingApprovedNotificationsToAdminsAndSupervisorrs() throws Exception {
 		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
+		RegisteredUser supervisor1 = new RegisteredUserBuilder().email("bob1@test.com").firstName("bob1").lastName("the builder").id(12).toUser();
+		Supervisor sup1 = new SupervisorBuilder().id(1).user(supervisor1).toSupervisor();
+		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(sup1).toApprovalRound();
+		
+		RegisteredUser supervisor2 = new RegisteredUserBuilder().email("bob2@test.com").firstName("bob2").lastName("the builder").id(13).toUser();
+		Supervisor sup2 = new SupervisorBuilder().id(2).user(supervisor2).toSupervisor();
+		RegisteredUser supervisor3 = new RegisteredUserBuilder().email("bob3@test.com").firstName("bob3").lastName("the builder").id(14).toUser();
+		Supervisor sup3 = new SupervisorBuilder().id(3).user(supervisor3).toSupervisor();
+		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(sup2, sup3).toApprovalRound();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
 
-		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().approvalRounds(previousApprovalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).toApplicationForm();
 
 		RegisteredUser approver = new RegisteredUserBuilder().id(11).toUser();
+
 		InternetAddress expAddr = new InternetAddress("bob@test.com", "bob the builder");
+		InternetAddress supAddr1 = new InternetAddress("bob2@test.com", "bob2 the builder");
+		InternetAddress supAddr2 = new InternetAddress("bob3@test.com", "bob3 the builder");
 
 		String expTemplate = "private/staff/admin/mail/approved_notification.ftl";
 
@@ -555,22 +571,29 @@ public class AdminMailSenderTest {
 
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approved.notification"),// 
-				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject");
+				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
 
-		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
-		javaMailSenderMock.send(mimePrepMock);
-		EasyMock.expectLastCall();
+		MimeMessagePreparator mimePrepMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator mimePrepMock2 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator mimePrepMock3 = EasyMock.createMock(MimeMessagePreparator.class);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock1);
+		javaMailSenderMock.send(mimePrepMock1);
+		
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(supAddr1, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock2);
+		javaMailSenderMock.send(mimePrepMock2);
+		
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(supAddr2, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock3);
+		javaMailSenderMock.send(mimePrepMock3);
 		
 		List<Person> registryContacts = new ArrayList<Person>();
 		registryContacts.add(new PersonBuilder().id(123).toPerson());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
 		
-		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
+		EasyMock.replay(mimePrepMock1, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 
-		adminMailSender.sendAdminApprovedNotification(application, approver);
+		adminMailSender.sendAdminAndSupervisorApprovedNotification(application, approver);
 
-		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
+		EasyMock.verify(mimePrepMock1, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 		Assert.assertEquals(approver, model.get("approver"));
 		Assert.assertEquals(registryContacts, model.get("registryContacts"));
 		Assert.assertEquals(ApplicationFormStatus.VALIDATION, model.get("previousStage"));

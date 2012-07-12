@@ -45,7 +45,7 @@ public class AdminApprovedNotificationTask extends TimerTask {
 			sessionFactory.getCurrentSession().refresh(application);
 			RegisteredUser approver = application.getApprover();
 			try {
-				adminMailSender.sendAdminApprovedNotification(application, approver);
+				adminMailSender.sendAdminAndSupervisorApprovedNotification(application, approver);
 				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPROVED_NOTIFICATION);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(NotificationType.APPROVED_NOTIFICATION);

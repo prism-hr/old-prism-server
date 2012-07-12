@@ -85,7 +85,7 @@
 		<constructor-arg index="2" ref="adminMailSender" />
 		<constructor-arg index="3" value="INTERVIEW_REMINDER" />
 		<constructor-arg index="4" value="INTERVIEW" />
-		<constructor-arg index="5" value="interview.feedback.request" />
+		<constructor-arg index="5" value="interview.feedback.evaluation" />
 		<constructor-arg index="6" value="private/staff/admin/mail/application_interview_reminder_first.ftl" />
 		<constructor-arg index="7" value="interview.feedback.evaluation.reminder" />
 		<constructor-arg index="8" value="private/staff/admin/mail/application_interview_reminder.ftl" />

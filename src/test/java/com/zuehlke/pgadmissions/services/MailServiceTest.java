@@ -26,15 +26,30 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 
@@ -133,27 +148,35 @@ public class MailServiceTest {
 		
 		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+		RegisteredUser formAdmin = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
 		Program program = new ProgramBuilder().administrators(admin1, admin2).title("title").toProgram();
 		
-		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicationAdministrator(formAdmin).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator preparatorMock3 = EasyMock.createMock(MimeMessagePreparator.class);
 		
 		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
-		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
+		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "henry harck");
+		InternetAddress toAddress3 = new InternetAddress("Forse@test.com", "Fred Forse");
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
-				EasyMock.aryEq(new Object[] { "xyz", "title" ,"a", "b"}), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
+				EasyMock.aryEq(new Object[] { "xyz", "title" ,"a", "b"}), EasyMock.eq((Locale)null))).andReturn("subject").times(3);
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
 						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress3), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock3);
+						
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
+		javaMailSenderMock.send(preparatorMock3);
 		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		
 		mailService.sendWithdrawToAdmins(form);
@@ -164,34 +187,114 @@ public class MailServiceTest {
 	@Test
 	public void shouldSendWithdrawnNotificationToReviewers() throws UnsupportedEncodingException {
 		
-		RegisteredUser reviewer1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
-		Program program = new ProgramBuilder().reviewers(reviewer1, reviewer2).title("title").toProgram();
+		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).toReviewer();
+		ReviewRound previousReviewRound = new ReviewRoundBuilder().id(1).reviewers(reviewer1).toReviewRound();
 		
-		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+		Reviewer reviewer2 = new ReviewerBuilder().id(2).user(reviewerUser2).review(new ReviewCommentBuilder().id(4).toReviewComment()).toReviewer();
+		RegisteredUser reviewerUser3 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
+		Reviewer reviewer3 = new ReviewerBuilder().id(3).user(reviewerUser3).toReviewer();
+		ReviewRound latestReviewRound = new ReviewRoundBuilder().id(1).reviewers(reviewer2, reviewer3).toReviewRound();
+		Program program = new ProgramBuilder().reviewers(reviewerUser1, reviewerUser2).title("title").toProgram();
+		
+		
+		
+		ApplicationForm form = new ApplicationFormBuilder().reviewRounds(previousReviewRound, latestReviewRound).latestReviewRound(latestReviewRound).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
-		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
 		
-		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
-		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
+		InternetAddress toAddress1 = new InternetAddress("Forse@test.com", "Fred Forse");
+		
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
-				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
+				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").anyTimes();
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
 						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
+	
 		javaMailSenderMock.send(preparatorMock1);
-		javaMailSenderMock.send(preparatorMock2);
 		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		
 		mailService.sendWithdrawToReviewers(form);
 		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldSendWithdrawnNotificationToInterviewers() throws UnsupportedEncodingException {
+		
+		RegisteredUser inrerviewerUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		Interviewer interviewer1 = new InterviewerBuilder().id(1).user(inrerviewerUser1).toInterviewer();
+		Interview previousItnerview = new InterviewBuilder().id(1).interviewers(interviewer1).toInterview();
+		
+		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+		Interviewer interviewer2 = new InterviewerBuilder().id(2).user(interviewerUser2).interviewComment(new InterviewCommentBuilder().id(1).toInterviewComment()).toInterviewer();
+		RegisteredUser interviewerUser3 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
+		Interviewer itnerviewer3 = new InterviewerBuilder().id(3).user(interviewerUser3).toInterviewer();
+		
+		Interview latestInterview = new InterviewBuilder().id(1).interviewers(interviewer2, itnerviewer3).toInterview();
+		Program program = new ProgramBuilder().reviewers(inrerviewerUser1, interviewerUser2).title("title").toProgram();
+		
+		
+		
+		ApplicationForm form = new ApplicationFormBuilder().interviews(previousItnerview, latestInterview).latestInterview(latestInterview).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		
+		InternetAddress toAddress1 = new InternetAddress("Forse@test.com", "Fred Forse");
+		
+		
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
+				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").anyTimes();
+		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+	
+		javaMailSenderMock.send(preparatorMock1);
+		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		
+		mailService.sendWithdrawToInterviewers(form);
+		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldSendWithdrawnNotificationToSupervisors() throws UnsupportedEncodingException {
+		
+		RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		Supervisor interviewer1 = new SupervisorBuilder().id(1).user(supervisorUser1).toSupervisor();
+		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(interviewer1).toApprovalRound();
+
+		RegisteredUser interviewerUser3 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
+		Supervisor itnerviewer3 = new SupervisorBuilder().id(3).user(interviewerUser3).toSupervisor();
+		
+		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors( itnerviewer3).toApprovalRound();
+		Program program = new ProgramBuilder().title("title").toProgram();
+		
+		
+		
+		ApplicationForm form = new ApplicationFormBuilder().approvalRounds(previousApprovalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		
+		InternetAddress toAddress1 = new InternetAddress("Forse@test.com", "Fred Forse");
+		
+		
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
+				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").anyTimes();
+		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+	
+		javaMailSenderMock.send(preparatorMock1);
+		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		
+		mailService.sendWithdrawToSupervisors(form);
+		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+	}
 	
 }

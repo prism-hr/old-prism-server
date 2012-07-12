@@ -30,8 +30,10 @@ public class WithdrawService {
 	public void saveApplicationFormAndSendMailNotifications(ApplicationForm form) {
 		applicationService.save(form);
 		mailService.sendWithdrawMailToReferees(refereeService.getRefereesWhoHaveNotProvidedReference(form));
-		mailService.sendWithdrawToAdmins(form);
+		mailService.sendWithdrawToAdmins(form);		
 		mailService.sendWithdrawToReviewers(form);
+		mailService.sendWithdrawToInterviewers(form);
+		mailService.sendWithdrawToSupervisors(form);
 	}
 
 

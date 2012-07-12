@@ -23,17 +23,10 @@
 		      		</h1>
 		      		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Our -- Context -- completed their assessment of your Application ${application.applicationNumber} for UCL 
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.approver.firstName} ${application.approver.lastName} has rejected ${application.applicant.firstName} ${application.applicant.lastName} Application ${application.applicationNumber} for UCL 
 			      			<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
 			      		</font>
 			      	</p>
-
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      	 		We regret to inform you that your Application was unsuccessful.  
-			      		</font>
-			      	</p>
-
 		      		
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
@@ -41,19 +34,14 @@
 			      		</font>
 			      	</p>
 			      	
-							<p>
-				            	<!-- Button -->
-								<a style="text-decoration:none;" href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="Find Another Programme">
-									<img border="0" style="border: none;" width="185" height="36" alt="Find Another Programme" src="${host}/pgadmissions/design/default/images/email/find_another_prog.png">
-								</a>
-							</p>
+					<p>
+			          <!-- Button -->
+			          <a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View Application">
+			            <img width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png" />
+			          </a>
+			        </p>
 			      	
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      	 		We wish you success in your search for postgraduate study.
-			      		</font>
-			      	</p>
-			      	
+			 
 			      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely, <br />UCL Prism</font>

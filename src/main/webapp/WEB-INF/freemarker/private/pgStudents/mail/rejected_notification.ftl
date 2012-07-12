@@ -37,7 +37,7 @@
 						</font>				      	 
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We regret to inform you that your Application was rejected for the following reason: ${(reason.text?html)!}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We regret to inform you that your Application was rejected for the following reason: ${(reason.text?html)!}</font>
 			      	</p>
 			      	<#if prospectusLink??>
 				        <p>

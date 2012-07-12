@@ -124,9 +124,14 @@ public class RegisterController {
 		if (params[2] != null) {
 			try {
 				batchDeadline = new SimpleDateFormat("dd-MMM-yyyy").parse(params[2]);
-			} catch (ParseException e) {
-				//log, but don't prevent user activating account!
-				log.warn("unparseable date in stored querystring:", e);				
+			} catch (ParseException ignore) {
+				try {
+					batchDeadline = new SimpleDateFormat("dd MMM yyyy").parse(params[2]);
+				} catch (ParseException e) {
+					//log, but don't prevent user activating account!
+					log.warn("unparseable date in stored querystring:", e);		
+				}
+						
 			}
 		}
 		String researchHomePage = params[1];
@@ -147,13 +152,16 @@ public class RegisterController {
 	}
 
 	@ModelAttribute("pendingUser")
-	public RegisteredUser getPendingUser(@RequestParam(required=false) String activationCode) {
+	public RegisteredUser getPendingUser(@RequestParam(required=false) String activationCode, @RequestParam(required=false) String directToUrl) {
 		if(StringUtils.isBlank(activationCode)){
 			return new RegisteredUser();
 		}
 		RegisteredUser pendingUser = userService.getUserByActivationCode(activationCode);
 		if(pendingUser == null){
 			throw new ResourceNotFoundException();
+		}
+		if(directToUrl != null){
+			pendingUser.setDirectToUrl(directToUrl);
 		}
 		return pendingUser;
 	}

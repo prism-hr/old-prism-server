@@ -39,7 +39,7 @@
 							<a style="text-decoration:none;" 
 							
 			                	<#if !reviewer.user?? || !reviewer.user.enabled>
-			                    	href="${host}/pgadmissions/register?activationCode=${reviewer.user.activationCode}"
+			                    	href="${host}/pgadmissions/register?activationCode=${reviewer.user.activationCode}&directToUrl=${"/reviewFeedback?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
 			                    <#else>
 			                    	href="${host}/pgadmissions/reviewFeedback?applicationId=${application.applicationNumber}"
 			                    </#if>								

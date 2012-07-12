@@ -38,7 +38,7 @@
 			          <!-- Button -->
 						<a style="text-decoration:none;" 
 							<#if  !referee.user.enabled>
-		                      	href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}"
+		                      	href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}&directToUrl=${"/referee/addReferences?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
 		                    <#else>
 		                      	href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}"
 		                    </#if>

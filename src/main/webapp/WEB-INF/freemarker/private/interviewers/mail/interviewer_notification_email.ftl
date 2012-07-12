@@ -48,7 +48,7 @@
 					          <!-- Button -->
 								<a style="text-decoration:none;" 
 				                      <#if !interviewer.user.enabled>
-				                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}"
+				                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}&directToUrl=${"/application?view=view&applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
 				                      <#else>
 				                      		href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"
 				                      </#if>								

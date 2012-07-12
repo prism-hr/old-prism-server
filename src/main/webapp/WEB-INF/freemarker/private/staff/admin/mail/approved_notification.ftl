@@ -22,21 +22,21 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 		      		<p>
-			      		  	<font face="Arial, Helvetica, sans-serif" size="2">${approver.firstName?html} ${approver.lastName?html} has authorised ${application.applicant.firstName?html} ${application.applicant.lastName?html} Application ${application.applicationNumber} for 
+			      		  	<font face="Arial, Helvetica, sans-serif" size="2">${approver.firstName?html} ${approver.lastName?html} has approved ${application.applicant.firstName?html} ${application.applicant.lastName?html} Application ${application.applicationNumber} for 
 				      		  <#if application.researchHomePage??>
-				      		  	<a href="${application.researchHomePage}">${application.program.title}</a>
+				      		  	<a href="${application.researchHomePage}">${application.program.title}</a>.
 				      		  <#else>
-				      		  	${application.program.title}
-				      		  </#if>.
+				      		  	${application.program.title}.
+				      		  </#if>
 				      		</font>
 			      	</p>
 			      	
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">The Application has been advanced to UCL Admissions for verification. If this is successful, an offer of study will be issued. UCL Admissions aim to be contact with their decision within ${admissionOfferServiceLevel}.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">The application has been advanced to UCL Admissions for verification. If this is successful, an offer of study will be issued. UCL Admissions aim to be contact with their decision within ${admissionOfferServiceLevel}.</font>
 			      	</p>
 			      	
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on the Application, you should now refer them to one of the following UCL Admissions contacts:
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on the application, you should refer them to one of the following UCL Admissions contacts:
 				      		<ul>			
 				      		<#list registryContacts as contact>      		
 								<li><a href="mailto: ${contact.email}">${contact.firstname} ${contact.lastname}</a></li>

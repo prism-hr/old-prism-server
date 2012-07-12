@@ -91,21 +91,30 @@ public class RegisterControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("Abc")).andReturn(user);
 		EasyMock.replay(userServiceMock);
-		assertEquals(user, registerController.getPendingUser("Abc"));
+		assertEquals(user, registerController.getPendingUser("Abc", null));
+		assertNull(user.getDirectToUrl());
 
 	}
 
 	@Test
 	public void shouldReturnNewUserIfBlankActivationCode() {
-		RegisteredUser pendingUser = registerController.getPendingUser("");
+		RegisteredUser pendingUser = registerController.getPendingUser("", null);
 		assertNull(pendingUser.getId());
 	}
-
+	
+	@Test
+	public void shouldSetDirectToUrlOnUserIfPRovided() {
+		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		EasyMock.expect(userServiceMock.getUserByActivationCode("Abc")).andReturn(user);
+		EasyMock.replay(userServiceMock);
+		assertEquals(user, registerController.getPendingUser("Abc", "direct/to/here"));
+		assertEquals("direct/to/here",user.getDirectToUrl());
+	}
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundIfUserDoesNotExists() {
 		EasyMock.expect(userServiceMock.getUserByActivationCode("Abc")).andReturn(null);
 		EasyMock.replay(userServiceMock);
-		registerController.getPendingUser("Abc");
+		registerController.getPendingUser("Abc", null);
 	}
 
 	@Test

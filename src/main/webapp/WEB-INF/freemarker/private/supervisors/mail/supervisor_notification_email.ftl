@@ -34,7 +34,7 @@
 		              		<!-- Button -->
 		              		<a  style="text-decoration:none;" 
 			                       	 <#if !supervisor.user.enabled>
-			                       	 	href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}"
+			                       	 	href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}&directToUrl=${"/application?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
 			                       	 <#else>
 			                      		href="${host}/pgadmissions/application?applicationId=${application.applicationNumber}"
 			                      	</#if>

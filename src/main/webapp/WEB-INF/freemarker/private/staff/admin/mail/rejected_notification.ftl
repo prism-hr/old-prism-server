@@ -30,7 +30,7 @@
 		      		
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      	 		The following reason was given: ${(reason.text?html)!}.
+			      	 		The following reason was given: ${(reason.text?html)!}
 			      		</font>
 			      	</p>
 			      	

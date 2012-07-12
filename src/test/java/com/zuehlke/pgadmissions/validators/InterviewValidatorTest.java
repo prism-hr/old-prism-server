@@ -7,6 +7,7 @@ import java.util.Calendar;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
@@ -54,6 +55,16 @@ public class InterviewValidatorTest {
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("interviewDueDate").getCode());
+	}
+	@Test
+	public void shouldNotRejectIfDueDateToday() {
+		Calendar calendar = Calendar.getInstance();
+		
+		interview.setInterviewDueDate(DateUtils.truncate(calendar.getTime(), Calendar.DATE));
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewDueDate");
+		interviewValidator.validate(interview, mappingResult);
+		Assert.assertEquals(0, mappingResult.getErrorCount());
+
 	}
 	
 	

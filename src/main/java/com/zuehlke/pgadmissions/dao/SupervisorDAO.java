@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class SupervisorDAO {
 				.createAlias("approvalRound.application", "application")
 				.add(Restrictions.eq("application.status", ApplicationFormStatus.APPROVAL))
 				.add(Restrictions.eqProperty("approvalRound", "application.latestApprovalRound"))
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
 

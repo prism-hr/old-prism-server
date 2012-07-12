@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class EthnicityDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Ethnicity> getAllEthnicities() {
-		return sessionFactory.getCurrentSession().createCriteria(Ethnicity.class).addOrder(Order.asc("id")).list();
+		return sessionFactory.getCurrentSession().createCriteria(Ethnicity.class).addOrder(Order.asc("id")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	public Ethnicity getEthnicityById(Integer id) {

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Repository
 public class InterviewerDAO {
@@ -54,6 +53,7 @@ public class InterviewerDAO {
 				.createAlias("interview.application", "application")
 				.add(Restrictions.eq("application.status", ApplicationFormStatus.INTERVIEW))
 				.add(Restrictions.eqProperty("interview", "application.latestInterview"))
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 
 	}
@@ -69,7 +69,7 @@ public class InterviewerDAO {
 		List<Interviewer> interviewers = sessionFactory.getCurrentSession().createCriteria(Interviewer.class).createAlias("interview.application", "application")
 				.add(Restrictions.eqProperty("interview", "application.latestInterview"))
 				.add(Restrictions.eq("application.status", ApplicationFormStatus.INTERVIEW)).add(Restrictions.lt("application.dueDate", dateWithSubtractedInterval))
-				.add(Restrictions.lt("lastNotified", dateWithSubtractedInterval)).list();
+				.add(Restrictions.lt("lastNotified", dateWithSubtractedInterval)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 
 		for (Interviewer interviewer : interviewers) {
 			if (interviewer.getInterviewComment() == null) {
@@ -86,7 +86,7 @@ public class InterviewerDAO {
 				.createAlias("interview.application", "application")
 				.add(Restrictions.eqProperty("application.latestInterview", "interview"))
 				.add(Restrictions.eq("requiresAdminNotification", true))
-				.add(Restrictions.isNull("dateAdminsNotified")).list();
+				.add(Restrictions.isNull("dateAdminsNotified")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 }

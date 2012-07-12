@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class ReviewerDAO {
 				.createAlias("reviewRound.application", "application")
 				.add(Restrictions.eqProperty("application.latestReviewRound", "reviewRound"))
 				.add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW))
-				.add(Restrictions.isNull("lastNotified")).list();
+				.add(Restrictions.isNull("lastNotified")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	public void save(Reviewer reviewer) {
@@ -68,7 +69,7 @@ public class ReviewerDAO {
 				.add(Restrictions.le("lastNotified", dateWithSubtractedInterval))
 				.createAlias("reviewRound.application", "application")
 				.add(Restrictions.eqProperty("application.latestReviewRound", "reviewRound"))
-				.add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW))
+				.add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 		
 		for (Reviewer reviewer : reviewers) {
@@ -86,7 +87,7 @@ public class ReviewerDAO {
 				.createAlias("reviewRound.application", "application")
 				.add(Restrictions.eqProperty("application.latestReviewRound", "reviewRound"))
 				.add(Restrictions.eq("requiresAdminNotification", CheckedStatus.YES))
-				.add(Restrictions.isNull("dateAdminsNotified")).list();
+				.add(Restrictions.isNull("dateAdminsNotified")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 }

@@ -55,7 +55,7 @@ public class UserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getAllUsers() {
-		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).list();
+		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -76,21 +76,21 @@ public class UserDAO {
 				.add(Restrictions.eq("authorityEnum", Authority.SUPERADMINISTRATOR)).uniqueResult()));
 
 		List<RegisteredUser> administrators = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-				.createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId())).list();
+				.createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		for (RegisteredUser admin : administrators) {
 			if (!users.contains(admin)) {
 				users.add(admin);
 			}
 		}
 		List<RegisteredUser> approvers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichApprover")
-				.add(Restrictions.eq("id", program.getId())).list();
+				.add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		for (RegisteredUser approver : approvers) {
 			if (!users.contains(approver)) {
 				users.add(approver);
 			}
 		}
 		List<RegisteredUser> reviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichReviewer")
-				.add(Restrictions.eq("id", program.getId())).list();
+				.add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		for (RegisteredUser reviewer : reviewers) {
 			if (!users.contains(reviewer)) {
 				users.add(reviewer);
@@ -104,7 +104,7 @@ public class UserDAO {
 			}
 		}
 		List<RegisteredUser> supervisors = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-				.createCriteria("programsOfWhichSupervisor").add(Restrictions.eq("id", program.getId())).list();
+				.createCriteria("programsOfWhichSupervisor").add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		for (RegisteredUser supervisor : supervisors) {
 			if (!users.contains(supervisor)) {
 				users.add(supervisor);
@@ -131,20 +131,20 @@ public class UserDAO {
 				.createAlias("roles", "role")
 				.add(Restrictions.and(Restrictions.not(Restrictions.eq("role.authorityEnum", Authority.APPLICANT)),
 						Restrictions.not(Restrictions.eq("role.authorityEnum", Authority.REFEREE)))).addOrder(Order.asc("firstName"))
-				.addOrder(Order.asc("lastName")).list();
+				.addOrder(Order.asc("lastName")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getUsersWithPendingRoleNotifications() {	
 		
 		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class, "user").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions.eq("enabled", false))
-				.createAlias("pendingRoleNotifications", "pendingRoleNotification").list();
+				.createAlias("pendingRoleNotifications", "pendingRoleNotification").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getAllPreviousInterviewersOfProgram(Program program) {
 		List<Interviewer> interviewers = sessionFactory.getCurrentSession().createCriteria(Interviewer.class).createAlias("interview", "interview").createAlias("interview.application", "application")
-				.add(Restrictions.eq("application.program", program)).list();
+				.add(Restrictions.eq("application.program", program)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 		for (Interviewer interviewer : interviewers) {
 			if(!users.contains(interviewer.getUser())){
@@ -157,7 +157,7 @@ public class UserDAO {
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getAllPreviousReviewersOfProgram(Program program) {
 		List<Reviewer> reviewers = sessionFactory.getCurrentSession().createCriteria(Reviewer.class).createAlias("reviewRound", "reviewRound").createAlias("reviewRound.application", "application")
-				.add(Restrictions.eq("application.program", program)).list();
+				.add(Restrictions.eq("application.program", program)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 		for (Reviewer reviewer : reviewers) {
 			if(!users.contains(reviewer.getUser())){
@@ -172,7 +172,7 @@ public class UserDAO {
 				.createAlias("reviewer.reviewRound", "reviewRound").createAlias("reviewRound.application", "application")
 				.add(Restrictions.eq("application", applicationForm))
 				.add(Restrictions.eqProperty("application.latestReviewRound","reviewer.reviewRound"))
-				.add(Restrictions.eq("willingToInterview", true))
+				.add(Restrictions.eq("willingToInterview", true)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 		for (ReviewComment reviewComment : reviews) {
@@ -186,7 +186,7 @@ public class UserDAO {
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getAllPreviousSupervisorsOfProgram(Program program) {
 		List<Supervisor> supervisors = sessionFactory.getCurrentSession().createCriteria(Supervisor.class).createAlias("approvalRound", "approvalRound").createAlias("approvalRound.application", "application")
-				.add(Restrictions.eq("application.program", program)).list();
+				.add(Restrictions.eq("application.program", program)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 		for (Supervisor supervisor : supervisors) {
 			if(!users.contains(supervisor.getUser())){

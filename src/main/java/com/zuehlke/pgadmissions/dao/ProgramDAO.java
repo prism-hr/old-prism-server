@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class ProgramDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Program> getAllPrograms() {
-		return sessionFactory.getCurrentSession().createCriteria(Program.class).list();
+		return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	
 	}
 

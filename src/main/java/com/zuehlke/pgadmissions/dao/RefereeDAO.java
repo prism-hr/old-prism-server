@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class RefereeDAO {
 					.add(Restrictions.eq("declined", false))
 					.add(Restrictions.isNotNull("user"))
 					.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
-					.add(Restrictions.le("lastNotified", dateWithSubtractedInterval))
+					.add(Restrictions.le("lastNotified", dateWithSubtractedInterval)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 		for (Referee referee : referees) {
 			if(referee.getReference() == null){
@@ -71,7 +72,7 @@ public class RefereeDAO {
 		List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession()
 				.createCriteria(Referee.class)
 				.add(Restrictions.eq("declined", false))
-				.add(Restrictions.eq("application", form))
+				.add(Restrictions.eq("application", form)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 		for (Referee referee : referees) {
 			if(referee.getReference() == null){
@@ -90,7 +91,7 @@ public class RefereeDAO {
 				.add(Restrictions.eq("declined", false))
 				.createAlias("application", "application")
 				.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED,
-						ApplicationFormStatus.REJECTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.UNSUBMITTED})))
+						ApplicationFormStatus.REJECTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.UNSUBMITTED}))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 		for (Referee referee : referees) {
 			if(referee.getReference() == null){

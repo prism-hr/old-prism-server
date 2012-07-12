@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class StageDurationDAO {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<StageDuration> getAllStagesDurations() {
-		return (List<StageDuration>) sessionFactory.getCurrentSession().createCriteria(StageDuration.class)
+		return (List<StageDuration>) sessionFactory.getCurrentSession().createCriteria(StageDuration.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
 	

@@ -22,11 +22,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our <#if previousStage == 'VALIDATION'>recruitment office<#elseif previousStage == 'REVIEW'>academic review panel<#elseif previousStage == 'INTErVIEW'>interview panel</#if> have completed their assessment of your Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>. We are pleased to inform you that they have recommended that you be recruited to the programme.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our <#if previousStage == 'VALIDATION'>recruitment office<#elseif previousStage == 'REVIEW'>academic review panel<#elseif previousStage == 'INTERVIEW'>interview panel</#if> have completed their assessment of your Application ${application.applicationNumber} for <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>. We are pleased to inform you that they have recommended that you be recruited to the programme.</font>
 			      	</p>
 		      		
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this does not constitute a legally binding offer of study and no offer of study is valid until provided in writing by UCL Admissions.</b></font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>Please note that this email does not constitute a legally binding offer of study and no offer of study is valid until provided in writing by UCL Admissions.</b></font>
 			      	</p>
 		      		 
 			      	<p>

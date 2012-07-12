@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
@@ -14,6 +15,13 @@ public class InterviewerBuilder {
 	private boolean requiresAdminNotification;
 	private Date dateAdminsNotified;
 	private boolean firstAdminNotification;
+	private InterviewComment interviewComment;
+
+	public InterviewerBuilder interviewComment(InterviewComment interviewComment) {
+		this.interviewComment = interviewComment;
+		return this;
+	}
+
 
 	public InterviewerBuilder dateAdminsNotified(Date dateAdminsNotified) {
 		this.dateAdminsNotified = dateAdminsNotified;
@@ -59,6 +67,7 @@ public class InterviewerBuilder {
 		interviewer.setLastNotified(lastNotified);
 		interviewer.setInterview(interview);
 		interviewer.setDateAdminsNotified(dateAdminsNotified);
+		interviewer.setInterviewComment(interviewComment);
 		return interviewer;
 	}
 }

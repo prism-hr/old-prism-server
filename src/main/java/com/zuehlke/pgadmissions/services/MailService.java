@@ -16,10 +16,13 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -63,7 +66,8 @@ public class MailService {
 	public void sendApplicationUpdatedMailToAdmins(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 
-		String mailSubject = resolveMessage("application.update", form.getApplicationNumber(), form.getProgram().getTitle(), form.getApplicant().getFirstName(), form.getApplicant().getLastName());
+		String mailSubject = resolveMessage("application.update", form.getApplicationNumber(), form.getProgram().getTitle(),
+				form.getApplicant().getFirstName(), form.getApplicant().getLastName());
 		for (RegisteredUser admin : administrators) {
 			try {
 				Map<String, Object> model = createModel(form);
@@ -83,7 +87,9 @@ public class MailService {
 	public void sendWithdrawMailToReferees(List<Referee> referees) {
 		for (Referee referee : referees) {
 			RegisteredUser user = referee.getUser();
-			internalSendWithdraw(user, referee.getApplication());
+			if(user != null){
+				internalSendWithdraw(user, referee.getApplication());
+			}
 		}
 	}
 
@@ -93,27 +99,51 @@ public class MailService {
 		for (RegisteredUser admin : administrators) {
 			internalSendWithdraw(admin, form);
 		}
+		if (form.getApplicationAdministrator() != null) {
+			internalSendWithdraw(form.getApplicationAdministrator(), form);
+		}
 	}
 
 	@Transactional
 	public void sendWithdrawToReviewers(ApplicationForm form) {
-		List<RegisteredUser> reviewers = form.getProgram().getProgramReviewers();
-		for (RegisteredUser reviewer : reviewers) {
-			internalSendWithdraw(reviewer, form);
+		List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
+		for (Reviewer reviewer : reviewers) {
+			if (reviewer.getReview() == null) {
+				internalSendWithdraw(reviewer.getUser(), form);
+			}
 		}
 	}
-
 	
+	public void sendWithdrawToInterviewers(ApplicationForm form) {
+		List<Interviewer> interviewers = form.getLatestInterview().getInterviewers();
+		for (Interviewer interviewer : interviewers) {
+			if (interviewer.getInterviewComment() == null) {
+				internalSendWithdraw(interviewer.getUser(), form);
+			}
+		}
+		
+	}
+	
+	public void sendWithdrawToSupervisors(ApplicationForm form) {
+		for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {			
+				internalSendWithdraw(supervisor.getUser(), form);
+			
+		}
+		
+	}
+
 	private void internalSendWithdraw(RegisteredUser recipient, ApplicationForm application) {
 		try {
 			Map<String, Object> model = createModel(application);
 			model.put("user", recipient);
 
 			InternetAddress toAddress = createAddress(recipient);
-			String mailSubject = resolveMessage("application.withdrawal", application.getApplicationNumber(), application.getProgram().getTitle(), application.getApplicant().getFirstName(), application.getApplicant().getLastName());
+			String mailSubject = resolveMessage("application.withdrawal", application.getApplicationNumber(), application.getProgram().getTitle(), application
+					.getApplicant().getFirstName(), application.getApplicant().getLastName());
 
 			delegateToMailSender(toAddress, null, mailSubject, "private/staff/mail/application_withdrawn_notification.ftl", model);
 		} catch (Throwable e) {
+
 			log.warn("error while sending email", e);
 		}
 	}
@@ -142,4 +172,7 @@ public class MailService {
 		MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject, template, model, null);
 		mailsender.send(msgPreparator);
 	}
+
+	
+	
 }

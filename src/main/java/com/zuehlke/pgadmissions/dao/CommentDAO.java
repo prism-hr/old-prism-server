@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class CommentDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Comment> getAllComments(){
-		return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class).list();
+		return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -46,7 +47,7 @@ public class CommentDAO {
 		return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class)
 				.add(Restrictions.eq("type", CommentType.REVIEW))
 				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified",false)))
-				.list();
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -54,7 +55,7 @@ public class CommentDAO {
 		return (List<InterviewComment>) sessionFactory.getCurrentSession().createCriteria(InterviewComment.class)
 				.add(Restrictions.eq("type", CommentType.INTERVIEW))
 				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified",false)))
-				.list();
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
 	

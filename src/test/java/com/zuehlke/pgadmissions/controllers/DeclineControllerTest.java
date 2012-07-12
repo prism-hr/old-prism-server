@@ -206,7 +206,7 @@ public class DeclineControllerTest {
 			}
 		}; 
 		
-		refereeServiceMock.declineToActAsRefereeAndNotifiyApplicant(referee);
+		refereeServiceMock.declineToActAsRefereeAndSendNotification(referee);
 		
 		EasyMock.replay(refereeServiceMock);
 		

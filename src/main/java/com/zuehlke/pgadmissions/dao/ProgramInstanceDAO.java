@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -35,7 +36,7 @@ public class ProgramInstanceDAO {
 		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
 				.createCriteria(ProgramInstance.class)
 				.add(Restrictions.eq("program", program))
-				.add(Restrictions.ge("applicationDeadline", today))
+				.add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
 
@@ -46,7 +47,7 @@ public class ProgramInstanceDAO {
 				.createCriteria(ProgramInstance.class)
 				.add(Restrictions.eq("program", program))
 				.add(Restrictions.eq("studyOption", studyOption))
-				.add(Restrictions.ge("applicationDeadline", today))
+				.add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
 	
@@ -58,7 +59,7 @@ public class ProgramInstanceDAO {
 				.add(Restrictions.eq("program", program))
 				.add(Restrictions.eq("studyOption", studyOption))
 				.add(Restrictions.ge("applicationDeadline", today))		
-				.addOrder(Order.asc("applicationDeadline"))
+				.addOrder(Order.asc("applicationDeadline")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 			return futureInstances.get(0);
 	}

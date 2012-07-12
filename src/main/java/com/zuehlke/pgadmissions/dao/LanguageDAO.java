@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class LanguageDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Language> getAllLanguages() {
-		return sessionFactory.getCurrentSession().createCriteria(Language.class).addOrder(Order.asc("name")).list();
+		return sessionFactory.getCurrentSession().createCriteria(Language.class).addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	
 	}
 

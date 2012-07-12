@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -32,7 +33,7 @@ public class PersonDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Person> getAllPersons() {
-		return (List<Person>) sessionFactory.getCurrentSession().createCriteria(Person.class).list();
+		return (List<Person>) sessionFactory.getCurrentSession().createCriteria(Person.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	public void delete(Person person) {

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,7 @@ public class ApprovalService {
 	@Transactional
 	public void moveApplicationToApproval(ApplicationForm application, ApprovalRound approvalRound) {
 		checkApplicationStatus(application);
+		copyLastNotifiedForRepeatSupervisors(application, approvalRound);
 		application.setLatestApprovalRound(approvalRound);
 		
 		approvalRound.setApplication(application);
@@ -75,6 +77,21 @@ public class ApprovalService {
 		resetRequestRestartNotificationRecords(application);
 		
 		applicationDAO.save(application);
+	}
+
+	private void copyLastNotifiedForRepeatSupervisors(ApplicationForm application, ApprovalRound approvalRound) {
+		ApprovalRound latestApprovalRound = application.getLatestApprovalRound();
+		if(latestApprovalRound != null){
+			List<Supervisor> supervisors = latestApprovalRound.getSupervisors();
+			for (Supervisor supervisor : supervisors) {
+				List<Supervisor> newSupervisors = approvalRound.getSupervisors();
+				for (Supervisor newSupervisor : newSupervisors) {
+					if(supervisor.getUser().equals(newSupervisor.getUser())){
+						newSupervisor.setLastNotified(supervisor.getLastNotified());
+					}
+				}
+			}
+		}
 	}
 
 	private void resetRequestRestartNotificationRecords(ApplicationForm application) {
@@ -137,7 +154,7 @@ public class ApprovalService {
 	}
 	
 	@Transactional
-	public void addSupervisorInPreviousReviewRound(ApplicationForm applicationForm, RegisteredUser newUser) {
+	public void addSupervisorInPreviousApprovalRound(ApplicationForm applicationForm, RegisteredUser newUser) {
 		Supervisor supervisor = newSupervisor();
 		supervisor.setUser(newUser);
 		supervisorDAO.save(supervisor);

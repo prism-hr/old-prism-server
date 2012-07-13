@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,50 +35,59 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class EvaluationTransitionController extends StateTransitionController {
 
 	EvaluationTransitionController() {
-		 this(null, null, null, null, null, null, null, null, null, null);
-	
+		this(null, null, null, null, null, null, null, null, null, null);
+
 	}
 
 	@Autowired
 	public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
 			CommentFactory commentFactory, StateTransitionViewResolver stateTransitionViewResolver, EncryptionHelper encryptionHelper,
-			DocumentService documentService, ApprovalService approvalService, StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor) {
-		super(applicationsService, userService, commentService, commentFactory, stateTransitionViewResolver, encryptionHelper,documentService, approvalService, stateChangeValidator, documentPropertyEditor);
+			DocumentService documentService, ApprovalService approvalService, StateChangeValidator stateChangeValidator,
+			DocumentPropertyEditor documentPropertyEditor) {
+		super(applicationsService, userService, commentService, commentFactory, stateTransitionViewResolver, encryptionHelper, documentService,
+				approvalService, stateChangeValidator, documentPropertyEditor);
 
 	}
-	
+
 	@ModelAttribute("comment")
 	public StateChangeComment getComment(@RequestParam String applicationId) {
 		return new StateChangeComment();
 	}
-	
-	@RequestMapping(method = RequestMethod.POST, value="/submitEvaluationComment")
-	public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result, ModelMap modelMap) {
-			ApplicationForm applicationForm = getApplicationForm(applicationId);
-			RegisteredUser user = getCurrentUser();
-			if (result.hasErrors()) {
-				return STATE_TRANSITION_VIEW;
+
+	@RequestMapping(method = RequestMethod.POST, value = "/submitEvaluationComment")
+	public String addComment(@RequestParam String applicationId, @Valid @ModelAttribute("comment") StateChangeComment stateChangeComment, BindingResult result,
+			ModelMap modelMap, @RequestParam(required = false) Boolean delegate) {
+		if (result.hasErrors()) {
+			return STATE_TRANSITION_VIEW;
+		}
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		RegisteredUser user = getCurrentUser();
+
+		Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getType(),
+				stateChangeComment.getNextStatus());
+		if (newComment instanceof ReviewEvaluationComment) {
+			((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());
+		}
+		if (newComment instanceof InterviewEvaluationComment) {
+			((InterviewEvaluationComment) newComment).setInterview(applicationForm.getLatestInterview());
+		}
+		if (newComment instanceof ApprovalEvaluationComment) {
+			((ApprovalEvaluationComment) newComment).setApprovalRound(applicationForm.getLatestApprovalRound());
+		}
+		commentService.save(newComment);
+		if (newComment instanceof ApprovalEvaluationComment) {
+			ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
+
+			if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
+				approvalService.moveToApproved(applicationForm);
+				modelMap.put("messageCode", "move.approved");
+				modelMap.put("application", applicationForm.getApplicationNumber());
 			}
-			Comment newComment = commentFactory.createComment(applicationForm, user, stateChangeComment.getComment(), stateChangeComment.getType(), stateChangeComment.getNextStatus());
-			if (newComment instanceof ReviewEvaluationComment) {
-				((ReviewEvaluationComment) newComment).setReviewRound(applicationForm.getLatestReviewRound());
-			}
-			if (newComment instanceof InterviewEvaluationComment) {
-				((InterviewEvaluationComment) newComment).setInterview(applicationForm.getLatestInterview());
-			}
-			if (newComment instanceof ApprovalEvaluationComment) {
-				((ApprovalEvaluationComment) newComment).setApprovalRound(applicationForm.getLatestApprovalRound());
-			}
-			commentService.save(newComment);
-			if (newComment instanceof ApprovalEvaluationComment) {
-				ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
-				
-				if(ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()){
-					approvalService.moveToApproved(applicationForm);
-					modelMap.put("messageCode", "move.approved");
-					modelMap.put("application", applicationForm.getApplicationNumber());
-				}
-			}
+		}
+		if(delegate != null && delegate){
+			return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
+		}
 		return stateTransitionViewResolver.resolveView(applicationForm);
+
 	}
 }

@@ -74,7 +74,7 @@ public class RegistryNotificationTimerTask extends TimerTask {
 
 	private String getCommentText(List<Person> registryContacts) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Referred to admissions. Referral send to ");
+		sb.append("Referred to UCL Admissions for advice on eligibility and fees status. Referral send to ");
 		for (int i = 0; i < registryContacts.size(); i++) {
 			Person contact = registryContacts.get(i);
 			if (i > 0 && i < registryContacts.size() - 1) {

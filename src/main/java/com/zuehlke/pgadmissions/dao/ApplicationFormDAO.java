@@ -93,7 +93,7 @@ public class ApplicationFormDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
-		Date twentyFourHoursAgo = DateUtils.addHours(Calendar.getInstance().getTime(), -24);
+		Date twentyFourHoursAgo = DateUtils.addHours(Calendar.getInstance().getTime(), -1);
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("notificationRecords", "notificationRecord")
 				.add(Restrictions.eq("notificationRecord.notificationType", NotificationType.UPDATED_NOTIFICATION))
 				.add(Restrictions.lt("notificationRecord.date", twentyFourHoursAgo)).add(Restrictions.ltProperty("notificationRecord.date", "lastUpdated"))

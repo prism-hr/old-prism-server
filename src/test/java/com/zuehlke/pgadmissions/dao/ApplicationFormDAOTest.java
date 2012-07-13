@@ -685,7 +685,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldNotReturnApplicationUpdatedSinceLastAlertAndLastAlertLessThan24HoursAgoFor1WeekReminderInterval() {
+	public void shouldNotReturnApplicationUpdatedSinceLastAlertAndLastAlertLessThanOneoursAgoFor1WeekReminderInterval() {
 		ReminderInterval reminderInterval = new ReminderInterval();
 		reminderInterval.setId(1);
 		reminderInterval.setDuration(1);
@@ -694,11 +694,11 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 
 		Date now = Calendar.getInstance().getTime();
-		Date twentyThreeHoursAgo = DateUtils.addHours(now, -23);
-		Date twelveHoursAgo = DateUtils.addHours(now, -12);
+		Date twentyThreeMinutesAgo = DateUtils.addMinutes(now, -23);
+		Date twelveMinutesAgo = DateUtils.addMinutes(now, -12);
 		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.UPDATED_NOTIFICATION)
-				.notificationDate(twentyThreeHoursAgo).toNotificationRecord();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).lastUpdated(twelveHoursAgo)
+				.notificationDate(twentyThreeMinutesAgo).toNotificationRecord();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).lastUpdated(twelveMinutesAgo)
 				.status(ApplicationFormStatus.VALIDATION).notificationRecords(lastNotificationRecord).toApplicationForm();
 		save(applicationForm);
 
@@ -712,11 +712,11 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnApplicationNotUpdatedSinceLastAlert() {
 		Date now = Calendar.getInstance().getTime();
-		Date twentyFiveHoursAgo = DateUtils.addHours(now, -25);
-		Date twentySevenHoursAgo = DateUtils.addHours(now, -27);
+		Date sixtyOneMinutesAgo = DateUtils.addMinutes(now, -61);
+		Date sixtySeventMinutesAgo = DateUtils.addMinutes(now, -67);
 		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.UPDATED_NOTIFICATION)
-				.notificationDate(twentyFiveHoursAgo).toNotificationRecord();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).lastUpdated(twentySevenHoursAgo)
+				.notificationDate(sixtyOneMinutesAgo).toNotificationRecord();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).lastUpdated(sixtySeventMinutesAgo)
 				.status(ApplicationFormStatus.VALIDATION).notificationRecords(lastNotificationRecord).toApplicationForm();
 		save(applicationForm);
 

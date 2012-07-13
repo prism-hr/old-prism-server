@@ -1981,4 +1981,43 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(applicationsDoApprovalRequestNotification.contains(applicationForm));
 
 	}
+	
+	@Test
+	public void shouldReturnApplicationsWithNoApprovalNotificationRecord() {
+		Integer noOfAppsBefore = applicationDAO.getApplicationsDueMovedToApprovalNotifications().size();
+			ApplicationForm applicationForm = new ApplicationFormBuilder()
+			.program(program).applicant(user)
+				.status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+
+		save( applicationForm);
+		flushAndClearSession();
+
+		List<ApplicationForm> applications = applicationDAO.getApplicationsDueMovedToApprovalNotifications();
+		Assert.assertNotNull(applications);
+		Assert.assertEquals(noOfAppsBefore + 1, applications.size());
+		assertTrue(applications.contains(applicationForm));
+	}
+
+	@Test
+	public void shouldNotReturnApplicationsWithApprovalNotificationrRecord() {
+		int noOfAppsBefore = applicationDAO.getApplicationsDueMovedToApprovalNotifications().size();
+
+		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+				.programsOfWhichApprover(program).toUser();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+				.notificationRecords(
+						new NotificationRecordBuilder().notificationType(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION).notificationDate(new Date())
+								.toNotificationRecord()).program(program).applicant(user)
+				.status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+
+		save(approver, applicationForm);
+		flushAndClearSession();
+
+		List<ApplicationForm> applications = applicationDAO.getApplicationsDueMovedToApprovalNotifications();
+		Assert.assertNotNull(applications);
+		Assert.assertEquals(noOfAppsBefore, applications.size());
+	}
+
 }

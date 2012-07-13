@@ -362,4 +362,16 @@ public class ApplicationFormDAO {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueMovedToApprovalNotifications() {
+		DetachedCriteria mvoedToApprovalNotificationCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
+				.add(Restrictions.eq("notificationType", NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION))
+				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
+				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
+				.add(Subqueries.notExists(mvoedToApprovalNotificationCriteria.setProjection(Projections.property("notificationRecord.id"))))
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	}
+
 }

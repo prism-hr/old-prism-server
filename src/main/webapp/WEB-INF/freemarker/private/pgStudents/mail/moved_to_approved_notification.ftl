@@ -25,10 +25,10 @@
 			      	<p>
 			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our Programme Director has completed their assessment of your Application ${application.applicationNumber} for UCL  
 				      		  <#if application.researchHomePage??>
-				      		  	<a href="${application.researchHomePage}">${application.program.title}</a>
+				      		  	<a href="${application.researchHomePage}">${application.program.title}.</a>
 				      		  <#else>
-				      		  	${application.program.title}
-				      		  </#if>.
+				      		  	${application.program.title}.
+				      		  </#if>
 			      		  </font>
 							
 			      	</p>
@@ -45,11 +45,11 @@
 			      	</p>
 
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>You must be in possession of an offer of study in order to enrol.</b></font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>You must be in possession of a valid offer of study in order to enrol.</b></font>
 			      	</p>
 
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions aim to be in contact with you within ${admissionOfferServiceLevel}. Should you have any further questions on your Application, you should refer them by email to admissions@ucl.ac.uk</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Admissions aim to be in contact with you within ${admissionOfferServiceLevel}. Should you have any further questions on your Application, you should now contact <a id="feedbackButton" href="mailto:admissions@ucl.ac.uk" target="_blank">UCL Admissions</a></font>
 			      	</p>
 
 			      	<p>

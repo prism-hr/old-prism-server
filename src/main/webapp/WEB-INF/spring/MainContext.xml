@@ -31,8 +31,8 @@
 	 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://${db.host}/${db.schema}?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true" />
-		<property name="username" value="pgadmissions" />
-		<property name="password" value="pgadmissions" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
 	</bean>
 
 

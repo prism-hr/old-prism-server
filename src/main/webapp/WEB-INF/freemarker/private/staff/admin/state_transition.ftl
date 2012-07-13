@@ -146,13 +146,7 @@
 										</div>
 									</div>
 	
-<#--
-									<div class="row">
-										<div class="registry"><#if applicationForm.getNotificationForType('REGISTRY_HELP_REQUEST')?? >The registry was last contacted on ${applicationForm.getNotificationForType('REGISTRY_HELP_REQUEST').date?string('dd MMM yyyy')}.</#if></div>
-										<button class="blue registry" type="button" id="notifyRegistryButton">Request registry assistance</button>
-										<div id="emailMessage"  class="registry"></div>
-									</div>
--->								
+							
 								</div><!-- close .row-group -->
 								</#if>
 	
@@ -190,15 +184,13 @@
 												</form>
 											</div>
 										</div>
-									</#if>
 									
+									</#if>
+							
 								</div><!-- close .row-group -->
 	
 								<div class="buttons">
-<#--
-									<button class="clear" type="button" value="cancel">Clear</button>
--->
-									<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>
+								<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>
 									<#if user.isInRoleInProgram('APPROVER', applicationForm.program) && applicationForm.isInState('APPROVAL')>
 										<button class="blue" type="button" id="requestRestartButton" value="requestRestart">Request restart of approval</button>
 									</#if>
@@ -223,6 +215,7 @@
 									<#elseif applicationForm.isInState('APPROVAL')>
 									<input type="hidden" id="commentType" name="type" value="APPROVAL_EVALUATION"/>
 								</#if>
+								<input type="hidden" id="delegate" name ="delegate" value="false"/>
 						 	</form>
 						</div>
 					</section>

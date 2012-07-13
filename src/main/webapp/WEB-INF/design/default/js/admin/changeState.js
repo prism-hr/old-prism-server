@@ -165,6 +165,7 @@ function changeState()
 				},
 				success:function(data)
 				{
+					$('#delegate').val('true');
 					saveComment();
 				}
 			});

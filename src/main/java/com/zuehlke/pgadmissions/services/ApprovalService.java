@@ -69,9 +69,9 @@ public class ApprovalService {
 		approvalRoundDAO.save(approvalRound);
 		StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
 		application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
-		if(application.getStatus() != ApplicationFormStatus.APPROVAL){
-			application.getEvents().add(eventFactory.createEvent(approvalRound));
-		}
+	
+		application.getEvents().add(eventFactory.createEvent(approvalRound));
+		
 		application.setStatus(ApplicationFormStatus.APPROVAL);
 		application.setPendingApprovalRestart(false);
 		resetNotificationRecords(application);

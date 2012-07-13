@@ -16,13 +16,14 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -79,6 +80,37 @@ public class MailService {
 				e.printStackTrace();
 				log.warn("error while sending email", e);
 			}
+		}
+		if(ApplicationFormStatus.INTERVIEW == form.getStatus()){
+			if(form.getLatestInterview() != null){
+				for (Interviewer interviewer : form.getLatestInterview().getInterviewers()) {
+					try {
+						Map<String, Object> model = createModel(form);
+						model.put("admin", interviewer.getUser());
+						InternetAddress toAddress = createAddress(interviewer.getUser());
+
+						delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
+					} catch (Throwable e) {
+						e.printStackTrace();
+						log.warn("error while sending email", e);
+					}
+				}
+			}
+		}
+		if(ApplicationFormStatus.APPROVAL == form.getStatus()){
+			for (RegisteredUser approver : form.getProgram().getApprovers()) {
+				try {
+					Map<String, Object> model = createModel(form);
+					model.put("admin", approver);
+					InternetAddress toAddress = createAddress(approver);
+
+					delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
+				} catch (Throwable e) {
+					e.printStackTrace();
+					log.warn("error while sending email", e);
+				}
+			}
+			
 		}
 		createOrUpdateUpdateNotificationRecord(form);
 	}

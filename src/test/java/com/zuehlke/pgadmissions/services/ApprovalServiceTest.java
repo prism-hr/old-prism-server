@@ -164,36 +164,7 @@ public class ApprovalServiceTest {
 
 	}
 
-	@Test
-	public void shouldNotCreateEventIfPresiousStateApproval() {
 
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).toApprovalRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).id(1).pendingApprovalRestart(true)
-				.toApplicationForm();
-		applicationForm.getNotificationRecords().add(
-				new NotificationRecordBuilder().id(2).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION).toNotificationRecord());
-		applicationForm.getNotificationRecords().add(
-				new NotificationRecordBuilder().id(5).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER).toNotificationRecord());
-		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
-				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
-		approvalRoundDAOMock.save(approvalRound);
-		applicationFormDAOMock.save(applicationForm);
-
-		EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
-
-		approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 2), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
-		assertEquals(applicationForm, approvalRound.getApplication());
-		assertEquals(approvalRound, applicationForm.getLatestApprovalRound());
-		assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getStatus());
-		assertEquals(0, applicationForm.getEvents().size());
-
-		assertFalse(applicationForm.isPendingApprovalRestart());
-		EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock);
-		assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION));
-		assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER));
-
-	}
 
 	@Test
 	public void shouldCopyLastNotifiedForSupervisorsWhoWereAlsoInPreviousRound() throws ParseException {
@@ -214,7 +185,8 @@ public class ApprovalServiceTest {
 				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
 		approvalRoundDAOMock.save(newApprovalRound);
 		applicationFormDAOMock.save(applicationForm);
-
+		StateChangeEvent event = new ApprovalStateChangeEventBuilder().id(1).toApprovalStateChangeEvent();
+		EasyMock.expect(eventFactoryMock.createEvent(newApprovalRound)).andReturn(event);
 		EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
 
 		approvalService.moveApplicationToApproval(applicationForm, newApprovalRound);

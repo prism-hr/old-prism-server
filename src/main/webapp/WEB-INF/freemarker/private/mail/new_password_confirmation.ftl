@@ -24,9 +24,9 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Your password has been reset. Your new password is: ${newPassword}.</font>
 			      	</p>
-			        
+			      
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">WE RECOMMEND THAT YOU LOGIN AND CHANGE YOUR PASSWORD NOW.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We recommend that you log in and change your password now.</font>
 			      	</p>
 			        
 			        <p>

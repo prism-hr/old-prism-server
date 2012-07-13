@@ -40,8 +40,12 @@ $(document).ready(function(){
 			data:$.param(postData),
 			success: function(data)
 			{
-				$('#accountdetails').html(data);
-				addToolTips();
+				if(data == "OK"){	
+					window.location.href = '/pgadmissions/myAccount?messageCode=account.updated';
+				}else{				
+					$('#accountdetails').html(data);
+					addToolTips();
+				}
 			},
 	      complete: function()
 	      {
@@ -62,7 +66,10 @@ $(document).ready(function(){
 function getAccountDetailsSection()
 {
 	$('.content-box-inner').append('<div class="ajax" />');
-	
+	var url = "/pgadmissions/myAccount/section";	
+	if($('#messageCode').val() != ''){
+		url = url + "?messageCode=" + $('#messageCode').val();
+	}
 	$.ajax({
 		type: 'GET',
 		 statusCode: {
@@ -82,7 +89,8 @@ function getAccountDetailsSection()
 				  window.location.href = "/pgadmissions/404";
 			  }
 		  },
-		url:"/pgadmissions/myAccount/section", 
+		url:url,
+		
 		success: function(data)
 		{
 			$('#accountdetails').html(data);

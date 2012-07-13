@@ -56,19 +56,19 @@ public class AccountControllerTest {
 	}
 
 	@Test
-	public void shouldSaveUserIfNoErrorsAccountIsChangedAndReturn() {
+	public void shouldSaveUserIfNoErrorsAccountIsChangedAndReturnAjaxOk() {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		userServiceMock.updateCurrentUser(student);
 
 		EasyMock.replay(bindingResultMock, userServiceMock);
 
-		Assert.assertEquals("redirect:/myAccount/section?messageCode=account.updated", accountController.saveAccountDetails(student, bindingResultMock));
+		Assert.assertEquals("/private/common/ajax_OK", accountController.saveAccountDetails(student, bindingResultMock));
 
 		EasyMock.verify(bindingResultMock, userServiceMock);
 	}
 
 	@Test
-	public void shouldReturnCloneOfCUrretnUserASUpdatedUser() {
+	public void shouldReturnCloneOfCurrentUserAsUpdatedUser() {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		RegisteredUser updateUser= accountController.getUpdatedUser();

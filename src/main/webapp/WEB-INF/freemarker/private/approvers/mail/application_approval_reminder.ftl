@@ -25,7 +25,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that it is recommended that ${application.applicant.firstName?html} ${application.applicant.lastName?html} be recruited to UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must authorise their Application ${application.applicationNumber} and select the next action.</b></font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must approve their Application ${application.applicationNumber} and select the next action.</b></font>
 			      	</p>
 			      	
 						<p>

@@ -82,7 +82,7 @@ public class RegistryNotificationTimerTaskTest {
 			
 			mailSenderMock.sendApplicationToRegistryContacts(application, registryContacts);
 			Comment comment = new CommentBuilder().id(5).toComment();
-			EasyMock.expect(commentFactoryMock.createComment(application, adminRequestingNotification, "Referred to admissions. Referral send to Bob Jones (jones@test.com), Karla Peters (peters@test.com) and Hanna Hobnob (hanna@test.com).", CommentType.GENERIC,null)).andReturn(comment);
+			EasyMock.expect(commentFactoryMock.createComment(application, adminRequestingNotification, "Referred to UCL Admissions for advice on eligibility and fees status. Referral send to Bob Jones (jones@test.com), Karla Peters (peters@test.com) and Hanna Hobnob (hanna@test.com).", CommentType.GENERIC,null)).andReturn(comment);
 			commentServiceMock.save(comment);
 			applicationServiceMock.save(application);
 			

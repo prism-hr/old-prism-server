@@ -132,7 +132,7 @@
 			                <#if comment.type == 'REQUEST_RESTART'>
 												<p><em>${(comment.comment?html)!}</em></p>
 												<p class="restart"><span></span><em>Requested restart of approval phase.</em></p>
-			                <#elseif comment.comment?starts_with("Referred to admissions")>
+			                <#elseif comment.comment?starts_with("Referred to")>
 												<p class="referral"><span></span><em>${(comment.comment?html)!}</em></p>
 			                <#elseif comment.comment?starts_with("Delegated Application")>
 												<p class="delegate"><span></span><em>${(comment.comment?html)!}</em></p>

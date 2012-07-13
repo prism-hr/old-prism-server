@@ -28,7 +28,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The following reason was given: ${comment.comment?html}</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must restart the approval stage for the Application to progress.</b></font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must restart the approval stage for the application to progress.</b></font>
 			      	</p>
 
 					<p>
@@ -39,7 +39,7 @@
 					</p>
 			      	
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We will continue to send reminders until you respond to this request.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>

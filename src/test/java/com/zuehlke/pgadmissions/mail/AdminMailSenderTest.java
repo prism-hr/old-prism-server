@@ -346,7 +346,7 @@ public class AdminMailSenderTest {
 
 		//
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("rejection.notification.admin"),//
-				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
+				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Approval" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
 
 		MimeMessagePreparator mimePrepMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, null, "subject", expTemplate, model, null)).andReturn(mimePrepMock1);
@@ -367,7 +367,7 @@ public class AdminMailSenderTest {
 		EasyMock.verify(mimePrepMock1, mimePrepMock2, mimePrepMock3, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock);
 		Assert.assertEquals(approver, model.get("approver"));
 		Assert.assertEquals(reason, model.get("reason"));
-		Assert.assertEquals(ApplicationFormStatus.VALIDATION, model.get("previousStage"));
+		Assert.assertEquals(ApplicationFormStatus.APPROVAL, model.get("previousStage"));
 	}
 
 
@@ -542,7 +542,7 @@ public class AdminMailSenderTest {
 		};
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approved.notification"),//
-				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Validation" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
+				EasyMock.aryEq(new Object[] { "bob", "prg", "Jane", "Smith", "Approval" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
 
 		MimeMessagePreparator mimePrepMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator mimePrepMock2 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -569,7 +569,7 @@ public class AdminMailSenderTest {
 		EasyMock.verify(mimePrepMock1, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
 		Assert.assertEquals(approver, model.get("approver"));
 		Assert.assertEquals(registryContacts, model.get("registryContacts"));
-		Assert.assertEquals(ApplicationFormStatus.VALIDATION, model.get("previousStage"));
+		Assert.assertEquals(ApplicationFormStatus.APPROVAL, model.get("previousStage"));
 	}
 
 	@Before

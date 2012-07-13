@@ -727,11 +727,23 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		if (ApplicationFormStatus.INTERVIEW == status) {
 			return resolveOutcomeOfStageForInterviewStatus();
 		}
-		return resolveOutcomeOfStageForApprovalandRejectedStatus();
+		if (ApplicationFormStatus.APPROVAL == status) {
+			return resolveOutcomeOfStageForApprovalStatus();
+		}
+		if (!approvalRounds.isEmpty() ) {
+			return ApplicationFormStatus.APPROVAL;
+		}
+		if(!interviews.isEmpty()){
+			return ApplicationFormStatus.INTERVIEW;
+		}
+		if(!reviewRounds.isEmpty()){
+			return ApplicationFormStatus.REVIEW;
+		}
+		return ApplicationFormStatus.VALIDATION;
 	}
 
-	private ApplicationFormStatus resolveOutcomeOfStageForApprovalandRejectedStatus() {
-		if (approvalRounds.size()  > 1 && ApplicationFormStatus.APPROVAL == status) {
+	private ApplicationFormStatus resolveOutcomeOfStageForApprovalStatus() {
+		if (approvalRounds.size()  > 1 ) {
 			return ApplicationFormStatus.APPROVAL;
 		}
 		if(!interviews.isEmpty()){

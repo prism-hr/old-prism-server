@@ -354,33 +354,12 @@ public class ApplicationFormTest {
 	}
 	
 	@Test
-	public void shouldReturnInterviewForStatusRejectedIfNoSomeInterviewAndApprovalRounds(){
-		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).toApprovalRound();
-		Interview interviewOne = new InterviewBuilder().id(3).toInterview();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).interviews(interviewOne).status(ApplicationFormStatus.REJECTED).toApplicationForm();
-		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getOutcomeOfStage());
-	}
-	@Test
-	public void shouldReturnIReviewForStatusRejectedIfNoInterviewbutSomeReviewsAndApprovalRounds(){
-		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).toApprovalRound();
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).toReviewRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).reviewRounds(reviewRound).status(ApplicationFormStatus.REJECTED).toApplicationForm();
-		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getOutcomeOfStage());
-	
-	}
-	@Test
-	public void shouldReturnValidationwForStatusRejectedIfNoInterviewOrSomeReviewsbutSomeApprovalRounds(){
+	public void shouldReturnApprovalForStatusRejectedIfSomApprovalRounds(){
 		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).toApprovalRound();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).status(ApplicationFormStatus.REJECTED).toApplicationForm();
-		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getOutcomeOfStage());
+		assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getOutcomeOfStage());
 	}
-	@Test
-	public void shouldReturnValidationForStatusRejectedIfNoInterviewOrReviewsButMoreThanOneApprovallRounds(){
-		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).toApprovalRound();
-		ApprovalRound approvalRoundTwo = new ApprovalRoundBuilder().id(5).toApprovalRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne, approvalRoundTwo).status(ApplicationFormStatus.REJECTED).toApplicationForm();
-		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getOutcomeOfStage());
-	}
+	
 	@After
 	public void tearDown() {
 		SecurityContextHolder.clearContext();

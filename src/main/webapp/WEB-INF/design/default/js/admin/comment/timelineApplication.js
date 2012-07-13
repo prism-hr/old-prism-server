@@ -132,7 +132,11 @@ $(document).ready(function()
 
 		$('#application').html("");
 	}
-	// "Open" the timeline tab by default.
-	$('#timelineBtn').trigger('click');
+	if($('#isReferee').val() == 'true'){
+		$('#applicationBtn').trigger('click');
+	}else{
+		// "Open" the timeline tab by default.	
+		$('#timelineBtn').trigger('click');
+	}
 	
 });

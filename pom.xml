@@ -374,6 +374,37 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<sql.host>192.168.11.115</sql.host>
+				<sql.db>pgadmissions_sit</sql.db>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>test-compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete
+											file="${project.build.outputDirectory}/environment.properties" />
+										<copy file="src/environments/environment.prod.properties"
+											tofile="${project.build.outputDirectory}/environment.properties" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
 	</profiles>
 
 </project>

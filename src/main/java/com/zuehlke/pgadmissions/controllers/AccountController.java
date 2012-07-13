@@ -53,7 +53,7 @@ public class AccountController {
 		
 		userService.updateCurrentUser(user);
 		
-		return "redirect:/myAccount/section?messageCode=account.updated";
+		return "/private/common/ajax_OK";
 	}
 
 	@ModelAttribute(value="updatedUser")

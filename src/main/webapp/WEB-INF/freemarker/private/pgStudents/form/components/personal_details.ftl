@@ -344,7 +344,7 @@
 					
 					<div class="row">
 						<label class="plain-label">Do you require a visa to study in the UK?<em>*</em></label>
-                   		<span class="hint"></span>
+						<span class="hint" data-desc="<@spring.message 'personalDetails.residence.visa'/>"></span>
                    		<div class="field">                   			
                    			<label>
                    				<input type="radio" name="requiresVisa" id="requiresVisaYes" value="true"

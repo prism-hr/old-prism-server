@@ -28,13 +28,18 @@
 
 	<context:property-placeholder location="classpath:environment.properties" />
 	   
-	 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://${db.host}/${db.schema}?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true" />
-		<property name="username" value="${db.username}" />
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl" value="jdbc:mysql://${db.host}/${db.schema}?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true" />
+		<property name="user" value="${db.username}" />
 		<property name="password" value="${db.password}" />
+        
+        <!-- these are C3P0 properties -->
+        <property name="acquireIncrement" value="${db.acquireIncrement}" />
+        <property name="minPoolSize" value="${db.minPoolSize}" />
+        <property name="maxPoolSize" value="${db.maxPoolSize}" />
+        <property name="testConnectionOnCheckout" value="true" />  
 	</bean>
-
 
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">

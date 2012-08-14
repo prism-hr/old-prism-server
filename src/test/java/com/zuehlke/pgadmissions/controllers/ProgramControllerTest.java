@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.MainPageModel;
 
 public class ProgramControllerTest {
@@ -28,13 +29,22 @@ public class ProgramControllerTest {
 	Map<String, MainPageModel> modelMap;
 	ModelAndView modelAndView;
 	
+	@Before
+	public void setUp(){
+	    programDAOMock = EasyMock.createMock(ProgramDAO.class);
+	    programs = new ArrayList<Program>();
+	    programController = new ProgramController(programDAOMock);
+	}
+	
 	@Test
-	public void getProgramsViewName(){
+	public void getProgramsViewName() {
+	    programController.setEnabled(true);
 		assertEquals("private/pgStudents/programs/program_list_page", programController.getProgramsPage().getViewName());
 	}
 	
 	@Test
-	public void shouldShowAllPrograms(){
+	public void shouldShowAllPrograms() {
+	    programController.setEnabled(true);
 		EasyMock.expect(programDAOMock.getAllPrograms()).andReturn(programs);
 		EasyMock.replay(programDAOMock);
 		
@@ -44,11 +54,11 @@ public class ProgramControllerTest {
 		assertSame(programs, model.getPrograms());
 	}
 	
-	@Before
-	public void setUp(){
-		programDAOMock = EasyMock.createMock(ProgramDAO.class);
-		programs = new ArrayList<Program>();
-		programController = new ProgramController(programDAOMock);
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldShowNoPrograms() {
+	    programController.setEnabled(false);
+        EasyMock.expect(programDAOMock.getAllPrograms()).andReturn(programs);
+        EasyMock.replay(programDAOMock);
+        programController.getProgramsPage();
 	}
-	
 }

@@ -326,7 +326,7 @@ function watchUpload($field, $deleteFunction)
     try{
     	isOkSize = input.files[0].size < 10485760;
     }catch(error){
-    	alert(error)
+    	alert(error);
     }
     if (isOkSize) // 10MB in bytes
     {

@@ -99,7 +99,7 @@ public class MimeMessagePreparatorFactory {
 				logStringBuilder.append(address.toString() + ", ");
 			}
 
-			log.info("Email \"" + getSubject() + "\" will be send to " + logStringBuilder.toString());
+			log.info("Email \"" + getSubject() + "\" will be sent to " + logStringBuilder.toString());
 			messageHelper.setTo(toAddresses);
 			if (!ArrayUtils.isEmpty(getCCAddresses())) {
 				messageHelper.setCc(getCCAddresses());

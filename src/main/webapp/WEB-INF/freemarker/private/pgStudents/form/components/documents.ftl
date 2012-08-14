@@ -30,7 +30,7 @@
 					<input id="psDocument" class="full" data-type="PERSONAL_STATEMENT" data-reference="Personal Statement" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="psUploadedDocument">
 						<input type="hidden" class="file" id="document_PERSONAL_STATEMENT" value="${(encrypter.encrypt(applicationForm.personalStatement.id))!}"/>
-						<input type="hidden" name="MAX_FILE_SIZE" value="500" />
+						<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
 						<a id="psLink" class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.personalStatement.id))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a>
 						<#if applicationForm.personalStatement?? && !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 						<a id="deletePs" data-desc="Change Personal Statement" class="button-delete button-hint">delete</a>

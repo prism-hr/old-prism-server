@@ -16,7 +16,7 @@
 			
 			<li  <#if activeTab=="config">class="current"</#if>><a href="<@spring.url '/configuration'/>">Configuration</a></li>
 			</#if>
-			<li <#if activeTab=="help">class="current"</#if>><a href="http://www.prism.cs.ucl.ac.uk/about/" target="_blank">Help</a></li>    
+			<li <#if activeTab=="help">class="current"</#if>><a href="http://www.prism.cs.ucl.ac.uk/help/" target="_blank">Help</a></li>    
 		</ul>
 			        
 		<div class="user">

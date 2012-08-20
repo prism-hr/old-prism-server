@@ -52,6 +52,18 @@ public class ProgramInstanceDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
+    public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(Program program, StudyOption studyOption) {
+        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession()
+                .createCriteria(ProgramInstance.class)
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("studyOption", studyOption))
+                .add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .addOrder(Order.asc("applicationDeadline"))
+                .list();
+    }
+	
+	@SuppressWarnings("unchecked")
 	public ProgramInstance getCurrentProgramInstanceForStudyOption(Program program, StudyOption studyOption) {
 		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
 		List<ProgramInstance> futureInstances = sessionFactory.getCurrentSession()

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -36,6 +37,7 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 	@Override
 	public void validate(Object target, Errors errors) {
 		super.validate(target, errors);
+		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
@@ -43,15 +45,25 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 
 		ProgrammeDetails programmeDetail = (ProgrammeDetails) target;
 
-		List<ProgramInstance> programInstances = programInstaceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(programmeDetail.getApplication()
-				.getProgram(), programmeDetail.getStudyOption());
+		List<ProgramInstance> programInstances = programInstaceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(programmeDetail.getApplication().getProgram(), programmeDetail.getStudyOption());
 		if (programInstances == null || programInstances.isEmpty()) {
 			errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");
 		}
-
+		
 		if(programmeDetail.getStartDate() != null && programmeDetail.getStartDate().before(new Date())){
 			errors.rejectValue("startDate", "date.field.notfuture");
 		}
+		
+		if (programInstances != null && !programInstances.isEmpty()) {
+		    DateTime startDateFirstProgrameInstance = new DateTime(programInstances.get(0).getApplicationDeadline());
+		    DateTime derivedEndDateLastProgrameInstance = new DateTime(programInstances.get(programInstances.size()-1).getApplicationDeadline()).plusYears(1);
+		    DateTime userEnteredPreferredStartDate = new DateTime(programmeDetail.getStartDate());
+		
+		    if (userEnteredPreferredStartDate.isBefore(startDateFirstProgrameInstance) || userEnteredPreferredStartDate.isAfter(derivedEndDateLastProgrameInstance)) {
+		        errors.rejectValue("startDate", "programmeDetails.startDate.invalid", new Object[] {startDateFirstProgrameInstance.toString("dd-MMM-yyyy"), derivedEndDateLastProgrameInstance.toString("dd-MMM-yyyy")}, "");
+		    }
+		}
+		
 		List<SuggestedSupervisor> supervisors = programmeDetail.getSuggestedSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
 			if (supervisors.get(i).getFirstname() == "" || supervisors.get(i).getFirstname() == null) {
@@ -61,7 +73,5 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 				errors.rejectValue("suggestedSupervisors", "text.field.empty");
 			}
 		}
-		
 	}
-
 }

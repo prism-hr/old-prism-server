@@ -54,104 +54,125 @@ public class ProgrammeDetailsValidatorTest {
 	public void shouldRejectIfProgrammeNameIsEmpty() {
 		programmeDetail.setProgrammeName(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "programmeName");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(
 				Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("programmeName").getCode());
+		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
 	}
 
 	@Test
 	public void shouldRejectIfStudyOptionIsEmpty() {
 		programmeDetail.setStudyOption(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(
 				Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("studyOption").getCode());
+		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
 	}
 
 	@Test
 	public void shouldRejectIfStartDateIsEmpty() {
 		programmeDetail.setStartDate(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(
 				Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("startDate").getCode());
+		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldErrors("startDate").get(0).getCode());
+		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldErrors("startDate").get(1).getCode());
 	}
 
 	@Test
 	public void shouldRejectIfStartDateIsFutureDate() {
 		programmeDetail.setStartDate(DateUtils.addDays(new Date(), -1));
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(
 				Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 	
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("startDate").getCode());
+		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals("date.field.notfuture", mappingResult.getFieldErrors("startDate").get(0).getCode());
+		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldErrors("startDate").get(1).getCode());
 	}
 
 	@Test
 	public void shouldRejectIfReferrerIsEmpty() {
 		programmeDetail.setReferrer(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "referrer");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(
 				Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("referrer").getCode());
+		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
 	}
+	
+	@Test
+    public void shouldRejectIfStartDateIsNotInRange() {
+	    programmeDetail.setStartDate(DateUtils.addYears(new Date(), 5));
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
+        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(
+                Arrays.asList(programInstance));
+        EasyMock.replay(programInstanceDAOMock);
+        programmeDetailsValidator.validate(programmeDetail, mappingResult);
+        EasyMock.verify(programInstanceDAOMock);
+
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
+    }
 
 	@Test
 	public void shouldRejectIfSuggestedSupervisorFirstNameIsEmpty() {
 		programmeDetail.getSuggestedSupervisors().get(0).setFirstname(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "suggestedSupervisors");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(
 				Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("suggestedSupervisors").getCode());
+		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
 	}
 
 	@Test
 	public void shouldRejectIfSuggestedSupervisorLastNameIsEmpty() {
 		programmeDetail.getSuggestedSupervisors().get(0).setLastname(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "suggestedSupervisors");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(
 				Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("suggestedSupervisors").getCode());
+		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
 	}
 
 	@Test
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
 		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(
 				null);
 		EasyMock.replay(programInstanceDAOMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);

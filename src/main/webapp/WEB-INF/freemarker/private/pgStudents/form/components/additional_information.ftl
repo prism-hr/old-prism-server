@@ -114,7 +114,7 @@
 		     	 </#if>
 			<div class="row">
 				<span class="terms-label">
-					Confirm that the information that you have provided in this section is true 
+					Confirm that the information that you have provided in this application is true 
 					and correct. Failure to provide true and correct information may result in a 
 					subsequent offer of study being withdrawn.				
 				</span>

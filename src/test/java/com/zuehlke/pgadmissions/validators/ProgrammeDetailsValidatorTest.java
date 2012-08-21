@@ -104,9 +104,8 @@ public class ProgrammeDetailsValidatorTest {
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 	
-		Assert.assertEquals(2, mappingResult.getErrorCount());
-		Assert.assertEquals("date.field.notfuture", mappingResult.getFieldErrors("startDate").get(0).getCode());
-		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldErrors("startDate").get(1).getCode());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldErrors("startDate").get(0).getCode());
 	}
 
 	@Test

@@ -116,12 +116,30 @@ $(document).ready(function()
 		{
 			$('#supervisorFirstname').after('<span class="invalid">You must make an entry.</span>').show();
 			errors++;
+		} else if (!validateStringChars($('#supervisorFirstname').val())) 
+		{
+			$('#supervisorFirstname').after('<span class="invalid">You must only enter valid characters.</span>').show();
+			errors++;
+		} else if (!validateStringLength($('#supervisorFirstname').val(), 30)) 
+		{
+			$('#supervisorFirstname').after('<span class="invalid">A maximum of 30 characters are allowed.</span>').show();
+			errors++;
 		}		
+		
 		if ($('#supervisorLastname').val() == "")
 		{
 			$('#supervisorLastname').after('<span class="invalid">You must make an entry.</span>').show();
 			errors++;
-		}		
+		} else if (!validateStringChars($('#supervisorLastname').val())) 
+		{
+			$('#supervisorLastname').after('<span class="invalid">You must only enter valid characters.</span>').show();
+			errors++;
+		} else if (!validateStringLength($('#supervisorLastname').val(), 40)) 
+		{
+			$('#supervisorLastname').after('<span class="invalid">A maximum of 40 characters are allowed.</span>').show();
+			errors++;
+		}	
+		
 		if ($("input[name='awareSupervisor']:checked").val() == undefined)
 		{
 			$('#awareNo').parent().after('<span class="invalid">You must make a selection.</span>').show();
@@ -130,6 +148,10 @@ $(document).ready(function()
 		if (!validateEmail($('#supervisorEmail').val()))
 		{
 			$('#supervisorEmail').after('<span class="invalid">You must enter a valid email address.</span>').show();
+			errors++;
+		} else if (!validateStringLength($('#supervisorEmail').val(), 255)) 
+		{
+			$('#supervisorEmail').after('<span class="invalid">A maximum of 255 characters are allowed.</span>').show();
 			errors++;
 		}
 		
@@ -212,20 +234,43 @@ $(document).ready(function()
 		{
 			$('#supervisorFirstname').after('<span class="invalid">You must make an entry.</span>').show();
 			errors++;
+		} else if (!validateStringChars($('#supervisorFirstname').val())) 
+		{
+			$('#supervisorFirstname').after('<span class="invalid">You must only enter valid characters.</span>').show();
+			errors++;
+		} else if (!validateStringLength($('#supervisorFirstname').val(), 30)) 
+		{
+			$('#supervisorFirstname').after('<span class="invalid">A maximum of 30 characters are allowed.</span>').show();
+			errors++;
 		}		
+		
 		if ($('#supervisorLastname').val() == "")
 		{
 			$('#supervisorLastname').after('<span class="invalid">You must make an entry.</span>').show();
 			errors++;
-		}		
+		} else if (!validateStringChars($('#supervisorLastname').val())) 
+		{
+			$('#supervisorLastname').after('<span class="invalid">You must only enter valid characters.</span>').show();
+			errors++;
+		} else if (!validateStringLength($('#supervisorLastname').val(), 40)) 
+		{
+			$('#supervisorLastname').after('<span class="invalid">A maximum of 40 characters are allowed.</span>').show();
+			errors++;
+		}	
+		
 		if ($("input[name='awareSupervisor']:checked").val() == undefined)
 		{
 			$('#awareNo').parent().after('<span class="invalid">You must make a selection.</span>').show();
 			errors++;
-		}	
+		}
+		
 		if (!validateEmail($('#supervisorEmail').val()))
 		{
 			$('#supervisorEmail').after('<span class="invalid">You must enter a valid email address.</span>').show();
+			errors++;
+		} else if (!validateStringLength($('#supervisorEmail').val(), 255)) 
+		{
+			$('#supervisorEmail').after('<span class="invalid">A maximum of 255 characters are allowed.</span>').show();
 			errors++;
 		}
 		
@@ -310,7 +355,27 @@ $(document).ready(function()
 		return result;
 	} 
 	
+	// -------------------------------------------------------------------------------
+	// Validation of supervisor first and last name (characters)
+	// -------------------------------------------------------------------------------
+	function validateStringChars(name) 
+	{
+		var pattern = new RegExp("^[\x20a-zA-Z\x7E\x80-\xA5\xE0-\xE6]{1,1024}$");
+		var result = pattern.test(name);
+		return result;
+	}
 
+	// -------------------------------------------------------------------------------
+	// Validation of supervisor first and last name (length)
+	// -------------------------------------------------------------------------------
+	function validateStringLength(name, length) 
+	{
+		if (name.length > length) {
+			return false;
+		}
+		return true;
+	}
+	
 	// -------------------------------------------------------------------------------
 	// Close Programme Details section.
 	// -------------------------------------------------------------------------------

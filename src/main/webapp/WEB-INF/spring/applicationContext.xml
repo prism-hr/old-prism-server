@@ -22,7 +22,7 @@
 	
 	<bean id="simplerHandlerMapping" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 	
-	
+	<!-- JSR-303 support will be detected on classpath and enabled automatically -->
 	<mvc:annotation-driven />
     
     <bean id="multipartResolver"

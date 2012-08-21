@@ -50,10 +50,6 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 			errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");
 		}
 		
-		if(programmeDetail.getStartDate() != null && programmeDetail.getStartDate().before(new Date())){
-			errors.rejectValue("startDate", "date.field.notfuture");
-		}
-		
 		if (programInstances != null && !programInstances.isEmpty()) {
 		    DateTime startDateFirstProgrameInstance = new DateTime(programInstances.get(0).getApplicationDeadline());
 		    DateTime derivedEndDateLastProgrameInstance = new DateTime(programInstances.get(programInstances.size()-1).getApplicationDeadline()).plusYears(1);
@@ -62,7 +58,9 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 		    if (userEnteredPreferredStartDate.isBefore(startDateFirstProgrameInstance) || userEnteredPreferredStartDate.isAfter(derivedEndDateLastProgrameInstance)) {
 		        errors.rejectValue("startDate", "programmeDetails.startDate.invalid", new Object[] {startDateFirstProgrameInstance.toString("dd-MMM-yyyy"), derivedEndDateLastProgrameInstance.toString("dd-MMM-yyyy")}, "");
 		    }
-		}
+		} else if(programmeDetail.getStartDate() != null && programmeDetail.getStartDate().before(new Date())) {
+            errors.rejectValue("startDate", "date.field.notfuture");
+        }
 		
 		List<SuggestedSupervisor> supervisors = programmeDetail.getSuggestedSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {

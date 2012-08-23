@@ -8,12 +8,11 @@ import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Interview;
 
 @Service
-public class InterviewValidator implements Validator {
+public class InterviewValidator extends AbstractValidator {
 
 
 	@Override
@@ -22,7 +21,7 @@ public class InterviewValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 		Interview interview = (Interview) target;
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "furtherDetails", "text.field.empty");

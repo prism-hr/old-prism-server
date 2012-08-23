@@ -20,6 +20,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -77,11 +78,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "current_address_id")
+	@Valid
 	private Address currentAddress;
 
 	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "contact_address_id")
+	@Valid
 	private Address contactAddress;
 
 	@ManyToOne
@@ -138,9 +141,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	private Program program;
 
 	@OneToOne(mappedBy = "application")
+	@Valid
 	private PersonalDetails personalDetails;
 
 	@OneToOne(mappedBy = "application")
+	@Valid
 	private ProgrammeDetails programmeDetails;
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
@@ -165,6 +170,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
+	@Valid
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
@@ -175,14 +181,17 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
+	@Valid
 	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
+	@Valid
 	private List<Referee> referees = new ArrayList<Referee>();
 
 	@OneToOne(mappedBy = "application")
+	@Valid
 	private AdditionalInformation additionalInformation;
 
 	@Column(name = "reject_notification_date")

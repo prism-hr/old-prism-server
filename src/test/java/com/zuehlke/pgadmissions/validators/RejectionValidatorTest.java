@@ -5,14 +5,21 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class RejectionValidatorTest {
 	private Rejection rejection;
+	@Autowired
 	private RejectionValidator rejectionValidator;
 	
 	@Test
@@ -30,8 +37,6 @@ public class RejectionValidatorTest {
 	}
 	@Before
 	public void setup(){
-		
 		rejection = new RejectionBuilder().rejectionReason(new RejectReasonBuilder().id(1).toRejectReason()).toRejection();
-		rejectionValidator = new RejectionValidator();
 	}
 }

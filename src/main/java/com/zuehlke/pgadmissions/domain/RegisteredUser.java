@@ -16,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,17 +24,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
 @Access(AccessType.FIELD)
 public class RegisteredUser extends DomainObject<Integer> implements UserDetails, Comparable<RegisteredUser> {
 
 	private static final long serialVersionUID = 7913035836949510857L;
+	
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 30)
 	private String firstName;
-
+	
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 40)
 	private String lastName;
+	
+	@ESAPIConstraint(rule = "Email", allowNull = true, maxLength = 255, message = "{text.email.notvalid}")
 	private String email;
+	
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 200)
 	private String username;
+	
 	private String password;
 
 	@Transient
@@ -49,14 +59,19 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private String originalApplicationQueryString;
 	
 	private boolean enabled;
+	
 	private boolean accountNonExpired;
+	
 	private boolean accountNonLocked ;
+	
 	private boolean credentialsNonExpired;
+	
 	private String activationCode;
 
 	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "user_id")
+	@Valid
 	private List<Comment> comments = new ArrayList<Comment>();
 	
 	@Column(name = "direct_to_url")
@@ -76,8 +91,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "registered_user_id")
 	private List<Referee> referees = new ArrayList<Referee>();
-
-
 
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })

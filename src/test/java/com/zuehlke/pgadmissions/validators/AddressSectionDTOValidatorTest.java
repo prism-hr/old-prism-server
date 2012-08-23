@@ -5,19 +5,35 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 
-
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class AddressSectionDTOValidatorTest {
 
+    @Autowired
 	private AddressSectionDTOValidator validator;
+    
 	private AddressSectionDTO address;
 
+	@Before
+	public void setup() {
+	    address = new AddressSectionDTO();
+	    address.setApplication(new ApplicationFormBuilder().id(8).toApplicationForm());
+	    address.setContactAddressLocation("London");
+	    address.setContactAddressCountry(new Country());
+	    address.setCurrentAddressLocation("New York");
+	    address.setCurrentAddressCountry(new Country());
+	}
+	
 	@Test
 	public void shouldSupportAddress() {
 		assertTrue(validator.supports(AddressSectionDTO.class));
@@ -84,18 +100,5 @@ public class AddressSectionDTOValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		validator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-	}
-	
-	@Before
-	public void setup(){
-		validator = new AddressSectionDTOValidator();
-	
-		
-		address = new AddressSectionDTO();
-		address.setApplication(new ApplicationFormBuilder().id(8).toApplicationForm());
-		address.setContactAddressLocation("London");
-		address.setContactAddressCountry(new Country());
-		address.setCurrentAddressLocation("New York");
-		address.setCurrentAddressCountry(new Country());
 	}
 }

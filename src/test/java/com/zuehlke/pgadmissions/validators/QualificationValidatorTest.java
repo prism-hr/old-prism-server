@@ -11,6 +11,10 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Country;
@@ -18,9 +22,13 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class QualificationValidatorTest {
 	
 	private Qualification qualification;
+	
+	@Autowired
 	private QualificationValidator qualificationValidator;
 
 	@Test
@@ -116,8 +124,6 @@ public class QualificationValidatorTest {
 
 	@Before
 	public void setup() throws ParseException{
-		
-		qualificationValidator = new QualificationValidator();
 		qualification = new Qualification();
 		qualification.setApplication(new ApplicationFormBuilder().id(9).toApplicationForm());
 		qualification.setId(3);

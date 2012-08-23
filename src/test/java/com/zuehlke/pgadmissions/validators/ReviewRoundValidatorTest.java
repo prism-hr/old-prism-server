@@ -8,6 +8,10 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -15,8 +19,12 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class ReviewRoundValidatorTest {
 	private ReviewRound reviewRound;
+	
+	@Autowired
 	private ReviewRoundValidator reviewRoundValidator;
 	
 	@Test
@@ -38,6 +46,6 @@ public class ReviewRoundValidatorTest {
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		
 		reviewRound = new ReviewRoundBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).reviewers(new ReviewerBuilder().id(4).toReviewer()).toReviewRound();
-		reviewRoundValidator = new ReviewRoundValidator();
+		//reviewRoundValidator = new ReviewRoundValidator();
 	}
 }

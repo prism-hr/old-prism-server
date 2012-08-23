@@ -6,6 +6,11 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
@@ -17,20 +22,23 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.services.UserService;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class SuperadminUserDTOValidatorTest {
 
-
 	private UserDTO user;
+	
+	@Autowired
 	private SuperadminUserDTOValidator validator;
+	
+	@Autowired
 	private UserService userServiceMock;
 
 	@Before
 	public void setup() {
-		userServiceMock = EasyMock.createMock(UserService.class);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null).anyTimes();
 		EasyMock.replay(userServiceMock);
 
-		validator = new  SuperadminUserDTOValidator(userServiceMock);
 		user = new UserDTO();
 		user.setFirstName("bob");
 		user.setLastName("Smith");
@@ -40,11 +48,13 @@ public class SuperadminUserDTOValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldSupportNewUserDTO() {
 		assertTrue(validator.supports(UserDTO.class));
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldNotRejectValidUser() {
 		BindingResult mappingResult = new BeanPropertyBindingResult(user, "*");
 		validator.validate(user, mappingResult);
@@ -52,6 +62,7 @@ public class SuperadminUserDTOValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfFirstNameEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
 		user.setFirstName("");
@@ -61,6 +72,7 @@ public class SuperadminUserDTOValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfLastNameNull() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "lastName");
 		user.setLastName(null);
@@ -70,6 +82,7 @@ public class SuperadminUserDTOValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfEmailNotValid() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		user.setEmail("");
@@ -77,7 +90,9 @@ public class SuperadminUserDTOValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 	}	
+	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfEmailThatOfExistingApplicant() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		user.setEmail("applicant@test.com");
@@ -89,6 +104,4 @@ public class SuperadminUserDTOValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.email.applicant", mappingResult.getFieldError("email").getCode());
 	}
-
-
 }

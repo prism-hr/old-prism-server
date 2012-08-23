@@ -1,20 +1,16 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Service
-public class AccountValidator implements Validator {
+public class AccountValidator extends AbstractValidator {
 
 	private static final int MINIMUM_PASSWORD_CHARACTERS = 8;
 	private static final int MAXIMUM_PASSWORD_CHARACTERS = 15;
@@ -32,19 +28,18 @@ public class AccountValidator implements Validator {
 		this.encryptionUtils = encryptionUtils;
 	}
 
-
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return RegisteredUser.class.equals(clazz);
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		RegisteredUser updatedUser = (RegisteredUser) target;
 		RegisteredUser existingUser = getCurrentUser();
 		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
 		
 		if(StringUtils.isBlank(updatedUser.getPassword()) && ( StringUtils.isNotBlank(updatedUser.getNewPassword()) || StringUtils.isNotBlank(updatedUser.getConfirmPassword()))){
 			errors.rejectValue("password", "text.field.empty");
@@ -82,15 +77,9 @@ public class AccountValidator implements Validator {
 		if(userWithSameEmail != null && !userWithSameEmail.equals(existingUser)){
 				errors.rejectValue("email", "user.email.alreadyexists");
 		}
-		
-		if (!EmailValidator.getInstance().isValid(updatedUser.getEmail())) {
-			errors.rejectValue("email", "text.email.notvalid");
-		}
-		
 	}  
 
 	public RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();
 	}
-
 }

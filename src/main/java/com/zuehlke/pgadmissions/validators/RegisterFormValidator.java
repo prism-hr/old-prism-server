@@ -1,18 +1,14 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.List;
-
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.services.UserService;
 @Service
-public class RegisterFormValidator implements Validator {
+public class RegisterFormValidator extends AbstractValidator {
 
 	private UserService userService;
 	private static final int MINIMUM_PASSWORD_CHARACTERS = 8;
@@ -32,10 +28,8 @@ public class RegisterFormValidator implements Validator {
 		return RegisteredUser.class.equals(clazz);
 	}
 
-	
-
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "text.field.empty");
@@ -63,10 +57,5 @@ public class RegisterFormValidator implements Validator {
 		if (userWithSameEmail != null && !record.equals(userWithSameEmail)) {
 			errors.rejectValue("email", "user.email.alreadyexists");
 		}
-		
-		if (!EmailValidator.getInstance().isValid(record.getEmail())) {
-			errors.rejectValue("email", "text.email.notvalid");
-		}
 	}
-
 }

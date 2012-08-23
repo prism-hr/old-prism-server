@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
 import com.zuehlke.pgadmissions.domain.Funding;
 
 @Component
@@ -17,8 +18,9 @@ public class FundingValidator extends FormSectionObjectValidator implements Vali
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
-		super.validate(target, errors);
+	public void addExtraValidation(Object target, Errors errors) {
+		super.addExtraValidation(target, errors);
+		
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "type", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "text.field.empty");
@@ -35,8 +37,5 @@ public class FundingValidator extends FormSectionObjectValidator implements Vali
 				errors.rejectValue("description", "user.fundingDescriptLength.exceeded");
 			}
 		}
-
 	}
-
-
 }

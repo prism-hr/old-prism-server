@@ -16,10 +16,8 @@ public class DocumentSectionValidator extends FormSectionObjectValidator impleme
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
-		super.validate(target, errors);
+	public void addExtraValidation(Object target, Errors errors) {
+		super.addExtraValidation(target, errors);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalStatement", "file.upload.empty");
-
 	}
-
 }

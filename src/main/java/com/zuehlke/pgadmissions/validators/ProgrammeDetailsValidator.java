@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,8 +36,8 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
-		super.validate(target, errors);
+	public void addExtraValidation(final Object target, final Errors errors) {
+		super.addExtraValidation(target, errors);
 		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", "dropdown.radio.select.none");
@@ -64,12 +65,15 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 		
 		List<SuggestedSupervisor> supervisors = programmeDetail.getSuggestedSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
-			if (supervisors.get(i).getFirstname() == "" || supervisors.get(i).getFirstname() == null) {
+			if (StringUtils.isBlank(supervisors.get(i).getFirstname())) {
 				errors.rejectValue("suggestedSupervisors", "text.field.empty");
 			}
-			if (supervisors.get(i).getLastname() == "" || supervisors.get(i).getLastname() == null) {
+			if (StringUtils.isBlank(supervisors.get(i).getLastname())) {
 				errors.rejectValue("suggestedSupervisors", "text.field.empty");
 			}
+			if (StringUtils.isBlank(supervisors.get(i).getEmail())) {
+                errors.rejectValue("suggestedSupervisors", "text.field.empty");
+            }
 		}
 	}
 }

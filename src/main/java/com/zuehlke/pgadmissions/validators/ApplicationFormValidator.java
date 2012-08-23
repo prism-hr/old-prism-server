@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -15,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Component
-public class ApplicationFormValidator implements Validator {
+public class ApplicationFormValidator extends AbstractValidator {
 
 	private final ProgramInstanceDAO programInstanceDAO;
 
@@ -35,7 +34,7 @@ public class ApplicationFormValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		ApplicationForm applicationForm = (ApplicationForm) target;
 		ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
 

@@ -3,12 +3,11 @@ package com.zuehlke.pgadmissions.validators;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Rejection;
 
 @Component
-public class RejectionValidator implements Validator {
+public class RejectionValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -16,7 +15,7 @@ public class RejectionValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 	
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "rejectionReason", "dropdown.radio.select.none");
 	}

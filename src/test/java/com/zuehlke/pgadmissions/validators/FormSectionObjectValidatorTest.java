@@ -14,68 +14,61 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class FormSectionObjectValidatorTest {
-	private ApplicationForm applicationForm;
-	private MyObject formSectionObject;
-	private FormSectionObjectValidator formSectionObjectValidator;
+    private ApplicationForm applicationForm;
+    private MyObject formSectionObject;
+    private FormSectionObjectValidator formSectionObjectValidator;
 
-	@Test
-	public void shouldRejectIfApplicationSubmittedAndTermsAcceptedIsFalse() {
+    @Test
+    public void shouldRejectIfApplicationSubmittedAndTermsAcceptedIsFalse() {
+        applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
+        formSectionObjectValidator.addExtraValidation(formSectionObject, mappingResult);
 
-		applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
-		formSectionObjectValidator.validate(formSectionObject, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("acceptedTerms").getCode());
+    }
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("acceptedTerms").getCode());
-	}
-	@Test
-	public void shouldNotRejectIfApplicationsubmittedAndTermsAcceptedIsTrue() {
+    @Test
+    public void shouldNotRejectIfApplicationsubmittedAndTermsAcceptedIsTrue() {
+        formSectionObject.setAcceptedTerms(true);
+        applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
+        formSectionObjectValidator.addExtraValidation(formSectionObject, mappingResult);
 
-		formSectionObject.setAcceptedTerms(true);
-		applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
-		formSectionObjectValidator.validate(formSectionObject, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
 
-		Assert.assertEquals(0, mappingResult.getErrorCount());
+    @Test
+    public void shouldNotRejectIfApplicationUnsubmittedAndTermsAcceptedIsFalse() {
+        applicationForm.setStatus(ApplicationFormStatus.UNSUBMITTED);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
+        formSectionObjectValidator.addExtraValidation(formSectionObject, mappingResult);
 
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
 
-	}
-	@Test
-	public void shouldNotRejectIfApplicationUnsubmittedAndTermsAcceptedIsFalse() {
+    @Before
+    public void setup() throws ParseException {
+        applicationForm = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+        formSectionObject = new MyObject();
+        formSectionObjectValidator = new FormSectionObjectValidator() {
+        };
+    }
 
-		applicationForm.setStatus(ApplicationFormStatus.UNSUBMITTED);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
-		formSectionObjectValidator.validate(formSectionObject, mappingResult);
+    private class MyObject implements FormSectionObject {
+        private ApplicationForm application = applicationForm;
+        private boolean acceptedTerms;
 
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-	}
+        public ApplicationForm getApplication() {
+            return application;
+        }
 
-	@Before
-	public void setup() throws ParseException {
+        public boolean isAcceptedTerms() {
+            return acceptedTerms;
+        }
 
-	
-		applicationForm = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
-		formSectionObject = new MyObject();
-
-		formSectionObjectValidator = new FormSectionObjectValidator(){
-			
-		};
-	}
-	
-	private class MyObject implements FormSectionObject{
-		private ApplicationForm application = applicationForm;			
-		private boolean acceptedTerms;
-		
-		public ApplicationForm getApplication() {
-			return application;
-		}
-
-		public boolean isAcceptedTerms() {
-			return acceptedTerms;
-		}
-
-		public void setAcceptedTerms(boolean acceptedTerms) {
-			this.acceptedTerms = acceptedTerms;
-		}
-	}
+        public void setAcceptedTerms(boolean acceptedTerms) {
+            this.acceptedTerms = acceptedTerms;
+        }
+    }
 }

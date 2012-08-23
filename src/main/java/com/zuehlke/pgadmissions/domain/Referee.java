@@ -17,6 +17,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
 @Entity(name = "APPLICATION_FORM_REFEREE")
 @Access(AccessType.FIELD)
 public class Referee extends DomainObject<Integer> implements FormSectionObject{
@@ -41,15 +43,18 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
 
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 35)
 	@Column(name = "phone")
 	private String phoneNumber;
 
 	@Column(name = "skype")
 	private String messenger;
 
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 30)
 	@Column(name = "firstname")
 	private String firstname;
 
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 40)
 	@Column(name = "lastname")
 	private String lastname;
 
@@ -60,6 +65,7 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	private String jobTitle;
 
 	@Column(name = "address_location")
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 500)
 	private String addressLocation;
 
 	@OneToOne
@@ -67,6 +73,7 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	private Country addressCountry;
 
 	@Column(name = "email")
+	@ESAPIConstraint(rule = "Email", allowNull = true, maxLength = 255, message = "{text.email.notvalid}")
 	private String email;
 
 	private boolean declined = false;

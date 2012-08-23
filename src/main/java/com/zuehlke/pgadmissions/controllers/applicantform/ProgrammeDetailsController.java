@@ -4,10 +4,8 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -36,7 +34,6 @@ import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 @RequestMapping("/update")
 @Controller
 public class ProgrammeDetailsController {
-	private final Logger log = Logger.getLogger(ProgrammeDetailsController.class);
 	private static final String STUDENTS_FORM_PROGRAMME_DETAILS_VIEW = "/private/pgStudents/form/components/programme_details";
 	private final ApplicationsService applicationsService;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;

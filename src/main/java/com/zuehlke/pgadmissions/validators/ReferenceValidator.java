@@ -3,12 +3,11 @@ package com.zuehlke.pgadmissions.validators;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 
 @Component
-public class ReferenceValidator implements Validator {
+public class ReferenceValidator extends AbstractValidator {
 
 	@Override	
 	
@@ -17,7 +16,7 @@ public class ReferenceValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "documents", "file.upload.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", "dropdown.radio.select.none");

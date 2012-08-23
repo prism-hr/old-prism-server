@@ -9,9 +9,12 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
-import org.apache.struts.action.ActionFormBean;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -19,10 +22,13 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class EmploymentPositionValidatorTest {
 
 	private EmploymentPosition position;
+	
+	@Autowired
 	private EmploymentPositionValidator positionValidator;
 	
 	@Test
@@ -159,9 +165,6 @@ public class EmploymentPositionValidatorTest {
 	
 	@Before
 	public void setup() throws ParseException{
-		
-		positionValidator = new EmploymentPositionValidator();
-	
 		position = new EmploymentPosition();
 		position.setApplication(new ApplicationFormBuilder().id(4).toApplicationForm());
 		position.setEmployerName("Mark");

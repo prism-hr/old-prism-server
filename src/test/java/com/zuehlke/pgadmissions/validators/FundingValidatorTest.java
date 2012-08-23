@@ -11,6 +11,10 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -18,11 +22,13 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
-
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class FundingValidatorTest {
 
+    @Autowired
 	private FundingValidator validator;
+    
 	private Funding funding;
 	
 	@Test
@@ -106,7 +112,6 @@ public class FundingValidatorTest {
 	
 	@Before
 	public void setup() throws ParseException{
-		validator = new FundingValidator();
 		funding = new Funding();
 		funding.setApplication(new ApplicationFormBuilder().id(3).toApplicationForm());
 		funding.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));

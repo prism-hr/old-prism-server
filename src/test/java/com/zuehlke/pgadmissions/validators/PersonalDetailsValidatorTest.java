@@ -7,8 +7,13 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Country;
@@ -20,9 +25,13 @@ import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class PersonalDetailsValidatorTest {
 
 	private PersonalDetails personalDetails;
+	
+	@Autowired
 	private PersonalDetailsValidator personalDetailValidator;
 
 	@Test
@@ -38,6 +47,34 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstName").getCode());
 	}
+	
+	@Test
+    public void shouldRejectIfFirstNameIsLongerThan30() {
+        personalDetails.setFirstName("1234567890123456789012345678901234567890");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "firstName");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 30 characters are allowed.", mappingResult.getFieldError("firstName").getDefaultMessage());
+    }
+	
+	@Test
+    public void shouldRejectIfPhoneNumberIsLongerThan35() {
+        personalDetails.setPhoneNumber("1234567890123456789012345678901234567890");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "phoneNumber");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 35 characters are allowed.", mappingResult.getFieldError("phoneNumber").getDefaultMessage());
+    }
+	
+	@Test
+    public void shouldRejectIfFirstNameContainsInvalidCharacters() {
+	    String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
+        personalDetails.setFirstName(chineseName);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "firstName");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("You must only enter valid characters.", mappingResult.getFieldError("firstName").getDefaultMessage());
+    }
 
 	@Test
 	public void shouldRejectIfLasttNameIsEmpty() {
@@ -47,6 +84,25 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("lastName").getCode());
 	}
+	
+    @Test
+    public void shouldRejectIfLasttNameIsLongerThan40() {
+        personalDetails.setLastName("12345678901234567890123456789012345678900123456789001234567890");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "lastName");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 40 characters are allowed.", mappingResult.getFieldError("lastName").getDefaultMessage());
+    }
+    
+    @Test
+    public void shouldRejectIfLastNameContainsInvalidCharacters() {
+        String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
+        personalDetails.setLastName(chineseName);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "lastName");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("You must only enter valid characters.", mappingResult.getFieldError("lastName").getDefaultMessage());
+    }
 
 	@Test
 	public void shouldRejectIfEmailIsEmpty() {
@@ -56,7 +112,6 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("email").getCode());
 	}
-
 	
 	@Test
 	public void shouldRejectIfEmailNotValidEmail() {
@@ -64,8 +119,17 @@ public class PersonalDetailsValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "email");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("You must enter a valid email address.", mappingResult.getFieldError("email").getDefaultMessage());
 	}
+	
+	@Test
+    public void shouldRejectIfEmailIsLongerThan255Characters() {
+        personalDetails.setEmail("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890@a.com");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "email");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 255 characters are allowed.", mappingResult.getFieldError("email").getDefaultMessage());
+    }
 
 	@Test
 	public void shouldRejectIfGenderisNull() {
@@ -178,6 +242,7 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("englishFirstLanguage").getCode());
 	}
+	
 	@Before
 	public void setup() {
 		Country nationality = new Country();
@@ -196,7 +261,5 @@ public class PersonalDetailsValidatorTest {
 				.requiresVisa(true)
 				.englishFirstLanguage(true)
 				.toPersonalDetails();
-
-		personalDetailValidator = new PersonalDetailsValidator();
 	}
 }

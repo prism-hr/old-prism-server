@@ -1,24 +1,32 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class RegisterFormValidatorTest {
 
+    @Autowired
 	private RegisterFormValidator recordValidator;
+    
+    @Autowired
 	private UserService userServiceMock;
+    
 	private RegisteredUser user;
 	
 	@Test
@@ -28,13 +36,11 @@ public class RegisterFormValidatorTest {
 
 	@Before
 	public void setup(){
-		user = new RegisteredUserBuilder().id(4).username("email").firstName("bob").lastName("bobson").email("meuston@gmail.com").confirmPassword("12345678").password("12345678").toUser();
-
-		userServiceMock = EasyMock.createMock(UserService.class);
-		recordValidator = new RegisterFormValidator(userServiceMock);
+		user = new RegisteredUserBuilder().id(4).username("email").firstName("Hans-Peter").lastName("Müller").email("meuston@gmail.com").confirmPassword("12345678").password("12345678").toUser();
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfFirstNameIsEmpty() {
 		user.setFirstName(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
@@ -47,6 +53,7 @@ public class RegisterFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfLasttNameIsEmpty() {
 		user.setLastName(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "lastName");
@@ -59,6 +66,7 @@ public class RegisterFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfEmailNotValidEmail() {
 		user.setEmail("nonvalidemail");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
@@ -67,10 +75,11 @@ public class RegisterFormValidatorTest {
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("You must enter a valid email address.", mappingResult.getFieldError("email").getDefaultMessage());
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfNoConfirmPassword() {
 		user.setConfirmPassword(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "confirmPassword");
@@ -83,6 +92,7 @@ public class RegisterFormValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfPasswordsDoNotMatch() {
 		user.setConfirmPassword("12345");
 		user.setPassword("12345678");
@@ -97,6 +107,7 @@ public class RegisterFormValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfPasswordLessThan8Chars() {
 		user.setPassword("12");
 		user.setConfirmPassword("12");
@@ -110,6 +121,7 @@ public class RegisterFormValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfPasswordMoreThan15Chars() {
 		user.setPassword("1234567891234567");
 		user.setConfirmPassword("1234567891234567");
@@ -122,8 +134,8 @@ public class RegisterFormValidatorTest {
 		Assert.assertEquals("user.password.large", mappingResult.getFieldError("password").getCode());
 	}
 	
-	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfContainsSpecialChars() {
 		user.setPassword(" 12o*-lala");
 		user.setConfirmPassword(" 12o*-lala");
@@ -136,8 +148,8 @@ public class RegisterFormValidatorTest {
 		Assert.assertEquals("user.password.nonalphanumeric", mappingResult.getFieldError("password").getCode());
 	}
 	
-	
 	@Test
+	@DirtiesContext
 	public void shouldAcceptPasswordWithOnlyChars() {
 		user.setPassword("oooooooooo");
 		user.setConfirmPassword("oooooooooo");
@@ -150,6 +162,7 @@ public class RegisterFormValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldAcceptPasswordWithOnlyNumbersAndLettes() {
 		user.setPassword("ooo12ooo3oo1");
 		user.setConfirmPassword("ooo12ooo3oo1");
@@ -162,6 +175,7 @@ public class RegisterFormValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldNotRejectIfPasswordsMatch() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "confirmPassword");
 	
@@ -172,6 +186,7 @@ public class RegisterFormValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfEmailAlreadyExistAndUserIsNewuser() {
 		user.setId(null);
 		user.setEmail("meuston@gmail.com");
@@ -185,6 +200,7 @@ public class RegisterFormValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfEmailAlreadyExistAndUserIsExistingUserButNotUserWithEmail() {
 
 		user.setEmail("meuston@gmail.com");
@@ -199,6 +215,7 @@ public class RegisterFormValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldNotRejectIfEmailAlreadyExistAndUserIsExistingUserAndIsUserWithEmail() {
 
 		user.setEmail("meuston@gmail.com");
@@ -208,7 +225,5 @@ public class RegisterFormValidatorTest {
 		EasyMock.replay(userServiceMock);		
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-		
 	}
 }

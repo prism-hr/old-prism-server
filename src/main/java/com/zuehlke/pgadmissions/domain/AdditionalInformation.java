@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
 @Entity(name = "APPLICATION_FORM_ADDITIONAL_INFO")
 @Access(AccessType.FIELD)
 public class AdditionalInformation extends DomainObject<Integer> implements FormSectionObject{
@@ -23,12 +25,14 @@ public class AdditionalInformation extends DomainObject<Integer> implements Form
 	private ApplicationForm application = null;
 
 	@Column(name = "info_text")
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 400)
 	private String informationText;
 
 	@Column(name = "has_convictions")
 	private Boolean convictions;
 
 	@Column(name = "convictions_text")
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 100)
 	private String convictionsText;
 
 	@Override

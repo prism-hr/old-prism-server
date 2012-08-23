@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
 
 @Entity(name="APPLICATION_FORM_ADDRESS")
 @Access(AccessType.FIELD) 
@@ -19,6 +21,7 @@ public class Address extends DomainObject<Integer>{
 	@JoinColumn(name = "country_id")
 	private Country country;
 
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 2000)
 	private String location;
 	
 	@Override

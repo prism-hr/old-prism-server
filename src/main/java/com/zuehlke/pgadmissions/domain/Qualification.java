@@ -13,18 +13,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="APPLICATION_FORM_QUALIFICATION")
 @Access(AccessType.FIELD) 
 public class Qualification extends DomainObject<Integer> implements FormSectionObject {
-	
 
 	private static final long serialVersionUID = -8949535622435302565L;
-	
 	
 	@Transient
 	private boolean acceptedTerms;
@@ -38,6 +38,7 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	private Date qualificationAwardDate;
 	
 	@Column(name="subject")
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
 	private String qualificationSubject;
 	
 	@ManyToOne
@@ -45,23 +46,25 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	private Country institutionCountry;
 	
 	@Column(name="institution")
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
 	private String qualificationInstitution;
 	
 	@ManyToOne
 	@JoinColumn(name = "language_id")
+	@Valid
 	private Language qualificationLanguage = null ;
 	
 	@Column(name="qualification_type")
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
 	private String qualificationType;
 	
 	@Column(name="grade")
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
 	private String qualificationGrade;
-	
 	
 	@Column(name="start_date")
 	@Temporal(TemporalType.DATE)
 	private Date qualificationStartDate;
-	
 	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
 	@Column(name="completed")

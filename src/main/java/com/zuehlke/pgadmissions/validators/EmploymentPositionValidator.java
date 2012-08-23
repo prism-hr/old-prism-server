@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.Date;
 
-import javax.swing.filechooser.FileSystemView;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -21,8 +19,9 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
-		super.validate(target, errors);
+	public void addExtraValidation(Object target, Errors errors) {
+		super.addExtraValidation(target, errors);
+		
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerAddress", "text.field.empty");
@@ -32,18 +31,6 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "language", "dropdown.radio.select.none");
 		EmploymentPosition position = (EmploymentPosition) target;
-		
-		if (position.getEmployerAddress() != null) {
-			if (position.getEmployerAddress().length() > 1000) {
-				errors.rejectValue("employerAddress", "user.employerAddressLength.exceeded");
-			}
-		}
-		
-		if (position.getRemit() != null) {
-			if (position.getRemit().length() > 2000) {
-				errors.rejectValue("remit", "user.jobDescriptLength.exceeded");
-			}
-		}
 		
 		String startDate = position.getStartDate() == null ? "" : position.getStartDate().toString();
 		String endDate = position.getEndDate() == null ? "" : position.getEndDate().toString();

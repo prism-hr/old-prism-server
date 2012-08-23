@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="COUNTRIES")
 @Access(AccessType.FIELD) 
@@ -27,6 +28,8 @@ public class Country extends DomainObject<Integer>{
 	}
 	
 	private String code;
+	
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 100)
 	private String name;
 	
 	public String getCode() {
@@ -44,6 +47,5 @@ public class Country extends DomainObject<Integer>{
 	public void setName(String name) {
 		this.name = name;
 	}
-
 }
 

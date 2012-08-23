@@ -5,12 +5,11 @@ import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Document;
 
 @Component
-public class DocumentValidator implements Validator {
+public class DocumentValidator extends AbstractValidator {
 
 	private static final String[] EXTENSION_WHITE_LIST = { "pdf"};
 
@@ -20,7 +19,7 @@ public class DocumentValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		Document document = (Document) target;
 		if (StringUtils.isBlank(document.getFileName())) {
 			errors.rejectValue("fileName", "file.upload.empty");

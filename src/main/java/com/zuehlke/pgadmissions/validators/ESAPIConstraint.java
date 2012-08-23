@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import org.apache.commons.lang.StringUtils;
+
 @Documented
 @Constraint(validatedBy = ESAPIConstraintValidator.class)
 @Target(ElementType.FIELD)
@@ -20,6 +22,8 @@ public @interface ESAPIConstraint {
     int maxLength() default 50;
     
     String rule() default "SafeString";
+    
+    String propertyPath() default StringUtils.EMPTY;
     
     Class<?>[] groups() default {};
 

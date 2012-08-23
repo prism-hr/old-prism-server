@@ -5,6 +5,10 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.InterviewComment;
@@ -14,7 +18,11 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class FeedbackCommentValidatorTest {
+    
+    @Autowired
 	private FeedbackCommentValidator validator;
 	private ReviewComment reviewComment;
 	private InterviewComment interviewComment;
@@ -152,7 +160,6 @@ public class FeedbackCommentValidatorTest {
 	
 	@Before
 	public void setup() {
-		validator = new FeedbackCommentValidator();
 		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidateForProgramme(false).suitableCandidateForUCL(false).willingToInterview(true).decline(false).toReviewComment();
 		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervise(true).decline(false).toInterviewComment();
 		referenceComment = new ReferenceCommentBuilder().comment("reference comment").suitableForProgramme(false).suitableForUcl(false).toReferenceComment();

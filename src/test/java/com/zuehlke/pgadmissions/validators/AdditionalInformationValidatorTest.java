@@ -5,22 +5,28 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class AdditionalInformationValidatorTest {
 
 	private AdditionalInformation info;
+	
+	@Autowired
 	private AdditionalInformationValidator infoValidator;
 
 	@Before
 	public void setup() {
 		info = new AdditionalInformationBuilder().convictionsText("blabla").setConvictions(true).applicationForm(new ApplicationFormBuilder().id(8).toApplicationForm()).toAdditionalInformation();
-
-		infoValidator = new AdditionalInformationValidator();
 	}
 
 	@Test
@@ -91,7 +97,7 @@ public class AdditionalInformationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "informationText");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("additionalInformation.text.notvalid", mappingResult.getFieldError("informationText").getCode());
+		Assert.assertEquals("A maximum of 400 characters are allowed.", mappingResult.getFieldError("informationText").getDefaultMessage());
 	}
 
 	@Test
@@ -104,6 +110,6 @@ public class AdditionalInformationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictionsText");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("additionalInformation.text.notvalid", mappingResult.getFieldError("convictionsText").getCode());
+		Assert.assertEquals("A maximum of 100 characters are allowed.", mappingResult.getFieldError("convictionsText").getDefaultMessage());
 	}
 }

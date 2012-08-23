@@ -16,6 +16,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 
 import org.hibernate.annotations.Type;
 
@@ -64,14 +65,15 @@ public class ProgrammeDetails extends DomainObject<Integer> implements FormSecti
 
 	@OneToOne
 	@JoinColumn(name = "application_form_id")
+	@Valid
 	private ApplicationForm application = null;
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "programme_detail_id")
+	@Valid
 	private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
 
-	
 	public String getProgrammeName() {
 		return programmeName;
 	}

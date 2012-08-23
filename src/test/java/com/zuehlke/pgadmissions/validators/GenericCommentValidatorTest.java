@@ -5,13 +5,21 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class GenericCommentValidatorTest {
-	private GenericCommentValidator validator;
+
+    @Autowired
+    private GenericCommentValidator validator;
 	private Comment comment;
 
 	@Test
@@ -30,7 +38,6 @@ public class GenericCommentValidatorTest {
 
 	@Before
 	public void setup() {
-		validator = new GenericCommentValidator();
 		comment = new CommentBuilder().comment("hi").toComment();
 	}
 }

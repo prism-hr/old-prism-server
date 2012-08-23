@@ -10,22 +10,16 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 @Component
 public class AdditionalInformationValidator extends FormSectionObjectValidator implements Validator {
 
-	private static final int MAXIMUM_CHARS = 5000;
-
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return AdditionalInformation.class.equals(clazz);
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
-		super.validate(target, errors);
+    public void addExtraValidation(final Object target, final Errors errors) {
+		super.addExtraValidation(target, errors);
+		
 		AdditionalInformation info = (AdditionalInformation) target;
-		if (info.getInformationText() != null) {
-			if (info.getInformationText().length() > MAXIMUM_CHARS) {
-				errors.rejectValue("informationText", "additionalInformation.text.notvalid");
-			}
-		}
 
 		Boolean hasConvictions = info.getConvictions();
 		if (hasConvictions == null) {
@@ -35,10 +29,6 @@ public class AdditionalInformationValidator extends FormSectionObjectValidator i
 				String convictionsText = info.getConvictionsText();
 				if (convictionsText == null || !StringUtils.hasText(convictionsText)) {
 					errors.rejectValue("convictionsText", "text.field.empty");
-				} else {
-					if (convictionsText.length() > MAXIMUM_CHARS) {
-						errors.rejectValue("convictionsText", "additionalInformation.text.notvalid");
-					}
 				}
 			} 
 		}

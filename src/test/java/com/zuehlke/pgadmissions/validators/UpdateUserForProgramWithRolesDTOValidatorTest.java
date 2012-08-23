@@ -5,15 +5,21 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.UpdateUserForProgramWithRolesDTO;
 
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class UpdateUserForProgramWithRolesDTOValidatorTest {
 
+    @Autowired
 	private UpdateUserForProgramWithRolesDTOValidator validator;
 	private UpdateUserForProgramWithRolesDTO dto;
 	
@@ -47,7 +53,6 @@ public class UpdateUserForProgramWithRolesDTOValidatorTest {
 	
 	@Before
 	public void setup() {
-		validator = new UpdateUserForProgramWithRolesDTOValidator();
 		dto = new UpdateUserForProgramWithRolesDTO();
 		dto.setSelectedProgram(new Program());
 		dto.setSelectedUser(new RegisteredUser());

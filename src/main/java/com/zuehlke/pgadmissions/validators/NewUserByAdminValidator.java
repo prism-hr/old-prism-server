@@ -6,14 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
-public class NewUserByAdminValidator implements Validator {
+public class NewUserByAdminValidator extends AbstractValidator {
 
 	private final UserService userService;
 	
@@ -32,7 +31,7 @@ public class NewUserByAdminValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		RegisteredUser user = (RegisteredUser) target;
 
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");

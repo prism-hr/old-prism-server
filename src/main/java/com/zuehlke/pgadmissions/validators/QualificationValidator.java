@@ -20,8 +20,9 @@ public class QualificationValidator  extends FormSectionObjectValidator implemen
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
-		super.validate(target, errors);
+	public void addExtraValidation(Object target, Errors errors) {
+		super.addExtraValidation(target, errors);
+		
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", "text.field.empty");
@@ -49,6 +50,4 @@ public class QualificationValidator  extends FormSectionObjectValidator implemen
 			errors.rejectValue("qualificationAwardDate", "text.field.empty");
 		}
 	}
-
-
 }

@@ -1,18 +1,31 @@
 package com.zuehlke.pgadmissions.dto;
 
+import javax.validation.Valid;
+
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.FormSectionObject;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class AddressSectionDTO implements FormSectionObject{
 
+    @ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 200)
 	private String currentAddressLocation;
-	private Country currentAddressCountry;
-	private String contactAddressLocation;
-	private Country contactAddressCountry;
-	private boolean sameAddress;
-	private ApplicationForm application;
-	private boolean acceptedTerms;
+    
+    @Valid
+    private Country currentAddressCountry;
+    
+    @ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 200)
+    private String contactAddressLocation;
+    
+    @Valid
+    private Country contactAddressCountry;
+	
+    private boolean sameAddress;
+	
+    private ApplicationForm application;
+	
+    private boolean acceptedTerms;
 	
 	
 	public String getCurrentAddressLocation() {

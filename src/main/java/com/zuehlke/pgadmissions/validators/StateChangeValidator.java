@@ -4,13 +4,12 @@ package com.zuehlke.pgadmissions.validators;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 
 @Component
-public class StateChangeValidator implements Validator{
+public class StateChangeValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -18,7 +17,7 @@ public class StateChangeValidator implements Validator{
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		if (target instanceof ValidationComment) {
 			ValidationComment comment = (ValidationComment) target;
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");

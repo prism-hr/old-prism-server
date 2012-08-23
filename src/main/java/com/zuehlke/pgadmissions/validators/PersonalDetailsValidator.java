@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.validators;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -20,12 +19,13 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 	
 		PersonalDetails personalDetail = (PersonalDetails) target;
 		if(personalDetail.getApplication() != null){
-			super.validate(target, errors);
+			super.addExtraValidation(target, errors);
 		}
+		
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
@@ -35,9 +35,6 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		
 		validateCandidateNationalities(target, errors);
 		
-		if (!errors.hasFieldErrors("email") && !EmailValidator.getInstance().isValid(((PersonalDetails)target).getEmail())) {
-			errors.rejectValue("email", "text.email.notvalid");
-		}
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", "text.field.empty");
@@ -58,7 +55,4 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 			errors.rejectValue("candidateNationalities", "dropdown.radio.select.none");
 		}
 	}
-
-
-
 }

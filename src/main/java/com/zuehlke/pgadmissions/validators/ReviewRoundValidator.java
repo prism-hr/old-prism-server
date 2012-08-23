@@ -2,12 +2,11 @@ package com.zuehlke.pgadmissions.validators;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 
 @Component
-public class ReviewRoundValidator implements Validator {
+public class ReviewRoundValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -15,7 +14,7 @@ public class ReviewRoundValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 
 		ReviewRound reviewRound = (ReviewRound) target;
 

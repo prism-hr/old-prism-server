@@ -10,6 +10,10 @@ import junit.framework.Assert;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -17,10 +21,13 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class InterviewValidatorTest {
-
 	
 	private Interview interview;
+	
+	@Autowired
 	private InterviewValidator interviewValidator;
 	
 	@Test
@@ -103,8 +110,6 @@ public class InterviewValidatorTest {
 		
 		interview = new InterviewBuilder().interviewTime("09:00").application(new ApplicationFormBuilder().id(2).toApplicationForm()).dueDate(calendar.getTime())
 				.furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).toInterviewer()).toInterview();
-		interviewValidator = new InterviewValidator();
 	}
-	
 }
 

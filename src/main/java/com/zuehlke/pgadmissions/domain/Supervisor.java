@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 
 @Entity(name = "SUPERVISOR")
 @Access(AccessType.FIELD)
@@ -32,9 +33,9 @@ public class Supervisor extends DomainObject<Integer> {
 		return id;
 	}
 
-
 	@ManyToOne
 	@JoinColumn(name = "registered_user_id")
+	@Valid
 	private RegisteredUser user;
 	
 	@Column(name = "last_notified")
@@ -44,8 +45,6 @@ public class Supervisor extends DomainObject<Integer> {
 	@ManyToOne
 	@JoinColumn(name = "approval_round_id")
 	private ApprovalRound approvalRound;
-
-
 
 	public RegisteredUser getUser() {
 		return user;

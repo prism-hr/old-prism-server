@@ -3,12 +3,11 @@ package com.zuehlke.pgadmissions.validators;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.dto.UpdateUserForProgramWithRolesDTO;
 
 @Component
-public class UpdateUserForProgramWithRolesDTOValidator implements Validator {
+public class UpdateUserForProgramWithRolesDTOValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -16,7 +15,7 @@ public class UpdateUserForProgramWithRolesDTOValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedUser", "dropdown.radio.select.none");
 	}

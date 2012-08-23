@@ -6,12 +6,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
 @Entity(name="LANGUAGE")
 @Access(AccessType.FIELD) 
 public class Language extends DomainObject<Integer> {
 	
 	private static final long serialVersionUID = -4719304115154138995L;
 	
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
 	private String name;
 	
 	@Override

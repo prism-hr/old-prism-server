@@ -12,6 +12,11 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 
@@ -33,21 +38,32 @@ import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class ApplicationFormValidatorTest {
 
+    @Autowired
 	private ApplicationFormValidator validator;
+    
 	private ApplicationForm applicationForm;
+	
+	@Autowired
 	private ProgramInstanceDAO programInstanceDAOMock;
+	
 	private ProgramInstance programInstance;
+	
 	private ProgrammeDetails programmeDetails;
+	
 	private Program program;
 
 	@Test
+	@DirtiesContext
 	public void shouldSupportAppForm() {
 		assertTrue(validator.supports(ApplicationForm.class));
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfProgrammeDetailsSectionMissing() {
 		applicationForm.setProgrammeDetails(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
@@ -59,6 +75,7 @@ public class ApplicationFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfProgrammeDetailsSectionNotSaved() {
 		ProgrammeDetails unsavedProgramDetails = new ProgrammeDetailsBuilder().studyOption(StudyOption.FULL_TIME).toProgrammeDetails();
 		applicationForm.setProgrammeDetails(unsavedProgramDetails);
@@ -72,6 +89,7 @@ public class ApplicationFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfPersonalDetailsSectionMissing() {
 		applicationForm.setPersonalDetails(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
@@ -84,6 +102,7 @@ public class ApplicationFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfAdditionalInfoSectionMissing() {
 		applicationForm.setAdditionalInformation(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
@@ -96,6 +115,7 @@ public class ApplicationFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfPersonalDetailsSectionNotSaved() {
 		applicationForm.setPersonalDetails(new PersonalDetails());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
@@ -109,6 +129,7 @@ public class ApplicationFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfCurrentAddressIsMissing() {
 		applicationForm.setCurrentAddress(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm.*");
@@ -122,6 +143,7 @@ public class ApplicationFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfContactAddressIsMissing() {
 		applicationForm.setContactAddress(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
@@ -135,6 +157,7 @@ public class ApplicationFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfFewerThanThreeReferees() {
 		applicationForm.getReferees().remove(2);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
@@ -148,6 +171,7 @@ public class ApplicationFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfPersonalStatementNotProvided() {
 		applicationForm.setPersonalStatement(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
@@ -160,6 +184,7 @@ public class ApplicationFormValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
 		ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
 		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE);
@@ -177,6 +202,7 @@ public class ApplicationFormValidatorTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfNoCurrentProgrammeInstancesExist() {
 		ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
 		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE);
@@ -193,6 +219,7 @@ public class ApplicationFormValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfNotAcceptedTheTerms() {
 		applicationForm.setAcceptedTermsOnSubmission(CheckedStatus.NO);
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "acceptedTermsOnSubmission");
@@ -205,11 +232,9 @@ public class ApplicationFormValidatorTest {
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("acceptedTermsOnSubmission").getCode());
 		
 	}
+	
 	@Before
 	public void setup() throws ParseException {
-		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
-		
-		validator = new ApplicationFormValidator(programInstanceDAOMock);
 		program = new ProgramBuilder().id(1).title("Program 1").toProgram();
 		programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME)
 				.applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();

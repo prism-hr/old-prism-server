@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain;
+package com.zuehlke.pgadmissions.validators;
 
 import java.util.Map;
 import java.util.Set;

@@ -5,6 +5,10 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
@@ -14,7 +18,10 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class StateChangeValidatorTest {
+    @Autowired
 	private StateChangeValidator validator;
 	private ValidationComment validationComment;
 	private StateChangeComment stateChangeComment;
@@ -133,7 +140,6 @@ public class StateChangeValidatorTest {
 	
 	@Before
 	public void setup() {
-		validator = new StateChangeValidator();
 		validationComment = new ValidationCommentBuilder().comment("validation comment").nextStatus(ApplicationFormStatus.APPROVAL).englishCompentencyOk(ValidationQuestionOptions.YES).qualifiedForPhd(ValidationQuestionOptions.YES).homeOrOverseas(HomeOrOverseas.HOME).toValidationComment();
 		stateChangeComment = new StateChangeComment();
 		stateChangeComment.setComment("comment");

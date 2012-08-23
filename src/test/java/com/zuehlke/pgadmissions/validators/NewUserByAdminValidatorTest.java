@@ -6,6 +6,11 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -14,26 +19,33 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.UserService;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class NewUserByAdminValidatorTest {
+    
+    @Autowired
 	private NewUserByAdminValidator validator;
-	private RegisteredUser user;
+	
+    private RegisteredUser user;
+	
+    @Autowired
 	private UserService userServiceMock;
 
 	@Before
 	public void setup() {
-		userServiceMock = EasyMock.createMock(UserService.class);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@bla.com")).andReturn(null).anyTimes();
 		EasyMock.replay(userServiceMock);
-		validator = new NewUserByAdminValidator(userServiceMock);
 		user = new RegisteredUserBuilder().firstName("first").lastName("last").email("email@bla.com").toUser();
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldSupportRegisteredUser() {
 		assertTrue(validator.supports(RegisteredUser.class));
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldNotRejectValidUser() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
 		validator.validate(user, mappingResult);
@@ -41,6 +53,7 @@ public class NewUserByAdminValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfFirstNameEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
 		user.setFirstName("");
@@ -50,6 +63,7 @@ public class NewUserByAdminValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfLastNameNull() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "lastName");
 		user.setLastName(null);
@@ -59,6 +73,7 @@ public class NewUserByAdminValidatorTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfEmailNotValid() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		user.setEmail("");
@@ -68,6 +83,7 @@ public class NewUserByAdminValidatorTest {
 	}
 	
 	@Test
+	@DirtiesContext
 	public void shouldRejectIfEmailThatOfExistingApplicant() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		user.setEmail("applicant@test.com");

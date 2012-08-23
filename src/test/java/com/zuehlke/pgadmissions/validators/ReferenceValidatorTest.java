@@ -8,14 +8,20 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class ReferenceValidatorTest {
 
+    @Autowired
 	private ReferenceValidator validator;
 	private ReferenceComment reference;
 
@@ -68,7 +74,6 @@ public class ReferenceValidatorTest {
 
 	@Before
 	public void setup() throws ParseException{
-		validator = new  ReferenceValidator();
 		reference = new ReferenceComment();
 		reference.getDocuments().add(new DocumentBuilder().id(1).toDocument());
 		reference.setComment("comment");

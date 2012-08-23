@@ -14,6 +14,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="APPLICATION_FORM_EMPLOYMENT_POSITION")
 @Access(AccessType.FIELD) 
@@ -25,19 +28,24 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	private boolean acceptedTerms;
 	
 	@Column(name="employer_name")
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 150)
 	private String employerName;
 	
 	@Column(name="employer_address")
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 200)
 	private String employerAddress;
 	
 	@ManyToOne
 	@JoinColumn(name="employer_country_id")
+	@Valid
 	private Country employerCountry;
 	
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 100)
 	private String position;
 	
 	private boolean current;
 	
+	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 250)
 	private String remit;
 	
 	@Temporal(TemporalType.DATE)
@@ -50,6 +58,7 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	
 	@OneToOne
 	@JoinColumn(name = "language_id")
+	@Valid
 	private Language language;
 	
 	@ManyToOne

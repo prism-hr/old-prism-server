@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -14,7 +13,7 @@ import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
-public class SuperadminUserDTOValidator implements Validator {
+public class SuperadminUserDTOValidator extends AbstractValidator {
 
 	private final UserService userService;
 
@@ -33,7 +32,7 @@ public class SuperadminUserDTOValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void addExtraValidation(Object target, Errors errors) {
 		UserDTO user = (UserDTO) target;	
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");		

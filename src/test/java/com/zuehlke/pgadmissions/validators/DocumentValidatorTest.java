@@ -5,15 +5,23 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testContext.xml")
 public class DocumentValidatorTest {
 
 	private Document document;
+	
+	@Autowired
 	private DocumentValidator documentValidator;
 
 	@Test
@@ -98,6 +106,5 @@ public class DocumentValidatorTest {
 	@Before
 	public void setup() {
 		document = new DocumentBuilder().fileName("bob.pdf").type(DocumentType.CV).toDocument();
-		documentValidator = new DocumentValidator();
 	}
 }

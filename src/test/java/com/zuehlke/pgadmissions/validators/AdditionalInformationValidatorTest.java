@@ -110,6 +110,6 @@ public class AdditionalInformationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictionsText");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("A maximum of 100 characters are allowed.", mappingResult.getFieldError("convictionsText").getDefaultMessage());
+		Assert.assertEquals("A maximum of 400 characters are allowed.", mappingResult.getFieldError("convictionsText").getDefaultMessage());
 	}
 }

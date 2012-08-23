@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ESAPIConstraint {
 
-    boolean allowNull() default false;
+    boolean allowNull() default true;
     
     int maxLength() default 50;
     

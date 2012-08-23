@@ -28,11 +28,11 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	private boolean acceptedTerms;
 	
 	@Column(name="employer_name")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 150)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 150)
 	private String employerName;
 	
 	@Column(name="employer_address")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 200)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String employerAddress;
 	
 	@ManyToOne
@@ -40,12 +40,12 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	@Valid
 	private Country employerCountry;
 	
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 100)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
 	private String position;
 	
 	private boolean current;
 	
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 250)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 250)
 	private String remit;
 	
 	@Temporal(TemporalType.DATE)

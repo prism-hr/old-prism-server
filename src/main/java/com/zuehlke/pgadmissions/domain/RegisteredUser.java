@@ -32,16 +32,16 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	private static final long serialVersionUID = 7913035836949510857L;
 	
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 30)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
 	private String firstName;
 	
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 40)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
 	private String lastName;
 	
-	@ESAPIConstraint(rule = "Email", allowNull = true, maxLength = 255, message = "{text.email.notvalid}")
+	@ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
 	private String email;
 	
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 200)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String username;
 	
 	private String password;

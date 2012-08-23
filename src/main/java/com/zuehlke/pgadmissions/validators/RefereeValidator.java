@@ -36,7 +36,8 @@ public class RefereeValidator extends FormSectionObjectValidator implements Vali
 		Referee referee = (Referee) target;
 		if (userService.getCurrentUser().getEmail().equals(referee.getEmail())) {
 			errors.rejectValue("email", "text.email.notyourself");
-		} 
+		}
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressCountry", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLocation", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobEmployer", "text.field.empty");

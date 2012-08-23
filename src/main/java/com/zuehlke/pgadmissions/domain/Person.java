@@ -17,13 +17,13 @@ public class Person extends DomainObject<Integer> {
 
     private static final long serialVersionUID = 1747305941073095458L;
     
-    @ESAPIConstraint(rule = "Email", allowNull = true, maxLength = 255, message = "{text.email.notvalid}")
+    @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     private String email;
     
-    @ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 30)
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     private String firstname;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 40)
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     private String lastname;
 
     @Override

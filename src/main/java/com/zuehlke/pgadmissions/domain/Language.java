@@ -14,7 +14,7 @@ public class Language extends DomainObject<Integer> {
 	
 	private static final long serialVersionUID = -4719304115154138995L;
 	
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	private String name;
 	
 	@Override

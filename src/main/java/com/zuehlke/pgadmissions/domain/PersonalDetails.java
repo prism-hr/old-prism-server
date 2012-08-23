@@ -40,7 +40,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	private String messenger;
 	
 	@Column(name = "phone")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 35)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 35)
 	private String phoneNumber;
 	
 	@Column(name = "english_first_language")
@@ -62,17 +62,17 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	private List<Country> paternalGuardianNationalities= new ArrayList<Country>();
 	
 	@Column(name = "first_name")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 30)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
 	private String firstName;
 
 	@Column(name = "last_name")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 40)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
 	private String lastName;
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.GenderEnumUserType")
 	private Gender gender;
 	
-	@ESAPIConstraint(rule = "Email", allowNull = true, maxLength = 255, message = "{text.email.notvalid}")
+	@ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
 	private String email;
 
 	@Column(name = "date_of_birth")

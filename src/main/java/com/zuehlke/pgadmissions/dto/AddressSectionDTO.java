@@ -9,13 +9,13 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class AddressSectionDTO implements FormSectionObject{
 
-    @ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 200)
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String currentAddressLocation;
     
     @Valid
     private Country currentAddressCountry;
     
-    @ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 200)
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
     private String contactAddressLocation;
     
     @Valid

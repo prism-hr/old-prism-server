@@ -25,14 +25,14 @@ public class AdditionalInformation extends DomainObject<Integer> implements Form
 	private ApplicationForm application = null;
 
 	@Column(name = "info_text")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 400)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 400)
 	private String informationText;
 
 	@Column(name = "has_convictions")
 	private Boolean convictions;
 
 	@Column(name = "convictions_text")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 100)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 400)
 	private String convictionsText;
 
 	@Override

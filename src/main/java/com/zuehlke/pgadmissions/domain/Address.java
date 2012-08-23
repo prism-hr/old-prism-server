@@ -21,7 +21,7 @@ public class Address extends DomainObject<Integer>{
 	@JoinColumn(name = "country_id")
 	private Country country;
 
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 2000)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
 	private String location;
 	
 	@Override

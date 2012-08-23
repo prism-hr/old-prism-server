@@ -29,7 +29,7 @@ public class Country extends DomainObject<Integer>{
 	
 	private String code;
 	
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true, maxLength = 100)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
 	private String name;
 	
 	public String getCode() {

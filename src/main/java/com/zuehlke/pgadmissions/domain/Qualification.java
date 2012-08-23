@@ -38,7 +38,7 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	private Date qualificationAwardDate;
 	
 	@Column(name="subject")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	private String qualificationSubject;
 	
 	@ManyToOne
@@ -46,7 +46,7 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	private Country institutionCountry;
 	
 	@Column(name="institution")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	private String qualificationInstitution;
 	
 	@ManyToOne
@@ -55,11 +55,11 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	private Language qualificationLanguage = null ;
 	
 	@Column(name="qualification_type")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	private String qualificationType;
 	
 	@Column(name="grade")
-	@ESAPIConstraint(rule = "ExtendedAscii", allowNull = true,  maxLength = 70)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	private String qualificationGrade;
 	
 	@Column(name="start_date")

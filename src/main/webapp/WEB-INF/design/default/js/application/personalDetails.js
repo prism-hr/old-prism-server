@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-	
+	var numberOfNationalities = 0;
 	var persImgCount = 0;
 	
 	$("#acceptTermsPEDValue").val("NO");
@@ -47,6 +47,7 @@ $(document).ready(function(){
 			
 			if (!duplicate)
 			{
+				numberOfNationalities++;
 				var html = 
 				'	<div class="nationality-item">'+
 				'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
@@ -60,12 +61,14 @@ $(document).ready(function(){
 				// Reset field.
 				$('#candidateNationalityCountry').val('');
 			}
-
+			
+			if (numberOfNationalities == 2) {
+				$('#addCandidateNationalityButton').hide();
+				$('#candidateNationalityCountry').hide();
+			}
 		}
-		
 	});
 	
-
 	// -------------------------------------------------------------------------------
 	// Add a nationality (mother).
 	// -------------------------------------------------------------------------------
@@ -154,6 +157,13 @@ $(document).ready(function(){
 		{
 			$select.val('');
 		}
+		
+		if ($select.attr('id') == "candidateNationalityCountry") {
+			numberOfNationalities--;
+			$('#addCandidateNationalityButton').show();
+			$('#candidateNationalityCountry').show();
+		}
+		
 		$(this).parent().remove();
 		return false;
 	});

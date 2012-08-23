@@ -36,7 +36,7 @@ public class RegisterFormValidatorTest {
 
 	@Before
 	public void setup(){
-		user = new RegisteredUserBuilder().id(4).username("email").firstName("Hans-Peter").lastName("Müller").email("meuston@gmail.com").confirmPassword("12345678").password("12345678").toUser();
+		user = new RegisteredUserBuilder().id(4).username("email").firstName("Hans-Peter").lastName("Mueller").email("meuston@gmail.com").confirmPassword("12345678").password("12345678").toUser();
 	}
 	
 	@Test

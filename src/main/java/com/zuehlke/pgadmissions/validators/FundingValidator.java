@@ -28,14 +28,9 @@ public class FundingValidator extends FormSectionObjectValidator implements Vali
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "awardDate", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "document", "file.upload.empty");
 		Funding fund = (Funding) target;
+		
 		if (fund.getAwardDate() != null && fund.getAwardDate().after(today)) {
 			errors.rejectValue("awardDate", "date.field.notpast");
-		}
-		
-		if (fund.getDescription() != null) {
-			if (fund.getDescription().length() > 2000) {
-				errors.rejectValue("description", "user.fundingDescriptLength.exceeded");
-			}
 		}
 	}
 }

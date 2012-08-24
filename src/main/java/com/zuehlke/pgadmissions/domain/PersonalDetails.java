@@ -37,6 +37,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	private boolean acceptedTerms;
 	
 	@Column(name = "skype")
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
 	private String messenger;
 	
 	@Column(name = "phone")

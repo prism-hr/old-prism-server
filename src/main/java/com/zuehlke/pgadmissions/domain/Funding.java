@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="APPLICATION_FORM_FUNDING")
 @Access(AccessType.FIELD) 
@@ -37,9 +38,11 @@ public class Funding extends DomainObject<Integer> implements FormSectionObject{
 	@JoinColumn(name = "document_id")
 	private Document document;
 	
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
 	private String description;
 	
 	@Column(name="award_value")
+	@ESAPIConstraint(rule = "NumbersOnly", maxLength = 100)
 	private String value;
 	
 	@Temporal(TemporalType.DATE)
@@ -49,7 +52,6 @@ public class Funding extends DomainObject<Integer> implements FormSectionObject{
 	@ManyToOne
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
-	
 	
 	@Override
 	public void setId(Integer id) {

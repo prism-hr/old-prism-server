@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
-import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -64,10 +63,9 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Qualification qualification = new QualificationBuilder().id(3).awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("")
-				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
+				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0))
 				.toQualification();
 

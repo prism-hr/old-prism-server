@@ -1,14 +1,10 @@
 $(document).ready(function(){
 
-	var numberOfNationalities = $("#my-nationality-div .nationality-item").size();
+	var numberOfNationalities = 0;
 	var persImgCount = 0;
 	
 	$("#acceptTermsPEDValue").val("NO");
-
-	if (numberOfNationalities == 2) {
-		$('#addCandidateNationalityButton').hide();
-		$('#candidateNationalityCountry').hide();
-	}
+	showOrHideNationalityButton();
 
 	// -------------------------------------------------------------------------------
 	// Close button.
@@ -51,7 +47,6 @@ $(document).ready(function(){
 			
 			if (!duplicate)
 			{
-				numberOfNationalities++;
 				var html = 
 				'	<div class="nationality-item">'+
 				'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
@@ -65,13 +60,23 @@ $(document).ready(function(){
 				// Reset field.
 				$('#candidateNationalityCountry').val('');
 			}
-			
-			if (numberOfNationalities == 2) {
-				$('#addCandidateNationalityButton').hide();
-				$('#candidateNationalityCountry').hide();
-			}
+			showOrHideNationalityButton();
 		}
 	});
+	
+	// -------------------------------------------------------------------------------
+	// Hide or show the national
+	// -------------------------------------------------------------------------------
+	function showOrHideNationalityButton() {
+		numberOfNationalities = $("#my-nationality-div .nationality-item").size();
+		if (numberOfNationalities >= 2) {
+			$('#addCandidateNationalityButton').hide();
+			$('#candidateNationalityCountry').hide();
+		} else {
+			$('#addCandidateNationalityButton').show();
+			$('#candidateNationalityCountry').show();
+		}
+	}
 	
 	// -------------------------------------------------------------------------------
 	// Add a nationality (mother).
@@ -162,13 +167,12 @@ $(document).ready(function(){
 			$select.val('');
 		}
 		
+		$(this).parent().remove();
+		
 		if ($select.attr('id') == "candidateNationalityCountry") {
-			numberOfNationalities--;
-			$('#addCandidateNationalityButton').show();
-			$('#candidateNationalityCountry').show();
+			showOrHideNationalityButton();
 		}
 		
-		$(this).parent().remove();
 		return false;
 	});
 	

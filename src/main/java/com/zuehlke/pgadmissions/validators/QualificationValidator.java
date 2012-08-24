@@ -13,7 +13,10 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 
 @Service
-public class QualificationValidator  extends FormSectionObjectValidator implements Validator{
+public class QualificationValidator  extends FormSectionObjectValidator implements Validator {
+    
+    private static final int MAX_NUMBER_OF_POSITIONS = 6;
+    
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return Qualification.class.equals(clazz);
@@ -49,5 +52,8 @@ public class QualificationValidator  extends FormSectionObjectValidator implemen
 		if (qualification.getCompleted() == CheckedStatus.NO && StringUtils.isNotBlank(awardDate)){
 			errors.rejectValue("qualificationAwardDate", "text.field.empty");
 		}
+		if (qualification.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
+            errors.reject("");
+        }
 	}
 }

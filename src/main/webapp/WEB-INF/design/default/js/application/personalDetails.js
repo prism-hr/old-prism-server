@@ -1,10 +1,14 @@
 $(document).ready(function(){
 
-	var numberOfNationalities = 0;
+	var numberOfNationalities = $("#my-nationality-div .nationality-item").size();
 	var persImgCount = 0;
 	
 	$("#acceptTermsPEDValue").val("NO");
 
+	if (numberOfNationalities == 2) {
+		$('#addCandidateNationalityButton').hide();
+		$('#candidateNationalityCountry').hide();
+	}
 
 	// -------------------------------------------------------------------------------
 	// Close button.

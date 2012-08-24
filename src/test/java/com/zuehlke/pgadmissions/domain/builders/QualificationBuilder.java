@@ -5,7 +5,6 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
@@ -13,7 +12,7 @@ public class QualificationBuilder {
 
 	private String q_name_of_programme;
 	private String q_institution;
-	private Language q_language_of_study;
+	private String q_language_of_study;
 	private String q_type;
 	private String q_grade;	
 	private Date q_start_date;
@@ -62,7 +61,7 @@ public class QualificationBuilder {
 	}
 	
 
-	public QualificationBuilder languageOfStudy(Language q_language_of_study) {
+	public QualificationBuilder languageOfStudy(String q_language_of_study) {
 		this.q_language_of_study = q_language_of_study;
 		return this;
 	}

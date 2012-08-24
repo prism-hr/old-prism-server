@@ -467,7 +467,7 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell(qualification.getQualificationSubject(), smallFont));
 
 				table.addCell(newTableCell("Language of Study", smallBoldFont));
-				table.addCell(newTableCell(qualification.getQualificationLanguage().getName(), smallFont));
+				table.addCell(newTableCell(qualification.getQualificationLanguage(), smallFont));
 
 				table.addCell(newTableCell("Start Date", smallBoldFont));
 				table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationStartDate()), smallFont));

@@ -86,7 +86,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		dao.save(document);
 		flushAndClearSession();
 		Qualification qualification = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
-				.languageOfStudy(languageDAO.getLanguageById(1)).subject("").isCompleted(CheckedStatus.YES)
+				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0))
 				.proofOfAward(document).toQualification();
 		sessionFactory.getCurrentSession().save(qualification);

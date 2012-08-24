@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -56,15 +55,9 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	@Column(name="end_date")
 	private Date endDate;
 	
-	@OneToOne
-	@JoinColumn(name = "language_id")
-	@Valid
-	private Language language;
-	
 	@ManyToOne
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
-	
 
 	@Override
 	public void setId(Integer id) {
@@ -115,14 +108,7 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-	public Language getLanguage() {
-		return language;
-	}
-	public void setLanguage(Language language) {
-		this.language = language;
-	}
-
-
+	
 	public String getEmployerAddress() {
 		return employerAddress;
 	}

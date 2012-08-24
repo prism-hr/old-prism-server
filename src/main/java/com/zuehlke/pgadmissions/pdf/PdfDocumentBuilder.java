@@ -542,9 +542,6 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell("Roles and Responsibilities", smallBoldFont));
 				table.addCell(newTableCell(position.getRemit(), smallFont));
 
-				table.addCell(newTableCell("Language of Work", smallBoldFont));
-				table.addCell(newTableCell(position.getLanguage().getName(), smallFont));
-
 				table.addCell(newTableCell("Start Date", smallBoldFont));
 				table.addCell(newTableCell(simpleDateFormat.format(position.getStartDate()), smallFont));
 

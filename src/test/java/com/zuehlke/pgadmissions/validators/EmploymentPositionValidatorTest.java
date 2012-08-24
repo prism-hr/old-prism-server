@@ -20,7 +20,6 @@ import org.springframework.validation.DirectFieldBindingResult;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testContext.xml")
@@ -44,8 +43,7 @@ public class EmploymentPositionValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("employerAddress").getCode());
 	}
-	
-	
+		
 	@Test
 	public void shouldRejectIfEmployerCountryIsEmpty(){
 		position.setEmployerCountry(null);
@@ -55,7 +53,6 @@ public class EmploymentPositionValidatorTest {
 		Assert.assertEquals("dropdown.radio.select.none",mappingResult.getFieldError("employerCountry").getCode());
 	}
 	
-	
 	@Test
 	public void shouldRejectIfEmployerNameIsEmpty(){
 		position.setEmployerName(null);
@@ -64,7 +61,6 @@ public class EmploymentPositionValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("employerName").getCode());
 	}
-	
 	
 	@Test
 	public void shouldRejectIfStartDateAndEndDateAreFutureDates(){
@@ -99,15 +95,6 @@ public class EmploymentPositionValidatorTest {
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("endDate").getCode());
-	}
-	
-	@Test
-	public void shouldRejectIfLanguageIsEmpty(){
-		position.setLanguage(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
-		positionValidator.validate(position, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("dropdown.radio.select.none",mappingResult.getFieldError("language").getCode());
 	}
 	
 	@Test
@@ -169,7 +156,6 @@ public class EmploymentPositionValidatorTest {
 		position.setApplication(new ApplicationFormBuilder().id(4).toApplicationForm());
 		position.setEmployerName("Mark");
 		position.setEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		position.setLanguage(new LanguageBuilder().id(3).toLanguage());
 		position.setRemit("cashier");
 		position.setCurrent(false);
 		position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));

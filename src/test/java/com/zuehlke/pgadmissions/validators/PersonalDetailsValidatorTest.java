@@ -248,8 +248,6 @@ public class PersonalDetailsValidatorTest {
 		Country nationality = new Country();
 		personalDetails = new PersonalDetailsBuilder()//
 				.candiateNationalities(nationality)//
-				.maternalGuardianNationalities(nationality)//
-				.paternalGuardianNationalities(nationality)//
 				.applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm())//
 				.country(new CountryBuilder().toCountry())//
 				.dateOfBirth(new Date()).email("email@test.com").firstName("bob")//

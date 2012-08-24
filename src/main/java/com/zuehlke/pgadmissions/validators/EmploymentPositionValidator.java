@@ -31,7 +31,6 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "remit", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "language", "dropdown.radio.select.none");
 		EmploymentPosition position = (EmploymentPosition) target;
 		
 		String startDate = position.getStartDate() == null ? "" : position.getStartDate().toString();

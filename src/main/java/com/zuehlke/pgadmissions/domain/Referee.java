@@ -48,6 +48,7 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	private String phoneNumber;
 
 	@Column(name = "skype")
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
 	private String messenger;
 
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
@@ -59,13 +60,15 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	private String lastname;
 
 	@Column(name = "job_employer")
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String jobEmployer;
 
 	@Column(name = "job_title")
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String jobTitle;
 
 	@Column(name = "address_location")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String addressLocation;
 
 	@OneToOne

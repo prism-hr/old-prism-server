@@ -426,6 +426,14 @@
                 		</#if>
                 	</div>
             	</div>
+                <@spring.bind "personalDetails.messenger" />         
+                <#list spring.status.errorMessages as error>
+                    <div class="row">
+                        <div class="field">
+                            <span class="invalid">${error}</span>
+                        </div>
+                    </div>
+                </#list>
             </div>
             
             <div class="row-group">

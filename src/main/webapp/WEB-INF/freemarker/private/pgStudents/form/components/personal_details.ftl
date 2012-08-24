@@ -210,67 +210,6 @@
 				</div>
 </#if>
     
-            	<div class="row">                     	
-              		<label class="plain-label" id="maternal-nationality">Mother's Nationality</label>
-              		<span id="maternal-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.maternalGuardianNationality'/>"></span>           
-                  	 
-                  	 <div class="field">
-                  	 	<div id="maternal-nationality-div">
-							 <#list personalDetails.maternalGuardianNationalities as nationality >
-								<div class="nationality-item">
-											<label class="full">${nationality.name}</label>  
-											<input type="hidden" name="maternalGuardianNationalities" value='${encrypter.encrypt(nationality.id)}'/>
-											<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><button type="button" class="button-delete" data-desc="Delete">Delete</button></#if>
-								</div>            
-							 </#list>
-                  	 	</div>
-                  	 	
-                     	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
-                      		<option value="">Select...</option>
-                        	<#list countries as country>
-                              <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
-                       	 </#list>
-                     	 </select>             	 
-                   	 </div>
-            	</div>
-              
-<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-            	<div class="row">
-              		<div class="field"><button type="button" class="blue" id="addMaternalNationalityButton">Add</button></div>
-              	</div>
-</#if>
-              	 
-				<div class="row">                      	
-					<label class="plain-label" id="paternal-nationality">Father's Nationality</label> 
-					  <span id="paternal-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.paternalGuardianNationality'/>"></span>      
-                  	 <div class="field">
-                  	 	
-                  	 	<div id="paternal-nationality-div">
-                  	 		<#list personalDetails.paternalGuardianNationalities as nationality >
-                  	 			<div class="nationality-item">
-									<label class="full">${nationality.name?html}</label>  
-									<input type="hidden" name="paternalGuardianNationalities" value='${encrypter.encrypt(nationality.id)}'/>
-									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><button type="button" class="button-delete" data-desc="Delete">Delete</button></#if>
-                  	 			</div>
-                  	 		</#list>
-                  	 	</div>
-                     	 
-                     	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
-                      		<option value="">Select...</option>
-                        	<#list countries as country>
-                              <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
-                       	 </#list>
-                     	 </select>             	 
-                   	 </div>
-            	</div>
-            	                     
-              
-<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-            	<div class="row">
-              		<div class="field"><button type="button" class="blue" id="addPaternalNationalityButton">Add</button></div>
-              	</div>
-</#if>
-              	 
             </div>
           	
           	<div class="row-group">

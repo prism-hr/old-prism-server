@@ -65,7 +65,6 @@ public class ProgrammeDetails extends DomainObject<Integer> implements FormSecti
 
 	@OneToOne
 	@JoinColumn(name = "application_form_id")
-	@Valid
 	private ApplicationForm application = null;
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })

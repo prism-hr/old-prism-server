@@ -64,10 +64,6 @@ public class EmploymentPositionBuilder {
 		return this;
 	}
 
-	public EmploymentPositionBuilder language(Language language){
-		this.language = language;
-		return this;
-	}
 	public EmploymentPositionBuilder startDate(Date startDate){
 		this.startDate = startDate;
 		return this;
@@ -87,7 +83,6 @@ public class EmploymentPositionBuilder {
 		employment.setEmployerAddress(employerAdress);
 		employment.setEmployerCountry(employerCountry);
 		employment.setEndDate(endDate);
-		employment.setLanguage(language);
 		employment.setRemit(remit);
 		employment.setStartDate(startDate);
 		employment.setPosition(position);

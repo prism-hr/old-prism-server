@@ -28,8 +28,6 @@ public class PersonalDetailsBuilder {
 
 	private String messenger;
 	private List<Country> candiateNationalities = new ArrayList<Country>();
-	private List<Country> maternalGuardianNationalities = new ArrayList<Country>();
-	private List<Country> paternalGuardianNationalities = new ArrayList<Country>();
 	private Boolean englishFirstLanguage;
 	private Boolean requiresVisa;
 	private String phoneNumber;
@@ -51,16 +49,6 @@ public class PersonalDetailsBuilder {
 
 	public PersonalDetailsBuilder requiresVisa(Boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
-		return this;
-	}
-
-	public PersonalDetailsBuilder paternalGuardianNationalities(Country... nationalities) {
-		this.paternalGuardianNationalities.addAll(Arrays.asList(nationalities));
-		return this;
-	}
-
-	public PersonalDetailsBuilder maternalGuardianNationalities(Country... nationalities) {
-		this.maternalGuardianNationalities.addAll(Arrays.asList(nationalities));
 		return this;
 	}
 

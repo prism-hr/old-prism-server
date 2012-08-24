@@ -49,13 +49,7 @@
         <span class="admin_row_label">Roles and Responsibilities</span>
         <div class="field" id="emp_description">${(position.remit?html)!"Not Provided"}</div>
       </div>
-      
-      <!-- Language -->
-      <div class="admin_row">
-        <span class="admin_row_label">Language of work</span>
-        <div class="field" id="empl_language">${(position.language.name?html)!"Not Provided"}</div>
-      </div>  
-      
+           
       <!-- Start date -->
       <div class="admin_row">
         <span class="admin_row_label">Start Date</span>

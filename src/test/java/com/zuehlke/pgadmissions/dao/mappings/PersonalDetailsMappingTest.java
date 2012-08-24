@@ -82,7 +82,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 		
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).maternalGuardianNationalities(nationality4).country(country1)
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
 				.englishFirstLanguage(false).requiresVisa(false).phoneNumber("abc")
 				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)

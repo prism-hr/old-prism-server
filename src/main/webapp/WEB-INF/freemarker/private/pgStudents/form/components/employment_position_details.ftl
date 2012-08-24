@@ -207,31 +207,6 @@
 						</div>
 					</div>
 				</#list>
-         	
-             <!-- Language -->
-            <div class="row">
-                <span class="plain-label">Language of work<em>*</em></span>
-                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.language'/>"></span>
-                <div class="field">
-                  	<select class="full" id="position_language" name="position_language"
-                   		<#if (applicationForm.isDecided() || applicationForm.isWithdrawn())>disabled="disabled"</#if>>
-                    	<option value="">Select...</option>
-                    	<#list languages as language>
-                     		<option value="${encrypter.encrypt(language.id)}" <#if employmentPosition.language?? && employmentPosition.language.id == language.id> selected="selected"</#if>>${language.name}</option>
-                     	</#list>
-                 	 </select>
-                 	  
-                									
-                </div>
-           	</div>
-           	<@spring.bind "employmentPosition.language" /> 
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
-						</div>
-					</div>
-				</#list>
            	
             <!-- Start date -->
             <div class="row">

@@ -137,8 +137,6 @@ public class PersonalDetailsBuilder {
 		personalDetails.setResidenceCountry(residenceCountry);
 		personalDetails.setEthnicity(ethnicity);
 		personalDetails.setDisability(disability);
-		personalDetails.setMaternalGuardianNationalities(maternalGuardianNationalities);
-		personalDetails.setPaternalGuardianNationalities(paternalGuardianNationalities);
 		personalDetails.setCandidateNationalities(candiateNationalities);
 		personalDetails.setMessenger(messenger);
 		personalDetails.setEnglishFirstLanguage(englishFirstLanguage);

@@ -69,38 +69,6 @@
         </div>
       </div>
       
-      <!-- Maternal guardian nationality -->
-      <div class="admin_row">
-        <label class="admin_row_label">Maternal Guardian Nationality</label>
-        <div class="field">
-          <#assign size_mn = applicationForm.personalDetails.maternalGuardianNationalities?size>
-          <#if ( size_mn > 0)>
-          <#list applicationForm.personalDetails.maternalGuardianNationalities as nationality >
-          <#assign index_i = nationality_index>
-          ${nationality.name!"Not Provided"}<#if (index_i < (size_mn - 1))>,</#if> 
-          </#list>
-          <#else>
-          Not Provided
-          </#if>
-        </div>
-      </div>
-      
-      <!-- Paternal guardian nationality -->
-      <div class="admin_row">
-        <label class="admin_row_label">Paternal Guardian Nationality</label>
-        <div class="field">
-          <#assign size_cp = applicationForm.personalDetails.paternalGuardianNationalities?size>
-          <#if ( size_cp > 0)>
-          <#list applicationForm.personalDetails.paternalGuardianNationalities as nationality >
-          <#assign index_i = nationality_index>
-          ${nationality.name!"Not Provided"}<#if (index_i < (size_cp - 1))>,</#if>
-          </#list>
-          <#else>
-          Not Provided
-          </#if>
-        </div>
-      </div>
-      
       <div class="admin_row">
         <span class="admin_row_label">Is English your first language?</span>
         <div class="field"><#if applicationForm.personalDetails.englishFirstLanguage>Yes<#else>No</#if></div>

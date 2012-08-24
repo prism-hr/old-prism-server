@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.PDFException;
-import com.zuehlke.pgadmissions.timers.RegistryNotificationTimerTask;
 
 @Component
 public class PdfDocumentBuilder {
@@ -348,26 +347,6 @@ public class PdfDocumentBuilder {
 		table.addCell(newTableCell("Nationality", smallBoldFont));
 		StringBuilder sb = new StringBuilder();
 		for (Country country : application.getPersonalDetails().getCandidateNationalities()) {
-			if (sb.length() > 0) {
-				sb.append(", ");
-			}
-			sb.append(country.getName());
-		}
-		table.addCell(newTableCell(sb.toString(), smallFont));
-
-		table.addCell(newTableCell("Mother's Nationality", smallBoldFont));
-		sb = new StringBuilder();
-		for (Country country : application.getPersonalDetails().getMaternalGuardianNationalities()) {
-			if (sb.length() > 0) {
-				sb.append(", ");
-			}
-			sb.append(country.getName());
-		}
-		table.addCell(newTableCell(sb.toString(), smallFont));
-
-		table.addCell(newTableCell("Father's Nationality", smallBoldFont));
-		sb = new StringBuilder();
-		for (Country country : application.getPersonalDetails().getPaternalGuardianNationalities()) {
 			if (sb.length() > 0) {
 				sb.append(", ");
 			}

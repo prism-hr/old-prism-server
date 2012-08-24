@@ -1,8 +1,10 @@
 $(document).ready(function(){
 	
 	var qualImgCount = 0;
+	var numberOfQualifications = 0;
 	
 	$("#acceptTermsQDValue").val("NO");
+	showOrHideAddQualificationButton();
 	
 	// -------------------------------------------------------------------------------
 	// Close button.
@@ -13,6 +15,17 @@ $(document).ready(function(){
 		return false;
 	});
 	
+	// -------------------------------------------------------------------------------
+	// Show or hide the AdPosisionButton.
+	// -------------------------------------------------------------------------------
+	function showOrHideAddQualificationButton() {
+		numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").size();
+		if (numberOfSavedPositions >= 6) {
+			$("#addQualificationButton").hide();
+		} else {
+			$("#addQualificationButton").show();
+		}
+	}
 
 	// -------------------------------------------------------------------------------
 	// Checkbox to mark the qualification as current.
@@ -104,8 +117,8 @@ $(document).ready(function(){
 			completed: function()
 			{
 				$('#qualificationsSection div.ajax').remove();
-			}
-				
+				showOrHideAddQualificationButton();
+			}				
 		});
 	});
 	
@@ -220,10 +233,12 @@ $(document).ready(function(){
 					
 					// Cheap way of changing the button text.
 					$('#addQualificationButton').html('Update');
+					$("#addQualificationButton").show();
 				},
 				completed: function()
 				{
 					$('#qualificationsSection div.ajax').remove();
+					showOrHideAddQualificationButton();
 				}
 		});
 	});

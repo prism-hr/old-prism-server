@@ -21,6 +21,8 @@ public @interface ESAPIConstraint {
     
     int maxLength() default 50;
     
+    int minLength() default 0;
+    
     String rule() default "SafeString";
     
     String propertyPath() default StringUtils.EMPTY;

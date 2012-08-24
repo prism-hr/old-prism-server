@@ -12,6 +12,8 @@ public class ESAPIConstraintValidator implements ConstraintValidator<ESAPIConstr
     
     private int maxLength;
     
+    private int minLength;
+    
     private String esapiValidationRule;
     
     private String message;
@@ -23,6 +25,7 @@ public class ESAPIConstraintValidator implements ConstraintValidator<ESAPIConstr
     public void initialize(final ESAPIConstraint target) {
         allowNull = target.allowNull();
         maxLength = target.maxLength();
+        minLength = target.minLength();
         esapiValidationRule = target.rule();
         message = target.message();
     }
@@ -43,12 +46,27 @@ public class ESAPIConstraintValidator implements ConstraintValidator<ESAPIConstr
                 message = "{text.field.maximumexceeded}";
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
+            } else if (isInputTooShort(input)) {
+                message = "{text.field.minimumexceeded}";
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
             }
         }
-        
         return returnValue;
     }
     
+    private boolean isInputTooShort(String input) {
+        try {
+            String canonical = ESAPI.encoder().canonicalize(input);
+            return canonical.length() < minLength;
+        } catch (IntrusionException e) {
+            // do nothing
+        } catch (Exception e) {
+            // do nothing
+        }
+        return false;
+    }
+
     private boolean isInputTooLong(final String input) {
         try {
             String canonical = ESAPI.encoder().canonicalize(input);

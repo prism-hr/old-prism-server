@@ -293,11 +293,35 @@ function fixedTip($object, text)
 // ------------------------------------------------------------------------------
 // Set up a div.field container with a file INPUT field for AJAX uploading.
 // ------------------------------------------------------------------------------
+function watchUpload($field)
+{       
+	var $parent = $field.parent('div.field'); 
+
+	// Add a button.
+	$parent.prepend('<button class="upload-file" type="button">Upload file</button>');
+	var $button = $parent.children('button.upload-file');
+	
+	var uploader = new qq.FileUploaderBasic({
+		element: $parent[0],
+		button: $button[0],
+		action: '/pgadmissions/documents/async',
+		params: { type: $field.attr('data-type') },
+		multiple: false,
+		allowedExtensions: ['pdf'],
+		sizeLimit: 10 * 1000 * 1000, // 10 megs
+		debug: true,
+		onComplete: function(id, filename, json) { alert('complete.'); },
+		onSubmit: function(id, filename) { alert('submit.'); }
+	});           
+}
+
+
+/*
 function watchUpload($field, $deleteFunction)
 {
   var $container  = $field.parent('div.field');
   
-	/* Delete button functionality. */
+	// Delete button functionality.
   $container.on('click', '.button-delete', function()
   {
     var $hidden  = $container.find('input.file');
@@ -352,7 +376,7 @@ function watchUpload($field, $deleteFunction)
 		 }
   });
 }
-
+*/
 
 // ------------------------------------------------------------------------------
 // Delete an uploaded file referenced by a hidden field.

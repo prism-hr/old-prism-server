@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS mode_of_attendance (
+CREATE TABLE IF NOT EXISTS MODE_OF_ATTENDANCE (
   id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   name varchar(100) NOT NULL DEFAULT '',
   enabled BOOLEAN NOT NULL DEFAULT FALSE,
@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS mode_of_attendance (
 )
 ENGINE = InnoDB
 ;
-INSERT INTO mode_of_attendance (name, enabled) VALUES 
+INSERT INTO MODE_OF_ATTENDANCE (name, enabled) VALUES 
 	('Flexible study: distance learning', TRUE),
 	('Full-time', TRUE),
 	('Full-time: Exchange', TRUE),

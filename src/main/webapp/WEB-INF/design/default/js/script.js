@@ -3,7 +3,7 @@ $(document).ready(function()
 	// ------------------------------------------------------------------------------
 	// Apply a class to the BODY tag if we're in "beta".
 	// ------------------------------------------------------------------------------
-	var now = Date.now();
+	var now = new Date();
 	var currentYear = now.getFullYear();
 	if (currentYear == '2012')
 	{

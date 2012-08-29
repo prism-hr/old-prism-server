@@ -14,8 +14,16 @@ label input { vertical-align: middle; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */
 #wrapper { background: url(../../images/bg_login.jpg) no-repeat 0 55px; margin: 0 auto; width: 950px; }
-body.beta #wrapper { background-image: url(../../images/bg_login_beta.jpg); }
 
+#beta-badge {
+	background: url(../../images/beta-badge.png) no-repeat;
+	display: block;
+	width: 96px;
+	height: 96px;
+	position: absolute;
+	left: 0;
+	top: 0;
+}	
 
 /* HEADER ------------------------------------------------------------------------------------------------- */
 #header { background: url(../../images/logo_ucl.png) no-repeat 100% 100%; color: #FFF; font-weight: bold; height: 108px; text-transform: uppercase; }

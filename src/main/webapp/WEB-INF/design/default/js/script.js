@@ -313,19 +313,32 @@ function watchUpload($field, $deleteFunction)
 		sizeLimit: 10 * 1000 * 1000, // 10 megs
 		debug: true,
 		inputName: 'file',
-		onComplete: function(id, filename, json)
+		onComplete: function(id, filename, json)	// completed upload
 		{
 			$parent.removeClass('posting');
 			console.log('complete: ' + filename); console.log(json);
 		},
-		onCancel: function(id, filename) { console.log('cancel: ' + filename); },
-		onUpload: function(id, filename)
+		onCancel: function(id, filename)
+		{
+			console.log('cancel: ' + filename);
+		},
+		onError: function(id, fileName, xhr)	// error during upload
+		{
+			$parent.append('<span class="invalid">Upload failed; please retry.</span>');
+		},
+		onUpload: function(id, filename)	// file starts uploading
 		{
 			$parent.addClass('posting');
 			console.log('upload: ' + filename);
 		},
-		onProgress: function(id, filename, uploaded, total) { console.log('progress: ' + filename + ' (' + uploaded + ' / ' + total + ')'); },
-		onSubmit: function(id, filename) { console.log('submit: ' + filename); },
+		onProgress: function(id, fileName, loaded, total)
+		{
+			console.log('progress: ' + filename + ' (' + loaded + ' / ' + total + ')');
+		},
+		onSubmit: function(id, filename)
+		{
+			console.log('submit: ' + filename);
+		},	// when a file is chosen
 		messages: {
 			typeError: "Document must be a PDF.",
 			sizeError: "Document must be at most 10MB.",

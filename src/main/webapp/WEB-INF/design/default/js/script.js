@@ -312,9 +312,18 @@ function watchUpload($field, $deleteFunction)
 		allowedExtensions: ['pdf'],
 		sizeLimit: 10 * 1000 * 1000, // 10 megs
 		debug: true,
-		onComplete: function(id, filename, json) { console.log('complete: ' + filename); console.log(json); },
+		inputName: 'file',
+		onComplete: function(id, filename, json)
+		{
+			$parent.removeClass('posting');
+			console.log('complete: ' + filename); console.log(json);
+		},
 		onCancel: function(id, filename) { console.log('cancel: ' + filename); },
-		onUpload: function(id, filename) { console.log('upload: ' + filename); },
+		onUpload: function(id, filename)
+		{
+			$parent.addClass('posting');
+			console.log('upload: ' + filename);
+		},
 		onProgress: function(id, filename, uploaded, total) { console.log('progress: ' + filename + ' (' + uploaded + ' / ' + total + ')'); },
 		onSubmit: function(id, filename) { console.log('submit: ' + filename); },
 		messages: {

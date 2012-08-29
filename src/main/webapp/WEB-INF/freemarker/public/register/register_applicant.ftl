@@ -99,7 +99,7 @@
 		
 		  </div>
 		  
-			<#include "/public/common/global_footer.ftl"/>
+		<#include "/public/common/global_footer.ftl"/>
 		
 		</div>
 		

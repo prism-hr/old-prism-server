@@ -1,39 +1,44 @@
 $(document).ready(function()
 {
 	// ------------------------------------------------------------------------------
-	// Create the feedback button.
+	// Apply a class to the BODY tag if we're in "beta".
 	// ------------------------------------------------------------------------------
-	//makeFeedbackButton();
+	var now = Date.now();
+	var currentYear = now.getFullYear();
+	if (currentYear == '2012')
+	{
+		$('body').addClass('beta');	
+	}
 
 	// ------------------------------------------------------------------------------
 	// On the application form, show "Not Provided" text in grey.
 	// ------------------------------------------------------------------------------
-  $('.field').each(function()
+	$('.field').each(function()
 	{
-     var strValue = $(this).text();
-    
-     if (strValue.match("Not Provided"))
-		 {
-       $(this).toggleClass('grey-label');
-     }
-  });
+		var strValue = $(this).text();
+		if (strValue.match("Not Provided"))
+		{
+			$(this).toggleClass('grey-label');
+		}
+	});
   
 	// ------------------------------------------------------------------------------
 	// Add tooltips!
 	// ------------------------------------------------------------------------------
-  fn = window['addToolTips'];
-  if(typeof  fn  == 'function'){
-    addToolTips();
-  }
+	fn = window['addToolTips'];
+	if(typeof fn == 'function')
+	{
+		addToolTips();
+	}
   
 	// ------------------------------------------------------------------------------
 	// Initialise date picker controls.
 	// ------------------------------------------------------------------------------
-  fn = window['bindDatePickers'];
-  if(typeof fn == 'function')
+	fn = window['bindDatePickers'];
+	if(typeof fn == 'function')
 	{
-    bindDatePickers();
-  }
+		bindDatePickers();
+	}
   
   // ------------------------------------------------------------------------------
   // Toolbar button action for jumping to a specific part of the application form.

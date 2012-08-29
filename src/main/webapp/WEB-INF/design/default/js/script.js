@@ -301,8 +301,8 @@ function watchUpload($field, $deleteFunction)
 	var $box = $('div.upload-box', $parent);
 
 	// Add a button.
-	$parent.prepend('<button class="upload-file" type="button">Upload file</button>');
-	var $button = $('button.upload-file', $parent);
+	$parent.prepend('<div class="button upload-file">Upload file</div>');
+	var $button = $('div.upload-file', $parent);
 	
 	var uploader = new qq.FileUploaderBasic({
 		element: $box[0],
@@ -313,8 +313,8 @@ function watchUpload($field, $deleteFunction)
 		allowedExtensions: ['pdf'],
 		sizeLimit: 10 * 1000 * 1000, // 10 megs
 		debug: true,
-		onComplete: function(id, filename, json) { alert('complete.'); },
-		onSubmit: function(id, filename) { alert('submit.'); }
+		onComplete: function(id, filename, json) { console.log('complete: ' + id + ' : ' + filename); console.log(json); },
+		onSubmit: function(id, filename) { console.log('submit: ' + id + ' : ' + filename); }
 	});           
 }
 

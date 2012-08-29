@@ -113,6 +113,16 @@ function saveComment()
 		$('#stateChangeForm').append(
 				'<input type="hidden" name="homeOrOverseas" value="' + $('input:radio[name=homeOrOverseas]:checked').val() + '"/>');
 	}
+	if ($('#projectTitle').length > 0)
+    {
+        $('#stateChangeForm').append(
+                '<input type="hidden" name="projectTitle" value="' + $('#projectTitle').val() + '"/>');
+    }
+	if ($('#closingDate').length > 0)
+    {
+        $('#stateChangeForm').append(
+                '<input type="hidden" name="closingDate" value="' + $('#closingDate').val() + '"/>');
+    }
 	$('input[name="documents"]').each(function()
 	{
 		$('#stateChangeForm').append(

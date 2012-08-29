@@ -52,20 +52,31 @@ public class ApplicationFormController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	public ModelAndView createNewApplicationForm(@RequestParam String program, @RequestParam String programDeadline, @RequestParam String projectTitle, @RequestParam String programhome) {
-		Date batchDeadline = parseBatchDeadline(programDeadline);
-		String researchHomePage =parseResearchHomePage(programhome);
-		RegisteredUser user = userService.getCurrentUser();
-
-		Program prog = programDAO.getProgramByCode(program);
-		if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()) {
-			return new ModelAndView(PROGRAM_DOES_NOT_EXIST);
-		}		
-	
-		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, batchDeadline, projectTitle, researchHomePage);
-
-		return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
-
+	    return processApplyNew(program, programDeadline, projectTitle, programhome);
 	}
+	
+    @RequestMapping(value = "/new", method = {RequestMethod.GET})
+    public ModelAndView createNewApplicationFormGet(
+            @RequestParam String program, 
+            @RequestParam String programDeadline, 
+            @RequestParam(required = false) String projectTitle, 
+            @RequestParam(required = false) String programhome) {
+        return processApplyNew(program, programDeadline, projectTitle, programhome);
+    }
+    
+    private ModelAndView processApplyNew(String program, String programDeadline, String projectTitle, String programhome) {
+        Date batchDeadline = parseBatchDeadline(programDeadline);
+        String researchHomePage =parseResearchHomePage(programhome);
+        RegisteredUser user = userService.getCurrentUser();
+
+        Program prog = programDAO.getProgramByCode(program);
+        if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()) {
+            return new ModelAndView(PROGRAM_DOES_NOT_EXIST);
+        }       
+        ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, batchDeadline, projectTitle, researchHomePage);
+        return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
+    }
+    
 
 	private String parseResearchHomePage(String programhome) {
 		String researchHomePage = null;

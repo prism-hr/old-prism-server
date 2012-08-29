@@ -169,7 +169,6 @@
                                                         <option value="${(badge.closingDate?string('dd MMM yyyy'))!}">${(badge.closingDate?string('dd MMM yyyy'))!}</option>
                                                     </#if>
                                                 </#list>   
-                                                <@spring.bind "comment.closingDate" />  
                                             </select>
                                         </div>
                                     </div>
@@ -184,7 +183,6 @@
                                                         <option value="${badge.projectTitle}">${badge.projectTitle}</option>
                                                     </#if>
                                                 </#list>
-                                                <@spring.bind "comment.projectTitle" />    
                                             </select>
                                         </div>
                                      </div>

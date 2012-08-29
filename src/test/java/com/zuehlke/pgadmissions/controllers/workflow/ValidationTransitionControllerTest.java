@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -87,8 +86,9 @@ public class ValidationTransitionControllerTest {
 		};
 
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+		applicationServiceMock.save(applicationForm);
 		EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-		controller.addComment(applicationForm.getApplicationNumber(), comment, bindingResultMock, new ModelMap());
+		controller.addComment(applicationForm.getApplicationNumber(), "13 Aug 2013", "projectTitle", comment, bindingResultMock, new ModelMap());
 		EasyMock.verify(commentServiceMock);
 	}
 	
@@ -114,7 +114,7 @@ public class ValidationTransitionControllerTest {
 		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("view");
 		EasyMock.replay(commentServiceMock, stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock);
 
-		assertEquals("view", controller.addComment(applicationForm.getApplicationNumber(), comment, bindingResultMock, new ModelMap()));
+		assertEquals("view", controller.addComment(applicationForm.getApplicationNumber(), "13 Aug 2013", "projectTitle", comment, bindingResultMock, new ModelMap()));
 
 		EasyMock.verify(commentServiceMock);
 		assertEquals(2, comment.getDocuments().size());

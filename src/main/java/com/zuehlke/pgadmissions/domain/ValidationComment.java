@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Date;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -30,28 +28,6 @@ public class ValidationComment extends StateChangeComment {
 	@Column(name="home_or_overseas")
 	private HomeOrOverseas homeOrOverseas;
 	
-	@Column(name="project_title")
-	private String projectTitle;
-	
-	@Column(name="closing_date")
-	private Date closingDate;
-	
-	public String getProjectTitle() {
-        return projectTitle;
-    }
-
-    public void setProjectTitle(String projectTitle) {
-        this.projectTitle = projectTitle;
-    }
-
-    public Date getClosingDate() {
-        return closingDate;
-    }
-
-    public void setClosingDate(Date closingDate) {
-        this.closingDate = closingDate;
-    }
-
     public ValidationQuestionOptions getQualifiedForPhd() {
 		return qualifiedForPhd;
 	}

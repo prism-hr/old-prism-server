@@ -138,6 +138,8 @@ a.button { display: inline-block; padding-top: 2px; padding-bottom: 2px; /*verti
 a.button:hover { text-decoration: none; }
 .old-ie button { overflow: visible; }
 
+div.button { display: inline-block; vertical-align: top; } /* upload buttons */
+
 span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical-align: middle; }
 
 .button-edit, .button-delete, .button-question, .button-responded, .button-show {

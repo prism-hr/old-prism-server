@@ -4,7 +4,10 @@ import com.zuehlke.pgadmissions.domain.Disability;
 
 public class DisabilityBuilder {
 	private String name;
+	
 	private Integer id;
+	
+	private Boolean enabled;
 
 	public DisabilityBuilder name(String disabilityName) {
 		this.name = disabilityName;
@@ -15,11 +18,17 @@ public class DisabilityBuilder {
 		this.id = disabilityId;
 		return this;
 	}
+	
+	public DisabilityBuilder enabled(Boolean enabled){
+        this.enabled = enabled;
+        return this;
+    }
 
 	public Disability toDisability() {
 		Disability disability = new Disability();
 		disability.setId(id);
 		disability.setName(name);
+		disability.setEnabled(enabled);
 		return disability;
 	}
 }

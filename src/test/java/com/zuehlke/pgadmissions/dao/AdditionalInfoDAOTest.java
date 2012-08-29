@@ -48,7 +48,6 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 		String infoText = "blablabal";
 		String conText = "streaking in public";
 		AdditionalInformation info = new AdditionalInformationBuilder()//
-				.informationText(infoText)//
 				.setConvictions(true).convictionsText(conText)//
 				.applicationForm(applicationForm).toAdditionalInformation();
 
@@ -63,7 +62,6 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 		Assert.assertNotNull(storedInfo);
 		Assert.assertEquals(persistentID, storedInfo.getId());
 		Assert.assertTrue(storedInfo.getConvictions());
-		Assert.assertEquals(infoText, storedInfo.getInformationText());
 		Assert.assertEquals(conText, storedInfo.getConvictionsText());
 	}
 

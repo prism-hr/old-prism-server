@@ -21,17 +21,15 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
-	
 	private RegisteredUser user;
 	private Program program;	
-	private LanguageDAO languageDAO;
 	private QualificationDAO qualificationDAO;
 	private CountriesDAO countriesDAO;
 
 	@Test
 	public void shouldGetQualificationById() throws ParseException{
 		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
-				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).subject("").isCompleted(CheckedStatus.YES)
+				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 		sessionFactory.getCurrentSession().save(qualification);
 		Integer id = qualification.getId();
@@ -44,7 +42,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveQualification() throws ParseException{
 		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
-				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).subject("").isCompleted(CheckedStatus.YES)
+				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 		qualificationDAO.save(qualification);
 		flushAndClearSession();		
@@ -63,7 +61,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		application.setApplicant(user);		
 
 		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
-				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).subject("").isCompleted(CheckedStatus.YES)
+				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 		save(application, qualification);
 		flushAndClearSession();
@@ -83,7 +81,6 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 		
 		save(user, program);
-		languageDAO = new LanguageDAO(sessionFactory);
 		countriesDAO = new CountriesDAO(sessionFactory);
 		flushAndClearSession();
 	}

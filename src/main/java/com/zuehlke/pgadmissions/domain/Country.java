@@ -14,6 +14,10 @@ public class Country extends DomainObject<Integer>{
 
 	private static final long serialVersionUID = 2746228908173552617L;
 
+	private String code;
+	
+	private Boolean enabled;
+	
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -27,7 +31,6 @@ public class Country extends DomainObject<Integer>{
 		return id;
 	}
 	
-	private String code;
 	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
 	private String name;
@@ -47,5 +50,13 @@ public class Country extends DomainObject<Integer>{
 	public void setName(String name) {
 		this.name = name;
 	}
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 }
 

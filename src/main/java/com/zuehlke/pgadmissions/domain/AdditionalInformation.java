@@ -16,17 +16,13 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Access(AccessType.FIELD)
 public class AdditionalInformation extends DomainObject<Integer> implements FormSectionObject{
 	private static final long serialVersionUID = -1761742614792933388L;
-
 	
 	@Transient
 	private boolean acceptedTerms;
+
 	@OneToOne
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application = null;
-
-	@Column(name = "info_text")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 400)
-	private String informationText;
 
 	@Column(name = "has_convictions")
 	private Boolean convictions;
@@ -54,14 +50,6 @@ public class AdditionalInformation extends DomainObject<Integer> implements Form
 
 	public void setApplication(ApplicationForm application) {
 		this.application = application;
-	}
-
-	public String getInformationText() {
-		return informationText;
-	}
-
-	public void setInformationText(String additionalInformation) {
-		this.informationText = additionalInformation;
 	}
 
 	// no default value for the convictions (the user has to set this property

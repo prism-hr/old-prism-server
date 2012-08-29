@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Event;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
@@ -39,11 +38,11 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
@@ -53,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -932,7 +932,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		save(applicant, applicationFormOne);
 		flushAndClearSession();
 
-		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser otherApplicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").username("username3")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -974,7 +974,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(applicant);
-		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -1000,7 +1000,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(applicant);
-		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -1026,7 +1026,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(applicant);
-		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -1620,8 +1620,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		qualification1.setQualificationGrade("");
 		qualification1.setQualificationInstitution("");
 
-		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
-		qualification1.setQualificationLanguage(languageDAO.getLanguageById(1));
+		qualification1.setQualificationLanguage("Abkhazian");
 		qualification1.setQualificationSubject("");
 		qualification1.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
 		qualification1.setQualificationType("");
@@ -1632,7 +1631,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		qualification2.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
 		qualification2.setQualificationGrade("");
 		qualification2.setQualificationInstitution("");
-		qualification2.setQualificationLanguage(languageDAO.getLanguageById(1));
+		qualification2.setQualificationLanguage("Abkhazian");
 		qualification2.setQualificationSubject("");
 		qualification2.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
 		qualification2.setQualificationType("");

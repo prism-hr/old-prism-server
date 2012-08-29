@@ -50,7 +50,7 @@
       <!-- Language (in which programme was undertaken) -->
       <div class="admin_row">
         <span class="admin_row_label">Language of Study</span>
-        <div class="field" id="qualificationLanguage">${qualification.qualificationLanguage.name!"Not Provided"}</div>
+        <div class="field" id="qualificationLanguage">${(qualification.qualificationLanguage?html)!"Not Provided"}</div>
       </div>
       
       <!-- Start date -->

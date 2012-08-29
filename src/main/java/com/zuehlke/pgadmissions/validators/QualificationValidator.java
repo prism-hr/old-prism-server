@@ -13,7 +13,10 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 
 @Service
-public class QualificationValidator  extends FormSectionObjectValidator implements Validator{
+public class QualificationValidator  extends FormSectionObjectValidator implements Validator {
+    
+    private static final int MAX_NUMBER_OF_POSITIONS = 6;
+    
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return Qualification.class.equals(clazz);
@@ -27,7 +30,7 @@ public class QualificationValidator  extends FormSectionObjectValidator implemen
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationStartDate", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLanguage", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLanguage", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "text.field.empty");		
@@ -49,5 +52,8 @@ public class QualificationValidator  extends FormSectionObjectValidator implemen
 		if (qualification.getCompleted() == CheckedStatus.NO && StringUtils.isNotBlank(awardDate)){
 			errors.rejectValue("qualificationAwardDate", "text.field.empty");
 		}
+		if (qualification.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
+            errors.reject("");
+        }
 	}
 }

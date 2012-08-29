@@ -13,6 +13,8 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 @Component
 public class EmploymentPositionValidator extends FormSectionObjectValidator implements Validator {
 
+    private static final int MAX_NUMBER_OF_POSITIONS = 5;
+    
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return EmploymentPosition.class.equals(clazz);
@@ -29,7 +31,6 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "remit", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "language", "dropdown.radio.select.none");
 		EmploymentPosition position = (EmploymentPosition) target;
 		
 		String startDate = position.getStartDate() == null ? "" : position.getStartDate().toString();
@@ -45,6 +46,9 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 		}
 		if (!position.isCurrent()  && StringUtils.isBlank(endDate)){
 			errors.rejectValue("endDate", "text.field.empty");
+		}
+		if (position.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
+		    errors.reject("");
 		}
 	}
 }

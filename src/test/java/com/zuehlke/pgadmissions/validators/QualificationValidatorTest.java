@@ -20,7 +20,6 @@ import org.springframework.validation.DirectFieldBindingResult;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testContext.xml")
@@ -75,7 +74,7 @@ public class QualificationValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("dropdown.radio.select.none",mappingResult.getFieldError("qualificationLanguage").getCode());
+		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("qualificationLanguage").getCode());
 	}
 
 	@Test
@@ -131,7 +130,7 @@ public class QualificationValidatorTest {
 		qualification.setQualificationGrade("first");
 		qualification.setQualificationInstitution("UCL");
 		qualification.setInstitutionCountry(new Country());
-		qualification.setQualificationLanguage(new LanguageBuilder().id(1).toLanguage());
+		qualification.setQualificationLanguage("Abkhazian");
 		qualification.setQualificationSubject("CS");		
 		qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
 		qualification.setQualificationType("degree");	}

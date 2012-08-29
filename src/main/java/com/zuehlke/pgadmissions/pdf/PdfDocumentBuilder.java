@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.PDFException;
-import com.zuehlke.pgadmissions.timers.RegistryNotificationTimerTask;
 
 @Component
 public class PdfDocumentBuilder {
@@ -355,26 +354,6 @@ public class PdfDocumentBuilder {
 		}
 		table.addCell(newTableCell(sb.toString(), smallFont));
 
-		table.addCell(newTableCell("Mother's Nationality", smallBoldFont));
-		sb = new StringBuilder();
-		for (Country country : application.getPersonalDetails().getMaternalGuardianNationalities()) {
-			if (sb.length() > 0) {
-				sb.append(", ");
-			}
-			sb.append(country.getName());
-		}
-		table.addCell(newTableCell(sb.toString(), smallFont));
-
-		table.addCell(newTableCell("Father's Nationality", smallBoldFont));
-		sb = new StringBuilder();
-		for (Country country : application.getPersonalDetails().getPaternalGuardianNationalities()) {
-			if (sb.length() > 0) {
-				sb.append(", ");
-			}
-			sb.append(country.getName());
-		}
-		table.addCell(newTableCell(sb.toString(), smallFont));
-
 		table.addCell(newTableCell("Is English your first language?", smallBoldFont));
 		if (application.getPersonalDetails().getEnglishFirstLanguage() == null) {
 			table.addCell(newTableCell(null, smallFont));
@@ -488,7 +467,7 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell(qualification.getQualificationSubject(), smallFont));
 
 				table.addCell(newTableCell("Language of Study", smallBoldFont));
-				table.addCell(newTableCell(qualification.getQualificationLanguage().getName(), smallFont));
+				table.addCell(newTableCell(qualification.getQualificationLanguage(), smallFont));
 
 				table.addCell(newTableCell("Start Date", smallBoldFont));
 				table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationStartDate()), smallFont));
@@ -562,9 +541,6 @@ public class PdfDocumentBuilder {
 
 				table.addCell(newTableCell("Roles and Responsibilities", smallBoldFont));
 				table.addCell(newTableCell(position.getRemit(), smallFont));
-
-				table.addCell(newTableCell("Language of Work", smallBoldFont));
-				table.addCell(newTableCell(position.getLanguage().getName(), smallFont));
 
 				table.addCell(newTableCell("Start Date", smallBoldFont));
 				table.addCell(newTableCell(simpleDateFormat.format(position.getStartDate()), smallFont));
@@ -738,11 +714,6 @@ public class PdfDocumentBuilder {
 
 		table = new PdfPTable(2);
 		table.setWidthPercentage(100f);
-
-		table.addCell(newTableCell("Additional Information", smallBoldFont));
-		table.addCell(newTableCell(application.getAdditionalInformation().getInformationText(), smallFont));
-		document.add(table);
-		document.add(new Paragraph(" "));
 
 		table = new PdfPTable(2);
 		table.setWidthPercentage(100f);

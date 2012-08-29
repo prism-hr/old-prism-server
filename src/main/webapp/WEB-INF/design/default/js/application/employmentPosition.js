@@ -1,9 +1,23 @@
 $(document).ready(function(){
 
 	var empImgCount = 0;
+	var numberOfSavedPositions = 0;
 	
 	$("#acceptTermsEPValue").val("NO");
 	limitTextArea();
+	showOrHideAdPosisionButton();
+	
+	// -------------------------------------------------------------------------------
+	// Show or hide the AdPosisionButton
+	// -------------------------------------------------------------------------------
+	function showOrHideAdPosisionButton() {
+		numberOfSavedPositions = $("#positionSection .existing .button-edit").size();
+		if (numberOfSavedPositions >= 5) {
+			$("#addPosisionButton").hide();
+		} else {
+			$("#addPosisionButton").show();
+		}
+	}
 	
 	// -------------------------------------------------------------------------------
 	// Current employment checkbox.
@@ -75,6 +89,7 @@ $(document).ready(function(){
 			completed: function()
 			{
 				$('#positionSection div.ajax').remove();
+				showOrHideAdPosisionButton();
 			}
 		});
 	});
@@ -169,10 +184,12 @@ $(document).ready(function(){
 					$('#posi-end-date-lb em').hide();
 				}
 				$('#addPosisionButton').html('Update');
+				$("#addPosisionButton").show();
 			},
 			completed: function()
 			{
 				$('#positionSection div.ajax').remove();
+				showOrHideAdPosisionButton();
 			}
 		});
 	});
@@ -269,6 +286,7 @@ function postEmploymentData(message)
     complete: function()
     {
       $('#positionSection div.ajax').remove();
+      showOrHideAdPosisionButton();
     }
 	});
 }

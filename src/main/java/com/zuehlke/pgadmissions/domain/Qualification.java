@@ -13,7 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.Valid;
 
 import org.hibernate.annotations.Type;
 
@@ -49,10 +48,9 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	private String qualificationInstitution;
 	
-	@ManyToOne
-	@JoinColumn(name = "language_id")
-	@Valid
-	private Language qualificationLanguage = null ;
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
+	@Column(name="qualification_language")
+	private String qualificationLanguage;
 	
 	@Column(name="qualification_type")
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
@@ -86,11 +84,11 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 		this.qualificationInstitution = q_institution;
 	}
 
-	public Language getQualificationLanguage() {
+	public String getQualificationLanguage() {
 		return qualificationLanguage;
 	}
 
-	public void setQualificationLanguage(Language q_language_of_study) {
+	public void setQualificationLanguage(String q_language_of_study) {
 		this.qualificationLanguage = q_language_of_study;
 	}
 	
@@ -192,7 +190,4 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	public void setAcceptedTerms(boolean acceptedTerms) {
 		this.acceptedTerms = acceptedTerms;
 	}
-
-
-
 }

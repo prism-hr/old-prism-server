@@ -40,7 +40,7 @@ $(document).ready(function()
 		$('#badge').attr("src", "");
 	});
 
-	$(document).on('change', '#programme, #project, #programhome, #batchdeadline', updateBadge);	
+	//$(document).on('change', '#programme, #project, #programhome, #batchdeadline', updateBadge);	
 });
 	
 function updateBadge()

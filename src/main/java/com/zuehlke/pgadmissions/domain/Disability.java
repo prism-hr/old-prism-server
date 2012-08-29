@@ -15,6 +15,8 @@ public class Disability extends DomainObject<Integer> {
 	private static final long serialVersionUID = 6141410638125684970L;
 
 	private String name;
+	
+	private Boolean enabled;
 
 	@Override
 	public void setId(Integer id) {
@@ -36,4 +38,13 @@ public class Disability extends DomainObject<Integer> {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+	
 }

@@ -4,20 +4,28 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.validation.BindingResult;
 
+import com.zuehlke.pgadmissions.dao.BadgeDAO;
+import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.BadgeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
+import com.zuehlke.pgadmissions.validators.BadgeValidator;
 
 public class BadgeControllerTest {
 
@@ -25,6 +33,10 @@ public class BadgeControllerTest {
 	private BadgeController controller;
 	private ProgramsService programServiceMock;
 	private RegisteredUser currentUserMock;
+	private BadgeDAO badgeDAOMock;
+	private BadgeValidator badgeValidatorMock;
+	private ProgramPropertyEditor programPropertyEditorMock;
+	private DatePropertyEditor datePropertyEditorMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -113,12 +125,27 @@ public class BadgeControllerTest {
 		EasyMock.replay(currentUserMock);		
 		controller.getBadge();		
 	}
+	
+	@Test
+	public void shouldSaveBadge() {
+	    Badge badge = new BadgeBuilder().id(1).closingDate(new Date()).projectTitle("pro").toBadge();
+	    badgeDAOMock.save(badge);
+	    BindingResult errors = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(errors.hasErrors()).andReturn(false);
+	    EasyMock.replay(badgeDAOMock);
+	    controller.saveBadgeDetails(badge, errors);
+	    EasyMock.verify(badgeDAOMock);
+	}
+	
 	@Before
 	public void setUp() {
-
 		userServiceMock = EasyMock.createMock(UserService.class);
 		programServiceMock = EasyMock.createMock(ProgramsService.class);
-		controller = new BadgeController(userServiceMock, programServiceMock);
+		badgeDAOMock = EasyMock.createMock(BadgeDAO.class);
+		badgeValidatorMock = EasyMock.createMock(BadgeValidator.class);
+		programPropertyEditorMock = EasyMock.createMock(ProgramPropertyEditor.class);
+		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
+		controller = new BadgeController(userServiceMock, programServiceMock, badgeDAOMock, datePropertyEditorMock, programPropertyEditorMock, badgeValidatorMock);
 
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();

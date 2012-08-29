@@ -37,6 +37,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	private boolean acceptedTerms;
 	
 	@Column(name = "skype")
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
 	private String messenger;
 	
 	@Column(name = "phone")
@@ -52,14 +53,6 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_country_id") })
 	private List<Country> candidateNationalities= new ArrayList<Country>();
-	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "MATERNAL_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "maternal_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "maternal_country_id") })
-	private List<Country> maternalGuardianNationalities= new ArrayList<Country>();
-	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "PATERNAL_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "paternal_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "paternal_country_id") })
-	private List<Country> paternalGuardianNationalities= new ArrayList<Country>();
 	
 	@Column(name = "first_name")
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
@@ -201,32 +194,6 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 		for (Country nationality : candiateNationalities) {
 			if(nationality != null){
 				this.candidateNationalities.add(nationality);
-			}
-		}
-	}
-
-	public List<Country> getMaternalGuardianNationalities() {
-		return maternalGuardianNationalities;
-	}
-
-	public void setMaternalGuardianNationalities(List<Country> maternalGuardianNationalities) {
-		this.maternalGuardianNationalities.clear();
-		for (Country nationality : maternalGuardianNationalities) {
-			if(nationality != null){
-				this.maternalGuardianNationalities.add(nationality);
-			}
-		}
-	}
-
-	public List<Country> getPaternalGuardianNationalities() {
-		return paternalGuardianNationalities;
-	}
-
-	public void setPaternalGuardianNationalities(List<Country> paternalGuardianNationalities) {
-		this.paternalGuardianNationalities.clear();
-		for (Country nationality : paternalGuardianNationalities) {
-			if(nationality != null){
-				this.paternalGuardianNationalities.add(nationality);
 			}
 		}
 	}

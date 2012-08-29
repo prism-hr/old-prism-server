@@ -12,28 +12,38 @@ import org.hibernate.annotations.Immutable;
 @Immutable
 @Access(AccessType.FIELD)
 public class Ethnicity extends DomainObject<Integer> {
-	private static final long serialVersionUID = -3605895863492842105L;
+    private static final long serialVersionUID = -3605895863492842105L;
 
-	private String name;
+    private String name;
 
-	@Override
-	public final void setId(Integer id) {
-		this.id = id;
-	}
+    private Boolean enabled;
+    
+    @Override
+    public final void setId(Integer id) {
+        this.id = id;
+    }
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
-	public final Integer getId() {
-		return id;
-	}
+    @Override
+    @Id
+    @GeneratedValue
+    @Access(AccessType.PROPERTY)
+    public final Integer getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 }

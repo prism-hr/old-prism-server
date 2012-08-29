@@ -111,8 +111,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldLoadApplicationFormWithPersonalDetails() throws ParseException {
-		Country country1 = new CountryBuilder().code("AA").name("AA").toCountry();
-		Country country2 = new CountryBuilder().code("CC").name("CC").toCountry();
+		Country country1 = new CountryBuilder().code("AA").name("AA").enabled(true).toCountry();
+		Country country2 = new CountryBuilder().code("CC").name("CC").enabled(true).toCountry();
 		save(country1, country2);
 
 		ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).toApplicationForm();
@@ -230,11 +230,11 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
-				.languageOfStudy(languageDAO.getLanguageById(1)).subject("").isCompleted(CheckedStatus.YES)
+				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0))
 				.toQualification();
 		Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
-				.isCompleted(CheckedStatus.YES).institution("").languageOfStudy(languageDAO.getLanguageById(2)).subject("")
+				.isCompleted(CheckedStatus.YES).institution("").languageOfStudy("Achinese").subject("")
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0))
 				.toQualification();
 

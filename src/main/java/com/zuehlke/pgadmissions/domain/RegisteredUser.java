@@ -44,6 +44,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String username;
 	
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
 	private String password;
 
 	@Transient

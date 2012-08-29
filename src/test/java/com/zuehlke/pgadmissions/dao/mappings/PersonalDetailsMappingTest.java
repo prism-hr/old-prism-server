@@ -69,10 +69,10 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadPersonalDetailsWithCandiateNationalities() throws Exception {
-		Country nationality1 = new CountryBuilder().code("aa").name("aaaaa").toCountry();
-		Country nationality2 = new CountryBuilder().code("bb").name("bbbbb").toCountry();
-		Country nationality3 = new CountryBuilder().code("cc").name("ccccc").toCountry();
-		Country nationality4 = new CountryBuilder().code("dd").name("ddddd").toCountry();
+		Country nationality1 = new CountryBuilder().code("aa").name("aaaaa").enabled(true).toCountry();
+		Country nationality2 = new CountryBuilder().code("bb").name("bbbbb").enabled(true).toCountry();
+		Country nationality3 = new CountryBuilder().code("cc").name("ccccc").enabled(true).toCountry();
+		Country nationality4 = new CountryBuilder().code("dd").name("ddddd").enabled(true).toCountry();
 		
 		sessionFactory.getCurrentSession().save(nationality1);
 		sessionFactory.getCurrentSession().save(nationality2);
@@ -82,7 +82,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 		
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).maternalGuardianNationalities(nationality4).country(country1)
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
 				.englishFirstLanguage(false).requiresVisa(false).phoneNumber("abc")
 				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
@@ -112,102 +112,12 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 	}
 	
-	
-	@Test
-	public void shouldSaveAndLoadPersonalDetailsWithMaternalGuardianNationalities() throws Exception {
-		Country nationality1 = new CountryBuilder().code("aa").name("aaaaa").toCountry();
-		Country nationality2 = new CountryBuilder().code("bb").name("bbbbb").toCountry();
-		Country nationality3 = new CountryBuilder().code("cc").name("ccccc").toCountry();
-		Country nationality4 = new CountryBuilder().code("dd").name("ddddd").toCountry();
-		
-		sessionFactory.getCurrentSession().save(nationality1);
-		sessionFactory.getCurrentSession().save(nationality2);
-		sessionFactory.getCurrentSession().save(nationality3);
-		sessionFactory.getCurrentSession().save(nationality4);
-
-		flushAndClearSession();
-		
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().maternalGuardianNationalities(nationality1, nationality2).candiateNationalities(nationality4).country(country1)
-				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.englishFirstLanguage(false).requiresVisa(false).phoneNumber("abc")
-				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
-				.toPersonalDetails();
-
-		sessionFactory.getCurrentSession().save(personalDetails);
-		
-		flushAndClearSession();
-		PersonalDetails reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getMaternalGuardianNationalities().size());
-		assertTrue(reloadedDetails.getMaternalGuardianNationalities().containsAll(Arrays.asList(nationality1,nationality2)));
-		reloadedDetails.getMaternalGuardianNationalities().remove(1);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
-
-		flushAndClearSession();
-		reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
-		assertEquals(1, reloadedDetails.getMaternalGuardianNationalities().size());
-		assertTrue(reloadedDetails.getMaternalGuardianNationalities().containsAll(Arrays.asList(nationality1)));
-
-		reloadedDetails.getMaternalGuardianNationalities().add(nationality3);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
-		flushAndClearSession();
-		
-		reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getMaternalGuardianNationalities().size());
-		assertTrue(reloadedDetails.getMaternalGuardianNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
-		
-	}
-	
-	@Test
-	public void shouldSaveAndLoadPersonalDetailsWithPaternalGuardianNationalities() throws Exception {
-		Country nationality1 = new CountryBuilder().code("aa").name("aaaaa").toCountry();
-		Country nationality2 = new CountryBuilder().code("bb").name("bbbbb").toCountry();
-		Country nationality3 = new CountryBuilder().code("cc").name("ccccc").toCountry();
-		Country nationality4 = new CountryBuilder().code("dd").name("ddddd").toCountry();
-		
-		sessionFactory.getCurrentSession().save(nationality1);
-		sessionFactory.getCurrentSession().save(nationality2);
-		sessionFactory.getCurrentSession().save(nationality3);
-		sessionFactory.getCurrentSession().save(nationality4);
-
-		flushAndClearSession();
-		
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().paternalGuardianNationalities(nationality1, nationality2).candiateNationalities(nationality4).country(country1)
-				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.englishFirstLanguage(false).requiresVisa(false).phoneNumber("abc")
-				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
-				.toPersonalDetails();
-
-		sessionFactory.getCurrentSession().save(personalDetails);
-		
-		flushAndClearSession();
-		
-		PersonalDetails reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getPaternalGuardianNationalities().size());
-		assertTrue(reloadedDetails.getPaternalGuardianNationalities().containsAll(Arrays.asList(nationality1,nationality2)));
-		reloadedDetails.getPaternalGuardianNationalities().remove(nationality2);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
-
-		flushAndClearSession();
-		reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
-		assertEquals(1, reloadedDetails.getPaternalGuardianNationalities().size());
-		assertTrue(reloadedDetails.getPaternalGuardianNationalities().containsAll(Arrays.asList(nationality1)));
-
-		reloadedDetails.getPaternalGuardianNationalities().add(nationality3);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
-		flushAndClearSession();
-		
-		reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getPaternalGuardianNationalities().size());
-		assertTrue(reloadedDetails.getPaternalGuardianNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
-	}
-	
-	
 	@Before
 	public void setUp() {
 		super.setUp();
 
-		country1 = new CountryBuilder().code("AA").name("AA").toCountry();
-		country2 = new CountryBuilder().code("CC").name("CC").toCountry();
+		country1 = new CountryBuilder().code("AA").name("AA").enabled(true).toCountry();
+		country2 = new CountryBuilder().code("CC").name("CC").enabled(true).toCountry();
 		save(country1, country2);
 
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		

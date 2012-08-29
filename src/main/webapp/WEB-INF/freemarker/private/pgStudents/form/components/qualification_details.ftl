@@ -181,18 +181,16 @@
 				</div>
 			</#list>
 
-		
 			<!-- Language (in which programme was undertaken) -->
 			<div class="row">
 				<span class="plain-label">Language of Study<em>*</em></span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.language'/>"></span>
 				<div class="field">
-					<select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${qualification.qualificationLanguage!}"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
-						<option value="">Select...</option>
-						<#list languages as language>
-						<option value="${encrypter.encrypt(language.id)}"  <#if qualification.qualificationLanguage?? && qualification.qualificationLanguage.id == language.id> selected="selected"</#if>>${language.name?html}</option>
-						</#list>
-					</select>
+                    <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+                    <input id="qualificationLanguage" class="full" type="text" placeholder="e.g. English"  value="${(qualification.qualificationLanguage?html)!}"/>
+                    <#else>
+                    <input readonly="readonly" id="qualificationLanguage" class="full" type="text" placeholder="e.g. English" value="${(qualification.qualificationLanguage?html)!}"/>
+                    </#if>
 				</div>
 			</div>
 			<@spring.bind "qualification.qualificationLanguage" />      		

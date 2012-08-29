@@ -6,8 +6,11 @@ import java.util.List;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
@@ -18,9 +21,10 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 public class Program extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = -9073611033741317582L;
+	
 	private String code;
-	private String title;
 
+	private String title;
 
 	@ManyToMany(mappedBy = "programsOfWhichApprover")
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
@@ -40,6 +44,10 @@ public class Program extends DomainObject<Integer> {
 	@OneToMany(mappedBy = "program")
 	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 	
+	@OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "BADGE", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
+    private List<Badge> badges = new ArrayList<Badge>();
+	
 	@Override
 	@Id
 	@GeneratedValue
@@ -51,21 +59,25 @@ public class Program extends DomainObject<Integer> {
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
-
 	}
 
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-
 	public String getCode() {
 		return code;
 	}
 
-	
+	public List<Badge> getBadges() {
+        return badges;
+    }
 
-	public String getTitle() {
+    public void setBadges(List<Badge> badges) {
+        this.badges = badges;
+    }
+
+    public String getTitle() {
 		return title;
 	}
 

@@ -6,6 +6,12 @@ $(document).ready(function(){
 	
 	limitTextArea();
 	
+	$("#convictionsText").attr("disabled", "disabled");
+	
+	if ($("#convictionsText").val() != "") {
+	    $("#convictionsText").removeAttr("disabled", "disabled");
+	}
+	
 	$('#additionalCloseButton').click(function(){
 		$('#additional-H2').trigger('click');
 		return false;

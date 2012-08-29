@@ -157,7 +157,7 @@ public class AccountValidatorTest {
 	
 	@Test
 	@DirtiesContext
-	public void shouldRejectIfContainsSpecialChars() {
+	public void shouldNotRejectIfContainsSpecialChars() {
 		user.setNewPassword(" 12o*-lala");
 		user.setConfirmPassword(" 12o*-lala");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
@@ -167,8 +167,7 @@ public class AccountValidatorTest {
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash(" 12o*-lala")).andReturn(" 12o*-lala");
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
 		accountValidator.validate(user, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.password.nonalphanumeric", mappingResult.getFieldError("newPassword").getCode());
+		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
 	@Test

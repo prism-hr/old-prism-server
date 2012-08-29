@@ -16,15 +16,15 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
 		DisabilityDAO disabilityDAO = new DisabilityDAO();
-		Disability disability = new DisabilityBuilder().id(1).name("ZZZZZZ").toDisability();
+		Disability disability = new DisabilityBuilder().id(1).name("ZZZZZZ").enabled(true).toDisability();
 		disabilityDAO.getDisabilityById(disability.getId());
 	}
 
 	@Test
 	public void shouldGetAllDisabilitiesInIDOrder() {
 		BigInteger numberOfDisabilities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DISABILITY").uniqueResult();
-		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").toDisability();
-		Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").toDisability();
+		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").enabled(true).toDisability();
+		Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").enabled(true).toDisability();
 		save(disability1, disability2);
 		flushAndClearSession();
 		DisabilityDAO disabilityDAO = new DisabilityDAO(sessionFactory);
@@ -37,8 +37,8 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldGetDisabilityById() {
-		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").toDisability();
-		Disability disability2 = new DisabilityBuilder().name("mmmmmm").toDisability();
+		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").enabled(true).toDisability();
+		Disability disability2 = new DisabilityBuilder().name("mmmmmm").enabled(true).toDisability();
 
 		save(disability1, disability2);
 		flushAndClearSession();

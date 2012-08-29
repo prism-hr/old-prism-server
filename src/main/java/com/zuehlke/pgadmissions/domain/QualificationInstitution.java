@@ -2,24 +2,26 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import org.hibernate.annotations.Immutable;
+@Entity(name="INSTITUTION")
+@Access(AccessType.FIELD) 
+public class QualificationInstitution extends DomainObject<Integer>{
 
-@Entity(name = "ETHNICITY")
-@Immutable
-@Access(AccessType.FIELD)
-public class Ethnicity extends DomainObject<Integer> {
-    private static final long serialVersionUID = -3605895863492842105L;
+    private static final long serialVersionUID = 2746228908173552617L;
 
+    @Column(name = "country_code")
+    private String code;
+    
     private String name;
 
     private Boolean enabled;
     
     @Override
-    public final void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -27,14 +29,22 @@ public class Ethnicity extends DomainObject<Integer> {
     @Id
     @GeneratedValue
     @Access(AccessType.PROPERTY)
-    public final Integer getId() {
+    public Integer getId() {
         return id;
     }
-
+    
+    public String getCode() {
+        return code;
+    }
+    
+    public void setCode(String code) {
+        this.code = code;
+    }
+    
     public String getName() {
         return name;
     }
-
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -47,3 +57,4 @@ public class Ethnicity extends DomainObject<Integer> {
         this.enabled = enabled;
     }
 }
+

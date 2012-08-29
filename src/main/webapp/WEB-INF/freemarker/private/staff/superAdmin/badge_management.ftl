@@ -1,6 +1,6 @@
-<#import "/spring.ftl" as spring />
-										
+<section id="badgeSection" >
 
+<#import "/spring.ftl" as spring />
 
 <div class="row-group">
 	<div class="row">
@@ -15,6 +15,14 @@
 			</select>
 		</div>
 	</div>
+	<@spring.bind "badge.program" /> 
+        <#list spring.status.errorMessages as error>
+        <div class="row">
+            <div class="field">
+                <span class="invalid">${error}</span>
+            </div>
+        </div>
+    </#list>
 
 	<div class="row">
 		<label class="plain-label">Programme Homepage</label>
@@ -30,7 +38,15 @@
 		<div class="field">
 			<input type="text" name="project" id="project" class="max" />
 		</div>
-	</div>												
+	</div>
+	<@spring.bind "badge.projectTitle" /> 
+        <#list spring.status.errorMessages as error>
+        <div class="row">
+            <div class="field">
+                <span class="invalid">${error}</span>
+            </div>
+        </div>
+    </#list>												
 											
 	<div class="row">
 		<label class="plain-label">Closing Date</label>
@@ -39,6 +55,14 @@
 			<input type="text" name="batchdeadline" id="batchdeadline" class="half date" />
 		</div>
 	</div>
+	<@spring.bind "badge.closingDate" /> 
+        <#list spring.status.errorMessages as error>
+        <div class="row">
+            <div class="field">
+                <span class="invalid">${error}</span>
+            </div>
+        </div>
+    </#list>
 	
 </div><!-- .row-group -->
 
@@ -50,4 +74,11 @@
 	</div>
 </div>
 
-								
+                                        
+<div class="buttons">
+    <button class="blue" id="badgeSaveButton" type="button">Create</button>
+</div>
+			
+</section>
+
+<script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge_management.js'/>"></script>

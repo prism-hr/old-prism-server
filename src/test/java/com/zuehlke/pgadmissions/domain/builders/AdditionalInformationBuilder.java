@@ -9,13 +9,11 @@ public class AdditionalInformationBuilder {
 	private ApplicationForm applicationForm;
 	private String convictionsText;
 	private Boolean hasConvictions;
-	private String infoText;
 
 	public AdditionalInformation toAdditionalInformation() {
 		AdditionalInformation info = new AdditionalInformation();
 		info.setId(infoId);
 		info.setApplication(applicationForm);
-		info.setInformationText(infoText);
 		if (hasConvictions != null) {
 			info.setConvictions(hasConvictions);
 			info.setConvictionsText(convictionsText);
@@ -40,11 +38,6 @@ public class AdditionalInformationBuilder {
 
 	public AdditionalInformationBuilder setConvictions(Boolean hasConvictions) {
 		this.hasConvictions = hasConvictions;
-		return this;
-	}
-
-	public AdditionalInformationBuilder informationText(String informationText) {
-		this.infoText = informationText;
 		return this;
 	}
 }

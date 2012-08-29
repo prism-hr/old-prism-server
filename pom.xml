@@ -191,6 +191,11 @@
             <artifactId>commons-codec</artifactId>
             <version>1.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2</version>
+        </dependency>
         <!-- Java Mail API -->
         <dependency>
             <groupId>javax.mail</groupId>

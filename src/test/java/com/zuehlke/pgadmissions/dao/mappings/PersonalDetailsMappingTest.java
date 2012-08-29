@@ -69,10 +69,10 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadPersonalDetailsWithCandiateNationalities() throws Exception {
-		Country nationality1 = new CountryBuilder().code("aa").name("aaaaa").toCountry();
-		Country nationality2 = new CountryBuilder().code("bb").name("bbbbb").toCountry();
-		Country nationality3 = new CountryBuilder().code("cc").name("ccccc").toCountry();
-		Country nationality4 = new CountryBuilder().code("dd").name("ddddd").toCountry();
+		Country nationality1 = new CountryBuilder().code("aa").name("aaaaa").enabled(true).toCountry();
+		Country nationality2 = new CountryBuilder().code("bb").name("bbbbb").enabled(true).toCountry();
+		Country nationality3 = new CountryBuilder().code("cc").name("ccccc").enabled(true).toCountry();
+		Country nationality4 = new CountryBuilder().code("dd").name("ddddd").enabled(true).toCountry();
 		
 		sessionFactory.getCurrentSession().save(nationality1);
 		sessionFactory.getCurrentSession().save(nationality2);
@@ -116,8 +116,8 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 	public void setUp() {
 		super.setUp();
 
-		country1 = new CountryBuilder().code("AA").name("AA").toCountry();
-		country2 = new CountryBuilder().code("CC").name("CC").toCountry();
+		country1 = new CountryBuilder().code("AA").name("AA").enabled(true).toCountry();
+		country2 = new CountryBuilder().code("CC").name("CC").enabled(true).toCountry();
 		save(country1, country2);
 
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		

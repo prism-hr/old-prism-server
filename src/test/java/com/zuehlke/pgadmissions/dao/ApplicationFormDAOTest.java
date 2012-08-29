@@ -932,7 +932,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		save(applicant, applicationFormOne);
 		flushAndClearSession();
 
-		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser otherApplicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").username("username3")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -974,7 +974,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(applicant);
-		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -1000,7 +1000,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(applicant);
-		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -1026,7 +1026,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(applicant);
-		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)

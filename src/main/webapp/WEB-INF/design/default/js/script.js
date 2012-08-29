@@ -296,9 +296,6 @@ function fixedTip($object, text)
 function watchUpload($field, $deleteFunction)
 {       
 	var $parent = $field.parent('div.field'); 
-	var $field = $(':file', $parent);
-	$field.hide();
-
 	$parent.prepend('<div class="upload-box" />');
 	var $box = $('div.upload-box', $parent);
 
@@ -315,8 +312,10 @@ function watchUpload($field, $deleteFunction)
 		allowedExtensions: ['pdf'],
 		sizeLimit: 10 * 1000 * 1000, // 10 megs
 		debug: true,
-		onComplete: function(id, filename, json) { console.log('complete: ' + id + ' : ' + filename); console.log(json); },
-		onSubmit: function(id, filename) { console.log('submit: ' + id + ' : ' + filename); }
+		onComplete: function(id, filename, json) { console.log('complete: ' + filename); console.log(json); },
+		onUpload: function(id, filename) { console.log('upload: ' + filename); },
+		onProgress: function(id, filename, uploaded, total) { console.log('progress: ' + filename + ' (' + uploaded + ' / ' + total + ')'); },
+		onSubmit: function(id, filename) { console.log('submit: ' + filename); }
 	});           
 }
 

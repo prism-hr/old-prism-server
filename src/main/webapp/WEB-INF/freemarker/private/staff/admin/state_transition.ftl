@@ -148,6 +148,42 @@
 	
 							
 								</div><!-- close .row-group -->
+								
+								<div class="row-group">
+    								<div class="row">
+                                        <label class="plain-label">Assign to Closing Date</label>
+    								    <span class="hint" data-desc="<@spring.message 'validateApp.nextStage'/>"></span>
+                                        <div class="field">
+                                            <select class="max" id="closingDate" name="closingDate">
+                                                <option value="">Select...</option>
+                                                <#list applicationForm.program.badges as badge>
+                                                    <#if badge.closingDate?has_content>
+                                                        <option value="${(badge.closingDate?string('dd MMM yyyy'))!}">${(badge.closingDate?string('dd MMM yyyy'))!}</option>
+                                                    </#if>
+                                                </#list>   
+                                                <@spring.bind "comment.closingDate" />  
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="plain-label">Assign to Project</label>
+                                        <span class="hint" data-desc="<@spring.message 'validateApp.nextStage'/>"></span>
+                                        <div class="field">
+                                            <select class="max" id="projectTitle" name="projectTitle">
+                                                <option value="">Select...</option>
+                                                <#list applicationForm.program.badges as badge>
+                                                    <#if badge.projectTitle?has_content>
+                                                        <option value="${badge.projectTitle}">${badge.projectTitle}</option>
+                                                    </#if>
+                                                </#list>
+                                                <@spring.bind "comment.projectTitle" />    
+                                            </select>
+                                        </div>
+                                     </div>
+								</div><!-- close .row-group -->
+								
+								
+								
 								</#if>
 	
 								<div class="row-group">

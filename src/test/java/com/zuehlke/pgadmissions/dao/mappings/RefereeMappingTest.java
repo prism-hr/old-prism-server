@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao.mappings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -21,17 +20,12 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
@@ -107,7 +101,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).toApplicationForm();
 		
-		Country country = new CountryBuilder().code("1").name("nae").toCountry(); 
+		Country country = new CountryBuilder().code("1").name("nae").enabled(true).toCountry(); 
 		save(applicant, application, country);
 		
 		Referee referee = new RefereeBuilder().application(application).email("email@test.com").firstname("bob")

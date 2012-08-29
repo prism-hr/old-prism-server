@@ -17,15 +17,15 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase{
 	@Test(expected=NullPointerException.class)
 	public void shouldThrowNullPointerException(){
 		CountriesDAO countriesDAO = new CountriesDAO();
-		Country country = new CountryBuilder().id(1).code("zz").name("ZZZZZZ").toCountry();
+		Country country = new CountryBuilder().id(1).code("zz").name("ZZZZZZ").enabled(true).toCountry();
 		countriesDAO.getCountryById(country.getId());
 	}
 	
 	@Test
 	public void shouldGetAllCountriesInAlhphabeticalOrder() {
 		BigInteger numberOfCoutnries = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from COUNTRIES").uniqueResult();
-		Country country1 = new CountryBuilder().code("zz").name("ZZZZZZ").toCountry();		
-		Country country2 = new CountryBuilder().code("aa").name("AAAAAAAA").toCountry();
+		Country country1 = new CountryBuilder().code("zz").enabled(true).name("ZZZZZZ").toCountry();		
+		Country country2 = new CountryBuilder().code("aa").enabled(true).name("AAAAAAAA").toCountry();
 		save(country1,  country2);
 		flushAndClearSession();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
@@ -34,7 +34,7 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase{
 		
 		assertEquals("AAAAAAAA",allCountries.get(0).getName());
 		
-		assertEquals("ZZZZZZ",allCountries.get(numberOfCoutnries.intValue() +1).getName());
+		assertEquals("ZZZZZZ",allCountries.get(numberOfCoutnries.intValue()).getName());
 		
 	}
 	
@@ -42,8 +42,8 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldGetCountryById(){
 
-		Country country1 = new CountryBuilder().code("zz").name("ZZZZZZ").toCountry();
-		Country country2 = new CountryBuilder().code("MM").name("mmmmmm").toCountry();
+		Country country1 = new CountryBuilder().code("zz").enabled(true).name("ZZZZZZ").toCountry();
+		Country country2 = new CountryBuilder().code("MM").enabled(true).name("mmmmmm").toCountry();
 		
 		save(country1, country2);
 		flushAndClearSession();

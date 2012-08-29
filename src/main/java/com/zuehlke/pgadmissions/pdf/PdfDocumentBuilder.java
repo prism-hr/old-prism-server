@@ -715,11 +715,6 @@ public class PdfDocumentBuilder {
 		table = new PdfPTable(2);
 		table.setWidthPercentage(100f);
 
-		table.addCell(newTableCell("Additional Information", smallBoldFont));
-		table.addCell(newTableCell(application.getAdditionalInformation().getInformationText(), smallFont));
-		document.add(table);
-		document.add(new Paragraph(" "));
-
 		table = new PdfPTable(2);
 		table.setWidthPercentage(100f);
 		table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", smallBoldFont));

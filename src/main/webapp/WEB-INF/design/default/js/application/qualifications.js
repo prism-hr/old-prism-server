@@ -2,9 +2,45 @@ $(document).ready(function(){
 	
 	var qualImgCount = 0;
 	var numberOfQualifications = 0;
+	var suggestions = [];
 	
 	$("#acceptTermsQDValue").val("NO");
 	showOrHideAddQualificationButton();
+	
+	$("input#qualificationInstitution").autocomplete({
+	    minLength: 3,
+	    source: function(req, add) {
+	        
+	        if ($('#institutionCountry').val() == "") {
+	            return;
+	        }
+	        
+	        var country_id = $("#institutionCountry").val();
+	        $.ajax({
+	            type: 'GET',
+	            statusCode: {
+	                    401: function() { window.location.reload(); },
+	                    500: function() { window.location.href = "/pgadmissions/error"; },
+	                    404: function() { window.location.href = "/pgadmissions/404"; },
+	                    400: function() { window.location.href = "/pgadmissions/400"; },                  
+	                    403: function() { window.location.href = "/pgadmissions/404"; }
+	            },
+	            url:"/pgadmissions/update/getInstitutionInformation",
+	            data: {
+	                country_id: country_id, 
+	                term: req.term
+	            }, 
+	            success: function(data) {
+	                suggestions = [];
+	                suggestions = jQuery.parseJSON(data);
+	            },
+	            completed: function() {
+	            }               
+	        });
+	        add(suggestions);
+	    }
+	    //source: ["c++", "java", "php", "coldfusion", "javascript", "asp", "ruby"]
+	});
 	
 	// -------------------------------------------------------------------------------
 	// Close button.
@@ -159,7 +195,8 @@ $(document).ready(function(){
 	{
 		$("span[name='nonAcceptedQD']").html('');
 		
-		// Check for a "dirty" qualification form. If there is data try to submit it.
+		// Check for a "dirty" qualification form. If there is data try to
+        // submit it.
 		if (!isFormEmpty('#qualificationsSection form'))
 		{
 			postQualificationData('close');
@@ -371,7 +408,7 @@ function ajaxProofOfAwardDelete()
 
 function ajaxProofOfAwardUpload()
 {	
-	// Showing/hiding progress bar when we're uploading the file via AJAX.	
+	// Showing/hiding progress bar when we're uploading the file via AJAX.
 	$("#progress").ajaxStart(function()
 		{
 			$(this).show();
@@ -398,7 +435,8 @@ function ajaxProofOfAwardUpload()
 		{	
 			if ($(data).find('span.invalid').length == 0)
 			{
-				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
+				// i.e. if there are no uploading errors, which would be
+                // indicated by the presence of a SPAN.invalid tag.
 				$('#qualUploadedDocument').html(data);
 				$('#qualUploadedDocument').show();
 				$('#uploadFields').addClass('uploaded');

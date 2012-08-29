@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Date;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -14,10 +16,8 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 @Access(AccessType.FIELD)
 public class ValidationComment extends StateChangeComment {
 	
-	
 	private static final long serialVersionUID = 1545465975465291005L;
 	
-
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ValidationQuestionOptionEnumUserType")
 	@Column(name="qualified_for_phd")	
 	private ValidationQuestionOptions qualifiedForPhd;
@@ -30,23 +30,49 @@ public class ValidationComment extends StateChangeComment {
 	@Column(name="home_or_overseas")
 	private HomeOrOverseas homeOrOverseas;
 	
-	public ValidationQuestionOptions getQualifiedForPhd() {
+	@Column(name="project_title")
+	private String projectTitle;
+	
+	@Column(name="closing_date")
+	private Date closingDate;
+	
+	public String getProjectTitle() {
+        return projectTitle;
+    }
+
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
+    }
+
+    public Date getClosingDate() {
+        return closingDate;
+    }
+
+    public void setClosingDate(Date closingDate) {
+        this.closingDate = closingDate;
+    }
+
+    public ValidationQuestionOptions getQualifiedForPhd() {
 		return qualifiedForPhd;
 	}
+	
 	public void setQualifiedForPhd(ValidationQuestionOptions qualifiedForPhd) {
 		this.qualifiedForPhd = qualifiedForPhd;
 	}
+	
 	public ValidationQuestionOptions getEnglishCompentencyOk() {
 		return englishCompentencyOk;
 	}
+	
 	public void setEnglishCompentencyOk(ValidationQuestionOptions englishCompentencyOk) {
 		this.englishCompentencyOk = englishCompentencyOk;
 	}
+	
 	public HomeOrOverseas getHomeOrOverseas() {
 		return homeOrOverseas;
 	}
+	
 	public void setHomeOrOverseas(HomeOrOverseas homeOrOverseas) {
 		this.homeOrOverseas = homeOrOverseas;
 	}
-	
 }

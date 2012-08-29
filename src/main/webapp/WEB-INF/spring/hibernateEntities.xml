@@ -56,6 +56,8 @@
 	     		<value>com.zuehlke.pgadmissions.domain.InterviewEvaluationComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.RequestRestartComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.QualificationInstitution</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Badge</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

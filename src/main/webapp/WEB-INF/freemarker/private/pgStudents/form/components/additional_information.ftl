@@ -24,29 +24,6 @@
 		</div>	
 		</#if>
 	
-		<!-- Free text field for info. -->
-		<div class="row-group">
-			<div class="row">
-				<span class="plain-label">Additional information relevant to your application</span>
-				<span class="hint" data-desc="<@spring.message 'additionalInformation.infotext'/>"></span>
-				<div class="field">
-					<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-					<textarea id="informationText" name="informationText" class="max" rows="6" cols="80" >${(additionalInformation.informationText?html)!}</textarea>
-					<#else>
-					<textarea readonly="readonly" id="informationText" name="informationText" class="max" rows="10" cols=80">${(additionalInformation.informationText?html)!}</textarea>
-					</#if>
-				</div>
-			</div>
-			<@spring.bind "additionalInformation.informationText" /> 
-			<#list spring.status.errorMessages as error>
-			<div class="row">
-				<div class="field">
-					<span class="invalid">${error}</span>
-				</div>
-			</div>
-			</#list>
-		</div>
-	
 		<div class="row-group">
 		
 			<!-- Radio buttons for convictions. -->

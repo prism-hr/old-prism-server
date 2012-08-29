@@ -84,6 +84,8 @@
 <title>UCL Postgraduate Admissions</title>
 
 <!-- Styles for Application Page -->    
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/jquery-ui-1.8.23.custom.css' />"/>
+
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/field_controls.css' />"/>
@@ -102,6 +104,7 @@
 
 <!-- Scripts -->
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>    
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>  

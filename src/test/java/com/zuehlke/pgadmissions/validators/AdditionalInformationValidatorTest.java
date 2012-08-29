@@ -35,16 +35,6 @@ public class AdditionalInformationValidatorTest {
 	}
 
 	@Test
-	public void validateGoodAdditionalInfo() {
-		info.setInformationText("add info");
-		info.setConvictions(false);
-		info.setConvictionsText("");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictions");
-		infoValidator.validate(info, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-	}
-	
-	@Test
 	public void validateGoodConvictionsData() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictions");
 		infoValidator.validate(info, mappingResult);
@@ -85,19 +75,6 @@ public class AdditionalInformationValidatorTest {
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("convictionsText").getCode());
-	}
-
-	@Test
-	public void shouldRejectIfTooMuchAddtionalInfo() {
-		StringBuilder addnInfo = new StringBuilder();
-		for (int i = 0; i <= 5000; i++) {
-			addnInfo.append("a");
-		}
-		info.setInformationText(addnInfo.toString());
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "informationText");
-		infoValidator.validate(info, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("A maximum of 400 characters are allowed.", mappingResult.getFieldError("informationText").getDefaultMessage());
 	}
 
 	@Test

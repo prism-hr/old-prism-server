@@ -313,9 +313,18 @@ function watchUpload($field, $deleteFunction)
 		sizeLimit: 10 * 1000 * 1000, // 10 megs
 		debug: true,
 		onComplete: function(id, filename, json) { console.log('complete: ' + filename); console.log(json); },
+		onCancel: function(id, filename) { console.log('cancel: ' + filename); },
 		onUpload: function(id, filename) { console.log('upload: ' + filename); },
 		onProgress: function(id, filename, uploaded, total) { console.log('progress: ' + filename + ' (' + uploaded + ' / ' + total + ')'); },
-		onSubmit: function(id, filename) { console.log('submit: ' + filename); }
+		onSubmit: function(id, filename) { console.log('submit: ' + filename); },
+		messages: {
+			typeError: "Document must be a PDF.",
+			sizeError: "Document must be at most 10MB.",
+		},
+		showMessage: function(message)
+		{
+			$parent.append('<span class="invalid">' + message + '</span>');
+		}
 	});           
 }
 

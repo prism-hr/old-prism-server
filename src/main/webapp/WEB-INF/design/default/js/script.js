@@ -296,13 +296,15 @@ function fixedTip($object, text)
 function watchUpload($field, $deleteFunction)
 {       
 	var $parent = $field.parent('div.field'); 
+	var $field = $(':file', $parent);
+	$field.hide();
 
 	$parent.prepend('<div class="upload-box" />');
 	var $box = $('div.upload-box', $parent);
 
 	// Add a button.
-	$parent.prepend('<div class="button upload-file">Upload file</div>');
-	var $button = $('div.upload-file', $parent);
+	$parent.prepend('<div class="button upload-button">Upload file</div>');
+	var $button = $('div.upload-button', $parent);
 	
 	var uploader = new qq.FileUploaderBasic({
 		element: $box[0],

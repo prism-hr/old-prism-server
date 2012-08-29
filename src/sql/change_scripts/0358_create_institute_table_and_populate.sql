@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS institution (
+CREATE TABLE IF NOT EXISTS INSTITUTION (
   id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   name varchar(100) NOT NULL DEFAULT '',
   country_code varchar(3) NOT NULL DEFAULT '',
@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS institution (
 )
 ENGINE = InnoDB
 ;
-INSERT INTO institution (name, country_code, enabled) VALUES 
+INSERT INTO INSTITUTION (name, country_code, enabled) VALUES 
 	('Abu Dhabi University', 'AE', TRUE),
 	('Ajman University of Science and Technology', 'AE', TRUE),
 	('Al Ain University of Science and Technology', 'AE', TRUE),

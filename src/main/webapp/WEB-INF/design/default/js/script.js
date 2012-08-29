@@ -293,13 +293,13 @@ function fixedTip($object, text)
 // ------------------------------------------------------------------------------
 // Set up a div.field container with a file INPUT field for AJAX uploading.
 // ------------------------------------------------------------------------------
-function watchUpload($field)
+function watchUpload($field, $deleteFunction)
 {       
 	var $parent = $field.parent('div.field'); 
 
 	// Add a button.
 	$parent.prepend('<button class="upload-file" type="button">Upload file</button>');
-	var $button = $parent.children('button.upload-file');
+	var $button = $('button.upload-file', $parent);
 	
 	var uploader = new qq.FileUploaderBasic({
 		element: $parent[0],

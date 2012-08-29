@@ -7,7 +7,7 @@ $(document).ready(function()
 	var currentYear = now.getFullYear();
 	if (currentYear == '2012')
 	{
-		$('body').addClass('beta');	
+		$('#middle').append('<span id="beta-badge"/>');	
 	}
 
 	// ------------------------------------------------------------------------------
@@ -297,12 +297,15 @@ function watchUpload($field, $deleteFunction)
 {       
 	var $parent = $field.parent('div.field'); 
 
+	$parent.prepend('<div class="upload-box" />');
+	var $box = $('div.upload-box', $parent);
+
 	// Add a button.
 	$parent.prepend('<button class="upload-file" type="button">Upload file</button>');
 	var $button = $('button.upload-file', $parent);
 	
 	var uploader = new qq.FileUploaderBasic({
-		element: $parent[0],
+		element: $box[0],
 		button: $button[0],
 		action: '/pgadmissions/documents/async',
 		params: { type: $field.attr('data-type') },

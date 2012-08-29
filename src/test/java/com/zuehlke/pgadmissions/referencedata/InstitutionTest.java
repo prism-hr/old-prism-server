@@ -13,11 +13,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class InstitutionTest {
 
     @Test
+    @Ignore
     public void setup() {
         Institutions institutions = null;
         try {
@@ -30,12 +32,10 @@ public class InstitutionTest {
         assertNotNull(institutions);
         assertEquals(5871, institutions.institutions.size());
         
-        
         for (Institution i : institutions.institutions) {
             i.name = i.name.replace("'", "\\'");
             i.name = i.name.replace("\"", "\\\"");
             System.out.println(String.format( "\t('%s', '%s', TRUE),", i.name, i.country));
-            
         }
     }
 }

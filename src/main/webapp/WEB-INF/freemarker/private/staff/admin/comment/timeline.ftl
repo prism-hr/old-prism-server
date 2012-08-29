@@ -66,7 +66,7 @@
 										</div>
 										<p><em>${timelineObject.interview.furtherDetails?html}</em></p>                  
 										<p class="datetime"><span data-desc="Date and Time"></span> ${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
-										<#if timelineObject.interview.locationURL?length &gt; 0><p class="location"><span data-desc="Location"></span><a href="${timelineObject.interview.locationURL}" target="_blank">${timelineObject.interview.locationURL?html}</a></p></#if>
+										<#if timelineObject.interview.locationURL?length &gt; 0><p class="location"><span data-desc="Location"></span><a href="${timelineObject.interview.locationURL}" target="_blank">Directions to interview</a></p></#if>
 									</div>
 								</li>
 							</ul>

@@ -24,7 +24,15 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */
 #wrapper { background: url(../../images/bg_wrapper.jpg) no-repeat 0 10px; margin: 0 auto; width: 950px; }
-body.beta #wrapper { background-image: url(../../images/bg_wrapper_beta.jpg); }
+#beta-badge {
+	background: url(../../images/beta-badge.png) no-repeat;
+	display: block;
+	width: 96px;
+	height: 96px;
+	position: absolute;
+	left: 0;
+	top: 0;
+}	
 
 
 /* HEADER ------------------------------------------------------------------------------------------------- */

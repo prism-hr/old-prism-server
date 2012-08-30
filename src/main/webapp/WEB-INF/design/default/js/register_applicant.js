@@ -18,12 +18,22 @@ $(document).ready(function()
 	el.blur(function(e) {
 		if (e.target.value == '')
 			e.target.value = e.target.defaultValue;
-	}); 
+	});
 
 
 	$('#registration-box button').click(function()
 	{
-		$('#firstName, #lastName').trigger('focus'); // set fields to blank if they have default values.
+		var field;
+		field = $('#firstName')[0];
+		if (field.value == e.defaultValue)
+		{
+			field.value = '';
+		}
+		field = $('#lastName')[0];
+		if (field.value == e.defaultValue)
+		{
+			field.value = '';
+		}
 		$('#registration-box').append('<div class="ajax" />');
 		return true;
 	});

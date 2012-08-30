@@ -11,6 +11,6 @@ public class GenderTest {
 	public void shouldOutputCorrectDisplayValues(){
 		Assert.assertEquals("Female", Gender.FEMALE.getDisplayValue());
 		Assert.assertEquals("Male", Gender.MALE.getDisplayValue());
-		Assert.assertEquals("Prefer not to say", Gender.PREFER_NOT_TO_SAY.getDisplayValue());
+		Assert.assertEquals("Indeterminate", Gender.INDETERMINATE.getDisplayValue());
 	}
 }

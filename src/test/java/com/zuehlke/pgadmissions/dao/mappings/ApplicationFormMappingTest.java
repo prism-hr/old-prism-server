@@ -54,6 +54,7 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
@@ -120,7 +121,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().save(application);
 		flushAndClearSession();
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2).requiresVisa(true)
+				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceCountry(country2).requiresVisa(true)
 				.englishFirstLanguage(true).phoneNumber("abc").applicationForm(application).toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);

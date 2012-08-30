@@ -136,7 +136,7 @@ public class RegisterFormValidatorTest {
 	
 	@Test
 	@DirtiesContext
-	public void shouldRejectIfContainsSpecialChars() {
+	public void shouldNotRejectIfContainsSpecialChars() {
 		user.setPassword(" 12o*-lala");
 		user.setConfirmPassword(" 12o*-lala");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
@@ -144,8 +144,7 @@ public class RegisterFormValidatorTest {
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("user.password.nonalphanumeric", mappingResult.getFieldError("password").getCode());
+		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
 	@Test

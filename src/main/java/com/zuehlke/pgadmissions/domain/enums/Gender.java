@@ -2,7 +2,10 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum Gender {
 
-	FEMALE("Female"), MALE("Male"), PREFER_NOT_TO_SAY("Prefer not to say"); 
+	FEMALE("Female"), 
+	MALE("Male"), 
+	PREFER_NOT_TO_SAY("Prefer not to say"),
+	INDETERMINATE("Indeterminate"); 
 	
 	private final String displayValue;
 	
@@ -13,8 +16,4 @@ public enum Gender {
 	private Gender(String displayValue) {
 		this.displayValue = displayValue;
 	}
-
-	
-	
-	
 }

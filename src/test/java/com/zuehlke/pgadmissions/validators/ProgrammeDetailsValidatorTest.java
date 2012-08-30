@@ -180,7 +180,7 @@ public class ProgrammeDetailsValidatorTest {
         EasyMock.verify(programInstanceDAOMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
-        Assert.assertEquals("You must only enter valid characters.", mappingResult.getFieldError("suggestedSupervisors[0].firstname").getDefaultMessage());
+        Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("suggestedSupervisors[0].firstname").getDefaultMessage());
         Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
     }	
 
@@ -226,7 +226,7 @@ public class ProgrammeDetailsValidatorTest {
         EasyMock.verify(programInstanceDAOMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
-        Assert.assertEquals("You must only enter valid characters.", mappingResult.getFieldError("suggestedSupervisors[0].lastname").getDefaultMessage());
+        Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("suggestedSupervisors[0].lastname").getDefaultMessage());
         Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
     }   
 

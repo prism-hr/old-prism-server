@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 
@@ -45,7 +46,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetPersonalDetailsById() throws ParseException {
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
+				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceCountry(country)
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
 				.applicationForm(applicationForm).toPersonalDetails();
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -62,7 +63,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
-				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
+				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceCountry(country)
 				.applicationForm(applicationForm)
 				.ethnicity(ethnicity).disability(disability).toPersonalDetails();
 		personalDetailDAO.save(personalDetails);
@@ -93,7 +94,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country)//
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))//
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").email("email")//
-				.firstName("firstName").gender(Gender.MALE).lastName("lastname")//
+				.firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname")//
 				.residenceCountry(country).ethnicity(eth).disability(dis).applicationForm(applicationForm).toPersonalDetails();
 
 		personalDetailDAO.save(personalDetails);

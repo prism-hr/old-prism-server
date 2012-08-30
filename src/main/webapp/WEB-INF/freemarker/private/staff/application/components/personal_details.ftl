@@ -28,6 +28,11 @@
     <div class="row-group">
     
       <div class="admin_row">
+        <label class="admin_row_label">Title</label>
+        <div class="field">${(applicationForm.personalDetails.title?capitalize)!"Not Provided"}</div>
+      </div>
+    
+      <div class="admin_row">
         <label class="admin_row_label">First Name</label>
         <div class="field">${(applicationForm.personalDetails.firstName?html)!"Not Provided"}</div>
       </div>

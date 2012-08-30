@@ -23,6 +23,7 @@ $(document).ready(function()
 
 	$('#registration-box button').click(function()
 	{
+		$('#firstName, #lastName').trigger('focus'); // set fields to blank if they have default values.
 		$('#registration-box').append('<div class="ajax" />');
 		return true;
 	});

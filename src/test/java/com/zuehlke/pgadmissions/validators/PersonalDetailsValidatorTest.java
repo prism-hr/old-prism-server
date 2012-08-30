@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.Title;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testContext.xml")
@@ -39,6 +40,15 @@ public class PersonalDetailsValidatorTest {
 		assertTrue(personalDetailValidator.supports(PersonalDetails.class));
 	}
 
+	@Test
+    public void shouldRejectIfTitleIsEmpty() {
+        personalDetails.setTitle(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "title");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("title").getCode());
+    }
+	
 	@Test
 	public void shouldRejectIfFirstNameIsEmpty() {
 		personalDetails.setFirstName(null);
@@ -251,7 +261,8 @@ public class PersonalDetailsValidatorTest {
 				.applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm())//
 				.country(new CountryBuilder().toCountry())//
 				.dateOfBirth(new Date()).email("email@test.com").firstName("bob")//
-				.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith")//
+				.gender(Gender.INDETERMINATE).lastName("smith")//
+				.title(Title.PROFESSOR)//
 				.residenceCountry(new CountryBuilder().toCountry())//
 				.phoneNumber("abc")//
 				.ethnicity(new EthnicityBuilder().id(23).toEthnicity())//

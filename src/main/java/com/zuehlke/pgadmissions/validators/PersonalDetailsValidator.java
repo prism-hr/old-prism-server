@@ -27,6 +27,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		}
 		
 		Date today = new Date();
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "dropdown.radio.select.none");

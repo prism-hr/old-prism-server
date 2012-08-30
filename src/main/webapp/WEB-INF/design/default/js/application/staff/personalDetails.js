@@ -87,51 +87,6 @@ $(document).ready(function(){
 		
 	});
 	
-	
-	//maternal guardian nationalities
-	$('#addMaternalNationalityButton').on("click", function(){
-		if( $('#maternalNationalityCountry option:selected').val()!= ''){
-			
-			var html = '<span>' +
-	  	 	'<div class="row">'+
-	  	 	'	<label class="label">Maternal Guardian Nationality</label>'+
-			'	<div class="field">'+
-			'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val() + '}' + "'/>" +
-	  		'		<a class="button-delete">Delete</a><br/>'+
-	  		'	</div>'+
-	  		'</div>'+
-	  	'</span> ';
-			
-			
-			$('#existingMaternalNationalities').append(html);
-			
-			$('#maternalNationalityCountry').val("");
-		}
-		
-	});
-	
-	//paternal guardian nationalities
-	$('#addPaternalNationalityButton').on("click", function(){
-		if( $('#paternalNationalityCountry option:selected').val()!= ''){
-			var html = '<span>' +
-	  	 	'<div class="row">'+
-	  	 	'	<label class="label">Paternal Guardian Nationality</label>'+
-			'	<div class="field">'+
-			'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()   + '}' + "'/>" +
-	  		'		<a class="button-delete">Delete</a> <br/>'+
-	  		'	</div>'+
-	  		'</div>'+
-	  	'</span> ';
-			
-			
-			$('#existingPaternalNationalities').append(html);
-			$('#paternalNationalityCountry').val("");
-		}
-	});
-	
-	
 	$('#personalDetailsSaveButton').on("click", function(){		
 		
 
@@ -156,32 +111,12 @@ $(document).ready(function(){
 		//candidate nationalities
 		if( $('#candidateNationalityCountry option:selected').val()!= ''){
 			var html = 	"<span><input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  + '}' + "'/>" + '</span>';
-				
-			
 			$('#existingCandidateNationalities').append(html);
 		}
 		
-
-		//maternal nationalities
-		if( $('#maternalNationalityCountry option:selected').val()!= ''){
-			var html = 	"<span><input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  + 
-			'}' + "'/></span>";
-			
-			$('#existingMaternalNationalities').append(html);
-		}
-		
-		//paternal nationalities
-		if( $('#paternalNationalityCountry option:selected').val()!= ''){
-			
-			var html = 	"<span><input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +
-			'}' + "'/></span>";
-			
-			$('#existingPaternalNationalities').append(html);
-		}
-		
-		
 		//general post data
 		var postData ={ 
+		        title: $("#title").val(),
 				firstName: $("#firstName").val(), 
 				lastName: $("#lastName").val(), 
 				email: $("#email").val(),
@@ -195,8 +130,7 @@ $(document).ready(function(){
 				candidateNationalities:"",
 				maternalGuardianNationalities:"",
 				paternalGuardianNationalities:"",
-				phoneNumbers:""
-				
+				phoneNumbers:""				
 			};
 		
 		var gender =  $("input[name='genderRadio']:checked").val();

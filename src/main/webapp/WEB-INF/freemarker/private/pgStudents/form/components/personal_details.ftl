@@ -68,6 +68,28 @@
 				</#if>
             
           	<div class="row-group">
+          	
+          	     <div class="row">
+                    <label class="plain-label">Title<em>*</em></label>
+                    <span class="hint" data-desc="<@spring.message 'personalDetails.title'/>"></span>
+                    <div class="field">
+                          <select class="full" name="title" id="title" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
+                            <option value="">Select...</option>
+                            <#list titles as title>
+                            <option value="${title}" <#if personalDetails.title?? &&  personalDetails.title == title >selected="selected"</#if>>${title.displayValue?html}</option>               
+                        </#list>
+                        </select>                
+                    </div>
+                </div>
+                <@spring.bind "personalDetails.title" /> 
+                <#list spring.status.errorMessages as error>
+                    <div class="row">
+                        <div class="field">
+                            <span class="invalid">${error}</span>
+                        </div>
+                    </div>
+                </#list>
+          	
 				<div class="row">
 					<label class="plain-label grey-label">First Name<em class="grey-label">*</em></label>
 					 <span class="hint" data-desc="<@spring.message 'personalDetails.firstname'/>"></span>
@@ -99,9 +121,7 @@
 								/> ${gender.displayValue}</label>
 											 
 						</#list>          		
-            			
-                		 
-					</div>
+            		</div>
 				</div>
 				<@spring.bind "personalDetails.gender" /> 
 				<#list spring.status.errorMessages as error>

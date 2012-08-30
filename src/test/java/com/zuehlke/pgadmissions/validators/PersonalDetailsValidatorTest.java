@@ -261,7 +261,7 @@ public class PersonalDetailsValidatorTest {
 				.applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm())//
 				.country(new CountryBuilder().toCountry())//
 				.dateOfBirth(new Date()).email("email@test.com").firstName("bob")//
-				.gender(Gender.INDETERMINATE).lastName("smith")//
+				.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith")//
 				.title(Title.PROFESSOR)//
 				.residenceCountry(new CountryBuilder().toCountry())//
 				.phoneNumber("abc")//

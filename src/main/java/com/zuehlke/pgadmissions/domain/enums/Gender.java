@@ -4,8 +4,7 @@ public enum Gender {
 
 	FEMALE("Female"), 
 	MALE("Male"), 
-	PREFER_NOT_TO_SAY("Prefer not to say"),
-	INDETERMINATE("Indeterminate"); 
+	PREFER_NOT_TO_SAY("Prefer not to say");
 	
 	private final String displayValue;
 	

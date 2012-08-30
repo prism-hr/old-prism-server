@@ -7,7 +7,7 @@ $(document).ready(function()
 	var currentYear = now.getFullYear();
 	if (currentYear == '2012')
 	{
-		$('#middle').append('<span id="beta-badge"/>');	
+		$('body').addClass('beta');	
 	}
 
 	// ------------------------------------------------------------------------------
@@ -293,100 +293,73 @@ function fixedTip($object, text)
 // ------------------------------------------------------------------------------
 // Set up a div.field container with a file INPUT field for AJAX uploading.
 // ------------------------------------------------------------------------------
-function watchUpload($field, deleteFunction)
+function watchUpload($field, $deleteFunction)
 {
-	// Hide the upload field.
-	$field.hide();
+	var $container  = $field.parent('div.field');
 	
-	// Create a placeholder for the upload functionality.
-	var $parent = $field.parent('div.field'); 
-	$parent.prepend('<div class="upload-box" />');
-	var $box = $('div.upload-box', $parent);
+	/* Delete button functionality. */
+	$container.on('click', '.button-delete', function()
+	{
+		var $hidden  = $container.find('input.file');
+		if (!$deleteFunction)
+		{
+			deleteUploadedFile($hidden);
+		}
+		else
+		{
+			$deleteFunction();
+		}
+	
+		$container.find('span a').each(function()
+		{
+			$(this).remove();
+		});
+	
+	
+		$hidden.val(''); // clear field value.
+		$container.removeClass('uploaded');
+	
+		// Replace the file field with a fresh copy (that's the only way we can set its value to empty).
+		var id		= $field.attr('id');
+		var ref		= $field.attr('data-reference');
+		var type	= $field.attr('data-type');
+		$field.replaceWith('<input class="full" type="file" name="file" value="" id="' + id +'" data-reference="' + ref + '" data-type="' + type + '" />');
+		watchUpload($('#'+id));
+	});
 
-	var $hidden = $('input.file:hidden', $parent);
-	
-	// Add an upload button.
-	$parent.prepend('<div class="button upload-button">Upload file</div>');
-	var $button = $('div.upload-button', $parent);
-	
-	var uploader = new qq.FileUploaderBasic({
-		element:			$box[0],
-		button:				$button[0],
-		action:				'/pgadmissions/documents/async',
-		params: {
-			type: $field.attr('data-type')
-		},
-		multiple:			false,
-		allowedExtensions:	['pdf'],
-		acceptFiles: 		['application/pdf'],
-		sizeLimit: 			10 * 1000 * 1000, // 10 megs
-		debug: 				false,
-		inputName:			'file',
-		onComplete: function(id, filename, data)	// completed upload
+	$container.on('change', $field, function()
+	{
+		var input    = this.children[0];
+		var $hidden  = $container.find('input.file');
+		var isOkSize = true;
+		try
 		{
-			$parent.removeClass('posting');
-			console.log('complete: ' + filename);
-
-			if ($(data).find('span.invalid').length > 0)
-			{
-				// There was an uploading error (determined by the presence of a SPAN.invalid tag).
-				$parent.append(data);
-			}
-			else if ($(data).find('input').length == 0)
-			{
-				// There was (probably) a server error.
-				$parent.append('<span class="invalid">Document must be a PDF.</span>');
-			}
-			else
-			{
-				// File was uploaded successfully.
-				var $hidden_parent = $hidden.parent();
-				$hidden_parent.html(data);
-				$parent.addClass('uploaded');
-				var doc_type = $upload_field.attr('data-reference');
-				$('a.button-delete', $hidden_parent).attr({ 'data-desc': 'Delete ' + doc_type })
-				   .qtip(tooltipSettings);
-			}
-		},
-		onCancel:	function(id, filename)
+			isOkSize = input.files[0].size < 10485760;
+		}
+		catch(error)
 		{
-			$parent.removeClass('posting');
-			console.log('cancel: ' + filename);
-		},
-		onError:	function(id, fileName, xhr)	// error during upload
+			alert(error);
+		}
+		if (isOkSize) // 10MB in bytes
 		{
-			$parent.removeClass('posting');
-			$parent.append('<span class="invalid">Upload failed; please retry.</span>');
-		},
-		onUpload:	function(id, filename)		// file starts uploading
-		{
-			if (!deleteFunction)
+			if (!$deleteFunction)
 			{
 				deleteUploadedFile($hidden);
 			}
 			else
 			{
-				deleteFunction();
+				$deleteFunction();
 			}
-			
-			$parent.addClass('posting');
-			console.log('upload: ' + filename);
-		},
-		onProgress:	function() {}, 				// no requirement for a progress bar.
-		onSubmit:	function(id, filename)		// when a file is chosen
-		{
-			$('span.invalid', $parent).remove();
-			console.log('submit: ' + filename);
-		},
-		messages: {
-			typeError: "Document must be a PDF.",
-			sizeError: "Document must be at most 10MB.",
-		},
-		showMessage: function(message)
-		{
-			$parent.append('<span class="invalid">' + message + '</span>');
+			$field.attr("readonly", "readonly");
+			$container.addClass('posting');
+			doUpload($(input));
+			$field.removeAttr("readonly");
 		}
-	});           
+		else
+		{
+			$container.append('<span class="invalid">Document must be at most 10MB.</span>');
+		}
+	});
 }
 
 
@@ -410,6 +383,56 @@ function deleteUploadedFile($hidden_field)
 			
 		});
 	}
+}
+
+
+// ------------------------------------------------------------------------------
+// Upload a file from an INPUT field using AJAX.
+// ------------------------------------------------------------------------------
+function doUpload($upload_field)
+{	
+  var $container  = $upload_field.parent('div.field');
+  var $hidden     = $container.find('span input');
+  var $hfParent   = $hidden.parent();
+  var $progress   = $container.find('span.progress');
+
+	// Remove any previous error messages.
+	$container.find('span.invalid').remove();
+
+	$.ajaxFileUpload({
+    url:            '/pgadmissions/documents/async',
+    secureuri:      false,
+    fileElementId:  $upload_field.attr('id'),	
+    dataType:       'text',
+    data:           { type: $upload_field.attr('data-type') },
+    success: function (data)
+    {		
+			$container.removeClass('posting');
+			if ($(data).find('span.invalid').length > 0)
+			{
+        // There was an uploading error.
+				$container.append(data);
+      }
+      else if ($(data).find('input').length == 0)
+      {
+        // There was (probably) a server error.
+        $container.append('<span class="invalid">Could not upload.</span>');
+      }
+			else
+			{
+				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
+				$hfParent.html(data);
+				$container.addClass('uploaded');
+				var doc_type = $upload_field.attr('data-reference');
+				$('a.button-delete', $hfParent).attr({ 'data-desc': 'Delete ' + doc_type })
+                                       .qtip(tooltipSettings);
+			}
+    },
+		error: function()
+		{
+			$container.append('<span class="invalid">Upload failed; please retry.</span>');
+		}
+  });
 }
 
 
@@ -600,12 +623,12 @@ function numbersOnly(event)
 {
 	// http://stackoverflow.com/questions/995183/how-to-allow-only-numeric-0-9-in-html-inputbox-using-jquery
 	if (event.keyCode == 46 ||	// backspace
-		event.keyCode == 8 ||	// delete
-		event.keyCode == 9 ||	// tab
-		event.keyCode == 27 ||	// escape
-		event.keyCode == 13 || 	// enter
-		(event.keyCode == 65 && event.ctrlKey === true) || // Ctrl+A
-		(event.keyCode >= 35 && event.keyCode <= 39)) // home, end, left, right
+			event.keyCode == 8 ||		// delete
+			event.keyCode == 9 ||		// tab
+			event.keyCode == 27 ||	// escape
+			event.keyCode == 13 || 	// enter
+			(event.keyCode == 65 && event.ctrlKey === true) || // Ctrl+A
+			(event.keyCode >= 35 && event.keyCode <= 39)) // home, end, left, right
 	{
 		// let it happen, don't do anything
 		return;

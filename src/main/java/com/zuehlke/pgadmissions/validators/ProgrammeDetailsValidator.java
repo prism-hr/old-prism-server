@@ -51,8 +51,8 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 			errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");
 		}
 		
-		if (programInstances != null && !programInstances.isEmpty()) {
-		    DateTime startDateFirstProgrameInstance = new DateTime(programInstances.get(0).getApplicationDeadline());
+		if (programInstances != null && !programInstances.isEmpty() && programmeDetail.getStartDate() != null) {
+		    DateTime startDateFirstProgrameInstance = new DateTime(programInstances.get(0).getApplicationStartDate());
 		    DateTime derivedEndDateLastProgrameInstance = new DateTime(programInstances.get(programInstances.size()-1).getApplicationDeadline()).plusYears(1);
 		    DateTime userEnteredPreferredStartDate = new DateTime(programmeDetail.getStartDate());
 		

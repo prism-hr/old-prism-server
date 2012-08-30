@@ -187,7 +187,7 @@ public class ApplicationFormValidatorTest {
 	@DirtiesContext
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
 		ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
-		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE);
+		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE_LEARNING);
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "programmeDetails.studyOption");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
 				null);
@@ -205,7 +205,7 @@ public class ApplicationFormValidatorTest {
 	@DirtiesContext
 	public void shouldRejectIfNoCurrentProgrammeInstancesExist() {
 		ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
-		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE);
+		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE_LEARNING);
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "program");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
 				Collections.EMPTY_LIST);

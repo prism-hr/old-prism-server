@@ -414,56 +414,6 @@ function deleteUploadedFile($hidden_field)
 
 
 // ------------------------------------------------------------------------------
-// Upload a file from an INPUT field using AJAX.
-// ------------------------------------------------------------------------------
-function doUpload($upload_field)
-{	
-	var $container  = $upload_field.parent('div.field');
-	var $hidden     = $container.find('span input');
-	var $hfParent   = $hidden.parent();
-	var $progress   = $container.find('span.progress');
-	
-	// Remove any previous error messages.
-	$container.find('span.invalid').remove();
-	
-	$.ajaxFileUpload({
-		url:            '/pgadmissions/documents/async',
-		secureuri:      false,
-		fileElementId:  $upload_field.attr('id'),	
-		dataType:       'text',
-		data:           { type: $upload_field.attr('data-type') },
-		success: function (data)
-		{		
-			$container.removeClass('posting');
-			if ($(data).find('span.invalid').length > 0)
-			{
-				// There was an uploading error.
-				$container.append(data);
-			}
-			else if ($(data).find('input').length == 0)
-			{
-				// There was (probably) a server error.
-				$container.append('<span class="invalid">Could not upload.</span>');
-			}
-			else
-			{
-				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
-				$hfParent.html(data);
-				$container.addClass('uploaded');
-				var doc_type = $upload_field.attr('data-reference');
-				$('a.button-delete', $hfParent).attr({ 'data-desc': 'Delete ' + doc_type })
-				   .qtip(tooltipSettings);
-			}
-		},
-		error: function()
-		{
-			$container.append('<span class="invalid">Upload failed; please retry.</span>');
-		}
-	});
-}
-
-
-// ------------------------------------------------------------------------------
 // Check whether a form is empty (no user input).
 // ------------------------------------------------------------------------------
 function isFormEmpty($container)

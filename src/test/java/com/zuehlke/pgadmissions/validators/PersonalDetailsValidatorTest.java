@@ -83,7 +83,7 @@ public class PersonalDetailsValidatorTest {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "firstName");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("You must only enter valid characters.", mappingResult.getFieldError("firstName").getDefaultMessage());
+        Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("firstName").getDefaultMessage());
     }
 
 	@Test
@@ -111,7 +111,7 @@ public class PersonalDetailsValidatorTest {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "lastName");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("You must only enter valid characters.", mappingResult.getFieldError("lastName").getDefaultMessage());
+        Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("lastName").getDefaultMessage());
     }
 
 	@Test

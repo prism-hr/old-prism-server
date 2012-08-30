@@ -254,3 +254,6 @@ INSERT INTO COUNTRIES (name, code, enabled) VALUES
 ('Yemen','YE',TRUE),
 ('Zambia','ZM',TRUE),
 ('Zimbabwe','ZW',TRUE)
+;
+SET FOREIGN_KEY_CHECKS = 1
+;

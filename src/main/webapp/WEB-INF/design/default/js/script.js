@@ -7,7 +7,7 @@ $(document).ready(function()
 	var currentYear = now.getFullYear();
 	if (currentYear == '2012')
 	{
-		$('#middle').append('<span id="beta-badge"/>');	
+		$('body').addClass('beta');	
 	}
 
 	// ------------------------------------------------------------------------------
@@ -294,69 +294,10 @@ function fixedTip($object, text)
 // Set up a div.field container with a file INPUT field for AJAX uploading.
 // ------------------------------------------------------------------------------
 function watchUpload($field, $deleteFunction)
-{       
-	var $parent = $field.parent('div.field'); 
-	$parent.prepend('<div class="upload-box" />');
-	var $box = $('div.upload-box', $parent);
-
-	// Add a button.
-	$parent.prepend('<div class="button upload-button">Upload file</div>');
-	var $button = $('div.upload-button', $parent);
-	
-	var uploader = new qq.FileUploaderBasic({
-		element: $box[0],
-		button: $button[0],
-		action: '/pgadmissions/documents/async',
-		params: { type: $field.attr('data-type') },
-		multiple: false,
-		allowedExtensions: ['pdf'],
-		sizeLimit: 10 * 1000 * 1000, // 10 megs
-		debug: true,
-		inputName: 'file',
-		onComplete: function(id, filename, json)	// completed upload
-		{
-			$parent.removeClass('posting');
-			console.log('complete: ' + filename); console.log(json);
-		},
-		onCancel: function(id, filename)
-		{
-			console.log('cancel: ' + filename);
-		},
-		onError: function(id, fileName, xhr)	// error during upload
-		{
-			$parent.append('<span class="invalid">Upload failed; please retry.</span>');
-		},
-		onUpload: function(id, filename)	// file starts uploading
-		{
-			$parent.addClass('posting');
-			console.log('upload: ' + filename);
-		},
-		onProgress: function(id, fileName, loaded, total)
-		{
-			console.log('progress: ' + filename + ' (' + loaded + ' / ' + total + ')');
-		},
-		onSubmit: function(id, filename)
-		{
-			console.log('submit: ' + filename);
-		},	// when a file is chosen
-		messages: {
-			typeError: "Document must be a PDF.",
-			sizeError: "Document must be at most 10MB.",
-		},
-		showMessage: function(message)
-		{
-			$parent.append('<span class="invalid">' + message + '</span>');
-		}
-	});           
-}
-
-
-/*
-function watchUpload($field, $deleteFunction)
 {
   var $container  = $field.parent('div.field');
   
-	// Delete button functionality.
+	/* Delete button functionality. */
   $container.on('click', '.button-delete', function()
   {
     var $hidden  = $container.find('input.file');
@@ -411,7 +352,7 @@ function watchUpload($field, $deleteFunction)
 		 }
   });
 }
-*/
+
 
 // ------------------------------------------------------------------------------
 // Delete an uploaded file referenced by a hidden field.

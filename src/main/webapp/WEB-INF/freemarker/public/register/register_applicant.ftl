@@ -59,13 +59,13 @@
 		      		<p>&gt; Register Today...</p>
 		            <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
 		            
-		            <input id="firstName" type="text" name="firstName" value="<#if pendingUser.firstName && pendingUser.firstName?length == 0>First Name<#else>${pendingUser.firstName!"First Name"}</#if>" />
+		            <input id="firstName" type="text" name="firstName" placeholder="First Name" value="${pendingUser.firstName!"First Name"}" />
 		            <@spring.bind "pendingUser.firstName" /> 
               		<#list spring.status.errorMessages as error>		                                		
                     	<span class="invalid">${error}</span>                    		
                     </#list>
 		            
-		            <input id="lastName" type="text" name="lastName" value="<#if pendingUser.lastName && pendingUser.lastName?length == 0>Last Name<#else>${pendingUser.lastName!"Name Name"}</#if>" />
+		            <input id="lastName" type="text" name="lastName" placeholder="Last Name" value="${pendingUser.lastName!"Last Name"}" />
 		             <@spring.bind "pendingUser.lastName" /> 
 		           <#list spring.status.errorMessages as error>		                                		
                     	<span class="invalid">${error}</span>                    		

@@ -25,12 +25,12 @@ $(document).ready(function()
 	{
 		var field;
 		field = $('#firstName')[0];
-		if (field.value == e.defaultValue)
+		if (field.value == field.defaultValue)
 		{
 			field.value = '';
 		}
 		field = $('#lastName')[0];
-		if (field.value == e.defaultValue)
+		if (field.value == field.defaultValue)
 		{
 			field.value = '';
 		}

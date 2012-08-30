@@ -360,7 +360,7 @@ function watchUpload($field, deleteFunction)
 		},
 		onUpload:	function(id, filename)		// file starts uploading
 		{
-			if (!$deleteFunction)
+			if (!deleteFunction)
 			{
 				deleteUploadedFile($hidden);
 			}

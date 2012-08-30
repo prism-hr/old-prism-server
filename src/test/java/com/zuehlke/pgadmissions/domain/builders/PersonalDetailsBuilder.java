@@ -11,10 +11,12 @@ import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class PersonalDetailsBuilder {
 
 	private Integer id;
+	private Title title;
 	private String firstName;
 	private String lastName;
 	private Gender gender;
@@ -32,6 +34,11 @@ public class PersonalDetailsBuilder {
 	private Boolean requiresVisa;
 	private String phoneNumber;
 
+	public PersonalDetailsBuilder title(Title title) {
+	    this.title = title;
+	    return this;
+	}
+	
 	public PersonalDetailsBuilder phoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 		return this;
@@ -115,6 +122,7 @@ public class PersonalDetailsBuilder {
 	public PersonalDetails toPersonalDetails() {
 		PersonalDetails personalDetails = new PersonalDetails();
 		personalDetails.setId(id);
+		personalDetails.setTitle(title);
 		personalDetails.setApplication(applicationForm);
 		personalDetails.setCountry(country);
 		personalDetails.setDateOfBirth(dateOfBirth);

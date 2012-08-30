@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
@@ -34,7 +35,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadPersonalDetails() throws Exception {
 
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2)
+				.email("email").firstName("firstName").title(Title.BROTHER).gender(Gender.MALE).lastName("lastname").residenceCountry(country2)
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").applicationForm(applicationForm).toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -83,7 +84,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).country(country1)
-				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
+				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE)
 				.englishFirstLanguage(false).requiresVisa(false).phoneNumber("abc")
 				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
 				.toPersonalDetails();

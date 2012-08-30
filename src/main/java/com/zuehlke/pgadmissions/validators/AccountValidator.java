@@ -68,11 +68,7 @@ public class AccountValidator extends AbstractValidator {
 		if(passwordFieldsFilled && updatedUser.getNewPassword().length() > MAXIMUM_PASSWORD_CHARACTERS){
 			errors.rejectValue("newPassword", "user.password.large");
 		}
-		
-//		if(passwordFieldsFilled && !updatedUser.getNewPassword().matches("[a-zA-Z0-9+]+")){
-//			errors.rejectValue("newPassword", "user.password.nonalphanumeric");
-//		}
-		
+				
 		RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
 		if(userWithSameEmail != null && !userWithSameEmail.equals(existingUser)){
 				errors.rejectValue("email", "user.email.alreadyexists");

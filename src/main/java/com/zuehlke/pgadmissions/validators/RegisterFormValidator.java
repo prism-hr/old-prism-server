@@ -48,11 +48,6 @@ public class RegisterFormValidator extends AbstractValidator {
 			errors.rejectValue("password", "user.password.large");
 		}
 		
-		if(!record.getPassword().matches("[a-zA-Z0-9+]+")){
-			errors.rejectValue("password", "user.password.nonalphanumeric");
-		}
-		
-		
 		RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(record.getEmail());
 		if (userWithSameEmail != null && !record.equals(userWithSameEmail)) {
 			errors.rejectValue("email", "user.email.alreadyexists");

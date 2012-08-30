@@ -318,6 +318,14 @@ public class PdfDocumentBuilder {
 
 		table = new PdfPTable(2);
 		table.setWidthPercentage(100f);
+		
+		table.addCell(newTableCell("Title", smallBoldFont));
+		if (application.getPersonalDetails().getTitle() == null) {
+            table.addCell(newTableCell(null, smallFont));
+		} else {
+		    table.addCell(newTableCell(application.getPersonalDetails().getTitle().getDisplayValue(), smallFont));
+		}
+		
 		table.addCell(newTableCell("First Name", smallBoldFont));
 		table.addCell(newTableCell(application.getPersonalDetails().getFirstName(), smallFont));
 

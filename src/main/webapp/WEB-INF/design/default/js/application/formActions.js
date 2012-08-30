@@ -321,6 +321,7 @@ function loadPersonalDetails(clear){
 				checkLoadedSections();
 				if(clear){
 					$("input[name*='genderRadio']").prop('checked', false);
+					$("#title").val("");
 					$("#dateOfBirth").val("");
 					$("#country").val("");
 					$("#candidateNationalityCountry").val("");					

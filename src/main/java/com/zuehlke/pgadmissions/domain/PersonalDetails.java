@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
@@ -54,7 +55,11 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_country_id") })
 	private List<Country> candidateNationalities= new ArrayList<Country>();
 	
-	@Column(name = "first_name")
+	@Column(name = "title")
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.TitleEnumUserType")
+    private Title title;
+
+    @Column(name = "first_name")
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
 	private String firstName;
 
@@ -103,6 +108,14 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
+	}
+	
+	public Title getTitle() {
+	    return title;
+	}
+
+	public void setTitle(Title title) {
+	    this.title = title;
 	}
 
 	public String getFirstName() {

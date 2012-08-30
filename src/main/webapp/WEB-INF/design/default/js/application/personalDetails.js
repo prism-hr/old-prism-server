@@ -264,22 +264,7 @@ function postPersonalDetailsData(message)
 		var html = 	"<span><input type='hidden' name='candidateNationalities' value='" +$('#candidateNationalityCountry option:selected').val() + "'/>" + '</span>';
 		$('#existingCandidateNationalities').append(html);
 	}
-	
 
-	//maternal nationalities
-	if ($('#maternalNationalityCountry option:selected').val()!= '')
-	{
-		var html = 	"<span><input type='hidden' name='maternalGuardianNationalities' value='"  +$('#maternalNationalityCountry option:selected').val() + "'/></span>";
-		$('#existingMaternalNationalities').append(html);
-	}
-	
-	//paternal nationalities
-	if ($('#paternalNationalityCountry option:selected').val()!= '')
-	{
-		var html = 	"<span><input type='hidden' name='paternalGuardianNationalities' value='{" +$('#paternalNationalityCountry option:selected').val() + "'/></span>";
-		$('#existingPaternalNationalities').append(html);
-	}
-	
 	var acceptedTheTerms;
 	if ($("#acceptTermsPEDValue").val() == 'NO')
 	{
@@ -291,6 +276,7 @@ function postPersonalDetailsData(message)
 	}
 	//general post data
 	var postData ={ 
+	        title: $("#title").val(),
 			firstName: $("#firstName").val(), 
 			lastName: $("#lastName").val(), 
 			email: $("#email").val(),
@@ -308,7 +294,6 @@ function postPersonalDetailsData(message)
 			disability: $("#disability").val(), 
 			message: message,
 			acceptedTerms: acceptedTheTerms
-			
 		};
 	
 

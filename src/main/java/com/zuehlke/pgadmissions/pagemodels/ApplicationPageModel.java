@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
+import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.errors.FundingErrors;
 
@@ -35,6 +36,7 @@ public class ApplicationPageModel extends PageModel {
 	private List<Language> languages;
 	
 	private List<Gender> genders = new LinkedList<Gender>();
+	private List<Title> titles = new LinkedList<Title>();
 	private List<PhoneType> phoneTypes = new LinkedList<PhoneType>();
 	private List<DocumentType> documentTypes = new LinkedList<DocumentType>();
 
@@ -129,7 +131,15 @@ public class ApplicationPageModel extends PageModel {
 	public void setGenders(Gender[] genders) {
 		this.genders.addAll(Arrays.asList(genders));
 	}
+	
+	public List<Title> getTitles() {
+	    return titles;
+	}
 
+	public void setTitles(Title[] titles) {
+	    this.titles.addAll(Arrays.asList(titles));
+	}
+	
 	public List<PhoneType> getPhoneTypes() {
 		return phoneTypes;
 	}

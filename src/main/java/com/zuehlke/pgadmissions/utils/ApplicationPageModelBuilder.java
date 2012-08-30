@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
+import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.errors.ValidationErrorsUtil;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -63,6 +64,7 @@ public class ApplicationPageModelBuilder {
 		viewApplicationModel.setPhoneTypes(PhoneType.values());
 		viewApplicationModel.setFundingTypes(FundingType.values());
 		viewApplicationModel.setDocumentTypes(DocumentType.values());
+		viewApplicationModel.setTitles(Title.values());
 
 		viewApplicationModel.setView(view);
 		if (view != null && view.equals("errors")) {

@@ -493,7 +493,8 @@ jQuery.extend({
 				}						
             }catch(e)
 			{
-				jQuery.handleError(s, xml, null, e);
+				//jQuery.handleError(s, xml, null, e);
+				console.log(e);
 			}
             if ( xml || isTimeout == "timeout") 
 			{				
@@ -514,11 +515,13 @@ jQuery.extend({
                         if( s.global )
                             jQuery.event.trigger( "ajaxSuccess", [xml, s] );
                     } else
-                        jQuery.handleError(s, xml, status);
+                        //jQuery.handleError(s, xml, status);
+						status = "error";
                 } catch(e) 
 				{
                     status = "error";
-                    jQuery.handleError(s, xml, status, e);
+                    //jQuery.handleError(s, xml, status, e);
+					console.log(e);
                 }
 
                 // The request was completed
@@ -543,7 +546,8 @@ jQuery.extend({
 											
 										} catch(e) 
 										{
-											jQuery.handleError(s, xml, null, e);
+											//jQuery.handleError(s, xml, null, e);
+											console.log(e);
 										}									
 
 									}, 100)
@@ -579,7 +583,8 @@ jQuery.extend({
 
         } catch(e) 
 		{			
-            jQuery.handleError(s, xml, null, e);
+            //jQuery.handleError(s, xml, null, e);
+			console.log(e);
         }
 		
 		jQuery('#' + frameId).load(uploadCallback	);

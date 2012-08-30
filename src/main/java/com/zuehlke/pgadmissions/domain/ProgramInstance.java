@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
@@ -21,17 +22,24 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 @Access(AccessType.FIELD)
 public class ProgramInstance extends DomainObject<Integer> {
 
-
 	private static final long serialVersionUID = -5414750352686318033L;
 
 	@Column(name="deadline")
 	@Temporal(value = TemporalType.DATE)
 	private Date applicationDeadline;
 	
+	@Column(name="start_date")
+    @Temporal(value = TemporalType.DATE)
+    private Date applicationStartDate;
+    
+	@Column(name="academic_year")
+    private String academic_year;
+    
 	@Column(name = "study_option")
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.StudyOptionEnumUserType")
 	private StudyOption studyOption;
 	
+	@Transient
 	private int sequence;
 	
 	@ManyToOne
@@ -83,4 +91,19 @@ public class ProgramInstance extends DomainObject<Integer> {
 		this.program = program;
 	}
 
+    public Date getApplicationStartDate() {
+        return applicationStartDate;
+    }
+
+    public void setApplicationStartDate(Date applicationStartDate) {
+        this.applicationStartDate = applicationStartDate;
+    }
+
+    public String getAcademic_year() {
+        return academic_year;
+    }
+
+    public void setAcademicYear(String academic_year) {
+        this.academic_year = academic_year;
+    }
 }

@@ -8,12 +8,24 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 public class ProgramInstanceBuilder {
 	private Date applicationDeadline;
+	private Date applicationStartDate;
+	private String academicYear;
 	private StudyOption studyOption;
 	private Integer id;
 	private int sequence;
 	
 	private Program program;
 
+	public ProgramInstanceBuilder applicationStartDate(Date start){
+	    this.applicationStartDate = start;
+	    return this;
+	} 
+
+	public ProgramInstanceBuilder academicYear(String academicYear){
+	    this.academicYear = academicYear;
+	    return this;
+	} 
+	
 	public ProgramInstanceBuilder program(Program program){
 		this.program = program;
 		return this;
@@ -45,6 +57,8 @@ public class ProgramInstanceBuilder {
 		programInstance.setId(id);
 		programInstance.setSequence(sequence);
 		programInstance.setProgram(program);
+		programInstance.setAcademicYear(academicYear);
+		programInstance.setApplicationStartDate(applicationStartDate);
 		return programInstance;
 		
 	}

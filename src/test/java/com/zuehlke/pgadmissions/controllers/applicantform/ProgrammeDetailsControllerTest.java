@@ -99,10 +99,10 @@ public class ProgrammeDetailsControllerTest {
 		};
 
 		EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(
-				Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE));
+				Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE_LEARNING));
 		EasyMock.replay(programmeDetailsServiceMock);
 		StudyOption[] studyOptions = controller.getStudyOptions(applicationNumber);
-		assertArrayEquals(studyOptions, new StudyOption[] { StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE });
+		assertArrayEquals(studyOptions, new StudyOption[] { StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE_LEARNING });
 	}
 
 	@Test

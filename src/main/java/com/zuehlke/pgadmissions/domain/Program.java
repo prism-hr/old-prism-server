@@ -25,6 +25,8 @@ public class Program extends DomainObject<Integer> {
 	private String code;
 
 	private String title;
+	
+	private boolean enabled;
 
 	@ManyToMany(mappedBy = "programsOfWhichApprover")
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
@@ -160,4 +162,12 @@ public class Program extends DomainObject<Integer> {
 	public void setSupervisors(List<RegisteredUser> supervisors) {
 		this.supervisors = supervisors;
 	}
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

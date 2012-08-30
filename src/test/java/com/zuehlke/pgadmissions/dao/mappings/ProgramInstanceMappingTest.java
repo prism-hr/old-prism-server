@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.dao.mappings;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -24,7 +27,7 @@ public class ProgramInstanceMappingTest extends AutomaticRollbackTestCase {
 		Date applicationDeadline = new Date();
 		
 		
-		ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(applicationDeadline).studyOption(StudyOption.FULL_TIME).sequence(7).toProgramInstance();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(applicationDeadline).studyOption(StudyOption.FULL_TIME).sequence(7).applicationStartDate(new Date()).academicYear("2013").toProgramInstance();
 		sessionFactory.getCurrentSession().saveOrUpdate(programInstance);
 		assertNotNull(programInstance.getId());
 		ProgramInstance reloadedProgramInstance = (ProgramInstance) sessionFactory.getCurrentSession().get(ProgramInstance.class, programInstance.getId());
@@ -37,7 +40,6 @@ public class ProgramInstanceMappingTest extends AutomaticRollbackTestCase {
 		
 		assertEquals(DateUtils.truncate(applicationDeadline, Calendar.DATE), reloadedProgramInstance.getApplicationDeadline());
 		assertEquals(StudyOption.FULL_TIME, reloadedProgramInstance.getStudyOption());
-		assertEquals(7, reloadedProgramInstance.getSequence());
 		assertEquals(program, reloadedProgramInstance.getProgram());
 	}
 }

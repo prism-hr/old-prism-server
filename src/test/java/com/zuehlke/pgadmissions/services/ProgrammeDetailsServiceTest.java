@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -42,7 +41,7 @@ public class ProgrammeDetailsServiceTest {
 	@Test
 	public void shouldReturnStudyOptionsAvaialbleForProgram(){
 		ProgramInstance programInstanceOne = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).toProgramInstance();
-		ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.PART_TIME_DISTANCE).toProgramInstance();
+		ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.PART_TIME_DISTANCE_LEARNING).toProgramInstance();
 		ProgramInstance programInstanceThree = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).toProgramInstance();
 		Program program = new ProgramBuilder().id(6).toProgram();
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstanceOne, programInstanceTwo, programInstanceThree));
@@ -50,7 +49,7 @@ public class ProgrammeDetailsServiceTest {
 		
 		List<StudyOption> options =  programmeService.getAvailableStudyOptions(program);
 		assertEquals(2, options.size());
-		assertTrue(options.containsAll(Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE)));
+		assertTrue(options.containsAll(Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE_LEARNING)));
 	}
 	
 	@Before

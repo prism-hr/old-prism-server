@@ -36,15 +36,17 @@ public class QualificationInstitutionDAO {
     }
     
     @SuppressWarnings("unchecked")
-    public List<QualificationInstitution> getInstitutionsByCountryCode(String code) {
-        return sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class).add(Restrictions.eq("code", code)).addOrder(Order.asc("name")).list();
+    public List<QualificationInstitution> getInstitutionsByCountryName(String country_name) {
+        return sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class)
+                .add(Restrictions.eq("country_name", country_name))
+                .addOrder(Order.asc("name")).list();
     }
     
     @SuppressWarnings("unchecked")
-    public List<QualificationInstitution> getInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String code, String term) {
+    public List<QualificationInstitution> getInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String name, String term) {
         return sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class)
-                .add(Restrictions.eq("code", code))
-                .add(Restrictions.ilike("name", term, MatchMode.ANYWHERE))
+                .add(Restrictions.and(Restrictions.eq("country_name", name), 
+                        Restrictions.or(Restrictions.ilike("name", term, MatchMode.END), Restrictions.ilike("name", term, MatchMode.START))))
                 .addOrder(Order.asc("name")).list();
     }
 }

@@ -469,7 +469,7 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell(qualification.getQualificationInstitution(), smallFont));
 
 				table.addCell(newTableCell("Qualification Type", smallBoldFont));
-				table.addCell(newTableCell(qualification.getQualificationType(), smallFont));
+				table.addCell(newTableCell(qualification.getQualificationType().getName(), smallFont));
 
 				table.addCell(newTableCell("Title/Subject", smallBoldFont));
 				table.addCell(newTableCell(qualification.getQualificationSubject(), smallFont));

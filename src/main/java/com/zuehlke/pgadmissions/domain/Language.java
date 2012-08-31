@@ -14,6 +14,8 @@ public class Language extends DomainObject<Integer> {
 	
 	private static final long serialVersionUID = -4719304115154138995L;
 	
+	private Boolean enabled;
+	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	private String name;
 	
@@ -37,5 +39,13 @@ public class Language extends DomainObject<Integer> {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
 }

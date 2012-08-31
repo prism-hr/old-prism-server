@@ -16,22 +16,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
+import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -46,36 +49,39 @@ public class QualificationController {
 	private final DatePropertyEditor datePropertyEditor;
 	private final LanguageService languageService;
 	private final LanguagePropertyEditor languagePropertyEditor;
-	private final CountryPropertyEditor countryPropertyEditor;
+	private final DomicilePropertyEditor domicilePropertyEditor;
 	private final QualificationValidator qualificationValidator;
-	private final CountryService countryService;
+	private final DomicileDAO domicileDAO;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final DocumentPropertyEditor documentPropertyEditor;
 	private final UserService userService;
 	private final EncryptionHelper encryptionHelper;
+    private final QualificationTypeDAO qualificationTypeDAO;
+    private final QualificationTypePropertyEditor qualificationTypePropertyEditor;
 
 	QualificationController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public QualificationController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
-			DatePropertyEditor datePropertyEditor, CountryService countryService, LanguageService languageService,
-			LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, QualificationValidator qualificationValidator,
-			QualificationService qualificationService, DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper) {
+			DatePropertyEditor datePropertyEditor, DomicileDAO domicileDAO, LanguageService languageService,
+			LanguagePropertyEditor languagePropertyEditor, DomicilePropertyEditor domicilePropertyEditor, QualificationValidator qualificationValidator,
+			QualificationService qualificationService, DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper, QualificationTypeDAO qualificationTypeDAO, QualificationTypePropertyEditor qualificationTypePropertyEditor) {
 		this.applicationService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
-		this.countryService = countryService;
+		this.domicileDAO = domicileDAO;
 		this.languageService = languageService;
 		this.languagePropertyEditor = languagePropertyEditor;
-		this.countryPropertyEditor = countryPropertyEditor;
+		this.domicilePropertyEditor = domicilePropertyEditor;
 		this.qualificationValidator = qualificationValidator;
 		this.qualificationService = qualificationService;
 		this.documentPropertyEditor = documentPropertyEditor;
 		this.userService = userService;
 		this.encryptionHelper = encryptionHelper;
-
+        this.qualificationTypeDAO = qualificationTypeDAO;
+        this.qualificationTypePropertyEditor = qualificationTypePropertyEditor;
 	}
 	
 	@InitBinder(value="qualification")
@@ -84,8 +90,9 @@ public class QualificationController {
 		binder.setValidator(qualificationValidator);
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
-		binder.registerCustomEditor(Country.class, countryPropertyEditor);
+		binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+		binder.registerCustomEditor(QualificationType.class, qualificationTypePropertyEditor);
 		binder.registerCustomEditor(Document.class, documentPropertyEditor);
 		
 	}
@@ -140,8 +147,13 @@ public class QualificationController {
 	}
 
 	@ModelAttribute("countries")
-	public List<Country> getAllCountries() {
-		return countryService.getAllCountries();
+	public List<Domicile> getAllCountries() {
+		return domicileDAO.getAllDomiciles();
+	}
+	
+	@ModelAttribute("types")
+	public List<QualificationType> getAllQualificationTypes() {
+	    return qualificationTypeDAO.getAllQualificationTypes();
 	}
 	
 	@ModelAttribute("applicationForm")

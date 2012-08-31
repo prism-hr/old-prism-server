@@ -2,24 +2,23 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity(name="INSTITUTION")
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
+@Entity(name = "QUALIFICATION_TYPE")
 @Access(AccessType.FIELD) 
-public class QualificationInstitution extends DomainObject<Integer>{
+public class QualificationType extends DomainObject<Integer>{
 
     private static final long serialVersionUID = 2746228908173552617L;
 
-    @Column(name = "country_name")
-    private String country_name;
-    
-    private String name;
-
     private Boolean enabled;
     
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+    private String name;
+
     @Override
     public void setId(Integer id) {
         this.id = id;
@@ -33,14 +32,6 @@ public class QualificationInstitution extends DomainObject<Integer>{
         return id;
     }
     
-    public String getCountry_name() {
-        return country_name;
-    }
-
-    public void setCountryName(String country_name) {
-        this.country_name = country_name;
-    }
-
     public String getName() {
         return name;
     }

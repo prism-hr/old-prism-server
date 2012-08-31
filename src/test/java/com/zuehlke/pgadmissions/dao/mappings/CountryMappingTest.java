@@ -14,7 +14,7 @@ public class CountryMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadCountry(){
-		Country country = new CountryBuilder().code("zz").name("ZZZZZZ").enabled(true).toCountry();
+		Country country = new CountryBuilder().name("ZZZZZZ").enabled(true).toCountry();
 		sessionFactory.getCurrentSession().save(country);
 		assertNotNull(country.getId());
 		Integer id = country.getId();
@@ -27,9 +27,6 @@ public class CountryMappingTest extends AutomaticRollbackTestCase {
 		assertNotSame(country, reloadedCountry);
 		assertEquals(country, reloadedCountry);
 		
-		
-		assertEquals("zz", reloadedCountry.getCode());
 		assertEquals("ZZZZZZ", reloadedCountry.getName());
-		
 	}
 }

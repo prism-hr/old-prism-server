@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -31,6 +33,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DisabilityPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -61,9 +64,11 @@ public class PersonalDetailsController {
 	private final PersonalDetailsValidator personalDetailsValidator;
 	private final PersonalDetailsService personalDetailsService;
 	private final UserService userService;
+    private DomicileDAO domicileDAO;
+    private DomicilePropertyEditor domicilePropertyEditor;
 
 	PersonalDetailsController() {
-		this(null, null , null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null , null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
@@ -71,7 +76,8 @@ public class PersonalDetailsController {
 			DatePropertyEditor datePropertyEditor, CountryService countryService, EthnicityService ethnicityService,//
 			DisabilityService disabilityService, LanguageService languageService,//
 			LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor,// 
-			DisabilityPropertyEditor disabilityPropertyEditor, EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator, PersonalDetailsService personalDetailsService) {
+			DisabilityPropertyEditor disabilityPropertyEditor, EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator, PersonalDetailsService personalDetailsService, DomicileDAO domicileDAO,
+			DomicilePropertyEditor domicilePropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -86,6 +92,8 @@ public class PersonalDetailsController {
 		this.disabilityPropertyEditor = disabilityPropertyEditor;
 		this.personalDetailsValidator = personalDetailsValidator;
 		this.personalDetailsService = personalDetailsService;
+        this.domicileDAO = domicileDAO;
+        this.domicilePropertyEditor = domicilePropertyEditor;
 	}
 
 	@RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
@@ -140,6 +148,11 @@ public class PersonalDetailsController {
 	public List<Disability> getAllDisabilities() {
 		return disabilityService.getAllDisabilities();
 	}
+	
+	@ModelAttribute("domiciles")
+	public List<Domicile> getAllDomiciles() {
+	    return domicileDAO.getAllDomiciles();
+	}
 
 	@ModelAttribute("genders")
 	public Gender[] getGenders() {
@@ -157,6 +170,7 @@ public class PersonalDetailsController {
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
+		binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
 		binder.registerCustomEditor(Ethnicity.class, ethnicityPropertyEditor);
 		binder.registerCustomEditor(Disability.class, disabilityPropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);

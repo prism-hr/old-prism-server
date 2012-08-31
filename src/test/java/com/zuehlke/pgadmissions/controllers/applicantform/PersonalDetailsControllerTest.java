@@ -17,9 +17,11 @@ import org.junit.Test;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -41,6 +43,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DisabilityPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -70,6 +73,8 @@ public class PersonalDetailsControllerTest {
 	private DisabilityPropertyEditor disabilityPropertyEditorMock;
 	private LanguagePropertyEditor languagePropertyEditorMopck;
 	private UserService userServiceMock;
+	private DomicileDAO domicileDAOMock;
+	private DomicilePropertyEditor domicilePropertyEditorMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -187,6 +192,7 @@ public class PersonalDetailsControllerTest {
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMopck);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditorMock);
+		binderMock.registerCustomEditor(Domicile.class, domicilePropertyEditorMock);
 		binderMock.registerCustomEditor(Ethnicity.class, ethnicityPropertyEditorMock);
 		binderMock.registerCustomEditor(Disability.class, disabilityPropertyEditorMock);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
@@ -279,6 +285,8 @@ public class PersonalDetailsControllerTest {
 		disabilityPropertyEditorMock = EasyMock.createMock(DisabilityPropertyEditor.class);
 		languagePropertyEditorMopck = EasyMock.createMock(LanguagePropertyEditor.class);
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
+		domicileDAOMock = EasyMock.createMock(DomicileDAO.class);
+		domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
 
 		personalDetailsValidatorMock = EasyMock.createMock(PersonalDetailsValidator.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
@@ -286,16 +294,10 @@ public class PersonalDetailsControllerTest {
 				datePropertyEditorMock, countryServiceMock, ethnicityServiceMock, disabilityServiceMock,// 
 				languageServiceMok, languagePropertyEditorMopck, countryPropertyEditorMock,// 
 				disabilityPropertyEditorMock, ethnicityPropertyEditorMock,// 
-				personalDetailsValidatorMock, personalDetailsServiceMock);
-
-	
+				personalDetailsValidatorMock, personalDetailsServiceMock, domicileDAOMock, domicilePropertyEditorMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
-	
-
 	}
-
-	
 }

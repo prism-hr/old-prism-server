@@ -14,11 +14,13 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -29,13 +31,15 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 	private Country country1;
 	private Country country2;
+	private Domicile country3;
+	
 	private ApplicationForm applicationForm;
 
 	@Test
 	public void shouldSaveAndLoadPersonalDetails() throws Exception {
 
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").title(Title.BROTHER).gender(Gender.MALE).lastName("lastname").residenceCountry(country2)
+				.email("email").firstName("firstName").title(Title.BROTHER).gender(Gender.MALE).lastName("lastname").residenceDomicile(country3)
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").applicationForm(applicationForm).toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -70,10 +74,10 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadPersonalDetailsWithCandiateNationalities() throws Exception {
-		Country nationality1 = new CountryBuilder().code("aa").name("aaaaa").enabled(true).toCountry();
-		Country nationality2 = new CountryBuilder().code("bb").name("bbbbb").enabled(true).toCountry();
-		Country nationality3 = new CountryBuilder().code("cc").name("ccccc").enabled(true).toCountry();
-		Country nationality4 = new CountryBuilder().code("dd").name("ddddd").enabled(true).toCountry();
+		Country nationality1 = new CountryBuilder().name("aaaaa").enabled(true).toCountry();
+		Country nationality2 = new CountryBuilder().name("bbbbb").enabled(true).toCountry();
+		Country nationality3 = new CountryBuilder().name("ccccc").enabled(true).toCountry();
+		Country nationality4 = new CountryBuilder().name("ddddd").enabled(true).toCountry();
 		
 		sessionFactory.getCurrentSession().save(nationality1);
 		sessionFactory.getCurrentSession().save(nationality2);
@@ -86,7 +90,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE)
 				.englishFirstLanguage(false).requiresVisa(false).phoneNumber("abc")
-				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
+				.lastName("lastname").residenceDomicile(country3).applicationForm(applicationForm)
 				.toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -117,9 +121,10 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 	public void setUp() {
 		super.setUp();
 
-		country1 = new CountryBuilder().code("AA").name("AA").enabled(true).toCountry();
-		country2 = new CountryBuilder().code("CC").name("CC").enabled(true).toCountry();
-		save(country1, country2);
+		country1 = new CountryBuilder().name("AA").enabled(true).toCountry();
+		country2 = new CountryBuilder().name("CC").enabled(true).toCountry();
+		country3 = new DomicileBuilder().name("DD").enabled(true).toDomicile();
+		save(country1, country2, country3);
 
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
 		save(program);

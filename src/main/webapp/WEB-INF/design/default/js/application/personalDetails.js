@@ -1,7 +1,6 @@
 $(document).ready(
         function() {
 
-            var numberOfNationalities = $("#my-nationality-div .nationality-item").size();
             var persImgCount = 0;
             showOrHideNationalityButton();
 
@@ -86,12 +85,12 @@ $(document).ready(
                 if ($select.val() == $field.val()) {
                     $select.val('');
                 }
-
+                $(this).parent().remove();
+                
                 if ($select.attr('id') == "candidateNationalityCountry") {
                     showOrHideNationalityButton();
                 }
-
-                $(this).parent().remove();
+                
                 return false;
             });
 
@@ -175,20 +174,6 @@ function postPersonalDetailsData(message) {
         $('#existingCandidateNationalities').append(html);
     }
 
-    // maternal nationalities
-    if ($('#maternalNationalityCountry option:selected').val() != '') {
-        var html = "<span><input type='hidden' name='maternalGuardianNationalities' value='"
-                + $('#maternalNationalityCountry option:selected').val() + "'/></span>";
-        $('#existingMaternalNationalities').append(html);
-    }
-
-    // paternal nationalities
-    if ($('#paternalNationalityCountry option:selected').val() != '') {
-        var html = "<span><input type='hidden' name='paternalGuardianNationalities' value='{"
-                + $('#paternalNationalityCountry option:selected').val() + "'/></span>";
-        $('#existingPaternalNationalities').append(html);
-    }
-
     var acceptedTheTerms;
     if ($("#acceptTermsPEDValue").val() == 'NO') {
         acceptedTheTerms = false;
@@ -197,6 +182,7 @@ function postPersonalDetailsData(message) {
     }
     // general post data
     var postData = {
+        title : $("#title").val(),
         firstName : $("#firstName").val(),
         lastName : $("#lastName").val(),
         email : $("#email").val(),

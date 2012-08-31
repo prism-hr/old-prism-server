@@ -206,7 +206,7 @@
 						
 							<select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
 								<option value="">Select...</option>
-								<#list countries as country>
+								<#list languages as country>
 								  <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
 								</#list>
 							</select>             	 
@@ -282,12 +282,12 @@
 					<div class="field">
 						<select class="full" name="residenceCountry" id="residenceCountry" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
 							<option value="">Select...</option>
-								<#list countries as country>
-								  <option value="${encrypter.encrypt(country.id)}"
-								  	<#if personalDetails.residenceCountry?? &&  personalDetails.residenceCountry.id == country.id >
+								<#list domiciles as domicile>
+								  <option value="${encrypter.encrypt(domicile.id)}"
+								  	<#if personalDetails.residenceCountry?? &&  personalDetails.residenceCountry.id == domicile.id >
 										selected="selected"
 									</#if>  
-								  >${country.name?html}</option>               
+								  >${domicile.name?html}</option>               
 								</#list>
 						 </select>
 						

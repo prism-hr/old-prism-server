@@ -31,6 +31,9 @@
     <name>Bachelors degree with 1-10 grading scheme</name>
   </qualificaton>
   <qualificaton>
+    <name>Bachelors degree with 110 grading scheme</name>
+  </qualificaton>
+  <qualificaton>
     <name>Bachelors degree with 1-12 grading scheme</name>
   </qualificaton>
   <qualificaton>
@@ -104,6 +107,9 @@
   </qualificaton>
   <qualificaton>
     <name>Masters degree with 1-10 grading scheme</name>
+  </qualificaton>
+  <qualificaton>
+    <name>Masters degree with 110 grading scheme</name>
   </qualificaton>
   <qualificaton>
     <name>Masters degree with 1-12 grading scheme</name>

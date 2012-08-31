@@ -41,8 +41,8 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	private String qualificationSubject;
 	
 	@ManyToOne
-	@JoinColumn(name = "institution_country_id")	
-	private Country institutionCountry;
+	@JoinColumn(name = "institution_domicile_id")	
+	private Domicile institutionCountry;
 	
 	@Column(name="institution")
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
@@ -52,9 +52,9 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	@Column(name="qualification_language")
 	private String qualificationLanguage;
 	
-	@Column(name="qualification_type")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-	private String qualificationType;
+	@ManyToOne
+	@JoinColumn(name="qualification_type_id")
+	private QualificationType qualificationType;
 	
 	@Column(name="grade")
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
@@ -92,14 +92,6 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 		this.qualificationLanguage = q_language_of_study;
 	}
 	
-	public String getQualificationType() {
-		return qualificationType;
-	}
-
-	public void setQualificationType(String q_type) {
-		this.qualificationType = q_type;
-	}
-
 	public String getQualificationGrade() {
 		return qualificationGrade;
 	}
@@ -167,11 +159,11 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 		this.completed = completed;
 	}
 
-	public Country getInstitutionCountry() {
+	public Domicile getInstitutionCountry() {
 		return institutionCountry;
 	}
 
-	public void setInstitutionCountry(Country institutionCountry) {
+	public void setInstitutionCountry(Domicile institutionCountry) {
 		this.institutionCountry = institutionCountry;
 	}
 
@@ -190,4 +182,12 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	public void setAcceptedTerms(boolean acceptedTerms) {
 		this.acceptedTerms = acceptedTerms;
 	}
+
+    public QualificationType getQualificationType() {
+        return qualificationType;
+    }
+
+    public void setQualificationType(QualificationType qualificationType) {
+        this.qualificationType = qualificationType;
+    }
 }

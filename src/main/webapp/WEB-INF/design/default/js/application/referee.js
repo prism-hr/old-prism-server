@@ -234,7 +234,7 @@ function postRefereeData(message){
 					
 				if (message == 'close' && errorCount == 0 && referenceCount >= 3)
 				{
-					$('#refereeCloseButton').trigger('click');
+					$('#referee-H2').trigger('click');
 				}
 				if(errorCount > 0){
 					markSectionError('#referencesSection');

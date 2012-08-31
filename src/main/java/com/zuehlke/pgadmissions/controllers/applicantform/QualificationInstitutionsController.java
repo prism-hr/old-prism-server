@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
-import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.CountryService;
 
 @RequestMapping("/update")
 @Controller
 public class QualificationInstitutionsController {
 
     private EncryptionHelper encryptionHelper;
-    private CountryService countryService;
+    private DomicileDAO domicileDAO;
     private QualificationInstitutionDAO qualificationInstitutionDAO;
 
     QualificationInstitutionsController(){
@@ -31,20 +31,19 @@ public class QualificationInstitutionsController {
     
     @Autowired
     public QualificationInstitutionsController(EncryptionHelper encryptionHelper, 
-            CountryService countryService, QualificationInstitutionDAO qualificationInstitutionDAO) {
+            DomicileDAO domicileDAO, QualificationInstitutionDAO qualificationInstitutionDAO) {
         this.encryptionHelper = encryptionHelper;
-        this.countryService = countryService;
+        this.domicileDAO = domicileDAO;
         this.qualificationInstitutionDAO = qualificationInstitutionDAO;
     }
     
     @RequestMapping(value = "/getInstitutionInformation", method = RequestMethod.GET)
     @ResponseBody
     public String getInstitutions(@RequestParam String country_id, @RequestParam String term) {
-        
         Integer decryptedCountryId = encryptionHelper.decryptToInteger(country_id);
-        Country country = countryService.getCountryById(decryptedCountryId);
+        Domicile country = domicileDAO.getDomicileById(decryptedCountryId);
         
-        List<QualificationInstitution> institutions = qualificationInstitutionDAO.getInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(country.getCode(), term);
+        List<QualificationInstitution> institutions = qualificationInstitutionDAO.getInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(country.getName(), term);
         List<String> institutionsNameList = new ArrayList<String>();
         for (QualificationInstitution inst : institutions) {
             institutionsNameList.add(inst.getName());

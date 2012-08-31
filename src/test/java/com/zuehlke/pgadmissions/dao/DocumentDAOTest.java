@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationTypeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -83,11 +84,14 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 	public void shouldDeleteQualificationProofOfAward() throws ParseException {
 		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.PROOF_OF_AWARD).toDocument();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
+		//QualificationTypeDAO typeDao = new QualificationTypeDAO(sessionFactory);
+		// typeDao.getAllQualificationTypes().get(0)
+		DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		dao.save(document);
 		flushAndClearSession();
 		Qualification qualification = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
 				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0))
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(new QualificationTypeBuilder().id(1).name("abc").enabled(true).toQualificationTitle()).institutionCountry(domicileDAO.getAllDomiciles().get(0))
 				.proofOfAward(document).toQualification();
 		sessionFactory.getCurrentSession().save(qualification);
 		flushAndClearSession();

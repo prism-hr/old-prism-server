@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -263,7 +264,7 @@ public class PersonalDetailsValidatorTest {
 				.dateOfBirth(new Date()).email("email@test.com").firstName("bob")//
 				.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith")//
 				.title(Title.PROFESSOR)//
-				.residenceCountry(new CountryBuilder().toCountry())//
+				.residenceDomicile(new DomicileBuilder().toDomicile())//
 				.phoneNumber("abc")//
 				.ethnicity(new EthnicityBuilder().id(23).toEthnicity())//
 				.disability(new DisabilityBuilder().id(23213).toDisability())//

@@ -14,8 +14,12 @@ $(document).ready(function(){
 		numberOfSavedPositions = $("#positionSection .existing .button-edit").size();
 		if (numberOfSavedPositions >= 5) {
 			$("#addPosisionButton").hide();
+			$("#positionSaveAndCloseButton").removeClass("blue");
+            $("#positionSaveAndCloseButton").addClass("clear");
 		} else {
 			$("#addPosisionButton").show();
+			$("#positionSaveAndCloseButton").addClass("blue");
+            $("#positionSaveAndCloseButton").removeClass("clear");
 		}
 	}
 	
@@ -117,6 +121,10 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#positionSaveAndCloseButton').click(function()
 	{
+	    if (numberOfSavedPositions >= 5) {
+	        return;
+	    }
+	    
 		$("span[name='nonAcceptedEP']").html('');
 
 		// Check for a "dirty" employment position form. If there is data try to submit it.

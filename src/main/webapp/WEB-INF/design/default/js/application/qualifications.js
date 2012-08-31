@@ -1,14 +1,35 @@
 $(document).ready(function(){
 	
 	var qualImgCount = 0;
-	var numberOfQualifications = 0;
 	var suggestions = [];
 	
 	$("#acceptTermsQDValue").val("NO");
 	showOrHideAddQualificationButton();
+	showOrHideQualificationInstitution();
 	
+	// -------------------------------------------------------------------------------
+    // Show or hide the qualificationInstitution text field.
+    // -------------------------------------------------------------------------------
+	function showOrHideQualificationInstitution() {
+	    $("#qualificationInstitution").attr("disabled", "disabled");
+	    if ($("#institutionCountry").val() != "") {
+	        $("#qualificationInstitution").removeAttr("disabled", "disabled");
+	    }
+	}
+	
+	$('#institutionCountry').click(function() {
+	    showOrHideQualificationInstitution();
+	});
+	
+	$('#institutionCountry').change(function() {
+        showOrHideQualificationInstitution();
+    });
+	
+	// -------------------------------------------------------------------------------
+    // The autocomplete box for the institution.
+    // -------------------------------------------------------------------------------
 	$("input#qualificationInstitution").autocomplete({
-	    minLength: 3,
+	    delay:150,
 	    source: function(req, add) {
 	        
 	        if ($('#institutionCountry').val() == "") {
@@ -52,14 +73,18 @@ $(document).ready(function(){
 	});
 	
 	// -------------------------------------------------------------------------------
-	// Show or hide the AdPosisionButton.
+	// Show or hide the AddPositionButton.
 	// -------------------------------------------------------------------------------
 	function showOrHideAddQualificationButton() {
 		numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").size();
 		if (numberOfSavedPositions >= 6) {
+		    $("#qualificationsSaveButton").removeClass("blue");
+		    $("#qualificationsSaveButton").addClass("clear");
 			$("#addQualificationButton").hide();
 		} else {
 			$("#addQualificationButton").show();
+			$("#qualificationsSaveButton").addClass("blue");
+            $("#qualificationsSaveButton").removeClass("clear");
 		}
 	}
 
@@ -193,6 +218,10 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#qualificationsSaveButton').click(function()
 	{
+	    if (numberOfSavedPositions >= 6) {
+	        return;
+	    }
+	    
 		$("span[name='nonAcceptedQD']").html('');
 		
 		// Check for a "dirty" qualification form. If there is data try to

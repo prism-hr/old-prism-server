@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers.applicantform;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,17 +44,11 @@ public class QualificationInstitutionsController {
         Integer decryptedCountryId = encryptionHelper.decryptToInteger(country_id);
         Country country = countryService.getCountryById(decryptedCountryId);
         
-        List<QualificationInstitution> institutions = qualificationInstitutionDAO.getInstitutionsByCountryCode(country.getCode()); 
+        List<QualificationInstitution> institutions = qualificationInstitutionDAO.getInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(country.getCode(), term);
         List<String> institutionsNameList = new ArrayList<String>();
         for (QualificationInstitution inst : institutions) {
-            if (StringUtils.containsIgnoreCase(inst.getName(), term)) {
-                institutionsNameList.add(inst.getName());
-            }
-            
-            // Might be worth to think about adding fuzzy matching here
-            // LevenshteinDistance.computeLevenshteinDistance(term, inst.getName())
+            institutionsNameList.add(inst.getName());
         }
-        
         Gson gson = new Gson();
         return gson.toJson(institutionsNameList);
     }

@@ -339,7 +339,7 @@ function watchUpload($field, $deleteFunction)
 		}
 		catch(error)
 		{
-			alert(error);
+			//alert(error);
 		}
 		if (isOkSize) // 10MB in bytes
 		{

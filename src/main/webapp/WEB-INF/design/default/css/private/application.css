@@ -2,6 +2,7 @@
 
 
 section.form-rows { margin-bottom: 10px; position: relative; }
+body.old-ie section.form-rows { width: 100%; }
 body.ie9 section.form-rows { margin-bottom: 0; }
 body.ie9 section.form-rows > div { margin-bottom: 10px; }
 

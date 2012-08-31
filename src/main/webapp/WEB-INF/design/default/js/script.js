@@ -1,27 +1,6 @@
 $(document).ready(function()
 {
 
-	// Tooltip settings used across the board.
-	var tooltipSettings = {
-		content: {
-			text: function(api)
-			{
-				// Retrieve content from custom attribute of the $('.selector') elements.
-				return $(this).attr('data-desc');
-			} 
-		},
-		position: {
-			my: 'bottom right', // Use the corner...
-			at: 'top center', // ...and opposite corner
-			viewport: $(window),
-			adjust: {
-				method: 'flip shift'
-			}
-		},
-		style: 'tooltip-pgr ui-tooltip-shadow'
-	};
-
-
 	// ------------------------------------------------------------------------------
 	// Apply a class to the BODY tag if we're in "beta".
 	// ------------------------------------------------------------------------------
@@ -167,6 +146,26 @@ $(document).ready(function()
 	*/
 	
 });
+
+// Tooltip settings used across the board.
+var tooltipSettings = {
+	content: {
+		text: function(api)
+		{
+			// Retrieve content from custom attribute of the $('.selector') elements.
+			return $(this).attr('data-desc');
+		} 
+	},
+	position: {
+		my: 'bottom right', // Use the corner...
+		at: 'top center', // ...and opposite corner
+		viewport: $(window),
+		adjust: {
+			method: 'flip shift'
+		}
+	},
+	style: 'tooltip-pgr ui-tooltip-shadow'
+};
 
 
 // ------------------------------------------------------------------------------

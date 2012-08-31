@@ -6,12 +6,6 @@
   
     <div class="row-group">
     
-      <!-- Free text field for info. -->
-      <div class="admin_row">
-        <span class="admin_row_label">Additional Information</span>
-				<div class="field"><#if applicationForm.additionalInformation?? && (applicationForm.additionalInformation.informationText)?has_content>${(applicationForm.additionalInformation.informationText?html)}<#else>Not Provided</#if></div>
-      </div>
-      
       <div class="admin_row">
         <label class="admin_row_label">Prior convictions</label>
         <div class="field"><#if applicationForm.additionalInformation.convictions>Yes<#else>No</#if></div>

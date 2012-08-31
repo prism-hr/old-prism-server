@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,13 @@ public class QualificationInstitutionDAO {
     @SuppressWarnings("unchecked")
     public List<QualificationInstitution> getInstitutionsByCountryCode(String code) {
         return sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class).add(Restrictions.eq("code", code)).addOrder(Order.asc("name")).list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<QualificationInstitution> getInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String code, String term) {
+        return sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class)
+                .add(Restrictions.eq("code", code))
+                .add(Restrictions.ilike("name", term, MatchMode.ANYWHERE))
+                .addOrder(Order.asc("name")).list();
     }
 }

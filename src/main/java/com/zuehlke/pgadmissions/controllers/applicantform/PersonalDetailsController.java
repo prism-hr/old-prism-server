@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
-@SuppressWarnings("unused")
+
 @RequestMapping("/update")
 @Controller
 public class PersonalDetailsController {

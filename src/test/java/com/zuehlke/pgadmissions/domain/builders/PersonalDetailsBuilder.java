@@ -8,6 +8,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -23,7 +24,7 @@ public class PersonalDetailsBuilder {
 	private String email;
 	private Date dateOfBirth;
 	private Country country;
-	private Country residenceCountry;
+	private Domicile residenceCountry;
 	private Ethnicity ethnicity;
 	private Disability disability;
 	private ApplicationForm applicationForm;
@@ -109,7 +110,7 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 
-	public PersonalDetailsBuilder residenceCountry(Country residenceCountry) {
+	public PersonalDetailsBuilder residenceDomicile(Domicile residenceCountry) {
 		this.residenceCountry = residenceCountry;
 		return this;
 	}

@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -22,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -35,6 +37,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	private ApplicationForm applicationForm;
 	private Ethnicity ethnicity;
 	private Disability disability;
+	private Domicile domicile;
 
 	
 	@Test(expected=NullPointerException.class)
@@ -46,7 +49,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetPersonalDetailsById() throws ParseException {
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceCountry(country)
+				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceDomicile(domicile)
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
 				.applicationForm(applicationForm).toPersonalDetails();
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -63,7 +66,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
-				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceCountry(country)
+				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceDomicile(domicile)
 				.applicationForm(applicationForm)
 				.ethnicity(ethnicity).disability(disability).toPersonalDetails();
 		personalDetailDAO.save(personalDetails);
@@ -95,7 +98,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))//
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").email("email")//
 				.firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname")//
-				.residenceCountry(country).ethnicity(eth).disability(dis).applicationForm(applicationForm).toPersonalDetails();
+				.residenceDomicile(domicile).ethnicity(eth).disability(dis).applicationForm(applicationForm).toPersonalDetails();
 
 		personalDetailDAO.save(personalDetails);
 		flushAndClearSession();
@@ -114,13 +117,15 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	@Override
 	public void setUp() {
 		super.setUp();
-		country = new CountryBuilder().code("AA").name("AA").enabled(true).toCountry();
+		country = new CountryBuilder().name("AA").enabled(true).toCountry();
+		domicile = new DomicileBuilder().name("BB").enabled(true).toDomicile();
 		ethnicity = new EthnicityBuilder().name("AAAA").enabled(true).toEthnicity();
 		disability = new DisabilityBuilder().name("BBBB").enabled(true).toDisability();
 
 		save(country);
 		save(ethnicity);
 		save(disability);
+		save(domicile);
 
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
 		save(program);

@@ -81,6 +81,7 @@ $(document).ready(function(){
 		    $("#qualificationsSaveButton").removeClass("blue");
 		    $("#qualificationsSaveButton").addClass("clear");
 			$("#addQualificationButton").hide();
+			$('#qualifications-H2').trigger('click');
 		} else {
 			$("#addQualificationButton").show();
 			$("#qualificationsSaveButton").addClass("blue");
@@ -361,7 +362,7 @@ function postQualificationData(message)
 		  },
 		url: "/pgadmissions/update/editQualification",
 		data: {  
-			qualificationSubject: $("#qualificationSubject").val(), 
+		    qualificationSubject: $("#qualificationSubject").val(), 
 			qualificationInstitution: $("#qualificationInstitution").val(), 
 			qualificationType: $("#qualificationType").val(),
 			qualificationGrade: $("#qualificationGrade").val(),

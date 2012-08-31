@@ -13,6 +13,7 @@ public class QualificationDAO {
 	QualificationDAO(){
 		this(null);
 	}
+	
 	@Autowired
 	public QualificationDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -30,5 +31,4 @@ public class QualificationDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(qualification);
 		
 	}
-
 }

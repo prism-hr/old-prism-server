@@ -11,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
+import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -40,10 +42,14 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Qualification qualification = new QualificationBuilder().id(3)
+		
+		DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
+		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
+		
+        Qualification qualification = new QualificationBuilder().id(3)
 				.awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("").institution("")
 				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0)).toQualification();
 
 		sessionFactory.getCurrentSession().save(qualification);
 		assertNotNull(qualification.getId());

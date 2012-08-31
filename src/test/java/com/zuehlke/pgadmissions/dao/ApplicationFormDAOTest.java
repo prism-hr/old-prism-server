@@ -932,7 +932,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		save(applicant, applicationFormOne);
 		flushAndClearSession();
 
-		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
+		Country country = new CountryBuilder().name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser otherApplicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").username("username3")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -974,7 +974,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(applicant);
-		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
+		Country country = new CountryBuilder().name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -1000,7 +1000,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(applicant);
-		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
+		Country country = new CountryBuilder().name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -1026,7 +1026,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(applicant);
-		Country country = new CountryBuilder().code("1").name("country").enabled(true).toCountry();
+		Country country = new CountryBuilder().name("country").enabled(true).toCountry();
 		save(country);
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -1612,7 +1612,9 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		application = new ApplicationForm();
 		application.setApplicant(user);
 		application.setProgram(program);
-
+		
+		QualificationTypeDAO typeDao = new QualificationTypeDAO(sessionFactory);
+		
 		List<Qualification> qualifications = new ArrayList<Qualification>();
 
 		Qualification qualification1 = new Qualification();
@@ -1623,7 +1625,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		qualification1.setQualificationLanguage("Abkhazian");
 		qualification1.setQualificationSubject("");
 		qualification1.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-		qualification1.setQualificationType("");
+		qualification1.setQualificationType(typeDao.getAllQualificationTypes().get(0));
 
 		qualifications.add(qualification1);
 
@@ -1634,7 +1636,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		qualification2.setQualificationLanguage("Abkhazian");
 		qualification2.setQualificationSubject("");
 		qualification2.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-		qualification2.setQualificationType("");
+		qualification2.setQualificationType(typeDao.getAllQualificationTypes().get(0));
 
 		qualifications.add(qualification1);
 		return qualifications;

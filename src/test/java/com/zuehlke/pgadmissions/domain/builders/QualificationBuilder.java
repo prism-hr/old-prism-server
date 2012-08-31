@@ -3,9 +3,10 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class QualificationBuilder {
@@ -13,14 +14,14 @@ public class QualificationBuilder {
 	private String q_name_of_programme;
 	private String q_institution;
 	private String q_language_of_study;
-	private String q_type;
+	private QualificationType q_type;
 	private String q_grade;	
 	private Date q_start_date;
 	private Date q_award_date;
 	private ApplicationForm application;
 	private Integer id;
 	private CheckedStatus completed;
-	private Country institutionCountry;
+	private Domicile institutionCountry;
 	private Document proofOfAward;
 	
 	public QualificationBuilder proofOfAward(Document proofOfAward) {
@@ -28,7 +29,7 @@ public class QualificationBuilder {
 		return this;
 	}
 	
-	public QualificationBuilder institutionCountry(Country institutionCountry) {
+	public QualificationBuilder institutionCountry(Domicile institutionCountry) {
 		this.institutionCountry = institutionCountry;
 		return this;
 	}
@@ -66,7 +67,7 @@ public class QualificationBuilder {
 		return this;
 	}
 
-	public QualificationBuilder type(String q_type) {
+	public QualificationBuilder type(QualificationType q_type) {
 		this.q_type = q_type;
 		return this;
 	}

@@ -18,14 +18,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
+import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -36,12 +39,12 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -52,17 +55,20 @@ public class QualificationControllerTest {
 	private LanguageService languageServiceMock;
 	private LanguagePropertyEditor languagePropertyEditorMock;
 	private DatePropertyEditor datePropertyEditorMock;
-	private CountryPropertyEditor countryPropertyEditor;
+	private DomicilePropertyEditor domicilePropertyEditor;
 	private ApplicationsService applicationsServiceMock;
 	private QualificationValidator qualificationValidatorMock;
-	private CountryService countriesServiceMock;
+	private DomicileDAO domicileDAOMock;
 	private QualificationService qualificationServiceMock;
 	private QualificationController controller;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
+	private QualificationTypePropertyEditor qualificationTypePropertyEditorMock;
 
 	private DocumentPropertyEditor documentPropertyEditorMock;
 	private UserService userServiceMock;
 	private EncryptionHelper encryptionHelperMock;
+	
+	private QualificationTypeDAO qualificationTypeDAOMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -102,11 +108,11 @@ public class QualificationControllerTest {
 	}
 
 	@Test
-	public void shouldReturnAllCountries() {
-		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).toCountry(), new CountryBuilder().id(2).toCountry());
-		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(countryList);
-		EasyMock.replay(countriesServiceMock);
-		List<Country> allCountries = controller.getAllCountries();
+	public void shouldReturnAllDomiciles() {
+		List<Domicile> countryList = Arrays.asList(new DomicileBuilder().id(1).toDomicile(), new DomicileBuilder().id(2).toDomicile());
+		EasyMock.expect(domicileDAOMock.getAllDomiciles()).andReturn(countryList);
+		EasyMock.replay(domicileDAOMock);
+		List<Domicile> allCountries = controller.getAllCountries();
 		assertSame(countryList, allCountries);
 	}
 
@@ -153,9 +159,10 @@ public class QualificationControllerTest {
 		binderMock.setValidator(qualificationValidatorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMock);
-		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
+		binderMock.registerCustomEditor(Domicile.class, domicilePropertyEditor);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
 		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
+		binderMock.registerCustomEditor(QualificationType.class, qualificationTypePropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -232,8 +239,8 @@ public class QualificationControllerTest {
 
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 
-		countryPropertyEditor = EasyMock.createMock(CountryPropertyEditor.class);
-		countriesServiceMock = EasyMock.createMock(CountryService.class);
+		domicilePropertyEditor = EasyMock.createMock(DomicilePropertyEditor.class);
+		domicileDAOMock = EasyMock.createMock(DomicileDAO.class);
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
@@ -245,10 +252,14 @@ public class QualificationControllerTest {
 
 		userServiceMock = EasyMock.createMock(UserService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		
+		qualificationTypeDAOMock = EasyMock.createMock(QualificationTypeDAO.class);
 
-		controller = new QualificationController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, countriesServiceMock,
-				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, qualificationValidatorMock, qualificationServiceMock,
-				documentPropertyEditorMock, userServiceMock, encryptionHelperMock);
+		qualificationTypePropertyEditorMock = EasyMock.createMock(QualificationTypePropertyEditor.class);
+		
+		controller = new QualificationController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, domicileDAOMock,
+				languageServiceMock, languagePropertyEditorMock, domicilePropertyEditor, qualificationValidatorMock, qualificationServiceMock,
+				documentPropertyEditorMock, userServiceMock, encryptionHelperMock, qualificationTypeDAOMock, qualificationTypePropertyEditorMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

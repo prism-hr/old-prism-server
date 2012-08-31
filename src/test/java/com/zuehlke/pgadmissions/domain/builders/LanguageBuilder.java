@@ -5,6 +5,7 @@ import com.zuehlke.pgadmissions.domain.Language;
 public class LanguageBuilder {
 	private String name;
 	private Integer id;
+	private Boolean enabled;
 	
 	public LanguageBuilder id(Integer id){
 		this.id = id;
@@ -16,10 +17,16 @@ public class LanguageBuilder {
 		return this;
 	}
 	
+	public LanguageBuilder enabled(Boolean enabled){
+	    this.enabled = enabled;
+	    return this;
+	}
+	
 	public Language toLanguage(){
 		Language language = new Language();
 		language.setId(id);
 		language.setName(name);
+		language.setEnabled(enabled);
 		return language;
 	}
 }

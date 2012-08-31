@@ -16,6 +16,7 @@ $(document).ready(function(){
 			$("#addPosisionButton").hide();
 			$("#positionSaveAndCloseButton").removeClass("blue");
             $("#positionSaveAndCloseButton").addClass("clear");
+            $('#position-H2').trigger('click');
 		} else {
 			$("#addPosisionButton").show();
 			$("#positionSaveAndCloseButton").addClass("blue");

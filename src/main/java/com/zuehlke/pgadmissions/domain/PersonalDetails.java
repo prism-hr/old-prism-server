@@ -90,8 +90,8 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	private Disability disability;
 	
 	@ManyToOne
-	@JoinColumn(name = "residence_country_id")
-	private Country residenceCountry;
+	@JoinColumn(name = "domicile_id")
+	private Domicile residenceCountry;
 
 	@OneToOne
 	@JoinColumn(name = "application_form_id")
@@ -150,11 +150,11 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 		this.dateOfBirth = dateOfBirth;
 	}
 
-	public Country getResidenceCountry() {
+	public Domicile getResidenceCountry() {
 		return residenceCountry;
 	}
 
-	public void setResidenceCountry(Country residenceCountry) {
+	public void setResidenceCountry(Domicile residenceCountry) {
 		this.residenceCountry = residenceCountry;
 	}
 

@@ -39,7 +39,7 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).toApplicationForm();
 		
-		Country country = new CountryBuilder().code("1").name("nae").enabled(true).toCountry(); 
+		Country country = new CountryBuilder().name("nae").enabled(true).toCountry(); 
 		save(applicant, application, country);
 		
 		Referee referee = new RefereeBuilder().application(application).email("email@test.com").firstname("bob")

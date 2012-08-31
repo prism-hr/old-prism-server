@@ -58,6 +58,8 @@
 	     		<value>com.zuehlke.pgadmissions.domain.RequestRestartComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.QualificationInstitution</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Badge</value>
+                <value>com.zuehlke.pgadmissions.domain.Domicile</value>
+                <value>com.zuehlke.pgadmissions.domain.QualificationType</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

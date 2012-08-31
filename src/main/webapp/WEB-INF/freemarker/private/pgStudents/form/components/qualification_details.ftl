@@ -144,11 +144,12 @@
 				<span class="plain-label">Qualification Type<em>*</em></span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.qualificationType'/>"></span>
 				<div class="field">
-					<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-					<input id="qualificationType" class="full" type="text" value="${(qualification.qualificationType?html)!}"/>
-					<#else>
-					<input readonly="readonly" id="qualificationType" class="full" type="text" value="${(qualification.qualificationType?html)!}"/>
-					</#if>
+				    <select class="full" id="qualificationType" name="qualificationType"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
+                        <option value="">Select...</option>
+                        <#list types as type>
+                        <option value="${encrypter.encrypt(type.id)}"  <#if qualification.qualificationType?? && qualification.qualificationType.id == type.id> selected="selected"</#if>>${type.name?html}</option>
+                        </#list>
+                    </select>
 				</div>
 			</div>
 			<@spring.bind "qualification.qualificationType" />

@@ -17,9 +17,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
-import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationTypeBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testContext.xml")
@@ -129,9 +130,9 @@ public class QualificationValidatorTest {
 		qualification.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
 		qualification.setQualificationGrade("first");
 		qualification.setQualificationInstitution("UCL");
-		qualification.setInstitutionCountry(new Country());
+		qualification.setInstitutionCountry(new Domicile());
 		qualification.setQualificationLanguage("Abkhazian");
 		qualification.setQualificationSubject("CS");		
 		qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
-		qualification.setQualificationType("degree");	}
+		qualification.setQualificationType(new QualificationTypeBuilder().name("degree").toQualificationTitle());	}
 }

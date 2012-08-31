@@ -16,13 +16,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.LanguageDAO;
+import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -38,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
@@ -112,16 +116,17 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldLoadApplicationFormWithPersonalDetails() throws ParseException {
-		Country country1 = new CountryBuilder().code("AA").name("AA").enabled(true).toCountry();
-		Country country2 = new CountryBuilder().code("CC").name("CC").enabled(true).toCountry();
-		save(country1, country2);
+		Country country1 = new CountryBuilder().name("AA").enabled(true).toCountry();
+		Country country2 = new CountryBuilder().name("CC").enabled(true).toCountry();
+		Domicile country3 = new DomicileBuilder().name("DD").enabled(true).toDomicile();
+		save(country1, country2, country3);
 
 		ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).toApplicationForm();
 
 		sessionFactory.getCurrentSession().save(application);
 		flushAndClearSession();
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceCountry(country2).requiresVisa(true)
+				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceDomicile(country3).requiresVisa(true)
 				.englishFirstLanguage(true).phoneNumber("abc").applicationForm(application).toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -230,13 +235,15 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		// flushAndClearSession();
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
+		 DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
 				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0))
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0))
 				.toQualification();
 		Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
 				.isCompleted(CheckedStatus.YES).institution("").languageOfStudy("Achinese").subject("")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0))
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0))
 				.toQualification();
 
 		application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));

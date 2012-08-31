@@ -494,7 +494,7 @@ jQuery.extend({
             }catch(e)
 			{
 				//jQuery.handleError(s, xml, null, e);
-				console.log(e);
+				//console.log(e);
 			}
             if ( xml || isTimeout == "timeout") 
 			{				
@@ -521,7 +521,7 @@ jQuery.extend({
 				{
                     status = "error";
                     //jQuery.handleError(s, xml, status, e);
-					console.log(e);
+					//console.log(e);
                 }
 
                 // The request was completed
@@ -547,7 +547,7 @@ jQuery.extend({
 										} catch(e) 
 										{
 											//jQuery.handleError(s, xml, null, e);
-											console.log(e);
+											//console.log(e);
 										}									
 
 									}, 100)
@@ -581,10 +581,11 @@ jQuery.extend({
             }			
             jQuery(form).submit();
 
-        } catch(e) 
+        }
+		catch(e) 
 		{			
             //jQuery.handleError(s, xml, null, e);
-			console.log(e);
+			//console.log(e);
         }
 		
 		jQuery('#' + frameId).load(uploadCallback	);

@@ -1,5 +1,27 @@
 $(document).ready(function()
 {
+
+	// Tooltip settings used across the board.
+	var tooltipSettings = {
+		content: {
+			text: function(api)
+			{
+				// Retrieve content from custom attribute of the $('.selector') elements.
+				return $(this).attr('data-desc');
+			} 
+		},
+		position: {
+			my: 'bottom right', // Use the corner...
+			at: 'top center', // ...and opposite corner
+			viewport: $(window),
+			adjust: {
+				method: 'flip shift'
+			}
+		},
+		style: 'tooltip-pgr ui-tooltip-shadow'
+	};
+
+
 	// ------------------------------------------------------------------------------
 	// Apply a class to the BODY tag if we're in "beta".
 	// ------------------------------------------------------------------------------
@@ -227,26 +249,6 @@ function limitTextArea()
 // ------------------------------------------------------------------------------
 function addToolTips()
 {
-	// Tooltip settings used across the board.
-	var tooltipSettings = {
-		content: {
-			text: function(api)
-			{
-				// Retrieve content from custom attribute of the $('.selector') elements.
-				return $(this).attr('data-desc');
-			} 
-		},
-		position: {
-			my: 'bottom right', // Use the corner...
-			at: 'top center', // ...and opposite corner
-			viewport: $(window),
-			adjust: {
-				method: 'flip shift'
-			}
-		},
-		style: 'tooltip-pgr ui-tooltip-shadow'
-	};
-
 	$('*[data-desc]').qtip(tooltipSettings);
 }
 
@@ -425,7 +427,7 @@ function doUpload($upload_field)
 				$container.addClass('uploaded');
 				var doc_type = $upload_field.attr('data-reference');
 				$('a.button-delete', $hfParent).attr({ 'data-desc': 'Delete ' + doc_type })
-                                       .qtip(tooltipSettings);
+		                                       .qtip(tooltipSettings);
 			}
     },
 		error: function()

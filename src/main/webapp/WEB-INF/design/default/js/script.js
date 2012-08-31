@@ -8,7 +8,7 @@ $(document).ready(function()
 	var currentYear = now.getFullYear();
 	if (currentYear == '2012')
 	{
-		$('body').addClass('beta');	
+		$('#middle').append('<span id="beta-badge"/>');	
 	}
 
 	// ------------------------------------------------------------------------------

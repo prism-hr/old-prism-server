@@ -351,7 +351,7 @@ function watchUpload($field, $deleteFunction)
 			{
 				$deleteFunction();
 			}
-			$field.attr("readonly", "readonly");
+//			$field.attr("readonly", "readonly");
 			$container.addClass('posting');
 			doUpload($(input));
 			$field.removeAttr("readonly");
@@ -417,7 +417,7 @@ function doUpload($upload_field)
       else if ($(data).find('input').length == 0)
       {
         // There was (probably) a server error.
-        $container.append('<span class="invalid">Could not upload.</span>');
+        $container.append('<span class="invalid">You must upload a PDF document (2Mb). </span>');
       }
 			else
 			{

@@ -1,3 +1,5 @@
+SET FOREIGN_KEY_CHECKS = 0
+;
 DELETE FROM QUALIFICATION_TYPE
 ;
 INSERT INTO QUALIFICATION_TYPE (name, enabled) VALUES 
@@ -52,4 +54,6 @@ INSERT INTO QUALIFICATION_TYPE (name, enabled) VALUES
 	 ("Non-Honours Ordinary Degree", TRUE),
 	 ("Other examinations and/or information", TRUE),
 	 ("PhD degree (postgraduate)", TRUE)
+;
+SET FOREIGN_KEY_CHECKS = 1
 ;

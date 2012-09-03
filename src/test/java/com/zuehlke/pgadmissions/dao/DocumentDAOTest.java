@@ -87,11 +87,12 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		//QualificationTypeDAO typeDao = new QualificationTypeDAO(sessionFactory);
 		// typeDao.getAllQualificationTypes().get(0)
 		DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
+		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
 		dao.save(document);
 		flushAndClearSession();
 		Qualification qualification = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
 				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(new QualificationTypeBuilder().id(1).name("abc").enabled(true).toQualificationTitle()).institutionCountry(domicileDAO.getAllDomiciles().get(0))
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0))
 				.proofOfAward(document).toQualification();
 		sessionFactory.getCurrentSession().save(qualification);
 		flushAndClearSession();

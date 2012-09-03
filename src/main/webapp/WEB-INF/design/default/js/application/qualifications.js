@@ -88,7 +88,7 @@ $(document).ready(function(){
             $("#qualificationsSaveButton").removeClass("clear");
 		}
 	}
-
+	
 	// -------------------------------------------------------------------------------
 	// Checkbox to mark the qualification as current.
 	// -------------------------------------------------------------------------------
@@ -305,7 +305,7 @@ $(document).ready(function(){
 				completed: function()
 				{
 					$('#qualificationsSection div.ajax').remove();
-					showOrHideAddQualificationButton();
+//					showOrHideAddQualificationButton();
 				}
 		});
 	});

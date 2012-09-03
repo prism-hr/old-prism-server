@@ -198,7 +198,7 @@ $(document).ready(function(){
 			completed: function()
 			{
 				$('#positionSection div.ajax').remove();
-				showOrHideAdPosisionButton();
+//				showOrHideAdPosisionButton();
 			}
 		});
 	});

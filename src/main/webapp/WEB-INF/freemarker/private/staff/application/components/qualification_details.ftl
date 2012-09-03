@@ -38,7 +38,7 @@
       <!-- Type -->
       <div class="admin_row">
         <span class="admin_row_label">QualificationType</span>
-        <div class="field" id="qualificationType">${(qualification.qualificationType?html)!"Not Provided"}</div>
+        <div class="field" id="qualificationType">${(qualification.qualificationType.name?html)!"Not Provided"}</div>
       </div>
       
       <!-- Title / Subject -->

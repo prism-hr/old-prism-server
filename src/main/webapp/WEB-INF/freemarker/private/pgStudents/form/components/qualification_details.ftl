@@ -46,7 +46,6 @@
 						</a>
 					<#else>
 						${(existingQualification.qualificationInstitution?html)!}&nbsp
-						${(existingQualification.qualificationType?html)!}&nbsp
 						${(existingQualification.qualificationSubject?html)!}&nbsp
 						(${(existingQualification.qualificationGrade?html)!})
 					</#if>

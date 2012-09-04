@@ -22,21 +22,21 @@ $(document).ready(function()
 
 
 	$('#registration-box button').click(function()
-			{
-				var field;
-				field = $('#firstName')[0];
-				if (field.value == "First Name")
-				{
-					field.value = '';
-				}
-				field = $('#lastName')[0];
-				if (field.value == "Last Name")
-				{
-					field.value = '';
-				}
-				$('#registration-box').append('<div class="ajax" />');
-				return true;
-			});
+	{
+		var field;
+		field = $('#firstName')[0];
+		if (field.value == field.defaultValue)
+		{
+			field.value = '';
+		}
+		field = $('#lastName')[0];
+		if (field.value == field.defaultValue)
+		{
+			field.value = '';
+		}
+		$('#registration-box').append('<div class="ajax" />');
+		return true;
+	});
   
 
 	// Resend confirmation email button.

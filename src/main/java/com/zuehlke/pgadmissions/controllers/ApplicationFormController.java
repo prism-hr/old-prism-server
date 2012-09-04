@@ -67,33 +67,16 @@ public class ApplicationFormController {
     
     private ModelAndView processApplyNew(String program, String programDeadline, String projectTitle, String programhome) {
         Date batchDeadline = parseBatchDeadline(programDeadline);
-        String researchHomePage =parseResearchHomePage(programhome);
         RegisteredUser user = userService.getCurrentUser();
 
         Program prog = programDAO.getProgramByCode(program);
         if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()) {
             return new ModelAndView(PROGRAM_DOES_NOT_EXIST);
         }       
-        ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, batchDeadline, projectTitle, researchHomePage);
+        ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, batchDeadline, projectTitle, programhome);
         return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
     }
     
-
-	private String parseResearchHomePage(String programhome) {
-		String researchHomePage = null;
-		if(StringUtils.isBlank(programhome)){
-			return null;
-		}
-		if( !programhome.startsWith("http://") && !programhome.startsWith("https://")){
-			researchHomePage = "http://" +  programhome;
-		}else{
-			researchHomePage = programhome;
-		}
-		if(!UrlValidator.getInstance().isValid(researchHomePage)){
-			throw new InvalidParameterFormatException(programhome + " is not a valid URL");
-		}
-		return researchHomePage;
-	}
 
 	private Date parseBatchDeadline(String programDeadline) {
 		Date batchDeadline = null;

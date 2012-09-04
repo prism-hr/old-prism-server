@@ -129,7 +129,6 @@ public class ApplicationFormControllerTest {
 		
 		applicationController.createNewApplicationForm("ABC", null, "project title", null);
 		EasyMock.verify(applicationsServiceMock);
-		
 	}
 
 	
@@ -154,44 +153,6 @@ public class ApplicationFormControllerTest {
 		
 	}
 	
-
-	@Test
-	public void shouldAppendProtocolToResearchHomePageofmissing() throws ParseException {
-
-		Program program = new ProgramBuilder().id(12).toProgram();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(simpleDateFormat.parse("2030/08/06")).toProgramInstance();
-		program.setInstances(Arrays.asList(programInstance));
-		
-		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
-		String researchHomePage = "www.researchhomepage.com";
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, null, null, "http://" + researchHomePage)).andReturn(applicationForm);
-		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
-		
-		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-		
-		applicationController.createNewApplicationForm("ABC", null,null, researchHomePage);
-		EasyMock.verify(applicationsServiceMock);
-		
-	}
-	
-	@Test(expected=InvalidParameterFormatException.class)
-	public void shouldTrowInvalidParameterFormatExceptionIfHomePageNotValudURL() throws ParseException {
-
-		Program program = new ProgramBuilder().id(12).toProgram();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(simpleDateFormat.parse("2030/08/06")).toProgramInstance();
-		program.setInstances(Arrays.asList(programInstance));
-		
-		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
-		String researchHomePage = "HI";
-		
-		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
-		
-		applicationController.createNewApplicationForm("ABC", null, null, researchHomePage);
-	
-		
-	}
 	
 	@Test
 	public void shouldRedirectToApplicationFormView() throws ParseException {

@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -30,7 +31,7 @@ public class PersonalDetailsBuilder {
 	private ApplicationForm applicationForm;
 
 	private String messenger;
-	private List<Country> candiateNationalities = new ArrayList<Country>();
+	private List<Language> candiateNationalities = new ArrayList<Language>();
 	private Boolean englishFirstLanguage;
 	private Boolean requiresVisa;
 	private String phoneNumber;
@@ -60,7 +61,7 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 
-	public PersonalDetailsBuilder candiateNationalities(Country... nationalities) {
+	public PersonalDetailsBuilder candiateNationalities(Language... nationalities) {
 		this.candiateNationalities.addAll(Arrays.asList(nationalities));
 		return this;
 	}

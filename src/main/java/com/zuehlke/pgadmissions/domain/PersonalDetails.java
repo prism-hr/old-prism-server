@@ -52,8 +52,8 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	private Boolean requiresVisa;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_country_id") })
-	private List<Country> candidateNationalities= new ArrayList<Country>();
+	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_language_id") })
+	private List<Language> candidateNationalities= new ArrayList<Language>();
 	
 	@Column(name = "title")
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.TitleEnumUserType")
@@ -198,13 +198,13 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 		this.email = email;
 	}
 
-	public List<Country> getCandidateNationalities() {
+	public List<Language> getCandidateNationalities() {
 		return candidateNationalities;
 	}
 
-	public void setCandidateNationalities(List<Country> candiateNationalities) {
+	public void setCandidateNationalities(List<Language> candiateNationalities) {
 		this.candidateNationalities.clear();
-		for (Country nationality : candiateNationalities) {
+		for (Language nationality : candiateNationalities) {
 			if(nationality != null){
 				this.candidateNationalities.add(nationality);
 			}

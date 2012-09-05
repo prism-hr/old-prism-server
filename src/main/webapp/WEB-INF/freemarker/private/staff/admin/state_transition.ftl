@@ -164,10 +164,8 @@
                                         <div class="field">
                                             <select class="max" id="closingDate" name="closingDate">
                                                 <option value="">Select...</option>
-                                                <#list applicationForm.program.badges as badge>
-                                                    <#if badge.closingDate?has_content>
-                                                        <option value="${(badge.closingDate?string('dd MMM yyyy'))!}">${(badge.closingDate?string('dd MMM yyyy'))!}</option>
-                                                    </#if>
+                                                <#list closingDates as date>
+                                                     <option value="${(date?string('dd MMM yyyy'))!}">${(date?string('dd MMM yyyy'))!}</option>
                                                 </#list>   
                                             </select>
                                         </div>
@@ -178,10 +176,8 @@
                                         <div class="field">
                                             <select class="max" id="projectTitle" name="projectTitle">
                                                 <option value="">Select...</option>
-                                                <#list applicationForm.program.badges as badge>
-                                                    <#if badge.projectTitle?has_content>
-                                                        <option value="${badge.projectTitle}">${badge.projectTitle}</option>
-                                                    </#if>
+                                                <#list projectTitles as title>
+                                                        <option value="${title}">${title}</option>
                                                 </#list>
                                             </select>
                                         </div>

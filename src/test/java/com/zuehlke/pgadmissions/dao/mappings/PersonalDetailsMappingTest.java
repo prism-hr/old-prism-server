@@ -15,12 +15,14 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -74,10 +76,10 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadPersonalDetailsWithCandiateNationalities() throws Exception {
-		Country nationality1 = new CountryBuilder().name("aaaaa").enabled(true).toCountry();
-		Country nationality2 = new CountryBuilder().name("bbbbb").enabled(true).toCountry();
-		Country nationality3 = new CountryBuilder().name("ccccc").enabled(true).toCountry();
-		Country nationality4 = new CountryBuilder().name("ddddd").enabled(true).toCountry();
+		Language nationality1 = new LanguageBuilder().name("aaaaa").enabled(true).toLanguage();
+		Language nationality2 = new LanguageBuilder().name("bbbbb").enabled(true).toLanguage();
+		Language nationality3 = new LanguageBuilder().name("ccccc").enabled(true).toLanguage();
+		Language nationality4 = new LanguageBuilder().name("ddddd").enabled(true).toLanguage();
 		
 		sessionFactory.getCurrentSession().save(nationality1);
 		sessionFactory.getCurrentSession().save(nationality2);

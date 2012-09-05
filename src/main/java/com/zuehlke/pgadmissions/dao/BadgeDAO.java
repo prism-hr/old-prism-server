@@ -33,5 +33,5 @@ public class BadgeDAO {
     public List<Badge> getBadgesByProgram(Program program){
         return (List<Badge>) sessionFactory.getCurrentSession().createCriteria(Badge.class).add(Restrictions.eq("program", program)).list();
     }
-    
+
 }

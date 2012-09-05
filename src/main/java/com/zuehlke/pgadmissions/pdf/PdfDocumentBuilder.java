@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -354,11 +355,11 @@ public class PdfDocumentBuilder {
 
 		table.addCell(newTableCell("Nationality", smallBoldFont));
 		StringBuilder sb = new StringBuilder();
-		for (Country country : application.getPersonalDetails().getCandidateNationalities()) {
+		for (Language languageCountry : application.getPersonalDetails().getCandidateNationalities()) {
 			if (sb.length() > 0) {
 				sb.append(", ");
 			}
-			sb.append(country.getName());
+			sb.append(languageCountry.getName());
 		}
 		table.addCell(newTableCell(sb.toString(), smallFont));
 

@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
@@ -256,7 +257,7 @@ public class PersonalDetailsValidatorTest {
 	
 	@Before
 	public void setup() {
-		Country nationality = new Country();
+		Language nationality = new Language();
 		personalDetails = new PersonalDetailsBuilder()//
 				.candiateNationalities(nationality)//
 				.applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm())//

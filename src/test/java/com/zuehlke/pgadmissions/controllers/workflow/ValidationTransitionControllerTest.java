@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.BadgeService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -52,6 +53,7 @@ public class ValidationTransitionControllerTest {
 	private DocumentPropertyEditor documentPropertyEditorMock;
 	private BindingResult bindingResultMock;
 	private RegisteredUser user;
+	private BadgeService badgeServiceMock;
 	
 	@Test
 	public void shouldReturnAllValidationQuestionOptions() {
@@ -77,7 +79,7 @@ public class ValidationTransitionControllerTest {
 		ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
 		commentServiceMock.save(comment);
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock){
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -102,7 +104,7 @@ public class ValidationTransitionControllerTest {
 		EasyMock.expect(documentServiceMock.getDocumentById(2)).andReturn(documentTwo);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock){
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -135,8 +137,9 @@ public class ValidationTransitionControllerTest {
 		stateTransitionViewResolverMock = EasyMock.createMock(StateTransitionViewResolver.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
+		badgeServiceMock = EasyMock.createMock(BadgeService.class);
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock);
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock);
 
 	}
 

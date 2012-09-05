@@ -289,6 +289,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	public void shouldLoadRegisteredUserWithComments() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").toUser();
 		
+		sessionFactory.getCurrentSession().save(applicant);
+		
 		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(1).toApplicationForm();
 		
 		sessionFactory.getCurrentSession().save(application);

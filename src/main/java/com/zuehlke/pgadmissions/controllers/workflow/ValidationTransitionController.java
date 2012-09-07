@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -74,9 +76,15 @@ public class ValidationTransitionController extends StateTransitionController {
 		
 		try {
 		    ApplicationForm form = getApplicationForm(applicationId);
-		    form.setBatchDeadline(new SimpleDateFormat("dd MMM yyyy").parse(closingDate));
-		    form.setProjectTitle(projectTitle);
-		    applicationsService.save(form);
+		    if(!StringUtils.isEmpty(closingDate)){
+		    	form.setBatchDeadline(new SimpleDateFormat("dd MMM yyyy").parse(closingDate));
+		    }
+		    if(!StringUtils.isEmpty(projectTitle)){
+		    	form.setProjectTitle(projectTitle);
+		    }
+		    if(!StringUtils.isEmpty(closingDate) || !StringUtils.isEmpty(projectTitle)){
+		    	applicationsService.save(form);
+		    }
 		    commentService.save(validationComment);
 		} catch (Exception e) {
 		    return STATE_TRANSITION_VIEW;
@@ -94,13 +102,13 @@ public class ValidationTransitionController extends StateTransitionController {
 		return HomeOrOverseas.values();
 	}
 	
-	@ModelAttribute("closingDates")
-	public Set<Date> getClosingDates(@RequestParam String applicationId) {
+	@ModelAttribute("badgesByClosingDate")
+	public List<Date> getClosingDates(@RequestParam String applicationId) {
 		return badgeService.getAllClosingDatesByProgram(getApplicationForm(applicationId).getProgram());
 	}
-	@ModelAttribute("projectTitles")
-	public Set<String> getProjectTitles(@RequestParam String applicationId) {
+	@ModelAttribute("badgesByTitle")
+	public List<String> getProjectTitles(@RequestParam String applicationId) {
 		return badgeService.getAllProjectTitlesByProgram(getApplicationForm(applicationId).getProgram());
 	}
-
+	
 }

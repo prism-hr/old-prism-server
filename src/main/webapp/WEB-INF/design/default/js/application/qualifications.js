@@ -4,7 +4,7 @@ $(document).ready(function(){
 	var suggestions = [];
 	
 	$("#acceptTermsQDValue").val("NO");
-	showOrHideAddQualificationButton();
+	showOrHideAddQualificationButtonOnly();
 	showOrHideQualificationInstitution();
 	
 	// -------------------------------------------------------------------------------
@@ -81,13 +81,28 @@ $(document).ready(function(){
 		    $("#qualificationsSaveButton").removeClass("blue");
 		    $("#qualificationsSaveButton").addClass("clear");
 			$("#addQualificationButton").hide();
-			$('#qualifications-H2').trigger('click');
+			$('#qualifications-H2').trigger('click');			
+		} else {
+			//enable save
+			$("#addQualificationButton").show();
+			$("#qualificationsSaveButton").addClass("blue");
+            $("#qualificationsSaveButton").removeClass("clear");
+		}
+	}
+	
+	function showOrHideAddQualificationButtonOnly() {
+		numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").size();
+		if (numberOfSavedPositions >= 6 && $("#qualificationSubject").val() == "") {
+		    $("#qualificationsSaveButton").removeClass("blue");
+		    $("#qualificationsSaveButton").addClass("clear");
+			$("#addQualificationButton").hide();
 		} else {
 			$("#addQualificationButton").show();
 			$("#qualificationsSaveButton").addClass("blue");
             $("#qualificationsSaveButton").removeClass("clear");
 		}
 	}
+	
 	
 	// -------------------------------------------------------------------------------
 	// Checkbox to mark the qualification as current.
@@ -219,7 +234,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('#qualificationsSaveButton').click(function()
 	{
-	    if (numberOfSavedPositions >= 6) {
+	    if (numberOfSavedPositions >= 6 && $("#qualificationSubject").val() == "") {
 	        return;
 	    }
 	    
@@ -244,6 +259,7 @@ $(document).ready(function(){
 	// -------------------------------------------------------------------------------
 	$('a[name="editQualificationLink"]').click(function()
 	{
+		$('#editClicked').val("1");
 		var id = this.id;
 		id = id.replace('qualification_', '');	
 		$('#qualificationsSection > div').append('<div class="ajax" />');

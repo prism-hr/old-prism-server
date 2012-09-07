@@ -150,12 +150,12 @@ public class AdminMailSender extends StateChangeMailSender {
 		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());
 		administrators.remove(approver);
 		if (!administrators.isEmpty()) {
-			internalSend(application, administrators, "approved.notification", "private/staff/admin/mail/approved_notification.ftl", model, true);
+			internalSend(application, administrators, "approved.notification", "private/staff/admin/mailBeta/approved_notification.ftl", model, true);
 		}
 
 		List<RegisteredUser> supervisorUsers = getSupervisorUsers(application);
 		if (!supervisorUsers.isEmpty()) {
-			internalSend(application, supervisorUsers, "approved.notification", "private/staff/admin/mail/approved_notification.ftl", model, false);
+			internalSend(application, supervisorUsers, "approved.notification", "private/staff/admin/mailBeta/approved_notification.ftl", model, false);
 		}
 	}
 

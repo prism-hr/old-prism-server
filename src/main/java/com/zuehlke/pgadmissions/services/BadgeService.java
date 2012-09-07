@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +15,10 @@ import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.domain.Badge;
+import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 
 @Service
 public class BadgeService {
@@ -33,26 +39,36 @@ public class BadgeService {
 		return badgeDAO.getBadgesByProgram(program);
 	}
 	
-	public Set<Date> getAllClosingDatesByProgram(Program program) {
+	public List<Date> getAllClosingDatesByProgram(Program program) {
+		Date now = new Date();
 		List<Badge> badges = badgeDAO.getBadgesByProgram(program);
 		List<Date> programClosingDates = new ArrayList<Date>();
 		for (Badge badge : badges) {
-			if(badge.getClosingDate() != null){
+			Date badgeClosingDate = badge.getClosingDate();
+			if(badgeClosingDate != null && !badgeClosingDate.before(now)){
 				programClosingDates.add(badge.getClosingDate());
 			}
 		}
-		return new HashSet<Date>(programClosingDates);
+		HashSet<Date> removedDuplicates = new HashSet<Date>(programClosingDates);
+		List<Date> dates = new ArrayList<Date>(removedDuplicates);
+		Collections.sort(dates);
+		Collections.reverse(dates);
+		return dates;
 	}
 	
-	public Set<String> getAllProjectTitlesByProgram(Program program) {
+	
+	public List<String> getAllProjectTitlesByProgram(Program program) {
 		List<Badge> badges = badgeDAO.getBadgesByProgram(program);
-		List<String> programProject = new ArrayList<String>();
+		List<String> programProjectTitles = new ArrayList<String>();
 		for (Badge badge : badges) {
 			if(!StringUtils.isEmpty(badge.getProjectTitle())){
-				programProject.add(badge.getProjectTitle());
+				programProjectTitles.add(badge.getProjectTitle());
 			}
 		}
-		return new HashSet<String>(programProject);
+		HashSet<String> removedDuplicates = new HashSet<String>(programProjectTitles);
+		List<String> titles = new ArrayList<String>(removedDuplicates);
+		Collections.sort(titles);
+		return titles;
 	}
-	
+
 }

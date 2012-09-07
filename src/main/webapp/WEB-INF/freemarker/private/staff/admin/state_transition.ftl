@@ -164,8 +164,8 @@
                                         <div class="field">
                                             <select class="max" id="closingDate" name="closingDate">
                                                 <option value="">Select...</option>
-                                                <#list closingDates as date>
-                                                     <option value="${(date?string('dd MMM yyyy'))!}">${(date?string('dd MMM yyyy'))!}</option>
+                                                <#list badgesByClosingDate as date>
+                                                     <option value="${(date?string('dd MMM yyyy'))!}" <#if applicationForm.batchDeadline?? && applicationForm.batchDeadline?string('dd MMM yyyy') == date?string('dd MMM yyyy')> selected="selected"</#if>>${(date?string('dd MMM yyyy'))!}</option>
                                                 </#list>   
                                             </select>
                                         </div>
@@ -176,8 +176,8 @@
                                         <div class="field">
                                             <select class="max" id="projectTitle" name="projectTitle">
                                                 <option value="">Select...</option>
-                                                <#list projectTitles as title>
-                                                        <option value="${title}">${title}</option>
+                                                <#list badgesByTitle as title>
+                                                        <option value="${title}" <#if applicationForm.projectTitle?? && applicationForm.projectTitle == title> selected="selected"</#if>>${title}</option>
                                                 </#list>
                                             </select>
                                         </div>

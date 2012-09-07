@@ -112,7 +112,7 @@
 		<constructor-arg index="4" value="APPROVED" />
 		<constructor-arg index="5" value="approved.notification.applicant" />
 		<constructor-arg index="6"
-			value="private/pgStudents/mail/moved_to_approved_notification.ftl" />
+			value="private/pgStudents/mailBeta/moved_to_approved_notification.ftl" />
 	</bean>
 
 	<bean id="moveToApprovedNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">

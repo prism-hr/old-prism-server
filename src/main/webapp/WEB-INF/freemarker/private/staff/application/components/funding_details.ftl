@@ -5,7 +5,7 @@
 </#if>
 
 <#import "/spring.ftl" as spring />
-
+<#setting locale = "en_US">
 <h2 id="funding-H2" class="no-arrow empty">Funding</h2>
 
 <div>

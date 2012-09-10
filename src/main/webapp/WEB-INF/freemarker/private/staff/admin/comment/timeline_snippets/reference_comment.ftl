@@ -1,4 +1,5 @@
 <#assign role = "referee"/>
+<#setting locale = "en_US">
 <#if !timelineObject.referee.declined>
 	<#assign comment = timelineObject.referee.reference/>
 </#if>    

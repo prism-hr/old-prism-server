@@ -12,7 +12,7 @@
 <#else> 
   <#assign comCount = 0>
 </#if>
-
+<#setting locale = "en_US">
 <#-- Personal Details Rendering -->
 
 <!-- Personal details -->

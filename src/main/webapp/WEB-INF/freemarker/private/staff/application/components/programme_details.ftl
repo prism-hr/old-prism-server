@@ -12,7 +12,7 @@
 
 <#-- Assignments -->
 <#import "/spring.ftl" as spring />
-
+<#setting locale = "en_US">
 <#-- Programme Details Rendering -->
 <h2 id="programme-H2" class="no-arrow tick">Programme</h2>
 

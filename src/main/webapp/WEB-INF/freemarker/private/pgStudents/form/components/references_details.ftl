@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#setting locale = "en_US">
 <#assign errorCode = RequestParameters.errorCode! />
 <#if applicationForm.referees?has_content>
   <#assign hasReferees = true>

@@ -6,7 +6,7 @@
 </#if> 
  
 <#import "/spring.ftl" as spring />
-
+<#setting locale = "en_US">
 <a name="qualification-details"></a>	
 <h2 id="qualifications-H2" class="empty open">
 	<span class="left"></span><span class="right"></span><span class="status"></span>

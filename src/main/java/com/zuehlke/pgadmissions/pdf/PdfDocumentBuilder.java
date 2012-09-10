@@ -493,7 +493,7 @@ public class PdfDocumentBuilder {
 				} else {
 					table.addCell(newTableCell("Expected Grade/Result/GPA", smallBoldFont));
 				}
-				table.addCell(newTableCell(qualification.getQualificationInstitution(), smallFont));
+				table.addCell(newTableCell(qualification.getQualificationGrade(), smallFont));
 
 				table.addCell(newTableCell("Award Date", smallBoldFont));
 				if (qualification.getQualificationAwardDate() == null) {
@@ -547,6 +547,9 @@ public class PdfDocumentBuilder {
 
 				table.addCell(newTableCell("Employer Address", smallBoldFont));
 				table.addCell(newTableCell(position.getEmployerAddress(), smallFont));
+				
+				table.addCell(newTableCell("Employer Position", smallBoldFont));
+				table.addCell(newTableCell(position.getPosition(), smallFont));
 
 				table.addCell(newTableCell("Roles and Responsibilities", smallBoldFont));
 				table.addCell(newTableCell(position.getRemit(), smallFont));

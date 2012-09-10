@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <#assign errorCode = RequestParameters.errorCode! />
-
+<#setting locale = "en_US">
 <a name="address-details"></a>
 <h2 id="address-H2" class="empty open">
 	<span class="left"></span><span class="right"></span><span class="status"></span>

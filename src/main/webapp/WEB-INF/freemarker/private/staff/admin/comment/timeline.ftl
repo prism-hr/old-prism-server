@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#setting locale = "en_US">
 <!-- Styles for Application List Page -->
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>

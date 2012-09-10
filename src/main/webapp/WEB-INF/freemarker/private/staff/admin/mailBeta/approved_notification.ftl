@@ -39,19 +39,9 @@
 			      	</p>
 			      	
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on the application, you should refer them to one of the following UCL Admissions contacts:
-				      		<ul>			
-				      		<#list registryContacts as contact>      		
-								<li><a href="mailto: ${contact.email}">${contact.firstname} ${contact.lastname}</a></li>
-							</#list>
-				      		</ul>			      		  
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on the application, you should refer them to one of the following UCL Admissions contacts us
 			      		  </font>
 			      	</p>
-
-			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2"><b>The candidate number for UCL Admissions is --SitsApplicationId--. Please quote this number in all correspondence with them.</b></font>
-			      	</p>
-
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>

@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <#-- Assignments -->
 <#import "/spring.ftl" as spring />
+<#setting locale = "en_US">
 <#if user.isInRole('APPLICANT')>
   <#assign formDisplayState = "close"/>
 <#else>

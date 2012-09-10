@@ -78,9 +78,8 @@ $(document).ready(function(){
 	function showOrHideAddQualificationButton() {
 		numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").size();
 		if (numberOfSavedPositions >= 6) {
-		    $("#qualificationsSaveButton").removeClass("blue");
 		    $("#qualificationsSaveButton").addClass("clear");
-			$("#addQualificationButton").hide();
+		    $("#addQualificationButton").removeClass("blue");
 			$('#qualifications-H2').trigger('click');			
 		} else {
 			//enable save
@@ -93,11 +92,12 @@ $(document).ready(function(){
 	function showOrHideAddQualificationButtonOnly() {
 		numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").size();
 		if (numberOfSavedPositions >= 6 && $("#qualificationSubject").val() == "") {
-		    $("#qualificationsSaveButton").removeClass("blue");
 		    $("#qualificationsSaveButton").addClass("clear");
-			$("#addQualificationButton").hide();
+			$("#addQualificationButton").removeClass("blue");
+			$("#addQualificationButton").attr('disabled','true');
 		} else {
 			$("#addQualificationButton").show();
+			$("#addQualificationButton").removeAttr('disabled');
 			$("#qualificationsSaveButton").addClass("blue");
             $("#qualificationsSaveButton").removeClass("clear");
 		}
@@ -235,6 +235,7 @@ $(document).ready(function(){
 	$('#qualificationsSaveButton').click(function()
 	{
 	    if (numberOfSavedPositions >= 6 && $("#qualificationSubject").val() == "") {
+			$('#qualifications-H2').trigger('click');
 	        return;
 	    }
 	    

@@ -93,16 +93,17 @@ public class BadgeServiceTest {
 		BadgeDAO badgeDAOMock = EasyMock.createMock(BadgeDAO.class);
 		BadgeService service = new BadgeService(badgeDAOMock);
 		
-		Badge badge1 = new BadgeBuilder().id(1).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09")).projectTitle("same title").toBadge();
-		Badge badge2 = new BadgeBuilder().id(2).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09")).projectTitle("").toBadge();
-		Badge badge3 = new BadgeBuilder().id(3).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09")).projectTitle("same title").toBadge();
-		Badge badge4 = new BadgeBuilder().id(4).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09")).projectTitle("same title").toBadge();
-		Badge badge5 = new BadgeBuilder().id(5).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09")).projectTitle("same title").toBadge();
+		Badge badge1 = new BadgeBuilder().id(1).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2030/09/09")).projectTitle("same title").toBadge();
+		Badge badge2 = new BadgeBuilder().id(2).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2030/09/09")).projectTitle("").toBadge();
+		Badge badge3 = new BadgeBuilder().id(3).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2030/09/09")).projectTitle("same title").toBadge();
+		Badge badge4 = new BadgeBuilder().id(4).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2030/09/09")).projectTitle("same title").toBadge();
+		Badge badge5 = new BadgeBuilder().id(5).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2030/09/09")).projectTitle("same title").toBadge();
+		Badge badge6 = new BadgeBuilder().id(6).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2030/09/09")).projectTitle("different title1").toBadge();
+		Badge badge7 = new BadgeBuilder().id(7).closingDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09")).projectTitle("different title").toBadge();
 		
-		EasyMock.expect(badgeDAOMock.getBadgesByProgram(program)).andReturn(Arrays.asList(badge1, badge2, badge3, badge4, badge5));
+		EasyMock.expect(badgeDAOMock.getBadgesByProgram(program)).andReturn(Arrays.asList(badge1, badge2, badge3, badge4, badge5, badge6, badge7));
 		EasyMock.replay(badgeDAOMock);
-		
-		assertEquals(1, service.getAllProjectTitlesByProgram(program).size());
+		assertEquals(2, service.getAllProjectTitlesByProgram(program).size());
 		
 	}
 	

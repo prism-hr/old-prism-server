@@ -38,7 +38,7 @@
 </#if>
 
 <#import "/spring.ftl" as spring />
-
+<#setting locale = "en_US">
 <#-- Personal Details Rendering -->
 <!-- Personal details -->
 <a name="Personal-Details"></a>

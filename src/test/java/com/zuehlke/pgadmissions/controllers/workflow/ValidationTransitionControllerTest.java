@@ -4,7 +4,11 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -16,6 +20,7 @@ import org.springframework.validation.BindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -121,6 +126,56 @@ public class ValidationTransitionControllerTest {
 		EasyMock.verify(commentServiceMock);
 		assertEquals(2, comment.getDocuments().size());
 		assertTrue(comment.getDocuments().containsAll(Arrays.asList(documentOne, documentTwo)));
+	}
+	
+	public void shouldAddAPplicationFormClosingDateIfExistInPast() throws ParseException {
+		Program program = new Program();
+		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().batchDeadline(pastDate).id(1).program(program).toApplicationForm();
+		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
+			@Override
+			public ApplicationForm getApplicationForm( String applicationId) {
+				return applicationForm;
+			}
+				
+		};
+		EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(Arrays.asList(new Date()));
+		EasyMock.replay(badgeServiceMock);
+		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains(pastDate));
+	}
+	
+	public void shouldAddAPplicationFormProjectTitleIfExistAndClosingDateInPast() throws ParseException {
+		Program program = new Program();
+		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").batchDeadline(pastDate).id(1).program(program).toApplicationForm();
+		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
+			@Override
+			public ApplicationForm getApplicationForm( String applicationId) {
+				return applicationForm;
+			}
+			
+		};
+		EasyMock.expect(badgeServiceMock.getAllProjectTitlesByProgram(program)).andReturn(Arrays.asList("title 1"));
+		EasyMock.replay(badgeServiceMock);
+		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains("title"));
+	}
+	
+	public void shouldAddAPplicationFormProjectTitleIfExistAndClosingDateDontExist() throws ParseException {
+		Program program = new Program();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").id(1).program(program).toApplicationForm();
+		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
+			@Override
+			public ApplicationForm getApplicationForm( String applicationId) {
+				return applicationForm;
+			}
+			
+		};
+		EasyMock.expect(badgeServiceMock.getAllProjectTitlesByProgram(program)).andReturn(Arrays.asList("title 1"));
+		EasyMock.replay(badgeServiceMock);
+		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains("title"));
 	}
 	
 	@Before

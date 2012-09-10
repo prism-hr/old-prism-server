@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 
 <#import "/spring.ftl" as spring />
-
+<#setting locale = "en_US">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

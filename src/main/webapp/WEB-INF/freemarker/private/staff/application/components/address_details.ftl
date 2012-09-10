@@ -5,6 +5,7 @@
 </#if> 
 
 <#import "/spring.ftl" as spring />
+<#setting locale = "en_US">
 
 <h2 id="address-H2" class="no-arrow empty">Address</h2>
 

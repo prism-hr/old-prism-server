@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
+<#setting locale = "en_US">
 <html>
 
 <head>

@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#setting locale = "en_US">
 <h2 id="additional-H2" class="no-arrow empty">Additional Information</h2>
 
 <div>

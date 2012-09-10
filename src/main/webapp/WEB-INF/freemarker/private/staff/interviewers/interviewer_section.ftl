@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#setting locale = "en_US">
 <#assign avaliableOptionsSize = (programmeInterviewers?size + previousInterviewers?size + 4)/>
 <#if (avaliableOptionsSize > 25)>
 <#assign avaliableOptionsSize = 25 />

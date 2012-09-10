@@ -1,5 +1,6 @@
 <#-- Assignments -->
 <#import "/spring.ftl" as spring />
+<#setting locale = "en_US">
 <#assign errorCode = RequestParameters.errorCode! />
 <#assign studyOptionError = RequestParameters.studyOptionError! />
 <#assign programError = RequestParameters.programError! />

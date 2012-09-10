@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -104,11 +105,29 @@ public class ValidationTransitionController extends StateTransitionController {
 	
 	@ModelAttribute("badgesByClosingDate")
 	public List<Date> getClosingDates(@RequestParam String applicationId) {
-		return badgeService.getAllClosingDatesByProgram(getApplicationForm(applicationId).getProgram());
+		List<Date> allClosingDates = new ArrayList<Date>();
+		allClosingDates = badgeService.getAllClosingDatesByProgram(getApplicationForm(applicationId).getProgram());
+		ApplicationForm form = getApplicationForm(applicationId);
+		if(form.getBatchDeadline() != null && form.getBatchDeadline().before(new Date())) {
+			allClosingDates.add(form.getBatchDeadline());
+		}
+		return allClosingDates;
 	}
+	
+	
 	@ModelAttribute("badgesByTitle")
 	public List<String> getProjectTitles(@RequestParam String applicationId) {
-		return badgeService.getAllProjectTitlesByProgram(getApplicationForm(applicationId).getProgram());
+		List<String> projectTitles = new ArrayList<String>();
+		projectTitles = badgeService.getAllProjectTitlesByProgram(getApplicationForm(applicationId).getProgram());
+		ApplicationForm form = getApplicationForm(applicationId);
+		if(!StringUtils.isEmpty(form.getProjectTitle()) && form.getBatchDeadline() != null && form.getBatchDeadline().before(new Date())) {
+			projectTitles.add(form.getProjectTitle());
+		}
+		else if(!StringUtils.isEmpty(form.getProjectTitle()) && form.getBatchDeadline() == null) {
+			projectTitles.add(form.getProjectTitle());
+		}
+		
+		return projectTitles;
 	}
 	
 }

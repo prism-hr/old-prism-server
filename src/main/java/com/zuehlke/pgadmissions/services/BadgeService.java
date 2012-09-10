@@ -58,9 +58,14 @@ public class BadgeService {
 	
 	
 	public List<String> getAllProjectTitlesByProgram(Program program) {
+		Date now = new Date();
 		List<Badge> badges = badgeDAO.getBadgesByProgram(program);
 		List<String> programProjectTitles = new ArrayList<String>();
 		for (Badge badge : badges) {
+			Date badgeClosingDate = badge.getClosingDate();
+			if(badgeClosingDate != null && badgeClosingDate.before(now)){
+				continue;
+			}
 			if(!StringUtils.isEmpty(badge.getProjectTitle())){
 				programProjectTitles.add(badge.getProjectTitle());
 			}
@@ -70,5 +75,5 @@ public class BadgeService {
 		Collections.sort(titles);
 		return titles;
 	}
-
+	
 }

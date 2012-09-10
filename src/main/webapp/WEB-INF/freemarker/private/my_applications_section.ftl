@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#setting locale = "en_US">
 <#list applications as application>
 <tr id="row_${application.applicationNumber}" name="applicationRow">
 	<td class="centre">

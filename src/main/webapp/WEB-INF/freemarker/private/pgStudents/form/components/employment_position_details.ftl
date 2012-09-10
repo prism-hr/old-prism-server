@@ -4,7 +4,7 @@
 <#else>
 	<#assign hasEmploymentPositions = false>
 </#if>
-
+<#setting locale = "en_US">
 <#import "/spring.ftl" as spring />
 
 <a name="position-details"></a>	

@@ -13,8 +13,7 @@ $(document).ready(function(){
 	function showOrHideAdPosisionButton() {
 		numberOfSavedPositions = $("#positionSection .existing .button-edit").size();
 		if (numberOfSavedPositions >= 5) {
-			$("#addPosisionButton").hide();
-			$("#positionSaveAndCloseButton").removeClass("blue");
+			$("#addPosisionButton").removeClass("blue");
             $("#positionSaveAndCloseButton").addClass("clear");
             $('#position-H2').trigger('click');
 		} else {
@@ -30,11 +29,12 @@ $(document).ready(function(){
 	function showOrHideAdPosisionButtonOnly() {
 		numberOfSavedPositions = $("#positionSection .existing .button-edit").size();
 		if (numberOfSavedPositions >= 5 && $("#position_title").val() == "") {
-			$("#addPosisionButton").hide();
-			$("#positionSaveAndCloseButton").removeClass("blue");
+			$("#addPosisionButton").removeClass("blue");
+			$("#addPosisionButton").attr('disabled','true');
             $("#positionSaveAndCloseButton").addClass("clear");
 		} else {
 			$("#addPosisionButton").show();
+			$("#addPosisionButton").removeAttr('disabled');
 			$("#positionSaveAndCloseButton").addClass("blue");
             $("#positionSaveAndCloseButton").removeClass("clear");
 		}
@@ -139,6 +139,7 @@ $(document).ready(function(){
 	$('#positionSaveAndCloseButton').click(function()
 	{
 	    if (numberOfSavedPositions >= 5 && $("#position_title").val() == "") {
+	    	 $('#position-H2').trigger('click');
 	        return;
 	    }
 	    

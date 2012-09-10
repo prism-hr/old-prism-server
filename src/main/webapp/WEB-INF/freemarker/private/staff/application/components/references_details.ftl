@@ -5,7 +5,7 @@
 </#if> 
 
 <#import "/spring.ftl" as spring />
-
+<#setting locale = "en_US">
 <h2 id="referee-H2" class="no-arrow empty">References</h2>
 
 <div class="open">

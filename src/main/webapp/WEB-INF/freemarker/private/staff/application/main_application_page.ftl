@@ -9,6 +9,7 @@
 <#-- Personal Details Rendering -->
 
 <!DOCTYPE HTML>
+<#setting locale = "en_US">
 <#import "/spring.ftl" as spring />
 <html>
 <head>

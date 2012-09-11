@@ -80,7 +80,14 @@
       <!-- Attachment / supporting document  -->
       <div class="admin_row">
         <span class="admin_row_label">Proof of award (PDF)</span>
-        <div class="field" id="referenceDocument">Not Provided</div> 
+        <div class="field" id="referenceDocument">
+            <#if qualification.proofOfAward??>
+                <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>" target="_blank">${(qualification.proofOfAward.fileName)!}</a>
+            <#else>
+                Not Provided
+            </#if>
+        </div>
+         
       </div>
       
     </div>                             

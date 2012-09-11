@@ -58,9 +58,9 @@
         <div class="field">${(applicationForm.personalDetails.country.name?html)!"Not Provided"}</div>
       </div>
       
-      <!-- My Nationality -->
+      <!-- Nationality -->
       <div class="admin_row">
-        <label class="admin_row_label">My Nationality</label>
+        <label class="admin_row_label">Nationality</label>
         <div class="field">
           <#assign size_cn = applicationForm.personalDetails.candidateNationalities?size>
           <#if ( size_cn > 0)>

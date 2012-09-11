@@ -61,8 +61,8 @@
       
     </div>
 
-    <#if applicationForm.programmeDetails.supervisors?? && (applicationForm.programmeDetails.supervisors?size > 0) >
-    <#list applicationForm.programmeDetails.supervisors! as supervisor>
+    <#if applicationForm.programmeDetails.suggestedSupervisors?? && (applicationForm.programmeDetails.suggestedSupervisors?size > 0) >
+    <#list applicationForm.programmeDetails.suggestedSupervisors! as supervisor>
       
     <div class="row-group">
       
@@ -83,7 +83,7 @@
       
       <div class="admin_row">
         <label class="admin_row_label">Is this supervisor aware of the application? </label>
-        <div class="field"><#if supervisor.awareSupervisor == "YES">Yes<#else>No</#if></div>
+        <div class="field"><#if supervisor.aware??>Yes<#else>No</#if></div>
       </div>
       
     </div>

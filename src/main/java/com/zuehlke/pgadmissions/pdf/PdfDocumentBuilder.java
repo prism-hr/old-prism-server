@@ -34,7 +34,6 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Language;
@@ -590,7 +589,7 @@ public class PdfDocumentBuilder {
 		if (application.getFundings().isEmpty()) {
 			table = new PdfPTable(2);
 			table.setWidthPercentage(100f);
-			table.addCell(newTableCell("Source", smallBoldFont));
+			table.addCell(newTableCell("Funding", smallBoldFont));
 			table.addCell(newTableCell(null, smallFont));
 			document.add(table);
 		} else {
@@ -598,7 +597,7 @@ public class PdfDocumentBuilder {
 			for (Funding funding : application.getFundings()) {
 				table = new PdfPTable(2);
 				table.setWidthPercentage(100f);
-				PdfPCell headerCell = newTableCell("Source (" + counter++ + ")", smallBoldFont);
+				PdfPCell headerCell = newTableCell("Funding (" + counter++ + ")", smallBoldFont);
 				headerCell.setColspan(2);
 				table.addCell(headerCell);
 				table.addCell(newTableCell("Funding Type", smallBoldFont));
@@ -659,6 +658,9 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell("Position", smallBoldFont));
 				table.addCell(newTableCell(referee.getJobTitle(), smallFont));
 
+				table.addCell(newTableCell("Address", smallBoldFont));
+                table.addCell(newTableCell(referee.getAddressLocation(), smallFont));
+				
 				table.addCell(newTableCell("Country", smallBoldFont));
 				table.addCell(newTableCell(referee.getAddressCountry().getName(), smallFont));
 

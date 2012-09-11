@@ -737,10 +737,13 @@ public class PdfDocumentBuilder {
 
 	private void addSupportingDocuments(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
 		for (Integer integer : bookmarkMap.keySet()) {
-			document.newPage();
-			headerEvent.setAddHeaderAndFooter(true);
-			Object obj = bookmarkMap.get(integer);
-			if(obj instanceof com.zuehlke.pgadmissions.domain.Document){
+			
+		    document.newPage();
+			
+		    headerEvent.setAddHeaderAndFooter(true);
+			
+		    Object obj = bookmarkMap.get(integer);
+			if (obj instanceof com.zuehlke.pgadmissions.domain.Document) {
 				com.zuehlke.pgadmissions.domain.Document doc = (com.zuehlke.pgadmissions.domain.Document) obj;
 				if (doc != null) {
 					document.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
@@ -753,9 +756,14 @@ public class PdfDocumentBuilder {
 					} else if (DocumentType.PROOF_OF_AWARD == doc.getType()) {
 						document.add(new Chunk(" - Qualification proof of award"));
 					}
-					readPdf(document, doc, writer);
+					
+					try {
+					    readPdf(document, doc, writer);
+					} catch (Exception e) {
+					    LOG.warn(String.format("Error in generating pdf while appending supporting document %s for %s", application.getApplicationNumber(), doc.getFileName()), e);
+					}
 				}
-			}else if( obj instanceof ReferenceComment){
+			} else if( obj instanceof ReferenceComment) {
 				ReferenceComment reference = (ReferenceComment) obj;
 				document.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
 				
@@ -776,26 +784,30 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell("Comment", smallBoldFont));
 				table.addCell(newTableCell(reference.getComment(), smallFont));
 				table.addCell(newTableCell("Is the applicant suitable for postgraduate study at UCL?", smallBoldFont));
-				if(reference.getSuitableForUCL()!= null && reference.getSuitableForUCL()){
+				if (reference.getSuitableForUCL()!= null && reference.getSuitableForUCL()) {
 					table.addCell(newTableCell("Yes", smallFont));
-				}else{
+				} else {
 					table.addCell(newTableCell("No", smallFont));
 				}
 				table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study programme?", smallBoldFont));
-				if(reference.getSuitableForProgramme()!= null && reference.getSuitableForProgramme()){
+				if (reference.getSuitableForProgramme()!= null && reference.getSuitableForProgramme()) {
 					table.addCell(newTableCell("Yes", smallFont));
-				}else{
+				} else {
 					table.addCell(newTableCell("No", smallFont));
 				}
 				document.add(table);
 				for (com.zuehlke.pgadmissions.domain.Document refDocument : reference.getDocuments()) {
-					readPdf(document, refDocument, writer);
+				    try {
+				        readPdf(document, refDocument, writer);
+                    } catch (Exception e) {
+                        LOG.warn(String.format("Error in generating pdf while appending supporting document %s for %s", application.getApplicationNumber(), refDocument.getFileName()), e);
+                    }
 				}
 			}
 		}
 	}
 
-	private void readPdf(Document document, com.zuehlke.pgadmissions.domain.Document doc, PdfWriter writer) throws IOException {
+	private void readPdf(Document document, com.zuehlke.pgadmissions.domain.Document doc, PdfWriter writer) throws Exception {
 		PdfReader pdfReader = new PdfReader(doc.getContent());
 		PdfContentByte cb = writer.getDirectContent();
 

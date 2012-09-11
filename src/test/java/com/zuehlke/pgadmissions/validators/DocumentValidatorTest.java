@@ -1,9 +1,15 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,26 +91,43 @@ public class DocumentValidatorTest {
 	@Test
 	public void shouldAllowPDFonly() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(document, "document");
-		
 		document.setFileName("bob.pdf");			
 		documentValidator.validate(document, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-	
 	}
+	
 	@Test
 	public void shouldAllowDotsInFilelanes() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(document, "document");
-		
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(document, "document");	
 		document.setFileName("bob_v1.1.pdf");			
 		documentValidator.validate(document, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-	
 	}
+	
+	@Test
+	@Ignore
+	public void shouldNotAllowDamagedPdf() throws IOException {
+	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(document, "document");
+	    document.setFileName("damaged.pdf");
+	    document.setContent(FileUtils.readFileToByteArray(new File("src/test/resources/pdf/damaged.pdf")));
+	    documentValidator.validate(document, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
+	@Test
+	@Ignore
+    public void shouldAllowValidPdf() throws IOException {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(document, "document");
+        documentValidator.validate(document, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
 
 	@Before
-	public void setup() {
-		document = new DocumentBuilder().fileName("bob.pdf").type(DocumentType.CV).toDocument();
+	public void setup() throws IOException {
+		document = new DocumentBuilder()
+		    .fileName("valid.pdf")
+		    .type(DocumentType.CV)
+		    .content(FileUtils.readFileToByteArray(new File("src/test/resources/pdf/valid.pdf")))
+		    .toDocument();
 	}
 }

@@ -52,7 +52,7 @@
         <span class="admin_row_label">Proof of award</span>
         <#if funding.document?has_content>
         <div class="field" id="proofOfAward">
-          <a href="<@spring.url '/pgadmissions/download?documentId=${(encrypter.encrypt(funding.document.id))!}'/>" target="_blank">
+          <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(funding.document.id))!}'/>" target="_blank">
             ${(funding.document.fileName?html)!}
           </a>
         </div>

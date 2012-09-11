@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -28,6 +29,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
+
 @RequestMapping("/update")
 @Controller
 public class AddressController {
@@ -99,7 +101,12 @@ public class AddressController {
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.setValidator(addressSectionDTOValidator);
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 	}
+	
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {

@@ -14,6 +14,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -145,12 +146,24 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldBindPropertyEditors() {
+	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
+	    controller = new EmploymentController(employmentServiceMock, languageServiceMock, countriesServiceMock, applicationsServiceMock,
+                languagePropertyEditorMock, datePropertyEditorMock, countryPropertyEditor, 
+                applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock) {
+	        @Override
+            public StringTrimmerEditor newStringTrimmerEditor() {
+                return stringTrimmerEditor;
+            }
+	    };
+
+	    
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(employmentValidatorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMock);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
+		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);

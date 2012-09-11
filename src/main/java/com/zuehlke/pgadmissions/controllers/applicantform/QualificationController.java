@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -86,16 +87,19 @@ public class QualificationController {
 	
 	@InitBinder(value="qualification")
 	public void registerPropertyEditors(WebDataBinder binder) {
-
 		binder.setValidator(qualificationValidator);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 		binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(QualificationType.class, qualificationTypePropertyEditor);
 		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-		
 	}
+
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }
 	
 	@RequestMapping(value = "/getQualification", method = RequestMethod.GET)
 	public String getQualificationView() {

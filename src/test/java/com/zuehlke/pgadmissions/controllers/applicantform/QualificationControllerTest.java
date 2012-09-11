@@ -14,6 +14,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -155,6 +156,16 @@ public class QualificationControllerTest {
 
 	@Test
 	public void shouldBindPropertyEditors() {
+	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
+	    controller = new QualificationController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, domicileDAOMock,
+                languageServiceMock, languagePropertyEditorMock, domicilePropertyEditor, qualificationValidatorMock, qualificationServiceMock,
+                documentPropertyEditorMock, userServiceMock, encryptionHelperMock, qualificationTypeDAOMock, qualificationTypePropertyEditorMock) {
+	        @Override
+	        public StringTrimmerEditor newStringTrimmerEditor() {
+                return stringTrimmerEditor;
+	        }
+	    };
+
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(qualificationValidatorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
@@ -163,6 +174,7 @@ public class QualificationControllerTest {
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
 		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
 		binderMock.registerCustomEditor(QualificationType.class, qualificationTypePropertyEditorMock);
+		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);

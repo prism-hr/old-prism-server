@@ -7,7 +7,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -74,27 +73,28 @@ public class EmploymentController {
 		this.employmentPositionValidator = employmentPositionValidator;
 		this.userService = userService;
 		this.encryptionHelper = encryptionHelper;
-
 	}
 
 	@InitBinder("employmentPosition")
 	public void registerPropertyEditors(WebDataBinder binder) {
-
 		binder.setValidator(employmentPositionValidator);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);		
-
-		
 	}
+	
+	public StringTrimmerEditor newStringTrimmerEditor() {
+	     return new StringTrimmerEditor(false);
+	 }
+	
 	@RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
 	public String getEmploymentView() {
 		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
 		return STUDENTS_EMPLOYMENT_DETAILS_VIEW;
-
 	}
 	
 	@RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
@@ -112,11 +112,7 @@ public class EmploymentController {
 		employment.getApplication().setLastUpdated(new Date());
 		applicationService.save(employment.getApplication());
 		return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getApplicationNumber();
-		
-
 	}
-
-
 
 	@ModelAttribute("languages")
 	public List<Language> getAllLanguages() {
@@ -153,7 +149,5 @@ public class EmploymentController {
 	@ModelAttribute("message")
 	public String getMessage(@RequestParam(required=false)String message) {		
 		return message;
-	}
-
-	
+	}	
 }

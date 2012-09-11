@@ -12,6 +12,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -128,10 +129,20 @@ public class RefereeControllerTest {
 
 	@Test
 	public void shouldBindPropertyEditors() {
+	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
+	    controller = new RefereeController(refereeServiceMock, userServiceMock,countriesServiceMock, applicationsServiceMock,// 
+                countryPropertyEditor, applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock) {
+	        @Override
+            public StringTrimmerEditor newStringTrimmerEditor() {
+                return stringTrimmerEditor;
+            }
+	    };
+	    
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(refereeValidatorMock);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
+		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -265,14 +276,12 @@ public class RefereeControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		countryPropertyEditor = EasyMock.createMock(CountryPropertyEditor.class);
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
-		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		refereeValidatorMock = EasyMock.createMock(RefereeValidator.class);
 
 		controller = new RefereeController(refereeServiceMock, userServiceMock,countriesServiceMock, applicationsServiceMock,// 
-				countryPropertyEditor, applicationFormPropertyEditorMock, refereeValidatorMock,// 
-				encryptionUtilsMock, encryptionHelperMock);
+				countryPropertyEditor, applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		

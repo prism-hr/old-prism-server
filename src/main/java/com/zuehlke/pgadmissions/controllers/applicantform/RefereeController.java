@@ -8,7 +8,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -32,10 +32,8 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
-import freemarker.template.utility.StringUtil;
 @RequestMapping("/update")
 @Controller
 public class RefereeController {
@@ -47,18 +45,17 @@ public class RefereeController {
 	private final CountryPropertyEditor countryPropertyEditor;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final RefereeValidator refereeValidator;
-	private final EncryptionUtils encryptionUtils;
 	private final EncryptionHelper encryptionHelper;
 	private final UserService userService;
 
 	RefereeController() {
-		this(null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public RefereeController(RefereeService refereeService, UserService userService, CountryService countryService, ApplicationsService applicationsService,
 			CountryPropertyEditor countryPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, 
-			RefereeValidator refereeValidator, EncryptionUtils encryptionUtils, EncryptionHelper encryptionHelper) {
+			RefereeValidator refereeValidator, EncryptionHelper encryptionHelper) {
 		this.refereeService = refereeService;
 		this.userService = userService;
 		this.countryService = countryService;
@@ -66,7 +63,6 @@ public class RefereeController {
 		this.countryPropertyEditor = countryPropertyEditor;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.refereeValidator = refereeValidator;
-		this.encryptionUtils = encryptionUtils;
 		this.encryptionHelper = encryptionHelper;
 	}
 
@@ -120,10 +116,14 @@ public class RefereeController {
 	@InitBinder(value="referee")
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.setValidator(refereeValidator);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);		
 	}
-
+	
+	public StringTrimmerEditor newStringTrimmerEditor() {
+	    return new StringTrimmerEditor(false);
+	}
 
 	@ModelAttribute
 	public Referee getReferee(@RequestParam(required=false) String refereeId) {

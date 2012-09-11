@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -98,7 +99,6 @@ public class PersonalDetailsController {
 
 	@RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
 	public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult result) {
-
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
@@ -167,6 +167,7 @@ public class PersonalDetailsController {
 	@InitBinder(value = "personalDetails")
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.setValidator(personalDetailsValidator);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
@@ -175,6 +176,10 @@ public class PersonalDetailsController {
 		binder.registerCustomEditor(Disability.class, disabilityPropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 	}
+	
+	public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }
 
 	@ModelAttribute
 	public PersonalDetails getPersonalDetails(@RequestParam String applicationId) {

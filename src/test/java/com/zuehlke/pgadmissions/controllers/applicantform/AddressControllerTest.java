@@ -14,6 +14,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -116,10 +117,19 @@ public class AddressControllerTest {
 
 	@Test
 	public void shouldBindPropertyEditors() {
+	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
+	    controller = new AddressController(applicationsServiceMock, userServiceMock, countriesServiceMock, countryPropertyEditor, addressSectionValidatorMock) {
+	        @Override
+	        public StringTrimmerEditor newStringTrimmerEditor() {
+	            return stringTrimmerEditor;
+	        }	        
+	    };
+	    
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(addressSectionValidatorMock);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
-
+		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
+		
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);

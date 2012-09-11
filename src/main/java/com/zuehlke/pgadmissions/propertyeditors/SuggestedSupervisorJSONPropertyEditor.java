@@ -34,16 +34,15 @@ public class SuggestedSupervisorJSONPropertyEditor extends PropertyEditorSupport
 
 			Map<String, Object> properties = objectMapper.readValue(jsonString, Map.class);
 			SuggestedSupervisor supervisor = new SuggestedSupervisor();
-			supervisor.setFirstname((String) properties.get("firstname"));
-			supervisor.setLastname((String) properties.get("lastname"));
-			supervisor.setEmail((String) properties.get("email"));
+			supervisor.setFirstname(StringUtils.trim((String) properties.get("firstname")));
+			supervisor.setLastname(StringUtils.trim((String) properties.get("lastname")));
+			supervisor.setEmail(StringUtils.trim((String) properties.get("email")));
 			if(properties.get("awareSupervisor") != null && "YES".equals((String) properties.get("awareSupervisor"))){			
 				supervisor.setAware(true);
 			}			
 			if (StringUtils.isNotBlank((String) properties.get("id"))) {
 				supervisor.setId(encryptionHelper.decryptToInteger((String) properties.get("id")));
 			}
-
 			setValue(supervisor);
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);

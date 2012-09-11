@@ -500,7 +500,7 @@ public class PdfDocumentBuilder {
 					table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
 					bookmarkMap.put(appendixCounter++, qualification.getProofOfAward());
 				} else {
-					table.addCell(newTableCell("Not Awarded", smallGrayFont));
+					table.addCell(newTableCell("Not Provided", smallGrayFont));
 				}
 
 				document.add(table);
@@ -539,7 +539,7 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell("Employer Address", smallBoldFont));
 				table.addCell(newTableCell(position.getEmployerAddress(), smallFont));
 				
-				table.addCell(newTableCell("Employer Position", smallBoldFont));
+				table.addCell(newTableCell("Position", smallBoldFont));
 				table.addCell(newTableCell(position.getPosition(), smallFont));
 
 				table.addCell(newTableCell("Roles and Responsibilities", smallBoldFont));

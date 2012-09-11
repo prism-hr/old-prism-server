@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -48,7 +47,9 @@ import com.zuehlke.pgadmissions.exceptions.PDFException;
 
 @Component
 public class PdfDocumentBuilder {
-	private final Logger log = Logger.getLogger(PdfDocumentBuilder.class);
+    
+	private static final Logger LOG = Logger.getLogger(PdfDocumentBuilder.class);
+	
 	private static Font boldFont = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 	private static Font smallBoldFont = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 	private static Font smallFont = new Font(FontFamily.HELVETICA, 10, Font.NORMAL);
@@ -76,7 +77,7 @@ public class PdfDocumentBuilder {
 				try {
 					buildDocument(applicationForm, document, writer);
 				} catch (Exception e) {
-					log.warn("Error in generating pdf for application " + applicationForm.getApplicationNumber(), e);
+					LOG.warn("Error in generating pdf for application " + applicationForm.getApplicationNumber(), e);
 				}
 				document.newPage();
 			
@@ -99,11 +100,9 @@ public class PdfDocumentBuilder {
 			submittedDateHeader = new Chunk("", smallerFont);
 		}
 
-		headerEvent = new HeaderEvent(new Chunk(application.getProgram().getTitle(), smallerFont), new Chunk(application.getApplicationNumber(), smallerFont),
-				submittedDateHeader);
+		headerEvent = new HeaderEvent(new Chunk(application.getProgram().getTitle(), smallerFont), new Chunk(application.getApplicationNumber(), smallerFont), submittedDateHeader);
+		
 		writer.setPageEvent(headerEvent);
-
-
 		
 		addProgrammeSection(application, document);
 
@@ -129,11 +128,8 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 
-		if (SecurityContextHolder.getContext().getAuthentication() != null
-				&& ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)) {
-
+		if (SecurityContextHolder.getContext().getAuthentication() != null && ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)) {
 			addReferencesSection(application, document);
-
 		}
 
 		addSectionSeparators(document);
@@ -147,8 +143,6 @@ public class PdfDocumentBuilder {
 		addSectionSeparators(document);
 
 		addSupportingDocuments(application, document, writer);
-
-
 	}
 
 	private void addCoverPage(ApplicationForm application, PdfWriter writer, Document document) throws DocumentException, MalformedURLException, IOException {
@@ -502,10 +496,9 @@ public class PdfDocumentBuilder {
 				}
 
 				table.addCell(newTableCell("Proof Of Award", smallBoldFont));
-				if (qualification.isQualificationCompleted()) {
+				if (qualification.isQualificationCompleted() && qualification.getProofOfAward() != null) {
 					table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
 					bookmarkMap.put(appendixCounter++, qualification.getProofOfAward());
-
 				} else {
 					table.addCell(newTableCell("Not Awarded", smallGrayFont));
 				}
@@ -514,7 +507,6 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph(" "));
 			}
 		}
-
 	}
 
 	private void addEmploymentSection(ApplicationForm application, Document document) throws DocumentException {
@@ -574,9 +566,7 @@ public class PdfDocumentBuilder {
 				document.add(table);
 				document.add(new Paragraph(" "));
 			}
-
 		}
-
 	}
 
 	private void addFundingSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
@@ -620,7 +610,6 @@ public class PdfDocumentBuilder {
 				document.add(table);
 				document.add(new Paragraph(" "));
 			}
-
 		}
 	}
 
@@ -746,12 +735,8 @@ public class PdfDocumentBuilder {
 		document.add(table);
 	}
 
-	private void addSupportingDocuments(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException,
-			IOException {
-
-		Set<Integer> keySet = bookmarkMap.keySet();
-
-		for (Integer integer : keySet) {
+	private void addSupportingDocuments(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
+		for (Integer integer : bookmarkMap.keySet()) {
 			document.newPage();
 			headerEvent.setAddHeaderAndFooter(true);
 			Object obj = bookmarkMap.get(integer);
@@ -806,11 +791,8 @@ public class PdfDocumentBuilder {
 				for (com.zuehlke.pgadmissions.domain.Document refDocument : reference.getDocuments()) {
 					readPdf(document, refDocument, writer);
 				}
-				
 			}
-			
 		}
-
 	}
 
 	private void readPdf(Document document, com.zuehlke.pgadmissions.domain.Document doc, PdfWriter writer) throws IOException {
@@ -823,7 +805,6 @@ public class PdfDocumentBuilder {
 			PdfImportedPage page = writer.getImportedPage(pdfReader, i);
 			cb.addTemplate(page, 0, 0);
 		}
-
 	}
 
 	private class HeaderEvent extends PdfPageEventHelper {
@@ -833,8 +814,8 @@ public class PdfDocumentBuilder {
 		private final Chunk submittedDateHeader;
 		private boolean addHeaderAndFooter = true;
 		private boolean first  = true;
+		
 		public HeaderEvent(Chunk programmeHeader, Chunk applicationHeader, Chunk submittedDateHeader) {
-
 			this.programmeHeader = programmeHeader;
 			this.applicationHeader = applicationHeader;
 			this.submittedDateHeader = submittedDateHeader;

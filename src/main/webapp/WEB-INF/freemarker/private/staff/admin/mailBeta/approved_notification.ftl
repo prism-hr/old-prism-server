@@ -39,8 +39,7 @@
 			      	</p>
 			      	
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any further questions on the application, you should refer them to one of the following UCL Admissions contacts us
-			      		  </font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any questions in the meantime please contact us.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>

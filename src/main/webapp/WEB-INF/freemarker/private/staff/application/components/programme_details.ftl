@@ -72,12 +72,17 @@
       </div>
       
       <div class="admin_row">
-        <label class="admin_row_label">Name:</label>
-        <div class="field">${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!}</div>
+        <label class="admin_row_label">Supervisor First Name:</label>
+        <div class="field">${(supervisor.firstname?html)!}</div>
       </div>
       
       <div class="admin_row">
-        <label class="admin_row_label">Email:</label>
+        <label class="admin_row_label">Supervisor Last Name:</label>
+        <div class="field">${(supervisor.lastname?html)!}</div>
+      </div>
+      
+      <div class="admin_row">
+        <label class="admin_row_label">Supervisor Email:</label>
         <div class="field">${supervisor.email?html}</div>
       </div>
       

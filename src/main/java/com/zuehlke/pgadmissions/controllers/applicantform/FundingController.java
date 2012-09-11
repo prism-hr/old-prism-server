@@ -7,7 +7,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
@@ -71,13 +70,16 @@ public class FundingController {
 
 	@InitBinder(value="funding")
 	public void registerPropertyEditors(WebDataBinder binder) {
-
 		binder.setValidator(fundingValidator);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-		
 	}
+	
+	 public StringTrimmerEditor newStringTrimmerEditor() {
+	     return new StringTrimmerEditor(false);
+	 }
 
 	@RequestMapping(value = "/editFunding", method = RequestMethod.POST)
 	public String editFunding(@Valid Funding funding, BindingResult result) {

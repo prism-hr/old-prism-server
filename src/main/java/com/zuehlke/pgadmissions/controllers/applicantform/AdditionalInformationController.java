@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -108,9 +109,13 @@ public class AdditionalInformationController {
 	@InitBinder(value = "additionalInformation")
 	public void registerValidatorsEditors(WebDataBinder binder) {
 		binder.setValidator(additionalInformationValidator);
-		
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(Boolean.class, booleanPropertyEditor);
+	}
+	
+	public StringTrimmerEditor newStringTrimmerEditor() {
+	    return new StringTrimmerEditor(false);
 	}
 
 	@ModelAttribute("applicationForm")

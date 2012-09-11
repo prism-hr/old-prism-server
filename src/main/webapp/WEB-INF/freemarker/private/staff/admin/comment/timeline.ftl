@@ -132,7 +132,7 @@
 			                </div>
 			                <#if comment.type == 'REQUEST_RESTART'>
 												<p><em>${(comment.comment?html)!}</em></p>
-												<p class="restart"><span></span><em>Requested restart of approval phase.</em></p>
+												<p class="restart"><span></span>Restart of approval stage requested.</p>
 			                <#elseif comment.comment?starts_with("Referred to")>
 												<p class="referral"><span></span><em>${(comment.comment?html)!}</em></p>
 			                <#elseif comment.comment?starts_with("Delegated Application")>

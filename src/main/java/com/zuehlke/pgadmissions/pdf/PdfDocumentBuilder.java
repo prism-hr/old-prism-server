@@ -490,7 +490,7 @@ public class PdfDocumentBuilder {
 
 				table.addCell(newTableCell("Award Date", smallBoldFont));
 				if (qualification.getQualificationAwardDate() == null) {
-					table.addCell(newTableCell("Not Awarded", smallGrayFont));
+					table.addCell(newTableCell("Not Provided", smallGrayFont));
 				} else {
 					table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationAwardDate()), smallFont));
 				}

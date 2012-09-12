@@ -32,6 +32,10 @@
 			      	</p>
 			      	
 			      	<p>
+                          <font face="Arial, Helvetica, sans-serif" size="2">The application will be been advanced to UCL Admissions for verification.</font>
+                    </p>
+			      	
+			      	<p>
 			      		  <font face="Arial, Helvetica, sans-serif" size="2">UCL Prism is in BETA and we are in the process of connecting it to UCL Portico, the
 										student record system which UCL Admissions uses to assess study applications. We
 										expect this to be complete by the end of 2012. We will be back in touch early in 2013
@@ -41,6 +45,7 @@
 			      	<p>
 			      		  <font face="Arial, Helvetica, sans-serif" size="2">Should you have any questions in the meantime please contact us.</font>
 			      	</p>
+			      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>
 			      	</p>

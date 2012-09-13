@@ -1,5 +1,9 @@
+var originalPostUrl;
+
 $(document).ready(function()
 {
+    originalPostUrl = $('#stateChangeForm').attr('action');
+    
 	// ------------------------------------------------------------------------------
 	// Submit button.
 	// ------------------------------------------------------------------------------
@@ -7,13 +11,11 @@ $(document).ready(function()
 	{
 		if (validateStateChange())
 		{
-			var state		= $('#status').val().toLowerCase().capitalize();
+			var state = $('#status').val().toLowerCase().capitalize();
 			var message = 'Confirm you want to move this application to the ' + state + ' stage. <b>You will not be able to reverse this decision!</b>';
 			modalPrompt(message, changeState);
 			return;
 		}
-		//fire the change state to submit and get validation messages
-		//changeState();
 		return false;
 	});
 
@@ -29,12 +31,21 @@ $(document).ready(function()
 			$('#applicationAdministrator').removeAttr('disabled');
 			$('#delegateLabel').removeClass('grey-label');
 		}
+		else if ($('#status').val() == 'REQUEST_RESTART_APPROVAL') 
+		{
+		    $('#stateChangeForm').attr('action', '/pgadmissions/approval/submitRequestRestart');
+		}
 		else
 		{
 			// disable the delegation dropdown box.
 			$('#applicationAdministrator').attr('disabled', 'disabled');
 			$('#delegateLabel').addClass('grey-label');
 		}
+		
+		if ($('#status').val() != 'REQUEST_RESTART_APPROVAL') { 
+		    $('#stateChangeForm').attr('action', originalPostUrl);
+		}
+		
 	});
 
 
@@ -80,12 +91,6 @@ $(document).ready(function()
 		
 		return false;
 	});
-	
-	$('#requestRestartButton').click(function()
-	{
-		window.location.href = "/pgadmissions/approval/requestRestart?applicationId=" + $('#applicationId').val();
-	});
-	
 });
 
 

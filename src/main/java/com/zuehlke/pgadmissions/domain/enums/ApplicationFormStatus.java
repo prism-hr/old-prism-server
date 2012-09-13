@@ -9,7 +9,8 @@ public enum ApplicationFormStatus {
 	APPROVAL("Approval"), //
 	APPROVED("Approved"), //
 	WITHDRAWN("Withdrawn"), //
-	REJECTED("Rejected"); //
+	REJECTED("Rejected"), //
+	REQUEST_RESTART_APPROVAL("Restart of approval"); //
 
 	private final String displayValue;
 
@@ -30,7 +31,7 @@ public enum ApplicationFormStatus {
 			return new ApplicationFormStatus[] {    INTERVIEW, APPROVAL, REJECTED };
 		}
 		if (status == APPROVAL) {
-			return new ApplicationFormStatus[] {APPROVED, REJECTED};
+			return new ApplicationFormStatus[] {APPROVED, REJECTED, REQUEST_RESTART_APPROVAL};
 		}
 		return new ApplicationFormStatus[] {};
 	}

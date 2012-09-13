@@ -12,7 +12,7 @@
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/global_private.css'/>" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/application.css'/>" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/staff/add_interviewer.css'/>" />
-<link type="text/css" rel="stylesheet"href="<@spring.url '/design/default/css/actions.css' />" />
+<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />" />
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>

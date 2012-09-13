@@ -52,7 +52,7 @@ public class InterviewValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("interviewDueDate").getCode());
 	}
-
+	
 	@Test
 	public void shouldRejectIfDueDateInPast() {
 		Calendar calendar = Calendar.getInstance();
@@ -71,7 +71,6 @@ public class InterviewValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewDueDate");
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
-
 	}
 	
 	
@@ -92,7 +91,15 @@ public class InterviewValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("timeMinutes").getCode());
 	}
-
+	
+	@Test
+    public void shouldRejectOnlyHoursIfBothAreEmpty() {
+	    interview.setInterviewTime(":");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewTime");
+        interviewValidator.validate(interview, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("timeHours").getCode());
+	}
 	
 	@Test
 	public void shouldRejectIfInterviewersListIsEmpty() {

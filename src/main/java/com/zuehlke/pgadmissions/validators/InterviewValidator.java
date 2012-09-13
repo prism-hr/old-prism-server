@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.Interview;
 @Service
 public class InterviewValidator extends AbstractValidator {
 
-
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return Interview.class.equals(clazz);
@@ -25,13 +24,19 @@ public class InterviewValidator extends AbstractValidator {
 		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 		Interview interview = (Interview) target;
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "furtherDetails", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "timeHours", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "timeMinutes", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewDueDate", "text.field.empty");
 		String dueDate = interview.getInterviewDueDate() == null ? "": interview.getInterviewDueDate().toString();
+
+		if (StringUtils.isBlank(interview.getTimeHours())) {
+		    errors.rejectValue("timeHours", "text.field.empty");
+		} else if (StringUtils.isBlank(interview.getTimeMinutes())) {
+		    errors.rejectValue("timeMinutes", "text.field.empty");
+		}
+		
 		if (StringUtils.isNotBlank(dueDate) && interview.getInterviewDueDate().before(today)) {
 			errors.rejectValue("interviewDueDate", "date.field.notfuture");
 		}
+		
 		if(interview.getInterviewers().isEmpty()){
 			errors.rejectValue("interviewers", "dropdown.radio.select.none");
 		}

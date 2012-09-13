@@ -16,7 +16,6 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -138,30 +137,33 @@ public class MailService {
 
 	@Transactional
 	public void sendWithdrawToReviewers(ApplicationForm form) {
-		List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
-		for (Reviewer reviewer : reviewers) {
-			if (reviewer.getReview() == null) {
-				internalSendWithdraw(reviewer.getUser(), form);
-			}
-		}
+	    if (form.getLatestReviewRound() != null) {
+    		List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
+    		for (Reviewer reviewer : reviewers) {
+    			if (reviewer.getReview() == null) {
+    				internalSendWithdraw(reviewer.getUser(), form);
+    			}
+    		}
+	    }
 	}
 	
 	public void sendWithdrawToInterviewers(ApplicationForm form) {
-		List<Interviewer> interviewers = form.getLatestInterview().getInterviewers();
-		for (Interviewer interviewer : interviewers) {
-			if (interviewer.getInterviewComment() == null) {
-				internalSendWithdraw(interviewer.getUser(), form);
-			}
+		if (form.getLatestInterview() != null) {
+    	    List<Interviewer> interviewers = form.getLatestInterview().getInterviewers();
+    		for (Interviewer interviewer : interviewers) {
+    			if (interviewer.getInterviewComment() == null) {
+    				internalSendWithdraw(interviewer.getUser(), form);
+    			}
+    		}
 		}
-		
 	}
 	
 	public void sendWithdrawToSupervisors(ApplicationForm form) {
-		for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {			
-				internalSendWithdraw(supervisor.getUser(), form);
-			
-		}
-		
+	    if (form.getLatestApprovalRound() != null) {
+    		for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {			
+    				internalSendWithdraw(supervisor.getUser(), form);
+    		}
+	    }
 	}
 
 	private void internalSendWithdraw(RegisteredUser recipient, ApplicationForm application) {

@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,6 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
@@ -123,16 +122,13 @@ public class ApplicationsService {
 					}
 				}
 				if (searchCategory == SearchCategory.APPLICATION_STATUS) {
-					ApplicationFormStatus matchedStatus = null;
 					for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
-						if (status.displayValue().toLowerCase().contains(term.toLowerCase())) {
-							matchedStatus = status;
-						}
-					}
-					if (matchedStatus != null) {
-						if (applicationForm.getStatus() == matchedStatus) {
-							matchingApplications.add(applicationForm);
-						}
+						if (StringUtils.containsIgnoreCase(status.displayValue(), term)) {
+							if (applicationForm.getStatus() == status) {
+    							matchingApplications.add(applicationForm);
+    							break;
+    						}
+    					}
 					}
 				}
 			}

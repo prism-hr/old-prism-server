@@ -33,7 +33,7 @@
 			<option value="withdraw">Withdraw</option>
 		</#if>      												
 		<#if (user.hasAdminRightsOnApplication(application) && application.isPendingApprovalRestart())>
-			<option value="restartApproval">Restart Approval</option>
+			<option value="restartApproval">Approve</option>
 		</#if>  
 		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL') && !application.isPendingApprovalRestart()>
 			<option value="validate">Approve</option>

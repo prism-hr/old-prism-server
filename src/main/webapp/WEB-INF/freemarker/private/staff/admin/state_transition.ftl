@@ -229,10 +229,7 @@
 								</div><!-- close .row-group -->
 	
 								<div class="buttons">
-								<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>
-									<#if user.isInRoleInProgram('APPROVER', applicationForm.program) && applicationForm.isInState('APPROVAL')>
-										<button class="blue" type="button" id="requestRestartButton" value="requestRestart">Request restart of approval</button>
-									</#if>
+								    <button class="blue" type="button" id="changeStateButton" value="save">Submit</button>
 								</div>
 								
 							</form>

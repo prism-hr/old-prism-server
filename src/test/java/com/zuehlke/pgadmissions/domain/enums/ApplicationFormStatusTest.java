@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class ApplicationFormStatusTest {
 	@Test
 	public void shouldReturnRejectedApprovedForApprovalState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.APPROVAL);
-		assertArrayEquals(new ApplicationFormStatus[]{ ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.REQUEST_RESTART_APPROVAL},avaialbleStati);
 	}
 	
 	@Test

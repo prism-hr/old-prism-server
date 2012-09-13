@@ -17,18 +17,18 @@ import org.springframework.web.bind.WebDataBinder;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.RequestRestartComment;
-import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.RequestRestartComment;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RequestRestartCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RequestRestartCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -61,10 +61,10 @@ public class ApprovalControllerTest {
 		Assert.assertEquals("/private/staff/supervisors/supervisors_section", controller.getSupervisorSection());
 	}
 
-	@Test
-	public void shouldGetRequestApprovalPage() {
-		Assert.assertEquals("/private/staff/approver/request_restart_approve_page", controller.getRequestRestartPage());
-	}
+//	@Test
+//	public void shouldGetRequestApprovalPage() {
+//		Assert.assertEquals("/private/staff/approver/request_restart_approve_page", controller.getRequestRestartPage());
+//	}
 
 	@Test
 	public void shouldGetProgrammeSupervisors() {

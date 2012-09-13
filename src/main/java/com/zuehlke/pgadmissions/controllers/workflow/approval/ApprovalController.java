@@ -74,10 +74,11 @@ public class ApprovalController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "requestRestart")
-	public String getRequestRestartPage() {
-		return REQUEST_RESTART_APPROVE_PAGE;
-	}
+//  Kevin: This form is now obsolete
+//	@RequestMapping(method = RequestMethod.GET, value = "requestRestart")
+//	public String getRequestRestartPage() {
+//		return REQUEST_RESTART_APPROVE_PAGE;
+//	}
 	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -178,13 +179,8 @@ public class ApprovalController {
 	public String requestRestart(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @Valid @ModelAttribute("comment") RequestRestartComment comment, BindingResult result) {
 		if (result.hasErrors()) {
 			return REQUEST_RESTART_APPROVE_PAGE;
-		}
-		
+		}	
 		approvalService.requestApprovalRestart(applicationForm, getUser(), comment);
-
-
 		return "redirect:/applications?messageCode=request.approval.restart&application=" + applicationForm.getApplicationNumber();
 	}
-
-
 }

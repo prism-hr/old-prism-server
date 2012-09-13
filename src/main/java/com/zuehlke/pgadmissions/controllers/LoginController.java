@@ -20,16 +20,44 @@ public class LoginController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String getLoginPage(HttpServletRequest request, HttpServletResponse response) {
 		String returnPage = LOGIN_PAGE;
-	    HttpSession session = request.getSession();
+	    
+		HttpSession session = request.getSession();
+		
 		DefaultSavedRequest attribute = (DefaultSavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+		
 		if (attribute != null && attribute.getRequestURL() != null && attribute.getRequestURL().endsWith("/apply/new")) {
-			session.setAttribute("applyRequest", composeQueryString(attribute));
+		    session.setAttribute("applyRequest", composeQueryString(attribute));
 			returnPage = REGISTER_USER_REDIRECT;
+			increaseNumberOfClicks(session);
 		} else {
 			session.setAttribute("applyRequest", null);
+			session.setAttribute("applyRequestClicks", new Integer(0));
 		}
+		
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		
+		if (getNumberOfClicks(session) > 1) {
+            returnPage = LOGIN_PAGE;
+        }
+		
 		return returnPage;
+	}
+	
+	private void increaseNumberOfClicks(final HttpSession session) {
+	    Integer numberOfClicks = (Integer) session.getAttribute("applyRequestClicks");
+	    if (numberOfClicks == null) {
+	        session.setAttribute("applyRequestClicks", new Integer(1));
+	    } else {
+	        session.setAttribute("applyRequestClicks", new Integer(((Integer)session.getAttribute("applyRequestClicks")) + 1));
+	    }
+	}
+	
+	private int getNumberOfClicks(final HttpSession session) {
+	    Integer numberOfClicks = (Integer) session.getAttribute("applyRequestClicks");
+        if (numberOfClicks == null) {
+            return 0;
+        }
+        return numberOfClicks;
 	}
 
 	private String composeQueryString(DefaultSavedRequest savedRequest) {

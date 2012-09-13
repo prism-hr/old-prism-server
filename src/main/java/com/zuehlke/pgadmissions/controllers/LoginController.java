@@ -13,17 +13,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/login")
 public class LoginController {
 
+    private static final String LOGIN_PAGE = "public/login/login_page";
+    
+    private static final String REGISTER_USER_REDIRECT = "redirect:/register";
+    
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String getLoginPage(HttpServletRequest request, HttpServletResponse response) {
-		HttpSession session = request.getSession();
+		String returnPage = LOGIN_PAGE;
+	    HttpSession session = request.getSession();
 		DefaultSavedRequest attribute = (DefaultSavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
 		if (attribute != null && attribute.getRequestURL() != null && attribute.getRequestURL().endsWith("/apply/new")) {
 			session.setAttribute("applyRequest", composeQueryString(attribute));
+			returnPage = REGISTER_USER_REDIRECT;
 		} else {
 			session.setAttribute("applyRequest", null);
 		}
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		return "public/login/login_page";
+		return returnPage;
 	}
 
 	private String composeQueryString(DefaultSavedRequest savedRequest) {

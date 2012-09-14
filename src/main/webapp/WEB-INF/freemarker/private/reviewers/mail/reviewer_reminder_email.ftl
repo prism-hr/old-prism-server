@@ -31,19 +31,22 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been selected to review their Application.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for postgraduate research study. If you feel unable to do this, you may also decline. <b>Be aware that declining to provide a review may reduce the applicant's chances of securing a study place.</b></font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for postgraduate research study. If you feel unable to do this, you may also decline.</font>
 			      	</p>
+                    <p>
+                        <font face="Arial, Helvetica, sans-serif" size="2"><b>Be aware that declining to provide a review may reduce the applicant's chances of securing a study place.</b></font>
+                    </p>
 			      
 
 				        <p>
 				          <!-- Button -->
-							<a style="text-decoration:none;" href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}"
+							<a style="text-decoration:none;" href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.activationCode}"
 								title="Provide Review">
 				            	<img border="0" style="border: none;" width="143" height="36" alt="Provide Review" src="${host}/pgadmissions/design/default/images/email/provide_review.png" />
 				          	</a>
 
 				          <!-- Button -->
-							<a style="text-decoration:none;" href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}"
+							<a style="text-decoration:none;" href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.activationCode}"
 								title="Decline">
 				            	<img border="0" style="border: none;" width="100" height="36" alt="Decline" src="${host}/pgadmissions/design/default/images/email/decline.png" />
 				          	</a>

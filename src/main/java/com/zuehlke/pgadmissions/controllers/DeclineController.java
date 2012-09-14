@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,6 +25,7 @@ public class DeclineController {
 	private final CommentService commentService;
 	private final ApplicationsService applicationsService;
 	private static final String DECLINE_SUCCESS_VIEW_NAME = "/private/reviewers/decline_success_confirmation";
+	private static final String DECLINE_CONFIRMATION_VIEW_NAME = "/private/reviewers/decline_confirmation";
 	private final RefereeService refereeService;
 
 	DeclineController() {
@@ -40,14 +42,29 @@ public class DeclineController {
 	}
 
 	@RequestMapping(value = "/review", method = RequestMethod.GET)
-	public String declineReview(@RequestParam String activationCode, @RequestParam String applicationId, ModelMap modelMap) {
-		RegisteredUser reviewer = getReviewer(activationCode);
-		ApplicationForm application = getApplicationForm(applicationId);
-		if (application.getStatus() == ApplicationFormStatus.REVIEW && reviewer.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
-			commentService.declineReview(reviewer, application);
+	public String declineReview(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
+	    RegisteredUser reviewer = getReviewer(activationCode);
+	    ApplicationForm application = getApplicationForm(applicationId);
+		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
+		    // the user clicked on "Confirm"
+		    if (application.getStatus() == ApplicationFormStatus.REVIEW && reviewer.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
+		        commentService.declineReview(reviewer, application);
+		    }
+		    modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
+		    return DECLINE_SUCCESS_VIEW_NAME;
+		} else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
+            // the user clicked on "Provide Review"
+		    if (reviewer != null && !reviewer.isEnabled()) {
+                return "redirect:/register?activationCode=" + reviewer.getActivationCode() + "&directToUrl=/reviewFeedback?applicationId=" + application.getApplicationNumber();
+		    } else {
+		        return "redirect:/reviewFeedback?applicationId=" + application.getApplicationNumber();
+		    }
+		} else {
+		    modelMap.put("message", "Please confirm that you wish to decline to provide a review. <b>You will not be able to reverse this decision.</b>");
+		    modelMap.put("okButton", "Confirm");
+		    modelMap.put("cancelButton", "Provide Review");
+            return DECLINE_CONFIRMATION_VIEW_NAME;
 		}
-		modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
-		return DECLINE_SUCCESS_VIEW_NAME;
 	}
 
 	public Referee getReferee(String activationCode, ApplicationForm applicationForm) {
@@ -60,17 +77,30 @@ public class DeclineController {
 			throw new ResourceNotFoundException();
 		}
 		return referee;
-
 	}
 
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)
-	public String declineReference(@RequestParam String activationCode, @RequestParam String applicationId, ModelMap modelMap) {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		Referee referee = getReferee(activationCode, applicationForm);
-
-		refereeService.declineToActAsRefereeAndSendNotification(referee);
-		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
-		return DECLINE_SUCCESS_VIEW_NAME;
+	public String declineReference(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
+	    ApplicationForm applicationForm = getApplicationForm(applicationId);
+	    Referee referee = getReferee(activationCode, applicationForm);
+	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
+	        // the user clicked on "Confirm"
+    		refereeService.declineToActAsRefereeAndSendNotification(referee);
+    		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
+    		return DECLINE_SUCCESS_VIEW_NAME;
+	    } else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
+	        // the user clicked on "Provide Reference"
+            if (referee != null && !referee.getUser().isEnabled()) {
+                return "redirect:/register?activationCode=" + referee.getUser().getActivationCode() + "&directToUrl=/referee/addReferences?applicationId=" + applicationForm.getApplicationNumber();
+            } else {
+                return "redirect:/referee/addReferences?applicationId=" + applicationForm.getApplicationNumber();
+            }
+	    } else {
+	        modelMap.put("message", "Please confirm that you wish to decline to provide a reference. <b>You will not be able to reverse this decision.</b>");
+	        modelMap.put("okButton", "Confirm");
+            modelMap.put("cancelButton", "Provide Reference");
+            return DECLINE_CONFIRMATION_VIEW_NAME;
+	    }
 	}
 
 	public RegisteredUser getReviewer(String activationCode) {

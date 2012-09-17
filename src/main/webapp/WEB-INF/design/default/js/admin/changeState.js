@@ -11,7 +11,7 @@ $(document).ready(function()
 	{
 		if (validateStateChange())
 		{
-			var state = $('#status').val().toLowerCase().capitalize();
+			var state = $('#status option:selected').text().toLowerCase().capitalize();
 			var message = 'Confirm you want to move this application to the ' + state + ' stage. <b>You will not be able to reverse this decision!</b>';
 			modalPrompt(message, changeState);
 			return;

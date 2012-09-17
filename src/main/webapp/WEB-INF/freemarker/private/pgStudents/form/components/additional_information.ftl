@@ -28,7 +28,7 @@
 		
 			<!-- Radio buttons for convictions. -->
 			<div class="row">
-				<label class="plain-label">Do you have any unspent criminal convictions?<em>*</em></label>
+				<label class="plain-label">Do you have any unspent Criminial Convictions?<em>*</em></label>
 				<span class="hint" data-desc="<@spring.message 'additionalInformation.hasconvictions'/>"></span>
 				<div class="field">
 					<label><input type="radio" name="convictionRadio" value="TRUE" id="convictionRadio_true"

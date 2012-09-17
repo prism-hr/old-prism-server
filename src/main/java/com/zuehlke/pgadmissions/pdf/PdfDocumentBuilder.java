@@ -128,7 +128,8 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 
-		if (SecurityContextHolder.getContext().getAuthentication() != null && ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)) {
+		if (SecurityContextHolder.getContext().getAuthentication() != null && 
+		        ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)) {
 			addReferencesSection(application, document);
 		}
 
@@ -730,8 +731,13 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell("No", smallFont));
 			}
 		}
-		table.addCell(newTableCell("Description", smallBoldFont));
-		table.addCell(newTableCell(application.getAdditionalInformation().getConvictionsText(), smallFont));
+		
+		if (SecurityContextHolder.getContext().getAuthentication() != null && ( 
+		        ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).isInRole(Authority.SUPERADMINISTRATOR) ||
+		        ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).equals(application.getApplicant()))) {
+		    table.addCell(newTableCell("Description", smallBoldFont));
+		    table.addCell(newTableCell(application.getAdditionalInformation().getConvictionsText(), smallFont));
+		}
 		document.add(table);
 	}
 

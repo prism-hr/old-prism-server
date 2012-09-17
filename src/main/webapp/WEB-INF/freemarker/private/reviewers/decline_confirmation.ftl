@@ -20,9 +20,9 @@
 	</head>
     <body id="bg">
 	
-<#include "/private/common/modal_window.ftl">
 	
 		<div id="wrapper">
+<#include "/private/common/modal_window.ftl">
 	
 			<!-- Header. -->
 			<div id="header">
@@ -53,15 +53,26 @@
             });
             
             function userOk() {
+                displayDialogBoxAgainAndShowSpinningWheel();
                 var url = window.location + "&confirmation=OK";
                 window.location = url;
             }
             
             function userCancel() {
+                displayDialogBoxAgainAndShowSpinningWheel();
                 var url = window.location + "&confirmation=Cancel";
                 window.location = url;
             }
+            
+            function displayDialogBoxAgainAndShowSpinningWheel() {
+                $('#popup-ok-button').attr("disabled", "disabled");
+                $('#popup-cancel-button').attr("disabled", "disabled");
+                $('#dialog-overlay, #dialog-box').show();
+                $('#dialog-box').append('<div class="ajax" />');
+            }
+            
 		</script>
+		
 	</body>
 	
 </html>

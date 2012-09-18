@@ -49,7 +49,7 @@ public class ApprovalRestartRequestNotificationTimerTask extends TimerTask {
 				application.getNotificationRecords().add(notificationRecord);
 				applicationsService.save(application);
 				transaction.commit();
-				log.info("Approval restart request notification send for " + application.getApplicationNumber());
+				log.info("Approval restart request notification sent for " + application.getApplicationNumber());
 			} catch (Throwable e) {
 				e.printStackTrace();
 				log.info("error in sending Approval restart request notification for " + application.getApplicationNumber());

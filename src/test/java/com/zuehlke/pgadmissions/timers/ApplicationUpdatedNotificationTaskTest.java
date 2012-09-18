@@ -1,7 +1,12 @@
 package com.zuehlke.pgadmissions.timers;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,9 +14,11 @@ import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.MailService;
 
 public class ApplicationUpdatedNotificationTaskTest {
@@ -19,10 +26,10 @@ public class ApplicationUpdatedNotificationTaskTest {
 	private Session sessionMock;	
 	private ApplicationUpdatedNotificationTask updateNotificationTask;
 	private MailService mailServiceMock;
-	private ApplicationsService applicationServiceMock;
+	private ApplicationFormDAO applicationFormDAOMock;
 
 	@Test
-	public void shouldGetApplicationsAndSendNotifications(){
+	public void shouldGetApplicationsAndSendNotifications() {
 		Transaction transactionOne = EasyMock.createMock(Transaction.class);
 		Transaction transactionTwo = EasyMock.createMock(Transaction.class);
 		Transaction transactionThree = EasyMock.createMock(Transaction.class);
@@ -31,11 +38,16 @@ public class ApplicationUpdatedNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 		
-		ApplicationForm appOne = new ApplicationFormBuilder().id(1).toApplicationForm();
+		NotificationRecord record = new NotificationRecord(NotificationType.UPDATED_NOTIFICATION);
+		record.setDate(DateUtils.addDays(new Date(), -12));
+		
+		ApplicationForm appOne = new ApplicationFormBuilder().id(1).notificationRecords(record).toApplicationForm();
 		ApplicationForm appTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
 		sessionMock.refresh(appOne);
 		sessionMock.refresh(appTwo);
-		EasyMock.expect(applicationServiceMock.getApplicationsDueUpdateNotification()).andReturn(Arrays.asList(appOne, appTwo));
+		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(Arrays.asList(appOne, appTwo));
+		applicationFormDAOMock.save(appOne);
+		applicationFormDAOMock.save(appTwo);
 		transactionOne.commit();
 		
 		mailServiceMock.sendApplicationUpdatedMailToAdmins(appOne);
@@ -44,11 +56,12 @@ public class ApplicationUpdatedNotificationTaskTest {
 		mailServiceMock.sendApplicationUpdatedMailToAdmins(appTwo);		
 		transactionThree.commit();
 		
-		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationServiceMock, mailServiceMock);
+		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationFormDAOMock, mailServiceMock);
 		
 		updateNotificationTask.run();
 		
-		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationServiceMock, mailServiceMock);
+		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationFormDAOMock, mailServiceMock);
+        assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(appOne.getNotificationForType(NotificationType.UPDATED_NOTIFICATION).getDate(), Calendar.DATE));
 	}
 	
 	@Test
@@ -64,7 +77,7 @@ public class ApplicationUpdatedNotificationTaskTest {
 		ApplicationForm appTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
 		sessionMock.refresh(appOne);
 		sessionMock.refresh(appTwo);
-		EasyMock.expect(applicationServiceMock.getApplicationsDueUpdateNotification()).andReturn(Arrays.asList(appOne, appTwo));
+		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(Arrays.asList(appOne, appTwo));
 		transactionOne.commit();
 		mailServiceMock.sendApplicationUpdatedMailToAdmins(appOne);
 		
@@ -73,19 +86,19 @@ public class ApplicationUpdatedNotificationTaskTest {
 		mailServiceMock.sendApplicationUpdatedMailToAdmins(appTwo);		
 		transactionThree.commit();
 		
-		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationServiceMock, mailServiceMock);
+		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationFormDAOMock, mailServiceMock);
 		
 		updateNotificationTask.run();
 		
-		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo,applicationServiceMock, mailServiceMock);
+		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo,applicationFormDAOMock, mailServiceMock);
 	}
 	@Before
 	public void setup(){
 		sessionFactoryMock = EasyMock.createMock(SessionFactory.class);
 		sessionMock = EasyMock.createMock(Session.class);
-		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		mailServiceMock = EasyMock.createMock(MailService.class);
-		updateNotificationTask= new ApplicationUpdatedNotificationTask(sessionFactoryMock, mailServiceMock, applicationServiceMock);
+		updateNotificationTask= new ApplicationUpdatedNotificationTask(sessionFactoryMock, mailServiceMock, applicationFormDAOMock);
 		
 	}
 	

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -48,18 +45,6 @@ public class MailService {
 		this.mailsender = mailsender;
 		this.applicationsService = applicationsService;
 		this.msgSource = msgSource;
-	}
-
-	@Transactional
-	private void createOrUpdateUpdateNotificationRecord(ApplicationForm form) {
-		NotificationRecord notificationRecord = form.getNotificationForType(NotificationType.UPDATED_NOTIFICATION);
-		if (notificationRecord == null) {
-			notificationRecord = new NotificationRecord();
-			notificationRecord.setNotificationType(NotificationType.UPDATED_NOTIFICATION);
-			form.getNotificationRecords().add(notificationRecord);
-		}
-		notificationRecord.setDate(new Date());
-		applicationsService.save(form);
 	}
 
 	@Transactional
@@ -111,7 +96,6 @@ public class MailService {
 			}
 			
 		}
-		createOrUpdateUpdateNotificationRecord(form);
 	}
 
 	@Transactional

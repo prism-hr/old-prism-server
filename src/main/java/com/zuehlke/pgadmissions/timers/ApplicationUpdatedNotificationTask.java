@@ -38,7 +38,7 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
 			try {
 				mailService.sendApplicationUpdatedMailToAdmins(applicationForm);
 				transaction.commit();
-				log.info("update notifiations send  for " + applicationForm.getId());
+				log.info("update notifiations sent  for " + applicationForm.getId());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending email", e);

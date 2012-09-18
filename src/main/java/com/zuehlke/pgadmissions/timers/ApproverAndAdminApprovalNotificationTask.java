@@ -50,7 +50,7 @@ public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
 				notificationRecord.setDate(new Date());
 				applicationDAO.save(application);
 				transaction.commit();
-				log.info("Application In Approval notifications send to approvers for " + application.getId());
+				log.info("Application In Approval notifications sent to approvers for " + application.getId());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending email", e);

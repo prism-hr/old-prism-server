@@ -41,7 +41,7 @@ public class InterviewerReminderTask extends TimerTask {
 				interviewer.setLastNotified(new Date());
 				interviewerDAO.save(interviewer);
 				transaction.commit();
-				log.info("reminder send to interviewer " + interviewer.getUser().getEmail());
+				log.info("reminder sent to interviewer " + interviewer.getUser().getEmail());
 			} catch (Throwable e) {
 				e.printStackTrace();
 				transaction.rollback();

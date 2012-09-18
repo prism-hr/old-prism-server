@@ -39,7 +39,7 @@ public class NewUserNotificationTask extends TimerTask {
 				user.getPendingRoleNotifications().clear();
 				userDAO.save(user);
 				transaction.commit();
-				log.info("notification send to new user " + user.getEmail());
+				log.info("notification sent to new user " + user.getEmail());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending notification to new user " + user.getEmail(), e);

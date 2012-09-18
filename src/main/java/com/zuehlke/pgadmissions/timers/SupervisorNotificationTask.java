@@ -39,7 +39,7 @@ public class SupervisorNotificationTask extends TimerTask {
 				supervisor.setLastNotified(new Date());
 				supervisorDAO.save(supervisor);
 				transaction.commit();
-				log.info("notification send to supervisor " + supervisor.getUser().getEmail());
+				log.info("notification sent to supervisor " + supervisor.getUser().getEmail());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending notification to supervisor " + supervisor.getUser().getEmail(), e);

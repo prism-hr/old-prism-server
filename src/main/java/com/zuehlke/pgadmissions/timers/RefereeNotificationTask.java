@@ -42,7 +42,7 @@ public class RefereeNotificationTask extends TimerTask {
 				referee.setLastNotified(new Date());
 				refereeDAO.save(referee);
 				transaction.commit();				
-				log.info("notification send to referee " +  referee.getEmail());
+				log.info("notification sent to referee " +  referee.getEmail());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending notification to referee " + referee.getEmail(), e);

@@ -39,7 +39,7 @@ public class InterviewerNotificationTask extends TimerTask {
 				interviewer.setLastNotified(new Date());
 				interviewerDAO.save(interviewer);
 				transaction.commit();
-				log.info("notification send to interviewer " + interviewer.getUser().getEmail());
+				log.info("notification sent to interviewer " + interviewer.getUser().getEmail());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending notification to interviewer " + interviewer.getUser().getEmail(), e);

@@ -39,7 +39,7 @@ public class ReviewerNotificationTask extends TimerTask {
 				reviewer.setLastNotified(new Date());
 				reviewerDAO.save(reviewer);
 				transaction.commit();
-				log.info("notification send to reviewer " + reviewer.getUser().getEmail());
+				log.info("notification sent to reviewer " + reviewer.getUser().getEmail());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending notification to reviewer " + reviewer.getUser().getEmail(), e);

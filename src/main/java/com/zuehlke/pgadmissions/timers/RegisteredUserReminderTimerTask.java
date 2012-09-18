@@ -68,7 +68,7 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 				notificationRecord.setDate(new Date());
 				applicationFormDAO.save(application);
 				transaction.commit();
-				log.info(status + " reminders send to " + application.getId());
+				log.info(status + " reminders sent to " + application.getId());
 			} catch (Throwable e) {
 				log.info("error in sending " + status + " reminders for " + application.getId(), e);
 				transaction.rollback();

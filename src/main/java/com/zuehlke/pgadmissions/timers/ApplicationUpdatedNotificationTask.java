@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.timers;
 
+import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -7,46 +8,51 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.services.MailService;
 
 public class ApplicationUpdatedNotificationTask extends TimerTask {
 
-	private final MailService mailService;
-	private final ApplicationsService applicationsService;
+    private final Logger log = Logger.getLogger(ApplicationUpdatedNotificationTask.class);
+
+    private final MailService mailService;
+	private final ApplicationFormDAO applicationDAO;
 	private final SessionFactory sessionFactory;
 
-	private final Logger log = Logger.getLogger(ApplicationUpdatedNotificationTask.class);
-
-	public ApplicationUpdatedNotificationTask(SessionFactory sessionFactory, MailService mailService, ApplicationsService applicationsService) {
+	public ApplicationUpdatedNotificationTask(SessionFactory sessionFactory, MailService mailService, ApplicationFormDAO applicationFormDAO) {
 		this.sessionFactory = sessionFactory;
 		this.mailService = mailService;
-
-		this.applicationsService = applicationsService;
+		this.applicationDAO = applicationFormDAO;
 	}
 
 	@Override
 	public void run() {
 		log.info("Application Update Notification task running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<ApplicationForm> applicationsDueUpdateNotification = applicationsService.getApplicationsDueUpdateNotification();
+		List<ApplicationForm> applicationsDueUpdateNotification = applicationDAO.getApplicationsDueUpdateNotification();
 		transaction.commit();
 		for (ApplicationForm applicationForm : applicationsDueUpdateNotification) {
 			transaction = sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().refresh(applicationForm);
 			try {
 				mailService.sendApplicationUpdatedMailToAdmins(applicationForm);
+				NotificationRecord notificationRecord = applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION);			
+			    if (notificationRecord == null) {
+			        notificationRecord = new NotificationRecord(NotificationType.UPDATED_NOTIFICATION);
+			        applicationForm.getNotificationRecords().add(notificationRecord);
+			    }
+			    notificationRecord.setDate(new Date());
+			    applicationDAO.save(applicationForm);			
 				transaction.commit();
-				log.info("update notifiations sent  for " + applicationForm.getId());
+				log.info("update notifiations sent for " + applicationForm.getId());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending email", e);
-
 			}
-
 		}
 		log.info("Application Update Notification task complete");
 	}
-
 }

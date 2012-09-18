@@ -21,12 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
@@ -93,12 +93,11 @@ public class ApplicationFormDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
-		Date twentyFourHoursAgo = DateUtils.addHours(Calendar.getInstance().getTime(), -1);
+		Date oneHourAgo = DateUtils.addHours(Calendar.getInstance().getTime(), -1);
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("notificationRecords", "notificationRecord")
 				.add(Restrictions.eq("notificationRecord.notificationType", NotificationType.UPDATED_NOTIFICATION))
-				.add(Restrictions.lt("notificationRecord.date", twentyFourHoursAgo)).add(Restrictions.ltProperty("notificationRecord.date", "lastUpdated"))
+				.add(Restrictions.lt("notificationRecord.date", oneHourAgo)).add(Restrictions.ltProperty("notificationRecord.date", "lastUpdated"))
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-
 	}
 
 	@SuppressWarnings("unchecked")

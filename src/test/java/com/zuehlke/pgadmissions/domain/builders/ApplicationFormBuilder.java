@@ -339,7 +339,7 @@ public class ApplicationFormBuilder {
 		application.setResearchHomePage(researchHomePage);
 		application.setStatus(status);
 		application.setAdditionalInformation(info);
-		application.getNotificationRecords().addAll(notificationRecords);
+		application.setNotificationRecords(notificationRecords);
 		application.setLastUpdated(lastUpdated);
 		application.setAcceptedTermsOnSubmission(acceptedTerms);
 		application.getApplicationComments().addAll(comments);

@@ -19,14 +19,11 @@ import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -105,7 +102,7 @@ public class ReviewServiceTest {
 
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).toApplicationForm();
-		applicationForm.getNotificationRecords().add(new NotificationRecordBuilder().id(2).notificationType(NotificationType.REVIEW_REMINDER).toNotificationRecord());
+		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.REVIEW_REMINDER).toNotificationRecord());
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
 				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
 		

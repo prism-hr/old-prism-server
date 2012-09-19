@@ -45,7 +45,7 @@ public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
 				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(NotificationType.APPROVAL_NOTIFICATION);
-					application.getNotificationRecords().add(notificationRecord);
+					application.addNotificationRecord(notificationRecord);
 				}
 				notificationRecord.setDate(new Date());
 				applicationDAO.save(application);

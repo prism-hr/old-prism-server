@@ -49,7 +49,7 @@ public class AdminApprovedNotificationTask extends TimerTask {
 				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPROVED_NOTIFICATION);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(NotificationType.APPROVED_NOTIFICATION);
-					application.getNotificationRecords().add(notificationRecord);
+					application.addNotificationRecord(notificationRecord);
 				}
 				notificationRecord.setDate(new Date());
 				applicationDAO.save(application);

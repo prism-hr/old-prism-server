@@ -42,7 +42,7 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
 				NotificationRecord notificationRecord = applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION);			
 			    if (notificationRecord == null) {
 			        notificationRecord = new NotificationRecord(NotificationType.UPDATED_NOTIFICATION);
-			        applicationForm.getNotificationRecords().add(notificationRecord);
+			        applicationForm.addNotificationRecord(notificationRecord);
 			    }
 			    notificationRecord.setDate(new Date());
 			    applicationDAO.save(applicationForm);			

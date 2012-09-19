@@ -52,7 +52,7 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
-					application.getNotificationRecords().add(notificationRecord);
+					application.addNotificationRecord(notificationRecord);
 				}
 				notificationRecord.setDate(new Date());
 				applicationFormDAO.save(application);

@@ -97,15 +97,15 @@ public class ApprovalService {
 	private void resetNotificationRecords(ApplicationForm application) {
 		NotificationRecord restartRequestNotification = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
 		if(restartRequestNotification != null){
-			application.getNotificationRecords().remove(restartRequestNotification);
+			application.removeNotificationRecord(restartRequestNotification);
 		}
 		NotificationRecord restartRequestReminder = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
 		if(restartRequestReminder != null){
-			application.getNotificationRecords().remove(restartRequestReminder);
+			application.removeNotificationRecord(restartRequestReminder);
 		}
 		NotificationRecord adminAndAproverNotificationRecord = application.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION);
 		if(adminAndAproverNotificationRecord != null){
-			application.getNotificationRecords().remove(adminAndAproverNotificationRecord);
+			application.removeNotificationRecord(adminAndAproverNotificationRecord);
 		}
 	}
 

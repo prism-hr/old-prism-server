@@ -724,9 +724,38 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueUpdateNotification = applicationDAO.getApplicationsDueUpdateNotification();
 		assertFalse(applicationsDueUpdateNotification.contains(applicationForm));
-
 	}
-
+	
+	@Test
+	public void shouldNotReturnApplicationForDuplicateNotificationRecords() throws ParseException {
+	    Date now = Calendar.getInstance().getTime();
+        Date sixtySeventMinutesAgo = DateUtils.addMinutes(now, -67);
+        
+	    NotificationRecord updatedNotification = new NotificationRecordBuilder()
+	            .notificationType(NotificationType.UPDATED_NOTIFICATION)
+	            .notificationDate(DateUtils.parseDate("2012-09-09T00:03:00", new String[] {"yyyy-MM-dd'T'HH:mm:ss"}))
+	            .toNotificationRecord();
+	        
+	    NotificationRecord duplicateNpdatedNotification = new NotificationRecordBuilder()
+	            .notificationType(NotificationType.UPDATED_NOTIFICATION)
+	            .notificationDate(new Date())
+	            .toNotificationRecord();
+	    
+	    ApplicationForm applicationForm = new ApplicationFormBuilder()
+	        .program(program)
+	        .applicant(user)
+	        .lastUpdated(sixtySeventMinutesAgo)
+	        .status(ApplicationFormStatus.VALIDATION)
+	        .notificationRecords(updatedNotification, duplicateNpdatedNotification)
+	        .toApplicationForm();
+	        
+	    save(applicationForm);
+        flushAndClearSession();
+	    
+        List<ApplicationForm> applicationsDueUpdateNotification = applicationDAO.getApplicationsDueUpdateNotification();
+        assertFalse(applicationsDueUpdateNotification.contains(applicationForm));
+	}
+	
 	@Test
 	public void shouldReturnApplicationFormDueReviewNotification() {
 		Date now = Calendar.getInstance().getTime();

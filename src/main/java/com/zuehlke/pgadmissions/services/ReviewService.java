@@ -12,8 +12,6 @@ import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -21,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.pagemodels.ReviewersListModel;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
@@ -61,7 +58,7 @@ public class ReviewService {
 		application.getEvents().add(eventFactory.createEvent(reviewRound));
 		NotificationRecord reviewReminderNotificationRevord = application.getNotificationForType(NotificationType.REVIEW_REMINDER);
 		if(reviewReminderNotificationRevord !=null){
-			application.getNotificationRecords().remove(reviewReminderNotificationRevord);
+			application.removeNotificationRecord(reviewReminderNotificationRevord);
 		}
 			
 		applicationDAO.save(application);

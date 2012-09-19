@@ -65,7 +65,7 @@ public class DelegateToApplicationAdministratorController {
 	public String delegateToApplicationAdministrator(@ModelAttribute("applicationForm") ApplicationForm applicationForm) {
 		NotificationRecord reviewReminderNotification = applicationForm.getNotificationForType(NotificationType.REVIEW_REMINDER);
 		if(reviewReminderNotification != null){
-			applicationForm.getNotificationRecords().remove(reviewReminderNotification);
+			applicationForm.removeNotificationRecord(reviewReminderNotification);
 		}
 		commentService.createDelegateComment(getCurrentUser(), applicationForm);
 		applicationsService.save(applicationForm);

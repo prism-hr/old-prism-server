@@ -93,11 +93,25 @@ public class ApplicationFormDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
-		Date oneHourAgo = DateUtils.addHours(Calendar.getInstance().getTime(), -1);
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("notificationRecords", "notificationRecord")
-				.add(Restrictions.eq("notificationRecord.notificationType", NotificationType.UPDATED_NOTIFICATION))
-				.add(Restrictions.lt("notificationRecord.date", oneHourAgo)).add(Restrictions.ltProperty("notificationRecord.date", "lastUpdated"))
-				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	    // Kevin: This should resolve a mysterious issue we had on production. For 
+        // some reason we had multiple email schedulers of the same class running in parallel
+        // which then created duplicate notification records for the same type 
+        // such as UPDATED_NOTIFICATION.
+	    //
+	    // This SQL query makes sure that we only select the notification_record with the highest
+	    // update date and ignores duplicates of the same notification type.
+		final String selectQuery = "" 
+		        + "SELECT appform.* " 
+		        + "FROM notification_record notification, application_form appform " 
+		        + "WHERE notification.application_form_id = appform.id " 
+		        + "AND notification.notification_date IN ( " 
+		        + "SELECT MAX(b.notification_date) " 
+		        + "FROM notification_record b " 
+		        + "WHERE notification_type = \"" + NotificationType.UPDATED_NOTIFICATION + "\" " 
+		        + "AND notification.application_form_id = b.application_form_id) " 
+		        + "AND notification.notification_date < appform.last_updated " 
+		        + "AND notification.notification_date < DATE_SUB(NOW(), INTERVAL 1 HOUR)";
+		return sessionFactory.getCurrentSession().createSQLQuery(selectQuery).addEntity(ApplicationForm.class).list();
 	}
 
 	@SuppressWarnings("unchecked")

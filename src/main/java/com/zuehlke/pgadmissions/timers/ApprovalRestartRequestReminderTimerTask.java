@@ -46,7 +46,7 @@ public class ApprovalRestartRequestReminderTimerTask extends TimerTask {
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord();
 					notificationRecord.setNotificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);					
-					application.getNotificationRecords().add(notificationRecord);
+					application.addNotificationRecord(notificationRecord);
 				}
 				notificationRecord.setDate(new Date());
 				applicationsService.save(application);

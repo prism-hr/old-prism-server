@@ -62,7 +62,7 @@ public class InterviewService {
 		applicationForm.getEvents().add(eventFactory.createEvent(interview));
 		NotificationRecord interviewReminderRecord = applicationForm.getNotificationForType(NotificationType.INTERVIEW_REMINDER);
 		if(interviewReminderRecord != null){
-			 applicationForm.getNotificationRecords().remove(interviewReminderRecord);
+			 applicationForm.removeNotificationRecord(interviewReminderRecord);
 		}
 		
 		applicationFormDAO.save(applicationForm);

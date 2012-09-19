@@ -46,7 +46,7 @@ public class ApprovalRestartRequestNotificationTimerTask extends TimerTask {
 				NotificationRecord notificationRecord = new NotificationRecord();
 				notificationRecord.setNotificationType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION);
 				notificationRecord.setDate(new Date());
-				application.getNotificationRecords().add(notificationRecord);
+				application.addNotificationRecord(notificationRecord);
 				applicationsService.save(application);
 				transaction.commit();
 				log.info("Approval restart request notification sent for " + application.getApplicationNumber());

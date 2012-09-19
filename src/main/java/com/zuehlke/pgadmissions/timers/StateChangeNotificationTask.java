@@ -53,7 +53,7 @@ public class StateChangeNotificationTask extends TimerTask {
 				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(notificationType);
-					application.getNotificationRecords().add(notificationRecord);
+					application.addNotificationRecord(notificationRecord);
 				}
 				notificationRecord.setDate(new Date());
 				applicationFormDAO.save(application);

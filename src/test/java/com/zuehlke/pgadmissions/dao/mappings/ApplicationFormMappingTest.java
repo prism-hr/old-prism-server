@@ -275,7 +275,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertTrue(reloadedApplication.getNotificationRecords().containsAll(Arrays.asList(recordOne, recordTwo)));
 		
 		recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
-		reloadedApplication.getNotificationRecords().remove(recordOne);
+		reloadedApplication.removeNotificationRecord(recordOne);
 		save(reloadedApplication);
 		flushAndClearSession();
 		

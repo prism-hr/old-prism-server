@@ -60,7 +60,7 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 				String useEmailTemplate = emailTemplate;
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(notificationType);
-					application.getNotificationRecords().add(notificationRecord);
+					application.addNotificationRecord(notificationRecord);
 					useSubjectCode = firstSubjectCode;
 					useEmailTemplate = firstEmailTemplate;
 				}

@@ -484,6 +484,28 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public NotificationRecord getNotificationForType(String strType) {
 		return getNotificationForType(NotificationType.valueOf(strType));
 	}
+	
+	public boolean addNotificationRecord(NotificationRecord record) {
+	    // Kevin: This should resolve a mysterious issue we had on production. For 
+	    // some reason we had multiple email schedulers of the same class running in parallel
+	    // which then created duplicate notification records for the same type 
+	    // such as UPDATED_NOTIFICATION. This then further lead to some of the SQL queries always 
+	    // returning the same records and thus sending thousands of emails in short intervals.
+	    // This function just ensures that we are not creating duplicate entries in the 
+	    // notification_record table for the same type.
+	    for (NotificationRecord existingRecord : notificationRecords) {
+	        if (existingRecord.getNotificationType() == record.getNotificationType()) {
+	            existingRecord.setDate(record.getDate());
+	            existingRecord.setUser(record.getUser());
+	            return false;
+	        }
+	    }
+	    return notificationRecords.add(record);
+	}
+	
+	public boolean removeNotificationRecord(NotificationRecord record) {
+	    return notificationRecords.remove(record);
+	}
 
 	public boolean hasAcceptedTheTerms() {
 		return acceptedTermsOnSubmission == CheckedStatus.YES;

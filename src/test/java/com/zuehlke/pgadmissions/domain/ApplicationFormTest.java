@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.domain;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -14,28 +16,25 @@ import junit.framework.Assert;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RequestRestartCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RequestRestartCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class ApplicationFormTest {
@@ -104,8 +103,30 @@ public class ApplicationFormTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().notificationRecords(validationReminder).toApplicationForm();
 		assertEquals(validationReminder, applicationForm.getNotificationForType(NotificationType.VALIDATION_REMINDER));
 		assertNull(applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION));
-		applicationForm.getNotificationRecords().add(submissionUpdateNotification);
+		applicationForm.addNotificationRecord(submissionUpdateNotification);
 		assertEquals(submissionUpdateNotification, applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION));
+	}
+	
+	@Test
+	public void shouldNotAddDuplicateNotificationTypeButUpdateExistingOne() throws ParseException {
+	    NotificationRecord updatedNotification = new NotificationRecordBuilder()
+	        .notificationType(NotificationType.UPDATED_NOTIFICATION)
+	        .notificationDate(DateUtils.parseDate("2012-09-09T00:03:00", new String[] {"yyyy-MM-dd'T'HH:mm:ss"}))
+	        .toNotificationRecord();
+	    
+        NotificationRecord duplicateNpdatedNotification = new NotificationRecordBuilder()
+            .notificationType(NotificationType.UPDATED_NOTIFICATION)
+            .notificationDate(new Date())
+            .toNotificationRecord();
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder()
+            .notificationRecords(updatedNotification)
+            .toApplicationForm();
+        
+        applicationForm.addNotificationRecord(duplicateNpdatedNotification);
+        
+        assertEquals(1, applicationForm.getNotificationRecords().size());
+        assertEquals(updatedNotification.getDate(), applicationForm.getNotificationRecords().get(0).getDate());
 	}
 
 	@Test

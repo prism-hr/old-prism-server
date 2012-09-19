@@ -132,11 +132,11 @@ public class ApprovalServiceTest {
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).toApprovalRound();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).pendingApprovalRestart(true)
 				.toApplicationForm();
-		applicationForm.getNotificationRecords().add(
+		applicationForm.addNotificationRecord(
 				new NotificationRecordBuilder().id(2).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION).toNotificationRecord());
-		applicationForm.getNotificationRecords().add(
+		applicationForm.addNotificationRecord(
 				new NotificationRecordBuilder().id(5).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER).toNotificationRecord());
-		applicationForm.getNotificationRecords().add(
+		applicationForm.addNotificationRecord(
 				new NotificationRecordBuilder().id(4).notificationType(NotificationType.APPROVAL_NOTIFICATION).toNotificationRecord());
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
 				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());

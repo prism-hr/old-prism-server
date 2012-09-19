@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
@@ -100,18 +101,21 @@ public class ApplicationFormDAO {
 	    //
 	    // This SQL query makes sure that we only select the notification_record with the highest
 	    // update date and ignores duplicates of the same notification type.
-		final String selectQuery = "" 
+	    Date oneHourAgo = DateUtils.addHours(Calendar.getInstance().getTime(), -1);
+	    final String selectQuery = "" 
 		        + "SELECT appform.* " 
 		        + "FROM NOTIFICATION_RECORD notification, APPLICATION_FORM appform " 
 		        + "WHERE notification.application_form_id = appform.id " 
 		        + "AND notification.notification_date IN ( " 
 		        + "SELECT MAX(b.notification_date) " 
 		        + "FROM NOTIFICATION_RECORD b " 
-		        + "WHERE notification_type = \"" + NotificationType.UPDATED_NOTIFICATION + "\" " 
+		        + "WHERE notification_type = ? " 
 		        + "AND notification.application_form_id = b.application_form_id) " 
 		        + "AND notification.notification_date < appform.last_updated " 
-		        + "AND notification.notification_date < DATE_SUB(NOW(), INTERVAL 1 HOUR)";
-		return sessionFactory.getCurrentSession().createSQLQuery(selectQuery).addEntity(ApplicationForm.class).list();
+		        + "AND notification.notification_date < ?";
+	    
+	    Query query = sessionFactory.getCurrentSession().createSQLQuery(selectQuery).addEntity(ApplicationForm.class);
+	    return query.setString(0, NotificationType.UPDATED_NOTIFICATION.toString()).setDate(1, oneHourAgo).list();
 	}
 
 	@SuppressWarnings("unchecked")

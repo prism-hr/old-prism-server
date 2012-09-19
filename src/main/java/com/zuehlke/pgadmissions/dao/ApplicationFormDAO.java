@@ -102,11 +102,11 @@ public class ApplicationFormDAO {
 	    // update date and ignores duplicates of the same notification type.
 		final String selectQuery = "" 
 		        + "SELECT appform.* " 
-		        + "FROM notification_record notification, application_form appform " 
+		        + "FROM NOTIFICATION_RECORD notification, APPLICATION_FORM appform " 
 		        + "WHERE notification.application_form_id = appform.id " 
 		        + "AND notification.notification_date IN ( " 
 		        + "SELECT MAX(b.notification_date) " 
-		        + "FROM notification_record b " 
+		        + "FROM NOTIFICATION_RECORD b " 
 		        + "WHERE notification_type = \"" + NotificationType.UPDATED_NOTIFICATION + "\" " 
 		        + "AND notification.application_form_id = b.application_form_id) " 
 		        + "AND notification.notification_date < appform.last_updated " 

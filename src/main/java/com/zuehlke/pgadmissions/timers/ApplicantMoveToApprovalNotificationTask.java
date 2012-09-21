@@ -38,7 +38,7 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("ApplicantMoveToApprovalNotificationTask Running");
+	    if (log.isDebugEnabled()) { log.debug("Applicant Move To Approval Notification Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 
 		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueMovedToApprovalNotifications();
@@ -57,16 +57,13 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 				notificationRecord.setDate(new Date());
 				applicationFormDAO.save(application);
 				transaction.commit();
-				log.info("move to approval notification sent for " + application.getApplicationNumber());
+				log.info("Notification move to approval sent for " + application.getApplicationNumber());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.info("error in move to approval notification for " + application.getApplicationNumber(), e);
+				log.warn("Error in move to approval notification for " + application.getApplicationNumber(), e);
 			}
 
 		}
-		log.info("ApplicantMoveToApprovalNotificationTask complete");
-
+		if (log.isDebugEnabled()) { log.debug("ApplicantMoveToApprovalNotificationTask Complete"); }
 	}
-
-
 }

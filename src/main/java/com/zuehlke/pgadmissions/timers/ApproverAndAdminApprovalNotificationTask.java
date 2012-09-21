@@ -29,7 +29,7 @@ public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Application In Approval Notification To Approvers Task Running");
+	    if (log.isDebugEnabled()) { log.debug("Application In Approval Notification To Approvers Task Running"); }
 		Session session = sessionFactory.getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 
@@ -50,13 +50,13 @@ public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
 				notificationRecord.setDate(new Date());
 				applicationDAO.save(application);
 				transaction.commit();
-				log.info("Application In Approval notifications sent to approvers for " + application.getId());
+				log.info("Notification Application In Approval notifications sent to approvers for " + application.getId());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.warn("error while sending email", e);
+				log.warn("Error while sending email", e);
 
 			}
 		}
-		log.info("Application In Approval Notification To Approvers Task  complete");
+		if (log.isDebugEnabled()) { log.debug("Application In Approval Notification To Approvers Task  Complete"); }
 	}
 }

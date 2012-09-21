@@ -26,7 +26,7 @@ public class SupervisorNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Supervisor Notification Task Running");
+	    if (log.isDebugEnabled()) { log.debug("Supervisor Notification Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Supervisor> supervisorsDueNotification = supervisorDAO.getSupervisorsDueNotification();
 
@@ -39,15 +39,12 @@ public class SupervisorNotificationTask extends TimerTask {
 				supervisor.setLastNotified(new Date());
 				supervisorDAO.save(supervisor);
 				transaction.commit();
-				log.info("notification sent to supervisor " + supervisor.getUser().getEmail());
+				log.info("Notification sent to supervisor " + supervisor.getUser().getEmail());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.warn("error while sending notification to supervisor " + supervisor.getUser().getEmail(), e);
-
+				log.warn("Error while sending notification to supervisor " + supervisor.getUser().getEmail(), e);
 			}
-
 		}
-		log.info("Supervisor Notification Task complete");
+		if (log.isDebugEnabled()) { log.debug("Supervisor Notification Task Complete"); }
 	}
-
 }

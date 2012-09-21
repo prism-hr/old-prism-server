@@ -27,7 +27,7 @@ public class ReviewerReminderTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Reviewer reminder Task Running");
+	    if (log.isDebugEnabled()) { log.debug("Reviewer reminder Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Reviewer> reviewersDuereminder = reviewerDAO.getReviewersDueReminder();
 
@@ -41,18 +41,13 @@ public class ReviewerReminderTask extends TimerTask {
 				reviewer.setLastNotified(new Date());
 				reviewerDAO.save(reviewer);
 				transaction.commit();
-				log.info("reminder sent to reviewer " + reviewer.getUser().getEmail());
+				log.info("Notification reminder sent to reviewer " + reviewer.getUser().getEmail());
 			} catch (Throwable e) {
 				e.printStackTrace();
 				transaction.rollback();
-				log.warn("error while sending reminder to reviewer " + reviewer.getUser().getEmail(), e);
-
+				log.warn("Error while sending reminder to reviewer " + reviewer.getUser().getEmail(), e);
 			}
-
 		}
-		log.info("Reviewer reminder Task complete");
-
-
+		if (log.isDebugEnabled()) { log.debug("Reviewer reminder Task Complete"); }
 	}
-
 }

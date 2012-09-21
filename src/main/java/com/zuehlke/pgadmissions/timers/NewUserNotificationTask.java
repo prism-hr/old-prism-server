@@ -26,7 +26,7 @@ public class NewUserNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("new User Notification Task Running");
+	    if (log.isDebugEnabled()) { log.debug("New User Notification Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
 		transaction.commit();
@@ -39,15 +39,13 @@ public class NewUserNotificationTask extends TimerTask {
 				user.getPendingRoleNotifications().clear();
 				userDAO.save(user);
 				transaction.commit();
-				log.info("notification sent to new user " + user.getEmail());
+				log.info("Notification sent to new user " + user.getEmail());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.warn("error while sending notification to new user " + user.getEmail(), e);
+				log.warn("Error while sending notification to new user " + user.getEmail(), e);
 
 			}
 		}
-
-		log.info("new User Notification Task complete");
+		if (log.isDebugEnabled()) { log.debug("New User Notification Task Complete"); }
 	}
-
 }

@@ -35,6 +35,33 @@ public class GenericCommentValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
 	}
+	
+	@Test
+    public void shouldRejectIfCommentIsLongerThan500Characters() {
+	    StringBuilder commentBuilder = new StringBuilder();
+	    for (int i = 0; i < 600; i++) {
+	        commentBuilder.append("a");
+	    }
+	    
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "comment");
+        comment.setComment(commentBuilder.toString());
+        validator.validate(comment, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 500 characters are allowed.", mappingResult.getFieldError("comment").getDefaultMessage());
+    }
+	
+	@Test
+    public void shouldNotRejectIfCommentIsShorterThan500Characters() {
+        StringBuilder commentBuilder = new StringBuilder();
+        for (int i = 0; i < 400; i++) {
+            commentBuilder.append("a");
+        }
+        
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "comment");
+        comment.setComment(commentBuilder.toString());
+        validator.validate(comment, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
 
 	@Before
 	public void setup() {

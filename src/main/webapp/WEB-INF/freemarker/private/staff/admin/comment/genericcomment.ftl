@@ -70,8 +70,8 @@
 													<div class="row">
 														<span class="plain-label">Comment<em>*</em></span>
 														<span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
-														<div class="field">		            				
-															<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+														<div class="field">
+														    <textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}</textarea>
 															<@spring.bind "comment.comment" /> 
 															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 														</div>
@@ -83,9 +83,6 @@
 												</div>
 											         
 												<div class="buttons">						        		
-<#--
-													<button class="clear" type="button" value="cancel">Clear</button>
--->
 													<button class="blue" type="submit" value="Submit">Submit</button>						        
 												</div>
 											</form>

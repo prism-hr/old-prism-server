@@ -22,6 +22,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 
 @Entity(name="COMMENT")
@@ -40,6 +41,7 @@ public class Comment extends DomainObject<Integer> implements Comparable<Comment
 	@JoinColumn(name = "comment_id")
 	private List<Document> documents = new ArrayList<Document>(); 
 	
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
 	private String comment;
 	
 	public String getComment() {

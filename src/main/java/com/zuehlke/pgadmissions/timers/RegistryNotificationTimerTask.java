@@ -6,7 +6,6 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -44,7 +43,7 @@ public class RegistryNotificationTimerTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Registry Notification Task Running");
+	    if (log.isDebugEnabled()) { log.debug("Registry Notification Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<ApplicationForm> applications = applicationsService.getApplicationsDueRegistryNotification();
 		List<Person> registryContacts = configurationService.getAllRegistryUsers();
@@ -56,20 +55,17 @@ public class RegistryNotificationTimerTask extends TimerTask {
 
 				registryMailSender.sendApplicationToRegistryContacts(applicationForm, registryContacts);
 				applicationForm.setRegistryUsersDueNotification(false);
-				Comment comment = commentFactory.createComment(applicationForm, applicationForm.getAdminRequestedRegistry(), getCommentText(registryContacts),
-						CommentType.GENERIC, null);
+				Comment comment = commentFactory.createComment(applicationForm, applicationForm.getAdminRequestedRegistry(), getCommentText(registryContacts), CommentType.GENERIC, null);
 				commentService.save(comment);
 				applicationsService.save(applicationForm);
 				transaction.commit();
-				log.info("notification sent to registry persons for application " + applicationForm.getApplicationNumber());
+				log.info("Notification sent to registry persons for application " + applicationForm.getApplicationNumber());
 			} catch (Throwable e) {
-
 				transaction.rollback();
-				log.warn("error while sending notification to registry persons for application " + applicationForm.getApplicationNumber(), e);
-
+				log.warn("Error while sending notification to registry persons for application " + applicationForm.getApplicationNumber(), e);
 			}
 		}
-		log.info("Registry Notification Task complete");
+		if (log.isDebugEnabled()) { log.debug("Registry Notification Task Complete"); }
 	}
 
 	private String getCommentText(List<Person> registryContacts) {

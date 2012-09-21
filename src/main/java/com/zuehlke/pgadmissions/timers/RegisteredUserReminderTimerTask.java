@@ -44,7 +44,7 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info(notificationType +  " Reminder Task Running");
+	    if (log.isDebugEnabled()) { log.debug(notificationType +  " Reminder Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 
 		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueUserReminder(notificationType, status);
@@ -68,14 +68,12 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 				notificationRecord.setDate(new Date());
 				applicationFormDAO.save(application);
 				transaction.commit();
-				log.info(status + " reminders sent to " + application.getId());
+				log.info("Notification " + status + " reminders sent to " + application.getId());
 			} catch (Throwable e) {
-				log.info("error in sending " + status + " reminders for " + application.getId(), e);
+				log.warn("Error in sending " + status + " reminders for " + application.getId(), e);
 				transaction.rollback();
 			}
-
 		}
-		log.info(notificationType +  " Reminder Task complete");
+		if (log.isDebugEnabled()) { log.debug(notificationType +  " Reminder Task Complete"); }
 	}
-
 }

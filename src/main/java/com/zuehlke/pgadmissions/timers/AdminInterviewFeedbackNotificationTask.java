@@ -9,7 +9,6 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zuehlke.pgadmissions.domain.InterviewComment;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 import com.zuehlke.pgadmissions.services.CommentService;
 
@@ -33,7 +32,7 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Interview Comment Notification Task Running");
+	    if (log.isDebugEnabled()) { log.debug("Interview Comment Notification Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<InterviewComment> comments = commentService.getInterviewCommentsDueNotification();
 		transaction.commit();
@@ -42,17 +41,15 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
 			sessionFactory.getCurrentSession().refresh(comment);
 			try {
 				adminMailSender.sendAdminInterviewNotification(comment.getApplication(), comment.getUser());
-
 				comment.setAdminsNotified(true);
 				commentService.save(comment);
 				transaction.commit();
-				log.info("notification sent to admins for interview comment " + comment.getId());
+				log.info("Notification sent to admins for interview comment " + comment.getId());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.warn("error while sending notification to admins for comment " + comment.getId(), e);
-
+				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
 			}
 		}
-		log.info("Interview Comment Task complete");
+		if (log.isDebugEnabled()) { log.debug("Interview Comment Task Complete"); }
 	}
 }

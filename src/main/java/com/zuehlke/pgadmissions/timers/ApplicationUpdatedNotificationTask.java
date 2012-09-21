@@ -30,7 +30,7 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Application Update Notification task running");
+	    if (log.isDebugEnabled()) { log.debug("Application Update Notification Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<ApplicationForm> applicationsDueUpdateNotification = applicationDAO.getApplicationsDueUpdateNotification();
 		transaction.commit();
@@ -47,12 +47,12 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
 			    notificationRecord.setDate(new Date());
 			    applicationDAO.save(applicationForm);			
 				transaction.commit();
-				log.info("update notifiations sent for " + applicationForm.getId());
+				log.info("Notification update sent for " + applicationForm.getId());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.warn("error while sending email", e);
+				log.warn("Error while sending email", e);
 			}
 		}
-		log.info("Application Update Notification task complete");
+		if (log.isDebugEnabled()) { log.debug("Application Update Notification Task Complete"); }
 	}
 }

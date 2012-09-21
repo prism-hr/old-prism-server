@@ -36,7 +36,7 @@ public class AdminApprovedNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Admin Approved Notification Task Running");
+		if (log.isDebugEnabled()) { log.debug("Admin Approved Notification Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<ApplicationForm> applications = applicationDAO.getApplicationsDueApprovedNotifications();
 		transaction.commit();
@@ -54,12 +54,12 @@ public class AdminApprovedNotificationTask extends TimerTask {
 				notificationRecord.setDate(new Date());
 				applicationDAO.save(application);
 				transaction.commit();
-				log.info("approved notification sent for application: " + application.getApplicationNumber());
+				log.info("Notification approved sent for application: " + application.getApplicationNumber());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.info("error in sending approved notification for application: " + application.getApplicationNumber(), e);
+				log.warn("Error in sending approved notification for application: " + application.getApplicationNumber(), e);
 			}
 		}
-		log.info("Admin Approved Notification Task complete");
+		if (log.isDebugEnabled()) { log.debug("Admin Approved Notification Task complete"); }
 	}
 }

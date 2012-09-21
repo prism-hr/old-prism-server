@@ -26,7 +26,7 @@ public class InterviewerNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Interviewer Notification Task Running");
+	    if (log.isDebugEnabled()) { log.debug("Interviewer Notification Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Interviewer> interviewersDueNotification = interviewerDAO.getInterviewersDueNotification();
 
@@ -39,16 +39,14 @@ public class InterviewerNotificationTask extends TimerTask {
 				interviewer.setLastNotified(new Date());
 				interviewerDAO.save(interviewer);
 				transaction.commit();
-				log.info("notification sent to interviewer " + interviewer.getUser().getEmail());
+				log.info("Notification sent to interviewer " + interviewer.getUser().getEmail());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.warn("error while sending notification to interviewer " + interviewer.getUser().getEmail(), e);
+				log.warn("Error while sending notification to interviewer " + interviewer.getUser().getEmail(), e);
 
 			}
 
 		}
-		log.info("Interviewer Notification Task complete");
-
+		if (log.isDebugEnabled()) { log.debug("Interviewer Notification Task Complete"); }
 	}
-
 }

@@ -28,8 +28,9 @@ public class AdminRejectNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Admin Reject Notification Task Running");
-		Session session = sessionFactory.getCurrentSession();
+	    if (log.isDebugEnabled()) { log.debug("Admin Reject Notification Task Running"); }
+		
+	    Session session = sessionFactory.getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 
 		List<ApplicationForm> applications = applicationDAO.getApplicationsDueRejectNotifications();
@@ -38,7 +39,8 @@ public class AdminRejectNotificationTask extends TimerTask {
 		for (ApplicationForm application : applications) {
 			sendRejectNotificationsForApplication(sessionFactory.getCurrentSession(), application);
 		}
-		log.info("Admin Reject Notification Task complete");
+		
+		if (log.isDebugEnabled()) { log.debug("Admin Reject Notification Task Complete"); }
 	}
 
 	private void sendRejectNotificationsForApplication(Session session, ApplicationForm application) {
@@ -48,14 +50,13 @@ public class AdminRejectNotificationTask extends TimerTask {
 		RegisteredUser approver = application.getApprover();
 		try {
 			adminMailSender.sendAdminRejectNotification(application, approver);
-
 			application.setRejectNotificationDate(new Date());
 			applicationDAO.save(application);
 			transaction.commit();
-			log.info("reject notification sent for application: " + application.getApplicationNumber());
+			log.info("Reject notification sent for application: " + application.getApplicationNumber());
 		} catch (Throwable e) {
 			transaction.rollback();
-			log.info("error in sending reject notification for application: " + application.getApplicationNumber(), e);
+			log.warn("Error in sending reject notification for application: " + application.getApplicationNumber(), e);
 		}
 	}
 }

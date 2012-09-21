@@ -29,7 +29,7 @@ public class RefereeNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-		log.info("Referee Notification Task Running");
+	    if (log.isDebugEnabled()) { log.debug("Referee Notification Task Running"); }
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Referee> refereesDueNotification = refereeDAO.getRefereesDueNotification();
 		refereeService.processRefereesRoles(refereesDueNotification);
@@ -42,14 +42,13 @@ public class RefereeNotificationTask extends TimerTask {
 				referee.setLastNotified(new Date());
 				refereeDAO.save(referee);
 				transaction.commit();				
-				log.info("notification sent to referee " +  referee.getEmail());
+				log.info("Notification sent to referee " +  referee.getEmail());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.warn("error while sending notification to referee " + referee.getEmail(), e);
+				log.warn("Error while sending notification to referee " + referee.getEmail(), e);
 
 			}
-
 		}
-		log.info("Referee Notification Task complete");
+		if (log.isDebugEnabled()) { log.debug("Referee Notification Task Complete"); } 
 	}
 }

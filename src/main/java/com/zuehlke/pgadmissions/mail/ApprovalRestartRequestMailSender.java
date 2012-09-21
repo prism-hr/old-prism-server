@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.mail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,28 +44,26 @@ public class ApprovalRestartRequestMailSender extends MailSender {
 		String template = "private/staff/admin/mail/restart_approval_request.ftl";
 		Map<String, Object> model = createModel(form);
 
-		if (applicationAdmin == null) { // send email to all program
-										// administrators
+		if (applicationAdmin == null) { // send email to all program administrators
 			for (RegisteredUser admin : adminRecipients) {
 				InternetAddress toAddress = createAddress(admin);
-
 				model.put("admin", admin);
 				MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, null, subject, template, model, null);
 				javaMailSender.send(msgPreparator);
 			}
 		} else { // send one email to application admin, CC to program admins
-			InternetAddress[] ccAddresses = new InternetAddress[adminRecipients.size()];
-			int index = 0;
-			for (RegisteredUser admin : adminRecipients) {
-				ccAddresses[index] = createAddress(admin);
-				index++;
-			}
-			InternetAddress toAddress = createAddress(applicationAdmin);
+		    InternetAddress toAddress = createAddress(applicationAdmin);
+		    ArrayList<InternetAddress> ccAddresses = new ArrayList<InternetAddress>();
+            for (RegisteredUser admin : adminRecipients) {
+                InternetAddress ccAddress = createAddress(admin);
+                if (!ccAddress.equals(toAddress)) {
+                    ccAddresses.add(ccAddress);
+                }
+            }
 			model.put("admin", applicationAdmin);
-			MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject, template, model, null);
+			MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses.toArray(new InternetAddress[]{}), subject, template, model, null);
 			javaMailSender.send(msgPreparator);
 		}
-
 	}
 
 	public void sendRequestRestartApprovalReminder(ApplicationForm form) {
@@ -77,25 +76,24 @@ public class ApprovalRestartRequestMailSender extends MailSender {
 		String template = "private/staff/admin/mail/approval_restart_request_reminder.ftl";
 		Map<String, Object> model = createModel(form);
 
-		if (applicationAdmin == null) { // send email to all program
-										// administrators
+		if (applicationAdmin == null) { // send email to all program administrators
 			for (RegisteredUser admin : adminRecipients) {
 				InternetAddress toAddress = createAddress(admin);
-
 				model.put("admin", admin);
 				MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, null, subject, template, model, null);
 				javaMailSender.send(msgPreparator);
 			}
 		} else { // send one email to application admin, CC to program admins
-			InternetAddress[] ccAddresses = new InternetAddress[adminRecipients.size()];
-			int index = 0;
-			for (RegisteredUser admin : adminRecipients) {
-				ccAddresses[index] = createAddress(admin);
-				index++;
+		    InternetAddress toAddress = createAddress(applicationAdmin);
+		    ArrayList<InternetAddress> ccAddresses = new ArrayList<InternetAddress>();
+		    for (RegisteredUser admin : adminRecipients) {
+				InternetAddress ccAddress = createAddress(admin);
+		        if (!ccAddress.equals(toAddress)) {
+		            ccAddresses.add(ccAddress);
+		        }
 			}
-			InternetAddress toAddress = createAddress(applicationAdmin);
 			model.put("admin", applicationAdmin);
-			MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject, template, model, null);
+			MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses.toArray(new InternetAddress[]{}), subject, template, model, null);
 			javaMailSender.send(msgPreparator);
 		}
 		

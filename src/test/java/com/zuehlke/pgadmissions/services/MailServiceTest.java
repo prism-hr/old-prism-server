@@ -160,6 +160,7 @@ public class MailServiceTest {
 		mailService.sendApplicationUpdatedMailToAdmins(form);
 		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSendWithdrawnNotificationToReferees() throws UnsupportedEncodingException {
@@ -348,5 +349,44 @@ public class MailServiceTest {
 		mailService.sendWithdrawToSupervisors(form);
 		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
-	
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldSendWithdrawnNotificationToAllUsers() throws UnsupportedEncodingException {
+        RegisteredUser refereeOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+        RegisteredUser refereeTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+        
+        Program program = new ProgramBuilder().title("title").administrators(refereeOne).toProgram();
+
+        ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicationNumber("xyz").applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+
+        Referee referee1 = new RefereeBuilder().application(form).id(2).user(refereeTwo).toReferee();
+        Referee referee2 = new RefereeBuilder().application(form).id(1).user(refereeOne).toReferee();
+
+        MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+        MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
+        
+        InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
+        InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
+        
+        EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
+                EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
+        
+        EasyMock.expect(
+                mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
+                        EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+        EasyMock.expect(
+                mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
+                        EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
+        
+        javaMailSenderMock.send(preparatorMock1);
+        javaMailSenderMock.send(preparatorMock2);
+        
+        EasyMock.expectLastCall();
+        
+        EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+        
+        mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(Arrays.asList(referee1, referee2), form);
+        EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);      
+    }	
 }

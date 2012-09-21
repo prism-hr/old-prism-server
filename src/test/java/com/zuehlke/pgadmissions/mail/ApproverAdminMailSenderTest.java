@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.mail;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -54,7 +53,7 @@ public class ApproverAdminMailSenderTest {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
 		
-		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().approver(approver).title("prg").administrators(admin).toProgram()).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().approver(approver, admin).title("prg").administrators(admin).toProgram()).toApplicationForm();
 
 		InternetAddress expAddr1 = new InternetAddress("bob@test.com", "bob the builder");
 		InternetAddress expAddr2 = new InternetAddress("admin@test.com", "bob the builder");

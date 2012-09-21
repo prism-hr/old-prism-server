@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.mail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
@@ -26,12 +28,10 @@ public class AdminMailSender extends StateChangeMailSender {
 	private final ApplicationsService applicationService;
 	private final ConfigurationService personService;
 
-	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,//
-			ApplicationsService applicationService, MessageSource msgSource, ConfigurationService personService) {
+	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ApplicationsService applicationService, MessageSource msgSource, ConfigurationService personService) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
 		this.applicationService = applicationService;
 		this.personService = personService;
-
 	}
 
 	Map<String, Object> createModel(ApplicationForm applicationForm) {
@@ -62,13 +62,11 @@ public class AdminMailSender extends StateChangeMailSender {
 			model.put("approver", approver);
 			delegateToMailSender(toAddress, null, subject, templatename, model);
 		}
-
 	}
 
 	public void sendAdminReviewNotification(ApplicationForm form, RegisteredUser reviewer) {
 		Map<String, Object> model = createModel(form);
 		model.put("reviewer", reviewer);
-
 		internalSend(form, "review.provided.admin", "private/staff/admin/mail/review_submission_notification.ftl", model);
 	}
 
@@ -84,24 +82,41 @@ public class AdminMailSender extends StateChangeMailSender {
 		model.put("reason", application.getRejection().getRejectionReason());
 		model.put("previousStage", application.getOutcomeOfStage());
 
+		Set<String> alreadyNotifiedUsers = new HashSet<String>();
+
 		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());
+		administrators = removeUsersThatHaveAlreadyBeenNotified(administrators, alreadyNotifiedUsers);
 		if (!administrators.isEmpty()) {
 			internalSend(application, administrators, "rejection.notification.admin", "private/staff/admin/mail/rejected_notification.ftl", model, true);
 		}
+		
 		List<RegisteredUser> supervisorUsers = getSupervisorUsers(application);
+		supervisorUsers = removeUsersThatHaveAlreadyBeenNotified(supervisorUsers, alreadyNotifiedUsers);
 		if (!supervisorUsers.isEmpty()) {
 			internalSend(application, supervisorUsers, "rejection.notification.admin", "private/staff/admin/mail/rejected_notification.ftl", model, false);
 		}
+		
 		List<RegisteredUser> approvers =new ArrayList<RegisteredUser>(application.getProgram().getApprovers());
+		approvers = removeUsersThatHaveAlreadyBeenNotified(approvers, alreadyNotifiedUsers);
 		if (!approvers.isEmpty()) {
 			internalSend(application, approvers, "rejection.notification.admin", "private/staff/admin/mail/rejected_notification.ftl", model, false);
 		}
 	}
 
+	private List<RegisteredUser> removeUsersThatHaveAlreadyBeenNotified(final List<RegisteredUser> users, final Set<String> alreadyNotifiedUsers) {
+	    List<RegisteredUser> cleansedUsers = new ArrayList<RegisteredUser>();
+	    for (RegisteredUser user : users) {
+	        if (!alreadyNotifiedUsers.contains(user.getEmail())) {
+	            cleansedUsers.add(user);
+	            alreadyNotifiedUsers.add(user.getEmail());
+	        }
+	    }
+	    return cleansedUsers;
+	}
+	
 	public void sendReviewerAssignedNotification(ApplicationForm applicationForm, Reviewer newReviewer) {
 		Map<String, Object> model = createModel(applicationForm);
 		model.put("newReviewer", newReviewer);
-
 		internalSend(applicationForm, "reviewer.assigned.admin", "private/staff/admin/mail/reviewer_assigned_notification.ftl", model);
 	}
 
@@ -110,8 +125,7 @@ public class AdminMailSender extends StateChangeMailSender {
 		internalSend(applicationForm, programAdmins, messageCode, template, model, true);
 	}
 
-	private void internalSend(ApplicationForm form, List<RegisteredUser> recipients, String messageCode, String template, Map<String, Object> model,
-			boolean ccIfApplicationAdmin) {
+	void internalSend(ApplicationForm form, List<RegisteredUser> recipients, String messageCode, String template, Map<String, Object> model, boolean ccIfApplicationAdmin) {
 		RegisteredUser applicationAdmin = form.getApplicationAdministrator();
 		ApplicationFormStatus previousStage = form.getOutcomeOfStage();
 
@@ -147,13 +161,17 @@ public class AdminMailSender extends StateChangeMailSender {
 		model.put("previousStage", application.getOutcomeOfStage());
 		model.put("registryContacts", personService.getAllRegistryUsers());
 
+		Set<String> alreadyNotifiedUsers = new HashSet<String>();
+
 		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());
 		administrators.remove(approver);
+		administrators = removeUsersThatHaveAlreadyBeenNotified(administrators, alreadyNotifiedUsers);
 		if (!administrators.isEmpty()) {
 			internalSend(application, administrators, "approved.notification", "private/staff/admin/mailBeta/approved_notification.ftl", model, true);
 		}
 
 		List<RegisteredUser> supervisorUsers = getSupervisorUsers(application);
+		supervisorUsers = removeUsersThatHaveAlreadyBeenNotified(supervisorUsers, alreadyNotifiedUsers);
 		if (!supervisorUsers.isEmpty()) {
 			internalSend(application, supervisorUsers, "approved.notification", "private/staff/admin/mailBeta/approved_notification.ftl", model, false);
 		}
@@ -164,9 +182,7 @@ public class AdminMailSender extends StateChangeMailSender {
 		if (application.getLatestApprovalRound() != null) {
 			List<Supervisor> supervisors = application.getLatestApprovalRound().getSupervisors();
 			for (Supervisor supervisor : supervisors) {
-
 				supervisorUsers.add(supervisor.getUser());
-
 			}
 		}
 		return supervisorUsers;

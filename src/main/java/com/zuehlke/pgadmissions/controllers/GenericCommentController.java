@@ -53,12 +53,21 @@ public class GenericCommentController {
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null || currentUser.isInRole(Authority.APPLICANT) || currentUser.isRefereeOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)){
-			throw new ResourceNotFoundException();
+		
+		if (applicationForm == null) {
+		    throw new ResourceNotFoundException();
 		}
+		
+		if (currentUser.isInRole(Authority.APPLICANT) || currentUser.isRefereeOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
+			// overwrite the decision if the currentUser is in fact the ADMINISTRATOR or SUPERADMINISTRATOR
+		    if (!(applicationForm.getProgram().getAdministrators().contains(currentUser) || currentUser.isInRole(Authority.SUPERADMINISTRATOR))) {
+		        throw new ResourceNotFoundException();
+		    }
+		}
+		
 		return applicationForm;
 	}
-
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getGenericCommentPage() {
 		return GENERIC_COMMENT_PAGE;

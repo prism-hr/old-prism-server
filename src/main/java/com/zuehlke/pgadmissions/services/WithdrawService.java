@@ -29,12 +29,6 @@ public class WithdrawService {
 	@Transactional
 	public void saveApplicationFormAndSendMailNotifications(ApplicationForm form) {
 		applicationService.save(form);
-		mailService.sendWithdrawMailToReferees(refereeService.getRefereesWhoHaveNotProvidedReference(form));
-		mailService.sendWithdrawToAdmins(form);		
-		mailService.sendWithdrawToReviewers(form);
-		mailService.sendWithdrawToInterviewers(form);
-		mailService.sendWithdrawToSupervisors(form);
+		mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(refereeService.getRefereesWhoHaveNotProvidedReference(form), form);
 	}
-
-
 }

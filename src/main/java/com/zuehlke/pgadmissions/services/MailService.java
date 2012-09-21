@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.services;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
@@ -50,15 +52,12 @@ public class MailService {
 	@Transactional
 	public void sendApplicationUpdatedMailToAdmins(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-
-		String mailSubject = resolveMessage("application.update", form.getApplicationNumber(), form.getProgram().getTitle(),
-				form.getApplicant().getFirstName(), form.getApplicant().getLastName());
+		String mailSubject = resolveMessage("application.update", form.getApplicationNumber(), form.getProgram().getTitle(), form.getApplicant().getFirstName(), form.getApplicant().getLastName());
 		for (RegisteredUser admin : administrators) {
 			try {
 				Map<String, Object> model = createModel(form);
 				model.put("admin", admin);
 				InternetAddress toAddress = createAddress(admin);
-
 				delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -72,7 +71,6 @@ public class MailService {
 						Map<String, Object> model = createModel(form);
 						model.put("admin", interviewer.getUser());
 						InternetAddress toAddress = createAddress(interviewer.getUser());
-
 						delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
 					} catch (Throwable e) {
 						e.printStackTrace();
@@ -87,18 +85,64 @@ public class MailService {
 					Map<String, Object> model = createModel(form);
 					model.put("admin", approver);
 					InternetAddress toAddress = createAddress(approver);
-
 					delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
 				} catch (Throwable e) {
 					e.printStackTrace();
 					log.warn("error while sending email", e);
 				}
 			}
-			
 		}
+	}
+	
+	@Transactional
+	public void sendWithdrawMailToAdminsReviewersInterviewersSupervisors(List<Referee> referees, ApplicationForm form) {
+	    Set<RegisteredUser> uniqueUsers = new HashSet<RegisteredUser>();
+	    
+	    for (Referee referee : referees) {
+            RegisteredUser user = referee.getUser();
+            if (user != null) {
+                uniqueUsers.add(user);
+            }
+        }
+	    
+	    uniqueUsers.addAll(form.getProgram().getAdministrators());
+        
+        if (form.getApplicationAdministrator() != null) {
+            uniqueUsers.add(form.getApplicationAdministrator());
+        }
+	    
+        if (form.getLatestReviewRound() != null) {
+            List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
+            for (Reviewer reviewer : reviewers) {
+                if (reviewer.getReview() == null) {
+                    uniqueUsers.add(reviewer.getUser());
+                }
+            }
+        }
+        
+        if (form.getLatestInterview() != null) {
+            List<Interviewer> interviewers = form.getLatestInterview().getInterviewers();
+            for (Interviewer interviewer : interviewers) {
+                if (interviewer.getInterviewComment() == null) {
+                    uniqueUsers.add(interviewer.getUser());
+                }
+            }
+        }
+        
+        if (form.getLatestApprovalRound() != null) {
+            for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {
+                uniqueUsers.add(supervisor.getUser());
+            }
+        }
+        
+        // send the emails only for the unique users
+        for (RegisteredUser user : uniqueUsers) {
+            internalSendWithdraw(user, form);
+        }
 	}
 
 	@Transactional
+	@Deprecated
 	public void sendWithdrawMailToReferees(List<Referee> referees) {
 		for (Referee referee : referees) {
 			RegisteredUser user = referee.getUser();
@@ -109,6 +153,7 @@ public class MailService {
 	}
 
 	@Transactional
+	@Deprecated
 	public void sendWithdrawToAdmins(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 		for (RegisteredUser admin : administrators) {
@@ -120,6 +165,7 @@ public class MailService {
 	}
 
 	@Transactional
+	@Deprecated
 	public void sendWithdrawToReviewers(ApplicationForm form) {
 	    if (form.getLatestReviewRound() != null) {
     		List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
@@ -131,7 +177,9 @@ public class MailService {
 	    }
 	}
 	
-	public void sendWithdrawToInterviewers(ApplicationForm form) {
+	@Deprecated
+	@Transactional
+    public void sendWithdrawToInterviewers(ApplicationForm form) {
 		if (form.getLatestInterview() != null) {
     	    List<Interviewer> interviewers = form.getLatestInterview().getInterviewers();
     		for (Interviewer interviewer : interviewers) {
@@ -142,6 +190,8 @@ public class MailService {
 		}
 	}
 	
+	@Deprecated
+	@Transactional
 	public void sendWithdrawToSupervisors(ApplicationForm form) {
 	    if (form.getLatestApprovalRound() != null) {
     		for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {			
@@ -189,8 +239,5 @@ public class MailService {
 	private void delegateToMailSender(InternetAddress toAddress, InternetAddress[] ccAddresses, String subject, String template, Map<String, Object> model) {
 		MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject, template, model, null);
 		mailsender.send(msgPreparator);
-	}
-
-	
-	
+	}	
 }

@@ -19,9 +19,8 @@ public class WithdrawServiceTest {
 	private RefereeService refereeServiceMock;
 	private WithdrawService service;
 	
-
 	@Test
-	public void shouldSaveFormAndSenEmails(){
+	public void shouldSaveFormAndSendEmails() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		applicationServiceMock.save(applicationForm);
 		Referee referee1 = new RefereeBuilder().id(1).toReferee();
@@ -29,16 +28,12 @@ public class WithdrawServiceTest {
 		List<Referee> referees = Arrays.asList(referee1, referee2 );
 		EasyMock.expect(refereeServiceMock.getRefereesWhoHaveNotProvidedReference(applicationForm)).andReturn(referees);
 	
-		mailServiceMock.sendWithdrawMailToReferees(referees);
-		mailServiceMock.sendWithdrawToAdmins(applicationForm);
-		mailServiceMock.sendWithdrawToReviewers(applicationForm);
-		mailServiceMock.sendWithdrawToInterviewers(applicationForm);
-		mailServiceMock.sendWithdrawToSupervisors(applicationForm);
+		mailServiceMock.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(referees, applicationForm);
 		EasyMock.replay(applicationServiceMock, refereeServiceMock, mailServiceMock);
 		service.saveApplicationFormAndSendMailNotifications(applicationForm);
 		EasyMock.verify(applicationServiceMock, refereeServiceMock, mailServiceMock);
-	
 	}
+	
 	@Before
 	public void setup(){
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);

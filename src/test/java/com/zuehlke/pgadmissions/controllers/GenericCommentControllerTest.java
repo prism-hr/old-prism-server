@@ -27,162 +27,207 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 
 public class GenericCommentControllerTest {
-	private ApplicationsService applicationsServiceMock;
-	private UserService userServiceMock;
-	private GenericCommentController controller;
-	private GenericCommentValidator genericCommentValidatorMock;
-	private CommentService commentServiceMock;
-	private DocumentPropertyEditor documentPropertyEditorMock;
+    private ApplicationsService applicationsServiceMock;
+    private UserService userServiceMock;
+    private GenericCommentController controller;
+    private GenericCommentValidator genericCommentValidatorMock;
+    private CommentService commentServiceMock;
+    private DocumentPropertyEditor documentPropertyEditorMock;
 
-	@Test
-	public void shouldGetApplicationFormFromId() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+    @Test
+    public void shouldGetApplicationFormFromId() {
+        Program program = new ProgramBuilder().id(7).toProgram();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.replay(currentUser, userServiceMock);
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
+        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.replay(currentUser, userServiceMock);
 
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		ApplicationForm returnedApplication = controller.getApplicationForm("5");
-		assertEquals(returnedApplication, applicationForm);
-	}
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock);
+        ApplicationForm returnedApplication = controller.getApplicationForm("5");
+        assertEquals(returnedApplication, applicationForm);
+    }
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm("5");
-	}
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+        EasyMock.replay(applicationsServiceMock);
+        controller.getApplicationForm("5");
+    }
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserApplicant() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNotFoundExceptionIfCurrentUserApplicant() {
+        Program program = new ProgramBuilder().id(7).toProgram();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
-		EasyMock.replay(currentUser, userServiceMock);
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
+        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+        EasyMock.replay(currentUser, userServiceMock);
 
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm("5");
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock);
+        controller.getApplicationForm("5");
 
-	}
+    }
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserReferee() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNotFoundExceptionIfCurrentUserReferee() {
+        Program program = new ProgramBuilder().id(7).toProgram();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-		EasyMock.replay(currentUser, userServiceMock);
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
+        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+        EasyMock.replay(currentUser, userServiceMock);
 
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm("5");
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock);
+        controller.getApplicationForm("5");
 
-	}
+    }
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+    @Test
+    public void shouldNotThrowResourceNotFoundExceptionIfCurrentUserIsRefereeAndAdministrator() {
+        Program program = new ProgramBuilder().id(7).toProgram();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        applicationForm.getProgram().getAdministrators().add(currentUser);
 
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-		EasyMock.replay(currentUser, userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
+        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
 
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm("5");
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.replay(currentUser, userServiceMock);
 
-	}
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock);
+        controller.getApplicationForm("5");
+    }
+    
+    @Test
+    public void shouldNotThrowResourceNotFoundExceptionIfCurrentUserIsRefereeAndSuperAdministrator() {
+        Program program = new ProgramBuilder().id(7).toProgram();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        applicationForm.getProgram().getAdministrators().add(currentUser);
 
-	@Test
-	public void shouldReturnGenericCommentPage() {
-		assertEquals("private/staff/admin/comment/genericcomment", controller.getGenericCommentPage());
-	}
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
+        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 
-	@Test
-	public void shouldReturnCurrentUser() {
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-		assertEquals(currentUser, controller.getUser());
-	}
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.replay(currentUser, userServiceMock);
 
-	@Test
-	public void shouldCreateNewCommentForApplicationForm() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.replay(userServiceMock);
-		controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
-				documentPropertyEditorMock) {
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock);
+        controller.getApplicationForm("5");
+    }
 
-			@Override
-			public ApplicationForm getApplicationForm(String id) {
-				return applicationForm;
-			}
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication() {
+        Program program = new ProgramBuilder().id(7).toProgram();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 
-		};
-		Comment comment = controller.getComment("5");
-		assertNull(comment.getId());
-		assertEquals(applicationForm, comment.getApplication());
-		assertEquals(currentUser, comment.getUser());
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
+        EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
+        EasyMock.replay(currentUser, userServiceMock);
 
-	}
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.replay(applicationsServiceMock);
+        controller.getApplicationForm("5");
 
-	@Test
-	public void shouldRegisterValidator(){
-		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.setValidator(genericCommentValidatorMock);
-		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-		EasyMock.replay(binderMock);
-		controller.registerBinders(binderMock);
-		EasyMock.verify(binderMock);
-	}
+    }
 
-	@Test
-	public void shouldReturnToCommentsPageIfErrors() {
-		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-		EasyMock.replay(errorsMock);
-		assertEquals("private/staff/admin/comment/genericcomment", controller.addComment(null, errorsMock));
-	}
+    @Test
+    public void shouldReturnGenericCommentPage() {
+        assertEquals("private/staff/admin/comment/genericcomment", controller.getGenericCommentPage());
+    }
 
-	@Test
-	public void shouldSaveCommentAndRedirectBackToPageIfNoErrors() {
-		Comment comment = new CommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).applicationNumber("ABC").toApplicationForm()).toComment();
-		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		commentServiceMock.save(comment);
-		EasyMock.replay(errorsMock, commentServiceMock);
-		assertEquals("redirect:/comment?applicationId=ABC", controller.addComment(comment, errorsMock));
-	}
+    @Test
+    public void shouldReturnCurrentUser() {
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.replay(userServiceMock);
+        assertEquals(currentUser, controller.getUser());
+    }
 
-	@Before
-	public void setUp() {
+    @Test
+    public void shouldCreateNewCommentForApplicationForm() {
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.replay(userServiceMock);
+        controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock,
+                genericCommentValidatorMock, documentPropertyEditorMock) {
 
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-		genericCommentValidatorMock = EasyMock.createMock(GenericCommentValidator.class);
-		commentServiceMock = EasyMock.createMock(CommentService.class);
-		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
-		controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
-				documentPropertyEditorMock);
+            @Override
+            public ApplicationForm getApplicationForm(String id) {
+                return applicationForm;
+            }
 
-	}
+        };
+        Comment comment = controller.getComment("5");
+        assertNull(comment.getId());
+        assertEquals(applicationForm, comment.getApplication());
+        assertEquals(currentUser, comment.getUser());
+
+    }
+
+    @Test
+    public void shouldRegisterValidator() {
+        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        binderMock.setValidator(genericCommentValidatorMock);
+        binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
+        EasyMock.replay(binderMock);
+        controller.registerBinders(binderMock);
+        EasyMock.verify(binderMock);
+    }
+
+    @Test
+    public void shouldReturnToCommentsPageIfErrors() {
+        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
+        EasyMock.replay(errorsMock);
+        assertEquals("private/staff/admin/comment/genericcomment", controller.addComment(null, errorsMock));
+    }
+
+    @Test
+    public void shouldSaveCommentAndRedirectBackToPageIfNoErrors() {
+        Comment comment = new CommentBuilder().id(1)
+                .application(new ApplicationFormBuilder().id(6).applicationNumber("ABC").toApplicationForm())
+                .toComment();
+        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+        commentServiceMock.save(comment);
+        EasyMock.replay(errorsMock, commentServiceMock);
+        assertEquals("redirect:/comment?applicationId=ABC", controller.addComment(comment, errorsMock));
+    }
+
+    @Before
+    public void setUp() {
+
+        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        genericCommentValidatorMock = EasyMock.createMock(GenericCommentValidator.class);
+        commentServiceMock = EasyMock.createMock(CommentService.class);
+        documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+        controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock,
+                genericCommentValidatorMock, documentPropertyEditorMock);
+
+    }
 }

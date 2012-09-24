@@ -34,9 +34,6 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${application.latestInterview.interviewTime} on ${application.latestInterview.interviewDueDate?string("dd MMM yyyy")}.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The details of the interview are as follows:</font>
-			      	</p>
-			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.latestInterview.furtherDetails?html}</font>
 			      	</p>
 			      	

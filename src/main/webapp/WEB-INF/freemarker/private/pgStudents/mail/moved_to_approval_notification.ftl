@@ -30,7 +30,7 @@
 			      	</p>
 		      		 
 			      	<p>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our Programme Director will now make a final assessment of your Application and determine whether to advance it to UCL Admissions for verification.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">Our Programme Director will now make a final assessment of your application and determine whether to advance it to UCL Admissions for verification.</font>
 			      	</p>
 		      		 
 			      	<p>

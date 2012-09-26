@@ -335,13 +335,13 @@ function watchUpload($field, $deleteFunction)
 		var isOkSize = true;
 		try
 		{
-			isOkSize = input.files[0].size < 10485760;
+			isOkSize = input.files[0].size < 2097152 ;
 		}
 		catch(error)
 		{
 			//alert(error);
 		}
-		if (isOkSize) // 10MB in bytes
+		if (isOkSize) // 2MB in bytes
 		{
 			if (!$deleteFunction)
 			{
@@ -351,14 +351,13 @@ function watchUpload($field, $deleteFunction)
 			{
 				$deleteFunction();
 			}
-//			$field.attr("readonly", "readonly");
 			$container.addClass('posting');
 			doUpload($(input));
 			$field.removeAttr("readonly");
 		}
 		else
 		{
-			$container.append('<span class="invalid">Document must be at most 10MB.</span>');
+			$container.append('<span class="invalid">Document must be at most 2Mb.</span>');
 		}
 	});
 }

@@ -1,24 +1,5 @@
-$(document).ready(function(){
-
-	$('#uploadFields').on('change','#commentDocument', function(event)
-	{	
-		$('#uploadFields span.invalid').remove();
-		
-		if (this.files[0].size < 10485760)
-		{
-			//$('#commentDocumentProgress').html("uploading file...");
-			$('#commentDocument').attr("readonly", "readonly");
-			commentDocumentUpload();
-			$('#commentDocument').removeAttr("readonly");
-		}
-		else
-		{
-			$('#uploadFields').append('<span class="invalid">Document must be at most 10MB.</span>');
-		}
-	});
-
-	$('#commentUploadedDocument').on('click', 'span[name="supportingDocumentSpan"] a[name="delete"]', commentDocumentDelete);
-	
+$(document).ready(function() {
+	watchUpload($('#commentDocument'), null);
 	
 	$('#referenceSaveButton').click(function()
 	{
@@ -40,94 +21,6 @@ $(document).ready(function(){
 	
 
 });
-
-function commentDocumentDelete()
-{
-	var id = $(this).attr("id");
-	$.ajax({
-		type: 'POST',
-		 statusCode: {
-			  401: function() {
-				  window.location.reload();
-			  },
-			  500: function() {
-				  window.location.href = "/pgadmissions/error";
-			  },
-			  404: function() {
-				  window.location.href = "/pgadmissions/404";
-			  },
-			  400: function() {
-				  window.location.href = "/pgadmissions/400";
-			  },				  
-			  403: function() {
-				  window.location.href = "/pgadmissions/404";
-			  }
-		  },
-		 url:"/pgadmissions/delete/asyncdelete",
-		data:{
-			documentId: id
-		},
-		success: function(data) {			
-			$('#' +id).parent().remove()
-		},
-		error: function()
-		{
-			$container.append('<span class="invalid">Upload failed; please retry.</span>');
-		}
-	});
-
-	
-}
-
-function commentDocumentUpload()
-{	
-	
-	/*$("#commentDocumentProgress").ajaxStart(function()
-	{
-		$(this).show();
-	})
-	.ajaxComplete(function(){
-		$(this).hide();
-		$('#commentDocumentProgress').html("");
-		$('#commentDocument').val("");
-		
-	});*/
-
-	$('#uploadFields').removeClass('uploaded').addClass('posting');
-	$.ajaxFileUpload
-	(
-		{
-			url:'/pgadmissions/documents/async',
-			secureuri:false,
-			
-			fileElementId:'commentDocument',	
-			dataType:'text',
-			data:{type:'COMMENT'},
-			success: function(data)
-			{
-				var invalid = data.indexOf('<span class="invalid');
-				if (invalid >= 0)
-				{
-					// Display error message.
-					var msg = data.substr(invalid);
-					$('#uploadFields').append(msg);
-				}
-				else
-				{
-					// Display the uploaded file.
-					$('#commentUploadedDocument').append(data);
-					$('#uploadFields').addClass('uploaded');
-					$('#commentUploadedDocument').show();
-				}
-			},
-			complete: function()
-			{
-				$('#commentDocument').val("");
-				$('#uploadFields').removeClass('posting');
-			}
-		}
-	);
-}
 
 function validateReference()
 {

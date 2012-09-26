@@ -21,6 +21,7 @@ public class MimeMessagePreparatorFactory {
 	static final Logger log = Logger.getLogger(MimeMessagePreparatorFactory.class);
 
 	final FreeMarkerConfig config;
+	
 	final boolean prod;
 
 	MimeMessagePreparatorFactory() {
@@ -49,7 +50,6 @@ public class MimeMessagePreparatorFactory {
 
 	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
 			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, PdfAttachmentInputSource... attachments) {
-
 		if (prod) {
 			return new ProductionMessagePreparator(toAddresses, ccAddresses, subject, templatename, model, replyToAddress, attachments);
 		}
@@ -57,12 +57,11 @@ public class MimeMessagePreparatorFactory {
 	}
 
 	MimeMessageHelper getMessageHelper(MimeMessage mimeMessage, boolean isMultipart) throws MessagingException {
-
 		return new MimeMessageHelper(mimeMessage, isMultipart);
 	}
 
 	class ProductionMessagePreparator implements MimeMessagePreparator {
-
+	    
 		protected InternetAddress[] toAddresses;
 		protected InternetAddress[] ccAddresses;
 		private final String subject;
@@ -92,14 +91,14 @@ public class MimeMessagePreparatorFactory {
 
 		@Override
 		public final void prepare(MimeMessage mimeMessage) throws Exception {
-			boolean isMultipart = (attachments != null && attachments.length > 0);
-			MimeMessageHelper messageHelper = getMessageHelper(mimeMessage, isMultipart);
+			MimeMessageHelper messageHelper = getMessageHelper(mimeMessage, true);
 			StringBuilder logStringBuilder = new StringBuilder();
 			for (InternetAddress address : toAddresses) {
 				logStringBuilder.append(address.toString() + ", ");
 			}
 
 			log.info("Email \"" + getSubject() + "\" will be sent to " + logStringBuilder.toString());
+			
 			messageHelper.setTo(toAddresses);
 			if (!ArrayUtils.isEmpty(getCCAddresses())) {
 				messageHelper.setCc(getCCAddresses());
@@ -111,29 +110,30 @@ public class MimeMessagePreparatorFactory {
 			messageHelper.setFrom(Environment.getInstance().getEmailFromAddress());
 
 			for (PdfAttachmentInputSource attachment : attachments) {	
-
 				messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");					
-
 			}
-
-			String text = FreeMarkerTemplateUtils.processTemplateIntoString(config.getConfiguration().getTemplate(templatename), model);
-			messageHelper.setText(text, true);
+			
+			HtmlToPlainText htmlFormatter = new HtmlToPlainText();
+			
+			String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(config.getConfiguration().getTemplate(templatename), model);
+			String plainText = htmlFormatter.getPlainText(htmlText);
+			plainText = plainText + "\n\nIf the links do not work in your email client copy and paste them into your browser.";
+			messageHelper.setText(plainText, htmlText);
 		}
-
 	}
 
 	class DevelopmentMessagePreparator extends ProductionMessagePreparator {
 
 		public DevelopmentMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
 				String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, PdfAttachmentInputSource... attachments) {
-			super(toAddresses, ccAddresses, subject, templatename, model, replyToAddress, attachments);
+		
+		    super(toAddresses, ccAddresses, subject, templatename, model, replyToAddress, attachments);
 			for (InternetAddress internetAddress : toAddresses) {
 				internetAddress.setAddress(Environment.getInstance().getEmailToAddress());
 			}
 			if (replyToAddress != null) {
 				replyToAddress.setAddress(Environment.getInstance().getEmailToAddress());
 			}
-
 		}
 
 		@Override

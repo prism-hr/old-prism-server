@@ -46,7 +46,7 @@ public class HtmlToPlainText {
                 append(((TextNode) node).text()); // TextNodes carry all user-readable text in the DOM.
             } else if (name.equals("li")) {
                 append("\n * ");
-            } else if (name.equals("a") && StringUtils.isNotBlank(node.attr("title")) && StringUtils.isNotBlank(node.attr("href"))) {
+            } else if (name.equals("a") && StringUtils.isNotBlank(node.attr("title")) && StringUtils.isNotBlank(node.attr("href")) && !StringUtils.equalsIgnoreCase("http://", node.attr("href"))) {
                 append("\n * ");
             }
         }
@@ -59,7 +59,7 @@ public class HtmlToPlainText {
             }
             else if (StringUtil.in(name, "p", "h1", "h2", "h3", "h4", "h5")) {
                 append("\n\n");
-            } else if (name.equals("a") && StringUtils.isNotBlank(node.attr("href"))) {
+            } else if (name.equals("a") && StringUtils.isNotBlank(node.attr("href")) && !StringUtils.equalsIgnoreCase("http://", node.attr("href"))) {
                 if (StringUtils.isNotBlank(node.attr("title"))) {
                     appendNoLineWrap(String.format("%s: %s", node.attr("title"), node.absUrl("href").trim()));
                 } else if (node.absUrl("href").contains("mailto")) {

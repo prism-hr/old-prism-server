@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -20,15 +21,23 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Access(AccessType.FIELD) 
 public class Badge extends DomainObject<Integer>{
 
-    
-    /**
-     * 
-     */
     private static final long serialVersionUID = -2878739613823320257L;
     
+    @Column(name="project_title")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+    private String projectTitle;
+    
+    @ManyToOne
+    @JoinColumn(name = "program_id")    
+    private Program program;
+
     @Temporal(TemporalType.DATE)
     @Column(name="closing_date")
     private Date closingDate;
+    
+    @Transient
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
+    private String programmeHomepage;
 
     @Override
     public void setId(Integer id) {
@@ -66,16 +75,12 @@ public class Badge extends DomainObject<Integer>{
     public void setClosingDate(Date closingDate) {
         this.closingDate = closingDate;
     }
-
-    @Column(name="project_title")
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-    private String projectTitle;
     
+    public String getProgrammeHomepage() {
+        return programmeHomepage;
+    }
     
-    @ManyToOne
-    @JoinColumn(name = "program_id")    
-    private Program program;
-    
-    
-    
+    public void setProgrammeHomepage(String programmeHomepage) {
+        this.programmeHomepage = programmeHomepage;
+    }
 }

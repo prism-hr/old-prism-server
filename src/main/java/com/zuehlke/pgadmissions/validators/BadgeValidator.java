@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
@@ -17,14 +20,19 @@ public class BadgeValidator extends AbstractValidator {
     @Override
     public void addExtraValidation(Object target, Errors errors) {
         Badge badge = (Badge) target;
+
         if (badge.getProgram() == null) {
             errors.rejectValue("program", "dropdown.radio.select.none");
-            return;
         }
         
-        if (StringUtils.isBlank(badge.getProjectTitle()) && badge.getClosingDate() == null) {
-            errors.rejectValue("projectTitle", "text.field.empty");
-            errors.rejectValue("closingDate", "text.field.empty");
+        if (StringUtils.isNotBlank(badge.getProgrammeHomepage()) && !GenericValidator.isUrl(badge.getProgrammeHomepage())) {
+            errors.rejectValue("programmeHomepage", "interview.locationURL.invalid");
+        }
+        
+        if (badge.getClosingDate() != null) {
+            if (badge.getClosingDate().before(new Date())) {
+                errors.rejectValue("closingDate", "date.field.notfuture");
+            }
         }
     }
 }

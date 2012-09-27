@@ -61,7 +61,7 @@ public class HtmlToPlainText {
                 append("\n\n");
             } else if (name.equals("a") && StringUtils.isNotBlank(node.attr("href")) && !StringUtils.equalsIgnoreCase("http://", node.attr("href"))) {
                 if (StringUtils.isNotBlank(node.attr("title"))) {
-                    appendNoLineWrap(String.format("%s: %s", node.attr("title"), node.absUrl("href").trim()));
+                    appendNoLineWrap(String.format(" %s: %s", node.attr("title"), node.absUrl("href").trim()));
                 } else if (node.absUrl("href").contains("mailto")) {
                     append(String.format(" <%s>", node.absUrl("href").replace("mailto:", "").trim()));
                 } else {
@@ -106,7 +106,7 @@ public class HtmlToPlainText {
         }
 
         public String toString() {
-            return accum.toString();
+            return accum.toString().replaceAll("\n\n\n+", "\n\n");
         }
     }
 }

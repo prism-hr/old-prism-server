@@ -29,18 +29,6 @@ $(document).ready(function()
 			bindDatePicker('#batchdeadline');
 		}
 	});	
-	
-	$('#cancelBadge').click(function()
-	{
-		$('#programme').val('');
-		$('#project').val('');
-		$('#programhome').val('');
-		$('#batchdeadline').val('');
-		$('#html').val('');
-		$('#badge').attr("src", "");
-	});
-
-	//$(document).on('change', '#programme, #project, #programhome, #batchdeadline', updateBadge);	
 });
 	
 function updateBadge()
@@ -77,6 +65,4 @@ function updateBadge()
 			$('#html').val(data).autosize();
 		}
 	});	
-
-
 };

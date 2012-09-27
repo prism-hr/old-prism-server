@@ -1,7 +1,6 @@
 $(document).ready(function() {
     
     $('#badgeSaveButton').click(function() {
-        updateBadge();
         $.ajax({
              type: 'POST',
              statusCode: {
@@ -25,10 +24,19 @@ $(document).ready(function() {
             data: {
                 closingDate: $('#batchdeadline').val(),
                 projectTitle: $('#project').val(),
-                program: $('#programme').val()
+                program: $('#programme').val(),
+                programmeHomepage: $('#programhome').val(),
+                cacheBreaker: new Date().getTime() 
             },
             success: function(data) {
-                //$('#badgeSection').html(data);
+            	if (/^<form/i.test(data)) {
+            		$(".invalid").remove();
+            		$('#html').val(data).autosize();
+            		$('#badgeSaveButton').hide();
+            	} else {
+            		$('#badgeSection').html(data);
+            		bindDatePicker('#batchdeadline');
+            	}
             },
             completed: function() {
             }

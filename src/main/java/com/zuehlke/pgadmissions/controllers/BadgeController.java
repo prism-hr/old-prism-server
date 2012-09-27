@@ -34,7 +34,6 @@ public class BadgeController {
 
 	private static final String BADGE = "private/staff/superAdmin/badge";
 	private static final String BADGE_MANAGEMENT = "private/staff/superAdmin/badge_management";
-	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
 	private final UserService userService;
 	private final ProgramsService programsService;
     private BadgeDAO badgeDAO;
@@ -76,7 +75,6 @@ public class BadgeController {
 	    return new Badge();
 	}
 
-		
 	@ModelAttribute("programs")
 	public List<Program> getPrograms() {
 		if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
@@ -104,19 +102,13 @@ public class BadgeController {
 		return Environment.getInstance().getApplicationHostName();
 	}
 
-	@RequestMapping( value="/html", method = RequestMethod.GET)
-	public String getBadge() {
-		if (!(userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR) || userService.getCurrentUser().isInRole(Authority.ADMINISTRATOR))) {
-			throw new ResourceNotFoundException();
-		}
-		return BADGE;
-	}
-
 	@RequestMapping (value ="/saveBadge", method = RequestMethod.POST)
 	public String saveBadgeDetails(@ModelAttribute(value="badge") @Valid Badge badge, BindingResult result) {
 	    if (!result.hasErrors()) {
 	        badgeDAO.save(badge);
+	        return BADGE;
+	    } else {
+	        return BADGE_MANAGEMENT;
 	    }
-	    return CONFIGURATION_VIEW_NAME;
 	}
 }

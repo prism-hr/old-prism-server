@@ -111,22 +111,6 @@ public class BadgeControllerTest {
 	}
 	
 	@Test
-	public void shouldReturnBadge(){
-		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();		
-		EasyMock.replay(currentUserMock);		
-		assertEquals("private/staff/superAdmin/badge", controller.getBadge());
-	}
-	
-
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionForBadgeIfUserNietherSuperAdminOrAdmin(){
-		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-		EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false).anyTimes();
-		EasyMock.replay(currentUserMock);		
-		controller.getBadge();		
-	}
-	
-	@Test
 	public void shouldSaveBadge() {
 	    Badge badge = new BadgeBuilder().id(1).closingDate(new Date()).projectTitle("pro").toBadge();
 	    badgeDAOMock.save(badge);

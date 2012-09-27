@@ -81,7 +81,6 @@ public class BadgeController {
 			return programsService.getAllPrograms();
 		}
 		return userService.getCurrentUser().getProgramsOfWhichAdministrator();
-
 	}
 	
 	@RequestMapping( method = RequestMethod.GET)
@@ -105,7 +104,9 @@ public class BadgeController {
 	@RequestMapping (value ="/saveBadge", method = RequestMethod.POST)
 	public String saveBadgeDetails(@ModelAttribute(value="badge") @Valid Badge badge, BindingResult result) {
 	    if (!result.hasErrors()) {
-	        badgeDAO.save(badge);
+	        if (badgeDAO.getDuplicateBadges(badge).isEmpty()) {
+	            badgeDAO.save(badge);
+	        }
 	        return BADGE;
 	    } else {
 	        return BADGE_MANAGEMENT;

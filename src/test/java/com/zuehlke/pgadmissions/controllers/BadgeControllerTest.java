@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -116,6 +117,7 @@ public class BadgeControllerTest {
 	    badgeDAOMock.save(badge);
 	    BindingResult errors = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errors.hasErrors()).andReturn(false);
+        EasyMock.expect(badgeDAOMock.getDuplicateBadges(badge)).andReturn(new ArrayList<Badge>());
 	    EasyMock.replay(badgeDAOMock);
 	    controller.saveBadgeDetails(badge, errors);
 	    EasyMock.verify(badgeDAOMock);

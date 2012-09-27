@@ -155,7 +155,38 @@ public class MimeMessagePreparatorTest {
 
         String plainTextMessage = parsedMessage.get(0);
 
-        Assert.assertEquals("Dear review, \n\nWe recently informed you that apply alastair has submitted an Application \nDDNPRFSING01-2012-000005 for postgraduate research study atUniversity College \nLondon (UCL) <http://www.ucl.ac.uk/> in MRes Management Sciences and Innovation \n<http://www.google.com>. \n\nYou have been selected to review their Application. \n\nYou are asked to complete a short questionnaire confirming their suitability \nfor postgraduate research study. If you feel unable to do this, you may also \ndecline.Be aware that declining to provide a review may reduce the applicant's \nchances of securing a study place. \n\n *  Provide Review: http://pgadmissions-sit.zuehlke.com/pgadmissions/decline/review?applicationId=DDNPRFSING01-2012-000005&activationCode=4533d932-14f7-4bba-a90c-ef54d11edad3 \n *  Decline: http://pgadmissions-sit.zuehlke.com/pgadmissions/decline/review?applicationId=DDNPRFSING01-2012-000005&activationCode=4533d932-14f7-4bba-a90c-ef54d11edad3 \n\nWe will continue to send reminders until you respond to this request. \n\nYours sincerely,\nUCL Prism \n\n University College London, Gower Street, London, WC1E 6BT\n Tel: +44 (0) 20 7679 2000\n \u00a9 UCL 1999\u20132012 \n\nIf the links do not work in your email client copy and paste them into your browser.", plainTextMessage);
+        Assert.assertEquals("Dear review, \n\nWe recently informed you that apply alastair has submitted an Application \nDDNPRFSING01-2012-000005 for postgraduate research study atUniversity College \nLondon (UCL) <http://www.ucl.ac.uk/> in MRes Management Sciences and Innovation\n<http://www.google.com>. \n\nYou have been selected to review their Application. \n\nYou are asked to complete a short questionnaire confirming their suitability \nfor postgraduate research study. If you feel unable to do this, you may also \ndecline.Be aware that declining to provide a review may reduce the applicant's \nchances of securing a study place. \n\n *  Provide Review: http://pgadmissions-sit.zuehlke.com/pgadmissions/decline/review?applicationId=DDNPRFSING01-2012-000005&activationCode=4533d932-14f7-4bba-a90c-ef54d11edad3 \n *  Decline: http://pgadmissions-sit.zuehlke.com/pgadmissions/decline/review?applicationId=DDNPRFSING01-2012-000005&activationCode=4533d932-14f7-4bba-a90c-ef54d11edad3 \n\nWe will continue to send reminders until you respond to this request. \n\nYours sincerely,\nUCL Prism \n\n University College London, Gower Street, London, WC1E 6BT\n Tel: +44 (0) 20 7679 2000\n \u00a9 UCL 1999\u20132012 \n\nIf the links do not work in your email client copy and paste them into your browser.", plainTextMessage);
+    }
+    
+    @Test
+    public void stripHtmlAndNoLeadingWhitespacesAndSendMultiPartMimeMessage() throws IOException, Exception {
+        EasyMock.expect(configMock.getTemplate(template)).andReturn(new InterviewConfirmationTemplate());
+        EasyMock.replay(freeMarkerConfigMock, configMock);
+
+        final ArrayList<MimeMessage> messages = new ArrayList<MimeMessage>();
+        final FakeLoggingMailSender mailSender = new FakeLoggingMailSender() {
+            @Override
+            protected void doSend(MimeMessage[] mimeMessages, Object[] originalMessages) throws MailException {
+                for (MimeMessage msg : mimeMessages) {
+                    messages.add(msg);
+                }
+                super.doSend(mimeMessages, originalMessages);
+            }
+        };
+
+        mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
+        MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress);
+        mailSender.send(msgPreparator);
+
+        Assert.assertEquals(1, messages.size());
+
+        MimeMessage message = messages.get(0);
+
+        List<String> parsedMessage = MultiPartMimeMessageParser.parseMessage(message);
+
+        String plainTextMessage = parsedMessage.get(0);
+
+        Assert.assertEquals("Dear apply, \n\nWe are pleased to confirm that your Application TMRMBISING01-2012-000005 for \nUCLMRes Medical and Biomedical Imaging has been advanced to interview. \n\nThe interview will take place at 07:00 on 27 Sep 2012. \n\nTesting. \n\n *  Get Directions: http://www.google.co.uk/ \n *  View/Update Application: http://pgadmissions-sit.zuehlke.com/pgadmissions/application?view=view&applicationId=TMRMBISING01-2012-000005 \n\nPlease let us know by e-mail <admin@aktest.com> if you are unable to attend. \n\nYours sincerely,\nUCL Prism \n\n University College London, Gower Street, London, WC1E 6BT\n Tel: +44 (0) 20 7679 2000\n \u00a9 UCL 1999\u20132012 \n\nIf the links do not work in your email client copy and paste them into your browser.", plainTextMessage);
     }
 
     class ApprovalOutcomeHtmlTemplate extends Template {
@@ -197,6 +228,21 @@ public class MimeMessagePreparatorTest {
         public void process(Object rootMap, Writer out) {
             try {
                 out.write(FileUtils.readFileToString(new File("src/test/resources/mail/review_request_reminder.html")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    class InterviewConfirmationTemplate extends Template {
+        public InterviewConfirmationTemplate() throws Exception {
+            super(null, new StringReader(""), null);
+        }
+
+        @Override
+        public void process(Object rootMap, Writer out) {
+            try {
+                out.write(FileUtils.readFileToString(new File("src/test/resources/mail/interview_confirmation.html")));
             } catch (IOException e) {
                 e.printStackTrace();
             }

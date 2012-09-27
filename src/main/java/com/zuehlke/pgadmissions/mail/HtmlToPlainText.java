@@ -78,9 +78,9 @@ public class HtmlToPlainText {
             if (text.equals(" ") && (accum.length() == 0 || StringUtil.in(accum.substring(accum.length() - 1), " ", "\n"))) {
                 return; // don't accumulate long runs of empty spaces
             }
-
+            
             if (text.length() + width > maxWidth) { // won't fit, needs to wrap
-                String words[] = text.split("\\s+");
+                String words[] = text.trim().split("\\s+");
                 for (int i = 0; i < words.length; i++) {
                     String word = words[i];
                     boolean last = i == words.length - 1;

@@ -28,10 +28,18 @@ public class BadgeDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(badge);
     }
     
-
     @SuppressWarnings("unchecked")
     public List<Badge> getBadgesByProgram(Program program){
         return (List<Badge>) sessionFactory.getCurrentSession().createCriteria(Badge.class).add(Restrictions.eq("program", program)).list();
     }
-
+    
+    @SuppressWarnings("unchecked")
+    public List<Badge> getDuplicateBadges(Badge badge) {
+        return (List<Badge>) sessionFactory.getCurrentSession()
+                .createCriteria(Badge.class)
+                .add(Restrictions.eq("program", badge.getProgram()))
+                .add(Restrictions.or(Restrictions.isNull("closingDate"), Restrictions.eq("closingDate", badge.getClosingDate())))
+                .add(Restrictions.or(Restrictions.isNull("projectTitle"), Restrictions.eq("projectTitle", badge.getProjectTitle())))
+                .list();
+    }
 }

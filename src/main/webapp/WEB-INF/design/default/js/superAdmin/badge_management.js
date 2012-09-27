@@ -32,7 +32,6 @@ $(document).ready(function() {
             	if (/^<form/i.test(data)) {
             		$(".invalid").remove();
             		$('#html').val(data).autosize();
-            		$('#badgeSaveButton').hide();
             	} else {
             		$('#badgeSection').html(data);
             		bindDatePicker('#batchdeadline');

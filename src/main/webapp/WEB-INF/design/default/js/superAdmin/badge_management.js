@@ -34,8 +34,9 @@ $(document).ready(function() {
             		$('#html').val(data).autosize();
             	} else {
             		$('#badgeSection').html(data);
-            		bindDatePicker('#batchdeadline');
             	}
+            	bindDatePicker('#batchdeadline');
+            	addToolTips();
             },
             completed: function() {
             }

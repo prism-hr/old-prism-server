@@ -110,6 +110,7 @@ public class RegisterControllerTest {
 		assertEquals(user, registerController.getPendingUser("Abc", "direct/to/here"));
 		assertEquals("direct/to/here",user.getDirectToUrl());
 	}
+	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundIfUserDoesNotExists() {
 		EasyMock.expect(userServiceMock.getUserByActivationCode("Abc")).andReturn(null);
@@ -128,6 +129,22 @@ public class RegisterControllerTest {
 		assertEquals("public/register/register_applicant", modelAndView);
 
 		EasyMock.verify(registrationServiceMock);
+	}
+	
+	@Test
+	public void shouldShowRegistrationNotCompleteViewIfUserRegistersWithoutRegistrationCode() {
+        RegisteredUser pendingUser = new RegisteredUserBuilder().email("test@test.com").toUser();
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("test@test.com").enabled(false).activationCode("abc").toUser();
+        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+        EasyMock.expect(userServiceMock.getUserByEmailDisabledAccountsOnly(pendingUser.getEmail())).andReturn(databaseUser);
+        registrationServiceMock.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
+        EasyMock.replay(errorsMock, userServiceMock, registrationServiceMock);
+        	    
+        String modelAndView = registerController.submitRegistration(pendingUser, errorsMock, new MockHttpServletRequest());
+        assertEquals("public/register/registration_not_complete", modelAndView);
+        
+        EasyMock.verify(registrationServiceMock);
 	}
 
 	@Test

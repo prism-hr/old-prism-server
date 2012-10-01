@@ -16,9 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -41,17 +43,15 @@ public class RegistrationService {
 	}
 
 	@Autowired
-	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
-			JavaMailSender mailsender, MessageSource msgSource) {
+	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO, 
+	        MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, 
+	        MessageSource msgSource) {
 		this.encryptionUtils = encryptionUtils;
 		this.roleDAO = roleDAO;
 		this.userDAO = userDAO;
-
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
-
 		this.mailsender = mailsender;
 		this.msgSource = msgSource;
-
 	}
 
 	public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, String queryString) {
@@ -87,20 +87,29 @@ public class RegistrationService {
 
 		sendConfirmationEmail(user);
 	}
+	
+	@Transactional
+	public void sendInstructionsToRegisterIfActivationCodeIsMissing(final RegisteredUser newUser) {
+	    try {
+            Map<String, Object> model = populateModelForRegistrationConfirmation(newUser);
+            InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
+            String subject = msgSource.getMessage("registration.invitation", null, null);
+            model.put("subject", subject);
+            mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/staff/mail/registering_without_activation_code.ftl", model, null));
+        } catch (Throwable e) {
+            log.warn("Error while sending email", e);
+        }
+	}
 
 	@Transactional
 	public void sendConfirmationEmail(RegisteredUser newUser) {
 		try {
 			Map<String, Object> model = populateModelForRegistrationConfirmation(newUser);
-
 			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
-
 			String subject = msgSource.getMessage("registration.confirmation", null, null);
-
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/pgStudents/mail/registration_confirmation.ftl",
-					model, null));
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/pgStudents/mail/registration_confirmation.ftl", model, null));
 		} catch (Throwable e) {
-			log.warn("error while sending email", e);
+		    log.warn("Error while sending email", e);
 		}
 	}
 

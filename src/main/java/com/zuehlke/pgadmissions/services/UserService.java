@@ -94,10 +94,11 @@ public class UserService {
 
 	public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
 		return userDAO.getUserByEmailIncludingDisabledAccounts(email);
-
 	}
-
 	
+	public RegisteredUser getUserByEmailDisabledAccountsOnly(String email) {
+        return userDAO.getDisabledUserByEmail(email);
+    }
 
 	public RegisteredUser getCurrentUser() {
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -238,7 +239,6 @@ public class UserService {
 		}
 		userDAO.save(newUser);
 		return newUser;
-
 	}
 
 	@Transactional
@@ -264,18 +264,16 @@ public class UserService {
 
 	@Transactional
 	public void updateCurrentUser(RegisteredUser user) {
-			RegisteredUser currentUser = getCurrentUser();
-			currentUser.setFirstName(user.getFirstName());
-			currentUser.setLastName(user.getLastName());
-			currentUser.setEmail(user.getEmail());
-			if (StringUtils.isNotBlank(user.getNewPassword())) {
-				currentUser.setPassword(encryptionUtils.getMD5Hash(user.getNewPassword()));
-			}
-			currentUser.setUsername(user.getEmail());
-			save(currentUser);
-		
+		RegisteredUser currentUser = getCurrentUser();
+		currentUser.setFirstName(user.getFirstName());
+		currentUser.setLastName(user.getLastName());
+		currentUser.setEmail(user.getEmail());
+		if (StringUtils.isNotBlank(user.getNewPassword())) {
+			currentUser.setPassword(encryptionUtils.getMD5Hash(user.getNewPassword()));
+		}
+		currentUser.setUsername(user.getEmail());
+		save(currentUser);
 	}
-	
 
 	@Transactional
 	public void resetPassword(String email) {

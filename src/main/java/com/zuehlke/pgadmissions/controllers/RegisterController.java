@@ -12,7 +12,6 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -41,6 +39,7 @@ public class RegisterController {
 	private static final String REGISTER_USERS_VIEW_NAME = "public/register/register_applicant";
 	private static final String REGISTER_INFO_VIEW_NAME = "public/register/activation_failed";
 	private static final String REGISTER_COMPLETE_VIEW_NAME = "public/register/registration_complete";
+	private static final String REGISTER_NOT_COMPLETE_VIEW_NAME = "public/register/registration_not_complete";
 	private final UserService userService;
 	private final RegisterFormValidator registerFormValidator;
 	private final RegistrationService registrationService;
@@ -70,10 +69,17 @@ public class RegisterController {
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public String submitRegistration( @Valid @ModelAttribute("pendingUser") RegisteredUser pendingUser,	BindingResult result, HttpServletRequest request) {
 		
-		if(result.hasErrors()){
-			return REGISTER_USERS_VIEW_NAME;
+		if (result.hasErrors()) {
+		    return REGISTER_USERS_VIEW_NAME;
 		}
 
+		RegisteredUser existingDisabledUser = userService.getUserByEmailDisabledAccountsOnly(pendingUser.getEmail());
+		if (existingDisabledUser != null && StringUtils.isBlank(pendingUser.getActivationCode())) {
+		    // Kevin: This means a user tries to register without using the link provided in the registration email.
+		    registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(existingDisabledUser);
+		    return REGISTER_NOT_COMPLETE_VIEW_NAME;
+		}
+		
 		String queryString = (String) request.getSession().getAttribute("applyRequest");
 		registrationService.updateOrSaveUser(pendingUser, queryString);
 

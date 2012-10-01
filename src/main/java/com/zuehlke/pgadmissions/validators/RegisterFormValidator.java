@@ -48,9 +48,9 @@ public class RegisterFormValidator extends AbstractValidator {
 			errors.rejectValue("password", "user.password.large");
 		}
 		
-		RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(record.getEmail());
+		RegisteredUser userWithSameEmail = userService.getUserByEmail(record.getEmail());
 		if (userWithSameEmail != null && !record.equals(userWithSameEmail)) {
-			errors.rejectValue("email", "user.email.alreadyexists");
+		    errors.rejectValue("email", "user.email.alreadyexists");
 		}
 	}
 }

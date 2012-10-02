@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.timers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -11,10 +10,12 @@ import org.easymock.EasyMock;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -64,8 +65,16 @@ public class NewUserNotificationTaskTest {
 		newUserNotificationTask.run();
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, transactionThree, newUserMailSenderMock, userDAOMock);
-		assertTrue(userOne.getPendingRoleNotifications().isEmpty());
-		assertTrue(userTwo.getPendingRoleNotifications().isEmpty());
+		
+		Assert.assertTrue(userOne.getPendingRoleNotifications().size() > 0);
+		for (PendingRoleNotification notification : userOne.getPendingRoleNotifications()) {
+		    Assert.assertNotNull(notification.getNotificationDate());
+		}
+		
+		Assert.assertTrue(userTwo.getPendingRoleNotifications().size() > 0);
+		for (PendingRoleNotification notification : userTwo.getPendingRoleNotifications()) {
+            Assert.assertNotNull(notification.getNotificationDate());
+        }
 	}
 
 	@Test
@@ -104,7 +113,11 @@ public class NewUserNotificationTaskTest {
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, transactionThree, newUserMailSenderMock, userDAOMock);
 		assertEquals(2, userOne.getPendingRoleNotifications().size());
-		assertTrue(userTwo.getPendingRoleNotifications().isEmpty());
+		
+		Assert.assertTrue(userTwo.getPendingRoleNotifications().size() > 0);
+		for (PendingRoleNotification notification : userTwo.getPendingRoleNotifications()) {
+            Assert.assertNotNull(notification.getNotificationDate());
+        }
 	}
 
 	@Before

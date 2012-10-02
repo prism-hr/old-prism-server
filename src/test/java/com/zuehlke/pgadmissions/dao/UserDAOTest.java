@@ -1,13 +1,18 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -35,7 +40,6 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class UserDAOTest extends AutomaticRollbackTestCase {
@@ -383,6 +387,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		assertTrue(users.contains(user));
 		
 	}
+	
 	@Test
 	public void shouldReturnUserWithPendingNotificationsOnlyOnce(){		
 		List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
@@ -404,9 +409,34 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		users = userDAO.getUsersWithPendingRoleNotifications();
-		assertEquals(previousNumberOfUsers + 1, users.size());
-		
+		assertEquals(previousNumberOfUsers + 1, users.size());		
 	}
+
+    @Test
+    public void shouldNotReturnUserWithPendingNotificationsIfDateIsNull(){     
+        List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
+        RoleDAO roleDAO = new RoleDAO(sessionFactory);
+        Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
+        Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+
+        Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+        save(program);
+        
+        Date now = new Date();
+        
+        PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).notificationDate(now).toPendingRoleNotification();
+        PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).notificationDate(now).toPendingRoleNotification();
+        
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).toUser();
+        save(user);
+        flushAndClearSession();
+        
+        users = userDAO.getUsersWithPendingRoleNotifications();
+        assertFalse(users.contains(user));   
+    }	
+	
 	
 	@Test
 	public void shouldNotReturnEnalbedUserWithPendingNotifications(){
@@ -430,7 +460,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(users.contains(user));
 	}
 	
-	@Test
+    @Test
 	public void shouldNotReturnUserWithNoPendingNotifications(){
 	
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

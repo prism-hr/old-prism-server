@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Date;
+
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -12,6 +14,12 @@ public class PendingRoleNotificationBuilder {
 	private RegisteredUser user;	
 	private Integer id;
 	private RegisteredUser addedByUser;
+	private Date notificationDate;
+	
+	public PendingRoleNotificationBuilder notificationDate(Date notificationDate) {
+        this.notificationDate = notificationDate;
+        return this;
+    }
 	
 	public PendingRoleNotificationBuilder addedByUser(RegisteredUser addedByUser) {
 		this.addedByUser = addedByUser;
@@ -46,6 +54,7 @@ public class PendingRoleNotificationBuilder {
 		pendingRoleNotification.setRole(role);
 		pendingRoleNotification.setUser(user);
 		pendingRoleNotification.setAddedByUser(addedByUser);
+		pendingRoleNotification.setNotificationDate(notificationDate);
 		return pendingRoleNotification;
 	}
 }

@@ -10,7 +10,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -19,7 +18,6 @@ public class NewUserMailSender extends MailSender {
 
 	public NewUserMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
-
 	}
 
 	public Map<String, Object> createModel(RegisteredUser user) {
@@ -49,11 +47,9 @@ public class NewUserMailSender extends MailSender {
 				programTitle = pendingRoleNotification.getProgram().getTitle();
 			}
 			if (authority == Authority.REVIEWER || authority == Authority.INTERVIEWER || authority == Authority.SUPERVISOR) {
-
 				sb.append("Default ");
 			}
 			sb.append(StringUtils.capitalize(authority.toString().toLowerCase()));
-
 		}
 		if(programTitle != null){
 			sb.append(" for " + programTitle);
@@ -61,18 +57,38 @@ public class NewUserMailSender extends MailSender {
 		return sb.toString();
 	}
 
+	public void sendNewUserNotificationAsReminder(RegisteredUser user) {
+	    sendNewUserNotification(user, true);
+	}
+	
 	public void sendNewUserNotification(RegisteredUser user) {
-		InternetAddress toAddress = createAddress(user);
-
-		Map<String, Object> model = createModel(user);
-		String subject = null;
-		if (model.get("program") != null) {
-			subject = resolveMessage("registration.invitation");
-		} else {
-			subject = resolveMessage("registration.invitation.superadmin", model.get("newRoles"));
-		}
-
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
-				"private/staff/mail/new_user_suggestion.ftl", model, null));
+	    sendNewUserNotification(user, false);
+	}
+	
+	private void sendNewUserNotification(RegisteredUser user, boolean reminder) {
+	    InternetAddress toAddress = createAddress(user);	    
+	    Map<String, Object> model = createModel(user);
+	    String subject = createSubject(model, reminder);
+	    javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/staff/mail/new_user_suggestion.ftl", model, null));
+	}
+	
+	private String createSubject(Map<String, Object> model, boolean reminder) {
+	    String messageSource = null;
+        
+	    if (model.get("program") != null) {
+            messageSource = "registration.invitation";
+        } else {
+            messageSource = "registration.invitation.superadmin";
+        }
+        
+        if (reminder) {
+            messageSource += ".reminder";
+        }
+        
+        if (model.get("program") != null) {
+            return resolveMessage(messageSource);
+        } else {
+            return resolveMessage(messageSource, model.get("newRoles"));
+        }
 	}
 }

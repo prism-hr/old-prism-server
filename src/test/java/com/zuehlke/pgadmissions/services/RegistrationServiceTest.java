@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +22,10 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -94,7 +97,17 @@ public class RegistrationServiceTest {
 		Assert.assertEquals("meuston@gmail.com", updateUser.getEmail());
 		Assert.assertEquals("meuston@gmail.com", updateUser.getUsername());		
 		Assert.assertEquals("1234", updateUser.getPassword());
-		
+	}
+	
+	@Test
+	public void shouldClearNotificationDatesFromPendingNotifications() {
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("test@test.com").enabled(false).activationCode("abc").pendingRoleNotifications(new PendingRoleNotificationBuilder().id(1).notificationDate(new Date()).toPendingRoleNotification(),new PendingRoleNotificationBuilder().id(2).notificationDate(new Date()).toPendingRoleNotification()).toUser();
+        registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+        registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
+        Assert.assertTrue(databaseUser.getPendingRoleNotifications().size() > 0);
+        for (PendingRoleNotification roleNotification : databaseUser.getPendingRoleNotifications()) {
+            Assert.assertNull(roleNotification.getNotificationDate());
+        }
 	}
 
 	@Test

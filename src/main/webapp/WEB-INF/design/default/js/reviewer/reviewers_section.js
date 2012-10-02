@@ -8,8 +8,9 @@ $(document).ready(function()
 		var selectedReviewers = $('#programReviewers').val();
 		if (selectedReviewers)
 		{
-			selectedReviewers.forEach(function(id)
+			$('#programReviewers').each(function(index)
 			{
+				var id = $(this).attr("value");
 				var $option = $("#programReviewers option[value='" + id + "']");
 	
 				if (!$option.hasClass('selected'))
@@ -37,8 +38,9 @@ $(document).ready(function()
 		var selectedReviewers = $('#applicationReviewers').val();
 		if (selectedReviewers)
 		{
-			selectedReviewers.forEach(function(id)
+			$('#applicationReviewers').each(function(index)
 			{
+				var id = $(this).attr("value");
 				var selText = $("#applicationReviewers option[value='" + id + "']").text();
 				$("#applicationReviewers option[value='" + id + "']").remove();
 				//$("#programInterviewers").append('<option value="'+ id +'">'+ selText +'</option>');

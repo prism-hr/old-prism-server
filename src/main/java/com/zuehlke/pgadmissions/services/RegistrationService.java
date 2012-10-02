@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
@@ -13,14 +12,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -89,16 +86,11 @@ public class RegistrationService {
 	}
 	
 	@Transactional
-	public void sendInstructionsToRegisterIfActivationCodeIsMissing(final RegisteredUser newUser) {
-	    try {
-            Map<String, Object> model = populateModelForRegistrationConfirmation(newUser);
-            InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
-            String subject = msgSource.getMessage("registration.invitation", null, null);
-            model.put("subject", subject);
-            mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/staff/mail/registering_without_activation_code.ftl", model, null));
-        } catch (Throwable e) {
-            log.warn("Error while sending email", e);
-        }
+	public void sendInstructionsToRegisterIfActivationCodeIsMissing(final RegisteredUser user) {
+	    for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
+	        notification.setNotificationDate(null);
+	    }
+	    userDAO.save(user);
 	}
 
 	@Transactional

@@ -45,9 +45,8 @@
                 <div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
             </div>
             <div class="content">
-                <h1>Almost there...</h1>
-                <p>Our records indicate that a user with this email already exists. In order to 
-                register please check your emails and click on the registration link.</p>
+                <p>Our records indicate that you have already been invited to use UCL Prism. We have resent the 
+                invitation by email. Follow the instructions in the email to register.</p>
             </div>
         </div>
         

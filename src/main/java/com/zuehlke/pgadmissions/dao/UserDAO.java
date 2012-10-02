@@ -5,19 +5,13 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
-import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -145,7 +139,7 @@ public class UserDAO {
 	public List<RegisteredUser> getUsersWithPendingRoleNotifications() {	
 		
 		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class, "user").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions.eq("enabled", false))
-				.createAlias("pendingRoleNotifications", "pendingRoleNotification").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+				.createAlias("pendingRoleNotifications", "pendingRoleNotification").add(Restrictions.isNull("pendingRoleNotification.notificationDate")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	@SuppressWarnings("unchecked")

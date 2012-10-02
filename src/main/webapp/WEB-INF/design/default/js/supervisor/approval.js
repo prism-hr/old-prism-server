@@ -10,8 +10,11 @@ $(document).ready(function()
 		var selectedSupervisors = $('#programSupervisors').val();
 		if (selectedSupervisors)
 		{
-			selectedSupervisors.forEach(function(id)
+			
+			$('#programSupervisors').each(function(index)
 			{
+				var id = $(this).attr("value");
+				
 				var $option = $("#programSupervisors option[value='" + id + "']");
 	
 				if (!$option.hasClass('selected'))
@@ -38,8 +41,9 @@ $(document).ready(function()
 		var selectedSupervisors = $('#applicationSupervisors').val();
 		if (selectedSupervisors)
 		{
-			selectedSupervisors.forEach(function(id)
+			$('#applicationSupervisors').each(function(index)
 			{
+				var id = $(this).attr("value");
 				var selText = $("#applicationSupervisors option[value='" + id + "']").text();
 				$("#applicationSupervisors option[value='" + id + "']").remove();
 				$("#programSupervisors option[value='" + id + "']").removeClass('selected')

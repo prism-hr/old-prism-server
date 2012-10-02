@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	$('#addReviewerBtn').click(function() {
-		var selectedReviewers = $('#reviewers').val();
-		selectedReviewers.forEach(function(id) {
+		$('#reviewers').each(function(index) {
+			var id = $(this).attr("value");
 			var selText = $("#reviewers option[value='" + id + "']").text();
 			$("#reviewers option[value='" + id + "']").remove();
 			$("#assignedReviewers").append('<option value="'+ id +'">'+ selText +'</option>');
@@ -10,8 +10,8 @@ $(document).ready(function() {
 	});
 	
 	$('#removeReviewerBtn').click(function() {
-		var selectedReviewers = $('#assignedReviewers').val();
-		selectedReviewers.forEach(function(id) {
+		$('#assignedReviewers').each(function(index) {
+			var id = $(this).attr("value");
 			var selText = $("#assignedReviewers option[value='" + id + "']").text();
 			$("#assignedReviewers option[value='" + id + "']").remove();
 			$("#reviewers").append('<option value="'+ id +'">'+ selText +'</option>');
@@ -104,7 +104,7 @@ $(document).ready(function() {
 function getAssignedReviewerIdString() {
 	var assignedReviewers = document.getElementById("assignedReviewers").options;
 	var revIds = "";
-	for(i = 0; i < assignedReviewers.length; i = i + 1) {
+	for(var i = 0; i < assignedReviewers.length; i = i + 1) {
 		if( i != 0) {
 			revIds += "|";
 		}

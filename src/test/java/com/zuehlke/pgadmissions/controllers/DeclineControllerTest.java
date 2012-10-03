@@ -119,6 +119,7 @@ public class DeclineControllerTest {
 		}; 
 		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);		
 		commentServiceMock.declineReview(reviewer, applicationForm);
+		reviewer.setDirectToUrl(null);
 		EasyMock.replay(commentServiceMock, reviewer);
 		String view = controller.declineReview("5", applicationForm.getApplicationNumber(), "OK", new ModelMap());
 		EasyMock.verify(commentServiceMock);
@@ -170,6 +171,7 @@ public class DeclineControllerTest {
 			}
 		}; 
 		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(false);		
+		reviewer.setDirectToUrl(null);
 		
 		EasyMock.replay(commentServiceMock, reviewer);
 		String view = controller.declineReview("5", applicationForm.getApplicationNumber(), "OK", new ModelMap());
@@ -198,6 +200,7 @@ public class DeclineControllerTest {
 			}
 		}; 
 		EasyMock.expect(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);		
+		reviewer.setDirectToUrl(null);
 		
 		EasyMock.replay(commentServiceMock, reviewer);
 		String view = controller.declineReview("5", "ABC", "OK", new ModelMap());
@@ -234,7 +237,11 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldDeclineReferenceAndReturnMessageView() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).toApplicationForm();
+		final RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		final Referee referee = new RefereeBuilder().application(applicationForm).id(5).toReferee();
+		
+		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
+		
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public Referee getReferee(String activationCode, ApplicationForm app) {
@@ -254,11 +261,16 @@ public class DeclineControllerTest {
 		
 		refereeServiceMock.declineToActAsRefereeAndSendNotification(referee);
 		
-		EasyMock.replay(refereeServiceMock);
+		userMock.setDirectToUrl(null);
+		
+		userServiceMock.save(userMock);
+		
+		EasyMock.replay(userServiceMock, refereeServiceMock);
 		
 		String view = controller.declineReference("5","ABC", "OK", new ModelMap());
 		
 		EasyMock.verify(refereeServiceMock);
+		
 		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
 	}
 	

@@ -20,14 +20,26 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
+import com.zuehlke.pgadmissions.dao.InterviewerDAO;
+import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
@@ -40,6 +52,10 @@ public class RegistrationServiceTest {
 	private EncryptionUtils encryptionUtilsMock;
 	private RoleDAO roleDAOMock;
 	private UserDAO userDAOMock;
+	private InterviewerDAO interviewerDAOMock;
+    private ReviewerDAO reviewerDAOMock;
+    private SupervisorDAO supervisorDAOMock;
+    private RefereeDAO refereeDAOMock;
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	
@@ -101,14 +117,73 @@ public class RegistrationServiceTest {
 	
 	@Test
 	public void shouldClearNotificationDatesFromPendingNotifications() {
-        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("test@test.com").enabled(false).activationCode("abc").pendingRoleNotifications(new PendingRoleNotificationBuilder().id(1).notificationDate(new Date()).toPendingRoleNotification(),new PendingRoleNotificationBuilder().id(2).notificationDate(new Date()).toPendingRoleNotification()).toUser();
-        registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+        RegisteredUser databaseUser = new RegisteredUserBuilder()
+                .id(4)
+                .email("test@test.com")
+                .enabled(false)
+                .activationCode("abc")
+                .pendingRoleNotifications(
+                        new PendingRoleNotificationBuilder().id(1).notificationDate(new Date())
+                                .toPendingRoleNotification(),
+                        new PendingRoleNotificationBuilder().id(2).notificationDate(new Date())
+                                .toPendingRoleNotification()).toUser();
+        registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
+                mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, interviewerDAOMock,
+                reviewerDAOMock, supervisorDAOMock, refereeDAOMock);
         registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
         Assert.assertTrue(databaseUser.getPendingRoleNotifications().size() > 0);
         for (PendingRoleNotification roleNotification : databaseUser.getPendingRoleNotifications()) {
             Assert.assertNull(roleNotification.getNotificationDate());
         }
 	}
+	
+	@Test
+	public void shouldClearNotificationDatesFromSupervisor() {
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").toUser();
+	    Supervisor supervisor = new SupervisorBuilder().id(1).lastNotified(new Date()).user(databaseUser).toSupervisor();
+	    EasyMock.expect(supervisorDAOMock.getSupervisorByUser(databaseUser)).andReturn(supervisor);
+	    supervisorDAOMock.save(supervisor);
+	    EasyMock.replay(supervisorDAOMock);
+	    registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
+	    EasyMock.verify(supervisorDAOMock);
+	    Assert.assertNull(supervisor.getLastNotified());
+	}
+	
+    @Test
+    public void shouldClearNotificationDatesFromInterviewer() {
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").toUser();
+        Interviewer interviewer = new InterviewerBuilder().id(1).lastNotified(new Date()).user(databaseUser).toInterviewer();
+        EasyMock.expect(interviewerDAOMock.getInterviewerByUser(databaseUser)).andReturn(interviewer);
+        interviewerDAOMock.save(interviewer);
+        EasyMock.replay(interviewerDAOMock);
+        registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
+        EasyMock.verify(interviewerDAOMock);
+        Assert.assertNull(interviewer.getLastNotified());
+    }
+    
+    @Test
+    public void shouldClearNotificationDatesFromReferee() {
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").toUser();
+        Referee referee = new RefereeBuilder().id(1).lastNotified(new Date()).user(databaseUser).toReferee();
+        EasyMock.expect(refereeDAOMock.getRefereeByUser(databaseUser)).andReturn(referee);
+        refereeDAOMock.save(referee);
+        EasyMock.replay(refereeDAOMock);
+        registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
+        EasyMock.verify(refereeDAOMock);
+        Assert.assertNull(referee.getLastNotified());
+    }
+    
+    @Test
+    public void shouldClearNotificationDatesFromReviewer() {
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").toUser();
+        Reviewer reviewer = new ReviewerBuilder().id(1).lastNotified(new Date()).user(databaseUser).toReviewer();
+        EasyMock.expect(reviewerDAOMock.getReviewerByUser(databaseUser)).andReturn(reviewer);
+        reviewerDAOMock.save(reviewer);
+        EasyMock.replay(reviewerDAOMock);
+        registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
+        EasyMock.verify(reviewerDAOMock);
+        Assert.assertNull(reviewer.getLastNotified());
+    }    
 
 	@Test
 	public void shouldSavePendingApplicantUserAndSendEmail() throws UnsupportedEncodingException {
@@ -118,7 +193,7 @@ public class RegistrationServiceTest {
 
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock) {
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -166,7 +241,7 @@ public class RegistrationServiceTest {
 
 		final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock) {
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
 
 			@Override
 			public RegisteredUser processPendingSuggestedUser(RegisteredUser pendingSuggestedUser ) {
@@ -211,7 +286,7 @@ public class RegistrationServiceTest {
 		expectedRecord.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock) {
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -245,7 +320,7 @@ public class RegistrationServiceTest {
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
 
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock) {
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -308,12 +383,17 @@ public class RegistrationServiceTest {
 		userDAOMock = EasyMock.createMock(UserDAO.class);
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
 		
+		interviewerDAOMock = EasyMock.createMock(InterviewerDAO.class);
+	    reviewerDAOMock = EasyMock.createMock(ReviewerDAO.class);
+	    supervisorDAOMock = EasyMock.createMock(SupervisorDAO.class);
+	    refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
+	    
 		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock);
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock);
 	}
 }

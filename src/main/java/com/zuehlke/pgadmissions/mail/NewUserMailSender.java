@@ -65,10 +65,10 @@ public class NewUserMailSender extends MailSender {
 	    sendNewUserNotification(user, false);
 	}
 	
-	private void sendNewUserNotification(RegisteredUser user, boolean reminder) {
+	private void sendNewUserNotification(RegisteredUser user, boolean resent) {
 	    InternetAddress toAddress = createAddress(user);	    
 	    Map<String, Object> model = createModel(user);
-	    String subject = createSubject(model, reminder);
+	    String subject = createSubject(model, resent);
 	    javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/staff/mail/new_user_suggestion.ftl", model, null));
 	}
 	
@@ -82,7 +82,7 @@ public class NewUserMailSender extends MailSender {
         }
         
         if (reminder) {
-            messageSource += ".reminder";
+            messageSource += ".resent";
         }
         
         if (model.get("program") != null) {

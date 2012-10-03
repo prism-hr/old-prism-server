@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
@@ -100,4 +101,8 @@ public class RefereeDAO {
 		}
 		return refereesDueReminder;
 	}
+
+    public Referee getRefereeByUser(RegisteredUser user) {
+        return (Referee) sessionFactory.getCurrentSession().createCriteria(Referee.class).add(Restrictions.eq("user", user)).uniqueResult();
+    }
 }

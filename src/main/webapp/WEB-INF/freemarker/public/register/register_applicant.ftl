@@ -93,7 +93,11 @@
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		      	</form>
 		      	
-		      	<a href="/pgadmissions/login">&gt; Back to Login</a>
+		      	<#if RequestParameters.activationCode??>
+		      	   <p>&nbsp;</p>
+                <#else>
+                    <a href="/pgadmissions/login">&gt; Back to Login</a>
+                </#if>
 		      	
 		    </section>
 		

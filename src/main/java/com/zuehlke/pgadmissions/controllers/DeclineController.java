@@ -38,7 +38,6 @@ public class DeclineController {
 		this.commentService = commentService;
 		this.applicationsService = applicationsService;
 		this.refereeService = refereeService;
-
 	}
 
 	@RequestMapping(value = "/review", method = RequestMethod.GET)
@@ -51,6 +50,8 @@ public class DeclineController {
 		        commentService.declineReview(reviewer, application);
 		    }
 		    modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
+		    reviewer.setDirectToUrl(null);
+		    userService.save(reviewer);
 		    return DECLINE_SUCCESS_VIEW_NAME;
 		} else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
             // the user clicked on "Provide Review"
@@ -83,10 +84,13 @@ public class DeclineController {
 	public String declineReference(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
 	    ApplicationForm applicationForm = getApplicationForm(applicationId);
 	    Referee referee = getReferee(activationCode, applicationForm);
+	    RegisteredUser user = userService.getUserByActivationCode(activationCode);
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"
     		refereeService.declineToActAsRefereeAndSendNotification(referee);
     		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
+    		user.setDirectToUrl(null);
+            userService.save(user);
     		return DECLINE_SUCCESS_VIEW_NAME;
 	    } else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
 	        // the user clicked on "Provide Reference"

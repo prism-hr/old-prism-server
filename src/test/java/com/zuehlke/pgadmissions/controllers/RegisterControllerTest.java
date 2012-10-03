@@ -72,19 +72,32 @@ public class RegisterControllerTest {
 
 	@Test
 	public void shouldReturnRegisterPage() {
-		assertEquals("public/register/register_applicant", registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).toUser()));
+		assertEquals("public/register/register_applicant", registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).toUser(), new MockHttpServletRequest()));
 	}
 
 	@Test
 	public void shouldRedirectToDirectURLIfUserExistsIsEnabledAndHasADirectURL() {
 		assertEquals("redirect:/directHere",
-				registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).directURL("/directHere").toUser()));
+				registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).directURL("/directHere").toUser(), new MockHttpServletRequest()));
 	}
 
 	@Test
-	public void shouldReturnRegisterPageIfUserExistsIsBNOTEnabledAndHasADirectURL() {
+	public void shouldReturnRegisterPageIfUserExistsIsNOTEnabledAndHasADirectURL() {
 		assertEquals("public/register/register_applicant",
-				registerController.getRegisterPage(new RegisteredUserBuilder().enabled(false).id(1).directURL("/directHere").toUser()));
+				registerController.getRegisterPage(new RegisteredUserBuilder().enabled(false).id(1).directURL("/directHere").toUser(), new MockHttpServletRequest()));
+	}
+	
+	@Test
+	public void shouldSaveRedirectUrlInSessionIfUserExistsIsNOTEnabledAndHasADirectUrl() {
+	    RegisteredUser user = new RegisteredUserBuilder().enabled(false).directURL("/directHere").id(1).toUser();
+	    MockHttpServletRequest requestMock = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        requestMock.setSession(session);
+        
+        String page = registerController.getRegisterPage(user, requestMock);
+        
+        assertEquals("public/register/register_applicant", page);
+        assertEquals("/directHere", session.getAttribute("directToUrl"));
 	}
 
 	@Test
@@ -94,7 +107,6 @@ public class RegisterControllerTest {
 		EasyMock.replay(userServiceMock);
 		assertEquals(user, registerController.getPendingUser("Abc", null));
 		assertNull(user.getDirectToUrl());
-
 	}
 
 	@Test
@@ -213,7 +225,7 @@ public class RegisterControllerTest {
 		EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
 		userServiceMock.save(user);
 		EasyMock.replay(userServiceMock);
-		String view = registerController.activateAccountSubmit(activationCode);
+		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
 		assertEquals("redirect:/applications", view);
 		assertTrue(user.isEnabled());
@@ -227,11 +239,38 @@ public class RegisterControllerTest {
 		EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
 		userServiceMock.save(user);
 		EasyMock.replay(userServiceMock);
-		String view = registerController.activateAccountSubmit(activationCode);
+		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
 		assertEquals("redirect:/directLink", view);
 		assertTrue(user.isEnabled());
 	}
+	
+    @Test
+    public void shouldActivateAccountAndRedirectToDirectURLIfProvidedAtRegistrationTime() throws ParseException {
+        String activationCode = "ul5oaij68186jbcg";
+        
+        RegisteredUser user = new RegisteredUserBuilder().directURL(null).role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole())
+                .id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
+        
+        MockHttpServletRequest requestMock = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        session.putValue("directToUrl", "/directLink");
+        requestMock.setSession(session);
+        
+        EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
+        
+        userServiceMock.save(user);
+        
+        EasyMock.replay(userServiceMock);
+        
+        String view = registerController.activateAccountSubmit(activationCode, requestMock);
+        
+        EasyMock.verify(userServiceMock);
+        
+        assertEquals("redirect:/directLink", view);
+        
+        assertTrue(user.isEnabled());
+    }	
 
 	@Test
 	public void shouldCreatNewApplicationAndRedirectToItIfQueryStringExistsOnUser() throws ParseException {
@@ -249,7 +288,7 @@ public class RegisterControllerTest {
 		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, program, batchDeadline, "project title", "http://www.url.com"))
 				.andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
-		String view = registerController.activateAccountSubmit(activationCode);
+		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
 		assertEquals("redirect:/application?applicationId=ABC", view);
 		assertTrue(user.isEnabled());
@@ -271,7 +310,7 @@ public class RegisterControllerTest {
 		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, program, null, "project title", "http://www.url.com")).andReturn(
 				applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
-		String view = registerController.activateAccountSubmit(activationCode);
+		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
 		assertEquals("redirect:/application?applicationId=ABC", view);
 		assertTrue(user.isEnabled());
@@ -292,7 +331,7 @@ public class RegisterControllerTest {
 		userServiceMock.save(user);
 		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, program, null, "project title", null)).andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
-		String view = registerController.activateAccountSubmit(activationCode);
+		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
 		assertEquals("redirect:/application?applicationId=ABC", view);
 		assertTrue(user.isEnabled());
@@ -313,7 +352,7 @@ public class RegisterControllerTest {
 		userServiceMock.save(user);
 		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, program, null, null, null)).andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
-		String view = registerController.activateAccountSubmit(activationCode);
+		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
 		assertEquals("redirect:/application?applicationId=ABC", view);
 		assertTrue(user.isEnabled());
@@ -321,13 +360,11 @@ public class RegisterControllerTest {
 
 	@Test
 	public void shouldReturnToRegistrationPageIfNouserFound() throws ParseException {
-
 		String activationCode = "differentactivationcode";
 		EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(null);
 		EasyMock.replay(userServiceMock);
-		String view = registerController.activateAccountSubmit(activationCode);
+		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		assertEquals("public/register/activation_failed", view);
-
 	}
 
 	@After

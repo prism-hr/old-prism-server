@@ -100,27 +100,29 @@ public class RegisterController {
 	}
 
 	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
-	public String activateAccountSubmit(@RequestParam String activationCode) {
+	public String activateAccountSubmit(@RequestParam String activationCode, HttpServletRequest request) {
 		RegisteredUser user = userService.getUserByActivationCode(activationCode);
+		
 		if (user == null) {				
 			return REGISTER_INFO_VIEW_NAME;
 		}
 		
 		user.setEnabled(true);
 		userService.save(user);
+		
 		String redirectView = "redirect:";
+		
 		if (user.getOriginalApplicationQueryString() != null) {
 			redirectView = createApplicationAndReturnApplicationViewValue(user, redirectView);
+		} else if (user.getDirectToUrl() != null) {
+		    redirectView = redirectView + user.getDirectToUrl();
+		} else if (StringUtils.isNotBlank((String) request.getSession().getAttribute("directToUrl"))) {
+		    redirectView = redirectView + (String) request.getSession().getAttribute("directToUrl");
 		} else {
-			if (user.getDirectToUrl() != null) {
-				redirectView = redirectView + user.getDirectToUrl();
-			} else {
-				redirectView = redirectView + "/applications";
-			}
+		    redirectView = redirectView + "/applications";
 		}
 
 		return redirectView;
-
 	}
 
 	private String createApplicationAndReturnApplicationViewValue(RegisteredUser user, String redirectView) {
@@ -150,9 +152,11 @@ public class RegisterController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String getRegisterPage(@ModelAttribute("pendingUser") RegisteredUser pendingUser) {
-		if(pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()){
+	public String getRegisterPage(@ModelAttribute("pendingUser") RegisteredUser pendingUser, HttpServletRequest request) {
+		if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
 			return "redirect:" +  pendingUser.getDirectToUrl();
+		} else if (pendingUser!= null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
+		    request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
 		}
 		return REGISTER_USERS_VIEW_NAME;
 	}

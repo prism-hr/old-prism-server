@@ -32,7 +32,7 @@
 	
 						<p>
 		              		<!-- Button -->
-		              		<a  style="text-decoration:none;" 
+		              		<a  style="text-decoration:none;" title="Supervise" 
 			                       	 <#if !supervisor.user.enabled>
 			                       	 	href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}&directToUrl=${"/application?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
 			                       	 <#else>

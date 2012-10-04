@@ -161,26 +161,22 @@
 								<div class="row-group">
     								<div class="row">
                                         <label class="plain-label">Assign to Closing Date</label>
-    								    <span class="hint" data-desc="<@spring.message 'validateApp.nextStage'/>"></span>
+    								    <span class="hint" data-desc="<@spring.message 'badge.closingDate'/>"></span>
                                         <div class="field">
-                                            <select class="max" id="closingDate" name="closingDate">
-                                                <option value="">Select...</option>
-                                                <#list badgesByClosingDate as date>
-                                                     <option value="${(date?string('dd MMM yyyy'))!}" <#if applicationForm.batchDeadline?? && applicationForm.batchDeadline?string('dd MMM yyyy') == date?string('dd MMM yyyy')> selected="selected"</#if>>${(date?string('dd MMM yyyy'))!}</option>
-                                                </#list>   
-                                            </select>
+                                            <input class="half date" value="${(closingDate?string('dd MMM yyyy'))!}" name="closingDate" id="closingDate"/>
+                                            <#if closingDate_error??>
+                                                <span class="invalid">${closingDate_error}</span>
+                                            </#if>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <label class="plain-label">Assign to Project</label>
-                                        <span class="hint" data-desc="<@spring.message 'validateApp.nextStage'/>"></span>
+                                        <span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
                                         <div class="field">
-                                            <select class="max" id="projectTitle" name="projectTitle">
-                                                <option value="">Select...</option>
-                                                <#list badgesByTitle as title>
-                                                        <option value="${title}" <#if applicationForm.projectTitle?? && applicationForm.projectTitle == title> selected="selected"</#if>>${title}</option>
-                                                </#list>
-                                            </select>
+                                            <input id="projectTitle" name="projectTitle" style="width:322px;" type="text" value="${(projectTitle)!}"/>
+                                            <#if projectTitle_error??>
+                                                <span class="invalid">${projectTitle_error}</span>
+                                            </#if>
                                         </div>
                                      </div>
 								</div><!-- close .row-group -->

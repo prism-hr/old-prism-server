@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.services.BadgeService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -38,6 +39,7 @@ public class BadgeControllerTest {
 	private BadgeValidator badgeValidatorMock;
 	private ProgramPropertyEditor programPropertyEditorMock;
 	private DatePropertyEditor datePropertyEditorMock;
+    private BadgeService badgeServiceMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -131,7 +133,8 @@ public class BadgeControllerTest {
 		badgeValidatorMock = EasyMock.createMock(BadgeValidator.class);
 		programPropertyEditorMock = EasyMock.createMock(ProgramPropertyEditor.class);
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-		controller = new BadgeController(userServiceMock, programServiceMock, badgeDAOMock, datePropertyEditorMock, programPropertyEditorMock, badgeValidatorMock);
+		badgeServiceMock = EasyMock.createMock(BadgeService.class);
+		controller = new BadgeController(userServiceMock, programServiceMock, badgeDAOMock, datePropertyEditorMock, programPropertyEditorMock, badgeValidatorMock, badgeServiceMock);
 
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();

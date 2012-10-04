@@ -1021,3 +1021,12 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
 	margin: 0 10px;
 	clear: left;
 }
+
+/* HIGHLIGHT DATES IN THE DATEPICKER --------------------------------------------------------------------------- */
+.highlighted a {
+   background-color : #F9EDED !important;
+   /*background-image :none !important;*/
+   /*color: Blue !important;*/
+   /*font-weight:bold !important;
+   /*font-size: 12pt;*/
+}

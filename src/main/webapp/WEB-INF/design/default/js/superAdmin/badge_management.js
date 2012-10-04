@@ -4,21 +4,11 @@ $(document).ready(function() {
         $.ajax({
              type: 'POST',
              statusCode: {
-                  401: function() {
-                      window.location.reload();
-                  },
-                  500: function() {
-                      window.location.href = "/pgadmissions/error";
-                  },
-                  404: function() {
-                      window.location.href = "/pgadmissions/404";
-                  },
-                  400: function() {
-                      window.location.href = "/pgadmissions/400";
-                  },                  
-                  403: function() {
-                      window.location.href = "/pgadmissions/404";
-                  }
+            	 	401: function() { window.location.reload(); },
+	                500: function() { window.location.href = "/pgadmissions/error"; },
+	                404: function() { window.location.href = "/pgadmissions/404"; },
+	                400: function() { window.location.href = "/pgadmissions/400"; },                  
+	                403: function() { window.location.href = "/pgadmissions/404"; }
               },
             url:"/pgadmissions/badge/saveBadge",
             data: {
@@ -35,8 +25,9 @@ $(document).ready(function() {
             	} else {
             		$('#badgeSection').html(data);
             	}
-            	bindDatePicker('#batchdeadline');
             	addToolTips();
+    			initialiseDatepicker();
+    			getClosingDates();
             },
             completed: function() {
             }

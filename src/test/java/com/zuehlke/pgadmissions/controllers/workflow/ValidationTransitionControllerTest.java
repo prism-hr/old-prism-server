@@ -4,16 +4,19 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -21,11 +24,10 @@ import org.springframework.validation.BindingResult;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -57,8 +59,8 @@ public class ValidationTransitionControllerTest {
 	private StateChangeValidator stateChangeValidatorMock;
 	private DocumentPropertyEditor documentPropertyEditorMock;
 	private BindingResult bindingResultMock;
-	private RegisteredUser user;
 	private BadgeService badgeServiceMock;
+	private MessageSource messageSourceMock;
 	
 	@Test
 	public void shouldReturnAllValidationQuestionOptions() {
@@ -79,49 +81,174 @@ public class ValidationTransitionControllerTest {
 	}
 	
 	@Test
+	public void shouldRejectClosingDateIfDateIsInThePast() {
+	    Program program = new ProgramBuilder().id(1).toProgram();
+	    final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
+	    ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+	    
+	    EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+	    
+	    controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
+                stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+                documentPropertyEditorMock, badgeServiceMock, messageSourceMock){
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+        
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        String view = controller.addComment(applicationForm.getApplicationNumber(), "29 Sept 1984", "projectTitle", comment, bindingResultMock, new ModelMap());
+        EasyMock.verify(commentServiceMock);
+        assertEquals("private/staff/admin/state_transition", view);
+	}
+	
+	@Test
+    public void shouldRejectProjectTitleIfLongerThan500() {
+        Program program = new ProgramBuilder().id(1).toProgram();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
+        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+        
+        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+        
+        controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
+                stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+                documentPropertyEditorMock, badgeServiceMock, messageSourceMock){
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+        
+        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        
+        StringBuffer projectTitle = new StringBuffer();
+        for (int i = 0; i < 600; i++) {
+            projectTitle.append("a");
+        }
+        
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        String view = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), projectTitle.toString(), comment, bindingResultMock, new ModelMap());
+        EasyMock.verify(commentServiceMock);
+        assertEquals("private/staff/admin/state_transition", view);
+    }
+	
+	@Test
+    public void shouldAllowClosingDateInThePastWithin1MonthFromNow() {
+	    Program program = new ProgramBuilder().id(1).toProgram();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
+        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+        
+        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+        
+        commentServiceMock.save(comment);
+        controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
+                stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+                documentPropertyEditorMock, badgeServiceMock, messageSourceMock){
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+
+        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(Calendar.getInstance().getTime(), -1);
+        
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        applicationServiceMock.save(applicationForm);
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        controller.addComment(applicationForm.getApplicationNumber(), format.format(oneMonthAgo), "projectTitle", comment, bindingResultMock, new ModelMap());
+        EasyMock.verify(commentServiceMock);
+    }
+	
+    @Test
+    public void shouldAllowClosingDateInThePastIfDateExistsInBadgeClosingDate() throws ParseException {
+        Program program = new ProgramBuilder().id(1).toProgram();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
+        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+        DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        Date dateInThePast = format.parse("29 Sep 1984");
+        
+        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(Arrays.asList(dateInThePast));
+        
+        commentServiceMock.save(comment);
+        controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
+                stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+                documentPropertyEditorMock, badgeServiceMock, messageSourceMock){
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+
+        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+        applicationServiceMock.save(applicationForm);
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        controller.addComment(applicationForm.getApplicationNumber(), format.format(dateInThePast), "projectTitle", comment, bindingResultMock, new ModelMap());
+        EasyMock.verify(commentServiceMock);
+    }	
+    
+	
+	@Test
 	public void shouldCreateValidationCommentWithQUestionaluesIfNoValidationErrors() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).toApplicationForm();
+	    Program program = new ProgramBuilder().id(1).toProgram();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
 		ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+		
+		EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+		
 		commentServiceMock.save(comment);
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+				documentPropertyEditorMock, badgeServiceMock, messageSourceMock){
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
 			}
-				
 		};
 
+		DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+		
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		applicationServiceMock.save(applicationForm);
-		EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock);
-		controller.addComment(applicationForm.getApplicationNumber(), "13 Aug 2013", "projectTitle", comment, bindingResultMock, new ModelMap());
+		EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+		controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap());
 		EasyMock.verify(commentServiceMock);
 	}
 	
 	@Test
 	public void shouldCreateCommentWithDocumentsAndSaveAndRedirectToResolvedView() {
+	    Program program = new Program();
+        program.setId(1);
+        
+        EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
+        
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("abc")).andReturn(1);
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("def")).andReturn(2);
 		Document documentOne = new DocumentBuilder().id(1).toDocument();
 		Document documentTwo = new DocumentBuilder().id(2).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(documentOne);
 		EasyMock.expect(documentServiceMock.getDocumentById(2)).andReturn(documentTwo);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).toApplicationForm();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+				documentPropertyEditorMock, badgeServiceMock, messageSourceMock) {
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
 			}
 				
 		};
+		DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+		
 		ValidationComment comment = new ValidationCommentBuilder().comment("comment").type(CommentType.VALIDATION).documents(documentOne, documentTwo).id(6).toValidationComment();
 		commentServiceMock.save(comment);
 		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("view");
-		EasyMock.replay(commentServiceMock, stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock);
+		EasyMock.replay(commentServiceMock, stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, badgeServiceMock);
 
-		assertEquals("view", controller.addComment(applicationForm.getApplicationNumber(), "13 Aug 2013", "projectTitle", comment, bindingResultMock, new ModelMap()));
+		assertEquals("view", controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap()));
 
 		EasyMock.verify(commentServiceMock);
 		assertEquals(2, comment.getDocuments().size());
@@ -133,7 +260,8 @@ public class ValidationTransitionControllerTest {
 		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().batchDeadline(pastDate).id(1).program(program).toApplicationForm();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+				documentPropertyEditorMock, badgeServiceMock, messageSourceMock){
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -150,7 +278,8 @@ public class ValidationTransitionControllerTest {
 		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").batchDeadline(pastDate).id(1).program(program).toApplicationForm();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+				documentPropertyEditorMock, badgeServiceMock, messageSourceMock){
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -166,7 +295,8 @@ public class ValidationTransitionControllerTest {
 		Program program = new Program();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").id(1).program(program).toApplicationForm();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock){
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+				documentPropertyEditorMock, badgeServiceMock, messageSourceMock) {
 			@Override
 			public ApplicationForm getApplicationForm( String applicationId) {
 				return applicationForm;
@@ -180,7 +310,6 @@ public class ValidationTransitionControllerTest {
 	
 	@Before
 	public void setUp() {
-		user = new RegisteredUserBuilder().id(1).toUser();
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
 		stateChangeValidatorMock = EasyMock.createMock(StateChangeValidator.class);
@@ -193,9 +322,10 @@ public class ValidationTransitionControllerTest {
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
 		badgeServiceMock = EasyMock.createMock(BadgeService.class);
+		messageSourceMock = EasyMock.createMock(MessageSource.class);
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
-				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock);
-
+				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, 
+				stateChangeValidatorMock, documentPropertyEditorMock, badgeServiceMock, messageSourceMock);
 	}
 
 	@After

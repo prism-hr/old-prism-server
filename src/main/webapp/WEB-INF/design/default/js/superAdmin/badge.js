@@ -1,4 +1,6 @@
 var selectedDates = {};
+var suggestions = [];
+
 $(document).ready(function()
 {
 	$.ajax({
@@ -19,9 +21,42 @@ $(document).ready(function()
 			addToolTips();
 			initialiseDatepicker();
 			getClosingDates();
+			initialiseAutocomplete();
 		}
 	});
 });
+
+function initialiseAutocomplete() {
+	$("input#project").autocomplete({
+	    delay:150,
+	    source: function(req, add) {
+	        
+	    	$.ajax({
+	            type: 'GET',
+	            statusCode: {
+	                    401: function() { window.location.reload(); },
+	                    500: function() { window.location.href = "/pgadmissions/error"; },
+	                    404: function() { window.location.href = "/pgadmissions/404"; },
+	                    400: function() { window.location.href = "/pgadmissions/400"; },                  
+	                    403: function() { window.location.href = "/pgadmissions/404"; }
+	            },
+	            url:"/pgadmissions/badge/getProjectTitles",
+	            data: {
+	            	program: $("#programme").val(),
+	                term: req.term,
+	                cacheBreaker: new Date().getTime()
+	            }, 
+	            success: function(data) {
+	                suggestions = [];
+	                suggestions = jQuery.parseJSON(data);
+	            },
+	            completed: function() {
+	            }               
+	        });
+	        add(suggestions);
+	    }
+	});
+}
 
 function initialiseDatepicker() {
 	$('#batchdeadline').datepicker({
@@ -59,12 +94,15 @@ function getClosingDates() {
 	        success: function(data) {
 	        	selectedDates = [];
 	            selectedDates = jQuery.parseJSON(data);
+	            $("input#programhome").val('');
+	            $("input#project").val('');
+	            $("#batchdeadline").val('');
+	            suggestions = [];
 	        },
 	        completed: function() {
 	        }
 	    });
 	});
-
 }
 
 function updateBadge()

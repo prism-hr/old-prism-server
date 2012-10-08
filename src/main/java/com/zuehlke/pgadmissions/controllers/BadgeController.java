@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -42,25 +41,21 @@ public class BadgeController {
 	private static final String BADGE_MANAGEMENT = "private/staff/superAdmin/badge_management";
 	private final UserService userService;
 	private final ProgramsService programsService;
-    private final BadgeDAO badgeDAO;
     private final BadgeService badgeService;
     private final ProgramPropertyEditor programFormPropertyEditor;
     private final DatePropertyEditor datePropertyEditor;
     private final BadgeValidator badgeValidator;
 
 	BadgeController() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public BadgeController(UserService userService, ProgramsService programsService, BadgeDAO badgeDAO, 
-	        DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programFormPropertyEditor,
-	        BadgeValidator badgeValidator, BadgeService badgeService) {
-
+	public BadgeController(UserService userService, ProgramsService programsService, DatePropertyEditor datePropertyEditor, 
+	        ProgramPropertyEditor programFormPropertyEditor, BadgeValidator badgeValidator, BadgeService badgeService) {
 	    this.badgeValidator = badgeValidator;
 		this.userService = userService;
 		this.programsService = programsService;
-        this.badgeDAO = badgeDAO;
         this.datePropertyEditor = datePropertyEditor;
         this.programFormPropertyEditor = programFormPropertyEditor;
         this.badgeService = badgeService;
@@ -109,6 +104,8 @@ public class BadgeController {
         List<Date> allClosingDates = new ArrayList<Date>();
         allClosingDates = badgeService.getAllClosingDatesByProgram(programsService.getProgramByCode(program));
         
+        allClosingDates.add(org.apache.commons.lang.time.DateUtils.addDays(new Date(), -3));
+        
         List<String> convertedDates = new ArrayList<String>();
         DateFormat format = new SimpleDateFormat("MMMM d, yyyy");
         for (Date date : allClosingDates) {
@@ -121,7 +118,19 @@ public class BadgeController {
         
         Gson gson = new Gson();
         return gson.toJson(convertedDates);
-    }   
+    }
+    
+    @RequestMapping(value = "/getProjectTitles", method = RequestMethod.GET)
+    @ResponseBody
+    public String getProjectTitlesJson(@RequestParam String program, @RequestParam String term) {
+        if (!(userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR) || userService.getCurrentUser().isInRole(Authority.ADMINISTRATOR))) {
+            throw new ResourceNotFoundException();
+        }
+        Program programme = programsService.getProgramByCode(program);
+        List<String> projectTitles = badgeService.getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(programme, term);
+        Gson gson = new Gson();
+        return gson.toJson(projectTitles);
+    }    
 	
 	@ModelAttribute("program")
 	public Program getProgram(@RequestParam(required=false) String program) {
@@ -136,9 +145,7 @@ public class BadgeController {
 	@RequestMapping (value ="/saveBadge", method = RequestMethod.POST)
 	public String saveBadgeDetails(@ModelAttribute(value="badge") @Valid Badge badge, BindingResult result) {
 	    if (!result.hasErrors()) {
-	        if (badgeDAO.getDuplicateBadges(badge).isEmpty()) {
-	            badgeDAO.save(badge);
-	        }
+	        badgeService.save(badge);
 	        return BADGE;
 	    } else {
 	        return BADGE_MANAGEMENT;

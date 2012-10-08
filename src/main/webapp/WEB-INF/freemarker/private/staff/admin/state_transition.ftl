@@ -15,6 +15,8 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/jquery-ui-1.8.23.custom.css' />"/>
+
 <!-- Styles for Application List Page -->
 
 <!--[if lt IE 9]>
@@ -22,11 +24,11 @@
 <![endif]-->
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/admin/changeState.js' />"></script> 
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
-
 
 </head>
 
@@ -173,7 +175,7 @@
                                         <label class="plain-label">Assign to Project</label>
                                         <span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
                                         <div class="field">
-                                            <input id="projectTitle" name="projectTitle" style="width:322px;" type="text" value="${(projectTitle)!}"/>
+                                            <input id="projectTitle" name="projectTitle" class="full ui-autocomplete-input" type="text" value="${(projectTitle)!}" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
                                             <#if projectTitle_error??>
                                                 <span class="invalid">${projectTitle_error}</span>
                                             </#if>

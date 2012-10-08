@@ -44,7 +44,7 @@
 		<label class="plain-label">Project Title</label>
 		<span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
 		<div class="field">
-			<input type="text" name="project" id="project" class="max" value="${(badge.projectTitle?html)!}"/>
+		    <input id="project" name="project" class="full ui-autocomplete-input" type="text" value="${(badge.projectTitle?html)!}" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
 		</div>
 	</div>
 	<@spring.bind "badge.projectTitle" /> 

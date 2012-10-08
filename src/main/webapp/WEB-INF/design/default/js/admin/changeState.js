@@ -77,23 +77,15 @@ $(document).ready(function()
 	        add(suggestions);
 	    }
 	});
-    
-    
-    
-    
+
 	// ------------------------------------------------------------------------------
 	// Submit button.
 	// ------------------------------------------------------------------------------
 	$('#changeStateButton').click(function()
 	{
-		if (validateStateChange())
-		{
-			var state = $('#status option:selected').text().toLowerCase().capitalize();
-			var message = 'Confirm you want to move this application to the ' + state + ' stage. <b>You will not be able to reverse this decision!</b>';
-			modalPrompt(message, changeState);
-			return;
-		}
-		return false;
+		var state = $('#status option:selected').text().toLowerCase().capitalize();
+		var message = 'Confirm you want to move this application to the ' + state + ' stage. <b>You will not be able to reverse this decision!</b>';
+		modalPrompt(message, changeState);
 	});
 
 
@@ -263,25 +255,4 @@ function changeState()
 			});
 		}
 	}
-}
-
-
-function validateStateChange()
-{
-	var errors = 0;
-	$('#commentsection span.invalid').remove();
-	
-	if ($('#comment').val() == '')
-	{
-		$('#comment').after('<span class="invalid">You must make an entry.</span>');
-		errors++;
-	}
-
-	if ($('#status').val() == '')
-	{
-		$('#status').after('<span class="invalid">You must make a selection.</span>');
-		errors++;
-	}
-
-	return (errors == 0);
 }

@@ -26,9 +26,14 @@ public class BadgeService {
 	@Autowired
 	public BadgeService(BadgeDAO badgeDAO) {
 		this.badgeDAO = badgeDAO;
-	
 	}
 
+	public void save(Badge badge) {
+	    if (badgeDAO.getDuplicateBadges(badge).isEmpty()) {
+            badgeDAO.save(badge);
+	    }
+	}
+	
 	public List<Badge> getAllBadges(Program program) {
 		return badgeDAO.getBadgesByProgram(program);
 	}
@@ -70,22 +75,10 @@ public class BadgeService {
 	}
 	
 	public List<String> getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(Program program, String searchTerm) {
-        Date now = new Date();
-        List<Badge> badges = badgeDAO.getBadgesByProgram(program);
-        List<String> programProjectTitles = new ArrayList<String>();
-        for (Badge badge : badges) {
-            Date badgeClosingDate = badge.getClosingDate();
-            if(badgeClosingDate != null && badgeClosingDate.before(now)){
-                continue;
-            }
-            if (!StringUtils.isBlank(badge.getProjectTitle()) && StringUtils.containsIgnoreCase(badge.getProjectTitle(), searchTerm)) {
-                programProjectTitles.add(badge.getProjectTitle());
-            }
-        }
-        HashSet<String> removedDuplicates = new HashSet<String>(programProjectTitles);
-        List<String> titles = new ArrayList<String>(removedDuplicates);
-        Collections.sort(titles);
-        return titles;
+	    HashSet<String> uniqueProjectTitles = new HashSet<String>();
+	    for (Badge badge : badgeDAO.getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(program, searchTerm)) {
+	        uniqueProjectTitles.add(badge.getProjectTitle());
+	    }
+	    return new ArrayList<String>(uniqueProjectTitles);
     }
-	
 }

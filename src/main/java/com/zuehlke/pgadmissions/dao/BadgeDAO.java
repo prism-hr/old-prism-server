@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,16 +32,30 @@ public class BadgeDAO {
     
     @SuppressWarnings("unchecked")
     public List<Badge> getBadgesByProgram(Program program){
-        return (List<Badge>) sessionFactory.getCurrentSession().createCriteria(Badge.class).add(Restrictions.eq("program", program)).list();
+        return (List<Badge>) sessionFactory.getCurrentSession().createCriteria(Badge.class)
+                .add(Restrictions.eq("program", program)).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Badge> getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(Program program, String term) {
+        return sessionFactory
+                .getCurrentSession()
+                .createCriteria(Badge.class)
+                .add(Restrictions.and(
+                        Restrictions.eq("program", program),
+                        Restrictions.or(Restrictions.ilike("projectTitle", term, MatchMode.END),
+                                Restrictions.ilike("projectTitle", term, MatchMode.START)))).addOrder(Order.asc("projectTitle")).list();
     }
     
     @SuppressWarnings("unchecked")
     public List<Badge> getDuplicateBadges(Badge badge) {
-        return (List<Badge>) sessionFactory.getCurrentSession()
+        return (List<Badge>) sessionFactory
+                .getCurrentSession()
                 .createCriteria(Badge.class)
                 .add(Restrictions.eq("program", badge.getProgram()))
-                .add(Restrictions.or(Restrictions.isNull("closingDate"), Restrictions.eq("closingDate", badge.getClosingDate())))
-                .add(Restrictions.or(Restrictions.isNull("projectTitle"), Restrictions.eq("projectTitle", badge.getProjectTitle())))
-                .list();
+                .add(Restrictions.or(Restrictions.isNull("closingDate"),
+                        Restrictions.eq("closingDate", badge.getClosingDate())))
+                .add(Restrictions.or(Restrictions.isNull("projectTitle"),
+                        Restrictions.eq("projectTitle", badge.getProjectTitle()))).list();
     }
 }

@@ -1024,7 +1024,8 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
 
 /* HIGHLIGHT DATES IN THE DATEPICKER --------------------------------------------------------------------------- */
 .highlighted a {
-   background-color : #F9EDED !important;
+   background-color: #F9EDED !important;
+   border:1px solid red !important;
    /*background-image :none !important;*/
    /*color: Blue !important;*/
    /*font-weight:bold !important;

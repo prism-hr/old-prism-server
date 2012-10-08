@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Badge;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -60,7 +62,6 @@ public class ValidationTransitionController extends StateTransitionController {
 		super(applicationsService, userService, commentService, commentFactory, stateTransitionViewResolver, encryptionHelper,documentService, approvalService, stateChangeValidator, documentPropertyEditor);
 		this.messageSource = messageSource;
 		this.badgeService = badgeService;
-
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="/getPage")
@@ -81,13 +82,15 @@ public class ValidationTransitionController extends StateTransitionController {
 	        @Valid @ModelAttribute("comment") ValidationComment validationComment, BindingResult result, ModelMap modelMap) {
 		try {
 		    ApplicationForm form = getApplicationForm(applicationId);
+		    Program programme = form.getProgram();
+		    Date newClosingDate = null;
 		    
 		    if (StringUtils.isNotBlank(closingDate)) {
-		        Date newClosingDate = new SimpleDateFormat("dd MMM yyyy").parse(closingDate);
+		        newClosingDate = new SimpleDateFormat("dd MMM yyyy").parse(closingDate);
                 modelMap.put("closingDate", newClosingDate);
                 
                 boolean foundMatch = false;
-                List<Date> existingClosingDates = badgeService.getAllClosingDatesByProgram(getApplicationForm(applicationId).getProgram());
+                List<Date> existingClosingDates = badgeService.getAllClosingDatesByProgram(programme);
                 for (Date existingClosingDate : existingClosingDates) {
                     if (org.apache.commons.lang.time.DateUtils.isSameDay(existingClosingDate, newClosingDate)) {
                         foundMatch = true;
@@ -121,6 +124,11 @@ public class ValidationTransitionController extends StateTransitionController {
 		    }
 		    
 		    if (StringUtils.isNotBlank(closingDate) || StringUtils.isNotBlank(projectTitle)) {
+		        Badge newBadge = new Badge();
+		        newBadge.setClosingDate(newClosingDate);
+		        newBadge.setProjectTitle(projectTitle);
+		        newBadge.setProgram(programme);
+		        badgeService.save(newBadge);
 		    	applicationsService.save(form);
 		    }
 		    
@@ -190,7 +198,6 @@ public class ValidationTransitionController extends StateTransitionController {
 		}
 		return allClosingDates;
 	}
-	
 	
 	@ModelAttribute("badgesByTitle")
 	public List<String> getProjectTitles(@RequestParam String applicationId) {

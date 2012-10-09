@@ -45,7 +45,7 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	private Domicile institutionCountry;
 	
 	@Column(name="institution")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
 	private String qualificationInstitution;
 	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)

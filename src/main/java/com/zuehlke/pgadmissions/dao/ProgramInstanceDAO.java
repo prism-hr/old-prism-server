@@ -39,6 +39,19 @@ public class ProgramInstanceDAO {
 				.add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
+	
+    @SuppressWarnings("unchecked")
+    public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, StudyOption studyOption) {
+        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession()
+                .createCriteria(ProgramInstance.class)
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("studyOption", studyOption))
+                .add(Restrictions.ge("applicationStartDate", today))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .addOrder(Order.asc("applicationStartDate"))
+                .list();
+    }
 
 	@SuppressWarnings("unchecked")
 	public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPast(Program program, StudyOption studyOption) {

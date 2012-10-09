@@ -37,16 +37,16 @@
         </div>
       </div>
       
-      <!-- Project -->
-      <div class="admin_row">
-        <label class="admin_row_label">Project</label>
-        <div class="field"><#if (applicationForm.projectTitle)?has_content>${(applicationForm.projectTitle?html)}<#else>Not Required</#if></div>
-      </div>
-      
       <!-- Start date -->
       <div class="admin_row">
         <label class="admin_row_label">Start Date</label>
         <div class="field">${(applicationForm.programmeDetails.startDate?string('dd MMM yyyy'))!}</div>
+      </div>
+      
+      <!-- Project -->
+      <div class="admin_row">
+        <label class="admin_row_label">Project</label>
+        <div class="field"><#if (applicationForm.projectTitle)?has_content>${(applicationForm.projectTitle?html)}<#else>Not Required</#if></div>
       </div>
       
       <!-- Referrer -->

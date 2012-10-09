@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.validators;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateMidnight;
+import org.joda.time.Years;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -43,7 +45,13 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		String dob = personalDetail.getDateOfBirth() == null ? "": personalDetail.getDateOfBirth().toString();
 		if (StringUtils.isNotBlank(dob) && personalDetail.getDateOfBirth().after(today)) {
 			errors.rejectValue("dateOfBirth", "date.field.notpast");
-		}
+		} else if (personalDetail.getDateOfBirth() != null) {
+            int age = Years.yearsBetween(new DateMidnight(personalDetail.getDateOfBirth()), new DateMidnight(new Date())).getYears();
+            if (!(age >= 10 && age <= 80)) {
+                errors.rejectValue("dateOfBirth", "date.field.age", new Object[] {"10", "80"}, null);
+            }
+        }
+		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "disability", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ethnicity", "dropdown.radio.select.none");
 		

@@ -177,4 +177,30 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 		ProgramInstance programInstance = dao.getCurrentProgramInstanceForStudyOption(program, StudyOption.FULL_TIME_DISTANCE_LEARNING);
 		assertEquals(programInstanceTwo, programInstance);
 	}
+	
+	@Test
+	public void shouldFindProgrameInstancesWithAStartDateInTheFuture() {
+	    Program program = new ProgramBuilder().code("aaaaa").title("hi").toProgram();
+        save(program);
+        Date now = Calendar.getInstance().getTime();
+        Date yesterday = DateUtils.addDays(now, -1);
+        Date eightMonthsAgo = DateUtils.addMonths(now, -8);
+        Date fourMonthsFromNow = DateUtils.addMonths(now, 4);
+        Date oneYearAndfourMonthsFromNow = DateUtils.addMonths(now, 16);
+        
+        Date startDateInOneMonth = DateUtils.addMonths(now, 1);
+        
+        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(program).applicationDeadline(eightMonthsAgo).sequence(1).studyOption(StudyOption.FULL_TIME_DISTANCE_LEARNING).applicationStartDate(yesterday).academicYear("2013").toProgramInstance();
+        
+        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow).sequence(2).studyOption(StudyOption.FULL_TIME_DISTANCE_LEARNING).applicationStartDate(startDateInOneMonth).academicYear("2013").toProgramInstance();
+        ProgramInstance programInstanceThree = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAndfourMonthsFromNow).sequence(3).studyOption(StudyOption.FULL_TIME_DISTANCE_LEARNING).applicationStartDate(yesterday).academicYear("2013").toProgramInstance();
+        ProgramInstance programInstanceFour = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow).sequence(4).studyOption(StudyOption.PART_TIME).applicationStartDate(yesterday).academicYear("2013").toProgramInstance();
+        save(programInstanceOne,  programInstanceThree,programInstanceFour, programInstanceTwo);
+        flushAndClearSession();
+        
+        ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+        List<ProgramInstance> activeProgramInstancesOrderedByApplicationStartDate = dao.getActiveProgramInstancesOrderedByApplicationStartDate(program, StudyOption.FULL_TIME_DISTANCE_LEARNING);
+        
+        assertEquals(1, activeProgramInstancesOrderedByApplicationStartDate.size());
+	}
 }

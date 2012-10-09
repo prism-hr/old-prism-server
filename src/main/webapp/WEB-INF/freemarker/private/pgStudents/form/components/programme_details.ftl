@@ -65,6 +65,19 @@
           </#if>
         </div>
       </div>
+      
+      <!-- Start date -->
+      <div class="row">
+        <label id="lbl_startDate" class="plain-label">Preferred Start Date<em>*</em></label>
+        <span class="hint" data-desc="<@spring.message 'programmeDetails.startDate'/>"></span>
+        <div class="field">
+          <input class="full date" type="text" id="startDate" name="startDate" value="${(programmeDetails.startDate?string('dd MMM yyyy'))!}"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if> />
+          <@spring.bind "programmeDetails.startDate" />
+          <#list spring.status.errorMessages as error>
+          <span class="invalid">${error}</span>
+          </#list>
+        </div>
+      </div>
   
       <!-- Project -->
       <div class="row">
@@ -78,19 +91,6 @@
         	</#if>
         	
           <input class="full" id="projectName" name="projectName" type="text" value="<#if project>${(applicationForm.projectTitle?html)}<#else>Not Required</#if>" disabled="disabled"/>
-        </div>
-      </div>
-  
-      <!-- Start date -->
-      <div class="row">
-        <label class="plain-label">Preferred Start Date<em>*</em></label>
-        <span class="hint" data-desc="<@spring.message 'programmeDetails.startDate'/>"></span>
-        <div class="field">
-          <input class="full date" type="text" id="startDate" name="startDate" value="${(programmeDetails.startDate?string('dd MMM yyyy'))!}"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if> />
-          <@spring.bind "programmeDetails.startDate" />
-          <#list spring.status.errorMessages as error>
-          <span class="invalid">${error}</span>
-          </#list>
         </div>
       </div>
   

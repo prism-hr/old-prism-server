@@ -8,6 +8,7 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -323,6 +324,25 @@ public class PersonalDetailsValidatorTest {
         Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("passportIssueDate").getCode());
     }
 	
+	@Test
+    public void shouldRejectDateOfBirthIfAgeIsLessThan10() {
+        Date infant = org.apache.commons.lang.time.DateUtils.addYears(new Date(), -9);
+        personalDetails.setDateOfBirth(infant);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "dateOfBirth");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.age", mappingResult.getFieldError("dateOfBirth").getCode());
+    }
+	
+	@Test
+    public void shouldRejectDateOfBirthIfAgeIsBiggerThan80() {
+        Date oldGeezer = org.apache.commons.lang.time.DateUtils.addYears(new Date(), -81);
+        personalDetails.setDateOfBirth(oldGeezer);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "dateOfBirth");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.age", mappingResult.getFieldError("dateOfBirth").getCode());
+    }
 	
 	@Before
 	public void setup() {
@@ -331,8 +351,10 @@ public class PersonalDetailsValidatorTest {
 				.candiateNationalities(nationality)//
 				.applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm())//
 				.country(new CountryBuilder().toCountry())//
-				.dateOfBirth(new Date()).email("email@test.com").firstName("bob")//
-				.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith")//
+				.dateOfBirth(DateUtils.addYears(new Date(), -28))
+				.email("email@test.com")
+				.firstName("bob")//
+				.gender(Gender.INDETERMINATE_GENDER).lastName("smith")//
 				.title(Title.PROFESSOR)//
 				.residenceDomicile(new DomicileBuilder().toDomicile())//
 				.phoneNumber("abc")//

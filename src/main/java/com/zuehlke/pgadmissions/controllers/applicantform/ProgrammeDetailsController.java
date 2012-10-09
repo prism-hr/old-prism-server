@@ -1,9 +1,13 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -14,8 +18,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -81,10 +87,45 @@ public class ProgrammeDetailsController {
 		return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getApplicationNumber();
 
 	}
+	
+	@RequestMapping(value = "/getProgrammeStartDate", method = RequestMethod.GET)
+	@ResponseBody
+	public String getProgrammeDetailsView(@RequestParam String applicationId, @RequestParam String studyOption) {
+	    if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+            throw new ResourceNotFoundException();
+        }
+	    
+	    if (StringUtils.isBlank(studyOption) || StringUtils.isBlank(applicationId)) {
+	        return StringUtils.EMPTY;
+	    }
+	    
+	    StudyOption sOption = StudyOption.valueOf(studyOption);
+	    if (sOption == null) {
+	        throw new ResourceNotFoundException();
+	    }
+	    
+	    List<ProgramInstance> availableProgramInstances = programmeDetailsService.getActiveProgramInstancesOrderedByApplicationStartDate(
+	            getApplicationForm(applicationId).getProgram(), sOption);
+	    
+	    String convertedDate = StringUtils.EMPTY;
+        DateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
+        Date today = new Date();
+        
+        for (ProgramInstance instance : availableProgramInstances) {
+            try {
+                if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate()) || instance.getApplicationStartDate().after(today)) {
+                    convertedDate = format.format(instance.getApplicationStartDate());
+                    break;
+                }
+            } catch (Throwable e) {
+                // do nothing
+            }
+        }
+	    return convertedDate;
+	}
 
 	@RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
 	public String getProgrammeDetailsView() {
-
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}

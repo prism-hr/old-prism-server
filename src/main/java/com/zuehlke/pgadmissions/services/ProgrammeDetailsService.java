@@ -48,4 +48,8 @@ public class ProgrammeDetailsService {
 		return options;
 	}
 
+	@Transactional
+	public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, StudyOption studyOption) {
+	    return programInstanceDAO.getActiveProgramInstancesOrderedByApplicationStartDate(program, studyOption);
+	}
 }

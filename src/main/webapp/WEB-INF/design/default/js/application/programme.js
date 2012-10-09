@@ -2,36 +2,45 @@
 // PROGRAMME DETAILS section
 // ===============================================================================
 
+function enableOrDisableStartDate() {
+	if ($("#studyOption").val() == "") {
+		$("#startDate").attr("disabled", "disabled");
+		$("#lbl_startDate").addClass("grey-label");
+	} else {
+		$("#startDate").removeAttr("disabled", "disabled");
+		$("#lbl_startDate").removeClass("grey-label");
+	}
+}
+
 $(document).ready(function()
 {
+	enableOrDisableStartDate();
 	
 	// -------------------------------------------------------------------------------
-	// Get the date for the first Monday in the upcoming October.
+	// Get the date from the programe.
 	// -------------------------------------------------------------------------------
-	if ($("#startDate").val() === "")
-	{
-		var today = new Date();
-		var mm    = today.getMonth(); 
-		var yyyy  = today.getFullYear();
-		var year;
-//		mm=10; uncomment to test 
-		if (mm >= 9)
-		{
-			year = yyyy +1;
-		}
-		else
-		{
-			year = yyyy;
-		}
-		var firstDayInNextYearsOctober = new Date();
-		firstDayInNextYearsOctober.setFullYear(year, 9, 1);
-		while (firstDayInNextYearsOctober.getDay() !== 1) // while not monday
-		{
-			firstDayInNextYearsOctober.setDate(firstDayInNextYearsOctober.getDate() + 1);
-		}
-		var formattedDate = firstDayInNextYearsOctober.getDate() + "-Oct-" + firstDayInNextYearsOctober.getFullYear();
-		$("#startDate").val(formattedDate);
-	}
+	$("#studyOption").bind('change', function() {
+		$.ajax({
+			type: 'GET',
+			statusCode: { 
+				401: function() {window.location.reload(); },
+				500: function() { window.location.href = "/pgadmissions/error"; },
+				404: function() { window.location.href = "/pgadmissions/404"; },
+				400: function() { window.location.href = "/pgadmissions/400"; },				  
+				403: function() { window.location.href = "/pgadmissions/404"; }
+			  },
+			  url:"/pgadmissions/update/getProgrammeStartDate",
+			  data: {
+				  applicationId: $('#applicationId').val(),
+				  studyOption: $('#studyOption').val(),
+				  cacheBreaker: new Date().getTime()					
+			  },
+			  success: function(data) {
+				  $('#startDate').val(data);
+				  enableOrDisableStartDate();
+			  }
+		});
+	});
 	
 	$("#acceptTermsPDValue").val("NO");
 	$("#addSupervisorButton").show();

@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
 @Access(AccessType.FIELD)
-
 public class PersonalDetails extends DomainObject<Integer> implements FormSectionObject {
 
 	private static final long serialVersionUID = 6549850558507667533L;
@@ -50,6 +49,22 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	
 	@Column(name = "requires_visa")
 	private Boolean requiresVisa;
+	
+	@ESAPIConstraint(rule = "LettersAndNumbersOnly", maxLength = 35, message = "{text.field.nonlettersandnumbers}")
+	@Column(name = "passport_number")
+	private String passportNumber;
+	
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+	@Column(name = "passport_name")
+	private String nameOnPassport;
+	
+	@Column(name = "passport_issue_date")
+	@Temporal(TemporalType.DATE)
+	private Date passportIssueDate;
+	
+    @Column(name = "passport_expiry_date")
+	@Temporal(TemporalType.DATE)
+	private Date passportExpiryDate;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_language_id") })
@@ -109,6 +124,38 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	public Integer getId() {
 		return id;
 	}
+	
+	public String getPassportNumber() {
+        return passportNumber;
+    }
+
+    public void setPassportNumber(String passportNumber) {
+        this.passportNumber = passportNumber;
+    }
+
+    public String getNameOnPassport() {
+        return nameOnPassport;
+    }
+
+    public void setNameOnPassport(String nameOnPassport) {
+        this.nameOnPassport = nameOnPassport;
+    }
+
+    public Date getPassportIssueDate() {
+        return passportIssueDate;
+    }
+
+    public void setPassportIssueDate(Date passportIssueDate) {
+        this.passportIssueDate = passportIssueDate;
+    }
+
+    public Date getPassportExpiryDate() {
+        return passportExpiryDate;
+    }
+
+    public void setPassportExpiryDate(Date passportExpiryDate) {
+        this.passportExpiryDate = passportExpiryDate;
+    }
 	
 	public Title getTitle() {
 	    return title;

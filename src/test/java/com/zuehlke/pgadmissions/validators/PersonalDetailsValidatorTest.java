@@ -16,7 +16,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -255,6 +254,76 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("englishFirstLanguage").getCode());
 	}
 	
+	@Test
+	public void shouldRejectPassportNumberIfEmpty() {
+	    personalDetails.setPassportNumber(null);
+	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportNumber");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportNumber").getCode());
+	}
+	
+	@Test
+    public void shouldRejectNameOnPassportIfEmpty() {
+        personalDetails.setNameOnPassport(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "nameOnPassport");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("nameOnPassport").getCode());
+    }
+	
+	@Test
+    public void shouldRejectPassportIssueDateIfEmpty() {
+        personalDetails.setPassportIssueDate(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportIssueDate");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportIssueDate").getCode());
+    }
+	
+	@Test
+    public void shouldRejectPassportExpiryDateIfEmpty() {
+        personalDetails.setPassportExpiryDate(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportExpiryDate");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportExpiryDate").getCode());
+    }
+    
+	@Test
+    public void shouldRejectPassportExpiryAndIssueDateAreTheSame() {
+	    Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
+	    personalDetails.setPassportExpiryDate(oneMonthAgo);
+        personalDetails.setPassportIssueDate(oneMonthAgo);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportExpiryDate");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(3, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.notfuture", mappingResult.getFieldErrors().get(0).getCode());
+        Assert.assertEquals("date.field.same", mappingResult.getFieldErrors().get(1).getCode());
+        Assert.assertEquals("date.field.same", mappingResult.getFieldErrors().get(2).getCode());
+    }
+    
+	@Test
+    public void shouldRejectPassportExpiryDateIsInThePast() {
+        Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
+        personalDetails.setPassportExpiryDate(oneMonthAgo);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportExpiryDate");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("passportExpiryDate").getCode());
+    }
+    
+	@Test
+    public void shouldRejectPassportIssueDateIsInTheFuture() {
+        Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), +1);
+        personalDetails.setPassportIssueDate(oneMonthAgo);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportIssueDate");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("passportIssueDate").getCode());
+    }
+	
+	
 	@Before
 	public void setup() {
 		Language nationality = new Language();
@@ -271,6 +340,10 @@ public class PersonalDetailsValidatorTest {
 				.disability(new DisabilityBuilder().id(23213).toDisability())//
 				.requiresVisa(true)
 				.englishFirstLanguage(true)
+				.passportNumber("11778899")
+				.nameOnPassport("Bob Smith")
+				.passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 5))
+				.passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -5))
 				.toPersonalDetails();
 	}
 }

@@ -385,6 +385,36 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell("No", smallFont));
 			}
 		}
+		
+		if (application.getPersonalDetails().getRequiresVisa() != null && application.getPersonalDetails().getRequiresVisa()) {
+		    table.addCell(newTableCell("Passport Number", smallBoldFont));
+	        if (StringUtils.isBlank(application.getPersonalDetails().getPassportNumber())) {
+	            table.addCell(newTableCell(null, smallFont));
+	        } else {
+	            table.addCell(newTableCell(application.getPersonalDetails().getPassportNumber(), smallFont));
+	        }
+	        
+	        table.addCell(newTableCell("Name on Passport", smallBoldFont));
+	        if (StringUtils.isBlank(application.getPersonalDetails().getNameOnPassport())) {
+                table.addCell(newTableCell(null, smallFont));
+            } else {
+                table.addCell(newTableCell(application.getPersonalDetails().getNameOnPassport(), smallFont));
+            }
+	        
+	        table.addCell(newTableCell("Passport Issue Date", smallBoldFont));
+	        if (application.getPersonalDetails().getPassportIssueDate() == null) {
+                table.addCell(newTableCell(null, smallFont));
+            } else {
+                table.addCell(newTableCell(simpleDateFormat.format(application.getPersonalDetails().getPassportIssueDate()), smallFont));
+            }
+	        
+	        table.addCell(newTableCell("Passport Expiry Date", smallBoldFont));
+	        if (application.getPersonalDetails().getPassportExpiryDate() == null) {
+                table.addCell(newTableCell(null, smallFont));
+            } else {
+                table.addCell(newTableCell(simpleDateFormat.format(application.getPersonalDetails().getPassportExpiryDate()), smallFont));
+            }
+		}
 
 		table.addCell(newTableCell("Email", smallBoldFont));
 		table.addCell(newTableCell(application.getPersonalDetails().getEmail(), smallFont));

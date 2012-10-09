@@ -326,22 +326,21 @@ function loadPersonalDetails(clear){
 					$("#country").val("");
 					$("#candidateNationalityCountry").val("");					
 					$("#maternalNationalityCountry").val("");
-					
 					$("#paternalNationalityCountry").val("");
 					$("#englishFirstLanguageYes").prop('checked', false);
 					$("#englishFirstLanguageNo").prop('checked', false);
-					
 					$("#residenceCountry").val("");
-					
 					$("#requiresVisaYes").prop('checked', false);
 					$("#requiresVisaNo").prop('checked', false);
-					
 					$("#pd_telephone").val("");
-					
 					$("#pd_messenger").val("");
-					
 					$("#ethnicity").val("");
 					$("#disability").val("");
+					$("#passportNumber").val("");
+			        $("#nameOnPassport").val("");
+			        $("#passportIssueDate").val("");
+			        $("#passportExpiryDate").val("");
+			        disablePassportInformation();
 				}else{
 					if ($('#personalDetailsSection .section-error-bar').length == 0)
 					{

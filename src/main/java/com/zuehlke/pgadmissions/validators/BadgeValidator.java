@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,10 +32,7 @@ public class BadgeValidator extends AbstractValidator {
         
         if (badge.getClosingDate() != null) {
             if (!DateUtils.isToday(badge.getClosingDate()) && badge.getClosingDate().before(new Date())) {
-                Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(Calendar.getInstance().getTime(), -1);
-                if (!org.apache.commons.lang.time.DateUtils.isSameDay(badge.getClosingDate(), oneMonthAgo) && badge.getClosingDate().before(oneMonthAgo)) {
-                    errors.rejectValue("closingDate", "date.field.notfuture");
-                }
+                errors.rejectValue("closingDate", "date.field.notfuture");
             }
         }
     }

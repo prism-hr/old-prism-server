@@ -314,7 +314,6 @@
 	                                      disabled="disabled"
 	                            </#if>/> Yes
                             </label>
-                            
                             <label>
 	                            <input type="radio" name="requiresVisa" id="requiresVisaYes" value="false"
 	                   			<#if personalDetails.isRequiresVisaSet() &&  !personalDetails.getRequiresVisa()>
@@ -324,7 +323,6 @@
 	                                      disabled="disabled"
 	                            </#if>/> No
                             </label>
-                   			
                    		</div>
                    		 <@spring.bind "personalDetails.requiresVisa" />
              			<#list spring.status.errorMessages as error >
@@ -335,6 +333,79 @@
 							</div>
 						</#list>
 					</div>
+					
+					<div class="row">
+                        <label id="lbl_passportNumber" class="plain-label">Passport Number</label>
+                        <span class="hint" data-desc="<@spring.message 'personalDetails.passportNumber'/>"></span>
+                        <div class="field">                     
+                            <input class="full" readonly="readonly" type="text" value="${(personalDetails.passportNumber?html)!}" name="passportNumber" id="passportNumber" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa()) >disabled="disabled"</#if> />             
+                        </div>
+                    </div>
+					<@spring.bind "personalDetails.passportNumber" /> 
+                    <#list spring.status.errorMessages as error>
+                        <div class="row">
+                            <div class="field">
+                                <span class="invalid">${error}</span>
+                            </div>
+                        </div>
+                    </#list>
+                    
+                    <div class="row">
+                        <label id="lbl_nameOnPassport" class="plain-label">Name on Passport</label>
+                        <span class="hint" data-desc="<@spring.message 'personalDetails.nameOnPassport'/>"></span>
+                        <div class="field">                     
+                            <input class="full" readonly="readonly" type="text" value="${(personalDetails.nameOnPassport?html)!}" name="nameOnPassport" id="nameOnPassport" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>disabled="disabled"</#if> />             
+                        </div>
+                    </div>
+                    <@spring.bind "personalDetails.nameOnPassport" /> 
+                    <#list spring.status.errorMessages as error>
+                        <div class="row">
+                            <div class="field">
+                                <span class="invalid">${error}</span>
+                            </div>
+                        </div>
+                    </#list>
+					
+					<div class="row">
+                        <label id="lbl_passportIssueDate" class="plain-label">Passport Issue Date</label>
+                        <span class="hint" data-desc="<@spring.message 'personalDetails.passportIssueDate'/>"></span>
+                        <div class="field">
+                            <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
+                                <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate" />             
+                            <#else>
+                                <input class="half date" value="${(personalDetails.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate"/>
+                            </#if>    
+                        </div>               
+                    </div>
+                    <@spring.bind "personalDetails.passportIssueDate" /> 
+                    <#list spring.status.errorMessages as error>
+                        <div class="row">
+                            <div class="field">
+                                <span class="invalid">${error}</span>
+                            </div>
+                        </div>
+                    </#list>
+                
+                    <div class="row">
+                        <label id="lbl_passportExpiryDate" class="plain-label">Passport Expiry Date</label>
+                        <span class="hint" data-desc="<@spring.message 'personalDetails.passportExpiryDate'/>"></span>
+                        <div class="field">
+                            <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
+                                <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate" />             
+                            <#else>
+                                <input class="half date" value="${(personalDetails.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate"/>
+                            </#if>    
+                        </div>               
+                    </div>
+                    <@spring.bind "personalDetails.passportExpiryDate" /> 
+                    <#list spring.status.errorMessages as error>
+                        <div class="row">
+                            <div class="field">
+                                <span class="invalid">${error}</span>
+                            </div>
+                        </div>
+                    </#list>
+					
 				</div>
             </div>
 

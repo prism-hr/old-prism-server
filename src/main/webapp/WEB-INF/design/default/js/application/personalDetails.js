@@ -3,7 +3,13 @@ $(document).ready(
 
             var persImgCount = 0;
             showOrHideNationalityButton();
-
+            
+            if ($("input[name='requiresVisa']:checked").val() == "true") {
+            	enablePassportInformation();
+            } else {
+            	disablePassportInformation();
+            }
+            
             $("#acceptTermsPEDValue").val("NO");
 
             // -------------------------------------------------------------------------------
@@ -107,6 +113,18 @@ $(document).ready(
 
                 }
             });
+            
+            // -------------------------------------------------------------------------------
+            // Require visa
+            // -------------------------------------------------------------------------------
+            $("input[name='requiresVisa']").bind('change', function() {
+            	var selected_radio = $("input[name='requiresVisa']:checked").val();
+            	if (selected_radio == 'true')   {
+            		enablePassportInformation();
+            	} else {
+            		disablePassportInformation();
+            	}
+            });            
 
             // -------------------------------------------------------------------------------
             // Save button.
@@ -161,9 +179,41 @@ $(document).ready(
             });
 
             bindDatePicker('#dateOfBirth');
+            bindDatePicker('#passportExpiryDate');
+            bindDatePicker('#passportIssueDate');
             addToolTips();
 
         });
+
+function disablePassportInformation() {
+	$("#passportNumber").attr("disabled", "disabled");
+	$("#passportNumber").val("");
+	$("#lbl_passportNumber").addClass("grey-label");
+	$("#nameOnPassport").attr("disabled", "disabled");
+	$("#nameOnPassport").val("");
+	$("#lbl_nameOnPassport").addClass("grey-label");
+	$("#passportIssueDate").attr("disabled", "disabled");
+	$("#passportIssueDate").val("");
+	$("#lbl_passportIssueDate").addClass("grey-label");
+	$("#passportExpiryDate").attr("disabled", "disabled");
+	$("#passportExpiryDate").val("");
+	$("#lbl_passportExpiryDate").addClass("grey-label");
+}
+
+function enablePassportInformation() {
+	$("#passportNumber").removeAttr("disabled", "disabled");
+	$("#passportNumber").removeAttr("readonly", "readonly");
+	$("#lbl_passportNumber").removeClass("grey-label");
+	$("#nameOnPassport").removeAttr("disabled", "disabled");
+	$("#nameOnPassport").removeAttr("readonly", "readonly");
+	$("#lbl_nameOnPassport").removeClass("grey-label");
+	$("#passportIssueDate").removeAttr("disabled", "disabled");
+	$("#passportIssueDate").removeAttr("readonly", "readonly");
+	$("#lbl_passportIssueDate").removeClass("grey-label");
+	$("#passportExpiryDate").removeAttr("disabled", "disabled");
+	$("#passportExpiryDate").removeAttr("readonly", "readonly");
+	$("#lbl_passportExpiryDate").removeClass("grey-label");	
+}
 
 function postPersonalDetailsData(message) {
 
@@ -198,9 +248,12 @@ function postPersonalDetailsData(message) {
         paternalGuardianNationalities : "",
         ethnicity : $("#ethnicity").val(),
         disability : $("#disability").val(),
+        passportNumber : $("#passportNumber").val(),
+        nameOnPassport : $("#nameOnPassport").val(),
+        passportIssueDate : $("#passportIssueDate").val(),
+        passportExpiryDate : $("#passportExpiryDate").val(),
         message : message,
         acceptedTerms : acceptedTheTerms
-
     };
 
     if ($('input:radio[name=englishFirstLanguage]:checked').length > 0) {

@@ -101,7 +101,8 @@ public class ValidationTransitionController extends StateTransitionController {
 		        if (!foundMatch && !DateUtils.isToday(newClosingDate) && newClosingDate.before(new Date())) {
 		            Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(Calendar.getInstance().getTime(), -1);
 		            if (!org.apache.commons.lang.time.DateUtils.isSameDay(newClosingDate, oneMonthAgo) && newClosingDate.before(oneMonthAgo)) {
-		                modelMap.put("closingDate_error", messageSource.getMessage("date.field.notfuture", null, null));
+		                SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
+		                modelMap.put("closingDate_error", messageSource.getMessage("date.field.notbefore", new Object[] {format.format(oneMonthAgo)}, null));
 		            }
 		        }
 		        

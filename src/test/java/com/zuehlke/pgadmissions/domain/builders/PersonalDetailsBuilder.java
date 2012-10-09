@@ -36,6 +36,31 @@ public class PersonalDetailsBuilder {
 	private Boolean requiresVisa;
 	private String phoneNumber;
 
+	private String passportNumber;
+    private String nameOnPassport;
+    private Date passportIssueDate;
+    private Date passportExpiryDate;
+    
+    public PersonalDetailsBuilder passportNumber(String passportNumber) {
+        this.passportNumber = passportNumber;
+        return this;
+    }
+    
+    public PersonalDetailsBuilder nameOnPassport(String nameOnPassport) {
+        this.nameOnPassport = nameOnPassport;
+        return this;
+    }
+    
+    public PersonalDetailsBuilder passportIssueDate(Date passportIssueDate) {
+        this.passportIssueDate = passportIssueDate;
+        return this;
+    }
+    
+    public PersonalDetailsBuilder passportExpiryDate(Date passportExpiryDate) {
+        this.passportExpiryDate = passportExpiryDate;
+        return this;
+    }
+    
 	public PersonalDetailsBuilder title(Title title) {
 	    this.title = title;
 	    return this;
@@ -140,6 +165,10 @@ public class PersonalDetailsBuilder {
 		personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
 		personalDetails.setRequiresVisa(requiresVisa);
 		personalDetails.setPhoneNumber(phoneNumber);
+		personalDetails.setPassportExpiryDate(passportExpiryDate);
+		personalDetails.setPassportIssueDate(passportIssueDate);
+		personalDetails.setPassportNumber(passportNumber);
+		personalDetails.setNameOnPassport(nameOnPassport);
 		return personalDetails;
 	}
 }

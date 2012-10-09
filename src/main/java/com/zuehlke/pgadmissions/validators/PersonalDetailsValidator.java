@@ -9,6 +9,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Component
 public class PersonalDetailsValidator extends FormSectionObjectValidator implements Validator {
@@ -49,6 +50,35 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", "dropdown.radio.select.none");
+		
+		if (personalDetail.getRequiresVisa() != null && personalDetail.getRequiresVisa()) {
+		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportNumber", "text.field.empty");
+		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nameOnPassport", "text.field.empty");
+		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportIssueDate", "text.field.empty");
+		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportExpiryDate", "text.field.empty");
+		    
+		    Date passportExpiryDate = personalDetail.getPassportExpiryDate();
+		    Date passportIssueDate = personalDetail.getPassportIssueDate();
+		    
+		    if (passportExpiryDate != null) {
+		        if (!DateUtils.isToday(passportExpiryDate) && passportExpiryDate.before(new Date())) {
+		            errors.rejectValue("passportExpiryDate", "date.field.notfuture");
+		        }
+		    }
+		    
+		    if (passportIssueDate != null) {
+                if (!DateUtils.isToday(passportIssueDate) && passportIssueDate.after(new Date())) {
+                    errors.rejectValue("passportIssueDate", "date.field.notpast");
+                }
+            }
+		    
+		    if (passportExpiryDate != null && passportIssueDate != null) {
+		        if (org.apache.commons.lang.time.DateUtils.isSameDay(passportExpiryDate, passportIssueDate)) {
+		            errors.rejectValue("passportExpiryDate", "date.field.same");
+		            errors.rejectValue("passportIssueDate", "date.field.same");
+		        }
+		    }
+		}
 	}
 
 	private void validateCandidateNationalities(Object target, Errors errors) {

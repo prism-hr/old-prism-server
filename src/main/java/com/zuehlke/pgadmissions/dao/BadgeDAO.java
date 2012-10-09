@@ -45,7 +45,8 @@ public class BadgeDAO {
                         Restrictions.eq("program", program),
                         Restrictions.or(Restrictions.ilike("projectTitle", term, MatchMode.END),
                                 Restrictions.ilike("projectTitle", term, MatchMode.START))))
-                .addOrder(Order.asc("projectTitle")).addOrder(Order.asc("projectTitle")).list();
+                .addOrder(Order.asc("projectTitle"))
+                .list();
     }
     
     @SuppressWarnings("unchecked")

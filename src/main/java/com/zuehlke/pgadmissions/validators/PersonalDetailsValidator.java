@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.joda.time.Years;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -48,7 +49,10 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		} else if (personalDetail.getDateOfBirth() != null) {
             int age = Years.yearsBetween(new DateMidnight(personalDetail.getDateOfBirth()), new DateMidnight(new Date())).getYears();
             if (!(age >= 10 && age <= 80)) {
-                errors.rejectValue("dateOfBirth", "date.field.age", new Object[] {"10", "80"}, null);
+                DateMidnight now = new DateMidnight().withDayOfYear(1);
+                DateTime tenYearsAgo = now.toDateTime().minusYears(10);
+                DateTime eightyYearsAgo = now.toDateTime().minusYears(80);
+                errors.rejectValue("dateOfBirth", "date.field.age", new Object[] {eightyYearsAgo.toString("dd-MMM-yyyy"), tenYearsAgo.toString("dd-MMM-yyyy")}, null);
             }
         }
 		

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -75,7 +76,7 @@ public class BadgeService {
 	}
 	
 	public List<String> getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(Program program, String searchTerm) {
-	    HashSet<String> uniqueProjectTitles = new HashSet<String>();
+	    LinkedHashSet<String> uniqueProjectTitles = new LinkedHashSet<String>();
 	    for (Badge badge : badgeDAO.getAllProjectTitlesByProgramFilteredByNameLikeCaseInsensitive(program, searchTerm)) {
 	        uniqueProjectTitles.add(badge.getProjectTitle());
 	    }

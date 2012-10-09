@@ -189,30 +189,44 @@ function disablePassportInformation() {
 	$("#passportNumber").attr("disabled", "disabled");
 	$("#passportNumber").val("");
 	$("#lbl_passportNumber").addClass("grey-label");
+	$("#lbl_passportNumber").html("Passport Number");
+	
 	$("#nameOnPassport").attr("disabled", "disabled");
 	$("#nameOnPassport").val("");
 	$("#lbl_nameOnPassport").addClass("grey-label");
+	$("#lbl_nameOnPassport").html("Name on Passport");
+	
 	$("#passportIssueDate").attr("disabled", "disabled");
 	$("#passportIssueDate").val("");
 	$("#lbl_passportIssueDate").addClass("grey-label");
+	$("#lbl_passportIssueDate").html("Passport Issue Date");
+	
 	$("#passportExpiryDate").attr("disabled", "disabled");
 	$("#passportExpiryDate").val("");
 	$("#lbl_passportExpiryDate").addClass("grey-label");
+	$("#lbl_passportExpiryDate").html("Passport Expiry Date");
 }
 
 function enablePassportInformation() {
 	$("#passportNumber").removeAttr("disabled", "disabled");
 	$("#passportNumber").removeAttr("readonly", "readonly");
 	$("#lbl_passportNumber").removeClass("grey-label");
+	$("#lbl_passportNumber").html("Passport Number<em>*</em>");
+	
 	$("#nameOnPassport").removeAttr("disabled", "disabled");
 	$("#nameOnPassport").removeAttr("readonly", "readonly");
 	$("#lbl_nameOnPassport").removeClass("grey-label");
+	$("#lbl_nameOnPassport").html("Name on Passport<em>*</em>");
+	
 	$("#passportIssueDate").removeAttr("disabled", "disabled");
 	$("#passportIssueDate").removeAttr("readonly", "readonly");
 	$("#lbl_passportIssueDate").removeClass("grey-label");
+	$("#lbl_passportIssueDate").html("Passport Issue Date<em>*</em>");
+	
 	$("#passportExpiryDate").removeAttr("disabled", "disabled");
 	$("#passportExpiryDate").removeAttr("readonly", "readonly");
-	$("#lbl_passportExpiryDate").removeClass("grey-label");	
+	$("#lbl_passportExpiryDate").removeClass("grey-label");
+	$("#lbl_passportExpiryDate").html("Passport Expiry Date<em>*</em>");	
 }
 
 function postPersonalDetailsData(message) {

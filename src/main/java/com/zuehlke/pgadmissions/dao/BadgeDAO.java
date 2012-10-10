@@ -41,12 +41,9 @@ public class BadgeDAO {
         return sessionFactory
                 .getCurrentSession()
                 .createCriteria(Badge.class)
-                .add(Restrictions.and(
-                        Restrictions.eq("program", program),
-                        Restrictions.or(Restrictions.ilike("projectTitle", term, MatchMode.END),
-                                Restrictions.ilike("projectTitle", term, MatchMode.START))))
-                .addOrder(Order.asc("projectTitle"))
-                .list();
+                .add(Restrictions.and(Restrictions.eq("program", program),
+                        Restrictions.ilike("projectTitle", term, MatchMode.ANYWHERE)))
+                .addOrder(Order.asc("projectTitle")).list();
     }
     
     @SuppressWarnings("unchecked")

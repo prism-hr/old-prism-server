@@ -63,7 +63,7 @@
             </form>
             
             <#if Session.applyRequest?has_content>
-                <a href="/pgadmissions/register">&gt; Not Registered? Signup</a>
+                <a href="/pgadmissions/register">&gt; Not Registered?</a>
             </#if>
             
             <a href="/pgadmissions/forgotPassword">&gt; Forgot Password</a>

@@ -49,9 +49,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		} else if (personalDetail.getDateOfBirth() != null) {
             int age = Years.yearsBetween(new DateMidnight(personalDetail.getDateOfBirth()), new DateMidnight(new Date())).getYears();
             if (!(age >= 10 && age <= 80)) {
-                DateMidnight now = new DateMidnight().withDayOfYear(1);
+                DateMidnight now = new DateMidnight();
                 DateTime tenYearsAgo = now.toDateTime().minusYears(10);
-                DateTime eightyYearsAgo = now.toDateTime().minusYears(80);
+                DateTime eightyYearsAgo = now.toDateTime().minusYears(81).plusDays(1);
                 errors.rejectValue("dateOfBirth", "date.field.age", new Object[] {eightyYearsAgo.toString("dd-MMM-yyyy"), tenYearsAgo.toString("dd-MMM-yyyy")}, null);
             }
         }

@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-    $('#email').qtip({
+    $('#email_tooltip').qtip({
         content: {
             text: function(api) {
                 return $('#email_tooltip').attr('data-desc');

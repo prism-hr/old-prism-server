@@ -72,11 +72,8 @@
                         <span class="invalid">${error}</span>                    		
                     </#list>
 		            
-		            <input id="email" type="text" name="email" value="<#if pendingUser.email?? && pendingUser.email?length &gt; 0>${pendingUser.email!"Email Address"}<#else>Email Address</#if>" <#if RequestParameters.activationCode?has_content>readonly="readonly"</#if> />
-		            <#if RequestParameters.activationCode?has_content>
-                        <span id="email_tooltip" data-desc="<@spring.message 'registration.email'/>"></span>
-                    </#if> 
-                    <@spring.bind "pendingUser.email" /> 
+		            <input id="email" type="text" name="email" value="<#if pendingUser.email?? && pendingUser.email?length &gt; 0>${pendingUser.email!"Email Address"}<#else>Email Address</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+		            <@spring.bind "pendingUser.email" /> 
                     <#list spring.status.errorMessages as error>		                                		
                         <span class="invalid">${error}</span>                    		
                     </#list>
@@ -94,13 +91,16 @@
                     </#list>
 		            
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
+		        	<#if RequestParameters.activationCode?has_content>
+                        <div class="hint" style="bottom: 6px; position: absolute; right: 38px; width: 50px;" id="email_tooltip" data-desc="<@spring.message 'registration.email'/>"></div>
+                    </#if> 
 		      	</form>
 		      	
 		      	<#if RequestParameters.activationCode?has_content>
 		      	   <p>&nbsp;</p>
                 <#else>
                     <#if Session.applyRequest?has_content>
-                        <a href="/pgadmissions/login">&gt; Already Registered? Login</a>
+                        <a href="/pgadmissions/login">&gt; Already Registered?</a>
                     <#else>
                         <p>&nbsp;</p>
                     </#if>

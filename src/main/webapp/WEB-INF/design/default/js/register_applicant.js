@@ -1,25 +1,48 @@
 $(document).ready(function()
 {
-  
+    $('#email').qtip({
+        content: {
+            text: function(api) {
+                return $('#email_tooltip').attr('data-desc');
+            } 
+        },
+        position: {
+            my: 'bottom right', // Use the corner...
+            at: 'top center', // ...and opposite corner
+            viewport: $(window),
+            adjust: {
+                method: 'flip shift'
+            },
+            target: $("#email_tooltip")
+        },
+        style: 'tooltip-pgr ui-tooltip-shadow'
+    });
+    
 	// Clear form fields on focus
 	var el = $('input[type=text], input[type=password]');
-	var cssObjBefore = {'color': '#808080' }
-	var cssObjAfter = {'color': '#000' }
+	var cssObjBefore = {'color': '#808080' };
+	var cssObjAfter = {'color': '#000' };
 	
 	el.each(function(){
-		$(this).css(cssObjBefore);
+	    if (!$(this).is('[readonly]')) { 
+	        $(this).css(cssObjBefore);
+	    }
 	});
 	
 	el.focus(function(e) {
-		if (e.target.value == e.target.defaultValue)
-			e.target.value = '';
-		$(this).css(cssObjAfter);
+	    if (!$(this).is('[readonly]')) {
+    		if (e.target.value == e.target.defaultValue)
+    			e.target.value = '';
+    		$(this).css(cssObjAfter);
+	    }
 	});
+	
 	el.blur(function(e) {
-		if (e.target.value == '')
-			e.target.value = e.target.defaultValue;
+	    if (!$(this).is('[readonly]')) {
+    		if (e.target.value == '')
+    			e.target.value = e.target.defaultValue;
+	    }
 	});
-
 
 	$('#registration-box button').click(function()
 	{

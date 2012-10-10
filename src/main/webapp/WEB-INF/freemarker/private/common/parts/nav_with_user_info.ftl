@@ -20,9 +20,9 @@
 			        
 		<div class="user">
 			<#if model?? && model.user??>
-			${model.user.firstName!} ${' '} ${model.user.lastName!}
+            ${model.user.email!}
 			<#elseif user??>
-			${user.firstName!} ${' '} ${user.lastName!}
+			${user.email!}
 			</#if>
 			<a class="button user-logout" href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
 		</div>

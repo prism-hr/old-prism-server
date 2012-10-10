@@ -62,7 +62,10 @@
               <button name="commit" type="submit" value="Sign In" class="blue">Go</button>
             </form>
             
-            <a href="/pgadmissions/register">&gt; Register Today...</a>
+            <#if Session.applyRequest?has_content>
+                <a href="/pgadmissions/register">&gt; Not Registered? Signup</a>
+            </#if>
+            
             <a href="/pgadmissions/forgotPassword">&gt; Forgot Password</a>
             
         </section>

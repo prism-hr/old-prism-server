@@ -9,6 +9,7 @@
 		<!-- Styles for Login List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/register.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/jquery-ui-1.8.23.custom.css' />"/>
 		
 		<!-- Styles for login List Page -->
 		
@@ -59,47 +60,52 @@
 		      		<p>&gt; Register Today...</p>
 		            <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
 		            
-		            <input id="firstName" type="text" name="firstName" 
-		              value="<#if pendingUser.firstName?? && pendingUser.firstName?length &gt; 0>${pendingUser.firstName!"First Name"}<#else>First Name</#if>" <#if RequestParameters.activationCode??>disabled="disabled"</#if> />
+		            <input id="firstName" type="text" name="firstName" value="<#if pendingUser.firstName?? && pendingUser.firstName?length &gt; 0>${pendingUser.firstName!"First Name"}<#else>First Name</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 		            <@spring.bind "pendingUser.firstName" /> 
               		<#list spring.status.errorMessages as error>		                                		
                     	<span class="invalid">${error}</span>                    		
                     </#list>
 		            
-		            <input id="lastName" type="text" name="lastName" value="<#if pendingUser.lastName?? && pendingUser.lastName?length &gt; 0>${pendingUser.lastName!"Last Name"}<#else>Last Name</#if>" <#if RequestParameters.activationCode??>disabled="disabled"</#if> />
-		             <@spring.bind "pendingUser.lastName" /> 
-		           <#list spring.status.errorMessages as error>		                                		
-                    	<span class="invalid">${error}</span>                    		
+		            <input id="lastName" type="text" name="lastName" value="<#if pendingUser.lastName?? && pendingUser.lastName?length &gt; 0>${pendingUser.lastName!"Last Name"}<#else>Last Name</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+                    <@spring.bind "pendingUser.lastName" /> 
+                    <#list spring.status.errorMessages as error>		                                		
+                        <span class="invalid">${error}</span>                    		
                     </#list>
 		            
-		            <input id="email" type="text" name="email" value="${pendingUser.email!"Email Address"}" <#if RequestParameters.activationCode??>disabled="disabled"</#if>/>
-		             <@spring.bind "pendingUser.email" /> 
-		           <#list spring.status.errorMessages as error>		                                		
-                    	<span class="invalid">${error}</span>                    		
+		            <input id="email" type="text" name="email" value="<#if pendingUser.email?? && pendingUser.email?length &gt; 0>${pendingUser.email!"Email Address"}<#else>Email Address</#if>" <#if RequestParameters.activationCode?has_content>readonly="readonly"</#if> />
+		            <#if RequestParameters.activationCode?has_content>
+                        <span id="email_tooltip" data-desc="<@spring.message 'registration.email'/>"></span>
+                    </#if> 
+                    <@spring.bind "pendingUser.email" /> 
+                    <#list spring.status.errorMessages as error>		                                		
+                        <span class="invalid">${error}</span>                    		
                     </#list>
 		            
 		            <input id="password" type="password" name="password" value="default"/>
-		             <@spring.bind "pendingUser.password" /> 
+                    <@spring.bind "pendingUser.password" /> 
 		        	<#list spring.status.errorMessages as error>		                                		
-                    	<span class="invalid">${error}</span>                    		
+                        <span class="invalid">${error}</span>                    		
                     </#list>
 		            
 		            <input id="confirmPassword" type="password" name="confirmPassword" value="default"/>
-		             <@spring.bind "pendingUser.confirmPassword" /> 
+                    <@spring.bind "pendingUser.confirmPassword" /> 
 		            <#list spring.status.errorMessages as error>		                                		
                     	<span class="invalid">${error}</span>                    		
                     </#list>
 		            
-		            
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		      	</form>
 		      	
-		      	<#if RequestParameters.activationCode??>
+		      	<#if RequestParameters.activationCode?has_content>
 		      	   <p>&nbsp;</p>
                 <#else>
-                    <a href="/pgadmissions/login">&gt; Back to Login</a>
+                    <#if Session.applyRequest?has_content>
+                        <a href="/pgadmissions/login">&gt; Already Registered? Login</a>
+                    <#else>
+                        <p>&nbsp;</p>
+                    </#if>
                 </#if>
-		      	
+		    
 		    </section>
 		
 		  </div>
@@ -110,6 +116,7 @@
 		
 		<!-- Scripts -->
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/register_applicant.js'/>"></script>

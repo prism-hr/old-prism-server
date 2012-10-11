@@ -43,7 +43,7 @@
 							<#if  !referee.user.enabled>
 		                      	href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}&directToUrl=${"/referee/addReferences?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
 		                    <#else>
-		                      	href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}"
+		                      	href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode!}"
 		                    </#if>
 							
 							title="Provide Reference">

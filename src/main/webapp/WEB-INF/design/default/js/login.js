@@ -1,23 +1,28 @@
 $(document).ready(function()
 {
-  
 	// Clear form fields on focus
 	var el = $('input[type=text], input[type=password]');
-	var cssObjBefore = {'color': '#808080' }
-	var cssObjAfter = {'color': '#000' }
+	var cssObjBefore = {'color': '#808080' };
+	var cssObjAfter = {'color': '#000' };
 	
 	el.each(function(){
-		$(this).css(cssObjBefore);
+	    if (!$(this).is('[readonly]')) {
+	        $(this).css(cssObjBefore);
+	    }
 	});
 	
 	el.focus(function(e) {
-		if (e.target.value == e.target.defaultValue)
-			e.target.value = '';
-		$(this).css(cssObjAfter);
+	    if (!$(this).is('[readonly]')) {
+    		if (e.target.value == e.target.defaultValue)
+    			e.target.value = '';
+    		$(this).css(cssObjAfter);
+	    }
 	});
 	el.blur(function(e) {
-		if (e.target.value == '')
-			e.target.value = e.target.defaultValue;
+	    if (!$(this).is('[readonly]')) {
+    		if (e.target.value == '')
+    			e.target.value = e.target.defaultValue;
+	    }
 	}); 
 	
 	

@@ -37,7 +37,7 @@
 		                  <td background="button-centre.gif" bgcolor="#003399" style="background: #003399 url(${host}/pgadmissions/design/default/images/email/button-centre.gif) repeat-x;" align="center">
 		                    <font face="Arial, Helvetica, sans-serif" size="2">
 		                      <a style="color: #FFFFFF; text-decoration: none; font-size:0.9em" 
-		                      	href="${host}/pgadmissions/referee/addReferences?applicationId=${referee.currentReferee.application.applicationNumber}"><b>Add Reference</b></a>
+		                      	href="${host}/pgadmissions/referee/addReferences?applicationId=${referee.currentReferee.application.applicationNumber}&activationCode=${referee.user.activationCode!}"><b>Add Reference</b></a>
 		                    </font>
 		                  </td>
 		                  <td width="10"><img src="${host}/pgadmissions/design/default/images/email/button-right.gif" width="13" height="29" alt="" /></td>

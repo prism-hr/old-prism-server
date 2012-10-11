@@ -29,7 +29,7 @@
 
 			        <p>
 			          <!-- Button -->
-						<a style="text-decoration:none;" href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View/Update Application">
+						<a style="text-decoration:none;" href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}&activationCode=${application.applicant.activationCode}" title="View/Update Application">
 			            	<img border="0" style="border: none;" width="193" height="36" alt="View/Update Application" src="${host}/pgadmissions/design/default/images/email/view_update_app.png" />
 			          	</a>
 			        </p>

@@ -33,7 +33,7 @@
 								<#if !interviewer.user.enabled>
 			                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}&directToUrl=${"/interviewFeedback?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
 			                      <#else>
-			                      		href="${host}/pgadmissions/interviewFeedback?applicationId=${application.applicationNumber}"
+			                      		href="${host}/pgadmissions/interviewFeedback?applicationId=${application.applicationNumber}&activationCode=${interviewer.user.activationCode}"
 			                      </#if>
 								 title="Provide Feedback">
 			            	<img border="0" style="border: none;" width="150" height="36" alt="Provide Feedback" src="${host}/pgadmissions/design/default/images/email/provide_feedback.png" />

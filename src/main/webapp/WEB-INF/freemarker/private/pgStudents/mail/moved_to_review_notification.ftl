@@ -37,7 +37,7 @@
 
 			        <p>
 			          <!-- Button -->
-						<a style="text-decoration:none;" href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View Application">
+						<a style="text-decoration:none;" href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}&activationCode=${application.applicant.activationCode}" title="View Application">
 			            	<img border="0" style="border: none;" width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png" />
 			          	</a>
 			        </p>

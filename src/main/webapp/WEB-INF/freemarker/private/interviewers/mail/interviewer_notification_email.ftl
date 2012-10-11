@@ -50,7 +50,7 @@
 				                      <#if !interviewer.user.enabled>
 				                      		href="${host}/pgadmissions/register?activationCode=${interviewer.user.activationCode}&directToUrl=${"/application?view=view&applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
 				                      <#else>
-				                      		href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}"
+				                      		href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}&activationCode=${interviewer.user.activationCode}"
 				                      </#if>								
 									 
 									  title="View Application">

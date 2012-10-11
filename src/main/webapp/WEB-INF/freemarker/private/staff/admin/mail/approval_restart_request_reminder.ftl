@@ -33,7 +33,7 @@
 
 					<p>
 			        	<!-- Button -->
-						<a style="text-decoration:none;" href="${host}/pgadmissions/approval/moveToApproval?applicationId=${application.applicationNumber}" title="Restart Approval">
+						<a style="text-decoration:none;" href="${host}/pgadmissions/approval/moveToApproval?applicationId=${application.applicationNumber}&activationCode=${admin.activationCode}" title="Restart Approval">
 							<img border="0" style="border: none;" width="150" height="36" alt="Restart Approval" src="${host}/pgadmissions/design/default/images/email/restart_approval.png">
 						</a>
 					</p>

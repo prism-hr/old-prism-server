@@ -227,7 +227,7 @@ public class RegisterControllerTest {
 		EasyMock.replay(userServiceMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
-		assertEquals("redirect:/applications", view);
+		assertEquals("redirect:/applications?activationCode="+activationCode, view);
 		assertTrue(user.isEnabled());
 	}
 
@@ -241,7 +241,7 @@ public class RegisterControllerTest {
 		EasyMock.replay(userServiceMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
-		assertEquals("redirect:/directLink", view);
+		assertEquals("redirect:/directLink?activationCode="+activationCode, view);
 		assertTrue(user.isEnabled());
 	}
 	
@@ -267,7 +267,7 @@ public class RegisterControllerTest {
         
         EasyMock.verify(userServiceMock);
         
-        assertEquals("redirect:/directLink", view);
+        assertEquals("redirect:/directLink?activationCode="+activationCode, view);
         
         assertTrue(user.isEnabled());
     }	
@@ -290,7 +290,7 @@ public class RegisterControllerTest {
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
-		assertEquals("redirect:/application?applicationId=ABC", view);
+		assertEquals("redirect:/application?applicationId=ABC&activationCode="+activationCode, view);
 		assertTrue(user.isEnabled());
 	}
 
@@ -312,7 +312,7 @@ public class RegisterControllerTest {
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
-		assertEquals("redirect:/application?applicationId=ABC", view);
+		assertEquals("redirect:/application?applicationId=ABC&activationCode="+activationCode, view);
 		assertTrue(user.isEnabled());
 	}
 
@@ -333,7 +333,7 @@ public class RegisterControllerTest {
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
-		assertEquals("redirect:/application?applicationId=ABC", view);
+		assertEquals("redirect:/application?applicationId=ABC&activationCode="+activationCode, view);
 		assertTrue(user.isEnabled());
 	}
 
@@ -354,7 +354,7 @@ public class RegisterControllerTest {
 		EasyMock.replay(userServiceMock, applicationsServiceMock, programServiceMock, qureyStringParserMock);
 		String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
 		EasyMock.verify(userServiceMock);
-		assertEquals("redirect:/application?applicationId=ABC", view);
+		assertEquals("redirect:/application?applicationId=ABC&activationCode="+activationCode, view);
 		assertTrue(user.isEnabled());
 	}
 

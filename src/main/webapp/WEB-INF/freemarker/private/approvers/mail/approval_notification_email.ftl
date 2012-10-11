@@ -28,7 +28,7 @@
         </p>
         <p>
           <!-- Button -->
-			<a style="text-decoration:none;" href="${host}/pgadmissions/progress/getPage?applicationId=${application.applicationNumber}" title="Evaluate Application">
+			<a style="text-decoration:none;" href="${host}/pgadmissions/progress/getPage?applicationId=${application.applicationNumber}&activationCode=${user.activationCode}" title="Evaluate Application">
             	<img border="0" style="border: none;" width="168" height="36" alt="Evaluate Application" src="${host}/pgadmissions/design/default/images/email/evaluate_app.png" />
           	</a>
         </p>
@@ -41,7 +41,7 @@
         </p>
         <p>
           <!-- Button -->
-          <a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}" title="View Application">
+          <a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}&activationCode=${user.activationCode}" title="View Application">
             <img width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png" />
           </a>
         </p>

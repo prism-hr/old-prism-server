@@ -54,19 +54,25 @@
           <form id="loginForm" method="post" action="/pgadmissions/j_spring_security_check">
               <p>&gt; Login</p>
               
-              <input type="text" id="username_or_email" name="j_username" placeholder="Email address" value="Email address" />
+              <#if Session.loginUserEmail?has_content>
+                <input type="text" id="username_or_email" name="j_username" value="${Session.loginUserEmail}" readonly="readonly" />
+              <#else>
+                <input type="text" id="username_or_email" name="j_username" placeholder="Email address" value="Email address" />
+              </#if>
+              
               <input type="password" id="password" name="j_password" placeholder="Password" value="Password" />
+
               <#if RequestParameters.login_error??>
-              <span class="invalid">Invalid username/password combination.</span>
+                  <span class="invalid">Invalid username/password combination.</span>
               </#if>
               <button name="commit" type="submit" value="Sign In" class="blue">Go</button>
-            </form>
+        </form>
             
-            <#if Session.applyRequest?has_content>
-                <a href="/pgadmissions/register">&gt; Not Registered?</a>
-            </#if>
+        <#if Session.applyRequest?has_content>
+            <a href="/pgadmissions/register">&gt; Not Registered?</a>
+        </#if>
             
-            <a href="/pgadmissions/forgotPassword">&gt; Forgot Password</a>
+        <a href="/pgadmissions/forgotPassword">&gt; Forgot Password</a>
             
         </section>
     

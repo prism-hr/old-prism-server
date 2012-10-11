@@ -58,7 +58,7 @@ public class DeclineController {
 		    if (reviewer != null && !reviewer.isEnabled()) {
                 return "redirect:/register?activationCode=" + reviewer.getActivationCode() + "&directToUrl=/reviewFeedback?applicationId=" + application.getApplicationNumber();
 		    } else {
-		        return "redirect:/reviewFeedback?applicationId=" + application.getApplicationNumber();
+		        return "redirect:/reviewFeedback?applicationId=" + application.getApplicationNumber() + "&activationCode=" + reviewer.getActivationCode();
 		    }
 		} else {
 		    modelMap.put("message", "Please confirm that you wish to decline to provide a review. <b>You will not be able to reverse this decision.</b>");
@@ -97,7 +97,7 @@ public class DeclineController {
             if (referee != null && !referee.getUser().isEnabled()) {
                 return "redirect:/register?activationCode=" + referee.getUser().getActivationCode() + "&directToUrl=/referee/addReferences?applicationId=" + applicationForm.getApplicationNumber();
             } else {
-                return "redirect:/referee/addReferences?applicationId=" + applicationForm.getApplicationNumber();
+                return "redirect:/referee/addReferences?applicationId=" + applicationForm.getApplicationNumber() + "&activationCode=" + referee.getUser().getActivationCode();
             }
 	    } else {
 	        modelMap.put("message", "Please confirm that you wish to decline to provide a reference. <b>You will not be able to reverse this decision.</b>");

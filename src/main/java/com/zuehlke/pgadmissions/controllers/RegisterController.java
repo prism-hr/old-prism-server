@@ -115,13 +115,21 @@ public class RegisterController {
 		if (user.getOriginalApplicationQueryString() != null) {
 			redirectView = createApplicationAndReturnApplicationViewValue(user, redirectView);
 		} else if (user.getDirectToUrl() != null) {
-		    redirectView = redirectView + user.getDirectToUrl();
+		    redirectView += user.getDirectToUrl();
 		} else if (StringUtils.isNotBlank((String) request.getSession().getAttribute("directToUrl"))) {
-		    redirectView = redirectView + (String) request.getSession().getAttribute("directToUrl");
+		    redirectView += (String) request.getSession().getAttribute("directToUrl");
 		} else {
-		    redirectView = redirectView + "/applications";
+		    redirectView += "/applications";
+		}
+		
+		if (StringUtils.contains(redirectView, "?")) {
+		    redirectView += "&";
+		} else {
+		    redirectView += "?";
 		}
 
+		redirectView += "activationCode=" + user.getActivationCode();
+		
 		return redirectView;
 	}
 

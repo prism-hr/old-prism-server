@@ -383,7 +383,12 @@ div.ajax {
 }
 
 /* Custom tooltip style */
-.hint { background: url(../../images/button_question.png) no-repeat; width: 20px; height: 20px; float: left; margin-right: 5px; }
+.hint { 
+    background: url(../../images/button_question.png) 
+    no-repeat; width: 25px; height: 20px; 
+    float: left; margin-left: 10px;
+    margin-top: 0.1em; 
+}
 .tooltip-pgr .ui-tooltip-titlebar, .tooltip-pgr .ui-tooltip-content {
   border: 2px solid #FFF !important;
   background-color: #007BC4 !important;

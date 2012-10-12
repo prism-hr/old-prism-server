@@ -72,7 +72,13 @@
                         <span class="invalid">${error}</span>                    		
                     </#list>
 		            
+		            <#if RequestParameters.activationCode?has_content>
+		            <div id="email_tooltip_input" name="email_tooltip_input" data-desc="<@spring.message 'registration.email'/>" >
+		            </#if>
 		            <input id="email" type="text" name="email" value="<#if pendingUser.email?? && pendingUser.email?length &gt; 0>${pendingUser.email!"Email Address"}<#else>Email Address</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+		            <#if RequestParameters.activationCode?has_content>
+                    </div>
+                    </#if>
 		            <@spring.bind "pendingUser.email" /> 
                     <#list spring.status.errorMessages as error>		                                		
                         <span class="invalid">${error}</span>                    		
@@ -92,7 +98,7 @@
 		            
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		        	<#if RequestParameters.activationCode?has_content>
-                        <div class="hint" style="bottom: 6px; position: absolute; right: 38px; width: 50px;" id="email_tooltip" data-desc="<@spring.message 'registration.email'/>"></div>
+                        <div class="hint" style="bottom: 6px; position: absolute; right: 44px; width: 50px;" id="email_tooltip" data-desc="<@spring.message 'registration.email'/>" ></div>
                     </#if> 
 		      	</form>
 		      	

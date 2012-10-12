@@ -15,6 +15,30 @@ $(document).ready(function()
             },
             target: $("#email_tooltip")
         },
+        show: {
+            solo: true
+        },
+        style: 'tooltip-pgr ui-tooltip-shadow'
+    });
+    
+    $('#email_tooltip_input').qtip({
+        content: {
+            text: function(api) {
+                return $('#email_tooltip_input').attr('data-desc');
+            } 
+        },
+        position: {
+            my: 'bottom right', // Use the corner...
+            at: 'top center', // ...and opposite corner
+            viewport: $(window),
+            adjust: {
+                method: 'flip shift'
+            },
+            target: $("#email_tooltip_input")
+        },
+        show: {
+            solo: true
+        },
         style: 'tooltip-pgr ui-tooltip-shadow'
     });
     

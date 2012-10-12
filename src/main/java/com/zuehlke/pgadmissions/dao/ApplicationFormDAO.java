@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -151,26 +152,19 @@ public class ApplicationFormDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
-		if (user.isInRole(Authority.APPLICANT)) {
-			// the only other role permitted if you are an applicant
-			// is referee
-			List<ApplicationForm> applications = applicationsOfWhichApplicant(user);
-			List<ApplicationForm> applicationsOfWhichReferee = applicationsOfWhichReferee(user);
-			for (ApplicationForm applicationForm : applicationsOfWhichReferee) {
-				if (!applications.contains(applicationForm)) {
-					applications.add(applicationForm);
-				}
-			}
-			return applications;
+	    LinkedHashSet<ApplicationForm> apps = new LinkedHashSet<ApplicationForm>();
 
+	    if (user.isInRole(Authority.APPLICANT)) {
+			apps.addAll(applicationsOfWhichApplicant(user));
+			apps.addAll(applicationsOfWhichReferee(user));
 		}
+
 		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-			return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-					.add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-					.list();
+            return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                    .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		}
 
-		List<ApplicationForm> apps = new ArrayList<ApplicationForm>();
 		if (user.isInRole(Authority.REFEREE)) {
 			if (!applicationsOfWhichReferee(user).isEmpty()) {
 				apps.addAll(applicationsOfWhichReferee(user));
@@ -178,50 +172,22 @@ public class ApplicationFormDAO {
 		}
 
 		if (!user.getProgramsOfWhichAdministrator().isEmpty()) {
-			List<ApplicationForm> submittedApplicationsInProgramsOfWhichAdmin = getSubmittedApplicationsInProgramsOfWhichAdmin(user);
-			for (ApplicationForm applicationForm : submittedApplicationsInProgramsOfWhichAdmin) {
-				if (!apps.contains(applicationForm)) {
-					apps.add(applicationForm);
-				}
-			}
-
+			apps.addAll(getSubmittedApplicationsInProgramsOfWhichAdmin(user));
 		}
-		List<ApplicationForm> applicationsOfWhichApplicationAdministrator = getSubmittedApplicationsOfWhichApplicationAdministrator(user);
-		for (ApplicationForm applicationForm : applicationsOfWhichApplicationAdministrator) {
-			if (!apps.contains(applicationForm)) {
-				apps.add(applicationForm);
-			}
-		}
+		
+		apps.addAll(getSubmittedApplicationsOfWhichApplicationAdministrator(user));
+		
 		if (!user.getProgramsOfWhichApprover().isEmpty()) {
-			List<ApplicationForm> approverApps = getApprovedApplicationsInProgramsOfWhichApprover(user);
-			for (ApplicationForm applicationForm : approverApps) {
-				if (!apps.contains(applicationForm)) {
-					apps.add(applicationForm);
-				}
-			}
+			apps.addAll(getApprovedApplicationsInProgramsOfWhichApprover(user));
 		}
 
-		List<ApplicationForm> reviewerApps = getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(user);
-		for (ApplicationForm applicationForm : reviewerApps) {
-			if (!apps.contains(applicationForm)) {
-				apps.add(applicationForm);
-			}
-		}
-
-		List<ApplicationForm> interviewerApps = getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(user);
-		for (ApplicationForm applicationForm : interviewerApps) {
-			if (!apps.contains(applicationForm)) {
-				apps.add(applicationForm);
-			}
-		}
-
-		List<ApplicationForm> supervisorApps = getApplicationsCurrentlyInApprovalOrApprovedOfWhichSupervisorOfLatestApprovalRound(user);
-		for (ApplicationForm applicationForm : supervisorApps) {
-			if (!apps.contains(applicationForm)) {
-				apps.add(applicationForm);
-			}
-		}
-		return apps;
+		apps.addAll(getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(user));
+		
+		apps.addAll(getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(user));
+		
+		apps.addAll(getApplicationsCurrentlyInApprovalOrApprovedOfWhichSupervisorOfLatestApprovalRound(user));
+		
+		return new ArrayList<ApplicationForm>(apps);
 	}
 
 	@SuppressWarnings("unchecked")

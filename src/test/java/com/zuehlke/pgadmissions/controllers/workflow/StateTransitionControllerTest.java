@@ -138,7 +138,7 @@ public class StateTransitionControllerTest {
 			@Override
 			public ApplicationForm getApplicationForm(String application) {
 
-				if (application == applicationNumber) {
+				if (application.equals(applicationNumber)) {
 					return applicationForm;
 				}
 				return null;
@@ -166,7 +166,7 @@ public class StateTransitionControllerTest {
 			@Override
 			public ApplicationForm getApplicationForm(String application) {
 
-				if (application == applicationNumber) {
+				if (application.equals(applicationNumber)) {
 					return applicationForm;
 				}
 				return null;

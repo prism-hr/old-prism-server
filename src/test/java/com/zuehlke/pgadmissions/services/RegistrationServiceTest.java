@@ -290,7 +290,7 @@ public class RegistrationServiceTest {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
-				if (expectedRecord == record && "queryString" == queryString) {
+				if (expectedRecord == record && "queryString".equals(queryString)) {
 					return newUser;
 				}
 				return null;
@@ -324,12 +324,11 @@ public class RegistrationServiceTest {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
-				if (expectedRecord == record && "queryString" == queryString) {
+				if (expectedRecord == record && "queryString".equals(queryString)) {
 					return newUser;
 				}
 				return null;
 			}
-
 		};
 
 		userDAOMock.save(newUser);

@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -40,8 +39,6 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 		document.setType(DocumentType.PERSONAL_STATEMENT);
 		sessionFactory.getCurrentSession().save(document);
 		flushAndClearSession();
-		
-		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		
 		DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);

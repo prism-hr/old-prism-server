@@ -42,6 +42,7 @@
 				<#include "/private/common/parts/nav_with_user_info.ftl"/>
 				<@header activeTab="account"/>
 				<input type="hidden" id="messageCode" value="${RequestParameters.messageCode!}"/>
+				<input type="hidden" id="messageCodeLink" value="${RequestParameters.messageCodeLink!}"/>
 					<!-- Main content area. -->
 					<article id="content" role="main">		    
 						

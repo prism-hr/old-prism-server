@@ -87,7 +87,7 @@ public class MoveToReviewControllerTest {
 		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
-				if(applicationId == "bob"){
+				if(applicationId.equals("bob")){
 					return application;
 				}
 				return null;
@@ -107,7 +107,7 @@ public class MoveToReviewControllerTest {
 		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
-				if(applicationId == "bob"){
+				if(applicationId.equals("bob")){
 					return application;
 				}
 				return null;

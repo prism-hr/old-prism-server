@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -65,7 +64,6 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
 		Qualification qualification = new QualificationBuilder().id(3).awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("")

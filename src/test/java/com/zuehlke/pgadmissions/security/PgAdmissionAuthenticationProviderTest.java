@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.security;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
@@ -24,22 +23,13 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class PgAdmissionAuthenticationProviderTest {
 
 	private PgAdmissionAuthenticationProvider authenticationProvider;
 	private UserDetailsService userDetailsServiceMock;
-
-	public String createHash(String password) throws NoSuchAlgorithmException {
-		MessageDigest md5 = MessageDigest.getInstance("MD5");
-		md5.update(password.getBytes());
-		byte byteData[] = md5.digest();
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++) {
-			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-		}
-		return sb.toString();
-	}
+	private EncryptionUtils encryptionUtilsMock;
 	
 	@Test
 	public void shouldSupportUsernamePasswordAuthenticationToken() {
@@ -50,9 +40,10 @@ public class PgAdmissionAuthenticationProviderTest {
 	public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
 		Role roleOne = new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).toRole();
 		Role roleTwo = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).toRole();
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password(createHash("secret")).roles(roleOne, roleTwo).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").roles(roleOne, roleTwo).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
-		EasyMock.replay(userDetailsServiceMock);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
+        EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
 
 		UsernamePasswordAuthenticationToken preProcessAuthenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");
 
@@ -70,7 +61,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = BadCredentialsException.class)
 	public void shouldThrowBadCredentialsExceptionForMismatchingPassword() throws NoSuchAlgorithmException {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password(createHash("secret")).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.replay(userDetailsServiceMock);
 
@@ -102,7 +93,8 @@ public class PgAdmissionAuthenticationProviderTest {
 	public void shouldThrowDisabledExceptionForDisabledAccount() {
 		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").enabled(false).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
-		EasyMock.replay(userDetailsServiceMock);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
+        EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");
 		authenticationProvider.authenticate(authenticationToken);
 	}
@@ -111,25 +103,28 @@ public class PgAdmissionAuthenticationProviderTest {
 	public void shouldThrowAccountExpiredExceptionForExpiredAccount() {
 		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").accountNonExpired(false).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
-		EasyMock.replay(userDetailsServiceMock);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
+        EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");
 		authenticationProvider.authenticate(authenticationToken);
 	}
 
 	@Test(expected = CredentialsExpiredException.class)
 	public void shouldThrowCredentialsExpiredExceptionForExpiredCredentials() throws NoSuchAlgorithmException {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password(createHash("secret")).credentialsNonExpired(false).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").credentialsNonExpired(false).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
-		EasyMock.replay(userDetailsServiceMock);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
+		EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");
 		authenticationProvider.authenticate(authenticationToken);
 	}
 
 	@Test(expected = LockedException.class)
 	public void shouldThrowLockedExceptionForLockedAccount() throws NoSuchAlgorithmException {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password(createHash("secret")).accountNonLocked(false).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").accountNonLocked(false).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
-		EasyMock.replay(userDetailsServiceMock);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
+        EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");
 		authenticationProvider.authenticate(authenticationToken);
 	}
@@ -137,6 +132,7 @@ public class PgAdmissionAuthenticationProviderTest {
 	@Before
 	public void setup() {
 		userDetailsServiceMock = EasyMock.createMock(UserDetailsService.class);
-		authenticationProvider = new PgAdmissionAuthenticationProvider(userDetailsServiceMock);
+		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
+		authenticationProvider = new PgAdmissionAuthenticationProvider(userDetailsServiceMock, encryptionUtilsMock);
 	}
 }

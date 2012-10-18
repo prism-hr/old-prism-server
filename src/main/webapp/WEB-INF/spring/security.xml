@@ -39,12 +39,11 @@
 		<authentication-provider ref="authenticationProvider" />
 	</authentication-manager>
 
-	<beans:bean id="authenticationProvider"
-		class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider"
-		autowire="constructor" />
-	<beans:bean id="userDetailsService"
-		class="com.zuehlke.pgadmissions.security.PgAdmissionUserDetailsService"
-		autowire="constructor" />
-		
-	<!-- <mvc:view-controller path="login" view-name="public/login/login_page" /> -->
+	<beans:bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider" autowire-candidate="false">
+        <beans:constructor-arg index="0" ref="userDetailsService" />
+        <beans:constructor-arg index="1" ref="authenticationEncryptionUtils"/>
+    </beans:bean>
+    <beans:bean id="userDetailsService" class="com.zuehlke.pgadmissions.security.PgAdmissionUserDetailsService" />
+    <beans:bean id="authenticationEncryptionUtils" class="com.zuehlke.pgadmissions.utils.EncryptionUtils" autowire-candidate="false" />		
+	
 </beans:beans>

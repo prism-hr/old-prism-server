@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.security;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.springframework.security.authentication.AccountExpiredException;
@@ -16,12 +15,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+
 public class PgAdmissionAuthenticationProvider implements AuthenticationProvider {
 
 	private final UserDetailsService userDetailsService;
+	
+	private final EncryptionUtils encryptionUtils;
 
-	public PgAdmissionAuthenticationProvider(UserDetailsService userDetailsService) {
+	public PgAdmissionAuthenticationProvider(UserDetailsService userDetailsService, EncryptionUtils encryptionUtils) {
 		this.userDetailsService = userDetailsService;
+		this.encryptionUtils = encryptionUtils;
 	}
 
 	@Override
@@ -42,7 +46,6 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 			e.printStackTrace();
 		}
 		return authentication;
-
 	}
 
 	private UserDetails findAndValidateUser(Authentication preProcessToken) throws NoSuchAlgorithmException {
@@ -55,7 +58,7 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 		if (!userDetails.isAccountNonExpired()) {
 			throw new AccountExpiredException("account \"" + username + "\" expired");
 		}
-		if (!userDetails.getPassword().equals(createHash((String) preProcessToken.getCredentials()))) {
+		if (!userDetails.getPassword().equals(encryptionUtils.getMD5Hash((String) preProcessToken.getCredentials()))) {
 			throw new BadCredentialsException("invalid username/password combination");
 		}
 		if (!userDetails.isAccountNonLocked()) {
@@ -66,21 +69,9 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 		}
 		return userDetails;
 	}
-
-	public String createHash(String password) throws NoSuchAlgorithmException {
-		MessageDigest md5 = MessageDigest.getInstance("MD5");
-		md5.update(password.getBytes());
-		byte byteData[] = md5.digest();
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++) {
-			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-		}
-		return sb.toString();
-	}
 	
 	@Override
 	public boolean supports(Class<? extends Object> clazz) {
 		return UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz);
 	}
-
 }

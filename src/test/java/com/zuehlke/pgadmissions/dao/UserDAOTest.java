@@ -581,6 +581,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		
 		assertFalse(users.contains(user));
 	}
+	
 	@Test
 	public void shouldReturnUserWhoIsReviewerOfLatestRoundOfReviewsWhoAreWillingToInterviewForOtherApplication(){
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("somethingelse@test.com").username("somethingelse").password("password")
@@ -604,6 +605,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		
 		assertFalse(users.contains(user));
 	}
+	
 	@Test
 	public void shouldReturnUserIfSupervisorOfAnyApprovalRound(){
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("somethingelse@test.com").username("somethingelse").password("password")
@@ -622,9 +624,80 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		List<RegisteredUser> users = userDAO.getAllPreviousSupervisorsOfProgram(program);
 		assertEquals(1, users.size());
 		assertTrue(users.contains(user));
-		
-		
 	}
+	
+	@Test
+	public void shouldSaveAndLinkTwoUserAccounts() throws Exception {
+        RegisteredUser user1 = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("jane@doe.com")
+                .username("janeUsername").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(true).toUser();
+        
+        RegisteredUser user2 = new RegisteredUserBuilder().firstName("John").lastName("Doe").email("john@doe.com")
+                .username("johnUsername").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(true).toUser();
+        
+        save(user1, user2);
+        flushAndClearSession();
+        
+        user1 = userDAO.getUserByEmail(user1.getEmail());
+        user2 = userDAO.getUserByEmail(user2.getEmail());
+
+        user1.addLinkedAccount(user2);
+        user2.addLinkedAccount(user1);
+
+        save(user1, user2);
+	    flushAndClearSession();
+
+        user1 = userDAO.getUserByEmail(user1.getEmail());
+        user2 = userDAO.getUserByEmail(user2.getEmail());
+	    
+	    assertFalse(user1.getLinkedAccounts().isEmpty());
+	    assertFalse(user2.getLinkedAccounts().isEmpty());
+	    assertEquals(1, user1.getLinkedAccounts().size());
+	    assertEquals(1, user2.getLinkedAccounts().size());
+	    assertEquals(user1.getLinkedAccounts().get(0), user2);
+	    assertEquals(user2.getLinkedAccounts().get(0), user1);
+	}
+	
+	@Test
+    public void shouldUpdatedAndRemoveLinkedUserAccounts() throws Exception {
+        RegisteredUser user1 = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("jane@doe.com")
+                .username("janeUsername").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(true).toUser();
+        
+        RegisteredUser user2 = new RegisteredUserBuilder().firstName("John").lastName("Doe").email("john@doe.com")
+                .username("johnUsername").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(true).toUser();
+        
+        save(user1, user2);
+        flushAndClearSession();
+        
+        user1 = userDAO.getUserByEmail(user1.getEmail());
+        user2 = userDAO.getUserByEmail(user2.getEmail());
+
+        user1.addLinkedAccount(user2);
+        user2.addLinkedAccount(user1);
+
+        save(user1, user2);
+        flushAndClearSession();
+
+        user1 = userDAO.getUserByEmail(user1.getEmail());
+        user2 = userDAO.getUserByEmail(user2.getEmail());
+        
+        user1.removeLinkedAccount(user2);
+        user2.removeLinkedAccount(user1);
+        
+        save(user1, user2);
+        flushAndClearSession();
+        
+        user1 = userDAO.getUserByEmail(user1.getEmail());
+        user2 = userDAO.getUserByEmail(user2.getEmail());
+        
+        assertTrue(user1.getLinkedAccounts().isEmpty());
+        assertTrue(user2.getLinkedAccounts().isEmpty());
+        assertEquals(0, user1.getLinkedAccounts().size());
+        assertEquals(0, user2.getLinkedAccounts().size());
+    }
 	
 	@Before
 	public void setup() {

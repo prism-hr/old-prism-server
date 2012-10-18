@@ -77,7 +77,7 @@ public class ApprovalControllerTest {
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
-				if (applicationId == "5") {
+				if (applicationId.equals("5")) {
 					return applicationForm;
 				}
 				return null;
@@ -111,7 +111,7 @@ public class ApprovalControllerTest {
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
-				if (applicationId == "5") {
+				if (applicationId.equals("5")) {
 					return applicationForm;
 				}
 				return null;
@@ -138,7 +138,7 @@ public class ApprovalControllerTest {
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
-				if (applicationId == "bob") {
+				if (applicationId.equals("bob")) {
 					return application;
 				}
 				return null;
@@ -168,7 +168,7 @@ public class ApprovalControllerTest {
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
-				if (applicationId == "bob") {
+				if (applicationId.equals("bob")) {
 					return application;
 				}
 				return null;
@@ -192,7 +192,7 @@ public class ApprovalControllerTest {
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
-				if (applicationId == "bob") {
+				if (applicationId.equals("bob")) {
 					return application;
 				}
 				return null;

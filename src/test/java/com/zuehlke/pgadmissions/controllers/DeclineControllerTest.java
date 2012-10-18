@@ -104,14 +104,14 @@ public class DeclineControllerTest {
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public RegisteredUser getReviewer(String activationCode){
-				if("5" == activationCode){
+				if("5".equals(activationCode)){
 					return reviewer;
 				}
 				return null;
 			}
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId){
-				if(applicationId == "ABC"){
+				if(applicationId.equals("ABC")){
 					return applicationForm;
 				}
 				return null;
@@ -133,14 +133,14 @@ public class DeclineControllerTest {
         controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
             @Override
             public RegisteredUser getReviewer(String activationCode){
-                if("5" == activationCode){
+                if("5".equals(activationCode)){
                     return reviewer;
                 }
                 return null;
             }
             @Override
             public ApplicationForm getApplicationForm(String applicationId){
-                if(applicationId == "ABC"){
+                if(applicationId.equals("ABC")){
                     return applicationForm;
                 }
                 return null;
@@ -157,14 +157,14 @@ public class DeclineControllerTest {
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public RegisteredUser getReviewer(String activationCode){
-				if("5" == activationCode){
+				if("5".equals(activationCode)){
 					return reviewer;
 				}
 				return null;
 			}
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId){
-				if(applicationId == "ABC"){
+				if(applicationId.equals("ABC")){
 					return applicationForm;
 				}
 				return null;
@@ -186,14 +186,14 @@ public class DeclineControllerTest {
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public RegisteredUser getReviewer(String activationCode){
-				if("5" == activationCode){
+				if("5".equals(activationCode)){
 					return reviewer;
 				}
 				return null;
 			}
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId){
-				if(applicationId == "ABC"){
+				if(applicationId.equals("ABC")){
 					return applicationForm;
 				}
 				return null;
@@ -215,14 +215,14 @@ public class DeclineControllerTest {
         controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
             @Override
             public Referee getReferee(String activationCode, ApplicationForm app) {
-                if("5" == activationCode && applicationForm == app){
+                if("5".equals(activationCode) && applicationForm == app){
                     return referee;
                 }
                 return null;
             }
             @Override
             public ApplicationForm getApplicationForm(String applicationId){
-                if(applicationId == "ABC"){
+                if(applicationId.equals("ABC")){
                     return applicationForm;
                 }
                 return null;
@@ -245,14 +245,14 @@ public class DeclineControllerTest {
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public Referee getReferee(String activationCode, ApplicationForm app) {
-				if("5" == activationCode && applicationForm == app){
+				if("5".equals(activationCode) && applicationForm == app){
 					return referee;
 				}
 				return null;
 			}
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId){
-				if(applicationId == "ABC"){
+				if(applicationId.equals("ABC")){
 					return applicationForm;
 				}
 				return null;

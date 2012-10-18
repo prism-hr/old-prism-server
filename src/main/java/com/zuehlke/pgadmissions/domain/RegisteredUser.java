@@ -92,7 +92,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "registered_user_id")
 	private List<Referee> referees = new ArrayList<Referee>();
-
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinTable(name = "USER_ACCOUNT_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "REGISTERED_USER_LINK_ID") })
+	private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
+	
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
@@ -792,4 +797,23 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return false;
 	}
+
+    public List<RegisteredUser> getLinkedAccounts() {
+        return linkedAccounts;
+    }
+
+    public void setLinkedAccounts(List<RegisteredUser> linkedAccounts) {
+        this.linkedAccounts = linkedAccounts;
+    }
+    
+    public boolean addLinkedAccount(RegisteredUser user) {
+        if (!this.linkedAccounts.contains(user)) {
+            return this.linkedAccounts.add(user);
+        }
+        return false;
+    }
+    
+    public boolean removeLinkedAccount(RegisteredUser user) {
+        return this.linkedAccounts.remove(user);
+    }
 }

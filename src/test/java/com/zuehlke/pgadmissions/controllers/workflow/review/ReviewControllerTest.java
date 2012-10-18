@@ -42,7 +42,7 @@ public class ReviewControllerTest {
 		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
-				if (applicationId == "5") {
+				if (applicationId.equals("5")) {
 					return applicationForm;
 				}
 				return null;
@@ -113,7 +113,7 @@ public class ReviewControllerTest {
 		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
-				if (applicationId == "5") {
+				if (applicationId.equals("5")) {
 					return applicationForm;
 				}
 				return null;

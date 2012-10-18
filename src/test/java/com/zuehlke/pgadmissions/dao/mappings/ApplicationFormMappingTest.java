@@ -17,7 +17,6 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
-import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.Address;
@@ -233,8 +232,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		// sessionFactory.getCurrentSession().save(application);
 		// Integer id = application.getId();
 		// flushAndClearSession();
-		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
-		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
 		 DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")

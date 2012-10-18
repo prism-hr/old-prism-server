@@ -13,7 +13,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -91,7 +90,7 @@ public class ProgrammeDetailsControllerTest {
 
 					@Override
 					public ApplicationForm getApplicationForm(String id) {
-						if(applicationNumber == id){
+						if(applicationNumber.equals(id)){
 							return applicationForm;
 						}
 						return null;
@@ -231,12 +230,10 @@ public class ProgrammeDetailsControllerTest {
 				.toProgrammeDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
-		ModelMap modelMap = new ModelMap();
 		EasyMock.replay(programmeDetailsServiceMock, errors);
 		String view = controller.editProgrammeDetails(programmeDetails, errors);
 		EasyMock.verify(programmeDetailsServiceMock);
 		assertEquals("/private/pgStudents/form/components/programme_details", view);
-	
 	}
 	
 

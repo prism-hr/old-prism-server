@@ -60,20 +60,32 @@
 		      		<p>&gt; Register Today...</p>
 		            <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
 		            
+		            <#if RequestParameters.activationCode?has_content>
+                    <div id="firstName_tooltip_input" name="firstName_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
+                    </#if>
 		            <input id="firstName" type="text" name="firstName" value="<#if pendingUser.firstName?? && pendingUser.firstName?length &gt; 0>${pendingUser.firstName!"First Name"}<#else>First Name</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+		            <#if RequestParameters.activationCode?has_content>
+                    </div>
+                    </#if>
 		            <@spring.bind "pendingUser.firstName" /> 
               		<#list spring.status.errorMessages as error>		                                		
                     	<span class="invalid">${error}</span>                    		
                     </#list>
 		            
+		            <#if RequestParameters.activationCode?has_content>
+                    <div id="lastName_tooltip_input" name="lastName_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
+                    </#if>
 		            <input id="lastName" type="text" name="lastName" value="<#if pendingUser.lastName?? && pendingUser.lastName?length &gt; 0>${pendingUser.lastName!"Last Name"}<#else>Last Name</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+                    <#if RequestParameters.activationCode?has_content>
+                    </div>
+                    </#if>
                     <@spring.bind "pendingUser.lastName" /> 
                     <#list spring.status.errorMessages as error>		                                		
                         <span class="invalid">${error}</span>                    		
                     </#list>
 		            
 		            <#if RequestParameters.activationCode?has_content>
-		            <div id="email_tooltip_input" name="email_tooltip_input" data-desc="<@spring.message 'registration.email'/>" >
+		            <div id="email_tooltip_input" name="email_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
 		            </#if>
 		            <input id="email" type="text" name="email" value="<#if pendingUser.email?? && pendingUser.email?length &gt; 0>${pendingUser.email!"Email Address"}<#else>Email Address</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 		            <#if RequestParameters.activationCode?has_content>
@@ -96,10 +108,7 @@
                     	<span class="invalid">${error}</span>                    		
                     </#list>
 		            
-		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
-		        	<#if RequestParameters.activationCode?has_content>
-                        <div class="hint" style="bottom: 6px; position: absolute; right: 44px; width: 50px;" id="email_tooltip" data-desc="<@spring.message 'registration.email'/>" ></div>
-                    </#if> 
+		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>		        	
 		      	</form>
 		      	
 		      	<#if RequestParameters.activationCode?has_content>

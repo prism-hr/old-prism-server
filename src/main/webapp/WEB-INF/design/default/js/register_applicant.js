@@ -1,9 +1,9 @@
 $(document).ready(function()
 {
-    $('#email_tooltip').qtip({
+    $('#firstName_tooltip_input').qtip({
         content: {
             text: function(api) {
-                return $('#email_tooltip').attr('data-desc');
+                return $('#firstName_tooltip_input').attr('data-desc');
             } 
         },
         position: {
@@ -13,7 +13,28 @@ $(document).ready(function()
             adjust: {
                 method: 'flip shift'
             },
-            target: $("#email_tooltip")
+            target: $("#firstName_tooltip_input")
+        },
+        show: {
+            solo: true
+        },
+        style: 'tooltip-pgr ui-tooltip-shadow'
+    });
+    
+    $('#lastName_tooltip_input').qtip({
+        content: {
+            text: function(api) {
+                return $('#lastName_tooltip_input').attr('data-desc');
+            } 
+        },
+        position: {
+            my: 'bottom right', // Use the corner...
+            at: 'top center', // ...and opposite corner
+            viewport: $(window),
+            adjust: {
+                method: 'flip shift'
+            },
+            target: $("#lastName_tooltip_input")
         },
         show: {
             solo: true

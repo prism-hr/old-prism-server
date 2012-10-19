@@ -13,10 +13,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
@@ -25,15 +27,16 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 public class Document extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = -6396463075916267580L;
+	
+	@Transient
+	private MultipartFile fileData;
+
 	@ManyToOne
 	@JoinColumn(name = "uploaded_by_id")
 	private RegisteredUser uploadedBy;
 	
-
 	@OneToOne(mappedBy="proofOfAward")	
 	private Qualification qualification;
-
-	
 
 	@Column(name = "uploaded_time_stamp", insertable = false)
 	@Generated(GenerationTime.INSERT)
@@ -46,7 +49,6 @@ public class Document extends DomainObject<Integer> {
 
 	@Column(name = "content_type")
 	private String contentType;
-	
 
 	@Column(name = "file_name")
 	private String fileName;
@@ -123,7 +125,12 @@ public class Document extends DomainObject<Integer> {
 	public void setQualification(Qualification qualification) {
 		this.qualification = qualification;
 	}
+	  
+    public MultipartFile getFileData() {
+        return fileData;
+    }
 
-
-	
+    public void setFileData(MultipartFile fileData) {
+        this.fileData = fileData;
+    }
 }

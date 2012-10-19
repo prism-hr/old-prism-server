@@ -330,35 +330,16 @@ function watchUpload($field, $deleteFunction)
 
 	$container.on('change', $field, function()
 	{
-		var input    = this.children[0];
-		var $hidden  = $container.find('input.file');
-		var isOkSize = true;
-		try
-		{
-			isOkSize = input.files[0].size < 2097152 ;
-		}
-		catch(error)
-		{
-			//alert(error);
-		}
-		if (isOkSize) // 2MB in bytes
-		{
-			if (!$deleteFunction)
-			{
-				deleteUploadedFile($hidden);
-			}
-			else
-			{
-				$deleteFunction();
-			}
-			$container.addClass('posting');
-			doUpload($(input));
-			$field.removeAttr("readonly");
-		}
-		else
-		{
-			$container.append('<span class="invalid">Document must be at most 2Mb.</span>');
-		}
+		var input = this.children[0];
+		var $hidden = $container.find('input.file');
+	    if (!$deleteFunction) {
+	        deleteUploadedFile($hidden);
+	    } else {
+	        $deleteFunction();
+	    }
+		$container.addClass('posting');
+		doUpload($(input));
+		$field.removeAttr("readonly");
 	});
 }
 

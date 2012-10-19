@@ -5,13 +5,13 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
-import com.itextpdf.text.pdf.PdfReader;
 import com.zuehlke.pgadmissions.domain.Document;
 
 @Component
 public class DocumentValidator extends AbstractValidator {
 
-	private static final String[] EXTENSION_WHITE_LIST = { "PDF"};
+	private static final int TWO_MB_IN_BYTES = 2097152;
+    private static final String[] EXTENSION_WHITE_LIST = { "PDF"};
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -41,11 +41,6 @@ public class DocumentValidator extends AbstractValidator {
 		    errors.rejectValue("content", "file.upload.large");
 		    return;
 		}
-		
-//		if (!canReadPdf(document)) {
-//		    errors.rejectValue("content", "file.upload.corrupted");
-//            return;
-//		}
 	}
 	
 	private boolean isEmptyFilename(final Document document) {
@@ -69,16 +64,11 @@ public class DocumentValidator extends AbstractValidator {
 	}
 	
 	private boolean isLargerThan2Mb(final Document document) {
-	    return document.getContent() != null && document.getContent().length > 2097152;
-	}
-	
-	private boolean canReadPdf(final Document document) {
-	    try {
-	        PdfReader pdfReader = new PdfReader(document.getContent());
-	        pdfReader.close();
-	        return true;
-	    } catch (Exception e) {
-	        return false;
+	    if (document.getFileData() != null) {
+	        return document.getFileData().getSize() > TWO_MB_IN_BYTES;
+	    } else if (document.getContent() != null) {
+	        return document.getContent().length > TWO_MB_IN_BYTES;
 	    }
+	    return true;
 	}
 }

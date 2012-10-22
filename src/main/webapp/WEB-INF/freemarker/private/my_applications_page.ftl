@@ -46,7 +46,7 @@
        <!-- Middle Starts -->
       <div id="middle">
       
-        <#include "/private/common/parts/nav_with_user_info.ftl"/>
+        <#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
         <@header/>
  
         <!-- Main content area. -->
@@ -68,26 +68,7 @@
 	              	<div class="section-info-bar"><@spring.message '${RequestParameters.messageCode}' /></div>
 	              </#if>             
               </#if>
-            
-            <div id="swtich-bar">
-            
-            <#if model?? && model.user?? && model.user.linkedAccounts?has_content>
-                <select id="linkedUserAccountsDrop" name="linkedUserAccountsDrop">
-                    <option value="">Switch user account...</option>
-                    <#list model.user.linkedAccounts as linkedAccount>
-                        <option value="${linkedAccount.email}">${linkedAccount.email?html}</option>
-                    </#list>
-                </select>
-            <#elseif user?? && user.linkedAccounts?has_content>
-                <select id="linkedUserAccountsDrop" name="linkedUserAccountsDrop">
-                    <option value="">Switch user account...</option>
-                    <#list user.linkedAccounts as linkedAccount>
-                        <option value="${linkedAccount.email}">${linkedAccount.email?html}</option>
-                    </#list>
-                </select>
-            </#if>
-              </div>
-            
+
 							<div id="table-bar">
 							
 								<!-- Download button. -->

@@ -32,7 +32,6 @@ public class CountriesOfBirthImporter implements Importer {
 	public void importData() throws JAXBException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
 		Countries countries = (Countries) unmarshaller.unmarshal(xmlFileLocation);
-		System.out.println("a");
 	}
 
 }

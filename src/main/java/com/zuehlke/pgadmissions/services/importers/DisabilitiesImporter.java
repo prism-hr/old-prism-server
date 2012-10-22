@@ -32,7 +32,6 @@ public class DisabilitiesImporter implements Importer {
 	public void importData() throws JAXBException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Disabilities disabilities = (Disabilities) unmarshaller.unmarshal(xmlFileLocation);
-        System.out.println("c");
 	}
 
 }

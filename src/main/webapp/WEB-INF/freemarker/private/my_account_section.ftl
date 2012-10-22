@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<section id="accountDetailsSection" class="form-rows">
 <h2 class="no-arrow">Account Details</h2>
 <div>
 	<form autocomplete="off">
@@ -102,7 +103,9 @@
 		</div>
 	</form>
 </div>
+</section>
 
+<section id="linkAcountDetailsSection" class="form-rows">
 <h2 class="no-arrow">Link Accounts</h2>
 <div id="linkAccountsSection">
     <form autocomplete="off">
@@ -111,6 +114,20 @@
         <#else>        
             <div class="section-info-bar">Link your current PRISM account to another account you own.</div>
         </#if>
+        
+            <#if user.linkedAccounts?has_content>
+            <div class="row-group">
+                <h3>Linked Accounts</h3>
+                <div class="row">
+                    <#list user.linkedAccounts as linkedAccount>
+                        <div class="field"> 
+                            ${linkedAccount.email?html} <button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button>
+                        </div>
+                    </#list>
+                </div>
+            </div>
+            </#if>
+            
             <div class="row-group">
                 <div class="row"> 
                     <span class="plain-label">Current Password</span>
@@ -125,7 +142,9 @@
                         <span class="invalid">${error}</span>
                     </div>
                 </#list>
-                
+            </div>
+            
+            <div class="row-group">
                 <div class="row"> 
                     <span class="plain-label">Email of the 2nd Account</span>
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.email' />"></span>
@@ -160,3 +179,4 @@
         </div>
     </form>
 </div>
+</section>

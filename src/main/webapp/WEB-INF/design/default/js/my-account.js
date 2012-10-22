@@ -1,5 +1,39 @@
 $(document).ready(function() {
+    
     getAccountDetailsSection();
+    
+    $(document).on('click', '.button-delete', function(event) {
+        var postData ={ 
+                email : $(this).attr("email"),
+        };
+        
+        $('.content-box-inner').append('<div class="ajax" />');
+        
+        $.ajax({
+            type: 'POST',
+             statusCode: {
+                  401: function() { window.location.reload(); },
+                  500: function() { window.location.href = "/pgadmissions/error"; },
+                  404: function() { window.location.href = "/pgadmissions/404"; },
+                  400: function() { window.location.href = "/pgadmissions/400"; },                  
+                  403: function() { window.location.href = "/pgadmissions/404"; }
+             },
+             url:"/pgadmissions/myAccount/deleteLinkedAccount", 
+             data:$.param(postData),
+             success: function(data) {
+                 if(data == "OK") {    
+                     window.location.href = '/pgadmissions/myAccount?messageCodeLink=account.unlinked';
+                } else {                
+                    $('#accountdetails').html(data);
+                    addToolTips();
+                }
+             },
+             complete: function() {
+                 $('.content-box-inner div.ajax').remove();
+             }
+        });
+    });
+    
     $('#accountdetails').on('click', "#saveChanges", function() {
         var postData ={ 
                 email : $('#email').val(),
@@ -10,7 +44,7 @@ $(document).ready(function() {
                 confirmPassword : $('#confirmNewPass').val()
         };
         
-        $('#accountdetails > div').append('<div class="ajax" />');
+        $('.content-box-inner').append('<div class="ajax" />');
         
         $.ajax({
             type: 'POST',
@@ -32,7 +66,7 @@ $(document).ready(function() {
                 }
              },
              complete: function() {
-                 $('#accountdetails div.ajax').remove();
+                 $('.content-box-inner div.ajax').remove();
              }
         });
     });
@@ -49,7 +83,7 @@ $(document).ready(function() {
                 password : $('#linkPassword').val()
         };
         
-        $('#accountdetails > div').append('<div class="ajax" />');
+        $('.content-box-inner').append('<div class="ajax" />');
         
         $.ajax({
             type: 'POST',
@@ -71,7 +105,7 @@ $(document).ready(function() {
                 }
              },
              complete: function() {
-                 $('#accountdetails div.ajax').remove();
+                 $('.content-box-inner div.ajax').remove();
              }
         });
     });

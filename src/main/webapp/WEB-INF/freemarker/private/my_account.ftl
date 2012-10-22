@@ -39,7 +39,7 @@
 			 <!-- Middle Starts -->
 			<div id="middle">
 			
-				<#include "/private/common/parts/nav_with_user_info.ftl"/>
+				<#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
 				<@header activeTab="account"/>
 				<input type="hidden" id="messageCode" value="${RequestParameters.messageCode!}"/>
 				<input type="hidden" id="messageCodeLink" value="${RequestParameters.messageCodeLink!}"/>
@@ -50,10 +50,8 @@
 						<div class="content-box">
 							<div class="content-box-inner">
 							
-								<section id="accountdetails" class="form-rows">
-									
-								</section>
-
+                                <div id="accountdetails"></div>
+                                
 							</div><!-- .content-box-inner -->
 						</div><!-- .content-box -->
 							

@@ -170,4 +170,24 @@ public class AccountController {
         }
         return "NOK";
     }
+    
+    @RequestMapping(value = "/deleteLinkedAccount", method = RequestMethod.POST)
+    public String deleteLinkedAccount(@RequestParam String email) {
+        try {
+            RegisteredUser currentAccount = userService.getCurrentUser();
+            RegisteredUser secondAccount = userService.getUserByEmail(email);
+            
+            if (currentAccount.getLinkedAccounts().contains(secondAccount)) {
+                currentAccount.removeLinkedAccount(secondAccount);
+                userService.save(currentAccount);
+                
+                secondAccount.removeLinkedAccount(currentAccount);
+                userService.save(secondAccount);
+            }
+            return "/private/common/ajax_OK";
+        } catch (Exception e) {
+            logger.error(e);
+        }
+        return "NOK";
+    }
 }

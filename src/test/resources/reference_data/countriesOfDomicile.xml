@@ -1,900 +1,920 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<nationalities>
-  <nationality>
-    <code>AA</code>
-    <name>Stateless</name>
-  </nationality>
-  <nationality>
+<domiciles>
+  <domicile>
     <code>AD</code>
     <name>Andorra</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>AE</code>
     <name>United Arab Emirates</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>AF</code>
     <name>Afghanistan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>AG</code>
     <name>Antigua (and Barbuda)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>AI</code>
     <name>Anguilla</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>AL</code>
     <name>Albania</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>AM</code>
     <name>Armenia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>AN</code>
+    <name>Antilles (Netherlands)</name>
+  </domicile>
+  <domicile>
     <code>AO</code>
     <name>Angola</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>AR</code>
     <name>Argentina</name>
-  </nationality>
-  <nationality>
-    <code>AS</code>
-    <name>Samoa US</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>AT</code>
     <name>Austria</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>AU</code>
     <name>Australia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>AX</code>
+    <name>Aland Islands</name>
+  </domicile>
+  <domicile>
     <code>AZ</code>
     <name>Azerbaijan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BA</code>
     <name>Bosnia and Herzegovina</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BB</code>
     <name>Barbados</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BD</code>
     <name>Bangladesh</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BE</code>
     <name>Belgium</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BF</code>
     <name>Burkina-Faso</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BG</code>
     <name>Bulgaria</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BH</code>
     <name>Bahrain</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BI</code>
     <name>Burundi</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BJ</code>
     <name>Benin</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BM</code>
     <name>Bermuda</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BN</code>
     <name>Brunei</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BO</code>
     <name>Bolivia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BR</code>
     <name>Brazil</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BS</code>
     <name>Bahamas</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BT</code>
     <name>Bhutan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BW</code>
     <name>Botswana</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BY</code>
     <name>Belarus</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>BZ</code>
     <name>Belize</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CA</code>
     <name>Canada</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CD</code>
     <name>Congo (Democratic Republic) (Zaire)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CF</code>
     <name>Central African Republic</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CG</code>
     <name>Congo (People&apos;s Republic)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CH</code>
     <name>Switzerland</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CI</code>
     <name>Ivory Coast</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CL</code>
     <name>Chile</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CM</code>
     <name>Cameroon</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CN</code>
     <name>China (People&apos;s Republic)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CO</code>
     <name>Colombia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CR</code>
     <name>Costa Rica</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CU</code>
     <name>Cuba</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CV</code>
     <name>Cape Verde Islands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>CZ</code>
     <name>Czech Republic</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>DE</code>
     <name>Germany</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>DJ</code>
     <name>Djibouti</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>DK</code>
     <name>Denmark</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>DM</code>
     <name>Dominica</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>DO</code>
     <name>Dominican Republic</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>DZ</code>
     <name>Algeria</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>EC</code>
     <name>Ecuador</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>EE</code>
     <name>Estonia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>EG</code>
     <name>Egypt</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>ER</code>
     <name>Eritrea</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>ES</code>
     <name>Spain</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>ET</code>
     <name>Ethiopia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>FI</code>
     <name>Finland</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>FJ</code>
     <name>Fiji</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>FK</code>
     <name>Falkland Islands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>FM</code>
-    <name>Micronesia ( Federated States of )</name>
-  </nationality>
-  <nationality>
-    <code>FO</code>
-    <name>Faroe Islands</name>
-  </nationality>
-  <nationality>
+    <name>Micronesia (Federated States of)</name>
+  </domicile>
+  <domicile>
     <code>FR</code>
     <name>France</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GA</code>
     <name>Gabon</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>British Overseas Citizen</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>Wales</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>British National</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>United Kingdom</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>England</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>Scotland</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>Northern Ireland</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GD</code>
     <name>Grenada</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GE</code>
     <name>Georgia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>GF</code>
+    <name>French Guiana</name>
+  </domicile>
+  <domicile>
+    <code>GG</code>
+    <name>Guernsey</name>
+  </domicile>
+  <domicile>
     <code>GH</code>
     <name>Ghana</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GI</code>
     <name>Gibraltar</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GL</code>
-    <name>Greenland (&amp; Faroe Isles)</name>
-  </nationality>
-  <nationality>
+    <name>Greenland</name>
+  </domicile>
+  <domicile>
     <code>GM</code>
     <name>Gambia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GN</code>
     <name>Guinea</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GQ</code>
     <name>Equatorial Guinea</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GR</code>
     <name>Greece</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GS</code>
     <name>South Georgia and the South Sandwich Islands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GT</code>
     <name>Guatemala</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GU</code>
     <name>Guam</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GW</code>
     <name>Guinea Bissau</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>GY</code>
     <name>Guyana</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>HK</code>
-    <name>Hong Kong (SAR), People&apos;s Republic of China</name>
-  </nationality>
-  <nationality>
+    <name>Hong Kong</name>
+  </domicile>
+  <domicile>
     <code>HN</code>
     <name>Honduras</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>HR</code>
     <name>Croatia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>HT</code>
     <name>Haiti</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>HU</code>
     <name>Hungary</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>ID</code>
     <name>Indonesia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>IE</code>
     <name>Ireland (Republic)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>IL</code>
     <name>Israel</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>IM</code>
     <name>Isle of Man</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>IN</code>
     <name>India</name>
-  </nationality>
-  <nationality>
-    <code>IO</code>
-    <name>British Indian Ocean Territory</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>IQ</code>
     <name>Iraq</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>IR</code>
     <name>Iran</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>IS</code>
     <name>Iceland</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>IT</code>
     <name>Italy</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>JE</code>
+    <name>Jersey</name>
+  </domicile>
+  <domicile>
     <code>JM</code>
     <name>Jamaica</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>JO</code>
     <name>Jordan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>JP</code>
     <name>Japan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KE</code>
     <name>Kenya</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KG</code>
     <name>Kyrgyzstan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KH</code>
     <name>Cambodia (Kampuchea)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KI</code>
     <name>Kiribati (Gilbert and Ellice Islands)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KM</code>
     <name>Comoros</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KN</code>
     <name>St Kitts-Nevis</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KP</code>
     <name>Korea (Dem Ppl Republic - North)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KR</code>
     <name>Korea (Republic - South)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KW</code>
     <name>Kuwait</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KY</code>
     <name>Cayman Islands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>KZ</code>
     <name>Kazakhstan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LA</code>
     <name>Laos</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LB</code>
     <name>Lebanon</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LC</code>
     <name>St Lucia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LI</code>
     <name>Liechtenstein</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LK</code>
     <name>Sri Lanka</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LR</code>
     <name>Liberia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LS</code>
     <name>Lesotho</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LT</code>
     <name>Lithuania</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LU</code>
     <name>Luxembourg</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LV</code>
     <name>Latvia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>LY</code>
     <name>Libya</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MA</code>
     <name>Morocco</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MC</code>
     <name>Monaco</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MD</code>
     <name>Moldova</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>ME</code>
     <name>Montenegro</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MG</code>
     <name>Madagascar</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MH</code>
     <name>Marshall Islands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MK</code>
-    <name>Macedonia</name>
-  </nationality>
-  <nationality>
+    <name>Macedonia (Former Yugoslav Republic of)</name>
+  </domicile>
+  <domicile>
     <code>ML</code>
     <name>Mali</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MM</code>
     <name>Burma (Myanmar)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MN</code>
     <name>Mongolia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MO</code>
     <name>Macao</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MR</code>
     <name>Mauritania</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MS</code>
     <name>Montserrat</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MT</code>
     <name>Malta</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MU</code>
     <name>Mauritius</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MV</code>
     <name>Maldive Islands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MW</code>
     <name>Malawi</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MX</code>
     <name>Mexico</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MY</code>
     <name>Malaysia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>MZ</code>
     <name>Mozambique</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>NA</code>
     <name>Namibia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>NC</code>
+    <name>New Caledonia</name>
+  </domicile>
+  <domicile>
     <code>NE</code>
     <name>Niger</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>NG</code>
     <name>Nigeria</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>NI</code>
     <name>Nicaragua</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>NL</code>
     <name>Netherlands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>NO</code>
     <name>Norway</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>NP</code>
     <name>Nepal</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>NR</code>
     <name>Nauru</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>NZ</code>
     <name>New Zealand</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>OM</code>
     <name>Oman</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>PA</code>
     <name>Panama</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>PE</code>
     <name>Peru</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>PF</code>
+    <name>French Polynesia</name>
+  </domicile>
+  <domicile>
     <code>PG</code>
     <name>Papua New Guinea</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>PH</code>
     <name>Philippines</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>PK</code>
     <name>Pakistan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>PL</code>
     <name>Poland</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>PN</code>
     <name>Pitcairn Islands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>PR</code>
+    <name>Puerto Rico</name>
+  </domicile>
+  <domicile>
     <code>PS</code>
     <name>Palestine</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>PT</code>
     <name>Portugal</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>PY</code>
     <name>Paraguay</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>QA</code>
     <name>Qatar</name>
-  </nationality>
-  <nationality>
-    <code>QO</code>
-    <name>Kosovo</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>RE</code>
+    <name>Reunion</name>
+  </domicile>
+  <domicile>
     <code>RO</code>
     <name>Romania</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>RS</code>
     <name>Serbia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>RU</code>
     <name>Russia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>RW</code>
     <name>Rwanda</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SA</code>
     <name>Saudi Arabia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SB</code>
     <name>Solomon Islands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SC</code>
     <name>Seychelles</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SD</code>
     <name>Sudan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SE</code>
     <name>Sweden</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SG</code>
     <name>Singapore</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SH</code>
     <name>St Helena</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SI</code>
     <name>Slovenia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SK</code>
     <name>Slovakia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SL</code>
     <name>Sierra Leone</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SM</code>
     <name>San Marino</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SN</code>
     <name>Senegal</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SO</code>
     <name>Somalia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SR</code>
     <name>Surinam</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>ST</code>
     <name>Sao Tome &amp; Principe</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SV</code>
     <name>El Salvador</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SY</code>
     <name>Syria</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>SZ</code>
     <name>Swaziland</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TC</code>
     <name>Turks and Caicos Islands</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TD</code>
     <name>Chad</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TG</code>
     <name>Togo</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TH</code>
     <name>Thailand</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TJ</code>
     <name>Tajikistan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TL</code>
-    <name>Timor (Portuguese)</name>
-  </nationality>
-  <nationality>
+    <name>East Timor</name>
+  </domicile>
+  <domicile>
     <code>TM</code>
     <name>Turkmenistan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TN</code>
     <name>Tunisia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TO</code>
     <name>Tonga</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TR</code>
     <name>Turkey</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TT</code>
     <name>Trinidad and Tobago</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TV</code>
     <name>Tuvalu</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TW</code>
     <name>Taiwan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>TZ</code>
     <name>Tanzania</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>UA</code>
     <name>Ukraine</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>UG</code>
     <name>Uganda</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>US</code>
     <name>U.S.A.</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>UY</code>
     <name>Uruguay</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>UZ</code>
     <name>Uzbekistan</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>VC</code>
     <name>St Vincent and the Grenadines</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>VE</code>
     <name>Venezuela</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>VG</code>
     <name>Virgin Islands (British)</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>VI</code>
+    <name>Virgin Islands (US)</name>
+  </domicile>
+  <domicile>
     <code>VN</code>
     <name>Vietnam</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>VU</code>
     <name>Vanuatu</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>WS</code>
     <name>Samoa</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>XA</code>
-    <name>Cyprus EU</name>
-  </nationality>
-  <nationality>
+    <name>Cyprus (European Union)</name>
+  </domicile>
+  <domicile>
     <code>XB</code>
-    <name>Cyprus Non EU</name>
-  </nationality>
-  <nationality>
+    <name>Cyprus (Non-European Union)</name>
+  </domicile>
+  <domicile>
+    <code>XF</code>
+    <name>England</name>
+  </domicile>
+  <domicile>
+    <code>XG</code>
+    <name>Northern Ireland</name>
+  </domicile>
+  <domicile>
+    <code>XG</code>
+    <name>Northern Ireland - General</name>
+  </domicile>
+  <domicile>
+    <code>XH</code>
+    <name>Scotland</name>
+  </domicile>
+  <domicile>
+    <code>XI</code>
+    <name>Wales</name>
+  </domicile>
+  <domicile>
+    <code>XK</code>
+    <name>United Kingdom</name>
+  </domicile>
+  <domicile>
+    <code>XL</code>
+    <name>Channel Islands</name>
+  </domicile>
+  <domicile>
+    <code>XL</code>
+    <name>Alderney</name>
+  </domicile>
+  <domicile>
     <code>YE</code>
     <name>Yemen</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
+    <code>YT</code>
+    <name>Mayotte (French Territorial Collectives)</name>
+  </domicile>
+  <domicile>
     <code>ZA</code>
     <name>South Africa</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>ZM</code>
     <name>Zambia</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>ZW</code>
     <name>Zimbabwe</name>
-  </nationality>
-  <nationality>
-    <code>ZZ</code>
-    <name>Not known (Overseas)</name>
-  </nationality>
-  <nationality>
-    <code>ZZ</code>
-    <name>Not known</name>
-  </nationality>
-  <nationality>
+  </domicile>
+  <domicile>
     <code>ZZ</code>
     <name>Not Known</name>
-  </nationality>
-</nationalities>
+  </domicile>
+</domiciles>
 

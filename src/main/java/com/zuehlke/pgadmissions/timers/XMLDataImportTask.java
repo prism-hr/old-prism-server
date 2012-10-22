@@ -20,7 +20,7 @@ public class XMLDataImportTask {
 	public void imoprtData() {
 		for (Importer importer : importers) {
 			try {
-				importer.importData(); //TODO @Async maybe?
+				importer.importData();
 			} catch (JAXBException e) {
 				// TODO Auto-generated catch block - send email on fail
 				e.printStackTrace();

@@ -6,9 +6,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.zuehlke.pgadmissions.dao.EthnicityDAO;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Ethnicities;
 
 @Service
@@ -19,6 +21,9 @@ public class EthnicitesImporter implements Importer {
 	@Value("${xml.data.import.ethnicities.url}")
 	private URL xmlFileLocation;
 	
+	@Autowired
+	private EthnicityDAO ethnicityDAO;
+	
 	public EthnicitesImporter() throws JAXBException {
 		context = JAXBContext.newInstance(Ethnicities.class);
 	}
@@ -27,6 +32,7 @@ public class EthnicitesImporter implements Importer {
 	public void importData() throws JAXBException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Ethnicities ethnicities = (Ethnicities) unmarshaller.unmarshal(xmlFileLocation);
+        System.out.println("d");
 	}
 
 }

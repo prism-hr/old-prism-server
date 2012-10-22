@@ -32,7 +32,6 @@ public class EthnicitesImporter implements Importer {
 	public void importData() throws JAXBException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Ethnicities ethnicities = (Ethnicities) unmarshaller.unmarshal(xmlFileLocation);
-        System.out.println("d");
 	}
 
 }

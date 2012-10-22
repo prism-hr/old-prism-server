@@ -1,900 +1,900 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<nationalities>
-  <nationality>
-    <code>AA</code>
-    <name>Stateless</name>
-  </nationality>
-  <nationality>
+<countries>
+  <country>
     <code>AD</code>
     <name>Andorra</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>AE</code>
     <name>United Arab Emirates</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>AF</code>
     <name>Afghanistan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>AG</code>
     <name>Antigua (and Barbuda)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>AI</code>
     <name>Anguilla</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>AL</code>
     <name>Albania</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>AM</code>
     <name>Armenia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>AN</code>
+    <name>Antilles (Netherlands)</name>
+  </country>
+  <country>
     <code>AO</code>
     <name>Angola</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>AR</code>
     <name>Argentina</name>
-  </nationality>
-  <nationality>
-    <code>AS</code>
-    <name>Samoa US</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>AT</code>
     <name>Austria</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>AU</code>
     <name>Australia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>AX</code>
+    <name>Aland Islands</name>
+  </country>
+  <country>
     <code>AZ</code>
     <name>Azerbaijan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BA</code>
     <name>Bosnia and Herzegovina</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BB</code>
     <name>Barbados</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BD</code>
     <name>Bangladesh</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BE</code>
     <name>Belgium</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BF</code>
-    <name>Burkina-Faso</name>
-  </nationality>
-  <nationality>
+    <name>Burkina-Faso (Upper Volta)</name>
+  </country>
+  <country>
     <code>BG</code>
     <name>Bulgaria</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BH</code>
     <name>Bahrain</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BI</code>
     <name>Burundi</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BJ</code>
     <name>Benin</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BM</code>
     <name>Bermuda</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BN</code>
     <name>Brunei</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BO</code>
     <name>Bolivia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BR</code>
     <name>Brazil</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BS</code>
     <name>Bahamas</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BT</code>
     <name>Bhutan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BW</code>
     <name>Botswana</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BY</code>
     <name>Belarus</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>BZ</code>
     <name>Belize</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CA</code>
     <name>Canada</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CD</code>
     <name>Congo (Democratic Republic) (Zaire)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CF</code>
     <name>Central African Republic</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CG</code>
-    <name>Congo (People&apos;s Republic)</name>
-  </nationality>
-  <nationality>
+    <name>Congo, People&apos;s Republic</name>
+  </country>
+  <country>
     <code>CH</code>
     <name>Switzerland</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CI</code>
     <name>Ivory Coast</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CL</code>
     <name>Chile</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CM</code>
     <name>Cameroon</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CN</code>
-    <name>China (People&apos;s Republic)</name>
-  </nationality>
-  <nationality>
+    <name>China, People&apos;s Republic</name>
+  </country>
+  <country>
     <code>CO</code>
     <name>Colombia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CR</code>
     <name>Costa Rica</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CU</code>
     <name>Cuba</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CV</code>
     <name>Cape Verde Islands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>CZ</code>
     <name>Czech Republic</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>DD</code>
+    <name>East Germany</name>
+  </country>
+  <country>
     <code>DE</code>
     <name>Germany</name>
-  </nationality>
-  <nationality>
-    <code>DJ</code>
+  </country>
+  <country>
+    <code>DK</code>
     <name>Djibouti</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>DK</code>
     <name>Denmark</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>DM</code>
     <name>Dominica</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>DO</code>
     <name>Dominican Republic</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>DZ</code>
     <name>Algeria</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>EC</code>
     <name>Ecuador</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>EE</code>
     <name>Estonia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>EG</code>
     <name>Egypt</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>ER</code>
     <name>Eritrea</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>ER</code>
+    <name>Eritrea</name>
+  </country>
+  <country>
     <code>ES</code>
     <name>Spain</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>ET</code>
     <name>Ethiopia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>FI</code>
     <name>Finland</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>FJ</code>
     <name>Fiji</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>FK</code>
     <name>Falkland Islands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>FM</code>
-    <name>Micronesia ( Federated States of )</name>
-  </nationality>
-  <nationality>
-    <code>FO</code>
-    <name>Faroe Islands</name>
-  </nationality>
-  <nationality>
+    <name>Micronesia (Federated States of)</name>
+  </country>
+  <country>
     <code>FR</code>
     <name>France</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GA</code>
     <name>Gabon</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>British Overseas Citizen</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>Wales</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>British National</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>United Kingdom</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>England</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>Scotland</name>
-  </nationality>
-  <nationality>
-    <code>GB</code>
-    <name>Northern Ireland</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GD</code>
     <name>Grenada</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GE</code>
     <name>Georgia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>GF</code>
+    <name>French Guiana</name>
+  </country>
+  <country>
     <code>GH</code>
     <name>Ghana</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GI</code>
     <name>Gibraltar</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GL</code>
     <name>Greenland (&amp; Faroe Isles)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GM</code>
     <name>Gambia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GN</code>
     <name>Guinea</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GQ</code>
     <name>Equatorial Guinea</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GR</code>
     <name>Greece</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GS</code>
     <name>South Georgia and the South Sandwich Islands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GT</code>
     <name>Guatemala</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GU</code>
     <name>Guam</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GW</code>
     <name>Guinea Bissau</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>GY</code>
     <name>Guyana</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>HK</code>
-    <name>Hong Kong (SAR), People&apos;s Republic of China</name>
-  </nationality>
-  <nationality>
+    <name>Hong Kong</name>
+  </country>
+  <country>
     <code>HN</code>
     <name>Honduras</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>HR</code>
     <name>Croatia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>HT</code>
     <name>Haiti</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>HU</code>
     <name>Hungary</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>ID</code>
     <name>Indonesia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>IE</code>
     <name>Ireland (Republic)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>IL</code>
     <name>Israel</name>
-  </nationality>
-  <nationality>
-    <code>IM</code>
-    <name>Isle of Man</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>IN</code>
     <name>India</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>IO</code>
     <name>British Indian Ocean Territory</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>IQ</code>
     <name>Iraq</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>IR</code>
     <name>Iran</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>IS</code>
     <name>Iceland</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>IT</code>
     <name>Italy</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>JM</code>
     <name>Jamaica</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>JO</code>
     <name>Jordan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>JP</code>
     <name>Japan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KE</code>
     <name>Kenya</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KG</code>
     <name>Kyrgyzstan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KH</code>
     <name>Cambodia (Kampuchea)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KI</code>
     <name>Kiribati (Gilbert and Ellice Islands)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KM</code>
     <name>Comoros</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KN</code>
     <name>St Kitts-Nevis</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KP</code>
     <name>Korea (Dem Ppl Republic - North)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KR</code>
     <name>Korea (Republic - South)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KW</code>
     <name>Kuwait</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KY</code>
     <name>Cayman Islands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>KZ</code>
     <name>Kazakhstan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LA</code>
     <name>Laos</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LB</code>
     <name>Lebanon</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LC</code>
     <name>St Lucia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LI</code>
     <name>Liechtenstein</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LK</code>
     <name>Sri Lanka</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LR</code>
     <name>Liberia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LS</code>
     <name>Lesotho</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LT</code>
     <name>Lithuania</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LU</code>
     <name>Luxembourg</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LV</code>
     <name>Latvia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>LY</code>
     <name>Libya</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MA</code>
     <name>Morocco</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MC</code>
     <name>Monaco</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MD</code>
     <name>Moldova</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>ME</code>
     <name>Montenegro</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MG</code>
     <name>Madagascar</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MH</code>
     <name>Marshall Islands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MK</code>
     <name>Macedonia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>ML</code>
     <name>Mali</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MM</code>
     <name>Burma (Myanmar)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MN</code>
     <name>Mongolia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MO</code>
     <name>Macao</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MR</code>
     <name>Mauritania</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MS</code>
     <name>Montserrat</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MT</code>
     <name>Malta</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MU</code>
     <name>Mauritius</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MV</code>
     <name>Maldive Islands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MW</code>
     <name>Malawi</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MX</code>
     <name>Mexico</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MY</code>
     <name>Malaysia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>MZ</code>
     <name>Mozambique</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>NA</code>
     <name>Namibia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>NC</code>
+    <name>New Caledonia</name>
+  </country>
+  <country>
     <code>NE</code>
     <name>Niger</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>NG</code>
     <name>Nigeria</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>NI</code>
     <name>Nicaragua</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>NL</code>
     <name>Netherlands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>NO</code>
     <name>Norway</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>NP</code>
     <name>Nepal</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>NR</code>
     <name>Nauru</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>NZ</code>
     <name>New Zealand</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>OM</code>
     <name>Oman</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>PA</code>
     <name>Panama</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>PE</code>
     <name>Peru</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>PF</code>
+    <name>French Polynesia</name>
+  </country>
+  <country>
     <code>PG</code>
     <name>Papua New Guinea</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>PH</code>
     <name>Philippines</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>PK</code>
     <name>Pakistan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>PL</code>
     <name>Poland</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>PN</code>
     <name>Pitcairn Islands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>PR</code>
+    <name>Puerto Rico</name>
+  </country>
+  <country>
     <code>PS</code>
     <name>Palestine</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>PT</code>
     <name>Portugal</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>PY</code>
     <name>Paraguay</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>QA</code>
     <name>Qatar</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>QO</code>
     <name>Kosovo</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>RE</code>
+    <name>Reunion</name>
+  </country>
+  <country>
     <code>RO</code>
     <name>Romania</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>RS</code>
     <name>Serbia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>RU</code>
     <name>Russia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>RW</code>
     <name>Rwanda</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SA</code>
     <name>Saudi Arabia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SB</code>
     <name>Solomon Islands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SC</code>
     <name>Seychelles</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SD</code>
     <name>Sudan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SE</code>
     <name>Sweden</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SG</code>
     <name>Singapore</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SH</code>
     <name>St Helena</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SI</code>
     <name>Slovenia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SK</code>
     <name>Slovakia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SL</code>
     <name>Sierra Leone</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SM</code>
     <name>San Marino</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SN</code>
     <name>Senegal</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SO</code>
     <name>Somalia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SR</code>
     <name>Surinam</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>ST</code>
     <name>Sao Tome &amp; Principe</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SV</code>
     <name>El Salvador</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SY</code>
     <name>Syria</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>SZ</code>
     <name>Swaziland</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TC</code>
     <name>Turks and Caicos Islands</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TD</code>
     <name>Chad</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TG</code>
     <name>Togo</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TH</code>
     <name>Thailand</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TJ</code>
     <name>Tajikistan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TL</code>
-    <name>Timor (Portuguese)</name>
-  </nationality>
-  <nationality>
+    <name>East Timor</name>
+  </country>
+  <country>
     <code>TM</code>
     <name>Turkmenistan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TN</code>
     <name>Tunisia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TO</code>
     <name>Tonga</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TR</code>
     <name>Turkey</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TT</code>
     <name>Trinidad and Tobago</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TV</code>
     <name>Tuvalu</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TW</code>
     <name>Taiwan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>TZ</code>
     <name>Tanzania</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>UA</code>
     <name>Ukraine</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>UG</code>
     <name>Uganda</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>US</code>
     <name>U.S.A.</name>
-  </nationality>
-  <nationality>
-    <code>UY</code>
-    <name>Uruguay</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>UZ</code>
     <name>Uzbekistan</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>VC</code>
-    <name>St Vincent and the Grenadines</name>
-  </nationality>
-  <nationality>
+    <name>St Vincent</name>
+  </country>
+  <country>
     <code>VE</code>
     <name>Venezuela</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>VG</code>
     <name>Virgin Islands (British)</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>VI</code>
+    <name>Virgin Islands (US)</name>
+  </country>
+  <country>
     <code>VN</code>
     <name>Vietnam</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>VU</code>
     <name>Vanuatu</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>WS</code>
     <name>Samoa</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>XA</code>
-    <name>Cyprus EU</name>
-  </nationality>
-  <nationality>
+    <name>Cyprus (EU)</name>
+  </country>
+  <country>
     <code>XB</code>
-    <name>Cyprus Non EU</name>
-  </nationality>
-  <nationality>
+    <name>Cyprus (Non EU)</name>
+  </country>
+  <country>
+    <code>XK</code>
+    <name>Uruguay</name>
+  </country>
+  <country>
+    <code>XK</code>
+    <name>UNITED KINGDOM</name>
+  </country>
+  <country>
+    <code>XM</code>
+    <name>Czechoslovakia</name>
+  </country>
+  <country>
+    <code>XN</code>
+    <name>U.S.S.R.</name>
+  </country>
+  <country>
     <code>YE</code>
     <name>Yemen</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
+    <code>YT</code>
+    <name>Mayotte (French Territorial Collectives)</name>
+  </country>
+  <country>
     <code>ZA</code>
     <name>South Africa</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>ZM</code>
     <name>Zambia</name>
-  </nationality>
-  <nationality>
+  </country>
+  <country>
     <code>ZW</code>
     <name>Zimbabwe</name>
-  </nationality>
-  <nationality>
-    <code>ZZ</code>
-    <name>Not known (Overseas)</name>
-  </nationality>
-  <nationality>
-    <code>ZZ</code>
-    <name>Not known</name>
-  </nationality>
-  <nationality>
-    <code>ZZ</code>
-    <name>Not Known</name>
-  </nationality>
-</nationalities>
+  </country>
+</countries>
 

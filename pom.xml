@@ -4,7 +4,7 @@
     <groupId>com.zuehlke</groupId>
     <artifactId>pgadmissions</artifactId>
     <packaging>war</packaging>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
     <name>pgadmissions Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <properties>
@@ -245,6 +245,24 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <packageName>com.zuehlke.pgadmissions.referencedata.jaxb</packageName>
+                    <outputDirectory>${project.build.directory}/generated-source/jaxb</outputDirectory>
+                    <schemaDirectory>${basedir}/src/main/resources/reference_data</schemaDirectory>
                 </configuration>
             </plugin>
             <plugin>

@@ -23,6 +23,8 @@ public class CountriesOfDomicileImporter implements Importer {
 	
 	@Autowired
 	private DomicileDAO domicileDAO;
+	@Autowired
+	private ImportService importService;
 	
 	public CountriesOfDomicileImporter() throws JAXBException {
 		context = JAXBContext.newInstance(Domiciles.class);

@@ -6,6 +6,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ public class InstitutionsImporter implements Importer {
 	
 	@Value("${xml.data.import.institutions.url}")
 	private URL xmlFileLocation;
+	@Autowired
+	private ImportService importService;
 	
 	public InstitutionsImporter() throws JAXBException {
 		context = JAXBContext.newInstance(Institutions.class);

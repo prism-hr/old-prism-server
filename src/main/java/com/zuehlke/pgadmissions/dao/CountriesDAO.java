@@ -32,7 +32,10 @@ public class CountriesDAO {
 	public Country getCountryById(Integer id) {
 		return (Country) sessionFactory.getCurrentSession().get(Country.class, id);
 	}
-
 	
+	public void save(Country country) {
+		sessionFactory.getCurrentSession().saveOrUpdate(country);
+	}
+
 
 }

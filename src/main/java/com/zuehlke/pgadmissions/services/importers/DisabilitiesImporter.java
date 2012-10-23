@@ -23,6 +23,8 @@ public class DisabilitiesImporter implements Importer {
 	
 	@Autowired
 	private DisabilityDAO disabilityDAO;
+	@Autowired
+	private ImportService importService;
 	
 	public DisabilitiesImporter() throws JAXBException {
 		context = JAXBContext.newInstance(Disabilities.class);

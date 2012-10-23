@@ -23,6 +23,8 @@ public class EthnicitesImporter implements Importer {
 	
 	@Autowired
 	private EthnicityDAO ethnicityDAO;
+	@Autowired
+	private ImportService importService;
 	
 	public EthnicitesImporter() throws JAXBException {
 		context = JAXBContext.newInstance(Ethnicities.class);

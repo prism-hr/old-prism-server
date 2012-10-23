@@ -23,6 +23,8 @@ public class QualificationsImporter implements Importer {
 	
 	@Autowired
 	private QualificationDAO qualificationDAO;
+	@Autowired
+	private ImportService importService;
 	
 	public QualificationsImporter() throws JAXBException {
 		context = JAXBContext.newInstance(Qualifications.class);

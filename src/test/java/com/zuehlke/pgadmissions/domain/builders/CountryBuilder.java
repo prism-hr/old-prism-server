@@ -9,6 +9,8 @@ public class CountryBuilder {
     private String name;
 	
     private Boolean enabled;
+
+	private String code;
 	
 	public CountryBuilder id(Integer id){
 		this.id = id;
@@ -25,11 +27,17 @@ public class CountryBuilder {
 	    return this;
 	}
 	
+	public CountryBuilder code(String code) {
+		this.code = code;
+		return this;
+	}
+	
 	public Country toCountry(){
 		Country country = new Country();
 		country.setId(id);
 		country.setName(name);
 		country.setEnabled(enabled);
+		country.setCode(code);
 		return country;
 	}
 }

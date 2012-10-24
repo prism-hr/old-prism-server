@@ -17,6 +17,8 @@ public class Country extends DomainObject<Integer> implements ImportedObject{
 
 	private Boolean enabled;
 	
+	private String code;
+	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
 	private String name;
 
@@ -52,13 +54,11 @@ public class Country extends DomainObject<Integer> implements ImportedObject{
 
 	@Override
 	public String getCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return code;
 	}
 
 	public void setCode(String code) {
-		// TODO Auto-generated method stub
-		
+		this.code = code;
 	}
 }
 

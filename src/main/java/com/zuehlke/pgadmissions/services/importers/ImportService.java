@@ -30,22 +30,23 @@ public class ImportService implements Comparator<CodeObject> {
 		int i = 0, j = 0;
 		T currentElement;
 		U importElement;
-		while(i<currentData.size() || j<importData.size()) {
+		while(i<currentData.size() && j<importData.size()) {
 			currentElement = currentData.get(i);
 			importElement = importData.get(j);
 			int comparisionResult = compare(currentElement, importElement);
 			if(comparisionResult==0) {
 				if(!importElement.equalAttributes(currentElement)) {
-					currentElement.setEnabled(false);
-					changes.add(currentElement);
+					disableElement(currentElement, changes);
 					ImportedObject domainObject = importElement.createDomainObject();
 					changes.add((T) domainObject);
+				} else if(!currentElement.getEnabled()) {
+					currentElement.setEnabled(true);
+					changes.add(currentElement);
 				}
 				i++;
 				j++;
 			} else if(comparisionResult<0) {
-				currentElement.setEnabled(false);
-				changes.add(currentElement);
+				disableElement(currentElement, changes);
 				i++;
 			} else if(comparisionResult>0) {
 				ImportedObject domainObject = importElement.createDomainObject();
@@ -55,8 +56,7 @@ public class ImportService implements Comparator<CodeObject> {
 		}
 		while(i<currentData.size()) {
 			currentElement = currentData.get(i);
-			currentElement.setEnabled(false);
-			changes.add(currentElement);
+			disableElement(currentElement, changes);
 			i++;
 		}
 		while(j<importData.size()) {
@@ -66,6 +66,14 @@ public class ImportService implements Comparator<CodeObject> {
 			j++;
 		}	
 		return changes;
+	}
+
+	private <T extends ImportedObject> void disableElement(T currentElement,
+			List<T> changes) {
+		if(currentElement.getEnabled()) {			
+			currentElement.setEnabled(false);
+			changes.add(currentElement);
+		}
 	}
 	
 }

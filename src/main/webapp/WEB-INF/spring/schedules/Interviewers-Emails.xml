@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<!-- interviewer notification -->
+	<bean id="interviewerNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.InterviewerNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="interviewerMailSender" />
+		<constructor-arg index="2" ref="mailInterviewerDAO" />		
+	</bean>
+
+	<bean id="interviewerNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="${delay.21}" />
+		<property name="period" value="${email.schedule.period.milliseconds}" />
+		<property name="timerTask" ref="interviewerNotificationTimerTask" />
+	</bean>
+	
+	<!-- interviewer reminders -->
+	<bean id="interviewerReminderTimerTask" class="com.zuehlke.pgadmissions.timers.InterviewerReminderTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="interviewerMailSender" />
+		<constructor-arg index="2" ref="mailInterviewerDAO" />
+	</bean>
+
+	<bean id="interviewerReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="${delay.22}" />
+		<property name="period" value="${email.schedule.period.milliseconds}" />
+		<property name="timerTask" ref="interviewerReminderTimerTask" />
+	</bean>
+</beans>

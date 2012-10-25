@@ -89,7 +89,7 @@ public class ApplicationPageModelBuilderTest {
         EasyMock.expect(sourcesOfInterestServiceMock.getAllSourcesOfInterest()).andReturn(interests);
         EasyMock.replay(sourcesOfInterestServiceMock);
 	    ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
-		assertSame(interests, model.getSourcesOfInterest());
+		assertSame(interests, model.getSourcesOfInterests());
 	}
 
 	@Test

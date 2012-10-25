@@ -118,9 +118,9 @@ public class ProgrammeDetailsControllerTest {
 	@Test
 	public void shouldReturnAllSourcesOfInterest() {
 	    SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("ZZ").name("ZZ").toSourcesOfInterest();
-	    EasyMock.expect(programmeDetailsServiceMock.getAllSourcesOfInterest()).andReturn(Collections.singletonList(sourcesOfInterest));
+	    EasyMock.expect(programmeDetailsServiceMock.getAllEnabledSourcesOfInterest()).andReturn(Collections.singletonList(sourcesOfInterest));
 	    EasyMock.replay(programmeDetailsServiceMock);
-	    assertEquals(controller.getAllSourcesOfInterest().get(0), sourcesOfInterest);
+	    assertEquals(controller.getSourcesOfInterests().get(0), sourcesOfInterest);
 	}
 
 	@Test

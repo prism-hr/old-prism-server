@@ -61,7 +61,7 @@ public class ApplicationPageModelBuilderTest {
 	@Test
 	public void shouldSetAllCoutriesOnModel() {
 		List<Country> countries = Arrays.asList(new CountryBuilder().id(1).toCountry());
-		EasyMock.expect(countryServiceMock.getAllCountries()).andReturn(countries);
+		EasyMock.expect(countryServiceMock.getAllEnabledCountries()).andReturn(countries);
 		EasyMock.replay(countryServiceMock);
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
 		assertSame(countries, model.getCountries());
@@ -70,7 +70,7 @@ public class ApplicationPageModelBuilderTest {
 	@Test
 	public void shouldSetAllLanguagesOnModel() {
 		List<Language> languages = Arrays.asList(new LanguageBuilder().id(1).toLanguage());
-		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(languages);
+		EasyMock.expect(languageServiceMock.getAllEnabledLanguages()).andReturn(languages);
 		EasyMock.replay(languageServiceMock);
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
 		assertSame(languages, model.getLanguages());
@@ -84,9 +84,9 @@ public class ApplicationPageModelBuilderTest {
 	}
 
 	@Test
-	public void shouldSetAllReferrersOnModel() {
+	public void shouldSetAllSourcesOfInterestOnModel() {
 	    List<SourcesOfInterest> interests = Arrays.asList(new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest());
-        EasyMock.expect(sourcesOfInterestServiceMock.getAllSourcesOfInterest()).andReturn(interests);
+        EasyMock.expect(sourcesOfInterestServiceMock.getAllEnabledSourcesOfInterest()).andReturn(interests);
         EasyMock.replay(sourcesOfInterestServiceMock);
 	    ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
 		assertSame(interests, model.getSourcesOfInterests());

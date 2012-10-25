@@ -9,26 +9,30 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
+import com.zuehlke.pgadmissions.dao.SourcesOfInterestDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
+import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 
 @Service
 public class ProgrammeDetailsService {
 
 	private final ProgrammeDetailDAO programmeDetailDAO;
 	private final ProgramInstanceDAO programInstanceDAO;
+	private final SourcesOfInterestDAO sourcesOfInterestDAO;
 
 	ProgrammeDetailsService() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public ProgrammeDetailsService(ProgrammeDetailDAO programmeDetailDAO, ProgramInstanceDAO programInstanceDAO) {
+	public ProgrammeDetailsService(ProgrammeDetailDAO programmeDetailDAO, 
+	        ProgramInstanceDAO programInstanceDAO, SourcesOfInterestDAO sourcesOfInterestDAO) {
 		this.programmeDetailDAO = programmeDetailDAO;
 		this.programInstanceDAO = programInstanceDAO;
-
+		this.sourcesOfInterestDAO = sourcesOfInterestDAO;
 	}
 
 	@Transactional
@@ -41,15 +45,21 @@ public class ProgrammeDetailsService {
 		List<StudyOption> options = new ArrayList<StudyOption>();
 		List<ProgramInstance> activeProgramInstances = programInstanceDAO.getActiveProgramInstances(program);
 		for (ProgramInstance programInstance : activeProgramInstances) {
-			if (!options.contains(programInstance.getStudyOption())) {
-				options.add(programInstance.getStudyOption());
+			StudyOption option = new StudyOption(programInstance.getStudyOptionCode(), programInstance.getStudyOption());
+		    if (!options.contains(option)) {
+				options.add(option);
 			}
 		}
 		return options;
 	}
 
 	@Transactional
-	public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, StudyOption studyOption) {
+	public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, String studyOption) {
 	    return programInstanceDAO.getActiveProgramInstancesOrderedByApplicationStartDate(program, studyOption);
 	}
+	
+	@Transactional
+    public List<SourcesOfInterest> getAllEnabledSourcesOfInterest() {
+        return sourcesOfInterestDAO.getAllEnabledSourcesOfInterest();
+    }
 }

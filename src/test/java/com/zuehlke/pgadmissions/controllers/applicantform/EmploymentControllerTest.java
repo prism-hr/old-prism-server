@@ -2,10 +2,10 @@ package com.zuehlke.pgadmissions.controllers.applicantform;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -92,21 +92,23 @@ public class EmploymentControllerTest {
 	}
 
 	@Test
-	public void shouldReturnAllLanguages() {
-		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).toLanguage(), new LanguageBuilder().id(2).toLanguage());
-		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(languageList);
+	public void shouldReturnAllEnabledLanguages() {
+		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).toLanguage(), new LanguageBuilder().id(2).enabled(false).toLanguage());
+		EasyMock.expect(languageServiceMock.getAllEnabledLanguages()).andReturn(Collections.singletonList(languageList.get(0)));
 		EasyMock.replay(languageServiceMock);
-		List<Language> allLanguages = controller.getAllLanguages();
-		assertSame(languageList, allLanguages);
+		List<Language> allLanguages = controller.getAllEnabledLanguages();
+		assertEquals(1, allLanguages.size());
+        assertEquals(languageList.get(0), allLanguages.get(0));
 	}
 
 	@Test
-	public void shouldReturnAllCountries() {
-		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).toCountry(), new CountryBuilder().id(2).toCountry());
-		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(countryList);
-		EasyMock.replay(countriesServiceMock);
-		List<Country> allCountries = controller.getAllCountries();
-		assertSame(countryList, allCountries);
+	public void shouldReturnAllEnabledCountries() {
+	    List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).enabled(true).toCountry(), new CountryBuilder().id(2).enabled(false).toCountry());
+	    EasyMock.expect(countriesServiceMock.getAllEnabledCountries()).andReturn(Collections.singletonList(countryList.get(0)));
+	    EasyMock.replay(countriesServiceMock);
+	    List<Country> allCountries = controller.getAllEnabledCountries();
+	    assertEquals(1, allCountries.size());
+	    assertEquals(countryList.get(0), allCountries.get(0));
 	}
 
 	@Test

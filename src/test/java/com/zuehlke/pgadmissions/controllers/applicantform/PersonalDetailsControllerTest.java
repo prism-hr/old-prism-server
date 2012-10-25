@@ -3,10 +3,10 @@ package com.zuehlke.pgadmissions.controllers.applicantform;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -105,39 +105,43 @@ public class PersonalDetailsControllerTest {
 	}
 
 	@Test
-	public void shouldReturnAllLanguages() {
-		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).toLanguage(), new LanguageBuilder().id(2).toLanguage());
-		EasyMock.expect(languageServiceMok.getAllLanguages()).andReturn(languageList);
+	public void shouldReturnAllEnabledLanguages() {
+		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).toLanguage(), new LanguageBuilder().id(2).enabled(false).toLanguage());
+		EasyMock.expect(languageServiceMok.getAllEnabledLanguages()).andReturn(Collections.singletonList(languageList.get(0)));
 		EasyMock.replay(languageServiceMok);
-		List<Language> allLanguages = controller.getAllLanguages();
-		assertSame(languageList, allLanguages);
+		List<Language> allLanguages = controller.getAllEnabledLanguages();
+		assertEquals(1, allLanguages.size());
+        assertEquals(languageList.get(0), allLanguages.get(0));
 	}
 
 	@Test
-	public void shouldReturnAllCountries() {
-		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).toCountry(), new CountryBuilder().id(2).toCountry());
-		EasyMock.expect(countryServiceMock.getAllCountries()).andReturn(countryList);
+	public void shouldReturnAllEnabledCountries() {
+		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).enabled(true).toCountry(), new CountryBuilder().id(2).enabled(false).toCountry());
+		EasyMock.expect(countryServiceMock.getAllEnabledCountries()).andReturn(Collections.singletonList(countryList.get(0)));
 		EasyMock.replay(countryServiceMock);
-		List<Country> allCountries = controller.getAllCountries();
-		assertSame(countryList, allCountries);
+		List<Country> allCountries = controller.getAllEnabledCountries();
+		assertEquals(1, allCountries.size());
+        assertEquals(countryList.get(0), allCountries.get(0));
 	}
 
 	@Test
-	public void returnAllEthnicities() {
-		List<Ethnicity> ethnicityList = Arrays.asList(new EthnicityBuilder().id(1).toEthnicity(), new EthnicityBuilder().id(2).toEthnicity());
-		EasyMock.expect(ethnicityServiceMock.getAllEthnicities()).andReturn(ethnicityList);
+	public void returnAllEnabledEthnicities() {
+		List<Ethnicity> ethnicityList = Arrays.asList(new EthnicityBuilder().id(1).enabled(true).toEthnicity(), new EthnicityBuilder().id(2).enabled(false).toEthnicity());
+		EasyMock.expect(ethnicityServiceMock.getAllEnabledEthnicities()).andReturn(Collections.singletonList(ethnicityList.get(0)));
 		EasyMock.replay(ethnicityServiceMock);
-		List<Ethnicity> allEthnicities = controller.getAllEthnicities();
-		assertSame(ethnicityList, allEthnicities);
+		List<Ethnicity> allEthnicities = controller.getAllEnabledEthnicities();
+		assertEquals(1, allEthnicities.size());
+        assertEquals(ethnicityList.get(0), allEthnicities.get(0));
 	}
 
 	@Test
-	public void returnAllDisabilities() {
-		List<Disability> disabilityList = Arrays.asList(new DisabilityBuilder().id(1).toDisability(), new DisabilityBuilder().id(2).toDisability());
-		EasyMock.expect(disabilityServiceMock.getAllDisabilities()).andReturn(disabilityList);
+	public void returnAllEnabledDisabilities() {
+		List<Disability> disabilityList = Arrays.asList(new DisabilityBuilder().id(1).enabled(true).toDisability(), new DisabilityBuilder().id(2).enabled(false).toDisability());
+		EasyMock.expect(disabilityServiceMock.getAllEnabledDisabilities()).andReturn(Collections.singletonList(disabilityList.get(0)));
 		EasyMock.replay(disabilityServiceMock);
-		List<Disability> allDisabilities = controller.getAllDisabilities();
-		assertSame(disabilityList, allDisabilities);
+		List<Disability> allDisabilities = controller.getAllEnabledDisabilities();
+		assertEquals(1, allDisabilities.size());
+        assertEquals(disabilityList.get(0), allDisabilities.get(0));
 	}
 
 	@Test

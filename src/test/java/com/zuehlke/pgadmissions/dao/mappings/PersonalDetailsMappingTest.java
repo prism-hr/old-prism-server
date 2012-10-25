@@ -76,10 +76,10 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadPersonalDetailsWithCandiateNationalities() throws Exception {
-		Language nationality1 = new LanguageBuilder().name("aaaaa").enabled(true).toLanguage();
-		Language nationality2 = new LanguageBuilder().name("bbbbb").enabled(true).toLanguage();
-		Language nationality3 = new LanguageBuilder().name("ccccc").enabled(true).toLanguage();
-		Language nationality4 = new LanguageBuilder().name("ddddd").enabled(true).toLanguage();
+		Language nationality1 = new LanguageBuilder().name("aaaaa").code("aa").enabled(true).toLanguage();
+		Language nationality2 = new LanguageBuilder().name("bbbbb").code("bb").enabled(true).toLanguage();
+		Language nationality3 = new LanguageBuilder().name("ccccc").code("cc").enabled(true).toLanguage();
+		Language nationality4 = new LanguageBuilder().name("ddddd").code("dd").enabled(true).toLanguage();
 		
 		sessionFactory.getCurrentSession().save(nationality1);
 		sessionFactory.getCurrentSession().save(nationality2);
@@ -123,9 +123,9 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 	public void setUp() {
 		super.setUp();
 
-		country1 = new CountryBuilder().name("AA").enabled(true).toCountry();
-		country2 = new CountryBuilder().name("CC").enabled(true).toCountry();
-		country3 = new DomicileBuilder().name("DD").enabled(true).toDomicile();
+		country1 = new CountryBuilder().name("AA").code("AA").enabled(true).toCountry();
+		country2 = new CountryBuilder().name("CC").code("CC").enabled(true).toCountry();
+		country3 = new DomicileBuilder().name("DD").code("DD").enabled(true).toDomicile();
 		save(country1, country2, country3);
 
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		

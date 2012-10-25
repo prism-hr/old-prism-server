@@ -23,14 +23,15 @@ public class CountryService {
 	
 	}
 
-
 	public List<Country> getAllCountries() {
 		return countriesDAO.getAllCountries();
 	}
-
+	
+	public List<Country> getAllEnabledCountries() {
+        return countriesDAO.getAllEnabledCountries();
+    }
 
 	public Country getCountryById(Integer id) {
 		return countriesDAO.getCountryById(id);
 	}
-
 }

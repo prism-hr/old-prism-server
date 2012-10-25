@@ -12,14 +12,19 @@ import com.zuehlke.pgadmissions.domain.Language;
 public class LanguageService {
 
 	private final LanguageDAO languageDAO;
+	
 	LanguageService(){
 		this(null);
 	}
+	
 	@Autowired
 	public LanguageService(LanguageDAO languageDAO) {
 		this.languageDAO = languageDAO;		
 	}
 	
+	public List<Language> getAllEnabledLanguages() {
+        return languageDAO.getAllEnabledLanguages();
+    }
 
 	public List<Language> getAllLanguages() {
 		return languageDAO.getAllLanguages();
@@ -29,6 +34,4 @@ public class LanguageService {
 	public Language getLanguageById(Integer id) {
 		return languageDAO.getLanguageById(id);
 	}
-	
-
 }

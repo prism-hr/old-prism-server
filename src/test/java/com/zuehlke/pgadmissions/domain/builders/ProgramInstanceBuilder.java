@@ -4,18 +4,34 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 public class ProgramInstanceBuilder {
 	private Date applicationDeadline;
 	private Date applicationStartDate;
 	private String academicYear;
-	private StudyOption studyOption;
+	private String studyOption;
+	private Integer studyOptionCode;
 	private Integer id;
 	private int sequence;
 	
 	private Program program;
 
+	public ProgramInstanceBuilder studyOptionCode(Integer id) {
+        this.studyOptionCode = id;
+        return this;
+    }
+    
+	public ProgramInstanceBuilder studyOption(String option) {
+        this.studyOption = option;
+        return this;
+    }
+	
+	public ProgramInstanceBuilder studyOption(Integer id, String option) {
+        this.studyOption = option;
+        this.studyOptionCode = id;
+        return this;
+    }
+	
 	public ProgramInstanceBuilder applicationStartDate(Date start){
 	    this.applicationStartDate = start;
 	    return this;
@@ -39,14 +55,10 @@ public class ProgramInstanceBuilder {
 	public ProgramInstanceBuilder id(Integer id){
 		this.id = id;
 		return this;
-	} 
-	public ProgramInstanceBuilder applicationDeadline(Date applicationDeadline){
-		this.applicationDeadline = applicationDeadline;
-		return this;
 	}
 	
-	public ProgramInstanceBuilder studyOption(StudyOption studyOption){
-		this.studyOption = studyOption;
+	public ProgramInstanceBuilder applicationDeadline(Date applicationDeadline){
+		this.applicationDeadline = applicationDeadline;
 		return this;
 	}
 	
@@ -54,6 +66,7 @@ public class ProgramInstanceBuilder {
 		ProgramInstance programInstance = new ProgramInstance();
 		programInstance.setApplicationDeadline(applicationDeadline);
 		programInstance.setStudyOption(studyOption);
+		programInstance.setStudyOptionCode(studyOptionCode);
 		programInstance.setId(id);
 		programInstance.setSequence(sequence);
 		programInstance.setProgram(program);

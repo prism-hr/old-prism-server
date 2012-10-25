@@ -13,38 +13,52 @@ import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 
 public class EthnicityDAOTest extends AutomaticRollbackTestCase {
 
-	@Test(expected = NullPointerException.class)
-	public void shouldThrowNullPointerException() {
-		EthnicityDAO ethnicityDAO = new EthnicityDAO();
-		Ethnicity ethnicity = new EthnicityBuilder().id(1).name("ZZZZZZ").enabled(true).toEthnicity();
-		ethnicityDAO.getEthnicityById(ethnicity.getId());
-	}
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowNullPointerException() {
+        EthnicityDAO ethnicityDAO = new EthnicityDAO();
+        Ethnicity ethnicity = new EthnicityBuilder().id(1).name("ZZZZZZ").code(1).enabled(true).toEthnicity();
+        ethnicityDAO.getEthnicityById(ethnicity.getId());
+    }
 
-	@Test
-	public void shouldGetAllEthnicitiesInIDOrder() {
-		BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from ETHNICITY").uniqueResult();
-		Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").enabled(true).toEthnicity();
-		Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").enabled(true).toEthnicity();
-		save(ethnicity1, ethnicity2);
-		flushAndClearSession();
-		EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
-		List<Ethnicity> allEthnicity = ethnicityDAO.getAllEthnicities();
-		assertEquals(numberOfEthnicities.intValue() + 2, allEthnicity.size());
-		
-		assertEquals("ZZZZZZ", allEthnicity.get(numberOfEthnicities.intValue()).getName());
-		assertEquals("AAAAAAAA", allEthnicity.get(numberOfEthnicities.intValue() + 1).getName());
-	}
+    @Test
+    public void shouldGetAllEthnicitiesInIDOrder() {
+        BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession()
+                .createSQLQuery("select count(*) from ETHNICITY").uniqueResult();
+        Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").code(1).enabled(true).toEthnicity();
+        Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").code(2).enabled(true).toEthnicity();
+        save(ethnicity1, ethnicity2);
+        flushAndClearSession();
+        EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
+        List<Ethnicity> allEthnicity = ethnicityDAO.getAllEthnicities();
+        assertEquals(numberOfEthnicities.intValue() + 2, allEthnicity.size());
 
-	@Test
-	public void shouldGetEthnicityById() {
-		Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").enabled(true).toEthnicity();
-		Ethnicity ethnicity2 = new EthnicityBuilder().name("mmmmmm").enabled(true).toEthnicity();
+        assertEquals("ZZZZZZ", allEthnicity.get(numberOfEthnicities.intValue()).getName());
+        assertEquals("AAAAAAAA", allEthnicity.get(numberOfEthnicities.intValue() + 1).getName());
+    }
 
-		save(ethnicity1, ethnicity2);
-		flushAndClearSession();
-		Integer id = ethnicity1.getId();
-		EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
-		Ethnicity reloadedEthnicity = ethnicityDAO.getEthnicityById(id);
-		assertEquals(ethnicity1, reloadedEthnicity);
-	}
+    @Test
+    public void shouldGetEthnicityById() {
+        Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").code(1).enabled(true).toEthnicity();
+        Ethnicity ethnicity2 = new EthnicityBuilder().name("mmmmmm").code(2).enabled(true).toEthnicity();
+
+        save(ethnicity1, ethnicity2);
+        flushAndClearSession();
+        Integer id = ethnicity1.getId();
+        EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
+        Ethnicity reloadedEthnicity = ethnicityDAO.getEthnicityById(id);
+        assertEquals(ethnicity1, reloadedEthnicity);
+    }
+
+    @Test
+    public void shouldGetAllEnabledEthnicities() {
+        BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession()
+                .createSQLQuery("select count(*) from ETHNICITY").uniqueResult();
+        Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").code(1).enabled(true).toEthnicity();
+        Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").code(2).enabled(false).toEthnicity();
+        save(ethnicity1, ethnicity2);
+        flushAndClearSession();
+        EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
+        List<Ethnicity> allEthnicity = ethnicityDAO.getAllEnabledEthnicities();
+        assertEquals(numberOfEthnicities.intValue() + 1, allEthnicity.size());
+    }
 }

@@ -199,7 +199,7 @@ public class PdfDocumentBuilder {
 
 		table.addCell(newTableCell("Study Option", smallBoldFont));
 		if (application.getProgrammeDetails().getStudyOption() != null) {
-			table.addCell(newTableCell(application.getProgrammeDetails().getStudyOption().displayValue(), smallFont));
+			table.addCell(newTableCell(application.getProgrammeDetails().getStudyOption(), smallFont));
 		} else {
 			table.addCell(newTableCell("Not Provided", smallGrayFont));
 		}
@@ -219,8 +219,12 @@ public class PdfDocumentBuilder {
 		}
 
 		table.addCell(newTableCell("How did you find us?", smallBoldFont));
-		if (application.getProgrammeDetails().getReferrer() != null) {
-			table.addCell(newTableCell(application.getProgrammeDetails().getReferrer().displayValue(), smallFont));
+		if (application.getProgrammeDetails().getSourcesOfInterest() != null) {
+		    if (application.getProgrammeDetails().getSourcesOfInterest().isFreeText()) {
+		        table.addCell(newTableCell(application.getProgrammeDetails().getSourcesOfInterestText(), smallFont));
+		    } else {
+		        table.addCell(newTableCell(application.getProgrammeDetails().getSourcesOfInterest().getName(), smallFont));
+		    }
 		} else {
 			table.addCell(newTableCell("Not Provided", smallGrayFont));
 		}

@@ -261,7 +261,7 @@
                 </executions>
                 <configuration>
                     <packageName>com.zuehlke.pgadmissions.referencedata.jaxb</packageName>
-                    <outputDirectory>${project.build.directory}/generated-source/jaxb</outputDirectory>
+                    <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
                     <schemaDirectory>${basedir}/src/main/resources/reference_data</schemaDirectory>
                 </configuration>
             </plugin>
@@ -279,12 +279,13 @@
                 <configuration>
                     <scriptdirectory>src/sql/change_scripts</scriptdirectory>
                     <driver>com.mysql.jdbc.Driver</driver>
-                    <url>jdbc:mysql://${sql.host}/${sql.db}</url>
+                    <url><![CDATA[jdbc:mysql://${sql.host}/${sql.db}?useUnicode=yes&characterEncoding=UTF-8]]></url>
                     <userid>pgadmissions</userid>
                     <password>pgadmissions</password>
                     <dbms>mysql</dbms>
                     <delimiter>;</delimiter>
                     <delimiterType>row</delimiterType>
+                    <encoding>UTF-8</encoding>
                 </configuration>
                 <dependencies>
                     <dependency>

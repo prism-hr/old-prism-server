@@ -130,28 +130,28 @@ public class PersonalDetailsController {
 
 
 	@ModelAttribute("languages")
-	public List<Language> getAllLanguages() {
-		return languageService.getAllLanguages();
+	public List<Language> getAllEnabledLanguages() {
+		return languageService.getAllEnabledLanguages();
 	}
 
 	@ModelAttribute("countries")
-	public List<Country> getAllCountries() {
-		return countryService.getAllCountries();
+	public List<Country> getAllEnabledCountries() {
+		return countryService.getAllEnabledCountries();
 	}
 
 	@ModelAttribute("ethnicities")
-	public List<Ethnicity> getAllEthnicities() {
-		return ethnicityService.getAllEthnicities();
+	public List<Ethnicity> getAllEnabledEthnicities() {
+		return ethnicityService.getAllEnabledEthnicities();
 	}
 
 	@ModelAttribute("disabilities")
-	public List<Disability> getAllDisabilities() {
-		return disabilityService.getAllDisabilities();
+	public List<Disability> getAllEnabledDisabilities() {
+		return disabilityService.getAllEnabledDisabilities();
 	}
 	
 	@ModelAttribute("domiciles")
-	public List<Domicile> getAllDomiciles() {
-	    return domicileDAO.getAllDomiciles();
+	public List<Domicile> getAllEnabledDomiciles() {
+	    return domicileDAO.getAllEnabledDomiciles();
 	}
 
 	@ModelAttribute("genders")

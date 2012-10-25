@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -26,7 +27,14 @@ public class DomicileDAO {
 
     @SuppressWarnings("unchecked")
     public List<Domicile> getAllDomiciles() {
-        return sessionFactory.getCurrentSession().createCriteria(Domicile.class).addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return sessionFactory.getCurrentSession().createCriteria(Domicile.class).addOrder(Order.asc("name"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Domicile> getAllEnabledDomiciles() {
+        return sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("enabled", true))
+                .addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public Domicile getDomicileById(Integer id) {

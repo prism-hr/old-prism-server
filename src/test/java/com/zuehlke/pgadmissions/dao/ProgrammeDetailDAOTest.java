@@ -10,43 +10,43 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
+import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 
 public class ProgrammeDetailDAOTest extends AutomaticRollbackTestCase{
-
 	
-		@Test(expected=NullPointerException.class)
-		public void shouldThrowNullPointerException(){
-			ProgrammeDetailDAO programDetailDAO = new ProgrammeDetailDAO();
-			programDetailDAO.getProgrammeDetailWithId(1);
-		}
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowNullPointerException() {
+        ProgrammeDetailDAO programDetailDAO = new ProgrammeDetailDAO();
+        programDetailDAO.getProgrammeDetailWithId(1);
+    }
 
-		@Test
-		public void shouldGetProgrammeDetailById() throws ParseException {
-			ProgrammeDetails programmeDetail = new ProgrammeDetailsBuilder().programmeName("proName")
-					.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02"))
-					.studyOption(StudyOption.FULL_TIME).referrer(Referrer.OPTION_1).id(1).toProgrammeDetails();
-			sessionFactory.getCurrentSession().save(programmeDetail);
-			flushAndClearSession();
-			
-			ProgrammeDetailDAO  programmeDetailDAO = new ProgrammeDetailDAO(sessionFactory);
-			assertEquals(programmeDetail, programmeDetailDAO.getProgrammeDetailWithId(programmeDetail.getId()));
-		
-		}
-		
-		@Test
-		public void shouldSaveProgrammeDetail() throws ParseException {
-			ProgrammeDetails programmeDetail = new ProgrammeDetailsBuilder().programmeName("proName")
-					.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02"))
-					.studyOption(StudyOption.FULL_TIME).referrer(Referrer.OPTION_1).toProgrammeDetails();
-			sessionFactory.getCurrentSession().save(programmeDetail);
-			flushAndClearSession();
-			
-			ProgrammeDetailDAO  programmeDetailDAO = new ProgrammeDetailDAO(sessionFactory);
-			programmeDetailDAO.save(programmeDetail);
-			Assert.assertNotNull(programmeDetail.getId());
-		}
-		
+    @Test
+    public void shouldGetProgrammeDetailById() throws ParseException {
+        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest();
+        ProgrammeDetails programmeDetail = new ProgrammeDetailsBuilder().programmeName("proName")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).studyOption(1, "Full-time")
+                .sourcesOfInterest(interest).id(1).toProgrammeDetails();
+        sessionFactory.getCurrentSession().save(programmeDetail);
+        flushAndClearSession();
+
+        ProgrammeDetailDAO programmeDetailDAO = new ProgrammeDetailDAO(sessionFactory);
+        assertEquals(programmeDetail, programmeDetailDAO.getProgrammeDetailWithId(programmeDetail.getId()));
+
+    }
+
+    @Test
+    public void shouldSaveProgrammeDetail() throws ParseException {
+        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest();
+        ProgrammeDetails programmeDetail = new ProgrammeDetailsBuilder().programmeName("proName")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).studyOption(1, "Full-time")
+                .sourcesOfInterest(interest).toProgrammeDetails();
+        sessionFactory.getCurrentSession().save(programmeDetail);
+        flushAndClearSession();
+
+        ProgrammeDetailDAO programmeDetailDAO = new ProgrammeDetailDAO(sessionFactory);
+        programmeDetailDAO.save(programmeDetail);
+        Assert.assertNotNull(programmeDetail.getId());
+    }
 }

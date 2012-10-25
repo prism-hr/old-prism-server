@@ -151,8 +151,8 @@ public class AddressController {
 	
 	
 	@ModelAttribute("countries")
-	public List<Country> getAllCountries() {
-		return countryService.getAllCountries();
+	public List<Country> getAllEnabledCountries() {
+		return countryService.getAllEnabledCountries();
 	}
 
 }

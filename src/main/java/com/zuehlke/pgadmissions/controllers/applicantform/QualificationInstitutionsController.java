@@ -41,9 +41,9 @@ public class QualificationInstitutionsController {
     @ResponseBody
     public String getInstitutions(@RequestParam String country_id, @RequestParam String term) {
         Integer decryptedCountryId = encryptionHelper.decryptToInteger(country_id);
-        Domicile country = domicileDAO.getDomicileById(decryptedCountryId);
+        Domicile domicileCountry = domicileDAO.getDomicileById(decryptedCountryId);
         
-        List<QualificationInstitution> institutions = qualificationInstitutionDAO.getInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(country.getName(), term);
+        List<QualificationInstitution> institutions = qualificationInstitutionDAO.getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(domicileCountry.getCode(), term);
         List<String> institutionsNameList = new ArrayList<String>();
         for (QualificationInstitution inst : institutions) {
             institutionsNameList.add(inst.getName());

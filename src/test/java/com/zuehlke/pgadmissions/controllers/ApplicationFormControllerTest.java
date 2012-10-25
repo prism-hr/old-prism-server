@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.exceptions.InvalidParameterFormatException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -46,7 +45,7 @@ public class ApplicationFormControllerTest {
 	public void shouldCreateNewApplicationFormWithProgramProjectAndUserFromSecurityContext() throws ParseException {
 
 		Program program = new ProgramBuilder().id(12).title("Program 1").toProgram();
-		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode(1).applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
@@ -66,7 +65,7 @@ public class ApplicationFormControllerTest {
 		Program program = new ProgramBuilder().id(12).toProgram();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		Date batchDeadline = dateFormat.parse("2012/08/02");
-		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(dateFormat.parse("2030/08/06")).toProgramInstance();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode(1).applicationDeadline(dateFormat.parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
@@ -85,7 +84,7 @@ public class ApplicationFormControllerTest {
 		Program program = new ProgramBuilder().id(12).toProgram();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		Date batchDeadline = dateFormat.parse("2012/08/02");
-		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(dateFormat.parse("2030/08/06")).toProgramInstance();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode(1).applicationDeadline(dateFormat.parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
@@ -103,7 +102,7 @@ public class ApplicationFormControllerTest {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		Program program = new ProgramBuilder().id(12).toProgram();
 
-		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(dateFormat.parse("2030/08/06")).toProgramInstance();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode(1).applicationDeadline(dateFormat.parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
@@ -118,7 +117,7 @@ public class ApplicationFormControllerTest {
 
 		Program program = new ProgramBuilder().id(12).toProgram();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(simpleDateFormat.parse("2030/08/06")).toProgramInstance();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode(1).applicationDeadline(simpleDateFormat.parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
@@ -138,7 +137,7 @@ public class ApplicationFormControllerTest {
 
 		Program program = new ProgramBuilder().id(12).toProgram();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(simpleDateFormat.parse("2030/08/06")).toProgramInstance();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode(1).applicationDeadline(simpleDateFormat.parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
@@ -157,7 +156,7 @@ public class ApplicationFormControllerTest {
 	@Test
 	public void shouldRedirectToApplicationFormView() throws ParseException {
 		Program program = new ProgramBuilder().id(12).title("Program 1").toProgram();
-		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption("Full-time").studyOptionCode(1).applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		

@@ -2,10 +2,10 @@ package com.zuehlke.pgadmissions.controllers.applicantform;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -101,20 +101,22 @@ public class QualificationControllerTest {
 
 	@Test
 	public void shouldReturnAllLanguages() {
-		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).toLanguage(), new LanguageBuilder().id(2).toLanguage());
-		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(languageList);
+		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).toLanguage(), new LanguageBuilder().id(2).enabled(false).toLanguage());
+		EasyMock.expect(languageServiceMock.getAllEnabledLanguages()).andReturn(Collections.singletonList(languageList.get(0)));
 		EasyMock.replay(languageServiceMock);
-		List<Language> allLanguages = controller.getAllLanguages();
-		assertSame(languageList, allLanguages);
+		List<Language> allLanguages = controller.getAllEnabledLanguages();
+		assertEquals(1, allLanguages.size());
+        assertEquals(languageList.get(0), allLanguages.get(0));
 	}
 
 	@Test
 	public void shouldReturnAllDomiciles() {
-		List<Domicile> countryList = Arrays.asList(new DomicileBuilder().id(1).toDomicile(), new DomicileBuilder().id(2).toDomicile());
-		EasyMock.expect(domicileDAOMock.getAllDomiciles()).andReturn(countryList);
+		List<Domicile> domicileList = Arrays.asList(new DomicileBuilder().id(1).enabled(true).toDomicile(), new DomicileBuilder().id(2).enabled(false).toDomicile());
+		EasyMock.expect(domicileDAOMock.getAllEnabledDomiciles()).andReturn(Collections.singletonList(domicileList.get(0)));
 		EasyMock.replay(domicileDAOMock);
-		List<Domicile> allCountries = controller.getAllCountries();
-		assertSame(countryList, allCountries);
+		List<Domicile> allDomiciles = controller.getAllEnabledDomiciles();
+		assertEquals(1, allDomiciles.size());
+        assertEquals(domicileList.get(0), allDomiciles.get(0));
 	}
 
 	@Test

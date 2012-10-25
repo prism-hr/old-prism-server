@@ -14,11 +14,11 @@ public class ProgrammeDetailDAO {
 	ProgrammeDetailDAO(){
 		this(null);
 	}
+	
 	@Autowired
 	public ProgrammeDetailDAO(SessionFactory sessionFactory){
 		this.sessionFactory = sessionFactory;
 	}
-
 
 	public ProgrammeDetails getProgrammeDetailWithId(Integer id) {
 		return (ProgrammeDetails) sessionFactory.getCurrentSession().get(ProgrammeDetails.class, id);
@@ -27,5 +27,4 @@ public class ProgrammeDetailDAO {
 	public void save(ProgrammeDetails pd) {
 		sessionFactory.getCurrentSession().saveOrUpdate(pd);
 	}
-
 }

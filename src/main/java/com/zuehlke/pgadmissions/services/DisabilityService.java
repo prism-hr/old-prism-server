@@ -24,6 +24,10 @@ public class DisabilityService {
 	public List<Disability> getAllDisabilities() {
 		return disabilityDAO.getAllDisabilities();
 	}
+	
+	public List<Disability> getAllEnabledDisabilities() {
+        return disabilityDAO.getAllEnabledDisabilities();
+    }
 
 	public Disability getDisabilityById(Integer disabilityId) {
 		return disabilityDAO.getDisabilityById(disabilityId);

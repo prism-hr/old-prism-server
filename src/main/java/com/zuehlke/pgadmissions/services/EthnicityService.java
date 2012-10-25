@@ -25,6 +25,10 @@ public class EthnicityService {
 	public List<Ethnicity> getAllEthnicities() {
 		return ethnicityDAO.getAllEthnicities();
 	}
+	
+	public List<Ethnicity> getAllEnabledEthnicities() {
+        return ethnicityDAO.getAllEnabledEthnicities();
+    }
 
 	public Ethnicity getEthnicityById(Integer ethnicityId) {
 		return ethnicityDAO.getEthnicityById(ethnicityId);

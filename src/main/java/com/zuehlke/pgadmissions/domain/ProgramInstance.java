@@ -14,10 +14,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Type;
-
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
-
 @Entity(name = "PROGRAM_INSTANCE")
 @Access(AccessType.FIELD)
 public class ProgramInstance extends DomainObject<Integer> {
@@ -33,12 +29,14 @@ public class ProgramInstance extends DomainObject<Integer> {
     private Date applicationStartDate;
     
 	@Column(name="academic_year")
-    private String academic_year;
+    private String academicYear;
     
 	@Column(name = "study_option")
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.StudyOptionEnumUserType")
-	private StudyOption studyOption;
+	private String studyOption;
 	
+	@Column(name = "study_code")
+    private Integer studyOptionCode;
+    
 	@Transient
 	private int sequence;
 	
@@ -67,14 +65,6 @@ public class ProgramInstance extends DomainObject<Integer> {
 		this.applicationDeadline = applicationDeadline;
 	}
 
-	public StudyOption getStudyOption() {
-		return studyOption;
-	}
-
-	public void setStudyOption(StudyOption studyOption) {
-		this.studyOption = studyOption;
-	}
-
 	public int getSequence() {
 		return sequence;
 	}
@@ -100,10 +90,26 @@ public class ProgramInstance extends DomainObject<Integer> {
     }
 
     public String getAcademic_year() {
-        return academic_year;
+        return academicYear;
     }
 
-    public void setAcademicYear(String academic_year) {
-        this.academic_year = academic_year;
+    public void setAcademicYear(String academicYear) {
+        this.academicYear = academicYear;
+    }
+
+    public String getStudyOption() {
+        return studyOption;
+    }
+
+    public void setStudyOption(String studyOption) {
+        this.studyOption = studyOption;
+    }
+
+    public Integer getStudyOptionCode() {
+        return studyOptionCode;
+    }
+
+    public void setStudyOptionCode(Integer studyCode) {
+        this.studyOptionCode = studyCode;
     }
 }

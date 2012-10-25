@@ -12,12 +12,11 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.errors.FundingErrors;
@@ -40,8 +39,8 @@ public class ApplicationPageModel extends PageModel {
 	private List<PhoneType> phoneTypes = new LinkedList<PhoneType>();
 	private List<DocumentType> documentTypes = new LinkedList<DocumentType>();
 
-	private List<StudyOption> studyOptions = new LinkedList<StudyOption>();
-	private List<Referrer> referrers = new LinkedList<Referrer>();
+	private List<String> studyOptions = new LinkedList<String>();
+	private List<SourcesOfInterest> sourcesOfInterest = new LinkedList<SourcesOfInterest>();
 	
 	private String uploadErrorCode;
 	private String uploadTwoErrorCode;
@@ -108,20 +107,20 @@ public class ApplicationPageModel extends PageModel {
 		return employmentPosition;
 	}
 
-	public List<StudyOption> getStudyOptions() {
+	public List<String> getStudyOptions() {
 		return studyOptions;
 	}
 
-	public void setStudyOptions(StudyOption[] values) {
-		this.studyOptions.addAll(Arrays.asList(values));
+	public void setStudyOptions(List<String> values) {
+		this.studyOptions = values;
 	}
 
-	public List<Referrer> getReferrers() {
-		return referrers;
+	public List<SourcesOfInterest> getSourcesOfInterests() {
+		return sourcesOfInterest;
 	}
 
-	public void setReferrers(Referrer[] values) {
-		this.referrers.addAll(Arrays.asList(values));
+	public void setSourcesOfInterests(List<SourcesOfInterest> values) {
+	    this.sourcesOfInterest = values;
 	}
 
 	public List<Gender> getGenders() {
@@ -205,7 +204,6 @@ public class ApplicationPageModel extends PageModel {
 
 	public void setRefereeUser(RegisteredUser refereeUser) {
 		this.refereeUser = refereeUser;
-		
 	}
 	
 	public RegisteredUser getRefereeUser() {

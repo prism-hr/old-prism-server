@@ -115,9 +115,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldLoadApplicationFormWithPersonalDetails() throws ParseException {
-		Country country1 = new CountryBuilder().name("AA").enabled(true).toCountry();
-		Country country2 = new CountryBuilder().name("CC").enabled(true).toCountry();
-		Domicile country3 = new DomicileBuilder().name("DD").enabled(true).toDomicile();
+		Country country1 = new CountryBuilder().name("AA").code("AA").enabled(true).toCountry();
+		Country country2 = new CountryBuilder().name("CC").code("CC").enabled(true).toCountry();
+		Domicile country3 = new DomicileBuilder().name("DD").code("DD").enabled(true).toDomicile();
 		save(country1, country2, country3);
 
 		ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).toApplicationForm();
@@ -236,11 +236,11 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		 DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
 				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0))
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0))
 				.toQualification();
 		Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
 				.isCompleted(CheckedStatus.YES).institution("").languageOfStudy("Achinese").subject("")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0))
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0))
 				.toQualification();
 
 		application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));

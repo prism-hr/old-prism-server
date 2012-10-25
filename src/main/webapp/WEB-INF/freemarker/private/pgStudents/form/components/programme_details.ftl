@@ -52,7 +52,7 @@
           <select class="full" id="studyOption" name="studyOption"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
             <option value="">Select...</option>
             <#list studyOptions as studyOption>
-            <option value="${studyOption}"<#if programmeDetails.studyOption?? &&  programmeDetails.studyOption == studyOption> selected="selected"</#if>>${studyOption.freeVal}</option>
+            <option value="${studyOption.name}"<#if programmeDetails.studyOption?? &&  programmeDetails.studyOption == studyOption> selected="selected"</#if>>${studyOption.name}</option>
             </#list>
           </select>
           <#if studyOptionError?? && studyOptionError=='true'>
@@ -101,12 +101,12 @@
         <div class="field">
           <select class="full" id="referrer" name="referrer"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
             <option value="">Select...</option>
-            <#list referrers as referrer>
-            <option value="${referrer}"<#if programmeDetails.referrer?? &&  programmeDetails.referrer == referrer> selected="selected"</#if>>${referrer.freeVal}</option>               
+            <#list sourcesOfInterests as interests>
+            <option value="${interests.id}"<#if programmeDetails.sourcesOfInterest?? &&  programmeDetails.sourcesOfInterest == interests> selected="selected"</#if>>${interests.name}</option>               
             </#list>
           </select>    
           
-          <@spring.bind "programmeDetails.referrer" /> 
+          <@spring.bind "programmeDetails.sourcesOfInterest" /> 
           <#list spring.status.errorMessages as error>
           <span class="invalid">${error}</span>
           </#list>

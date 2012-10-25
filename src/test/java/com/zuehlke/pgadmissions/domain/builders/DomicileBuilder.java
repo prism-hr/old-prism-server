@@ -10,6 +10,13 @@ public class DomicileBuilder {
     
     private Boolean enabled;
     
+    private String code;
+    
+    public DomicileBuilder code(String code) {
+        this.code = code;
+        return this;
+    }
+    
     public DomicileBuilder id(Integer id){
         this.id = id;
         return this;
@@ -30,6 +37,7 @@ public class DomicileBuilder {
         domicile.setId(id);
         domicile.setName(name);
         domicile.setEnabled(enabled);
+        domicile.setCode(code);
         return domicile;
     }
 }

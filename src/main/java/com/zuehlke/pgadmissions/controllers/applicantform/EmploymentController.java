@@ -115,13 +115,13 @@ public class EmploymentController {
 	}
 
 	@ModelAttribute("languages")
-	public List<Language> getAllLanguages() {
-		return languageService.getAllLanguages();
+	public List<Language> getAllEnabledLanguages() {
+		return languageService.getAllEnabledLanguages();
 	}
 
 	@ModelAttribute("countries")
-	public List<Country> getAllCountries() {
-		return countryService.getAllCountries();
+	public List<Country> getAllEnabledCountries() {
+		return countryService.getAllEnabledCountries();
 	}
 
 	@ModelAttribute("applicationForm")

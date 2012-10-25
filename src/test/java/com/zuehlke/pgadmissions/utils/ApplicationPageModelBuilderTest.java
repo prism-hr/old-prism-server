@@ -20,19 +20,20 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
 
 public class ApplicationPageModelBuilderTest {
 
@@ -40,6 +41,7 @@ public class ApplicationPageModelBuilderTest {
 	private CountryService countryServiceMock;
 	private LanguageService languageServiceMock;
 	private CommentService commentServiceMock;
+	private SourcesOfInterestService sourcesOfInterestServiceMock; 
 	private ApplicationPageModelBuilder builder;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 
@@ -82,17 +84,12 @@ public class ApplicationPageModelBuilderTest {
 	}
 
 	@Test
-	public void shouldSetAllStudyOptionsOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
-		assertEquals(StudyOption.values().length, model.getStudyOptions().size());
-		assertTrue(model.getStudyOptions().containsAll(Arrays.asList(StudyOption.values())));
-	}
-
-	@Test
 	public void shouldSetAllReferrersOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
-		assertEquals(Referrer.values().length, model.getReferrers().size());
-		assertTrue(model.getReferrers().containsAll(Arrays.asList(Referrer.values())));
+	    List<SourcesOfInterest> interests = Arrays.asList(new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest());
+        EasyMock.expect(sourcesOfInterestServiceMock.getAllSourcesOfInterest()).andReturn(interests);
+        EasyMock.replay(sourcesOfInterestServiceMock);
+	    ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
+		assertSame(interests, model.getSourcesOfInterest());
 	}
 
 	@Test
@@ -156,9 +153,9 @@ public class ApplicationPageModelBuilderTest {
 		countryServiceMock = EasyMock.createMock(CountryService.class);
 		languageServiceMock = EasyMock.createMock(LanguageService.class);
 		commentServiceMock = EasyMock.createMock(CommentService.class);
+		sourcesOfInterestServiceMock = EasyMock.createMock(SourcesOfInterestService.class);
 
-		builder = new ApplicationPageModelBuilder(commentServiceMock, countryServiceMock, languageServiceMock);
-
+		builder = new ApplicationPageModelBuilder(commentServiceMock, countryServiceMock, languageServiceMock, sourcesOfInterestServiceMock);
 	}
 
 	@After

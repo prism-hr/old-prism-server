@@ -32,7 +32,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	    DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
 				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0)).toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).toQualification();
 		sessionFactory.getCurrentSession().save(qualification);
 		Integer id = qualification.getId();
 		flushAndClearSession();
@@ -47,7 +47,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	    DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 	    Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
 				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0)).toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).toQualification();
 		qualificationDAO.save(qualification);
 		flushAndClearSession();		
 		Integer id = qualification.getId();
@@ -68,7 +68,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		 DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
 				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0)).toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).toQualification();
 		save(application, qualification);
 		flushAndClearSession();
 		

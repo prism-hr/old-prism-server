@@ -42,7 +42,7 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "referrer", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterest", "dropdown.radio.select.none");
 
 		ProgrammeDetails programmeDetail = (ProgrammeDetails) target;
 

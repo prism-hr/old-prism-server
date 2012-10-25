@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 @Repository
 public class ProgramInstanceDAO {
@@ -41,7 +40,7 @@ public class ProgramInstanceDAO {
 	}
 	
     @SuppressWarnings("unchecked")
-    public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, StudyOption studyOption) {
+    public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, String studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
         return (List<ProgramInstance>) sessionFactory.getCurrentSession()
                 .createCriteria(ProgramInstance.class)
@@ -54,7 +53,7 @@ public class ProgramInstanceDAO {
     }
 
 	@SuppressWarnings("unchecked")
-	public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPast(Program program, StudyOption studyOption) {
+	public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPast(Program program, String studyOption) {
 		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
 		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
 				.createCriteria(ProgramInstance.class)
@@ -65,7 +64,7 @@ public class ProgramInstanceDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-    public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(Program program, StudyOption studyOption) {
+    public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(Program program, String studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
         return (List<ProgramInstance>) sessionFactory.getCurrentSession()
                 .createCriteria(ProgramInstance.class)
@@ -77,7 +76,7 @@ public class ProgramInstanceDAO {
     }
 	
 	@SuppressWarnings("unchecked")
-	public ProgramInstance getCurrentProgramInstanceForStudyOption(Program program, StudyOption studyOption) {
+	public ProgramInstance getCurrentProgramInstanceForStudyOption(Program program, String studyOption) {
 		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
 		List<ProgramInstance> futureInstances = sessionFactory.getCurrentSession()
 				.createCriteria(ProgramInstance.class)

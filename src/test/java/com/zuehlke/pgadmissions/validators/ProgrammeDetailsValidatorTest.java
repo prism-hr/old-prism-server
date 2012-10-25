@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -37,11 +38,10 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testContext.xml")
@@ -125,16 +125,16 @@ public class ProgrammeDetailsValidatorTest {
 
 	@Test
 	@DirtiesContext
-	public void shouldRejectIfReferrerIsEmpty() {
-		programmeDetail.setReferrer(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "referrer");
+	public void shouldRejectIfSourcesOfInterestIsEmpty() {
+		programmeDetail.setSourcesOfInterest(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "sourcesOfInterest");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 
 		Assert.assertEquals(2, mappingResult.getErrorCount());
-		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("referrer").getCode());
+		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("sourcesOfInterest").getCode());
 		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
 	}
 	
@@ -292,7 +292,8 @@ public class ProgrammeDetailsValidatorTest {
 	@Test
 	@DirtiesContext
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
-		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE_LEARNING);
+		programmeDetail.setStudyOption("Part-time");
+		programmeDetail.setStudyOptionCode(31);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(null);
 		EasyMock.replay(programInstanceDAOMock);
@@ -351,6 +352,7 @@ public class ProgrammeDetailsValidatorTest {
 
 	@Before
 	public void setup() throws ParseException {
+	    SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest();
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).role(role).toUser();
 		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder()
@@ -362,7 +364,7 @@ public class ProgrammeDetailsValidatorTest {
 		program = new ProgramBuilder().id(1).title("Program 1").toProgram();
 		programInstance = new ProgramInstanceBuilder()
 		    .id(1)
-		    .studyOption(StudyOption.FULL_TIME)
+		    .studyOption(1, "Full-time")
 		    .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
 		    .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06"))
 		    .toProgramInstance();
@@ -377,7 +379,8 @@ public class ProgrammeDetailsValidatorTest {
 		    .id(5)
 		    .suggestedSupervisors(suggestedSupervisor)
 		    .programmeName("programmeName")
-		    .referrer(Referrer.OPTION_1).startDate(DateUtils.addDays(new Date(),10)).applicationForm(form)
-		    .studyOption(StudyOption.FULL_TIME).toProgrammeDetails();
+		    .sourcesOfInterest(interest)
+		    .startDate(DateUtils.addDays(new Date(),10)).applicationForm(form)
+		    .studyOption(1, "Full-time").toProgrammeDetails();
 	}
 }

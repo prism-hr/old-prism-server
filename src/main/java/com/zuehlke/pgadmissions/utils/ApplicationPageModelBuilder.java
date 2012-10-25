@@ -10,8 +10,6 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.errors.ValidationErrorsUtil;
@@ -19,6 +17,7 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
 
 @Component
 public class ApplicationPageModelBuilder {
@@ -26,20 +25,23 @@ public class ApplicationPageModelBuilder {
 	private final CountryService countryService;
 	private final LanguageService languageService;
 	private final CommentService commentService;
+	private final SourcesOfInterestService sourcesOfInterestService;
 
 	ApplicationPageModelBuilder() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public ApplicationPageModelBuilder(CommentService commentService, CountryService countryService, LanguageService languageService) {
+	public ApplicationPageModelBuilder(CommentService commentService, CountryService countryService, 
+	        LanguageService languageService, SourcesOfInterestService sourcesOfInterestService) {
 		this.commentService = commentService;
 		this.countryService = countryService;
 		this.languageService = languageService;
+		this.sourcesOfInterestService = sourcesOfInterestService;
 	}
 
-	public ApplicationPageModel createAndPopulatePageModel(ApplicationForm applicationForm, String uploadErrorCode, String view, String uploadTwoErrorCode,
-			String fundingErrors) {
+	public ApplicationPageModel createAndPopulatePageModel(ApplicationForm applicationForm, 
+	        String uploadErrorCode, String view, String uploadTwoErrorCode, String fundingErrors) {
 		RegisteredUser currentUser = null;
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null
 				&& SecurityContextHolder.getContext().getAuthentication().getDetails() instanceof RegisteredUser) {
@@ -56,10 +58,9 @@ public class ApplicationPageModelBuilder {
 		}
 		viewApplicationModel.setUploadErrorCode(uploadErrorCode);
 		viewApplicationModel.setUploadTwoErrorCode(uploadTwoErrorCode);
-		viewApplicationModel.setCountries(countryService.getAllCountries());
-		viewApplicationModel.setLanguages(languageService.getAllLanguages());
-		viewApplicationModel.setStudyOptions(StudyOption.values());
-		viewApplicationModel.setReferrers(Referrer.values());
+		viewApplicationModel.setCountries(countryService.getAllEnabledCountries());
+		viewApplicationModel.setLanguages(languageService.getAllEnabledLanguages());
+		viewApplicationModel.setSourcesOfInterests(sourcesOfInterestService.getAllEnabledSourcesOfInterest());
 		viewApplicationModel.setGenders(Gender.values());
 		viewApplicationModel.setPhoneTypes(PhoneType.values());
 		viewApplicationModel.setFundingTypes(FundingType.values());
@@ -70,8 +71,6 @@ public class ApplicationPageModelBuilder {
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}
-
-		
 
 		viewApplicationModel.setFundingErrors(ValidationErrorsUtil.convertFundingErrors(fundingErrors));
 		return viewApplicationModel;

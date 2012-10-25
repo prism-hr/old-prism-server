@@ -3,18 +3,25 @@ package com.zuehlke.pgadmissions.domain.builders;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 
 public class QualificationInstitutionBuilder {
+    
     private Integer id;
-    private String country_name;
+    private String countryCode;
     private String name;
     private Boolean enabled;
-
+    private String code;
+    
     public QualificationInstitutionBuilder id(Integer id) {
         this.id = id;
         return this;
     }
 
-    public QualificationInstitutionBuilder country_name(String name) {
-        this.country_name = name;
+    public QualificationInstitutionBuilder code(String code) {
+        this.code = code;
+        return this;
+    }
+    
+    public QualificationInstitutionBuilder countryCode(String code) {
+        this.countryCode = code;
         return this;
     }
 
@@ -29,11 +36,12 @@ public class QualificationInstitutionBuilder {
     }
 
     public QualificationInstitution toQualificationInstitution() {
-        QualificationInstitution country = new QualificationInstitution();
-        country.setId(id);
-        country.setCountryName(country_name);
-        country.setName(name);
-        country.setEnabled(enabled);
-        return country;
+        QualificationInstitution institution = new QualificationInstitution();
+        institution.setId(id);
+        institution.setDomicileCode(countryCode);
+        institution.setCode(code);
+        institution.setName(name);
+        institution.setEnabled(enabled);
+        return institution;
     }
 }

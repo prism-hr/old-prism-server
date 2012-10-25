@@ -18,17 +18,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
-import org.hibernate.annotations.Type;
-
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
-
 @Entity(name = "APPLICATION_FORM_PROGRAMME_DETAIL")
 @Access(AccessType.FIELD)
 public class ProgrammeDetails extends DomainObject<Integer> implements FormSectionObject {
 
-
-	private static final long serialVersionUID = -5997103825068065955L;
+    private static final long serialVersionUID = -5997103825068065955L;
 
 	@Transient
 	private boolean acceptedTerms;
@@ -50,8 +44,10 @@ public class ProgrammeDetails extends DomainObject<Integer> implements FormSecti
 	private String programmeName;
 
 	@Column(name = "study_option")
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.StudyOptionEnumUserType")
-	private StudyOption studyOption;
+	private String studyOption;
+	
+	@Column(name = "study_code")
+    private Integer studyOptionCode;
 
 	@Column(name = "project_name")
 	private String projectName;
@@ -59,9 +55,13 @@ public class ProgrammeDetails extends DomainObject<Integer> implements FormSecti
 	@Temporal(value = TemporalType.DATE)
 	@Column(name = "start_date")
 	private Date startDate;
-
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ReferrerEnumUserType")
-	private Referrer referrer;
+	
+	@OneToOne
+    @JoinColumn(name = "sources_of_interest_id")
+    private SourcesOfInterest sourcesOfInterest;
+	
+	@Column (name = "sources_of_interest_text")
+	private String sourcesOfInterestText;
 
 	@OneToOne
 	@JoinColumn(name = "application_form_id")
@@ -97,21 +97,21 @@ public class ProgrammeDetails extends DomainObject<Integer> implements FormSecti
 		this.startDate = startDate;
 	}
 
-	public Referrer getReferrer() {
-		return referrer;
-	}
-
-	public void setReferrer(Referrer referrer) {
-		this.referrer = referrer;
-	}
-
-	public StudyOption getStudyOption() {
+	public String getStudyOption() {
 		return studyOption;
 	}
 
-	public void setStudyOption(StudyOption studyOption) {
+	public void setStudyOption(String studyOption) {
 		this.studyOption = studyOption;
 	}
+	
+    public Integer getStudyOptionCode() {
+        return studyOptionCode;
+    }
+
+    public void setStudyOptionCode(Integer studyCode) {
+        this.studyOptionCode = studyCode;
+    }
 
 	public ApplicationForm getApplication() {
 		return application;
@@ -150,4 +150,19 @@ public class ProgrammeDetails extends DomainObject<Integer> implements FormSecti
 		this.acceptedTerms = acceptedTerms;
 	}
 
+    public SourcesOfInterest getSourcesOfInterest() {
+        return sourcesOfInterest;
+    }
+
+    public void setSourcesOfInterest(SourcesOfInterest sourcesOfInterest) {
+        this.sourcesOfInterest = sourcesOfInterest;
+    }
+
+    public String getSourcesOfInterestText() {
+        return sourcesOfInterestText;
+    }
+
+    public void setSourcesOfInterestText(String sourcesOfInterestText) {
+        this.sourcesOfInterestText = sourcesOfInterestText;
+    }
 }

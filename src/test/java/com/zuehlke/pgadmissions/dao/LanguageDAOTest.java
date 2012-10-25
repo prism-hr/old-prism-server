@@ -23,26 +23,23 @@ public class LanguageDAOTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldGetAllLanguagesInAlhphabeticalOrder() {
 		BigInteger numberOfLanguages = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from LANGUAGE").uniqueResult();
-		Language language1 = new LanguageBuilder().name("ZZZZZZ").enabled(true).toLanguage();
-		Language language2 = new LanguageBuilder().name("AAAAAA").enabled(true).toLanguage();
+		Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toLanguage();
+		Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(true).toLanguage();
 		save(language1,  language2);
 		flushAndClearSession();
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		List<Language> allLanguages = languageDAO.getAllLanguages();
+
 		assertEquals(numberOfLanguages.intValue() +2, allLanguages.size());
-		
 		assertEquals("AAAAAA",allLanguages.get(0).getName());
-		
 		assertEquals("ZZZZZZ",allLanguages.get(numberOfLanguages.intValue() +1).getName());
-		
 	}
-	
 	
 	@Test
 	public void shouldGetLanguageById(){
 
-		Language language1 = new LanguageBuilder().name("ZZZZZZ").enabled(true).toLanguage();
-		Language language2 = new LanguageBuilder().name("AAAAAA").enabled(true).toLanguage();
+		Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toLanguage();
+		Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(true).toLanguage();
 		
 		save(language1, language2);
 		flushAndClearSession();
@@ -50,8 +47,17 @@ public class LanguageDAOTest extends AutomaticRollbackTestCase{
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		Language reloadedLanguage = languageDAO.getLanguageById(id);
 		assertEquals(language1, reloadedLanguage);
-		
-	
 	}
 	
+    @Test
+    public void shouldGetAllEnabledLanguages() {
+        BigInteger numberOfLanguages = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from LANGUAGE WHERE enabled = true").uniqueResult();
+        Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toLanguage();
+        Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(false).toLanguage();
+        save(language1,  language2);
+        flushAndClearSession();
+        LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
+        List<Language> allLanguages = languageDAO.getAllEnabledLanguages();
+        assertEquals(numberOfLanguages.intValue() +1, allLanguages.size());
+    }	
 }

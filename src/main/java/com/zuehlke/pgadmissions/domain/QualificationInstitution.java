@@ -13,12 +13,17 @@ public class QualificationInstitution extends DomainObject<Integer>{
 
     private static final long serialVersionUID = 2746228908173552617L;
 
-    @Column(name = "country_name")
-    private String country_name;
+    @Column(name = "domicile_code")
+    private String domicileCode;
     
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "enabled")
     private Boolean enabled;
+    
+    @Column(name = "code")
+    private String code;
     
     @Override
     public void setId(Integer id) {
@@ -31,14 +36,6 @@ public class QualificationInstitution extends DomainObject<Integer>{
     @Access(AccessType.PROPERTY)
     public Integer getId() {
         return id;
-    }
-    
-    public String getCountry_name() {
-        return country_name;
-    }
-
-    public void setCountryName(String country_name) {
-        this.country_name = country_name;
     }
 
     public String getName() {
@@ -55,6 +52,22 @@ public class QualificationInstitution extends DomainObject<Integer>{
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getDomicileCode() {
+        return domicileCode;
+    }
+
+    public void setDomicileCode(String domicileCode) {
+        this.domicileCode = domicileCode;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }
 

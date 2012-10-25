@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -304,12 +305,13 @@ public class AddressControllerTest {
 	}
 
 	@Test
-	public void shouldReturnAllCountries() {
-		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).toCountry(), new CountryBuilder().id(2).toCountry());
-		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(countryList);
+	public void shouldReturnAllEnabledCountries() {
+		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).enabled(true).toCountry(), new CountryBuilder().id(2).enabled(false).toCountry());
+		EasyMock.expect(countriesServiceMock.getAllEnabledCountries()).andReturn(Collections.singletonList(countryList.get(0)));
 		EasyMock.replay(countriesServiceMock);
-		List<Country> allCountries = controller.getAllCountries();
-		assertSame(countryList, allCountries);
+		List<Country> allCountries = controller.getAllEnabledCountries();
+		assertEquals(1, allCountries.size());
+		assertEquals(countryList.get(0), allCountries.get(0));
 	}
 
 	@Before

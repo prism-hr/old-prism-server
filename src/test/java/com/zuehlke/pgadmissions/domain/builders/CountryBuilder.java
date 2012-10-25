@@ -9,7 +9,14 @@ public class CountryBuilder {
     private String name;
 	
     private Boolean enabled;
+    
+    private String code;
 	
+    public CountryBuilder code(String code){
+        this.code = code;
+        return this;
+    }
+    
 	public CountryBuilder id(Integer id){
 		this.id = id;
 		return this;
@@ -30,6 +37,7 @@ public class CountryBuilder {
 		country.setId(id);
 		country.setName(name);
 		country.setEnabled(enabled);
+		country.setCode(code);
 		return country;
 	}
 }

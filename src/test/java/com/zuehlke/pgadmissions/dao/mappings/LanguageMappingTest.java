@@ -14,7 +14,7 @@ public class LanguageMappingTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldSaveAndLoadLanguage(){
-		Language language = new LanguageBuilder().name("ZZZZZZ").enabled(true).toLanguage();
+		Language language = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toLanguage();
 		sessionFactory.getCurrentSession().save(language);
 		assertNotNull(language.getId());
 		Integer id = language.getId();

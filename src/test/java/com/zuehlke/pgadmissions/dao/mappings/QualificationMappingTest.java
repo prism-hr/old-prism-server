@@ -46,7 +46,7 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
         Qualification qualification = new QualificationBuilder().id(3)
 				.awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("").institution("")
 				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllDomiciles().get(0)).toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).toQualification();
 
 		sessionFactory.getCurrentSession().save(qualification);
 		assertNotNull(qualification.getId());

@@ -91,7 +91,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		Ethnicity eth = new EthnicityBuilder().name("AAAA").enabled(true).toEthnicity();
 		save(eth);
 
-		Disability dis = new DisabilityBuilder().name("BBBB").enabled(true).toDisability();
+		Disability dis = new DisabilityBuilder().name("BBBB").code(2).enabled(true).toDisability();
 		save(dis);
 
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country)//
@@ -117,10 +117,10 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	@Override
 	public void setUp() {
 		super.setUp();
-		country = new CountryBuilder().name("AA").enabled(true).toCountry();
-		domicile = new DomicileBuilder().name("BB").enabled(true).toDomicile();
-		ethnicity = new EthnicityBuilder().name("AAAA").enabled(true).toEthnicity();
-		disability = new DisabilityBuilder().name("BBBB").enabled(true).toDisability();
+		country = new CountryBuilder().name("AA").code("AA").enabled(true).toCountry();
+		domicile = new DomicileBuilder().name("BB").code("BB").enabled(true).toDomicile();
+		ethnicity = new EthnicityBuilder().name("AAAA").code(1).enabled(true).toEthnicity();
+		disability = new DisabilityBuilder().name("BBBB").code(2).enabled(true).toDisability();
 
 		save(country);
 		save(ethnicity);

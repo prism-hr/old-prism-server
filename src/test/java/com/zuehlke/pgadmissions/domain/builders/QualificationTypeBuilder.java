@@ -9,7 +9,14 @@ public class QualificationTypeBuilder {
     private String name;
 	
     private Boolean enabled;
+    
+    private String code;
 	
+    public QualificationTypeBuilder code(String code) {
+        this.code = code;
+        return this;
+    }
+    
 	public QualificationTypeBuilder id(Integer id){
 		this.id = id;
 		return this;
@@ -30,6 +37,7 @@ public class QualificationTypeBuilder {
 	    title.setId(id);
 	    title.setName(name);
 	    title.setEnabled(enabled);
+	    title.setCode(code);
 		return title;
 	}
 }

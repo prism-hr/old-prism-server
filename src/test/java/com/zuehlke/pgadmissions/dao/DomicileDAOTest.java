@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigInteger;
+
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -12,8 +14,8 @@ public class DomicileDAOTest extends AutomaticRollbackTestCase{
 
 	@Test
 	public void shouldGetNationalityById() {
-		Domicile dom1 = new DomicileBuilder().enabled(true).name("AAAAA").toDomicile();
-		Domicile dom2 = new DomicileBuilder().enabled(true).name("BBBBB").toDomicile();
+		Domicile dom1 = new DomicileBuilder().enabled(true).name("AAAAA").code("AA").toDomicile();
+		Domicile dom2 = new DomicileBuilder().enabled(true).name("BBBBB").code("BB").toDomicile();
 		
 		save(dom1, dom2);
 		flushAndClearSession();
@@ -25,4 +27,20 @@ public class DomicileDAOTest extends AutomaticRollbackTestCase{
 		
 		assertEquals(dom1, domicileById);
 	}
+	
+	@Test
+    public void shouldGetEnabledNationalities() {
+	    BigInteger numberOfDomiciles = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DOMICILE WHERE enabled = true").uniqueResult();
+	    
+        Domicile dom1 = new DomicileBuilder().enabled(true).name("AAAAA").code("AA").toDomicile();
+        Domicile dom2 = new DomicileBuilder().enabled(false).name("BBBBB").code("BB").toDomicile();
+        
+        save(dom1, dom2);
+        
+        flushAndClearSession();
+        
+        DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
+        
+        assertEquals(numberOfDomiciles.intValue() + 1, domicileDAO.getAllEnabledDomiciles().size());
+    }
 }

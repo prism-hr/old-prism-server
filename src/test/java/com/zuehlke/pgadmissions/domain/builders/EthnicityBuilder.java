@@ -6,7 +6,13 @@ public class EthnicityBuilder {
 	private String name;
 	private Integer id;
 	private Boolean enabled;
+	private int code;
 
+	public EthnicityBuilder code(Integer code) {
+        this.code = code;
+        return this;
+    }
+	
 	public EthnicityBuilder name(String ethName) {
 		this.name = ethName;
 		return this;
@@ -27,6 +33,7 @@ public class EthnicityBuilder {
 		eth.setId(id);
 		eth.setName(name);
 		eth.setEnabled(enabled);
+		eth.setCode(code);
 		return eth;
 	}
 }

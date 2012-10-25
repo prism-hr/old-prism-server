@@ -60,6 +60,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Badge</value>
                 <value>com.zuehlke.pgadmissions.domain.Domicile</value>
                 <value>com.zuehlke.pgadmissions.domain.QualificationType</value>
+				<value>com.zuehlke.pgadmissions.domain.SourcesOfInterest</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

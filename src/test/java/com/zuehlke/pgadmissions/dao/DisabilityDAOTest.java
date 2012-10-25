@@ -16,15 +16,15 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
 		DisabilityDAO disabilityDAO = new DisabilityDAO();
-		Disability disability = new DisabilityBuilder().id(1).name("ZZZZZZ").enabled(true).toDisability();
+		Disability disability = new DisabilityBuilder().id(1).name("ZZZZZZ").code(1).enabled(true).toDisability();
 		disabilityDAO.getDisabilityById(disability.getId());
 	}
 
 	@Test
 	public void shouldGetAllDisabilitiesInIDOrder() {
 		BigInteger numberOfDisabilities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DISABILITY").uniqueResult();
-		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").enabled(true).toDisability();
-		Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").enabled(true).toDisability();
+		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").code(1).enabled(true).toDisability();
+		Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").code(2).enabled(true).toDisability();
 		save(disability1, disability2);
 		flushAndClearSession();
 		DisabilityDAO disabilityDAO = new DisabilityDAO(sessionFactory);
@@ -37,8 +37,8 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldGetDisabilityById() {
-		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").enabled(true).toDisability();
-		Disability disability2 = new DisabilityBuilder().name("mmmmmm").enabled(true).toDisability();
+		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").code(1).enabled(true).toDisability();
+		Disability disability2 = new DisabilityBuilder().name("mmmmmm").code(2).enabled(true).toDisability();
 
 		save(disability1, disability2);
 		flushAndClearSession();
@@ -47,4 +47,17 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 		Disability reloadedDisability = disabilityDAO.getDisabilityById(id);
 		assertEquals(disability1, reloadedDisability);
 	}
+	
+
+    @Test
+    public void shouldGetAllDisabilitiesEnabledOnly() {
+        BigInteger numberOfDisabilities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DISABILITY WHERE enabled = true").uniqueResult();
+        Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").code(1).enabled(false).toDisability();
+        Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").code(2).enabled(true).toDisability();
+        save(disability1, disability2);
+        flushAndClearSession();
+        DisabilityDAO disabilityDAO = new DisabilityDAO(sessionFactory);
+        List<Disability> allDisability = disabilityDAO.getAllEnabledDisabilities();
+        assertEquals(numberOfDisabilities.intValue() + 1, allDisability.size());
+    }
 }

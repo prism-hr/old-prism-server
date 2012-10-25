@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
@@ -20,16 +22,17 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -54,8 +57,11 @@ public class ProgrammeDetailsControllerTest {
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1)
-				.applicationForm(new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.APPROVED).toApplicationForm()).toProgrammeDetails();
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder()
+                .id(1)
+                .applicationForm(
+                        new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.APPROVED).toApplicationForm())
+                .toProgrammeDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(programmeDetailsServiceMock, errors);
 		controller.editProgrammeDetails( programmeDetails, errors);
@@ -98,17 +104,23 @@ public class ProgrammeDetailsControllerTest {
 			
 		};
 
-		EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(
-				Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE_LEARNING));
+		StudyOption option1 = new StudyOption(1, "Full-time");
+		StudyOption option2 = new StudyOption(31, "Part-time");
+		
+		List<StudyOption> optionsList = Arrays.asList(option1, option2);
+		
+		EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(optionsList);
 		EasyMock.replay(programmeDetailsServiceMock);
-		StudyOption[] studyOptions = controller.getStudyOptions(applicationNumber);
-		assertArrayEquals(studyOptions, new StudyOption[] { StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE_LEARNING });
+		List<StudyOption> studyOptions = controller.getStudyOptions(applicationNumber);
+		assertSame(studyOptions, optionsList);
 	}
 
 	@Test
-	public void shouldReturnAllReferers() {
-		Referrer[] referrers = controller.getReferrers();
-		assertArrayEquals(referrers, Referrer.values());
+	public void shouldReturnAllSourcesOfInterest() {
+	    SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("ZZ").name("ZZ").toSourcesOfInterest();
+	    EasyMock.expect(programmeDetailsServiceMock.getAllSourcesOfInterest()).andReturn(Collections.singletonList(sourcesOfInterest));
+	    EasyMock.replay(programmeDetailsServiceMock);
+	    assertEquals(controller.getAllSourcesOfInterest().get(0), sourcesOfInterest);
 	}
 
 	@Test
@@ -236,29 +248,23 @@ public class ProgrammeDetailsControllerTest {
 		assertEquals("/private/pgStudents/form/components/programme_details", view);
 	}
 	
-
-	
 	@Before
 	public void setUp() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-
 		programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
-
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
-
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 		supervisorJSONPropertyEditorMock = EasyMock.createMock(SuggestedSupervisorJSONPropertyEditor.class);
 		programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
 		programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
-				supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock);
+        controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock,
+                datePropertyEditorMock, supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock,
+                programmeDetailsServiceMock, userServiceMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 	}
-
-
 }

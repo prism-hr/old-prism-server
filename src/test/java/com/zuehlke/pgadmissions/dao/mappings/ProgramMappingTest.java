@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
@@ -55,8 +54,8 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		program.setTitle("Program's title");
 		
 		save(program);
-		ProgramInstance instanceOne = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(StudyOption.FULL_TIME).program(program).applicationStartDate(new Date()).academicYear("2013").toProgramInstance();
-		ProgramInstance instanceTwo = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(StudyOption.FULL_TIME).program(program).applicationStartDate(new Date()).academicYear("2013").toProgramInstance();
+		ProgramInstance instanceOne = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(1, "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").toProgramInstance();
+		ProgramInstance instanceTwo = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(1, "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").toProgramInstance();
 		save(instanceOne, instanceTwo);
 		flushAndClearSession();
 		

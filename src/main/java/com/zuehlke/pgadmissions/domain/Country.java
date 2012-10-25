@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -9,12 +10,16 @@ import javax.persistence.Id;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "COUNTRIES")
-@Access(AccessType.FIELD) 
-public class Country extends DomainObject<Integer>{
+@Access(AccessType.FIELD)
+public class Country extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = 2746228908173552617L;
-
+	
+	@Column(name = "enabled")
 	private Boolean enabled;
+	
+	@Column(name = "code")
+	private String code;
 	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
 	private String name;
@@ -46,6 +51,14 @@ public class Country extends DomainObject<Integer>{
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }
 

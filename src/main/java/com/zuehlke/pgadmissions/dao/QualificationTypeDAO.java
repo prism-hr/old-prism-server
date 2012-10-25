@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,8 +26,17 @@ public class QualificationTypeDAO {
     }
 
     @SuppressWarnings("unchecked")
+    public List<QualificationType> getAllEnabledQualificationTypes() {
+        return sessionFactory.getCurrentSession().createCriteria(QualificationType.class)
+                .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("name"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
+    
+    @SuppressWarnings("unchecked")
     public List<QualificationType> getAllQualificationTypes() {
-        return sessionFactory.getCurrentSession().createCriteria(QualificationType.class).addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return sessionFactory.getCurrentSession().createCriteria(QualificationType.class)
+                .addOrder(Order.asc("name"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public QualificationType getQualificationTypeById(Integer id) {

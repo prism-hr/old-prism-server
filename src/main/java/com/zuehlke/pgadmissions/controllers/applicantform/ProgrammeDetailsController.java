@@ -24,10 +24,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -99,13 +99,7 @@ public class ProgrammeDetailsController {
 	        return StringUtils.EMPTY;
 	    }
 	    
-	    StudyOption sOption = StudyOption.valueOf(studyOption);
-	    if (sOption == null) {
-	        throw new ResourceNotFoundException();
-	    }
-	    
-	    List<ProgramInstance> availableProgramInstances = programmeDetailsService.getActiveProgramInstancesOrderedByApplicationStartDate(
-	            getApplicationForm(applicationId).getProgram(), sOption);
+	    List<ProgramInstance> availableProgramInstances = programmeDetailsService.getActiveProgramInstancesOrderedByApplicationStartDate(getApplicationForm(applicationId).getProgram(), studyOption);
 	    
 	    String convertedDate = StringUtils.EMPTY;
         DateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
@@ -133,13 +127,13 @@ public class ProgrammeDetailsController {
 	}
 
 	@ModelAttribute("studyOptions")
-	public StudyOption[] getStudyOptions(@RequestParam String applicationId) {
-		return (StudyOption[]) programmeDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram()).toArray(new StudyOption[] {});
+	public List<StudyOption> getStudyOptions(@RequestParam String applicationId) {
+		return programmeDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram());
 	}
 
-	@ModelAttribute("referrers")
-	public Referrer[] getReferrers() {
-		return Referrer.values();
+	@ModelAttribute("sourcesOfInterests")
+	public List<SourcesOfInterest> getSourcesOfInterests() {
+		return programmeDetailsService.getAllEnabledSourcesOfInterest();
 	}
 
 	@ModelAttribute("applicationForm")
@@ -178,11 +172,9 @@ public class ProgrammeDetailsController {
 			return new ProgrammeDetails();
 		}
 		return applicationForm.getProgrammeDetails();
-
 	}
 
 	private RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();
 	}
-
 }

@@ -146,18 +146,18 @@ public class QualificationController {
 	/* Reference data section */
 	
 	@ModelAttribute("languages")
-	public List<Language> getAllLanguages() {
-		return languageService.getAllLanguages();
+	public List<Language> getAllEnabledLanguages() {
+		return languageService.getAllEnabledLanguages();
 	}
 
 	@ModelAttribute("countries")
-	public List<Domicile> getAllCountries() {
-		return domicileDAO.getAllDomiciles();
+	public List<Domicile> getAllEnabledDomiciles() {
+		return domicileDAO.getAllEnabledDomiciles();
 	}
 	
 	@ModelAttribute("types")
-	public List<QualificationType> getAllQualificationTypes() {
-	    return qualificationTypeDAO.getAllQualificationTypes();
+	public List<QualificationType> getAllEnabledQualificationTypes() {
+	    return qualificationTypeDAO.getAllEnabledQualificationTypes();
 	}
 	
 	@ModelAttribute("applicationForm")

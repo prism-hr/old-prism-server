@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.xerces.impl.xpath.regex.REUtil;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.CodeObject;
@@ -15,41 +14,39 @@ import com.zuehlke.pgadmissions.referencedata.adapters.ImportData;
 @Service
 public class ImportService {
 
-	private static class ImportedObjectComparator implements Comparator<ImportedObject> {
+	private static class CodeComparator implements Comparator<CodeObject> {
 		@Override
-		public int compare(ImportedObject o1, ImportedObject o2) {
+		public int compare(CodeObject o1, CodeObject o2) {
 			int compareResult = o1.getCode().compareTo(o2.getCode());
 			if (compareResult == 0) {
-				if (o1.getEnabled())
-					return -1;
-				else if (o2.getEnabled())
-					return 1;
-				else
-					return 0;
+				return o1.getName().compareTo(o2.getName());
 			} else {
 				return compareResult;
 			}
 		}
-
 	}
-
-	private static class CodeComparator implements Comparator<CodeObject> {
-
+	
+	private static class ProgramComparator implements Comparator<CodeObject> {
 		@Override
 		public int compare(CodeObject o1, CodeObject o2) {
-			return o1.getCode().compareTo(o2.getCode());
+			int compareResult = o1.getCode().compareTo(o2.getCode());
+			if (compareResult == 0) {
+				return o1.getName().compareTo(o2.getName());
+			} else {
+				return compareResult;
+			}
 		}
-
 	}
 
-	private final ImportedObjectComparator importedObjectComparator = new ImportedObjectComparator();
 	private final CodeComparator codeComparator = new CodeComparator();
 
 	// Requires RandomAccess lists to run fast
 	@SuppressWarnings("unchecked")
 	public <T extends ImportedObject, U extends ImportData> List<T> merge(List<T> currentData, List<U> importData) {
 		List<T> changes = new ArrayList<T>();
-		Collections.sort(currentData, importedObjectComparator);
+		if(!currentData.isEmpty()) {			
+			Collections.sort(currentData, getComparator(currentData.get(0)));
+		}
 		Collections.sort(importData, codeComparator);
 		int i = 0, j = 0;
 		T currentElement;
@@ -59,17 +56,11 @@ public class ImportService {
 			importElement = importData.get(j);
 			int comparisionResult = codeComparator.compare(currentElement, importElement);
 			if (comparisionResult == 0) {
-				if (!importElement.equalAttributes(currentElement)) {
-					disableElement(currentElement, changes);
-					ImportedObject domainObject = importElement.createDomainObject();
-					changes.add((T) domainObject);
-				} else if (!currentElement.getEnabled()) {
+				if (!currentElement.getEnabled()) {
 					currentElement.setEnabled(true);
 					changes.add(currentElement);
 				}
-				do {
-					i++;
-				} while (i < currentData.size() && currentData.get(i).getCode().equals(currentElement.getCode()));
+				i++;
 				j++;
 			} else if (comparisionResult < 0) {
 				disableElement(currentElement, changes);
@@ -92,6 +83,10 @@ public class ImportService {
 			j++;
 		}
 		return changes;
+	}
+
+	private Comparator<CodeObject> getComparator(ImportedObject object) {
+		return codeComparator;
 	}
 
 	private <T extends ImportedObject> void disableElement(T currentElement, List<T> changes) {

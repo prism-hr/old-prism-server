@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.dao.QualificationDAO;
+import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
 
 @Service
@@ -31,9 +32,13 @@ public class QualificationsImporter implements Importer {
 	}
 
 	@Override
-	public void importData() throws JAXBException {
+	public void importData() throws XMLDataImportException {
+		try {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Qualifications qualification = (Qualifications) unmarshaller.unmarshal(xmlFileLocation);
+		} catch (Throwable e) {
+			throw new XMLDataImportException("Error during the import of file: " + xmlFileLocation, e);
+		}
 	}
 
 }

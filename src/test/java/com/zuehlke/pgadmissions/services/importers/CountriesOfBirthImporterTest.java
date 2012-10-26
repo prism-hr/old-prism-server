@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 
 public class CountriesOfBirthImporterTest {
 	
@@ -24,7 +25,7 @@ public class CountriesOfBirthImporterTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test
-    public void testImportData() throws JAXBException {
+    public void testImportData() throws XMLDataImportException {
 		List<Country> countries = new ArrayList<Country>();
 		countries.add(new CountryBuilder().code("UK").enabled(true).name("United Kingdom").toCountry());
 		countries.add(new CountryBuilder().code("PL").enabled(true).name("Poland").toCountry());

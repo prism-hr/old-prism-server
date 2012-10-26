@@ -40,4 +40,8 @@ public class EthnicityDAO {
 	public Ethnicity getEthnicityById(Integer id) {
 		return (Ethnicity) sessionFactory.getCurrentSession().get(Ethnicity.class, id);
 	}
+
+	public void save(Ethnicity ethnicity) {
+		sessionFactory.getCurrentSession().saveOrUpdate(ethnicity);
+	}
 }

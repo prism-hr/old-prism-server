@@ -15,7 +15,7 @@ public class CountryOfBirthAdapterTest {
 	@Test
     public void testCreateDomainObject() {
 		CountryOfBirthAdapter countryOfBirthAdapter = new CountryOfBirthAdapter(country);
-		Country domainObject = countryOfBirthAdapter.createDomainObject();		
+		Country domainObject = countryOfBirthAdapter.createDomainObject(null, null);		
 		Assert.assertEquals(country.getCode(), domainObject.getCode());
 		Assert.assertEquals(country.getName(), domainObject.getName());
 		Assert.assertEquals(Boolean.TRUE, domainObject.getEnabled());

@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 @Entity(name = "DISABILITY")
 @Access(AccessType.FIELD)
-public class Disability extends DomainObject<Integer> {
+public class Disability extends DomainObject<Integer> implements ImportedObject {
 	private static final long serialVersionUID = 6141410638125684970L;
 
     @Column(name = "enabled")
@@ -52,6 +52,10 @@ public class Disability extends DomainObject<Integer> {
 
     public Integer getCode() {
         return code;
+    }
+    
+    public String getStringCode() {
+        return code.toString();
     }
 
     public void setCode(Integer code) {

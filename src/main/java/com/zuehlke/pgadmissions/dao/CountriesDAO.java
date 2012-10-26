@@ -44,6 +44,7 @@ public class CountriesDAO {
 	public void save(Country country) {
 		sessionFactory.getCurrentSession().saveOrUpdate(country);
 	}
+	
 	public Country getEnabledCountryByCode(String code) {
         return (Country) sessionFactory.getCurrentSession().createCriteria(Country.class).add(Restrictions.eq("code", code)).add(Restrictions.eq("enabled", true)).uniqueResult();
     }

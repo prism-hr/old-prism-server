@@ -8,12 +8,11 @@ import javax.xml.bind.Unmarshaller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
 
-@Service
+//@Service - no import of institutions
 public class InstitutionsImporter implements Importer {
 	
 	private final JAXBContext context;

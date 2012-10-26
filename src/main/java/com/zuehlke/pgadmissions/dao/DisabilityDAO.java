@@ -42,4 +42,8 @@ public class DisabilityDAO {
 		return (Disability) sessionFactory.getCurrentSession().get(Disability.class, id);
 	}
 
+	public void save(Disability disability) {
+		sessionFactory.getCurrentSession().saveOrUpdate(disability);
+	}
+
 }

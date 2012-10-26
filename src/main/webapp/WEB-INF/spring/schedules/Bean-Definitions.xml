@@ -35,14 +35,13 @@
 		<constructor-arg ref="sessionFactoryMail" />
 	</bean>
 	
-	
-	
 	<bean id="mailConfigurationService" class="com.zuehlke.pgadmissions.services.ConfigurationService"
 		autowire-candidate="false">
 		<constructor-arg ref="mailStageDurationDAO" />
 		<constructor-arg ref="mailReminderIntervalDAO" />
 		<constructor-arg ref="mailRegistryUserDAO" />
 	</bean>
+	
 	<bean id="mailServiceForTimers" class="com.zuehlke.pgadmissions.services.MailService"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
@@ -112,6 +111,13 @@
 		<constructor-arg index="2" ref="messageSource" />
 	</bean>
 	
+	<bean id="dataImporterMailSender" class="com.zuehlke.pgadmissions.mail.DataImporterMailSender">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="messageSource" />
+		<constructor-arg index="3" ref="mailUserService" />
+		<constructor-arg index="4" ref="sessionFactoryMail" />
+	</bean>
 
 	<bean id="mailApplicationDAO" class="com.zuehlke.pgadmissions.dao.ApplicationFormDAO"
 		autowire-candidate="false">

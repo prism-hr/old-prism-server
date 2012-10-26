@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "COUNTRIES")
-@Access(AccessType.FIELD)
-public class Country extends DomainObject<Integer> {
+@Access(AccessType.FIELD) 
+public class Country extends DomainObject<Integer> implements ImportedObject{
 
 	private static final long serialVersionUID = 2746228908173552617L;
 	
@@ -49,16 +49,18 @@ public class Country extends DomainObject<Integer> {
         return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
-    public String getCode() {
-        return code;
-    }
+	@Override
+	public String getCode() {
+		return code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 }
 

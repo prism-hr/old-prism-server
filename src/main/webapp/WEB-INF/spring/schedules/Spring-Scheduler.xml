@@ -11,8 +11,9 @@
 	<import resource="Supervisor-Emails.xml" />
 	<import resource="Bean-Definitions.xml" />
 	<import resource="Person-Emails.xml" />
-
 	
+	<bean id="xmlDataImportTask" class="com.zuehlke.pgadmissions.timers.XMLDataImportTask"/>
+
 	<!-- new user notifications -->
 	<bean id="newUserNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.NewUserNotificationTask">
 		<constructor-arg index="0" ref="sessionFactoryMail" />

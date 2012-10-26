@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "COUNTRIES")
 @Access(AccessType.FIELD) 
-public class Country extends DomainObject<Integer> implements ImportedObject{
+public class Country extends DomainObject<Integer> implements ImportedObject {
 
 	private static final long serialVersionUID = 2746228908173552617L;
 	
@@ -54,10 +54,13 @@ public class Country extends DomainObject<Integer> implements ImportedObject{
         this.enabled = enabled;
     }
 
-	@Override
 	public String getCode() {
 		return code;
 	}
+	
+	public String getStringCode() {
+        return code;
+    }
 
 	public void setCode(String code) {
 		this.code = code;

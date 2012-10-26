@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.referencedata.adapters;
 
+import java.util.List;
+
+import com.zuehlke.pgadmissions.domain.CodeObject;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Countries.Country;
 
 public class CountryOfBirthAdapter implements ImportData {
@@ -15,12 +18,12 @@ public class CountryOfBirthAdapter implements ImportData {
 	}
 
 	@Override
-	public String getCode() {
+	public String getStringCode() {
 		return country.getCode();
 	}
 
 	@Override
-	public com.zuehlke.pgadmissions.domain.Country createDomainObject() {
+	public com.zuehlke.pgadmissions.domain.Country createDomainObject(List<? extends CodeObject> currentData, List<? extends CodeObject> changes) {
 		com.zuehlke.pgadmissions.domain.Country result = new com.zuehlke.pgadmissions.domain.Country();
 		result.setCode(country.getCode());
 		result.setName(country.getName());

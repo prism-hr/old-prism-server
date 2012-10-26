@@ -40,4 +40,8 @@ public class DomicileDAO {
     public Domicile getDomicileById(Integer id) {
         return (Domicile) sessionFactory.getCurrentSession().get(Domicile.class, id);
     }
+
+	public void save(Domicile domicile) {
+		sessionFactory.getCurrentSession().saveOrUpdate(domicile);
+	}
 }

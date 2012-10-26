@@ -42,4 +42,8 @@ public class LanguageDAO {
 		return (Language) sessionFactory.getCurrentSession().get(Language.class, id);
 	}
 
+	public void save(Language language) {
+		sessionFactory.getCurrentSession().saveOrUpdate(language);
+	}
+
 }

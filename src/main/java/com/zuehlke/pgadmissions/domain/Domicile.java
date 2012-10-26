@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "DOMICILE")
 @Access(AccessType.FIELD) 
-public class Domicile extends DomainObject<Integer>{
+public class Domicile extends DomainObject<Integer> implements ImportedObject {
 
     private static final long serialVersionUID = -8250449282720149478L;
 
@@ -37,6 +37,7 @@ public class Domicile extends DomainObject<Integer>{
         return id;
     }
     
+    @Override
     public String getName() {
         return name;
     }
@@ -45,15 +46,21 @@ public class Domicile extends DomainObject<Integer>{
         this.name = name;
     }
 
+    @Override
     public Boolean getEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
     public String getCode() {
+        return code;
+    }
+    
+    public String getStringCode() {
         return code;
     }
 

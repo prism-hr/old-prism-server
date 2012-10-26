@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 @Entity(name = "ETHNICITY")
 @Access(AccessType.FIELD)
-public class Ethnicity extends DomainObject<Integer> {
+public class Ethnicity extends DomainObject<Integer> implements ImportedObject {
     private static final long serialVersionUID = -3605895863492842105L;
 
     @Column(name = "enabled")
@@ -57,4 +57,9 @@ public class Ethnicity extends DomainObject<Integer> {
     public void setCode(Integer code) {
         this.code = code;
     }
+
+	@Override
+	public String getStringCode() {
+		return code.toString();
+	}
 }

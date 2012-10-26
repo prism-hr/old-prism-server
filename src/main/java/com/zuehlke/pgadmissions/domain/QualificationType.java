@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "QUALIFICATION_TYPE")
 @Access(AccessType.FIELD) 
-public class QualificationType extends DomainObject<Integer>{
+public class QualificationType extends DomainObject<Integer> implements ImportedObject {
 
     private static final long serialVersionUID = 2746228908173552617L;
 
@@ -61,5 +61,10 @@ public class QualificationType extends DomainObject<Integer>{
     public void setCode(String code) {
         this.code = code;
     }
+
+	@Override
+	public String getStringCode() {
+		return code;
+	}
 }
 

@@ -15,6 +15,7 @@ public class ProgramInstanceBuilder {
 	private int sequence;
 	
 	private Program program;
+	private Boolean enabled;
 
 	public ProgramInstanceBuilder studyOptionCode(Integer id) {
         this.studyOptionCode = id;
@@ -57,6 +58,11 @@ public class ProgramInstanceBuilder {
 		return this;
 	}
 	
+	public ProgramInstanceBuilder enabled(Boolean enabled){
+		this.enabled = enabled;
+		return this;
+	}
+	
 	public ProgramInstanceBuilder applicationDeadline(Date applicationDeadline){
 		this.applicationDeadline = applicationDeadline;
 		return this;
@@ -72,6 +78,7 @@ public class ProgramInstanceBuilder {
 		programInstance.setProgram(program);
 		programInstance.setAcademicYear(academicYear);
 		programInstance.setApplicationStartDate(applicationStartDate);
+		programInstance.setEnabled(enabled);
 		return programInstance;
 		
 	}

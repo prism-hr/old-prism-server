@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="LANGUAGE")
 @Access(AccessType.FIELD) 
-public class Language extends DomainObject<Integer> {
+public class Language extends DomainObject<Integer> implements ImportedObject {
 	
 	private static final long serialVersionUID = -4719304115154138995L;
 	
@@ -61,5 +61,10 @@ public class Language extends DomainObject<Integer> {
     public void setCode(String code) {
         this.code = code;
     }
+
+	@Override
+	public String getStringCode() {
+		return code;
+	}
 
 }

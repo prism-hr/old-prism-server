@@ -16,7 +16,7 @@ import javax.persistence.Transient;
 
 @Entity(name = "PROGRAM_INSTANCE")
 @Access(AccessType.FIELD)
-public class ProgramInstance extends DomainObject<Integer> {
+public class ProgramInstance extends DomainObject<Integer> implements ProgramInstanceInterface, ImportedObject {
 
 	private static final long serialVersionUID = -5414750352686318033L;
 
@@ -36,6 +36,9 @@ public class ProgramInstance extends DomainObject<Integer> {
 	
 	@Column(name = "study_code")
     private Integer studyOptionCode;
+	
+	@Column(name = "enabled")
+    private Boolean enabled;
     
 	@Transient
 	private int sequence;
@@ -112,4 +115,24 @@ public class ProgramInstance extends DomainObject<Integer> {
     public void setStudyOptionCode(Integer studyCode) {
         this.studyOptionCode = studyCode;
     }
+
+	@Override
+	public String getStringCode() {
+		return program.getCode();
+	}
+
+	@Override
+	public String getName() {
+		return program.getTitle();
+	}
+
+	@Override
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	@Override
+	public Boolean getEnabled() {
+		return this.enabled;
+	}
 }

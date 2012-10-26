@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 @Entity(name = "SOURCES_OF_INTEREST")
 @Access(AccessType.FIELD)
-public class SourcesOfInterest extends DomainObject<Integer> {
+public class SourcesOfInterest extends DomainObject<Integer> implements ImportedObject {
 
     private static final long serialVersionUID = -3309557608853073374L;
 
@@ -62,4 +62,9 @@ public class SourcesOfInterest extends DomainObject<Integer> {
     public boolean isFreeText() {
         return code.equalsIgnoreCase("OTHER");
     }
+
+	@Override
+	public String getStringCode() {
+		return code;
+	}
 }

@@ -44,7 +44,7 @@ public class DataImportMailSenderTest {
 
 		Map<String, Object> model = dataImporterMailSender.createModel(user, message);
 		assertEquals(user, model.get("user"));
-		assertEquals(user, model.get("message"));
+		assertEquals(message, model.get("message"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 		Assert.assertNotNull(model.get("time"));
 	}

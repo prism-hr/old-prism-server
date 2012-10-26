@@ -9,8 +9,8 @@ public class CountryBuilder {
     private String name;
 	
     private Boolean enabled;
-    
-    private String code;
+
+	private String code;
 	
     public CountryBuilder code(String code){
         this.code = code;

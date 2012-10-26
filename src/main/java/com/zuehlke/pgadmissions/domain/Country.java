@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import com.zuehlke.pgadmissions.referencedata.adapters.ImportData;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "COUNTRIES")

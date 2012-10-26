@@ -6,5 +6,4 @@ import com.zuehlke.pgadmissions.domain.ImportedObject;
 
 public interface ImportData extends CodeObject{
 		ImportedObject createDomainObject();
-		boolean equalAttributes(ImportedObject other);
 }

@@ -1,10 +1,7 @@
 package com.zuehlke.pgadmissions.services.importers;
 
-import javax.xml.bind.JAXBException;
-
-import org.springframework.scheduling.annotation.Async;
+import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 
 public interface Importer {
-	@Async
-	void importData() throws JAXBException;
+	void importData() throws XMLDataImportException;
 }

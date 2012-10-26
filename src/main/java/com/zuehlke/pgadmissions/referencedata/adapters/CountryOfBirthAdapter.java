@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.referencedata.adapters;
 
-import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Countries.Country;
 
 public class CountryOfBirthAdapter implements ImportData {
 
 	private Country country;
 	
+	public String getName() {
+		return country.getName();
+	}
+
 	public CountryOfBirthAdapter(Country country) {
 		this.country = country;
 	}
@@ -23,14 +26,5 @@ public class CountryOfBirthAdapter implements ImportData {
 		result.setName(country.getName());
 		result.setEnabled(true);
 		return result;
-	}
-
-	@Override
-	public boolean equalAttributes(ImportedObject other) {
-		if(!com.zuehlke.pgadmissions.domain.Country.class.equals(other.getClass())) {			
-			return false;
-		}
-		com.zuehlke.pgadmissions.domain.Country country = (com.zuehlke.pgadmissions.domain.Country) other;
-		return country.getName().equals(this.country.getName());
 	}
 }

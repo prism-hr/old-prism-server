@@ -54,8 +54,8 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		program.setTitle("Program's title");
 		
 		save(program);
-		ProgramInstance instanceOne = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(1, "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").toProgramInstance();
-		ProgramInstance instanceTwo = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(1, "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").toProgramInstance();
+		ProgramInstance instanceOne = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(1, "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").enabled(true).toProgramInstance();
+		ProgramInstance instanceTwo = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(1, "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").enabled(true).toProgramInstance();
 		save(instanceOne, instanceTwo);
 		flushAndClearSession();
 		

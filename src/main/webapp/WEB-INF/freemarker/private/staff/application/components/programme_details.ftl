@@ -32,7 +32,7 @@
         <label class="admin_row_label">Study Option</label>
         <div class="field">
           <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.studyOption??>
-          ${applicationForm.programmeDetails.studyOption.freeVal}
+          ${applicationForm.programmeDetails.studyOption}
           </#if>
         </div>
       </div>
@@ -53,11 +53,21 @@
       <div class="admin_row">
         <label class="admin_row_label">How did you find us?</label>
         <div class="field">
-          <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.referrer??>                    
-          ${applicationForm.programmeDetails.referrer.freeVal}
+          <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.sourcesOfInterest??>                    
+          ${applicationForm.programmeDetails.sourcesOfInterest.name?html}
           </#if>                    
         </div>
       </div>
+      
+      <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.sourcesOfInterestText?has_content>
+      <!-- Referrer Free Text-->
+      <div class="admin_row">
+        <label class="admin_row_label">Please explain</label>
+        <div class="field">
+          ${applicationForm.programmeDetails.sourcesOfInterestText?html}
+        </div>
+      </div>
+      </#if>
       
     </div>
 

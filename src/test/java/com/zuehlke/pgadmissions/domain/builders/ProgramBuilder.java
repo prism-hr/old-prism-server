@@ -12,6 +12,7 @@ public class ProgramBuilder {
 	private Integer id;
 	private String code;
 	private String title;
+	private boolean enabled;
 	
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
@@ -21,6 +22,11 @@ public class ProgramBuilder {
 	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
 	
 	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
+	
+	public ProgramBuilder enabled(boolean enabled){
+        this.enabled = enabled;
+        return this;
+    }
 	
 	public ProgramBuilder id(Integer id){
 		this.id = id;
@@ -87,7 +93,8 @@ public class ProgramBuilder {
 		program.setId(id);
 		program.setCode(code);
 		program.setTitle(title);
-
+		program.setEnabled(enabled);
+		
 		program.getApprovers().addAll(approvers);
 		program.getAdministrators().addAll(administrators);
 		program.getProgramReviewers().addAll(reviewers);

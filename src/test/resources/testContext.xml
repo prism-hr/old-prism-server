@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<import resource="hibernateTestConfig.xml" />
+    
+	<import resource="../../src/main/webapp/WEB-INF/spring/applicationContext.xml" /> 
+    
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+    <!-- Workaround for: http://forum.springsource.org/showthread.php?89210-Testing-using-ContextConfiguration-and-XmlWebApplicationContext-and-dwr -->
+    <bean id="dwrController" class="com.zuhlke.pgadmissions.test.utils.DwrControllerWithTestSupport" />
+    
+    <bean id="programInstanceDAOMock" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
+        <constructor-arg value="com.zuehlke.pgadmissions.dao.ProgramInstanceDAO" />
+    </bean>
+    
+    <bean id="userServiceMock" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
+        <constructor-arg value="com.zuehlke.pgadmissions.services.UserService" />
+    </bean>
+    
+    <bean id="refereeValidator" class="com.zuehlke.pgadmissions.validators.RefereeValidator">
+        <constructor-arg index="0" ref="userServiceMock" />
+    </bean>
+    
+    <bean id="programmeDetailsValidator" class="com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator">
+        <constructor-arg index="0" ref="programInstanceDAOMock" />
+    </bean>
+    
+    <bean id="applicationFormValidator" class="com.zuehlke.pgadmissions.validators.ApplicationFormValidator">
+        <constructor-arg index="0" ref="programInstanceDAOMock" />
+    </bean>
+    
+    <bean id="userDTOValidator" class="com.zuehlke.pgadmissions.validators.UserDTOValidator">
+        <constructor-arg index="0" ref="userServiceMock" />
+    </bean>
+    
+    <bean id="superadminUserDTOValidator" class="com.zuehlke.pgadmissions.validators.SuperadminUserDTOValidator">
+        <constructor-arg index="0" ref="userServiceMock" />
+    </bean>
+    
+    <bean id="encryptionUtilsMock" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
+        <constructor-arg value="com.zuehlke.pgadmissions.utils.EncryptionUtils" />
+    </bean>
+    
+    <bean id="accountValidator" class="com.zuehlke.pgadmissions.validators.AccountValidator">
+        <constructor-arg index="0" ref="userServiceMock" />
+        <constructor-arg index="1" ref="encryptionUtilsMock" />
+    </bean>
+    
+    
+    
+</beans>

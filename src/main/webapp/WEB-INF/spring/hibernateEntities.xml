@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	 xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd		
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<bean id="entities" class="java.util.ArrayList">
+		<constructor-arg>
+	     	<list>
+	     		<value>com.zuehlke.pgadmissions.domain.RegisteredUser</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Role</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ApplicationForm</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Comment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.StateChangeComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReviewComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.InterviewComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReferenceComment</value>	     		
+	     		<value>com.zuehlke.pgadmissions.domain.Program</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ProgramInstance</value>		     		
+	     		<value>com.zuehlke.pgadmissions.domain.Qualification</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Address</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Funding</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Country</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Ethnicity</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Disability</value>
+	     		<value>com.zuehlke.pgadmissions.domain.EmploymentPosition</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Referee</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Reviewer</value>
+	     		<value>com.zuehlke.pgadmissions.domain.PersonalDetails</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ProgrammeDetails</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Supervisor</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Document</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Language</value>
+	     		<value>com.zuehlke.pgadmissions.domain.AdditionalInformation</value>
+	     		<value>com.zuehlke.pgadmissions.domain.NotificationRecord</value>
+	     		<value>com.zuehlke.pgadmissions.domain.PendingRoleNotification</value>
+	     		<value>com.zuehlke.pgadmissions.domain.StateChangeEvent</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent</value>
+	     		<value>com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReferenceEvent</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Interviewer</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReviewRound</value>
+	     		<value>com.zuehlke.pgadmissions.domain.RejectReason</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Interview</value>
+	     		<value>com.zuehlke.pgadmissions.domain.StageDuration</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReminderInterval</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Rejection</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ApprovalRound</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Person</value>
+	     		<value>com.zuehlke.pgadmissions.domain.SuggestedSupervisor</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ValidationComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReviewEvaluationComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.InterviewEvaluationComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.RequestRestartComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.QualificationInstitution</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Badge</value>
+                <value>com.zuehlke.pgadmissions.domain.Domicile</value>
+                <value>com.zuehlke.pgadmissions.domain.QualificationType</value>
+				<value>com.zuehlke.pgadmissions.domain.SourcesOfInterest</value>
+	     	</list>    	        	
+	    </constructor-arg>			
+	</bean>
+
+</beans>

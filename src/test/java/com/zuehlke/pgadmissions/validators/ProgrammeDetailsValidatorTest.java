@@ -140,6 +140,22 @@ public class ProgrammeDetailsValidatorTest {
 	
 	@Test
 	@DirtiesContext
+	public void shouldRejectIfSourcesOfInterestFreeTextIsEmpty() {
+	    SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).toSourcesOfInterest();
+	    programmeDetail.setSourcesOfInterest(sourcesOfInterest);
+	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "sourcesOfInterest");
+	    EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+	    EasyMock.replay(programInstanceDAOMock);
+	    programmeDetailsValidator.validate(programmeDetail, mappingResult);
+	    EasyMock.verify(programInstanceDAOMock);
+
+	    Assert.assertEquals(2, mappingResult.getErrorCount());
+	    Assert.assertEquals("text.field.empty", mappingResult.getFieldError("sourcesOfInterestText").getCode());
+	    Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
+	}
+	
+	@Test
+	@DirtiesContext
     public void shouldRejectIfStartDateIsNotInRange() {
 	    programmeDetail.setStartDate(DateUtils.addYears(new Date(), 5));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
@@ -361,12 +377,13 @@ public class ProgrammeDetailsValidatorTest {
 		    .email("mark@gmail.com")
 		    .aware(true)
 		    .toSuggestedSupervisor();
-		program = new ProgramBuilder().id(1).title("Program 1").toProgram();
+        program = new ProgramBuilder().id(1).title("Program 1").enabled(true).toProgram();
 		programInstance = new ProgramInstanceBuilder()
 		    .id(1)
 		    .studyOption(1, "Full-time")
 		    .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
 		    .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06"))
+		    .enabled(true)
 		    .toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
 		form = new ApplicationFormBuilder()

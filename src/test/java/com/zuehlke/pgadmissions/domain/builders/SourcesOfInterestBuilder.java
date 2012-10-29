@@ -8,7 +8,7 @@ public class SourcesOfInterestBuilder {
     
     private Integer id;
     
-    private Boolean enabled;
+    private boolean enabled;
     
     private String code;
 
@@ -27,7 +27,7 @@ public class SourcesOfInterestBuilder {
         return this;
     }
     
-    public SourcesOfInterestBuilder enabled(Boolean enabled){
+    public SourcesOfInterestBuilder enabled(boolean enabled){
         this.enabled = enabled;
         return this;
     }

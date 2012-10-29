@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
@@ -48,16 +49,18 @@ public class ProgrammeDetailsController {
 	private final ProgrammeDetailsValidator programmeDetailsValidator;
 	private final ProgrammeDetailsService programmeDetailsService;
 	private final SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
+	private final SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor;
 	private final UserService userService;
 
 	ProgrammeDetailsController() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public ProgrammeDetailsController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
 			DatePropertyEditor datePropertyEditor, SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor,
-			ProgrammeDetailsValidator programmeDetailsValidator, ProgrammeDetailsService programmeDetailsService, UserService userService) {
+			ProgrammeDetailsValidator programmeDetailsValidator, ProgrammeDetailsService programmeDetailsService, UserService userService,
+			SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
@@ -65,6 +68,7 @@ public class ProgrammeDetailsController {
 		this.programmeDetailsValidator = programmeDetailsValidator;
 		this.programmeDetailsService = programmeDetailsService;
 		this.userService = userService;
+		this.sourcesOfInterestPropertyEditor = sourcesOfInterestPropertyEditor;
 	}
 
 	@RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
@@ -73,19 +77,20 @@ public class ProgrammeDetailsController {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
+		
 		if (programmeDetails.getApplication().isDecided()) {
 			throw new CannotUpdateApplicationException();
 		}
+		
 		if (result.hasErrors()) {
-			
 			return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
 		}
 
+		programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(programmeDetails.getApplication().getProgram(), programmeDetails.getStudyOption()));
 		programmeDetailsService.save(programmeDetails);
 		programmeDetails.getApplication().setLastUpdated(new Date());
 		applicationsService.save(programmeDetails.getApplication());
 		return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getApplicationNumber();
-
 	}
 	
 	@RequestMapping(value = "/getProgrammeStartDate", method = RequestMethod.GET)
@@ -158,6 +163,7 @@ public class ProgrammeDetailsController {
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditor);
+		binder.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditor);
 	}
 	
     public StringTrimmerEditor newStringTrimmerEditor() {

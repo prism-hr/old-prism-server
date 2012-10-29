@@ -46,6 +46,10 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 
 		ProgrammeDetails programmeDetail = (ProgrammeDetails) target;
 
+		if (programmeDetail.getSourcesOfInterest() != null && programmeDetail.getSourcesOfInterest().isFreeText()) {
+		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterestText", "text.field.empty");
+		}
+		
 		List<ProgramInstance> programInstances = programInstaceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(programmeDetail.getApplication().getProgram(), programmeDetail.getStudyOption());
 		if (programInstances == null || programInstances.isEmpty()) {
 			errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");

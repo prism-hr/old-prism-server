@@ -52,7 +52,7 @@
           <select class="full" id="studyOption" name="studyOption"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
             <option value="">Select...</option>
             <#list studyOptions as studyOption>
-            <option value="${studyOption.name}"<#if programmeDetails.studyOption?? &&  programmeDetails.studyOption == studyOption> selected="selected"</#if>>${studyOption.name}</option>
+            <option value="${studyOption.name}"<#if programmeDetails.studyOption?? &&  programmeDetails.studyOption == studyOption.name> selected="selected"</#if>>${studyOption.name}</option>
             </#list>
           </select>
           <#if studyOptionError?? && studyOptionError=='true'>
@@ -102,7 +102,7 @@
           <select class="full" id="referrer" name="referrer"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
             <option value="">Select...</option>
             <#list sourcesOfInterests as interests>
-            <option value="${interests.id}"<#if programmeDetails.sourcesOfInterest?? &&  programmeDetails.sourcesOfInterest == interests> selected="selected"</#if>>${interests.name}</option>               
+            <option value="${encrypter.encrypt(interests.id)!}"<#if programmeDetails.sourcesOfInterest?? &&  programmeDetails.sourcesOfInterest == interests> selected="selected"</#if>>${interests.name}</option>               
             </#list>
           </select>    
           
@@ -112,12 +112,23 @@
           </#list>
         </div>
       </div>
+      
+      <!-- Referrer Free Text-->
+      <div class="row">
+        <label id="referrer-text-lbl" class="plain-label grey-label">Please explain</label>
+        <span class="hint" data-desc="<@spring.message 'programmeDetails.howDidYouFindUsExplain'/>"></span>
+        <div class="field">
+          <input class="full grey-label" id="referrer_text" name="referrer_text" type="text" value=<#if programmeDetails.sourcesOfInterestText??>"${(programmeDetails.sourcesOfInterestText?html)}"<#else>"Not Required" disabled="disabled"</#if> />
+          <@spring.bind "programmeDetails.sourcesOfInterestText" /> 
+          <#list spring.status.errorMessages as error>
+          <span class="invalid">${error}</span>
+          </#list>
+        </div>
+      </div>
   
     </div><!-- .row-group -->
   
-  
     <div class="row-group" id="supervisor_div">
-  
       <label class="group-heading-label">Supervision</label>
       <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.supervisor'/>"></span>
   

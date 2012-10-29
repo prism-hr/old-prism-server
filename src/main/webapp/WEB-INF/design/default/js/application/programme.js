@@ -12,9 +12,33 @@ function enableOrDisableStartDate() {
 	}
 }
 
+function enableOrDisableReferrerText() {
+	if ($("#referrer option:selected").text() === "Other") {
+		$("#referrer-text-lbl").text($.trim($("#referrer-text-lbl").text())).append('<em>*</em>');
+		$("#referrer-text-lbl").removeClass("grey-label");
+		$("#referrer_text").removeClass("grey-label");
+		$("#referrer_text").removeAttr("disabled", "disabled");
+		if ($("#referrer_text").val() === "Not Required") {
+			$("#referrer_text").val("");
+		}
+	} else {
+		$("#referrer-text-lbl em").remove();
+		$("#referrer-text-lbl").addClass("grey-label");
+		$("#referrer_text").addClass("grey-label");
+		$("#referrer_text").attr("disabled", "disabled");
+		$("#referrer_text").val("Not Required");
+	}
+}
+
 $(document).ready(function()
 {
 	enableOrDisableStartDate();
+	enableOrDisableReferrerText();
+	
+	$("#referrer").bind('change', function() {
+		enableOrDisableReferrerText();
+	});
+	
 	
 	// -------------------------------------------------------------------------------
 	// Get the date from the programe.
@@ -459,13 +483,18 @@ function postProgrammeData(message)
 	else{
 		acceptedTheTerms = true;
 	}
+	
+	if ($("#referrer_text").val() === "Not Required") {
+		$("#referrer_text").val("");
+	}
 		
 	var postData = {
 			programmeName: $("#programmeName").val(),
 			projectName: $("#projectName").val(), 
 			studyOption: $("#studyOption").val(), 
 			startDate: $("#startDate").val(),
-			referrer: $("#referrer").val(),
+			sourcesOfInterest: $("#referrer").val(),
+			sourcesOfInterestText: $("#referrer_text").val(),
 			application: $("#appId1").val(),
 			application: $('#applicationId').val(),
 			applicationId: $('#applicationId').val(),

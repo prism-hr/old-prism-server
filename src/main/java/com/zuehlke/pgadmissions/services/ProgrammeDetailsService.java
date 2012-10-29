@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,16 +44,24 @@ public class ProgrammeDetailsService {
 	
 	@Transactional
 	public List<StudyOption> getAvailableStudyOptions(Program program) {
-		List<StudyOption> options = new ArrayList<StudyOption>();
+		HashSet<StudyOption> options = new HashSet<StudyOption>();
 		List<ProgramInstance> activeProgramInstances = programInstanceDAO.getActiveProgramInstances(program);
 		for (ProgramInstance programInstance : activeProgramInstances) {
 			StudyOption option = new StudyOption(programInstance.getStudyOptionCode(), programInstance.getStudyOption());
-		    if (!options.contains(option)) {
-				options.add(option);
-			}
+		    options.add(option);
 		}
-		return options;
+		return new ArrayList<StudyOption>(options);
 	}
+	
+	@Transactional
+    public Integer getStudyOptionCodeForProgram(Program program, String studyOption) {
+        for (ProgramInstance programInstance :  programInstanceDAO.getActiveProgramInstances(program)) {
+            if (StringUtils.equalsIgnoreCase(programInstance.getStudyOption(), studyOption)) {
+                return programInstance.getStudyOptionCode();
+            }
+        }
+        return -1;
+    }
 
 	@Transactional
 	public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, String studyOption) {

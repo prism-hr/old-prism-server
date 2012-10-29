@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
@@ -51,6 +52,7 @@ public class ProgrammeDetailsControllerTest {
 	private ProgrammeDetailsService programmeDetailsServiceMock;
 	private ProgrammeDetailsController controller;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
+	private SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditorMock;
 
 	private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
 	private UserService userServiceMock;
@@ -92,7 +94,7 @@ public class ProgrammeDetailsControllerTest {
 		Program program = new ProgramBuilder().id(7).toProgram();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).toApplicationForm();
 		controller =  new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
-				supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock){
+				supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock, sourcesOfInterestPropertyEditorMock){
 
 					@Override
 					public ApplicationForm getApplicationForm(String id) {
@@ -163,7 +165,7 @@ public class ProgrammeDetailsControllerTest {
 	public void shouldBindPropertyEditors() {
 	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
 	    controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
-                supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock) {
+                supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock, sourcesOfInterestPropertyEditorMock) {
             @Override
             public StringTrimmerEditor newStringTrimmerEditor() {
                 return stringTrimmerEditor;
@@ -176,6 +178,7 @@ public class ProgrammeDetailsControllerTest {
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
 		binderMock.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditorMock);
 		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
+		binderMock.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -227,6 +230,7 @@ public class ProgrammeDetailsControllerTest {
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(applicationForm).toProgrammeDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		EasyMock.expect(programmeDetailsServiceMock.getStudyOptionCodeForProgram(null, null)).andReturn(1);
 		programmeDetailsServiceMock.save(programmeDetails);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(programmeDetailsServiceMock,applicationsServiceMock, errors);
@@ -258,9 +262,11 @@ public class ProgrammeDetailsControllerTest {
 		programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
 		programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
+		sourcesOfInterestPropertyEditorMock =  EasyMock.createMock(SourcesOfInterestPropertyEditor.class);
+		
         controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock,
                 datePropertyEditorMock, supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock,
-                programmeDetailsServiceMock, userServiceMock);
+                programmeDetailsServiceMock, userServiceMock, sourcesOfInterestPropertyEditorMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 

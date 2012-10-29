@@ -42,4 +42,8 @@ public class SourcesOfInterestDAO {
     public SourcesOfInterest getSourcesOfInterestById(Integer id) {
         return (SourcesOfInterest) sessionFactory.getCurrentSession().get(SourcesOfInterest.class, id);
     }
+
+	public void save(SourcesOfInterest sourceOfInterest) {
+		sessionFactory.getCurrentSession().saveOrUpdate(sourceOfInterest);
+	}
 }

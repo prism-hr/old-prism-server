@@ -42,4 +42,8 @@ public class QualificationTypeDAO {
     public QualificationType getQualificationTypeById(Integer id) {
         return (QualificationType) sessionFactory.getCurrentSession().get(QualificationType.class, id);
     }
+
+	public void save(QualificationType qualification) {
+		sessionFactory.getCurrentSession().saveOrUpdate(qualification);
+	}
 }

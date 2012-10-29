@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.DisabilityDAO;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
@@ -40,6 +41,7 @@ public class DisabilitiesImporter implements Importer {
 	}
 
 	@Override
+	@Transactional
 	public void importData() throws XMLDataImportException {
 		log.info("Starting the import from xml file: " + xmlFileLocation);
 		try {

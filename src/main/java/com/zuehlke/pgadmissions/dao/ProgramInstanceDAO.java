@@ -87,5 +87,14 @@ public class ProgramInstanceDAO {
 				.list();
 			return futureInstances.get(0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ProgramInstance> getAllProgramInstances() {
+        return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	}
+
+	public void save(ProgramInstance programInstance) {
+		sessionFactory.getCurrentSession().saveOrUpdate(programInstance);
+	}
 
 }

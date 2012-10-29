@@ -8,6 +8,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
@@ -27,6 +28,7 @@ public class InstitutionsImporter implements Importer {
 	}
 
 	@Override
+	@Transactional
 	public void importData() throws XMLDataImportException {
 		try {
         Unmarshaller unmarshaller = context.createUnmarshaller();

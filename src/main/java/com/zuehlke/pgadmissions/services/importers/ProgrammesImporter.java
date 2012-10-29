@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.importers;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +32,19 @@ public class ProgrammesImporter implements Importer {
 	private final URL xmlFileLocation;
 	private final ProgramInstanceDAO programDAO;
 	private final ImportService importService;
+
+	private final String user;
+	private final String password;
 	
 	@Autowired
 	public ProgrammesImporter(ProgramInstanceDAO programDAO, ImportService importService,
-			@Value("${xml.data.import.prismProgrammes.url}") URL xmlFileLocation) throws JAXBException {
+			@Value("${xml.data.import.prismProgrammes.url}") URL xmlFileLocation, @Value("${xml.data.import.prismProgrammes.user}") String user,
+			@Value("${xml.data.import.prismProgrammes.password}") String password) throws JAXBException {
 		this.programDAO = programDAO;
 		this.importService = importService;
 		this.xmlFileLocation = xmlFileLocation;
+		this.user = user;
+		this.password = password;
 		context = JAXBContext.newInstance(Programmes.class);
 	}
 
@@ -45,8 +53,7 @@ public class ProgrammesImporter implements Importer {
 	public void importData() throws XMLDataImportException {
 		log.info("Starting the import from xml file: " + xmlFileLocation);
 		try {
-			Unmarshaller unmarshaller = context.createUnmarshaller();
-			Programmes programmes = (Programmes) unmarshaller.unmarshal(xmlFileLocation);
+			Programmes programmes = unmarshallXML();
 			List<PrismProgrammeAdapter> importData = createAdapter(programmes);
 			List<ProgramInstance> currentData = programDAO.getAllProgramInstances();
 			List<ProgramInstance> changes = importService.merge(currentData, importData);
@@ -57,6 +64,18 @@ public class ProgrammesImporter implements Importer {
 		} catch (Throwable e) {
 			throw new XMLDataImportException("Error during the import of file: " + xmlFileLocation, e);
 		}
+	}
+	
+	private Programmes unmarshallXML() throws JAXBException {
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+		Authenticator.setDefault(new Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(user, password.toCharArray());
+			}
+		});
+		Programmes countries = (Programmes) unmarshaller.unmarshal(xmlFileLocation);
+		Authenticator.setDefault(null);
+		return countries;
 	}
 
 	private List<PrismProgrammeAdapter> createAdapter(Programmes programmes) {

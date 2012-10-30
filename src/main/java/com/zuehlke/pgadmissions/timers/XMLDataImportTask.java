@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.timers;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
@@ -16,11 +19,22 @@ public class XMLDataImportTask {
 	
 	private final List<Importer> importers;
 	private final DataImporterMailSender mailSender;
+
+	private Authenticator authenticator;
+
+	private final String maxRedirects;
 	
 	@Autowired
-	public XMLDataImportTask(List<Importer> importers, DataImporterMailSender mailSender) {
+	public XMLDataImportTask(List<Importer> importers, DataImporterMailSender mailSender, @Value("${xml.data.import.user}") final String user,
+			@Value("${xml.data.import.password}") final String password) {
 		this.importers = importers;
 		this.mailSender = mailSender;
+		this.authenticator = new Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(user, password.toCharArray());
+			}
+		};
+		this.maxRedirects = System.getProperty("http.maxRedirects");
 	}
 	
 	
@@ -28,6 +42,8 @@ public class XMLDataImportTask {
 	public void imoprtData() {
 		for (Importer importer : importers) {
 			try {
+				System.setProperty("http.maxRedirects", "2");
+				Authenticator.setDefault(authenticator);
 				importer.importData();
 			} catch (XMLDataImportException e) {
 				log.error("Error importing reference data.", e);
@@ -37,6 +53,12 @@ public class XMLDataImportTask {
 					message += "\n" + cause.toString();
 				}
 				mailSender.sendErrorMessage(message);
+			} finally {
+				Authenticator.setDefault(null);
+				if(maxRedirects!=null)
+					System.setProperty("http.maxRedirects", maxRedirects);
+				else
+					System.clearProperty("http.maxRedirects");
 			}
 		}
 	}

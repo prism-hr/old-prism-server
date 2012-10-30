@@ -79,9 +79,12 @@ public class EvaluationTransitionController extends StateTransitionController {
 			ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
 
 			if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
-				approvalService.moveToApproved(applicationForm);
-				modelMap.put("messageCode", "move.approved");
-				modelMap.put("application", applicationForm.getApplicationNumber());
+				if(approvalService.moveToApproved(applicationForm)) {					
+					modelMap.put("messageCode", "move.approved");
+					modelMap.put("application", applicationForm.getApplicationNumber());
+				} else {
+					return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber()+"&rejectionId=7";
+				}
 			}
 		}
 		if(delegate != null && delegate){

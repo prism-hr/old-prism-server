@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.importers;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
@@ -28,15 +31,24 @@ public class ProgrammesImporter implements Importer {
 	
 	private final JAXBContext context;
 	private final URL xmlFileLocation;
-	private final ProgramInstanceDAO programDAO;
+	private final ProgramInstanceDAO programInstanceDAO;
+	private final ProgramDAO programDao;
 	private final ImportService importService;
+
+	private final String user;
+	private final String password;
+
 	
 	@Autowired
-	public ProgrammesImporter(ProgramInstanceDAO programDAO, ImportService importService,
-			@Value("${xml.data.import.prismProgrammes.url}") URL xmlFileLocation) throws JAXBException {
-		this.programDAO = programDAO;
+	public ProgrammesImporter(ProgramInstanceDAO programDAO, ProgramDAO programDao, ImportService importService,
+			@Value("${xml.data.import.prismProgrammes.url}") URL xmlFileLocation, @Value("${xml.data.import.prismProgrammes.user}") String user,
+			@Value("${xml.data.import.prismProgrammes.password}") String password) throws JAXBException {
+		this.programInstanceDAO = programDAO;
+		this.programDao = programDao;
 		this.importService = importService;
 		this.xmlFileLocation = xmlFileLocation;
+		this.user = user;
+		this.password = password;
 		context = JAXBContext.newInstance(Programmes.class);
 	}
 
@@ -45,18 +57,31 @@ public class ProgrammesImporter implements Importer {
 	public void importData() throws XMLDataImportException {
 		log.info("Starting the import from xml file: " + xmlFileLocation);
 		try {
-			Unmarshaller unmarshaller = context.createUnmarshaller();
-			Programmes programmes = (Programmes) unmarshaller.unmarshal(xmlFileLocation);
+			Programmes programmes = unmarshallXML();
 			List<PrismProgrammeAdapter> importData = createAdapter(programmes);
-			List<ProgramInstance> currentData = programDAO.getAllProgramInstances();
+			List<ProgramInstance> currentData = programInstanceDAO.getAllProgramInstances();
 			List<ProgramInstance> changes = importService.merge(currentData, importData);
 			for (ProgramInstance programInstance : changes) {
-				programDAO.save(programInstance);
+				programInstanceDAO.save(programInstance);
+				if(programInstance.getProgram().getId() == null)
+					programDao.save(programInstance.getProgram());
 			}
 			log.info("Import done. Wrote " + changes.size() + " change(s) to the database.");
 		} catch (Throwable e) {
 			throw new XMLDataImportException("Error during the import of file: " + xmlFileLocation, e);
 		}
+	}
+	
+	private Programmes unmarshallXML() throws JAXBException {
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+		Authenticator.setDefault(new Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(user, password.toCharArray());
+			}
+		});
+		Programmes countries = (Programmes) unmarshaller.unmarshal(xmlFileLocation);
+		Authenticator.setDefault(null);
+		return countries;
 	}
 
 	private List<PrismProgrammeAdapter> createAdapter(Programmes programmes) {

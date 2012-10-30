@@ -331,7 +331,7 @@ public class ApprovalServiceTest {
 
 		Date startDate = new Date();
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption(1, "full").toProgrammeDetails();
-		ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).enabled(true).studyOption(1, "full").toProgramInstance();
+		ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate,1)).enabled(true).studyOption(1, "full").toProgramInstance();
 		Program program = new ProgramBuilder().id(1).instances(instance).toProgram();
 		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).toApplicationForm();
 

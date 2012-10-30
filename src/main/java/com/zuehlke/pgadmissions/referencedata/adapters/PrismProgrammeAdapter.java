@@ -87,7 +87,6 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
 		program = getProgrammeLineary(changes);
 		if(program != null)
 			return program;
-		//FIXME do we create a new programme in case there isn't one of this code?
 		program = new Program();
 		program.setCode(getStringCode());
 		program.setTitle(getName());

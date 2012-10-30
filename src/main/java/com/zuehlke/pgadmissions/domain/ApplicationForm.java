@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
@@ -34,6 +35,8 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD)
 public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm>, FormSectionObject {
+
+	private static final int CONSIDERATION_PERIOD_MONTHS = 1;
 
 	private static final long serialVersionUID = -7671357234815343496L;
 
@@ -803,6 +806,43 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 	
 		return ApplicationFormStatus.VALIDATION;
+	}
+
+	public Date getEarliestPossibleStartDate() {
+		Date result = null;
+		ProgrammeDetails details = getProgrammeDetails();
+		Date today = new Date();
+		Date todayPlusConsiderationPeriod = DateUtils.addMonths(today, CONSIDERATION_PERIOD_MONTHS);
+		for (ProgramInstance instance : getProgram().getInstances()) {
+			Date applicationStartDate = instance.getApplicationStartDate();
+			boolean startDateInFuture = today.before(applicationStartDate);
+			boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
+			boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
+			boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
+			if(instance.getEnabled() && (startDateInFuture || beforeEndDate) && sameStudyOption && sameStudyOptionCode ) {
+				if(startDateInFuture && (result == null || result.after(applicationStartDate))) {
+						result = applicationStartDate;
+				} else if (result == null || result.after(todayPlusConsiderationPeriod)) {
+					result = todayPlusConsiderationPeriod;					
+				}
+			}
+		}
+		return result;
+	}
+
+	public boolean isPrefferedStartDateWithinBounds() {
+		ProgrammeDetails details = getProgrammeDetails();
+		Date startDate = details.getStartDate();
+		for (ProgramInstance instance : getProgram().getInstances()) {
+			boolean afterStartDate = !startDate.before(instance.getApplicationStartDate());
+			boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
+			boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
+			boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
+			if(instance.getEnabled() && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -18,6 +18,10 @@ public class ForgotPasswordController {
 	private static final String FORGOT_PW_CONFIRMATION_VIEW_NAME = "public/login/forgot_password_confirmation";
 	private final UserService userService;
 
+	public ForgotPasswordController() {
+	    this(null);
+	}
+	
 	@Autowired
 	public ForgotPasswordController(UserService userService) {
 		this.userService = userService;

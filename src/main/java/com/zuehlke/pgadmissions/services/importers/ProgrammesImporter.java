@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
@@ -30,17 +31,20 @@ public class ProgrammesImporter implements Importer {
 	
 	private final JAXBContext context;
 	private final URL xmlFileLocation;
-	private final ProgramInstanceDAO programDAO;
+	private final ProgramInstanceDAO programInstanceDAO;
+	private final ProgramDAO programDao;
 	private final ImportService importService;
 
 	private final String user;
 	private final String password;
+
 	
 	@Autowired
-	public ProgrammesImporter(ProgramInstanceDAO programDAO, ImportService importService,
+	public ProgrammesImporter(ProgramInstanceDAO programDAO, ProgramDAO programDao, ImportService importService,
 			@Value("${xml.data.import.prismProgrammes.url}") URL xmlFileLocation, @Value("${xml.data.import.prismProgrammes.user}") String user,
 			@Value("${xml.data.import.prismProgrammes.password}") String password) throws JAXBException {
-		this.programDAO = programDAO;
+		this.programInstanceDAO = programDAO;
+		this.programDao = programDao;
 		this.importService = importService;
 		this.xmlFileLocation = xmlFileLocation;
 		this.user = user;
@@ -55,10 +59,12 @@ public class ProgrammesImporter implements Importer {
 		try {
 			Programmes programmes = unmarshallXML();
 			List<PrismProgrammeAdapter> importData = createAdapter(programmes);
-			List<ProgramInstance> currentData = programDAO.getAllProgramInstances();
+			List<ProgramInstance> currentData = programInstanceDAO.getAllProgramInstances();
 			List<ProgramInstance> changes = importService.merge(currentData, importData);
 			for (ProgramInstance programInstance : changes) {
-				programDAO.save(programInstance);
+				programInstanceDAO.save(programInstance);
+				if(programInstance.getProgram().getId() == null)
+					programDao.save(programInstance.getProgram());
 			}
 			log.info("Import done. Wrote " + changes.size() + " change(s) to the database.");
 		} catch (Throwable e) {

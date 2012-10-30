@@ -20,12 +20,15 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -35,6 +38,8 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
@@ -53,6 +58,7 @@ public class ApprovalServiceTest {
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApprovalRoundDAO approvalRoundDAOMock;
 	private StageDurationDAO stageDurationDAOMock;
+	private ProgrammeDetailDAO programmeDetailDAOMock;
 
 	private EventFactory eventFactoryMock;
 
@@ -63,6 +69,7 @@ public class ApprovalServiceTest {
 	private ApprovalRound approvalRound;
 	private Supervisor supervisor;
 
+
 	@Before
 	public void setUp() {
 		supervisor = new SupervisorBuilder().id(1).toSupervisor();
@@ -71,13 +78,14 @@ public class ApprovalServiceTest {
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		approvalRoundDAOMock = EasyMock.createMock(ApprovalRoundDAO.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
+		programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
 
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
 
 		commentDAOMock = EasyMock.createMock(CommentDAO.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		approvalService = new ApprovalService(userServiceMock, applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, eventFactoryMock,
-				commentDAOMock, supervisorDAOMock) {
+				commentDAOMock, supervisorDAOMock, programmeDetailDAOMock) {
 			@Override
 			public ApprovalRound newApprovalRound() {
 				return approvalRound;
@@ -321,8 +329,11 @@ public class ApprovalServiceTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 
-		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).toApplicationForm();
+		Date startDate = new Date();
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption(1, "full").toProgrammeDetails();
+		ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).enabled(true).studyOption(1, "full").toProgramInstance();
+		Program program = new ProgramBuilder().id(1).instances(instance).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).toApplicationForm();
 
 		applicationFormDAOMock.save(application);
 
@@ -336,6 +347,39 @@ public class ApprovalServiceTest {
 		EasyMock.verify(applicationFormDAOMock, commentDAOMock);
 		assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
 		assertEquals(currentUser, application.getApprover());
+
+		assertEquals(1, application.getEvents().size());
+		assertEquals(event, application.getEvents().get(0));
+
+	}
+	
+	@Test
+	public void shouldChangeStartDate() {
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
+
+		Date startDate = DateUtils.addDays(new Date(), 1);
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption(1, "full").toProgrammeDetails();
+		ProgramInstance instanceDisabled = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(false).studyOption(1, "full").toProgramInstance();
+		ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3)).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption(1, "full").toProgramInstance();
+		Program program = new ProgramBuilder().id(1).instances(instanceDisabled, instanceEnabled).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).toApplicationForm();
+
+		programmeDetailDAOMock.save(EasyMock.same(programmeDetails));
+		applicationFormDAOMock.save(application);
+
+		StateChangeEvent event = new StateChangeEventBuilder().id(1).toEvent();
+		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
+
+		EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programmeDetailDAOMock);
+
+		approvalService.moveToApproved(application);
+
+		EasyMock.verify(applicationFormDAOMock, commentDAOMock, programmeDetailDAOMock);
+		assertEquals(ApplicationFormStatus.APPROVED, application.getStatus());
+		assertEquals(currentUser, application.getApprover());
+		assertEquals(programmeDetails.getStartDate(), instanceEnabled.getApplicationStartDate());
 
 		assertEquals(1, application.getEvents().size());
 		assertEquals(event, application.getEvents().get(0));

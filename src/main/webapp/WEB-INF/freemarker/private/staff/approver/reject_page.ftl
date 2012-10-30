@@ -85,7 +85,12 @@
 												<#list availableReasons as reason>
 												<li>
 													<label>
-														<input type="radio" name="rejectionReason" value="${encrypter.encrypt(reason.id)}" class="reason"/>
+													    <#if RequestParameters.rejectionId = reason.id?string >
+													    	<#assign checked = "checked">
+													    <#else>
+													    	<#assign checked = "">
+													    </#if>
+														<input type="radio" name="rejectionReason" value="${encrypter.encrypt(reason.id)}" class="reason" ${checked} />
 														${reason.text}
 													</label>
 												</li> 

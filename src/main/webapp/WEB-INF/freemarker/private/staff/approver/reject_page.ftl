@@ -85,7 +85,7 @@
 												<#list availableReasons as reason>
 												<li>
 													<label>
-													    <#if RequestParameters.rejectionId = reason.id?string >
+													    <#if RequestParameters.rejectionId?? && RequestParameters.rejectionId = reason.id?string >
 													    	<#assign checked = "checked">
 													    <#else>
 													    	<#assign checked = "">

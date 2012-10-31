@@ -8,7 +8,9 @@
 
 	<import resource="hibernateTestConfig.xml" />
     
-	<import resource="../../src/main/webapp/WEB-INF/spring/applicationContext.xml" /> 
+    <import resource="../../src/main/webapp/WEB-INF/spring/applicationContext.xml" /> 
+    
+    <import resource="testWebServiceContext.xml" />
     
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 

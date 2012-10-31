@@ -134,7 +134,7 @@
             <artifactId>spring-security-taglibs</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+
         <!-- Performance measuring -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -214,12 +214,14 @@
             <artifactId>gson</artifactId>
             <version>2.2.2</version>
         </dependency>
+
         <!-- Java Mail API -->
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.3</version>
         </dependency>
+
         <!-- PDF generator -->
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -231,6 +233,8 @@
             <artifactId>jsoup</artifactId>
             <version>1.6.3</version>
         </dependency>
+
+        <!-- Testing with PowerMock -->
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
@@ -243,6 +247,24 @@
             <version>1.4.12</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- WebService -->
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-core</artifactId>
+            <version>2.1.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>1.5.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-security</artifactId>
+            <version>2.1.0.RELEASE</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>pgadmissions</finalName>
@@ -271,17 +293,31 @@
                 <version>1.5</version>
                 <executions>
                     <execution>
-                        <id>xjc</id>
+                        <id>xjc-1</id>
                         <goals>
                             <goal>xjc</goal>
                         </goals>
+                        <configuration>
+                            <packageName>com.zuehlke.pgadmissions.referencedata.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
+                            <schemaDirectory>${basedir}/src/main/resources/reference_data</schemaDirectory>
+                            <staleFile>${project.build.directory}/jaxb2/.schema1XjcStaleFlag</staleFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>xjc-2</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>com.zuehlke.pgadmissions.admissionsservice.jaxb</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
+                            <schemaDirectory>${basedir}/src/main/resources/admission_sapplications_service</schemaDirectory>
+                            <staleFile>${project.build.directory}/jaxb2/.schema2XjcStaleFlag</staleFile>
+                            <clearOutputDir>false</clearOutputDir>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <packageName>com.zuehlke.pgadmissions.referencedata.jaxb</packageName>
-                    <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-                    <schemaDirectory>${basedir}/src/main/resources/reference_data</schemaDirectory>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -497,7 +533,5 @@
                 </plugins>
             </build>
         </profile>
-
-
     </profiles>
 </project>

@@ -12,6 +12,14 @@ import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.domain.ProgramInstanceInterface;
 import com.zuehlke.pgadmissions.referencedata.adapters.ImportData;
 
+/**
+ * This is UCL data import service.
+ * User for situations where we pull data from UCL system (PORTICO).
+ * Currently this is just a set of dictionaries we share.
+ *
+ * todo: consider changing name of this class to UclImportService (to achieve consistency with similar UclExportService)
+ * todo: consider moving to the parent package
+ */
 @Service
 public class ImportService {
 

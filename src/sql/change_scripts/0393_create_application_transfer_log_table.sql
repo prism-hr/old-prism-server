@@ -1,4 +1,4 @@
-create table application_transfer_log_item (
+create table application_form_transfer (
     id bigint primary key,
     application_id integer not null references application_form,
     transfer_begin_timepoint timestamp,

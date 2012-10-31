@@ -17,10 +17,13 @@ import java.util.Date;
  * Stores information about a single transfer of application from PRISM to UCL-PORTICO system.
  * This transfer is supposed to happen via a mixture of webservice published by UCL-PORTICO and SFTP transfer.
  * For any given application several transfers may happen during the history of the system.
+ *
+ * Business logic is deciding that at some point given application form should be transferred to UCL by creating
+ * an ApplicationFormTransfer instance with status set to SCHEDULED.
  */
-@Entity(name = "APPLICATION_TRANSFER_LOG_ITEM")
+@Entity(name = "APPLICATION_TRANSFER")
 @Access(AccessType.FIELD)
-public class ApplicationTransferLogItem extends DomainObject<Long> {
+public class ApplicationFormTransfer extends DomainObject<Long> {
 
     @ManyToOne
     @JoinColumn(name = "application_id")

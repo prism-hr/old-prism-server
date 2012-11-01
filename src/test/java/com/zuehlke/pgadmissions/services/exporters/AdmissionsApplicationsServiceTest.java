@@ -72,8 +72,6 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
     @DirtiesContext
     public void testConnectivity() throws IOException {
 
-        System.getProperties().setProperty(com.sun.xml.internal.bind.v2.model.impl.RuntimeBuiltinLeafInfoImpl.class.getName() + "printgmonthinoldstyle", "false");
-        
         ApplicationFormDAO applicationFormDAO = new ApplicationFormDAO(sessionFactory);
         ProgramInstanceDAO programInstanceDAO = new ProgramInstanceDAO(sessionFactory);
 

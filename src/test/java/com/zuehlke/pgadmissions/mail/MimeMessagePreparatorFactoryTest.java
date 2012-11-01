@@ -32,8 +32,8 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
+import com.zuehlke.pgadmissions.test.utils.MultiPartMimeMessageParser;
 import com.zuehlke.pgadmissions.utils.Environment;
-import com.zuhlke.pgadmissions.test.utils.MultiPartMimeMessageParser;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

@@ -43,7 +43,7 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
 
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 35)
+	@ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
 	@Column(name = "phone")
 	private String phoneNumber;
 

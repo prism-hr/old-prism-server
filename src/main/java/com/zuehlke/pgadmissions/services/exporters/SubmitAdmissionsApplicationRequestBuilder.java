@@ -92,6 +92,9 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private ApplicationTp buildApplication() {
         ApplicationTp applicationTp = xmlFactory.createApplicationTp();
         applicationTp.setSource(SOURCE_IDENTIFIER);
+//      Schema is wrong (should not be an option)  
+//      applicationTp.setExternalApplicationID(applicationForm.getApplicationNumber());
+        applicationTp.setUclApplicationID(String.valueOf(applicationForm.getApplicant().getId()));
         applicationTp.setApplicant(buildApplicant());
         applicationTp.setCourseApplication(buildCourseApplication());
         applicationTp.getQualificationDetails().addAll(buildQualificationDetails());
@@ -254,7 +257,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicationTp.setApplicationStatus(applicationForm.getStatus().displayValue());
         
 //      TODO 
-//      <v1_0:atasStatement>string</v1_0:atasStatement>
+//      <v1_0:atasStatement>string</v1_0:atasStatement> // Project description
 //      <v1_0:ipAddress>string</v1_0:ipAddress>
 //      <v1_0:departmentalDecision>Accepted</v1_0:departmentalDecision>
 //      <v1_0:departmentalOfferConditions>string</v1_0:departmentalOfferConditions>
@@ -272,8 +275,11 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         ProgramInstance currentProgramInstanceForStudyOption = programInstanceDAO.getCurrentProgramInstanceForStudyOption(program, programmeDetails.getStudyOption());
         occurrenceTp.setAcademicYear(buildXmlDateYearOnly(currentProgramInstanceForStudyOption.getAcademic_year()));
         
+//      TODO: ONLY FOR TEST
+//      ============================================================================================================
         occurrenceTp.setAcademicYearOccurrence("F"); // TODO: ONLY FOR TEST
         occurrenceTp.setBlock("1"); // TODO: ONLY FOR TEST
+//      ============================================================================================================
         
         // TODO: We do not have the following data values
         // <v1_0:academicYearOccurrence>F</v1_0:academicYearOccurrence>

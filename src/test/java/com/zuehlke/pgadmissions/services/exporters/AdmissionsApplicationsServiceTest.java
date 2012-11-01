@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -10,6 +11,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,6 +39,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 @ContextConfiguration("/testContext.xml")
 public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase {
 
+    private final Logger logger = Logger.getLogger(AdmissionsApplicationsServiceTest.class);
+    
     @Autowired
     private WebServiceTemplate webServiceTemplate;
 
@@ -64,6 +68,8 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
         Marshaller marshaller = webServiceTemplate.getMarshaller();
         marshaller.marshal(admissionsApplicationRequest, new StreamResult(st));
         
+        logger.info(String.format("Marshalled : %s", st.toString()));
+        
         assertTrue(StringUtils.contains(st.toString(), "<ns2:startMonth>" + GMonthAdapter.print(firstDayOfMonth) + "</ns2:startMonth>"));
     }
     
@@ -81,14 +87,15 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
 
         SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm2).toSubmitAdmissionsApplicationRequest();
         
+        AdmissionsApplicationResponse response = null;
         try {
-            AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
+            response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
         } catch (SoapFaultClientException e) {
-            System.out.println("FaultCode: " + e.getFaultCode());
-            System.out.println("Reason: " + e.getFaultStringOrReason());
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            e.getWebServiceMessage().writeTo(os);
-            System.out.println("Request failed [" + os.toString("UTF-8") + "]");
+            e.printStackTrace();
         }
-    }
+        
+        assertNotNull(response);
+        assertEquals(response.getReference().getReferenceID(), "");
+        assertEquals(response.getReference().getUserCode(), "");
+    }        
 }

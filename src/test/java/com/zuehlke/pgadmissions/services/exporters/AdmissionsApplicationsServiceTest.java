@@ -70,7 +70,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
         
         logger.info(String.format("Marshalled : %s", st.toString()));
         
-        assertTrue(StringUtils.contains(st.toString(), "<ns2:startMonth>" + GMonthAdapter.print(firstDayOfMonth) + "</ns2:startMonth>"));
+        assertTrue(StringUtils.contains(st.toString(), GMonthAdapter.print(firstDayOfMonth)));
     }
     
     @Test

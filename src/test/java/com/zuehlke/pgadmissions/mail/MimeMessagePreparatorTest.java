@@ -23,7 +23,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.zuhlke.pgadmissions.test.utils.MultiPartMimeMessageParser;
+import com.zuehlke.pgadmissions.test.utils.MultiPartMimeMessageParser;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

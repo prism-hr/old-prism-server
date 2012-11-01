@@ -15,7 +15,7 @@
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
     <!-- Workaround for: http://forum.springsource.org/showthread.php?89210-Testing-using-ContextConfiguration-and-XmlWebApplicationContext-and-dwr -->
-    <bean id="dwrController" class="com.zuhlke.pgadmissions.test.utils.DwrControllerWithTestSupport" />
+    <bean id="dwrController" class="com.zuehlke.pgadmissions.test.utils.DwrControllerWithTestSupport" />
     
     <bean id="programInstanceDAOMock" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
         <constructor-arg value="com.zuehlke.pgadmissions.dao.ProgramInstanceDAO" />

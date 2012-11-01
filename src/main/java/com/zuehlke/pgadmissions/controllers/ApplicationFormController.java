@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -70,7 +69,7 @@ public class ApplicationFormController {
         RegisteredUser user = userService.getCurrentUser();
 
         Program prog = programDAO.getProgramByCode(program);
-        if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()) {
+        if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty() || !prog.isEnabled()) {
             return new ModelAndView(PROGRAM_DOES_NOT_EXIST);
         }       
         ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, batchDeadline, projectTitle, programhome);

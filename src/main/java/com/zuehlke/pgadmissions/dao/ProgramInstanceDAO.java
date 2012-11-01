@@ -35,6 +35,7 @@ public class ProgramInstanceDAO {
 		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
 				.createCriteria(ProgramInstance.class)
 				.add(Restrictions.eq("program", program))
+				.add(Restrictions.eq("enabled", true))
 				.add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
 	}
@@ -45,6 +46,7 @@ public class ProgramInstanceDAO {
         return (List<ProgramInstance>) sessionFactory.getCurrentSession()
                 .createCriteria(ProgramInstance.class)
                 .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true))
                 .add(Restrictions.eq("studyOption", studyOption))
                 .add(Restrictions.ge("applicationStartDate", today))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
@@ -58,6 +60,7 @@ public class ProgramInstanceDAO {
 		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
 				.createCriteria(ProgramInstance.class)
 				.add(Restrictions.eq("program", program))
+				.add(Restrictions.eq("enabled", true))
 				.add(Restrictions.eq("studyOption", studyOption))
 				.add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
@@ -69,6 +72,7 @@ public class ProgramInstanceDAO {
         return (List<ProgramInstance>) sessionFactory.getCurrentSession()
                 .createCriteria(ProgramInstance.class)
                 .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true))
                 .add(Restrictions.eq("studyOption", studyOption))
                 .add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .addOrder(Order.asc("applicationDeadline"))
@@ -81,11 +85,12 @@ public class ProgramInstanceDAO {
 		List<ProgramInstance> futureInstances = sessionFactory.getCurrentSession()
 				.createCriteria(ProgramInstance.class)
 				.add(Restrictions.eq("program", program))
+				.add(Restrictions.eq("enabled", true))
 				.add(Restrictions.eq("studyOption", studyOption))
 				.add(Restrictions.ge("applicationDeadline", today))		
 				.addOrder(Order.asc("applicationDeadline")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.list();
-			return futureInstances.get(0);
+		return futureInstances.get(0);
 	}
 	
 	@SuppressWarnings("unchecked")

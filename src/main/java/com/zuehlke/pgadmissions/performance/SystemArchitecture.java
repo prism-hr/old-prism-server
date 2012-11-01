@@ -11,4 +11,8 @@ public class SystemArchitecture {
     @Pointcut("execution(* com.zuehlke.pgadmissions.controllers..*.*(..))")
     public void businessController() {
     }
+    
+    @Pointcut("execution(* com.zuehlke.pgadmissions.services..*.*(..))")
+    public void businessService() {
+    }
 }

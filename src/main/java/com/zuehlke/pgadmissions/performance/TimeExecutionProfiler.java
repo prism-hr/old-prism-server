@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.performance;
 
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -21,19 +20,21 @@ public class TimeExecutionProfiler {
     private static final Logger logger = Logger.getLogger(TimeExecutionProfiler.class);
 
     @Around("com.zuehlke.pgadmissions.performance.SystemArchitecture.businessController()")
-    public Object profile(ProceedingJoinPoint pjp) throws Throwable {
-        long start = System.currentTimeMillis();
-        logger.info(String.format("ServicesProfiler.profile(): Going to call the method: %s", pjp.getSignature().getName()));
-        Object output = pjp.proceed();
-        logger.info("ServicesProfiler.profile(): Method execution completed.");
-        long elapsedTime = System.currentTimeMillis() - start;
-        logger.info("ServicesProfiler.profile(): Method execution time: " + elapsedTime + " milliseconds.");
-
-        return output;
+    public Object profileControlers(ProceedingJoinPoint pjp) throws Throwable {
+        return profile(pjp);
+    }
+    
+    @Around("com.zuehlke.pgadmissions.performance.SystemArchitecture.businessService()")
+    public Object profileService(ProceedingJoinPoint pjp) throws Throwable {
+        return profile(pjp);
     }
 
-    @After("com.zuehlke.pgadmissions.performance.SystemArchitecture.businessController()")
-    public void profileMemory() {
-        logger.info(String.format("JVM memory in use = %s", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())));
+    private Object profile(ProceedingJoinPoint pjp) throws Throwable {
+        String methodName = pjp.getSignature().getName();
+        long start = System.currentTimeMillis();
+        Object output = pjp.proceed();
+        long elapsedTime = System.currentTimeMillis() - start;
+        logger.info(String.format("PROFILE [%s] [%s]", methodName, elapsedTime));
+        return output;
     }
 }

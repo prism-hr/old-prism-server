@@ -229,7 +229,11 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         Address contactAddress = applicationForm.getContactAddress();
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
         AddressTp addressTp = xmlFactory.createAddressTp();
-        addressTp.setAddressLine1(contactAddress.getLocation());
+        addressTp.setAddressLine1(contactAddress.getAddress1());
+        addressTp.setAddressLine2(contactAddress.getAddress2());
+        addressTp.setAddressLine3(contactAddress.getAddress3());
+        addressTp.setAddressLine4(contactAddress.getAddress4());
+        addressTp.setAddressLine5(contactAddress.getAddress5());
         addressTp.setCountry(contactAddress.getCountry().getCode());
 //      TODO: We need to add these address lines to the database
 //      addressTp.setAddressLine1(value)
@@ -392,8 +396,12 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 contactDtlsTp.setLandline(referee.getPhoneNumber());
                 
                 AddressTp addressTp = xmlFactory.createAddressTp();
-                addressTp.setAddressLine1(referee.getAddressLocation());
-                addressTp.setCountry(referee.getAddressCountry().getCode());
+                addressTp.setAddressLine1(referee.getAddressLocation().getAddress1());
+                addressTp.setAddressLine2(referee.getAddressLocation().getAddress2());
+                addressTp.setAddressLine3(referee.getAddressLocation().getAddress3());
+                addressTp.setAddressLine4(referee.getAddressLocation().getAddress4());
+                addressTp.setAddressLine5(referee.getAddressLocation().getAddress5());
+                addressTp.setCountry(referee.getAddressLocation().getCountry().getCode());
                 contactDtlsTp.setAddressDtls(addressTp);
                 
                 refereeTp.setContactDetails(contactDtlsTp);

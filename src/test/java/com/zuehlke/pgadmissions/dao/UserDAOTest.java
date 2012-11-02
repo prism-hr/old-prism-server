@@ -109,7 +109,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser userOne = new RegisteredUserBuilder()
             .firstName("Jane")
             .lastName("Doe")
-            .email("email@test.com")
+            .email("email1@test.com")
             .username("username")
             .password("password")
             .accountNonExpired(false)
@@ -122,7 +122,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser userTwo = new RegisteredUserBuilder()
             .firstName("Jane")
             .lastName("Doe")
-            .email("email@test.com")
+            .email("email1@test.com")
             .username("otherusername")
             .password("password")
             .accountNonExpired(false)
@@ -136,7 +136,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
         flushAndClearSession();
 
-        RegisteredUser foundUser = userDAO.getDisabledUserByEmail("email@test.com");
+        RegisteredUser foundUser = userDAO.getDisabledUserByEmail("email1@test.com");
         assertEquals(userOne, foundUser);
     }	
 

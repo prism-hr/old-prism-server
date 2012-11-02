@@ -31,17 +31,95 @@
 		
 			<!-- Address body -->
 			<div class="row">
-				<span class="plain-label">Address<em>*</em></span>
-				<span class="hint" data-desc="<@spring.message 'addressDetails.currentAddress.address'/>"></span>	
+				<span class="plain-label">House name / number & street<em>*</em></span>
+				<span class="hint" data-desc="<@spring.message 'addressDetails.house'/>"></span>	
 				<div class="field">
-					<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-					<textarea id="currentAddressLocation" class="max" rows="5" cols="80" maxlength='2000'>${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
-					<#else>
-					<textarea readonly="readonly" id="currentAddressLocation" class="max" rows="5" cols="80">${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
-					</#if>
+					<input id="currentAddress1" class="max" value="${(addressSectionDTO.currentAddress1?html)!}"
+						<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+						readonly="readonly"
+						</#if>
+					>
 				</div>
 			</div>
-			<@spring.bind "addressSectionDTO.currentAddressLocation" /> 
+			<@spring.bind "addressSectionDTO.currentAddress1" /> 
+			<#list spring.status.errorMessages as error>
+			<div class="row">
+				<div class="field">
+					<span id="currentAddressInvalid" class="invalid">${error}</span>
+				</div>
+			</div>
+			</#list>
+			
+			<div class="row">
+				<div class="field">
+					<input id="currentAddress2" class="max" value="${(addressSectionDTO.currentAddress2?html)!}"
+						<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+						readonly="readonly"
+						</#if>
+					>
+				</div>
+			</div>
+			<@spring.bind "addressSectionDTO.currentAddress2" /> 
+			<#list spring.status.errorMessages as error>
+			<div class="row">
+				<div class="field">
+					<span id="currentAddressInvalid" class="invalid">${error}</span>
+				</div>
+			</div>
+			</#list>
+			
+			<div class="row">
+				<span class="plain-label">Town / city / suburb<em>*</em></span>
+				<span class="hint" data-desc="<@spring.message 'addressDetails.town'/>"></span>	
+				<div class="field">
+					<input id="currentAddress3" class="max" value="${(addressSectionDTO.currentAddress3?html)!}"
+						<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+						readonly="readonly"
+						</#if>
+					>
+				</div>
+			</div>
+			<@spring.bind "addressSectionDTO.currentAddress3" /> 
+			<#list spring.status.errorMessages as error>
+			<div class="row">
+				<div class="field">
+					<span id="currentAddressInvalid" class="invalid">${error}</span>
+				</div>
+			</div>
+			</#list>
+			
+			<div class="row">
+				<span class="plain-label">State / county / region</span>
+				<span class="hint" data-desc="<@spring.message 'addressDetails.state'/>"></span>	
+				<div class="field">
+					<input id="currentAddress4" class="max" value="${(addressSectionDTO.currentAddress4?html)!}"
+						<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+						readonly="readonly"
+						</#if>
+					>
+				</div>
+			</div>
+			<@spring.bind "addressSectionDTO.currentAddress4" /> 
+			<#list spring.status.errorMessages as error>
+			<div class="row">
+				<div class="field">
+					<span id="currentAddressInvalid" class="invalid">${error}</span>
+				</div>
+			</div>
+			</#list>
+			
+			<div class="row">
+				<span class="plain-label">Post / zip / area code</span>
+				<span class="hint" data-desc="<@spring.message 'addressDetails.zip'/>"></span>	
+				<div class="field">
+					<input id="currentAddress5" class="max" value="${(addressSectionDTO.currentAddress5?html)!}"
+						<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+						readonly="readonly"
+						</#if>
+					>
+				</div>
+			</div>
+			<@spring.bind "addressSectionDTO.currentAddress5" /> 
 			<#list spring.status.errorMessages as error>
 			<div class="row">
 				<div class="field">
@@ -101,26 +179,119 @@
 			<p></p>
 		
 			<div class="row">
-				<span id="add-two-lb" class="plain-label">Address<em id="add-two-em">*</em></span>
-				<span class="hint" data-desc="<@spring.message 'addressDetails.ContactAddress.address'/>"></span>	
+				<span id="add-two-lb" class="plain-label">House name / number & street<em id="add-two-em">*</em></span>
+				<span class="hint" data-desc="<@spring.message 'addressDetails.house'/>"></span>	
 				
 				<div class="field">
-					<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-					<textarea id="contactAddressLocation" class="max" rows="5" cols="80" maxlength='2000'
+					<input id="contactAddress1" class="max"
 					<#if addressSectionDTO.sameAddress>
 					disabled="disabled"
 					</#if>
-					>${(addressSectionDTO.contactAddressLocation?html)!}</textarea>
-					<#else>
-					<textarea readonly="readonly" id="contactAddressLocation" class="max" rows="5" cols="80"
-					<#if addressSectionDTO.sameAddress>
-					disabled="disabled"
+					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+					readonly="readonly"
 					</#if>
-					>${(addressSectionDTO.contactAddressLocation?html)!}</textarea>
-					</#if>
+					value="${(addressSectionDTO.contactAddress1?html)!}"
+					/>
 				</div>
 			</div>
-			<@spring.bind "addressSectionDTO.contactAddressLocation" /> 
+			<@spring.bind "addressSectionDTO.contactAddress1" /> 
+			<#list spring.status.errorMessages as error>
+			<div class="row">
+				<div class="field">
+					<span id="contactAddressLocationInvalid" class="invalid">${error}</span>
+				</div>
+			</div>
+			</#list>
+			
+			<div class="row">
+				<div class="field">
+					<input id="contactAddress2" class="max"
+					<#if addressSectionDTO.sameAddress>
+					disabled="disabled"
+					</#if>
+					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+					readonly="readonly"
+					</#if>
+					value="${(addressSectionDTO.contactAddress2?html)!}"
+					/>
+				</div>
+			</div>
+			<@spring.bind "addressSectionDTO.contactAddress2" /> 
+			<#list spring.status.errorMessages as error>
+			<div class="row">
+				<div class="field">
+					<span id="contactAddressLocationInvalid" class="invalid">${error}</span>
+				</div>
+			</div>
+			</#list>
+			
+			<div class="row">
+				<span id="add-two-lb" class="plain-label">Town / city / suburb<em id="add-two-em">*</em></span>
+				<span class="hint" data-desc="<@spring.message 'addressDetails.town'/>"></span>	
+				
+				<div class="field">
+					<input id="contactAddress3" class="max"
+					<#if addressSectionDTO.sameAddress>
+					disabled="disabled"
+					</#if>
+					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+					readonly="readonly"
+					</#if>
+					value="${(addressSectionDTO.contactAddress3?html)!}"
+					/>
+				</div>
+			</div>
+			<@spring.bind "addressSectionDTO.contactAddress3" /> 
+			<#list spring.status.errorMessages as error>
+			<div class="row">
+				<div class="field">
+					<span id="contactAddressLocationInvalid" class="invalid">${error}</span>
+				</div>
+			</div>
+			</#list>
+			
+			<div class="row">
+				<span id="add-two-lb" class="plain-label">State / county / region</span>
+				<span class="hint" data-desc="<@spring.message 'addressDetails.state'/>"></span>	
+				
+				<div class="field">
+					<input id="contactAddress4" class="max"
+					<#if addressSectionDTO.sameAddress>
+					disabled="disabled"
+					</#if>
+					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+					readonly="readonly"
+					</#if>
+					value="${(addressSectionDTO.contactAddress4?html)!}"
+					/>
+				</div>
+			</div>
+			<@spring.bind "addressSectionDTO.contactAddress4" /> 
+			<#list spring.status.errorMessages as error>
+			<div class="row">
+				<div class="field">
+					<span id="contactAddressLocationInvalid" class="invalid">${error}</span>
+				</div>
+			</div>
+			</#list>
+			
+			<div class="row">
+				<span id="add-two-lb" class="plain-label">Post / zip / area code</span>
+				<span class="hint" data-desc="<@spring.message 'addressDetails.zip'/>"></span>	
+				
+				<div class="field">
+					<input id="contactAddress5" class="max"
+					<#if addressSectionDTO.sameAddress>
+					disabled="disabled"
+					</#if>
+					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+					readonly="readonly"
+					</#if>
+					value="${(addressSectionDTO.contactAddress5?html)!}"
+					/>
+				</div>
+			</div>
+			<@spring.bind "addressSectionDTO.contactAddress5" /> 
 			<#list spring.status.errorMessages as error>
 			<div class="row">
 				<div class="field">

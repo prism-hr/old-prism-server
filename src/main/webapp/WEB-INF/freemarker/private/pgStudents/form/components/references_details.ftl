@@ -187,33 +187,134 @@
 
     <!-- Address body -->
     
-    <#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
       <div class="row">
-        <label class="group-heading-label">Address</label>
+        <label class=
+        <#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+        "group-heading-label"
+        <#else>
+        "group-heading-label grey-label"
+        </#if>
+        >Address</label>
       </div> 
       <div class="row">
-        <span class="plain-label">Address<em>*</em></span>
-        <span class="hint" data-desc="<@spring.message 'referee.address'/>"></span>
+        <span class=
+        <#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+        "plain-label"
+        <#else>
+        "plain-label grey-label"
+        </#if>
+        >House name / number & street<em>*</em></span>
+        <span class="hint" data-desc="<@spring.message 'addressDetails.house'/>"></span>
         <div class="field">
-          <textarea class="max" rows="6" cols="70" id="ref_address_location" 
-          name="ref_address_location">${(referee.addressLocation?html)!}</textarea> 
+          <input class="max" id="ref_address_location1" name="ref_address_location1" value="${(referee.addressLocation.address1?html)!}"
+          <#if !referee.editable || !(applicationForm.referees?size &lt; 3 || referee.id??) >
+          readonly="readonly" disabled="disabled"
+          </#if>
+          /> 
         </div>
       </div>          
-    <#else>
+
+    <@spring.bind "referee.addressLocation.address1" />         
+    <#list spring.status.errorMessages as error>
       <div class="row">
-        <label class="group-heading-label grey-label">Address</label>
-      </div> 
-      <div class="row">
-        <span class="plain-label grey-label">Address</span>
-        <span class="hint"></span>
         <div class="field">
-          <textarea readonly="readonly" class="max" rows="6" cols="70" id="ref_address_location" 
-          name="ref_address_location" disabled="disabled">${(referee.addressLocation?html)!}</textarea>
+          <span class="invalid">${error}</span>
         </div>
       </div>
-    </#if>
+    </#list>
+    
+    <div class="row">
+        <div class="field">
+          <input class="max" id="ref_address_location2" name="ref_address_location2" value="${(referee.addressLocation.address2?html)!}"
+          <#if !referee.editable || !(applicationForm.referees?size &lt; 3 || referee.id??) >
+          readonly="readonly" disabled="disabled"
+          </#if>
+          /> 
+        </div>
+      </div>          
 
-    <@spring.bind "referee.addressLocation" />         
+    <@spring.bind "referee.addressLocation.address2" />         
+    <#list spring.status.errorMessages as error>
+      <div class="row">
+        <div class="field">
+          <span class="invalid">${error}</span>
+        </div>
+      </div>
+    </#list>
+    
+    <div class="row">
+        <span class=
+        <#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+        "plain-label"
+        <#else>
+        "plain-label grey-label"
+        </#if>
+        >Town / city / suburb<em>*</em></span>
+        <span class="hint" data-desc="<@spring.message 'addressDetails.town'/>"></span>
+        <div class="field">
+          <input class="max" id="ref_address_location3" name="ref_address_location3" value="${(referee.addressLocation.address3?html)!}"
+          <#if !referee.editable || !(applicationForm.referees?size &lt; 3 || referee.id??) >
+          readonly="readonly" disabled="disabled"
+          </#if>
+          /> 
+        </div>
+      </div>          
+
+    <@spring.bind "referee.addressLocation.address3" />         
+    <#list spring.status.errorMessages as error>
+      <div class="row">
+        <div class="field">
+          <span class="invalid">${error}</span>
+        </div>
+      </div>
+    </#list>
+    
+    <div class="row">
+        <span class=
+        <#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+        "plain-label"
+        <#else>
+        "plain-label grey-label"
+        </#if>
+        >State / county / region</span>
+        <span class="hint" data-desc="<@spring.message 'addressDetails.state'/>"></span>
+        <div class="field">
+          <input class="max" id="ref_address_location4" name="ref_address_location4" value="${(referee.addressLocation.address4?html)!}"
+          <#if !referee.editable || !(applicationForm.referees?size &lt; 3 || referee.id??) >
+          readonly="readonly" disabled="disabled"
+          </#if>
+          /> 
+        </div>
+      </div>          
+
+    <@spring.bind "referee.addressLocation.address4" />         
+    <#list spring.status.errorMessages as error>
+      <div class="row">
+        <div class="field">
+          <span class="invalid">${error}</span>
+        </div>
+      </div>
+    </#list>
+    
+    <div class="row">
+        <span class=
+        <#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+        "plain-label"
+        <#else>
+        "plain-label grey-label"
+        </#if>
+        >Post / zip / area code</span>
+        <span class="hint" data-desc="<@spring.message 'addressDetails.zip'/>"></span>
+        <div class="field">
+          <input class="max" id="ref_address_location5" name="ref_address_location5" value="${(referee.addressLocation.address5?html)!}"
+          <#if !referee.editable || !(applicationForm.referees?size &lt; 3 || referee.id??) >
+          readonly="readonly" disabled="disabled"
+          </#if>
+          /> 
+        </div>
+      </div>          
+
+    <@spring.bind "referee.addressLocation.address5" />         
     <#list spring.status.errorMessages as error>
       <div class="row">
         <div class="field">
@@ -232,7 +333,7 @@
             <option value="">Select...</option>
             <#list countries as country>
             <option value="${encrypter.encrypt(country.id)}" 
-            <#if referee.addressCountry?? && referee.addressCountry.id == country.id> 
+            <#if referee.addressLocation.country?? && referee.addressLocation.country.id == country.id> 
               selected="selected"</#if>>${country.name?html}</option>               
             </#list>
           </select>
@@ -247,7 +348,7 @@
       </#if>
     </div>
 
-    <@spring.bind "referee.addressCountry" /> 
+    <@spring.bind "referee.addressLocation.country" /> 
     <#list spring.status.errorMessages as error>
       <div class="row">
         <div class="field">

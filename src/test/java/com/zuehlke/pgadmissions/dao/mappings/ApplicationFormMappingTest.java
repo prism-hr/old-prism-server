@@ -162,8 +162,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 
-		Address addressOne = new AddressBuilder().country(countriesDAO.getAllCountries().get(0)).location("london").toAddress();
-		Address addressTwo = new AddressBuilder().country(countriesDAO.getAllCountries().get(0)).location("london").toAddress();
+		Address addressOne = new AddressBuilder().country(countriesDAO.getAllCountries().get(0)).address1("london").toAddress();
+		Address addressTwo = new AddressBuilder().country(countriesDAO.getAllCountries().get(0)).address1("london").toAddress();
 
 		application.setCurrentAddress(addressOne);
 		application.setContactAddress(addressTwo);

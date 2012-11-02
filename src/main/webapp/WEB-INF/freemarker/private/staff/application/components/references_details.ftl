@@ -27,9 +27,9 @@
     <input type="hidden" id="${encRefereeId}_lastname" value="${(referee.lastname?html)!}"/>                                    
     <input type="hidden" id="${encRefereeId}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>
     <input type="hidden" id="${encRefereeId}_jobTitle" value="${(referee.jobTitle?html)!}"/>
-    <input type="hidden" id="${encRefereeId}_addressLocation" value="${(referee.addressLocation?html)!}"/>
+    <input type="hidden" id="${encRefereeId}_addressLocation" value="${(referee.addressLocation.locationString?html)!}"/>
     
-    <input type="hidden" id="${encRefereeId}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.name?html)!}" </#if>/>
+    <input type="hidden" id="${encRefereeId}_addressCountry" <#if referee.addressLocation.country??> value="${(referee.addressLocation.country.name?html)!}" </#if>/>
     <input type="hidden" id="${encRefereeId}_lastUpdated" value="<#if referee.hasProvidedReference() > 
     Provided ${(referee.reference.lastUpdated?string('dd MMM yyyy'))!}
     <#else>
@@ -81,13 +81,13 @@
       <!-- Address body -->
       <div class="admin_row">
         <span class="admin_row_label">Address</span>
-        <div class="field" id="ref_address_location">${(referee.addressLocation?html)!"Not Provided"}</div>
+        <div class="field" id="ref_address_location">${(referee.addressLocation.locationString?html)!"Not Provided"}</div>
       </div>
     
       <!-- Country -->
       <div class="admin_row">
         <span class="admin_row_label">Country</span>
-        <div class="field" id="ref_address_country">${(referee.addressCountry.name?html)!"Not Provided"}</div>
+        <div class="field" id="ref_address_country">${(referee.addressLocation.country.name?html)!"Not Provided"}</div>
       </div>
     
       <!-- Email address -->

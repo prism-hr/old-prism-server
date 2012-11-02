@@ -39,7 +39,7 @@ public class EmploymentPositionMappingTest extends AutomaticRollbackTestCase {
 		Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/12/2011");
 		Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/08/2011");
 		EmploymentPosition employment = new EmploymentPositionBuilder().application(applicationForm).employerName("employer").endDate(endDate)
-				.remit("remit").position("position").startDate(startDate).employerAdress("address").employerCountry(country).current(true)
+				.remit("remit").position("position").startDate(startDate).employerAdress1("address").employerCountry(country).current(true)
 				.toEmploymentPosition();
 
 		save(employment);
@@ -60,8 +60,8 @@ public class EmploymentPositionMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(startDate, reloadedEmployment.getStartDate());
 		assertEquals("remit", reloadedEmployment.getRemit());
 		assertEquals("position", reloadedEmployment.getPosition());
-		assertEquals("address", reloadedEmployment.getEmployerAddress());
-		assertEquals(country, reloadedEmployment.getEmployerCountry());
+		assertEquals("address", reloadedEmployment.getEmployerAddress().getLocationString());
+		assertEquals(country, reloadedEmployment.getEmployerAddress().getCountry());
 		assertTrue(reloadedEmployment.isCurrent());
 	}
 

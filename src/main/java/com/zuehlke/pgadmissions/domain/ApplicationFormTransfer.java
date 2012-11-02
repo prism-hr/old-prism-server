@@ -44,11 +44,11 @@ public class ApplicationFormTransfer extends DomainObject<Long> {
     @Column(name = "status")
     private ApplicationTransferStatus status;
 
-    @Column(name = "ucl_ref_number")
-    private String uclBookingReferenceReceived;
-
-    @Column(name = "ucl")
+    @Column(name = "ucl_user_id_received")
     private String uclUserIdReceived;
+
+    @Column(name = "ucl_booking_ref_number_received")
+    private String uclBookingReferenceReceived;
 
     @Override
     @Id
@@ -93,5 +93,21 @@ public class ApplicationFormTransfer extends DomainObject<Long> {
 
     public void setStatus(ApplicationTransferStatus status) {
         this.status = status;
+    }
+
+    public String getUclBookingReferenceReceived() {
+        return uclBookingReferenceReceived;
+    }
+
+    public void setUclBookingReferenceReceived(String uclBookingReferenceReceived) {
+        this.uclBookingReferenceReceived = uclBookingReferenceReceived;
+    }
+
+    public String getUclUserIdReceived() {
+        return uclUserIdReceived;
+    }
+
+    public void setUclUserIdReceived(String uclUserIdReceived) {
+        this.uclUserIdReceived = uclUserIdReceived;
     }
 }

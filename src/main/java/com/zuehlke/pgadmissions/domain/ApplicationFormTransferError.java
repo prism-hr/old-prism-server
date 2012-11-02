@@ -16,6 +16,7 @@ import java.util.Date;
 
 /**
  * I represent the error situation recognized during transfer of application form (PRISM ----> PORTICO).
+ * Remark: This enties actually constitute a log that can be accessed by application administrator on UCL side.
  */
 @Entity(name = "APPLICATION_FORM_TRANSFER_ERROR")
 @Access(AccessType.FIELD)
@@ -27,7 +28,7 @@ public class ApplicationFormTransferError extends DomainObject<Long> {
     private ApplicationFormTransfer transfer;
 
     /** Time point when the error happened.*/
-    @Column(name = "timepoint")
+    @Column(name = "handling_time")
     private Date timepoint;
 
     /** Diagnostic information (like the stacktrace etc.) */
@@ -36,12 +37,12 @@ public class ApplicationFormTransferError extends DomainObject<Long> {
 
     /** Type of the problem as recognized by PRISM. */
     @Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormTransferErrorTypeEnumUserType")
-    @Column(name = "context")
-    private ApplicationFormTransferErrorType context;
+    @Column(name = "problem_classification")
+    private ApplicationFormTransferErrorType ploblemClassification;
 
-    /** Decision made on how to handle the situation. */
+    /** Decision (programatically) made by PRISM on how to handle the situation. */
     @Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormTransferErrorHandlingDecisionEnumUserType")
-    @Column(name = "errorHandlingStrategy")
+    @Column(name = "error_handling_strategy")
     private ApplicationFormTransferErrorHandlingDecision errorHandlingStrategy;
 
     @Override

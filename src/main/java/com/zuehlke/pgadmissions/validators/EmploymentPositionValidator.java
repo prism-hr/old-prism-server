@@ -27,7 +27,6 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerAddress", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerCountry", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "remit", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
@@ -49,6 +48,15 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 		}
 		if (position.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
 		    errors.reject("");
+		}
+		if (position.getEmployerAddress() != null && StringUtils.isBlank(position.getEmployerAddress().getAddress1())) {
+			errors.rejectValue("employerAddress.address1", "text.field.empty");
+		}
+		if (position.getEmployerAddress() != null && StringUtils.isBlank(position.getEmployerAddress().getAddress3())) {
+			errors.rejectValue("employerAddress.address3", "text.field.empty");
+		}
+		if (position.getEmployerAddress() != null && position.getEmployerAddress().getCountry()==null) {
+			errors.rejectValue("employerAddress.country", "text.field.empty");
 		}
 	}
 }

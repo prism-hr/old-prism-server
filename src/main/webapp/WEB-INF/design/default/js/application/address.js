@@ -23,11 +23,39 @@ $(document).ready(function(){
 		$('#address-H2').trigger('click');
 		return false;
 	});
-	$('#currentAddressLocation').change(function(){
+	$('#currentAddress1').change(function(){
 		
 		if(isSame()){
 
-			$('#contactAddressLocation').val($('#currentAddressLocation').val());
+			$('#contactAddress1').val($('#currentAddress1').val());
+		}
+	});
+	$('#currentAddress2').change(function(){
+		
+		if(isSame()){
+
+			$('#contactAddress2').val($('#currentAddress2').val());
+		}
+	});
+	$('#currentAddress3').change(function(){
+		
+		if(isSame()){
+
+			$('#contactAddress3').val($('#currentAddress3').val());
+		}
+	});
+	$('#currentAddress4').change(function(){
+		
+		if(isSame()){
+
+			$('#contactAddress4').val($('#currentAddress4').val());
+		}
+	});
+	$('#currentAddress5').change(function(){
+		
+		if(isSame()){
+
+			$('#contactAddress5').val($('#currentAddress5').val());
 		}
 	});
 
@@ -84,9 +112,17 @@ $(document).ready(function(){
 	$("#sameAddressCB").click(function() {
 		
 		if (isSame()){
-			$("#contactAddressLocation").val($("#currentAddressLocation").val());
+			$("#contactAddress1").val($("#currentAddress1").val());
+			$("#contactAddress2").val($("#currentAddress2").val());
+			$("#contactAddress3").val($("#currentAddress3").val());
+			$("#contactAddress4").val($("#currentAddress4").val());
+			$("#contactAddress5").val($("#currentAddress5").val());
 			$("#contactAddressCountry").val($("#currentAddressCountry").val());
-			$("#contactAddressLocation").attr('disabled','disabled');
+			$("#contactAddress1").attr('disabled','disabled');
+			$("#contactAddress2").attr('disabled','disabled');
+			$("#contactAddress3").attr('disabled','disabled');
+			$("#contactAddress4").attr('disabled','disabled');
+			$("#contactAddress5").attr('disabled','disabled');
 			$("#contactAddressCountry").attr('disabled','disabled');
 			
 			$("#add-two-lb").addClass("grey-label");
@@ -184,9 +220,17 @@ function postAddressData(message)
 		  },
 		url:"/pgadmissions/update/editAddress",
 		data:{ 
-			currentAddressLocation: $("#currentAddressLocation").val(),
+			currentAddress1: $("#currentAddress1").val(),
+			currentAddress2: $("#currentAddress2").val(),
+			currentAddress3: $("#currentAddress3").val(),
+			currentAddress4: $("#currentAddress4").val(),
+			currentAddress5: $("#currentAddress5").val(),
 			currentAddressCountry: $("#currentAddressCountry").val(),
-			contactAddressLocation: $("#contactAddressLocation").val(),
+			contactAddress1: $("#contactAddress1").val(),
+			contactAddress2: $("#contactAddress2").val(),
+			contactAddress3: $("#contactAddress3").val(),
+			contactAddress4: $("#contactAddress4").val(),
+			contactAddress5: $("#contactAddress5").val(),
 			contactAddressCountry: $("#contactAddressCountry").val(),
 			applicationId:  $('#applicationId').val(),
 			message:message,

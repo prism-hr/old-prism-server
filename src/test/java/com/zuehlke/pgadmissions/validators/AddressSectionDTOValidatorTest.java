@@ -28,9 +28,11 @@ public class AddressSectionDTOValidatorTest {
 	public void setup() {
 	    address = new AddressSectionDTO();
 	    address.setApplication(new ApplicationFormBuilder().id(8).toApplicationForm());
-	    address.setContactAddressLocation("London");
+	    address.setContactAddress1("London");
+	    address.setContactAddress3("Londo3n");
 	    address.setContactAddressCountry(new Country());
-	    address.setCurrentAddressLocation("New York");
+	    address.setCurrentAddress1("New York");
+	    address.setCurrentAddress3("New York3");
 	    address.setCurrentAddressCountry(new Country());
 	}
 	
@@ -48,7 +50,7 @@ public class AddressSectionDTOValidatorTest {
 	
 	@Test
 	public void shouldRejectIfCurrentLocationIsNull() {
-		address.setCurrentAddressLocation(null);
+		address.setCurrentAddress1(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		validator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -56,7 +58,7 @@ public class AddressSectionDTOValidatorTest {
 	
 	@Test
 	public void shouldRejectIfContactLocationIsNull() {
-		address.setContactAddressLocation(null);
+		address.setContactAddress1(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		validator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -84,7 +86,7 @@ public class AddressSectionDTOValidatorTest {
 		for (int i = 0; i <=2000; i++) {
 			currentAddressLoc.append("a");
 		}
-		address.setCurrentAddressLocation(currentAddressLoc.toString());
+		address.setCurrentAddress1(currentAddressLoc.toString());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		validator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -96,7 +98,7 @@ public class AddressSectionDTOValidatorTest {
 		for (int i = 0; i <=2000; i++) {
 			contactAddressLoc.append("a");
 		}
-		address.setContactAddressLocation(contactAddressLoc.toString());
+		address.setContactAddress1(contactAddressLoc.toString());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		validator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());

@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.AddressUtils;
 import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
 
 @RequestMapping("/update")
@@ -71,7 +72,11 @@ public class AddressController {
 			applicationForm.setContactAddress(contactAddress);
 		}
 		contactAddress.setCountry(addressSectionDTO.getContactAddressCountry());
-		contactAddress.setLocation(addressSectionDTO.getContactAddressLocation());
+		contactAddress.setAddress1(addressSectionDTO.getContactAddress1());
+		contactAddress.setAddress2(addressSectionDTO.getContactAddress2());
+		contactAddress.setAddress3(addressSectionDTO.getContactAddress3());
+		contactAddress.setAddress4(addressSectionDTO.getContactAddress4());
+		contactAddress.setAddress5(addressSectionDTO.getContactAddress5());
 		
 		
 		Address currentAddress = applicationForm.getCurrentAddress();
@@ -80,7 +85,11 @@ public class AddressController {
 			applicationForm.setCurrentAddress(currentAddress);
 		}
 		currentAddress.setCountry(addressSectionDTO.getCurrentAddressCountry());
-		currentAddress.setLocation(addressSectionDTO.getCurrentAddressLocation());
+		currentAddress.setAddress1(addressSectionDTO.getCurrentAddress1());
+		currentAddress.setAddress2(addressSectionDTO.getCurrentAddress2());
+		currentAddress.setAddress3(addressSectionDTO.getCurrentAddress3());
+		currentAddress.setAddress4(addressSectionDTO.getCurrentAddress4());
+		currentAddress.setAddress5(addressSectionDTO.getCurrentAddress5());
 	
 		applicationForm.setLastUpdated(new Date());
 		applicationService.save(applicationForm);
@@ -134,16 +143,23 @@ public class AddressController {
 		Address contactAddress = applicationForm.getContactAddress();
 		if (contactAddress != null) {
 			sectionDTO.setContactAddressCountry(contactAddress.getCountry());
-			sectionDTO.setContactAddressLocation(contactAddress.getLocation());
+			sectionDTO.setContactAddress1(contactAddress.getAddress1());
+			sectionDTO.setContactAddress2(contactAddress.getAddress2());
+			sectionDTO.setContactAddress3(contactAddress.getAddress3());
+			sectionDTO.setContactAddress4(contactAddress.getAddress4());
+			sectionDTO.setContactAddress5(contactAddress.getAddress5());
 		}
 
 		Address currentAddress = applicationForm.getCurrentAddress();
 		if (currentAddress != null) {
 			sectionDTO.setCurrentAddressCountry(currentAddress.getCountry());
-			sectionDTO.setCurrentAddressLocation(currentAddress.getLocation());
+			sectionDTO.setCurrentAddress1(currentAddress.getAddress1());
+			sectionDTO.setCurrentAddress2(currentAddress.getAddress2());
+			sectionDTO.setCurrentAddress3(currentAddress.getAddress3());
+			sectionDTO.setCurrentAddress4(currentAddress.getAddress4());
+			sectionDTO.setCurrentAddress5(currentAddress.getAddress5());
 		}
-		if (contactAddress != null && currentAddress != null && contactAddress.getCountry().equals(currentAddress.getCountry())
-				&& contactAddress.getLocation().equals(currentAddress.getLocation())) {
+		if (AddressUtils.addressesEqual(contactAddress, currentAddress)) {
 			sectionDTO.setSameAddress(true);
 		}
 		return sectionDTO;

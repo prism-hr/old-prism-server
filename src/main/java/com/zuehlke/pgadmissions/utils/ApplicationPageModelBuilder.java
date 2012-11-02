@@ -83,15 +83,23 @@ public class ApplicationPageModelBuilder {
 		if (currentAddress != null) {
 			address.setCurrentAddressCountry(currentAddress.getCountry());
 
-			address.setCurrentAddressLocation(currentAddress.getLocation());
+			address.setCurrentAddress1(currentAddress.getAddress1());
+			address.setCurrentAddress2(currentAddress.getAddress2());
+			address.setCurrentAddress3(currentAddress.getAddress3());
+			address.setCurrentAddress4(currentAddress.getAddress4());
+			address.setCurrentAddress5(currentAddress.getAddress5());
 		}
 		com.zuehlke.pgadmissions.domain.Address contactAddress = applicationForm.getContactAddress();
 		if(contactAddress != null){
 		address.setContactAddressCountry(contactAddress.getCountry());
 
-		address.setContactAddressLocation(contactAddress.getLocation());
+		address.setContactAddress1(contactAddress.getAddress1());
+		address.setContactAddress2(contactAddress.getAddress2());
+		address.setContactAddress3(contactAddress.getAddress3());
+		address.setContactAddress4(contactAddress.getAddress4());
+		address.setContactAddress5(contactAddress.getAddress5());
 		}
-		if (currentAddress != null && contactAddress != null && currentAddress.getLocation().equals(contactAddress.getLocation()) && currentAddress.getCountry().equals(contactAddress.getCountry())) {
+		if (AddressUtils.addressesEqual(contactAddress, currentAddress)) {
 			address.setSameAddress(true);
 		}
 

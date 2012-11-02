@@ -164,10 +164,10 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon W1T 4HD\nUnited Kingdom";
         RegisteredUser user = new RegisteredUserBuilder().id(1).username("denk@zhaw.ch").toUser();
         Country country = new CountryBuilder().id(1).code("XK").name("United Kingdom").toCountry();
-        Address address = new AddressBuilder().id(1).country(country).location(addressStr).toAddress();
+        Address address = new AddressBuilder().id(1).country(country).address1(addressStr).toAddress();
         EmploymentPosition employmentPosition = new EmploymentPositionBuilder()
             .current(true)
-            .employerAdress(addressStr)
+            .employerAdress1(addressStr)
             .employerCountry(country)
             .employerName("Zuhlke Ltd.")
             .toEmploymentPosition();

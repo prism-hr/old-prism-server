@@ -26,7 +26,7 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 	
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Country countryById = countriesDAO.getCountryById(1);
-		Address address = new AddressBuilder().country(countryById).location("1 Main Street").toAddress();
+		Address address = new AddressBuilder().country(countryById).address1("1 Main Street").toAddress();
 		save( address);
 		flushAndClearSession();
 		

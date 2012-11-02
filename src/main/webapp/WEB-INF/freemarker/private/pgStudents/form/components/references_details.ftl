@@ -300,7 +300,7 @@
         <span class="plain-label">Telephone<em>*</em></span>
         <span class="hint" data-desc="<@spring.message 'referee.telephone'/>"></span>
         <div class="field">
-          <input class="full" id="refPhoneNumber" name="refPhoneNumber" value="${(referee.phoneNumber?html)!}"/>                
+          <input class="full" id="refPhoneNumber" name="refPhoneNumber" placeholder="e.g. +44 (0) 123 123 1234" value="${(referee.phoneNumber?html)!}"/>                
         </div>            
       <#else>
         <span class="plain-label grey-label">Telephone</span>

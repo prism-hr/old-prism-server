@@ -78,6 +78,15 @@ public class PersonalDetailsValidatorTest {
         Assert.assertEquals("A maximum of 35 characters are allowed.", mappingResult.getFieldError("phoneNumber").getDefaultMessage());
     }
 	
+    @Test
+    public void shouldRejectIfPhoneNumberIsNotValid() {
+        personalDetails.setPhoneNumber("+41-00-0-000--000");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "phoneNumber");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("You must enter telephone numbers in the following format +44 (0) 123 123 1234.", mappingResult.getFieldError("phoneNumber").getDefaultMessage());
+    }	
+	
 	@Test
     public void shouldRejectIfFirstNameContainsInvalidCharacters() {
 	    String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
@@ -357,7 +366,7 @@ public class PersonalDetailsValidatorTest {
 				.gender(Gender.INDETERMINATE_GENDER).lastName("smith")//
 				.title(Title.PROFESSOR)//
 				.residenceDomicile(new DomicileBuilder().toDomicile())//
-				.phoneNumber("abc")//
+				.phoneNumber("0123456")//
 				.ethnicity(new EthnicityBuilder().id(23).toEthnicity())//
 				.disability(new DisabilityBuilder().id(23213).toDisability())//
 				.requiresVisa(true)

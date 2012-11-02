@@ -428,8 +428,7 @@
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.telephone'/>"></span>
                 	<div class="field">                    	
                 		<#if !applicationForm.isDecided()  && !applicationForm.isWithdrawn()>
-                			<input class="full" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone"/>
-						 
+                			<input class="full" type="text" value="${(personalDetails.phoneNumber?html)!}" placeholder="e.g. +44 (0) 123 123 1234" name="pd_telephone" id="pd_telephone"/>
                 		<#else>
                 			<input class="full" readonly="readonly" disabled="disabled" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone" />	          
                 		</#if>

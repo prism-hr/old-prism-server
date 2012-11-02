@@ -300,7 +300,7 @@
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.referencedata.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-                            <schemaDirectory>${basedir}/src/main/resources/reference_data</schemaDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/xsd/import</schemaDirectory>
                             <staleFile>${project.build.directory}/jaxb2/.schema1XjcStaleFlag</staleFile>
                         </configuration>
                     </execution>
@@ -312,7 +312,7 @@
                         <configuration>
                             <packageName>com.zuehlke.pgadmissions.admissionsservice.jaxb</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-                            <schemaDirectory>${basedir}/src/main/resources/admission_sapplications_service</schemaDirectory>
+                            <schemaDirectory>${project.basedir}/src/main/xsd/export</schemaDirectory>
                             <staleFile>${project.build.directory}/jaxb2/.schema2XjcStaleFlag</staleFile>
                             <clearOutputDir>false</clearOutputDir>
                         </configuration>

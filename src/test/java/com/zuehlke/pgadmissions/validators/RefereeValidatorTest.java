@@ -40,9 +40,10 @@ public class RefereeValidatorTest {
         currentUser = new RegisteredUserBuilder().id(9).email("me@test.com").toUser();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
-        referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).email("email@test.com").firstname("bob")
-                .lastname("smith").addressCountry(new Country()).addressLocation("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress")
-                .phoneNumber("hallihallo").toReferee();
+        referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm())
+                .email("email@test.com").firstname("bob").lastname("smith").addressCountry(new Country())
+                .addressLocation("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress")
+                .phoneNumber("hallihallo").phoneNumber("0000").toReferee();
     }
 	
 	@Test
@@ -60,6 +61,26 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstname").getCode());
 	}
+	
+    @Test
+    @DirtiesContext
+    public void shouldRejectIfPhoneNumberIsLargerThan35() {
+        referee.setPhoneNumber("0123456789012345678901234567890123456789");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
+        refereeValidator.validate(referee, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 35 characters are allowed.", mappingResult.getFieldError("phoneNumber").getDefaultMessage());
+    }	
+    
+    @Test
+    @DirtiesContext
+    public void shouldRejectIfPhoneNumberIsInvalid() {
+        referee.setPhoneNumber("012345678901234567--8901");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
+        refereeValidator.validate(referee, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("You must enter telephone numbers in the following format +44 (0) 123 123 1234.", mappingResult.getFieldError("phoneNumber").getDefaultMessage());
+    }       
 
 	@Test
 	@DirtiesContext

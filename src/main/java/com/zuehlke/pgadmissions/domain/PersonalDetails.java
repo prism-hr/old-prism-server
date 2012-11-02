@@ -41,7 +41,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	private String messenger;
 	
 	@Column(name = "phone")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 35)
+	@ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
 	private String phoneNumber;
 	
 	@Column(name = "english_first_language")

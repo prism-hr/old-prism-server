@@ -38,12 +38,12 @@ public class UclExportService {
 
     @Resource(name = "webservice-calling-queue-executor")
     public void setWebserviceCallingQueue(ThreadPoolTaskExecutor webserviceCallingQueue) {
-        this.webserviceCallingQueue = webserviceCallingQueue;
+        this.webserviceCallingQueueExecutor = webserviceCallingQueue;
     }
 
     @Resource(name = "sftp-calling-queue-executor")
     public void setSftpCallingQueue(ThreadPoolTaskExecutor sftpCallingQueue) {
-        this.sftpCallingQueue = sftpCallingQueue;
+        this.sftpCallingQueueExecutor = sftpCallingQueue;
     }
 
     //ooooooooooooooooooooooooooooooo PUBLIC API oooooooooooooooooooooooooooooooo
@@ -74,7 +74,7 @@ public class UclExportService {
     public Long sendToUCL(ApplicationForm applicationForm, TransferListener listener) {
         ApplicationFormTransfer transfer = this.createPersistentQueueItem();
         listener.queued();
-        webserviceCallingQueueExecutor.execute(transfer.getId(), applicationForm.getId(),  listener);
+        webserviceCallingQueueExecutor.execute(new Phase1Task(applicationForm.getId(),  transfer.getId(), listener));
         return transfer.getId();
     }
 
@@ -123,12 +123,19 @@ public class UclExportService {
     @Transactional
     private ApplicationFormTransfer createPersistentQueueItem() {
         //todo
+        return null;
     }
 
     private class Phase1Task implements Runnable {
+        private Integer applicationId;
+        private Long transferId;
         private TransferListener listener;
-        //knows which app transfer is servicing
-        //knows the callback listener
+
+        private Phase1Task(Integer applicationId, Long transferId, TransferListener listener) {
+            this.applicationId = applicationId;
+            this.transferId = transferId;
+            this.listener = listener;
+        }
 
         @Override
         public void run() {
@@ -159,10 +166,5 @@ public class UclExportService {
 
         }
     }
-
-
-
-
-
 
 }

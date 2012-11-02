@@ -38,7 +38,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadReferee() throws Exception {
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy").parse("01 05 2012");
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc")
+		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).address1("loc")
 				.email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").phoneNumber("phoneNumber").declined(true).lastNotified(lastNotified)
 				.toReferee();
 
@@ -55,7 +55,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		assertNotSame(referee, reloadedReferee);
 		assertEquals(referee, reloadedReferee);
 
-		assertEquals(referee.getAddressCountry(), reloadedReferee.getAddressCountry());
+		assertEquals(referee.getAddressLocation().getCountry(), reloadedReferee.getAddressLocation().getCountry());
 		assertEquals(referee.getAddressLocation(), reloadedReferee.getAddressLocation());
 
 		assertEquals(referee.getApplication(), reloadedReferee.getApplication());
@@ -79,7 +79,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry(countriesDAO.getCountryById(1))
-				.addressLocation("loc").email("email").user(user).firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")
+				.address1("loc").email("email").user(user).firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")
 				.phoneNumber("phoneNumber").toReferee();
 		
 		sessionFactory.getCurrentSession().save(referee);
@@ -105,7 +105,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		save(applicant, application, country);
 		
 		Referee referee = new RefereeBuilder().application(application).email("email@test.com").firstname("bob")
-				.lastname("smith").addressCountry(country).addressLocation("london").jobEmployer("zuhlke").jobTitle("se")
+				.lastname("smith").addressCountry(country).address1("london").jobEmployer("zuhlke").jobTitle("se")
 				.messenger("skypeAddress").phoneNumber("hallihallo").user(refereeUser).toReferee();
 		
 		ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee)

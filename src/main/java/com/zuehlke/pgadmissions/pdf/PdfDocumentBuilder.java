@@ -445,7 +445,7 @@ public class PdfDocumentBuilder {
 		if (application.getCurrentAddress() == null) {
 			table.addCell(newTableCell(null, smallFont));
 		} else {
-			table.addCell(newTableCell(application.getCurrentAddress().getLocation(), smallFont));
+			table.addCell(newTableCell(application.getCurrentAddress().getLocationString(), smallFont));
 		}
 
 		table.addCell(newTableCell("Country", smallBoldFont));
@@ -459,7 +459,7 @@ public class PdfDocumentBuilder {
 		if (application.getContactAddress() == null) {
 			table.addCell(newTableCell(null, smallFont));
 		} else {
-			table.addCell(newTableCell(application.getContactAddress().getLocation(), smallFont));
+			table.addCell(newTableCell(application.getContactAddress().getLocationString(), smallFont));
 		}
 
 		table.addCell(newTableCell("Country", smallBoldFont));
@@ -567,13 +567,13 @@ public class PdfDocumentBuilder {
 				headerCell.setColspan(2);
 				table.addCell(headerCell);
 				table.addCell(newTableCell("Country", smallBoldFont));
-				table.addCell(newTableCell(position.getEmployerCountry().getName(), smallFont));
+				table.addCell(newTableCell(position.getEmployerAddress().getCountry().getName(), smallFont));
 
 				table.addCell(newTableCell("Employer Name", smallBoldFont));
 				table.addCell(newTableCell(position.getEmployerName(), smallFont));
 
 				table.addCell(newTableCell("Employer Address", smallBoldFont));
-				table.addCell(newTableCell(position.getEmployerAddress(), smallFont));
+				table.addCell(newTableCell(position.getEmployerAddress().getLocationString(), smallFont));
 				
 				table.addCell(newTableCell("Position", smallBoldFont));
 				table.addCell(newTableCell(position.getPosition(), smallFont));
@@ -684,10 +684,10 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell(referee.getJobTitle(), smallFont));
 
 				table.addCell(newTableCell("Address", smallBoldFont));
-                table.addCell(newTableCell(referee.getAddressLocation(), smallFont));
+                table.addCell(newTableCell(referee.getAddressLocation().getLocationString(), smallFont));
 				
 				table.addCell(newTableCell("Country", smallBoldFont));
-				table.addCell(newTableCell(referee.getAddressCountry().getName(), smallFont));
+				table.addCell(newTableCell(referee.getAddressLocation().getCountry().getName(), smallFont));
 
 				table.addCell(newTableCell("Email", smallBoldFont));
 				table.addCell(newTableCell(referee.getEmail(), smallFont));

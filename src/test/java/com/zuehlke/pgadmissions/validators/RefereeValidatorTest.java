@@ -42,7 +42,7 @@ public class RefereeValidatorTest {
         EasyMock.replay(userServiceMock);
         referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm())
                 .email("email@test.com").firstname("bob").lastname("smith").addressCountry(new Country())
-                .addressLocation("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress")
+                .address1("london").address3("london3").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress")
                 .phoneNumber("hallihallo").phoneNumber("0000").toReferee();
     }
 	
@@ -104,16 +104,6 @@ public class RefereeValidatorTest {
 
 	@Test
 	@DirtiesContext
-	public void shouldRejectIfAddressCountryIsEmpty() {
-		referee.setAddressCountry(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressCountry");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("addressCountry").getCode());
-	}
-
-	@Test
-	@DirtiesContext
 	public void shouldRejectIfJobEmployeeIsEmpty() {
 		referee.setJobEmployer(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobEmployer");
@@ -164,18 +154,5 @@ public class RefereeValidatorTest {
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("phoneNumber").getCode());
-	}
-
-	@Test
-	@DirtiesContext
-	public void shouldRejectIfAddressTooLong() {
-		StringBuilder addressLoc = new StringBuilder();
-		for (int i = 0; i <= 500; i++) {
-			addressLoc.append("a");
-		}
-		referee.setAddressLocation(addressLoc.toString());
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 }

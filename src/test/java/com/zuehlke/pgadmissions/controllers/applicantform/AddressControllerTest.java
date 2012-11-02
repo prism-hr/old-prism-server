@@ -143,20 +143,22 @@ public class AddressControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 		Country countryOne = new CountryBuilder().id(1).toCountry();
-		Address addressOne = new AddressBuilder().id(1).location("location1").country(countryOne).toAddress();
+		Address addressOne = new AddressBuilder().id(1).address1("location1").address2("location1-line2").country(countryOne).toAddress();
 
 		Country countryTwo = new CountryBuilder().id(2).toCountry();
-		Address addressTwo = new AddressBuilder().id(2).location("location2").country(countryTwo).toAddress();
+		Address addressTwo = new AddressBuilder().id(2).address1("location2").address2("location2-line2").country(countryTwo).toAddress();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
 		AddressSectionDTO returnedAddress = controller.getAddressDTO("1");
-		assertEquals("location1", returnedAddress.getContactAddressLocation());
+		assertEquals("location1", returnedAddress.getContactAddress1());
+		assertEquals("location1-line2", returnedAddress.getContactAddress2());
 		assertEquals(countryOne, returnedAddress.getContactAddressCountry());
 
-		assertEquals("location2", returnedAddress.getCurrentAddressLocation());
+		assertEquals("location2", returnedAddress.getCurrentAddress1());
+		assertEquals("location2-line2", returnedAddress.getCurrentAddress2());
 		assertEquals(countryTwo, returnedAddress.getCurrentAddressCountry());
 		assertFalse(returnedAddress.isSameAddress());
 	}
@@ -168,9 +170,9 @@ public class AddressControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 		Country countryOne = new CountryBuilder().id(1).toCountry();
-		Address addressOne = new AddressBuilder().id(1).location("location1").country(countryOne).toAddress();
+		Address addressOne = new AddressBuilder().id(1).address1("location1").country(countryOne).toAddress();
 
-		Address addressTwo = new AddressBuilder().id(2).location("location1").country(countryOne).toAddress();
+		Address addressTwo = new AddressBuilder().id(2).address1("location1").country(countryOne).toAddress();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
@@ -179,10 +181,10 @@ public class AddressControllerTest {
 
 		AddressSectionDTO returnedAddress = controller.getAddressDTO("1");
 
-		assertEquals("location1", returnedAddress.getContactAddressLocation());
+		assertEquals("location1", returnedAddress.getContactAddress1());
 		assertEquals(countryOne, returnedAddress.getContactAddressCountry());
 
-		assertEquals("location1", returnedAddress.getCurrentAddressLocation());
+		assertEquals("location1", returnedAddress.getCurrentAddress1());
 		assertEquals(countryOne, returnedAddress.getCurrentAddressCountry());
 		assertTrue(returnedAddress.isSameAddress());
 	}
@@ -201,10 +203,10 @@ public class AddressControllerTest {
 
 		AddressSectionDTO returnedAddress = controller.getAddressDTO("1");
 		assertEquals(applicationForm, returnedAddress.getApplication());
-		assertNull(returnedAddress.getContactAddressLocation());
+		assertNull(returnedAddress.getContactAddress1());
 		assertNull(returnedAddress.getContactAddressCountry());
 
-		assertNull(returnedAddress.getCurrentAddressLocation());
+		assertNull(returnedAddress.getCurrentAddress1());
 		assertNull(returnedAddress.getCurrentAddressCountry());
 		assertFalse(returnedAddress.isSameAddress());
 	}
@@ -222,10 +224,10 @@ public class AddressControllerTest {
 
 		AddressSectionDTO addressSectionDTO = new AddressSectionDTO();
 		addressSectionDTO.setContactAddressCountry(countryOne);
-		addressSectionDTO.setContactAddressLocation("location1");
+		addressSectionDTO.setContactAddress1("location1");
 
 		addressSectionDTO.setCurrentAddressCountry(countryTwo);
-		addressSectionDTO.setCurrentAddressLocation("location2");
+		addressSectionDTO.setCurrentAddress1("location2");
 
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -241,10 +243,10 @@ public class AddressControllerTest {
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 
-		assertEquals("location1", applicationForm.getContactAddress().getLocation());
+		assertEquals("location1", applicationForm.getContactAddress().getAddress1());
 		assertEquals(countryOne, applicationForm.getContactAddress().getCountry());
 
-		assertEquals("location2", applicationForm.getCurrentAddress().getLocation());
+		assertEquals("location2", applicationForm.getCurrentAddress().getAddress1());
 		assertEquals(countryTwo, applicationForm.getCurrentAddress().getCountry());
 
 		assertEquals("redirect:/update/getAddress?applicationId=ABC", view);
@@ -257,16 +259,16 @@ public class AddressControllerTest {
 		Country countryThree = new CountryBuilder().id(3).toCountry();
 		Country countryFour = new CountryBuilder().id(4).toCountry();
 
-		Address addressOne = new AddressBuilder().id(1).location("location3").country(countryThree).toAddress();
+		Address addressOne = new AddressBuilder().id(1).address1("location3").country(countryThree).toAddress();
 
-		Address addressTwo = new AddressBuilder().id(2).location("location4").country(countryFour).toAddress();
+		Address addressTwo = new AddressBuilder().id(2).address1("location4").country(countryFour).toAddress();
 
 		AddressSectionDTO addressSectionDTO = new AddressSectionDTO();
 		addressSectionDTO.setContactAddressCountry(countryOne);
-		addressSectionDTO.setContactAddressLocation("location1");
+		addressSectionDTO.setContactAddress1("location1");
 
 		addressSectionDTO.setCurrentAddressCountry(countryTwo);
-		addressSectionDTO.setCurrentAddressLocation("location2");
+		addressSectionDTO.setCurrentAddress1("location2");
 
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -282,11 +284,11 @@ public class AddressControllerTest {
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 
-		assertEquals("location1", applicationForm.getContactAddress().getLocation());
+		assertEquals("location1", applicationForm.getContactAddress().getAddress1());
 		assertEquals(countryOne, applicationForm.getContactAddress().getCountry());
 		assertSame(addressTwo, applicationForm.getContactAddress());
 
-		assertEquals("location2", applicationForm.getCurrentAddress().getLocation());
+		assertEquals("location2", applicationForm.getCurrentAddress().getAddress1());
 		assertEquals(countryTwo, applicationForm.getCurrentAddress().getCountry());
 		assertSame(addressOne, applicationForm.getCurrentAddress());
 

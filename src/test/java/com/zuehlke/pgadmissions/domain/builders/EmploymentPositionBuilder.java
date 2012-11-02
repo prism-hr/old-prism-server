@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -25,7 +26,10 @@ public class EmploymentPositionBuilder {
 	
 	private Integer id;	
 	
-	private String employerAdress;
+	private String employerAdress1;
+	private String employerAdress2;
+	private String employerAdress3;
+	private String employerAdress4;
 	
 	private Country employerCountry;
 	
@@ -36,10 +40,23 @@ public class EmploymentPositionBuilder {
 		return this;
 	}
 	
-	public EmploymentPositionBuilder employerAdress(String employerAdress){
-		this.employerAdress = employerAdress;
+	public EmploymentPositionBuilder employerAdress1(String employerAdress){
+		this.employerAdress1 = employerAdress;
 		return this;
 	}
+	public EmploymentPositionBuilder employerAdress2(String employerAdress){
+		this.employerAdress2 = employerAdress;
+		return this;
+	}
+	public EmploymentPositionBuilder employerAdress3(String employerAdress){
+		this.employerAdress3 = employerAdress;
+		return this;
+	}
+	public EmploymentPositionBuilder employerAdress4(String employerAdress){
+		this.employerAdress4 = employerAdress;
+		return this;
+	}
+	
 	public EmploymentPositionBuilder employerCountry(Country employerCountry){
 		this.employerCountry = employerCountry;
 		return this;
@@ -80,8 +97,8 @@ public class EmploymentPositionBuilder {
 		EmploymentPosition employment = new EmploymentPosition();
 		employment.setApplication(application);
 		employment.setEmployerName(employerName);
+		Address employerAdress = new AddressBuilder().address1(employerAdress1).address2(employerAdress2).address3(employerAdress3).address4(employerAdress4).country(employerCountry).toAddress();
 		employment.setEmployerAddress(employerAdress);
-		employment.setEmployerCountry(employerCountry);
 		employment.setEndDate(endDate);
 		employment.setRemit(remit);
 		employment.setStartDate(startDate);

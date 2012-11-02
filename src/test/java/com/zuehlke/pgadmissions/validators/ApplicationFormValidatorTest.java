@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -244,7 +245,7 @@ public class ApplicationFormValidatorTest {
 		applicationForm = new ApplicationFormBuilder().program(program).programmeDetails(programmeDetails)
 				.acceptedTerms(CheckedStatus.YES).personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails())
 				.additionalInformation(new AdditionalInformationBuilder().id(3).toAdditionalInformation())//
-				.currentAddress(new Address()).contactAddress(new Address())//
+				.currentAddress(new AddressBuilder().address1("address").toAddress()).contactAddress(new AddressBuilder().address1("address").toAddress())//
 				.referees(new Referee(), new Referee(), new Referee())//
 				.personalStatement(new Document()).toApplicationForm();
 	}

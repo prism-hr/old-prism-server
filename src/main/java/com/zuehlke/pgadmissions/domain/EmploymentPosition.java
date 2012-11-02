@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -30,14 +31,11 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 150)
 	private String employerName;
 	
-	@Column(name="employer_address")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
-	private String employerAddress;
-	
-	@ManyToOne
-	@JoinColumn(name="employer_country_id")
+	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "address_id")
 	@Valid
-	private Country employerCountry;
+	private Address employerAddress;
 	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
 	private String position;
@@ -109,20 +107,12 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 		this.endDate = endDate;
 	}
 	
-	public String getEmployerAddress() {
+	public Address getEmployerAddress() {
 		return employerAddress;
 	}
 
-	public void setEmployerAddress(String employerAdress) {
+	public void setEmployerAddress(Address employerAdress) {
 		this.employerAddress = employerAdress;
-	}
-
-	public Country getEmployerCountry() {
-		return employerCountry;
-	}
-
-	public void setEmployerCountry(Country employerCountry) {
-		this.employerCountry = employerCountry;
 	}
 
 	public boolean isCurrent() {

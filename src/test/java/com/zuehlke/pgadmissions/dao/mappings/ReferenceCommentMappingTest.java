@@ -43,7 +43,7 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 		save(applicant, application, country);
 		
 		Referee referee = new RefereeBuilder().application(application).email("email@test.com").firstname("bob")
-				.lastname("smith").addressCountry(country).addressLocation("london").jobEmployer("zuhlke").jobTitle("se")
+				.lastname("smith").addressCountry(country).address1("london").jobEmployer("zuhlke").jobTitle("se")
 				.messenger("skypeAddress").phoneNumber("hallihallo").user(refereeUser).toReferee();
 		save(refereeUser, referee);
 		

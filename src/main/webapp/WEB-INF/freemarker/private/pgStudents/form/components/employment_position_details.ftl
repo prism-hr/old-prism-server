@@ -81,29 +81,6 @@
     
     	
     	<div class="row-group" id="employmentForm">
-    		<!-- Country -->
-			<div class="row">
-            	<span class="plain-label">Country<em>*</em></span>
-                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerCountry'/>"></span>
-               	<div class="field">
-                	<select class="full" id="position_country" name="position_country"
-                   		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
-                    	<option value="">Select...</option>
-                    	<#list countries as country>
-                     		<option value="${encrypter.encrypt(country.id)}" <#if employmentPosition.employerCountry?? && employmentPosition.employerCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>
-                     	</#list>
-                 	 </select>
-                 	 
-                </div>
-            </div>
-            <@spring.bind "employmentPosition.employerCountry" /> 
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
-						</div>
-					</div>
-				</#list>
             
         	<!-- Employer (company name) -->
             <div class="row">
@@ -131,26 +108,120 @@
 				</#list>
             
             
-        	<!-- Employer (company name) -->
+        	<!-- Address -->
             <div class="row">
-            	<span class="plain-label">Employer Address<em>*</em></span>
-                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerAddress'/>"></span>
+            	<span class="plain-label">House name / number & street<em>*</em></span>
+                <span class="hint" data-desc="<@spring.message 'addressDetails.house'/>"></span>
                 <div class="field">
-                   <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-                  		<textarea cols="80" rows="5" class="max"  ='1000' id="position_employer_address" 
-                  		name="position_employer_address" 
-                  		placeholder="Employer's address">${(employmentPosition.employerAddress?html)!}</textarea>
-						
-						  
-            				
-					 <#else>
-					    <textarea readonly="readonly" cols="80" rows="5" class="max" id="position_employer_address" 
-                        name="position_employer_address"
-                        placeholder="Employer's address">${(employmentPosition.employerAddress?html)!}</textarea>  
-					 </#if>   
+                  		<input id="position_employer_address1" name="position_employer_address1" value="${(employmentPosition.employerAddress.address1?html)!}"
+                  		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+                  		readonly="readonly"
+                  		</#if>
+                  		/>
                	</div>
             </div>
-            <@spring.bind "employmentPosition.employerAddress" />
+            <@spring.bind "employmentPosition.employerAddress.address1" />
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+				
+			<div class="row">
+                <div class="field">
+                  		<input id="position_employer_address2" name="position_employer_address2" value="${(employmentPosition.employerAddress.address2?html)!}"
+                  		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+                  		readonly="readonly"
+                  		</#if>
+                  		/>
+               	</div>
+            </div>
+            <@spring.bind "employmentPosition.employerAddress.address2" />
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+				
+			<div class="row">
+            	<span class="plain-label">Town / city / suburb<em>*</em></span>
+                <span class="hint" data-desc="<@spring.message 'addressDetails.town'/>"></span>
+                <div class="field">
+                  		<input id="position_employer_address3" name="position_employer_address3" value="${(employmentPosition.employerAddress.address3?html)!}"
+                  		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+                  		readonly="readonly"
+                  		</#if>
+                  		/>
+               	</div>
+            </div>
+            <@spring.bind "employmentPosition.employerAddress.address3" />
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+				
+			<div class="row">
+            	<span class="plain-label">State / county / region</span>
+                <span class="hint" data-desc="<@spring.message 'addressDetails.state'/>"></span>
+                <div class="field">
+                  		<input id="position_employer_address4" name="position_employer_address4" value="${(employmentPosition.employerAddress.address4?html)!}"
+                  		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+                  		readonly="readonly"
+                  		</#if>
+                  		/>
+               	</div>
+            </div>
+            <@spring.bind "employmentPosition.employerAddress.address4" />
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+				
+			<div class="row">
+            	<span class="plain-label">Post / zip / area code</span>
+                <span class="hint" data-desc="<@spring.message 'addressDetails.zip'/>"></span>
+                <div class="field">
+                  		<input id="position_employer_address5" name="position_employer_address5" value="${(employmentPosition.employerAddress.address5?html)!}"
+                  		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+                  		readonly="readonly"
+                  		</#if>
+                  		/>
+               	</div>
+            </div>
+            <@spring.bind "employmentPosition.employerAddress.address5" />
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+
+			<div class="row">
+            	<span class="plain-label">Country<em>*</em></span>
+                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerCountry'/>"></span>
+               	<div class="field">
+                	<select class="full" id="position_country" name="position_country"
+                   		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
+                    	<option value="">Select...</option>
+                    	<#list countries as country>
+                     		<option value="${encrypter.encrypt(country.id)}" <#if employmentPosition.employerAddress.country?? && employmentPosition.employerAddress.country.id == country.id> selected="selected"</#if>>${country.name?html}</option>
+                     	</#list>
+                 	 </select>
+                 	 
+                </div>
+            </div>
+            <@spring.bind "employmentPosition.employerAddress.country" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">

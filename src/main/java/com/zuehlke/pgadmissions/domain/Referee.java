@@ -14,6 +14,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -67,13 +68,11 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String jobTitle;
 
-	@Column(name = "address_location")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
-	private String addressLocation;
-
-	@OneToOne
-	@JoinColumn(name = "country_id")
-	private Country addressCountry;
+	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "address_id")
+	@Valid
+	private Address addressLocation;
 
 	@Column(name = "email")
 	@ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
@@ -121,20 +120,12 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 		this.jobTitle = jobTitle;
 	}
 
-	public String getAddressLocation() {
+	public Address getAddressLocation() {
 		return addressLocation;
 	}
 
-	public void setAddressLocation(String addressLocation) {
+	public void setAddressLocation(Address addressLocation) {
 		this.addressLocation = addressLocation;
-	}
-
-	public Country getAddressCountry() {
-		return addressCountry;
-	}
-
-	public void setAddressCountry(Country addressCountry) {
-		this.addressCountry = addressCountry;
 	}
 
 	public String getEmail() {

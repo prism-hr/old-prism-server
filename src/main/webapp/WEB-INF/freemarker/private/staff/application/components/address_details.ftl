@@ -19,7 +19,7 @@
       <!-- Address body -->
       <div class="admin_row">
         <span class="admin_row_label">Current Address</span>
-        <div class="field">${(applicationForm.currentAddress.location?html)!}</div>
+        <div class="field">${(applicationForm.currentAddress.locationString?html)!}</div>
       </div>
       
       <!-- Country -->
@@ -34,7 +34,7 @@
       
       <div class="admin_row">
         <span class="admin_row_label">Contact Address</span>    
-        <div class="field">${(applicationForm.contactAddress.location?html)!}</div>
+        <div class="field">${(applicationForm.contactAddress.locationString?html)!}</div>
       </div>
       
       <!-- Country -->

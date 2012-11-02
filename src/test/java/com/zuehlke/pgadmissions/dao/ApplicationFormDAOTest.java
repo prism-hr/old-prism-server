@@ -967,7 +967,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
 		Referee referee = new RefereeBuilder().user(applicant).email("email3@test.com").firstname("bob").lastname("smith").addressCountry(country)
-				.addressLocation("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+				.address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
 		save(referee, otherApplicant);
 		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).referees(referee).applicant(otherApplicant)
 				.status(ApplicationFormStatus.REVIEW).toApplicationForm();
@@ -1010,7 +1010,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(refereeUser);
 		Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob").lastname("smith").addressCountry(country)
-				.addressLocation("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+				.address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
 		save(referee);
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).referees(referee).applicant(applicant)
 				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
@@ -1036,7 +1036,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(refereeUser);
 		Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob").lastname("smith").addressCountry(country)
-				.addressLocation("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+				.address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
 		save(referee);
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).referees(referee).applicant(applicant)
 				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
@@ -1062,7 +1062,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
 		save(refereeUser);
 		Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob").lastname("smith").addressCountry(country)
-				.addressLocation("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+				.address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
 		save(referee);
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION)
 				.toApplicationForm();

@@ -34,7 +34,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 		application.setProgram(program);
 		application.setApplicant(user);
 		
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").application(application).employerName("fr")
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress1("Address").application(application).employerName("fr")
 				.endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
 		save(application, employmentPosition);
 		flushAndClearSession();
@@ -55,7 +55,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 		save(application);
 		flushAndClearSession();
 
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").application(application).employerName("fr")
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress1("Address").application(application).employerName("fr")
 				.endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
 
 		EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
@@ -71,7 +71,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 		application.setProgram(program);
 		application.setApplicant(user);
 		
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").application(application).employerName("fr")
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress1("Address").application(application).employerName("fr")
 				.endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
 		save(application, employmentPosition);
 		flushAndClearSession();

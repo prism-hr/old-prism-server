@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 
@@ -42,15 +43,6 @@ public class EmploymentPositionValidatorTest {
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty",mappingResult.getFieldError("employerAddress").getCode());
-	}
-		
-	@Test
-	public void shouldRejectIfEmployerCountryIsEmpty(){
-		position.setEmployerCountry(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
-		positionValidator.validate(position, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("dropdown.radio.select.none",mappingResult.getFieldError("employerCountry").getCode());
 	}
 	
 	@Test
@@ -126,18 +118,6 @@ public class EmploymentPositionValidatorTest {
 	}
 	
 	@Test
-	public void shouldRejectifEmployerAddressTooLong() {
-		StringBuilder employerAddressLoc = new StringBuilder();
-		for (int i = 0; i <=1000; i++) {
-			employerAddressLoc.append("a");
-		}
-		position.setEmployerAddress(employerAddressLoc.toString());
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
-		positionValidator.validate(position, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-	}
-	
-	@Test
 	public void shouldRejectIfJobDescriptionTooLong() {
 		StringBuilder jobDescription = new StringBuilder();
 		for (int i = 0; i <=2000; i++) {
@@ -160,7 +140,6 @@ public class EmploymentPositionValidatorTest {
 		position.setCurrent(false);
 		position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		position.setPosition("head of department");
-		position.setEmployerAddress("address");
-		position.setEmployerCountry(new CountryBuilder().id(1).toCountry());
+		position.setEmployerAddress(new AddressBuilder().address1("address").address3("address3").country(new CountryBuilder().id(1).toCountry()).toAddress());
 	}
 }

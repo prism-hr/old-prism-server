@@ -1,4 +1,4 @@
-package com.zuhlke.pgadmissions.test.utils;
+package com.zuehlke.pgadmissions.test.utils;
 
 import org.directwebremoting.spring.DwrController;
 

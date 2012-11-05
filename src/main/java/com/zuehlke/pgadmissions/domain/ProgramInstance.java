@@ -34,8 +34,11 @@ public class ProgramInstance extends DomainObject<Integer> implements ProgramIns
 	@Column(name = "study_option")
 	private String studyOption;
 	
+	@Column(name = "identifier")
+    private String identifier;
+	
 	@Column(name = "study_code")
-    private Integer studyOptionCode;
+    private String studyOptionCode;
 	
 	@Column(name = "enabled")
     private Boolean enabled;
@@ -108,11 +111,11 @@ public class ProgramInstance extends DomainObject<Integer> implements ProgramIns
         this.studyOption = studyOption;
     }
 
-    public Integer getStudyOptionCode() {
+    public String getStudyOptionCode() {
         return studyOptionCode;
     }
 
-    public void setStudyOptionCode(Integer studyCode) {
+    public void setStudyOptionCode(String studyCode) {
         this.studyOptionCode = studyCode;
     }
 
@@ -134,5 +137,14 @@ public class ProgramInstance extends DomainObject<Integer> implements ProgramIns
 	@Override
 	public Boolean getEnabled() {
 		return this.enabled;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return identifier;
+	}
+	
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 }

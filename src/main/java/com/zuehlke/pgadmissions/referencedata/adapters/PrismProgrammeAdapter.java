@@ -13,29 +13,29 @@ import com.zuehlke.pgadmissions.domain.CodeObject;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramInstanceInterface;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Programmes.Programme;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.services.importers.ImportService;
 
 public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportData {
 
-	private Programme programme;
+	private ProgrammeOccurrence programme;
 	
 	public String getName() {
-		return programme.getName();
+		return programme.getProgramme().getName();
 	}
 
-	public PrismProgrammeAdapter(Programme programme) {
+	public PrismProgrammeAdapter(ProgrammeOccurrence programme) {
 		this.programme = programme;
 	}
 
 	@Override
 	public String getStringCode() {
-		return programme.getCode();
+		return programme.getProgramme().getCode();
 	}
 
 	@Override
-	public Integer getStudyOptionCode() {
-		return Integer.parseInt(programme.getModeOfAttendance().getCode());
+	public String getStudyOptionCode() {
+		return programme.getModeOfAttendance().getCode();
 	}
 
 	@Override
@@ -46,6 +46,11 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
 	@Override
 	public String getAcademic_year() {
 		return programme.getAcademicYear();
+	}
+	
+	@Override
+	public String getIdentifier() {
+		return programme.getIdentifier();
 	}
 
 	@Override
@@ -74,6 +79,7 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
 		result.setApplicationStartDate(getApplicationStartDate());
 		result.setStudyOption(getStudyOption());
 		result.setStudyOptionCode(getStudyOptionCode());
+		result.setIdentifier(getIdentifier());
 		result.setEnabled(true);
 		Program program = getProgramme(currentData, changes);
 		result.setProgram(program);

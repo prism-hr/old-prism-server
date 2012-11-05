@@ -26,7 +26,7 @@ public class ProgrammeDetailDAOTest extends AutomaticRollbackTestCase{
     public void shouldGetProgrammeDetailById() throws ParseException {
         SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest();
         ProgrammeDetails programmeDetail = new ProgrammeDetailsBuilder().programmeName("proName")
-                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).studyOption(1, "Full-time")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).studyOption("1", "Full-time")
                 .sourcesOfInterest(interest).id(1).toProgrammeDetails();
         sessionFactory.getCurrentSession().save(programmeDetail);
         flushAndClearSession();
@@ -40,7 +40,7 @@ public class ProgrammeDetailDAOTest extends AutomaticRollbackTestCase{
     public void shouldSaveProgrammeDetail() throws ParseException {
         SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest();
         ProgrammeDetails programmeDetail = new ProgrammeDetailsBuilder().programmeName("proName")
-                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).studyOption(1, "Full-time")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).studyOption("1", "Full-time")
                 .sourcesOfInterest(interest).toProgrammeDetails();
         sessionFactory.getCurrentSession().save(programmeDetail);
         flushAndClearSession();

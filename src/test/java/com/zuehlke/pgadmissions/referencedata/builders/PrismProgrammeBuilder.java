@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.referencedata.builders;
 
-import com.zuehlke.pgadmissions.referencedata.jaxb.Programmes.Programme;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Programmes.Programme.ModeOfAttendance;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 
 public class PrismProgrammeBuilder {
 	private String academicYear;
@@ -11,6 +12,7 @@ public class PrismProgrammeBuilder {
 	private String startDate;
 	private String studyOptionCode;
 	private String studyOption;
+	private String identifier;
 
 	public PrismProgrammeBuilder academicYear(String academicYear){
 	    this.academicYear = academicYear;
@@ -47,18 +49,26 @@ public class PrismProgrammeBuilder {
 		return this;
 	}
 	
-	public Programme toPrismProgramme(){
-		Programme programme = new Programme();
+	public PrismProgrammeBuilder identifier(String identifier) {
+		this.identifier = identifier;
+		return this;
+	}
+	
+	public ProgrammeOccurrence toPrismProgramme(){
+		ProgrammeOccurrence programmeOccurrence = new ProgrammeOccurrence();
 		ModeOfAttendance modeOfAttendance = new ModeOfAttendance();
+		Programme programme= new Programme();
 		modeOfAttendance.setCode(studyOptionCode);
 		modeOfAttendance.setName(studyOption);
-		programme.setModeOfAttendance(modeOfAttendance);
-		programme.setAcademicYear(academicYear);
 		programme.setCode(code);
-		programme.setEndDate(endDate);
 		programme.setName(name);
-		programme.setStartDate(startDate);
-		return programme;
+		programmeOccurrence.setModeOfAttendance(modeOfAttendance);
+		programmeOccurrence.setAcademicYear(academicYear);
+		programmeOccurrence.setProgramme(programme);
+		programmeOccurrence.setIdentifier(identifier);
+		programmeOccurrence.setEndDate(endDate);
+		programmeOccurrence.setStartDate(startDate);
+		return programmeOccurrence;
 		
 	}
 }

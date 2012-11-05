@@ -42,7 +42,6 @@ public class AdmissionApplicationsSFTPServiceTest {
     }
     
     @Test
-    @Ignore
     public void connectiviyTest() throws JSchException, IOException, SftpException {
         Session session = jSchFactory.getInstance();
 

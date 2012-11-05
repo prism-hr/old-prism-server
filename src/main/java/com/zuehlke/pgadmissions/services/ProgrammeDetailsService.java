@@ -54,13 +54,13 @@ public class ProgrammeDetailsService {
 	}
 	
 	@Transactional
-    public Integer getStudyOptionCodeForProgram(Program program, String studyOption) {
+    public String getStudyOptionCodeForProgram(Program program, String studyOption) {
         for (ProgramInstance programInstance :  programInstanceDAO.getActiveProgramInstances(program)) {
             if (StringUtils.equalsIgnoreCase(programInstance.getStudyOption(), studyOption)) {
                 return programInstance.getStudyOptionCode();
             }
         }
-        return -1;
+        return null;
     }
 
 	@Transactional

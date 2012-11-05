@@ -15,7 +15,7 @@ public class ProgrammeDetailsBuilder {
 	private ApplicationForm applicationForm;
 	private String programmeName;
 	private String studyOption;
-	private Integer studyOptionCode;
+	private String studyOptionCode;
 	private String projectName;
 	private Date startDate;
 	private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
@@ -47,12 +47,12 @@ public class ProgrammeDetailsBuilder {
 		return this;
 	}
 	
-	public ProgrammeDetailsBuilder studyOptionCode(Integer studyOptionCode) {
+	public ProgrammeDetailsBuilder studyOptionCode(String studyOptionCode) {
         this.studyOptionCode = studyOptionCode;
         return this;
     }
 	
-	public ProgrammeDetailsBuilder studyOption(Integer studyOptionCode, String studyOption) {
+	public ProgrammeDetailsBuilder studyOption(String studyOptionCode, String studyOption) {
         this.studyOptionCode = studyOptionCode;
         this.studyOption = studyOption;
         return this;

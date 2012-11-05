@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.ZipEntry;
@@ -42,6 +41,7 @@ public class AdmissionApplicationsSFTPServiceTest {
     }
     
     @Test
+    @Ignore
     public void connectiviyTest() throws JSchException, IOException, SftpException {
         Session session = jSchFactory.getInstance();
 

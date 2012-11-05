@@ -1,0 +1,1 @@
+UPDATE APPLICATION_FORM set pending_approval_restart = 0 where pending_approval_restart is null;

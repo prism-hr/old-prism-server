@@ -1,0 +1,1 @@
+ALTER TABLE APPLICATION_FORM ADD COLUMN registry_users_notified tinyint(1);

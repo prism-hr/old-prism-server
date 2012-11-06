@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -213,6 +215,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne
 	@JoinColumn(name = "latest_review_round_id")
 	private ReviewRound latestReviewRound;
+	
+	@Column(name = "ip_address")
+	private byte[] ipAddress;
 
 	public List<Qualification> getQualifications() {
 		return qualifications;
@@ -739,6 +744,22 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setApproverRequestedRestart(RegisteredUser approverRequestedRestart) {
 		this.approverRequestedRestart = approverRequestedRestart;
+	}
+	
+	public byte[] getIpAddress() {
+		return ipAddress;
+	}
+	
+	public void setIpAddress(byte[] ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+	
+	public String getIpAddressAsString() throws UnknownHostException {
+		return InetAddress.getByAddress(ipAddress).getHostAddress();
+	}
+	
+	public void setIpAddressAsString(String ipAddress) throws UnknownHostException {
+		this.ipAddress = InetAddress.getByName(ipAddress).getAddress();
 	}
 
 	public RequestRestartComment getLatestsRequestRestartComment() {

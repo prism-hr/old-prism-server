@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
@@ -33,6 +36,7 @@ import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 @RequestMapping(value = { "/submit" , "application"})
 public class SubmitApplicationFormController {
 
+	private static final Logger log = Logger.getLogger(SubmitApplicationFormController.class);
 
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "/private/pgStudents/form/main_application_page";
 	private static final String VIEW_APPLICATION_STAFF_VIEW_NAME = "/private/staff/application/main_application_page";
@@ -58,13 +62,19 @@ public class SubmitApplicationFormController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result) {
+	public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
 		if(!getCurrentUser().equals(applicationForm.getApplicant()) || applicationForm.isDecided()){
 			throw new ResourceNotFoundException();
 		}
 			
 		if(result.hasErrors()){
 			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;			
+		}
+		
+		try {
+			applicationForm.setIpAddressAsString(request.getRemoteAddr());
+		} catch (UnknownHostException e) {
+			log.error("Error while setting ip address of: "+request.getRemoteAddr(), e);
 		}
 		
 		applicationForm.setStatus(ApplicationFormStatus.VALIDATION);		

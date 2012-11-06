@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -15,6 +16,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -53,6 +55,8 @@ public class SubmitApplicationFormControllerTest {
 	private EventFactory eventFactoryMock;
 
 	private UserService userServiceMock;
+
+	private MockHttpServletRequest httpServletRequestMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -102,7 +106,7 @@ public class SubmitApplicationFormControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock);
-		String view = applicationController.submitApplication(applicationForm, errorsMock);
+		String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
 		assertEquals("/private/pgStudents/form/main_application_page", view);
 	}
 
@@ -124,7 +128,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationDAOMock, eventFactoryMock);
 		
 		
-		applicationController.submitApplication(applicationForm, errorsMock);
+		applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
 
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());
@@ -151,8 +155,22 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationDAOMock);
-		String view = applicationController.submitApplication(applicationForm, errorsMock);
+		String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
 		assertEquals("redirect:/applications?messageCode=application.submitted&application=abc" , view);
+	}
+	
+	@Test
+	public void shouldSaveRequestIp() throws UnknownHostException {
+		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).applicationNumber("abc").toApplicationForm();
+		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+		StageDuration stageDuration = new StageDuration();
+		stageDuration.setDuration(1);
+		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationDAOMock);
+		applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
+		assertEquals(httpServletRequestMock.getRemoteAddr(), applicationForm.getIpAddressAsString());
 	}
 	
 	@Test
@@ -184,7 +202,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.replay(userServiceMock);
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).toApplicationForm();
-		applicationController.submitApplication(applicationForm, null);
+		applicationController.submitApplication(applicationForm, null, httpServletRequestMock);
 
 	}
 
@@ -198,7 +216,7 @@ public class SubmitApplicationFormControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowSubmitExceptionIfApplicationIsDecided() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).status(ApplicationFormStatus.APPROVED).toApplicationForm();
-		applicationController.submitApplication(applicationForm, null);
+		applicationController.submitApplication(applicationForm, null, httpServletRequestMock);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -251,6 +269,7 @@ public class SubmitApplicationFormControllerTest {
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
 		applicationController = new SubmitApplicationFormController(applicationsServiceMock,userServiceMock,  applicationFormValidatorMock, stageDurationDAOMock,eventFactoryMock);
+		httpServletRequestMock = new MockHttpServletRequest();
 
 
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

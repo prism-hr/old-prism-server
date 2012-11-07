@@ -871,23 +871,22 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public List<Document> getQualificationsToSend() {
 		List<Document> result = new ArrayList<Document>(2);
 		for (Qualification qualification : getQualifications()) {
-			Document proofOfAward = qualification.getProofOfAward();
-			if (proofOfAward != null && BooleanUtils.toBoolean(proofOfAward.getSendToUCL())) {
-				result.add(proofOfAward);
+			if(BooleanUtils.toBoolean(qualification.getSendToUCL())) {
+				Validate.notNull(qualification.getProofOfAward(), "Qualification with id: " + qualification.getId()
+						+ " is marked for sending to UCL but has no proofOfAward assosiated with it.");
+				result.add(qualification.getProofOfAward());
 			}
 		}
 		return result;
 	}
 
-	public List<Document> getReferencesToSend() {
-		List<Document> result = new ArrayList<Document>(2);
+	public List<ReferenceComment> getReferencesToSend() {
+		List<ReferenceComment> result = new ArrayList<ReferenceComment>(2);
 		for (Referee refree : getReferees()) {
-			ReferenceComment referenceComment = refree.getReference();
-			if (referenceComment != null && !referenceComment.getDocuments().isEmpty()) {
-				for (Document document : referenceComment.getDocuments()) {
-					if (BooleanUtils.toBoolean(document.getSendToUCL()))
-						result.add(document);
-				}
+			if(BooleanUtils.toBoolean(refree.getSendToUCL())) {
+				Validate.notNull(refree.getReference(), "Referee with id: " + refree.getId()
+						+ " is marked for sending to UCL but has no reference assosiated with it.");
+				result.add(refree.getReference());
 			}
 		}
 		return result;

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -65,6 +66,30 @@ public class PdfDocumentBuilder {
 	private int appendixCounter = 1;
 	private HeaderEvent headerEvent;
 	private int pageCounter = 0;
+	
+	public void writePdf(ReferenceComment referenceComment, OutputStream outputStream) {
+		try {
+			
+			Document document = new Document(PageSize.A4, 50, 50, 100, 50);
+			PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+			document.open();
+			//addCoverPage(referenceComment.getApplication(), writer, document);
+			document.add(new Paragraph("Refree comment:\n"+referenceComment.getComment()));
+			PdfContentByte cb = writer.getDirectContent();
+	        for (com.zuehlke.pgadmissions.domain.Document in : referenceComment.getDocuments()) {
+	            PdfReader reader = new PdfReader(in.getContent());
+	            for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+	                document.newPage();
+	                PdfImportedPage page = writer.getImportedPage(reader, i);
+	                cb.addTemplate(page, 0, 0);
+	            }
+	        }
+			document.newPage();
+			document.close();
+		} catch (Exception e) {
+			throw new PDFException(e);
+		}
+	}
 
 	public byte[] buildPdf(ApplicationForm... applications) {
 		try {

@@ -121,7 +121,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
     }
     
     @Test
-    @Ignore                                                                                                                                                                                                                                                                                                                                                       U
+    @Ignore
     public void sendValidApplicationForm() {
         EasyMock.expect(
                 programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(applicationForm.getProgram(),
@@ -202,7 +202,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
             .applicationDeadline(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
             .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1))
             .enabled(true)
-            .studyOption(1, "Full-time")
+            .studyOption("1", "Full-time")
             .sequence(1)
             .toProgramInstance();
         Program program = new ProgramBuilder()
@@ -224,7 +224,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
             .projectName("Project Title")
             .sourcesOfInterest(interest)
             .startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
-            .studyOption(1, "Full-time")
+            .studyOption("1", "Full-time")
             .toProgrammeDetails();
         QualificationType qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").toQualificationTitle();
         Qualification qualification = new QualificationBuilder()

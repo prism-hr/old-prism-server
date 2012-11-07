@@ -17,8 +17,8 @@ CREATE TABLE APPLICATION_FORM_PERSONAL_DETAIL_LANGUAGE_QUALIFICATIONS (
 	PRIMARY KEY (id),
 	KEY application_form_personal_detail_fk (application_form_personal_detail_id),
 	KEY language_qualification_document_id_fk (language_qualification_document_id),
-	CONSTRAINT application_form_personal_detail_lang_fk FOREIGN KEY (application_form_personal_detail_id) REFERENCES application_form_personal_detail (id),
-	CONSTRAINT cstr_language_qualification_document_id_fk FOREIGN KEY (language_qualification_document_id) REFERENCES document (id)
+	CONSTRAINT application_form_personal_detail_lang_fk FOREIGN KEY (application_form_personal_detail_id) REFERENCES APPLICATION_FORM_PERSONAL_DETAIL (id),
+	CONSTRAINT cstr_language_qualification_document_id_fk FOREIGN KEY (language_qualification_document_id) REFERENCES DOCUMENT (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ;
 
@@ -31,7 +31,7 @@ CREATE TABLE APPLICATION_FORM_PERSONAL_DETAIL_PASSPORT (
 	passport_expiry_date DATE DEFAULT NULL,
 	PRIMARY KEY (id),
 	KEY application_form_personal_detail_fk (application_form_personal_detail_id),
-	CONSTRAINT application_form_personal_detail_passport_fk FOREIGN KEY (application_form_personal_detail_id) REFERENCES application_form_personal_detail (id)
+	CONSTRAINT application_form_personal_detail_passport_fk FOREIGN KEY (application_form_personal_detail_id) REFERENCES APPLICATION_FORM_PERSONAL_DETAIL (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ;
 

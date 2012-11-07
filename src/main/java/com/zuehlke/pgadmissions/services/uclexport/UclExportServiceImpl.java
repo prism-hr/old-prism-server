@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
@@ -26,11 +27,15 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.WebServiceTransportException;
+import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import javax.annotation.Resource;
+import javax.xml.transform.TransformerException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
@@ -80,14 +85,15 @@ class UclExportServiceImpl implements UCLExportService {
 
     public Long sendToUCL(ApplicationForm applicationForm, TransferListener listener) {
         ApplicationFormTransfer transfer = this.createPersistentQueueItem(applicationForm);
-        //todo: create an event in application form timeline ("scheduled")
-        listener.queued();
+        //todo: create an event in application form's timeline ("scheduled transfer to UCL-PORTICO")
         webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+        listener.queued();
         return transfer.getId();
     }
 
     public void systemStartupSendingQueuesRecovery() {
-        //todo
+        //todo recreate the contents of both task queues from what we have in database
+        //todo plug-in this method to application startup sequence
     }
 
     //ooooooooooooooooooooooooooooooo PRIVATE oooooooooooooooooooooooooooooooo
@@ -103,23 +109,31 @@ class UclExportServiceImpl implements UCLExportService {
     }
 
     @Transactional
-    public void transactionallyExecuteWebserviceCallAndHandlePersistentQueue(Integer applicationId, Long transferId, TransferListener listener) {
-        listener.transferStarted();
-
+    public void transactionallyExecuteWebserviceCallAndHandlePersistentQueue(Long transferId, TransferListener listener) {
         //retrieve AppliationForm and ApplicationFormTransfer instances from the db
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
         ApplicationForm applicationForm  = transfer.getApplicationForm();
 
-        //try to call the webservice
+        //prepare to webservice call
         SubmitAdmissionsApplicationRequest request;
         AdmissionsApplicationResponse response;
+        final ByteArrayOutputStream requestMessageBuffer =  new ByteArrayOutputStream(5000);
+
+        WebServiceMessageCallback webServiceMessageCallback = new WebServiceMessageCallback() {
+            public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
+                webServiceMessage.writeTo(requestMessageBuffer);
+            }
+        };
+
+        //build webservice request
+        request = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAO,new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
 
         try  {
-            request = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAO,new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
-            response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
+            //call webservice
+            response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
 
         }  catch (WebServiceTransportException e) {
-            //webservice call failed because of network failure, protocol problems etc
+            //CASE 1: webservice call failed because of network failure, protocol problems etc
             //seems like we have communication problems so makes no sense to push more appliaction forms at the moment
 
             //save error information
@@ -132,7 +146,7 @@ class UclExportServiceImpl implements UCLExportService {
             applicationFormTransferErrorDAO.save(error);
 
             //pause the queue for some time
-            this.pauseQueueForMinutes(10);
+            this.pauseQueueForMinutes(10); //todo: refactor - read delay value from config
 
             //schedudle the same transfer again
             this.sendToUCL(applicationForm, listener);
@@ -140,7 +154,7 @@ class UclExportServiceImpl implements UCLExportService {
             return;
 
         } catch (SoapFaultClientException e) {
-            //webservice is alive but refused to accept our request
+            //CASE 2: webservice is alive but refused to accept our request
             //usually this will be caused by validation problems - and is actually expected as side effect of PORTICO and PRISM evolution
 
             //save error information
@@ -150,41 +164,56 @@ class UclExportServiceImpl implements UCLExportService {
             error.setProblemClassification(ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT);
             error.setDiagnosticInfo(StacktraceDump.forException(e));
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY);
+            error.setRequestCopy(requestMessageBuffer.toString());
+            ByteArrayOutputStream responseMessageBuffer =  new ByteArrayOutputStream(5000);
+            try {
+                e.getWebServiceMessage().writeTo(responseMessageBuffer);
+            } catch (IOException ioex) {
+                throw new RuntimeException("Line unreachable");//writing to in-memory buffer should not fail
+            }
+            error.setResponseCopy(responseMessageBuffer.toString());
             applicationFormTransferErrorDAO.save(error);
 
-            //we count this situations and if thay are repeating - we eventually will stop the queue and call for administrator's support
+            //update transfer status
+            transfer.setStatus(ApplicationTransferStatus.REJECTED_BY_WEBSERVICE);
+            transfer.setTransferFinishTimepoint(new Date());
+
+            //we count soap-fault situations;  if faults are repeating - we will eventually stop the queue and issue an email alert to administrators
             numberOfConsecutiveSoapFaults++;
             if (numberOfConsecutiveSoapFaults > consecutiveSoapFaultsLimit) {
                 webserviceCallingQueueExecutor.pause();
+                //todo: inform the admins that we have repeating webservice problems (probably by sending an email with problem description)
 
             }
-
 
             return;
         }
 
-        //we are here so webservice answer was ok (transmission succesful, request approved)
+        //CASE 3; webservice answer was ok (transmission succesful, request approved)
         numberOfConsecutiveSoapFaults = 0;
 
+        //extract precious IDs received from UCL and store them into ApplicationTransfer
+        transfer.setUclUserIdReceived(response.getReference().getUserCode());
+        transfer.setUclBookingReferenceReceived(response.getReference().getReferenceID());
+        //todo: store these idenfitiers also into (respectively) ApplicationForm and RegisteredUser
+
+        //schedule phase 2 (sftp)
+        sftpCallingQueueExecutor.execute(new Phase2Task());
 
 
 
         //update transfer status in the database
+        transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING);
 
 
 
 
-        //schedule phase 2
+
 
         //handle possible websersice call errors
             //decide about handling strategy
             //store the error information
 
-
-    }
-
-    @Transactional
-    public void moveFromQueue1ToQueue2(ApplicationForm applicationForm) {
 
     }
 

@@ -120,7 +120,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
     }
     
     @Test
-    @Ignore
+    @Ignore                                                                                                                                                                                                                                                                                                                                                       U
     public void sendValidApplicationForm() {
         EasyMock.expect(
                 programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(applicationForm.getProgram(),

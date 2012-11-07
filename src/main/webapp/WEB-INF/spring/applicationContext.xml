@@ -142,8 +142,10 @@
 
     <mvc:view-controller path="/400" view-name="public/error/400" />
 
-    <task:executor id="webservice-calling-queue-executor" pool-size="1" queue-capacity="1000" rejection-policy="ABORT"/>
+    <bean id="webservice-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor"/>
 
-    <task:executor id="sftp-calling-queue-executor" pool-size="1" queue-capacity="1000" rejection-policy="ABORT"/>
+    <bean id="sftp-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor"/>
+
+    <task:scheduler id="ucl-export-scheduler" pool-size="1"/>
 
 </beans>

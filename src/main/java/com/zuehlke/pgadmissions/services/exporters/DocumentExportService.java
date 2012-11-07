@@ -16,6 +16,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.exceptions.DocumentExportException;
 
 @Service
@@ -65,25 +66,30 @@ public class DocumentExportService {
 	}
 
 	private void addReferences(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException, DocumentExportException {
-		List<Document> references = applicationForm.getReferencesToSend();
+		List<ReferenceComment> references = applicationForm.getReferencesToSend();
 		String filename;
 		switch(references.size()) {
 		case 2:
 			filename = PorticoDocumentNameMappings.getReferenceFilename(referenceNumber, 2) + ".pdf";
 			zos.putNextEntry(new ZipEntry(filename));
-			zos.write(references.get(1).getContent());
+			zos.write(preparePdf(references.get(1)));
 			zos.closeEntry();
 		case 1:
 			filename = PorticoDocumentNameMappings.getReferenceFilename(referenceNumber, 1) + ".pdf";
 			zos.putNextEntry(new ZipEntry(filename));
 			zos.putNextEntry(new ZipEntry(filename));
-			zos.write(references.get(0).getContent());
+			zos.write(preparePdf(references.get(0)));
 			zos.closeEntry();
 		case 0:
 			break;
 		default:
 			throw new DocumentExportException("There should be at most 2 references marked for sending to UCL");		
 		}
+	}
+
+	private byte[] preparePdf(ReferenceComment referenceComment) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private void addCV(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException {

@@ -56,9 +56,6 @@ public class Document extends DomainObject<Integer> {
 	@Column(name = "file_content")
 	@Type(type ="binary")
 	private byte[] content;
-	
-	@Column(name="send_to_ucl")
-	private Boolean sendToUCL;
 
 	@Override
 	public void setId(Integer id) {
@@ -136,12 +133,4 @@ public class Document extends DomainObject<Integer> {
     public void setFileData(MultipartFile fileData) {
         this.fileData = fileData;
     }
-    
-    public Boolean getSendToUCL() {
-		return sendToUCL;
-	}
-    
-    public void setSendToUCL(Boolean sendToUCL) {
-		this.sendToUCL = sendToUCL;
-	}
 }

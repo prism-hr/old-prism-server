@@ -77,6 +77,9 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	@Column(name = "email")
 	@ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
 	private String email;
+	
+	@Column(name="send_to_ucl")
+	private Boolean sendToUCL;
 
 	private boolean declined = false;
 
@@ -222,6 +225,14 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 
 	public void setAcceptedTerms(boolean acceptedTerms) {
 		this.acceptedTerms = acceptedTerms;
+	}
+	
+	public void setSendToUCL(Boolean sendToUCL) {
+		this.sendToUCL = sendToUCL;
+	}
+	
+	public Boolean getSendToUCL() {
+		return sendToUCL;
 	}
 
 }

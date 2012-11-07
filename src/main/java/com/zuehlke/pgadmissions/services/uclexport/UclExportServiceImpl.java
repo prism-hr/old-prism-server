@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
@@ -154,7 +155,7 @@ class UclExportServiceImpl implements UCLExportService {
             //we count this situations and if thay are repeating - we eventually will stop the queue and call for administrator's support
             numberOfConsecutiveSoapFaults++;
             if (numberOfConsecutiveSoapFaults > consecutiveSoapFaultsLimit) {
-                this.stopQueue();
+                webserviceCallingQueueExecutor.pause();
 
             }
 
@@ -187,28 +188,26 @@ class UclExportServiceImpl implements UCLExportService {
 
     }
 
+    private void pauseQueueForMinutes(int minutes) {
+        //todo
+    }
 
-    private void sftpSendFile() throws JSchException, IOException, SftpException {
+
+    private void sftpSendFile(Document document) throws JSchException, IOException, SftpException {
         Session session = jSchFactory.getInstance();
-
         session.connect();
-
         Channel channel = session.openChannel("sftp");
         ChannelSftp sftpChannel = (ChannelSftp) channel;
-
         sftpChannel.connect();
-
+        //todo: plug the zip package from Maciek
         OutputStream put = sftpChannel.put("test.zip");
-
         ZipOutputStream os = new ZipOutputStream(put);
         os.putNextEntry(new ZipEntry("test1.pdf"));
         os.write(document.getContent());
         os.closeEntry();
         IOUtils.closeQuietly(os);
         IOUtils.closeQuietly(put);
-
         sftpChannel.disconnect();
-
         session.disconnect();
     }
 

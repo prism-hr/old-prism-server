@@ -40,6 +40,7 @@ public class ApplicationFormTransferError extends DomainObject<Long> {
     private String requestCopy;
 
     /** Webservice response message copy. */
+    @Column(name = "response_copy")
     private String responseCopy;
 
     /** Type of the problem as recognized by PRISM. */

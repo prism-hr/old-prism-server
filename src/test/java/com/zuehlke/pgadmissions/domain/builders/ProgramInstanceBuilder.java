@@ -10,14 +10,15 @@ public class ProgramInstanceBuilder {
 	private Date applicationStartDate;
 	private String academicYear;
 	private String studyOption;
-	private Integer studyOptionCode;
+	private String studyOptionCode;
 	private Integer id;
 	private int sequence;
 	
 	private Program program;
 	private Boolean enabled;
+	private String identifier;
 
-	public ProgramInstanceBuilder studyOptionCode(Integer id) {
+	public ProgramInstanceBuilder studyOptionCode(String id) {
         this.studyOptionCode = id;
         return this;
     }
@@ -27,7 +28,7 @@ public class ProgramInstanceBuilder {
         return this;
     }
 	
-	public ProgramInstanceBuilder studyOption(Integer id, String option) {
+	public ProgramInstanceBuilder studyOption(String id, String option) {
         this.studyOption = option;
         this.studyOptionCode = id;
         return this;
@@ -63,6 +64,11 @@ public class ProgramInstanceBuilder {
 		return this;
 	}
 	
+	public ProgramInstanceBuilder identifier(String identifier){
+		this.identifier = identifier;
+		return this;
+	}
+	
 	public ProgramInstanceBuilder applicationDeadline(Date applicationDeadline){
 		this.applicationDeadline = applicationDeadline;
 		return this;
@@ -74,6 +80,7 @@ public class ProgramInstanceBuilder {
 		programInstance.setStudyOption(studyOption);
 		programInstance.setStudyOptionCode(studyOptionCode);
 		programInstance.setId(id);
+		programInstance.setIdentifier(identifier);
 		programInstance.setSequence(sequence);
 		programInstance.setProgram(program);
 		programInstance.setAcademicYear(academicYear);

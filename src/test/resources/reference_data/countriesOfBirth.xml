@@ -14,7 +14,7 @@
   </country>
   <country>
     <code>AG</code>
-    <name>Antigua (and Barbuda)</name>
+    <name>Antigua and Barbuda</name>
   </country>
   <country>
     <code>AI</code>
@@ -30,7 +30,7 @@
   </country>
   <country>
     <code>AN</code>
-    <name>Antilles (Netherlands)</name>
+    <name>Netherlands Antilles</name>
   </country>
   <country>
     <code>AO</code>
@@ -41,12 +41,20 @@
     <name>Argentina</name>
   </country>
   <country>
+    <code>AS</code>
+    <name>American Samoa</name>
+  </country>
+  <country>
     <code>AT</code>
     <name>Austria</name>
   </country>
   <country>
     <code>AU</code>
     <name>Australia</name>
+  </country>
+  <country>
+    <code>AW</code>
+    <name>Aruba</name>
   </country>
   <country>
     <code>AX</code>
@@ -74,7 +82,7 @@
   </country>
   <country>
     <code>BF</code>
-    <name>Burkina-Faso (Upper Volta)</name>
+    <name>Burkina Faso</name>
   </country>
   <country>
     <code>BG</code>
@@ -133,8 +141,12 @@
     <name>Canada</name>
   </country>
   <country>
+    <code>CC</code>
+    <name>Cocos (Keeling) Islands</name>
+  </country>
+  <country>
     <code>CD</code>
-    <name>Congo (Democratic Republic) (Zaire)</name>
+    <name>Congo (Democratic Republic)</name>
   </country>
   <country>
     <code>CF</code>
@@ -142,7 +154,7 @@
   </country>
   <country>
     <code>CG</code>
-    <name>Congo, People&apos;s Republic</name>
+    <name>Congo (Peoples Republic)</name>
   </country>
   <country>
     <code>CH</code>
@@ -151,6 +163,10 @@
   <country>
     <code>CI</code>
     <name>Ivory Coast</name>
+  </country>
+  <country>
+    <code>CK</code>
+    <name>Cook Islands</name>
   </country>
   <country>
     <code>CL</code>
@@ -162,7 +178,7 @@
   </country>
   <country>
     <code>CN</code>
-    <name>China, People&apos;s Republic</name>
+    <name>China</name>
   </country>
   <country>
     <code>CO</code>
@@ -178,7 +194,11 @@
   </country>
   <country>
     <code>CV</code>
-    <name>Cape Verde Islands</name>
+    <name>Cape Verde</name>
+  </country>
+  <country>
+    <code>CX</code>
+    <name>Christmas Island</name>
   </country>
   <country>
     <code>CZ</code>
@@ -193,7 +213,7 @@
     <name>Germany</name>
   </country>
   <country>
-    <code>DK</code>
+    <code>DJ</code>
     <name>Djibouti</name>
   </country>
   <country>
@@ -225,6 +245,10 @@
     <name>Egypt</name>
   </country>
   <country>
+    <code>EH</code>
+    <name>Western Sahara</name>
+  </country>
+  <country>
     <code>ER</code>
     <name>Eritrea</name>
   </country>
@@ -254,7 +278,11 @@
   </country>
   <country>
     <code>FM</code>
-    <name>Micronesia (Federated States of)</name>
+    <name>Micronesia</name>
+  </country>
+  <country>
+    <code>FO</code>
+    <name>Faroe Islands</name>
   </country>
   <country>
     <code>FR</code>
@@ -286,7 +314,7 @@
   </country>
   <country>
     <code>GL</code>
-    <name>Greenland (&amp; Faroe Isles)</name>
+    <name>Greenland</name>
   </country>
   <country>
     <code>GM</code>
@@ -295,6 +323,10 @@
   <country>
     <code>GN</code>
     <name>Guinea</name>
+  </country>
+  <country>
+    <code>GP</code>
+    <name>Guadeloupe</name>
   </country>
   <country>
     <code>GQ</code>
@@ -306,7 +338,7 @@
   </country>
   <country>
     <code>GS</code>
-    <name>South Georgia and the South Sandwich Islands</name>
+    <name>South Georgia and South Sandwich Islands</name>
   </country>
   <country>
     <code>GT</code>
@@ -314,7 +346,7 @@
   </country>
   <country>
     <code>GU</code>
-    <name>Guam</name>
+    <name>US Trust Territories</name>
   </country>
   <country>
     <code>GW</code>
@@ -345,12 +377,16 @@
     <name>Hungary</name>
   </country>
   <country>
+    <code>IC</code>
+    <name>Canary Islands</name>
+  </country>
+  <country>
     <code>ID</code>
     <name>Indonesia</name>
   </country>
   <country>
     <code>IE</code>
-    <name>Ireland (Republic)</name>
+    <name>Ireland</name>
   </country>
   <country>
     <code>IL</code>
@@ -359,10 +395,6 @@
   <country>
     <code>IN</code>
     <name>India</name>
-  </country>
-  <country>
-    <code>IO</code>
-    <name>British Indian Ocean Territory</name>
   </country>
   <country>
     <code>IQ</code>
@@ -402,11 +434,11 @@
   </country>
   <country>
     <code>KH</code>
-    <name>Cambodia (Kampuchea)</name>
+    <name>Cambodia</name>
   </country>
   <country>
     <code>KI</code>
-    <name>Kiribati (Gilbert and Ellice Islands)</name>
+    <name>Kiribati</name>
   </country>
   <country>
     <code>KM</code>
@@ -414,15 +446,15 @@
   </country>
   <country>
     <code>KN</code>
-    <name>St Kitts-Nevis</name>
+    <name>St. Kitts-Nevis</name>
   </country>
   <country>
     <code>KP</code>
-    <name>Korea (Dem Ppl Republic - North)</name>
+    <name>Korea DRY (North)</name>
   </country>
   <country>
     <code>KR</code>
-    <name>Korea (Republic - South)</name>
+    <name>Korea (South)</name>
   </country>
   <country>
     <code>KW</code>
@@ -438,7 +470,7 @@
   </country>
   <country>
     <code>LA</code>
-    <name>Laos</name>
+    <name>Lao PDR</name>
   </country>
   <country>
     <code>LB</code>
@@ -478,7 +510,7 @@
   </country>
   <country>
     <code>LY</code>
-    <name>Libya</name>
+    <name>Libyan AR</name>
   </country>
   <country>
     <code>MA</code>
@@ -514,7 +546,7 @@
   </country>
   <country>
     <code>MM</code>
-    <name>Burma (Myanmar)</name>
+    <name>Burma</name>
   </country>
   <country>
     <code>MN</code>
@@ -523,6 +555,14 @@
   <country>
     <code>MO</code>
     <name>Macao</name>
+  </country>
+  <country>
+    <code>MP</code>
+    <name>Northern Mariana Islands</name>
+  </country>
+  <country>
+    <code>MQ</code>
+    <name>Martinique</name>
   </country>
   <country>
     <code>MR</code>
@@ -573,6 +613,10 @@
     <name>Niger</name>
   </country>
   <country>
+    <code>NF</code>
+    <name>Norfolk Island</name>
+  </country>
+  <country>
     <code>NG</code>
     <name>Nigeria</name>
   </country>
@@ -595,6 +639,10 @@
   <country>
     <code>NR</code>
     <name>Nauru</name>
+  </country>
+  <country>
+    <code>NU</code>
+    <name>Niue</name>
   </country>
   <country>
     <code>NZ</code>
@@ -621,6 +669,10 @@
     <name>Papua New Guinea</name>
   </country>
   <country>
+    <code>PG</code>
+    <name>New Guinea</name>
+  </country>
+  <country>
     <code>PH</code>
     <name>Philippines</name>
   </country>
@@ -631,6 +683,10 @@
   <country>
     <code>PL</code>
     <name>Poland</name>
+  </country>
+  <country>
+    <code>PM</code>
+    <name>St Pierre And Miquelon</name>
   </country>
   <country>
     <code>PN</code>
@@ -647,6 +703,10 @@
   <country>
     <code>PT</code>
     <name>Portugal</name>
+  </country>
+  <country>
+    <code>PW</code>
+    <name>Palau</name>
   </country>
   <country>
     <code>PY</code>
@@ -671,6 +731,10 @@
   <country>
     <code>RS</code>
     <name>Serbia</name>
+  </country>
+  <country>
+    <code>RU</code>
+    <name>USSR (not otherwise specified)</name>
   </country>
   <country>
     <code>RU</code>
@@ -713,6 +777,10 @@
     <name>Slovenia</name>
   </country>
   <country>
+    <code>SJ</code>
+    <name>Svalbard And Jan Mayen</name>
+  </country>
+  <country>
     <code>SK</code>
     <name>Slovakia</name>
   </country>
@@ -738,7 +806,7 @@
   </country>
   <country>
     <code>ST</code>
-    <name>Sao Tome &amp; Principe</name>
+    <name>Sao Tome and Principe</name>
   </country>
   <country>
     <code>SV</code>
@@ -771,6 +839,14 @@
   <country>
     <code>TJ</code>
     <name>Tajikistan</name>
+  </country>
+  <country>
+    <code>TK</code>
+    <name>Tokelau</name>
+  </country>
+  <country>
+    <code>TL</code>
+    <name>East Timor (Timor-Leste)</name>
   </country>
   <country>
     <code>TL</code>
@@ -818,11 +894,19 @@
   </country>
   <country>
     <code>US</code>
-    <name>U.S.A.</name>
+    <name>United States of America</name>
+  </country>
+  <country>
+    <code>UY</code>
+    <name>Uruguay</name>
   </country>
   <country>
     <code>UZ</code>
     <name>Uzbekistan</name>
+  </country>
+  <country>
+    <code>VA</code>
+    <name>Vatican City</name>
   </country>
   <country>
     <code>VC</code>
@@ -834,7 +918,7 @@
   </country>
   <country>
     <code>VG</code>
-    <name>Virgin Islands (British)</name>
+    <name>British Virgin Islands</name>
   </country>
   <country>
     <code>VI</code>
@@ -849,20 +933,20 @@
     <name>Vanuatu</name>
   </country>
   <country>
+    <code>WF</code>
+    <name>Wallis &amp; Futuna</name>
+  </country>
+  <country>
     <code>WS</code>
     <name>Samoa</name>
   </country>
   <country>
     <code>XA</code>
-    <name>Cyprus (EU)</name>
+    <name>Cyprus (European Union)</name>
   </country>
   <country>
     <code>XB</code>
-    <name>Cyprus (Non EU)</name>
-  </country>
-  <country>
-    <code>XK</code>
-    <name>Uruguay</name>
+    <name>Cyprus (Non-European Union)</name>
   </country>
   <country>
     <code>XK</code>
@@ -873,8 +957,12 @@
     <name>Czechoslovakia</name>
   </country>
   <country>
-    <code>XN</code>
-    <name>U.S.S.R.</name>
+    <code>XW</code>
+    <name>French West Indies</name>
+  </country>
+  <country>
+    <code>XX</code>
+    <name>British Indian Ocean Territory</name>
   </country>
   <country>
     <code>YE</code>
@@ -882,7 +970,7 @@
   </country>
   <country>
     <code>YT</code>
-    <name>Mayotte (French Territorial Collectives)</name>
+    <name>Mayotte</name>
   </country>
   <country>
     <code>ZA</code>
@@ -895,6 +983,18 @@
   <country>
     <code>ZW</code>
     <name>Zimbabwe</name>
+  </country>
+  <country>
+    <code>ZZ</code>
+    <name>Not Known</name>
+  </country>
+  <country>
+    <code>ZZ</code>
+    <name>Stateless</name>
+  </country>
+  <country>
+    <code>ZZ</code>
+    <name>British Antarctic Territory</name>
   </country>
 </countries>
 

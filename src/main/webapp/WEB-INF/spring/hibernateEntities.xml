@@ -12,6 +12,8 @@
 	     		<value>com.zuehlke.pgadmissions.domain.RegisteredUser</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Role</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ApplicationForm</value>
+                 <value>com.zuehlke.pgadmissions.domain.ApplicationFormTransfer</value>
+                 <value>com.zuehlke.pgadmissions.domain.ApplicationFormTransferError</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Comment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.StateChangeComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ReviewComment</value>

@@ -106,8 +106,8 @@ public class ProgrammeDetailsControllerTest {
 			
 		};
 
-		StudyOption option1 = new StudyOption(1, "Full-time");
-		StudyOption option2 = new StudyOption(31, "Part-time");
+		StudyOption option1 = new StudyOption("1", "Full-time");
+		StudyOption option2 = new StudyOption("31", "Part-time");
 		
 		List<StudyOption> optionsList = Arrays.asList(option1, option2);
 		
@@ -230,7 +230,7 @@ public class ProgrammeDetailsControllerTest {
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(applicationForm).toProgrammeDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
-		EasyMock.expect(programmeDetailsServiceMock.getStudyOptionCodeForProgram(null, null)).andReturn(1);
+		EasyMock.expect(programmeDetailsServiceMock.getStudyOptionCodeForProgram(null, null)).andReturn("1");
 		programmeDetailsServiceMock.save(programmeDetails);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(programmeDetailsServiceMock,applicationsServiceMock, errors);

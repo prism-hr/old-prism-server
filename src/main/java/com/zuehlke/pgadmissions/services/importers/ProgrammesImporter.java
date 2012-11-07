@@ -21,8 +21,8 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.PrismProgrammeAdapter;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Programmes;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Programmes.Programme;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 
 @Service
 public class ProgrammesImporter implements Importer {
@@ -49,7 +49,7 @@ public class ProgrammesImporter implements Importer {
 		this.xmlFileLocation = xmlFileLocation;
 		this.user = user;
 		this.password = password;
-		context = JAXBContext.newInstance(Programmes.class);
+		context = JAXBContext.newInstance(ProgrammeOccurrences.class);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class ProgrammesImporter implements Importer {
 	public void importData() throws XMLDataImportException {
 		log.info("Starting the import from xml file: " + xmlFileLocation);
 		try {
-			Programmes programmes = unmarshallXML();
+			ProgrammeOccurrences programmes = unmarshallXML();
 			List<PrismProgrammeAdapter> importData = createAdapter(programmes);
 			List<ProgramInstance> currentData = programInstanceDAO.getAllProgramInstances();
 			List<ProgramInstance> changes = importService.merge(currentData, importData);
@@ -72,21 +72,21 @@ public class ProgrammesImporter implements Importer {
 		}
 	}
 	
-	private Programmes unmarshallXML() throws JAXBException {
+	private ProgrammeOccurrences unmarshallXML() throws JAXBException {
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 		Authenticator.setDefault(new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(user, password.toCharArray());
 			}
 		});
-		Programmes countries = (Programmes) unmarshaller.unmarshal(xmlFileLocation);
+		ProgrammeOccurrences programmes = (ProgrammeOccurrences) unmarshaller.unmarshal(xmlFileLocation);
 		Authenticator.setDefault(null);
-		return countries;
+		return programmes;
 	}
 
-	private List<PrismProgrammeAdapter> createAdapter(Programmes programmes) {
-		List<PrismProgrammeAdapter> result = new ArrayList<PrismProgrammeAdapter>(programmes.getProgramme().size());
-		for (Programme programme : programmes.getProgramme()) {
+	private List<PrismProgrammeAdapter> createAdapter(ProgrammeOccurrences programmes) {
+		List<PrismProgrammeAdapter> result = new ArrayList<PrismProgrammeAdapter>(programmes.getProgrammeOccurrence().size());
+		for (ProgrammeOccurrence programme : programmes.getProgrammeOccurrence()) {
 			result.add(new PrismProgrammeAdapter(programme));
 		}
 		return result;

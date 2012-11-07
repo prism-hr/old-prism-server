@@ -81,16 +81,16 @@ public class ImportServiceTest {
 		String deadlineStr = new SimpleDateFormat("yyyy-MM-dd").format(deadline);
 		Date startDate = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
 		String startDateStr = new SimpleDateFormat("yyyy-MM-dd").format(startDate);
-		currentData.add(new ProgramInstanceBuilder().id(1).academicYear("1").program(p1).applicationDeadline(deadline).applicationStartDate(startDate).studyOption(1, "option").enabled(true).toProgramInstance());
-		currentData.add(new ProgramInstanceBuilder().id(2).academicYear("1").program(p1).applicationDeadline(deadline).applicationStartDate(startDate).studyOption(2, "option2").enabled(true).toProgramInstance());
-		currentData.add(new ProgramInstanceBuilder().id(3).academicYear("1").program(p2).applicationDeadline(deadline).applicationStartDate(startDate).studyOption(1, "option").enabled(false).toProgramInstance());
-		currentData.add(new ProgramInstanceBuilder().id(4).academicYear("1").program(p2).applicationDeadline(deadline).applicationStartDate(startDate).studyOption(2, "option2").enabled(false).toProgramInstance());
-		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").code("A").endDate(deadlineStr).name("A").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
-		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").code("B").endDate(deadlineStr).name("B").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
-		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").code("B").endDate(deadlineStr).name("B").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
-		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").code("B").endDate(deadlineStr).name("C").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
-		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").code("C").endDate(deadlineStr).name("D").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
-		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").code("C").endDate(deadlineStr).name("D").startDate(startDateStr).studyOption("option2").studyOptionCode("2").toPrismProgramme()));
+		currentData.add(new ProgramInstanceBuilder().id(1).academicYear("1").identifier("0001").program(p1).applicationDeadline(deadline).applicationStartDate(startDate).studyOption("1", "option").enabled(true).toProgramInstance());
+		currentData.add(new ProgramInstanceBuilder().id(2).academicYear("1").identifier("0002").program(p1).applicationDeadline(deadline).applicationStartDate(startDate).studyOption("2", "option2").enabled(true).toProgramInstance());
+		currentData.add(new ProgramInstanceBuilder().id(3).academicYear("1").identifier("0001").program(p2).applicationDeadline(deadline).applicationStartDate(startDate).studyOption("1", "option").enabled(false).toProgramInstance());
+		currentData.add(new ProgramInstanceBuilder().id(4).academicYear("1").identifier("0002").program(p2).applicationDeadline(deadline).applicationStartDate(startDate).studyOption("2", "option2").enabled(false).toProgramInstance());
+		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").identifier("0001").code("A").endDate(deadlineStr).name("A").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
+		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").identifier("0001").code("B").endDate(deadlineStr).name("B").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
+		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").identifier("0001").code("B").endDate(deadlineStr).name("B").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
+		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").identifier("0001").code("B").endDate(deadlineStr).name("C").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
+		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").identifier("0001").code("C").endDate(deadlineStr).name("D").startDate(startDateStr).studyOption("option").studyOptionCode("1").toPrismProgramme()));
+		importData.add(new PrismProgrammeAdapter(new PrismProgrammeBuilder().academicYear("1").identifier("0002").code("C").endDate(deadlineStr).name("D").startDate(startDateStr).studyOption("option2").studyOptionCode("2").toPrismProgramme()));
 		
 		List<ImportedObject> changes = importService.merge(currentData, importData);
 		Assert.assertEquals(6, changes.size());

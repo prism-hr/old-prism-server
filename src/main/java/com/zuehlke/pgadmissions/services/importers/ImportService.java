@@ -40,6 +40,14 @@ public class ImportService {
 		public int compare(ProgramInstanceInterface o1, ProgramInstanceInterface o2) {
 			int compareResult = codeComparator.compare(o1, o2);
 			if (compareResult == 0) {
+				if(o1.getIdentifier() == null)
+					compareResult = -1;
+				else if(o2.getIdentifier() == null)
+					compareResult = 1;
+				else
+					compareResult = o1.getIdentifier().compareTo(o2.getIdentifier());
+			}
+			if (compareResult == 0) {
 				compareResult = o1.getStudyOptionCode().compareTo(o2.getStudyOptionCode());
 			}
 			if (compareResult == 0) {

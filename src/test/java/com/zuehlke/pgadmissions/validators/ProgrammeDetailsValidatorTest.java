@@ -309,7 +309,7 @@ public class ProgrammeDetailsValidatorTest {
 	@DirtiesContext
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
 		programmeDetail.setStudyOption("Part-time");
-		programmeDetail.setStudyOptionCode(31);
+		programmeDetail.setStudyOptionCode("31");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(null);
 		EasyMock.replay(programInstanceDAOMock);
@@ -380,7 +380,7 @@ public class ProgrammeDetailsValidatorTest {
         program = new ProgramBuilder().id(1).title("Program 1").enabled(true).toProgram();
 		programInstance = new ProgramInstanceBuilder()
 		    .id(1)
-		    .studyOption(1, "Full-time")
+		    .studyOption("1", "Full-time")
 		    .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
 		    .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06"))
 		    .enabled(true)
@@ -398,6 +398,6 @@ public class ProgrammeDetailsValidatorTest {
 		    .programmeName("programmeName")
 		    .sourcesOfInterest(interest)
 		    .startDate(DateUtils.addDays(new Date(),10)).applicationForm(form)
-		    .studyOption(1, "Full-time").toProgrammeDetails();
+		    .studyOption("1", "Full-time").toProgrammeDetails();
 	}
 }

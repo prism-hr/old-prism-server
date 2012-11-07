@@ -1,730 +1,536 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<programmes>
-  <programme>
-    <code>DDNBENSING09</code>
-    <name>EngD Biochemical Engineering</name>
+<programmeOccurrences>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNBENSING09</code>
+      <name>EngD Biochemical Engineering</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>DDNCIVSUSR09</code>
-    <name>EngD Urban Sustainability and Resilience</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNCIVSUSR09</code>
+      <name>EngD Urban Sustainability and Resilience</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>DDNCOMSVEI09</code>
-    <name>EngD Virtual Environments, Imaging and Visualisation</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNCOMSVEI09</code>
+      <name>EngD Virtual Environments, Imaging and Visualisation</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>DDNENVSENG01</code>
-    <name>EngD Environmental Engineering Science</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>DDNPRFSING01</code>
+      <name>EngD Professional Services</name>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>DDNPRFSING01</code>
-    <name>EngD Professional Services</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDBENSING01</code>
+      <name>Research Degree:  Biochemical Engineering</name>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDBENSING01</code>
-    <name>Research Degree:  Biochemical Engineering</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDBENSING01</code>
+      <name>Research Degree:  Biochemical Engineering</name>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDBENSING01</code>
-    <name>Research Degree:  Biochemical Engineering</name>
-    <modeOfAttendance>
-      <code>31</code>
+      <code>P+++++</code>
       <name>Part-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCENSING01</code>
-    <name>Research Degree:  Chemical Engineering</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCENSING01</code>
+      <name>Research Degree:  Chemical Engineering</name>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCIVSGEO01</code>
-    <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCIVSGEO01</code>
+      <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCIVSGEO01</code>
-    <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCIVSGEO01</code>
+      <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>31</code>
+      <code>P+++++</code>
       <name>Part-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCOMSFNC01</code>
-    <name>Research Degree: Financial Computing</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCOMSING01</code>
+      <name>Research Degree:  Computer Science</name>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCOMSING01</code>
-    <name>Research Degree:  Computer Science</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDCOMSING01</code>
+      <name>Research Degree:  Computer Science</name>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCOMSING01</code>
-    <name>Research Degree:  Computer Science</name>
-    <modeOfAttendance>
-      <code>31</code>
+      <code>P+++++</code>
       <name>Part-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDEENSING01</code>
-    <name>Research Degree:  Electronic and Electrical Engineering</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDEENSING01</code>
+      <name>Research Degree:  Electronic and Electrical Engineering</name>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDEENSING01</code>
-    <name>Research Degree:  Electronic and Electrical Engineering</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDEENSING01</code>
+      <name>Research Degree:  Electronic and Electrical Engineering</name>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>31</code>
+      <code>P+++++</code>
       <name>Part-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDEENSPHT01</code>
-    <name>Research Degree: Photonics Systems Development</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMANSING01</code>
+      <name>Research Degree: Management Science and Innovation</name>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMANSING01</code>
-    <name>Research Degree: Management Science and Innovation</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMANSING01</code>
+      <name>Research Degree: Management Science and Innovation</name>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMANSING01</code>
-    <name>Research Degree: Management Science and Innovation</name>
-    <modeOfAttendance>
-      <code>31</code>
+      <code>P+++++</code>
       <name>Part-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMBISING01</code>
-    <name>Research Degree: Medical and Biomedical Imaging</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMBISING01</code>
+      <name>Research Degree: Medical and Biomedical Imaging</name>
+    </programme>
+    <identifier>0013</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMECSING01</code>
-    <name>Research Degree:  Mechanical Engineering</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMECSING01</code>
+      <name>Research Degree:  Mechanical Engineering</name>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMECSING01</code>
-    <name>Research Degree:  Mechanical Engineering</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMECSING01</code>
+      <name>Research Degree:  Mechanical Engineering</name>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>31</code>
+      <code>P+++++</code>
       <name>Part-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMPHSING01</code>
-    <name>Research Degree:  Medical Physics</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMPHSING01</code>
+      <name>Research Degree:  Medical Physics</name>
+    </programme>
+    <identifier>0014</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMPHSING01</code>
-    <name>Research Degree:  Medical Physics</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDMPHSING01</code>
+      <name>Research Degree:  Medical Physics</name>
+    </programme>
+    <identifier>0015</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>31</code>
+      <code>P+++++</code>
       <name>Part-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDSCSSING01</code>
-    <name>Research Degree: Security and Crime Science</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSCSSING01</code>
+      <name>Research Degree: Security and Crime Science</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDSCSSING01</code>
-    <name>Research Degree: Security and Crime Science</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSCSSING01</code>
+      <name>Research Degree: Security and Crime Science</name>
+    </programme>
+    <identifier>0010</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>31</code>
+      <code>P+++++</code>
       <name>Part-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDSECSING01</code>
-    <name>Research Degree: Security Science</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>RRDSECSING01</code>
+      <name>Research Degree: Security Science</name>
+    </programme>
+    <identifier>0013</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2012</academicYear>
-    <startDate>2012-09-24</startDate>
-    <endDate>2013-09-15</endDate>
-  </programme>
-  <programme>
-    <code>DDNBENSING09</code>
-    <name>EngD Biochemical Engineering</name>
+    <startDate>2013-09-23</startDate>
+    <endDate>2014-09-15</endDate>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRBENSING01</code>
+      <name>MRes Biochemical Engineering</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>DDNCIVSUSR09</code>
-    <name>EngD Urban Sustainability and Resilience</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>DDNCOMSVEI09</code>
-    <name>EngD Virtual Environments, Imaging and Visualisation</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>DDNPRFSING01</code>
-    <name>EngD Professional Services</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDBENSING01</code>
-    <name>Research Degree:  Biochemical Engineering</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDBENSING01</code>
-    <name>Research Degree:  Biochemical Engineering</name>
-    <modeOfAttendance>
-      <code>31</code>
-      <name>Part-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCENSING01</code>
-    <name>Research Degree:  Chemical Engineering</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCIVSGEO01</code>
-    <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCIVSGEO01</code>
-    <name>Research Degree:  Civil, Environmental and Geomatic Engineering</name>
-    <modeOfAttendance>
-      <code>31</code>
-      <name>Part-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCOMSFNC01</code>
-    <name>Research Degree: Financial Computing</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCOMSING01</code>
-    <name>Research Degree:  Computer Science</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDCOMSING01</code>
-    <name>Research Degree:  Computer Science</name>
-    <modeOfAttendance>
-      <code>31</code>
-      <name>Part-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDEENSING01</code>
-    <name>Research Degree:  Electronic and Electrical Engineering</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDEENSING01</code>
-    <name>Research Degree:  Electronic and Electrical Engineering</name>
-    <modeOfAttendance>
-      <code>31</code>
-      <name>Part-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDEENSPHT01</code>
-    <name>Research Degree: Photonics Systems Development</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMANSING01</code>
-    <name>Research Degree: Management Science and Innovation</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMANSING01</code>
-    <name>Research Degree: Management Science and Innovation</name>
-    <modeOfAttendance>
-      <code>31</code>
-      <name>Part-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMBISING01</code>
-    <name>Research Degree: Medical and Biomedical Imaging</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMECSING01</code>
-    <name>Research Degree:  Mechanical Engineering</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMECSING01</code>
-    <name>Research Degree:  Mechanical Engineering</name>
-    <modeOfAttendance>
-      <code>31</code>
-      <name>Part-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMPHSING01</code>
-    <name>Research Degree:  Medical Physics</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDMPHSING01</code>
-    <name>Research Degree:  Medical Physics</name>
-    <modeOfAttendance>
-      <code>31</code>
-      <name>Part-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDSCSSING01</code>
-    <name>Research Degree: Security and Crime Science</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDSCSSING01</code>
-    <name>Research Degree: Security and Crime Science</name>
-    <modeOfAttendance>
-      <code>31</code>
-      <name>Part-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>RRDSECSING01</code>
-    <name>Research Degree: Security Science</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
-    <startDate>2013-09-23</startDate>
-    <endDate>2014-09-15</endDate>
-  </programme>
-  <programme>
-    <code>TMRBENSING01</code>
-    <name>MRes Biochemical Engineering</name>
-    <modeOfAttendance>
-      <code>1</code>
-      <name>Full-time</name>
-    </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRCIVSUSR01</code>
-    <name>MRes Urban Sustainability and Resilience</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCIVSUSR01</code>
+      <name>MRes Urban Sustainability and Resilience</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRCOMSFNC01</code>
-    <name>MRes Financial Computing</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCOMSFNC01</code>
+      <name>MRes Financial Computing</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRCOMSVEI01</code>
-    <name>MRes Virtual Environments, Imaging and Visualisation</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCOMSVEI01</code>
+      <name>MRes Virtual Environments, Imaging and Visualisation</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRCOMSWEB01</code>
-    <name>MRes Web Science</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRCOMSWEB01</code>
+      <name>MRes Web Science</name>
+    </programme>
+    <identifier>0003</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMREENSPHT01</code>
-    <name>MRes Photonics Systems Development</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMREENSPHT01</code>
+      <name>MRes Photonics Systems Development</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRHEAAWLB01</code>
-    <name>MRes Lifelong Health and Wellbeing</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRHEAAWLB01</code>
+      <name>MRes Lifelong Health and Wellbeing</name>
+    </programme>
+    <identifier>0007</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRHEAAWLB01</code>
-    <name>MRes Lifelong Health and Wellbeing</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRHEAAWLB01</code>
+      <name>MRes Lifelong Health and Wellbeing</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>31</code>
+      <code>P+++++</code>
       <name>Part-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRMBISING01</code>
-    <name>MRes Medical and Biomedical Imaging</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMBISING01</code>
+      <name>MRes Medical and Biomedical Imaging</name>
+    </programme>
+    <identifier>0009</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRMPHSING01</code>
-    <name>MRes Medical Physics and Bioengineering</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMPHSING01</code>
+      <name>MRes Medical Physics and Bioengineering</name>
+    </programme>
+    <identifier>0007</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>31</code>
+      <code>B+++++</code>
       <name>Modular/flexible study</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRMPHSING01</code>
-    <name>MRes Medical Physics and Bioengineering</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMPHSING01</code>
+      <name>MRes Medical Physics and Bioengineering</name>
+    </programme>
+    <identifier>0008</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRMSISING01</code>
-    <name>MRes Management Sciences and Innovation</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRMSISING01</code>
+      <name>MRes Management Sciences and Innovation</name>
+    </programme>
+    <identifier>0005</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRSECSING01</code>
-    <name>MRes Security Science</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRSECSING01</code>
+      <name>MRes Security Science</name>
+    </programme>
+    <identifier>0011</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>31</code>
+      <code>B+++++</code>
       <name>Modular/flexible study</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRSECSING01</code>
-    <name>MRes Security Science</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRSECSING01</code>
+      <name>MRes Security Science</name>
+    </programme>
+    <identifier>0012</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-  <programme>
-    <code>TMRTELSING01</code>
-    <name>MRes Telecommunications</name>
+  </programmeOccurrence>
+  <programmeOccurrence>
+    <programme>
+      <code>TMRTELSING01</code>
+      <name>MRes Telecommunications</name>
+    </programme>
+    <identifier>0011</identifier>
+    <academicYear>2013</academicYear>
     <modeOfAttendance>
-      <code>1</code>
+      <code>F+++++</code>
       <name>Full-time</name>
     </modeOfAttendance>
-    <academicYear>2013</academicYear>
     <startDate>2013-09-23</startDate>
     <endDate>2014-09-22</endDate>
-  </programme>
-</programmes>
+  </programmeOccurrence>
+</programmeOccurrences>
 

@@ -14,7 +14,7 @@
   </domicile>
   <domicile>
     <code>AG</code>
-    <name>Antigua (and Barbuda)</name>
+    <name>Antigua and Barbuda</name>
   </domicile>
   <domicile>
     <code>AI</code>
@@ -30,7 +30,7 @@
   </domicile>
   <domicile>
     <code>AN</code>
-    <name>Antilles (Netherlands)</name>
+    <name>Netherlands Antilles</name>
   </domicile>
   <domicile>
     <code>AO</code>
@@ -74,7 +74,7 @@
   </domicile>
   <domicile>
     <code>BF</code>
-    <name>Burkina-Faso</name>
+    <name>Burkina Faso</name>
   </domicile>
   <domicile>
     <code>BG</code>
@@ -134,7 +134,7 @@
   </domicile>
   <domicile>
     <code>CD</code>
-    <name>Congo (Democratic Republic) (Zaire)</name>
+    <name>Congo (Democratic Republic)</name>
   </domicile>
   <domicile>
     <code>CF</code>
@@ -142,7 +142,7 @@
   </domicile>
   <domicile>
     <code>CG</code>
-    <name>Congo (People&apos;s Republic)</name>
+    <name>Congo (Peoples Republic)</name>
   </domicile>
   <domicile>
     <code>CH</code>
@@ -162,7 +162,7 @@
   </domicile>
   <domicile>
     <code>CN</code>
-    <name>China (People&apos;s Republic)</name>
+    <name>China</name>
   </domicile>
   <domicile>
     <code>CO</code>
@@ -178,7 +178,7 @@
   </domicile>
   <domicile>
     <code>CV</code>
-    <name>Cape Verde Islands</name>
+    <name>Cape Verde</name>
   </domicile>
   <domicile>
     <code>CZ</code>
@@ -246,7 +246,7 @@
   </domicile>
   <domicile>
     <code>FM</code>
-    <name>Micronesia (Federated States of)</name>
+    <name>Micronesia</name>
   </domicile>
   <domicile>
     <code>FR</code>
@@ -302,7 +302,7 @@
   </domicile>
   <domicile>
     <code>GS</code>
-    <name>South Georgia and the South Sandwich Islands</name>
+    <name>South Georgia and South Sandwich Islands</name>
   </domicile>
   <domicile>
     <code>GT</code>
@@ -310,7 +310,7 @@
   </domicile>
   <domicile>
     <code>GU</code>
-    <name>Guam</name>
+    <name>US Trust Territories</name>
   </domicile>
   <domicile>
     <code>GW</code>
@@ -346,7 +346,7 @@
   </domicile>
   <domicile>
     <code>IE</code>
-    <name>Ireland (Republic)</name>
+    <name>Ireland</name>
   </domicile>
   <domicile>
     <code>IL</code>
@@ -402,11 +402,11 @@
   </domicile>
   <domicile>
     <code>KH</code>
-    <name>Cambodia (Kampuchea)</name>
+    <name>Cambodia</name>
   </domicile>
   <domicile>
     <code>KI</code>
-    <name>Kiribati (Gilbert and Ellice Islands)</name>
+    <name>Kiribati</name>
   </domicile>
   <domicile>
     <code>KM</code>
@@ -414,15 +414,15 @@
   </domicile>
   <domicile>
     <code>KN</code>
-    <name>St Kitts-Nevis</name>
+    <name>St. Kitts-Nevis</name>
   </domicile>
   <domicile>
     <code>KP</code>
-    <name>Korea (Dem Ppl Republic - North)</name>
+    <name>Korea DRY (North)</name>
   </domicile>
   <domicile>
     <code>KR</code>
-    <name>Korea (Republic - South)</name>
+    <name>Korea (South)</name>
   </domicile>
   <domicile>
     <code>KW</code>
@@ -438,7 +438,7 @@
   </domicile>
   <domicile>
     <code>LA</code>
-    <name>Laos</name>
+    <name>Lao PDR</name>
   </domicile>
   <domicile>
     <code>LB</code>
@@ -478,7 +478,7 @@
   </domicile>
   <domicile>
     <code>LY</code>
-    <name>Libya</name>
+    <name>Libyan AR</name>
   </domicile>
   <domicile>
     <code>MA</code>
@@ -506,7 +506,7 @@
   </domicile>
   <domicile>
     <code>MK</code>
-    <name>Macedonia (Former Yugoslav Republic of)</name>
+    <name>Macedonia</name>
   </domicile>
   <domicile>
     <code>ML</code>
@@ -514,7 +514,7 @@
   </domicile>
   <domicile>
     <code>MM</code>
-    <name>Burma (Myanmar)</name>
+    <name>Burma</name>
   </domicile>
   <domicile>
     <code>MN</code>
@@ -618,6 +618,10 @@
   </domicile>
   <domicile>
     <code>PG</code>
+    <name>New Guinea</name>
+  </domicile>
+  <domicile>
+    <code>PG</code>
     <name>Papua New Guinea</name>
   </domicile>
   <domicile>
@@ -671,6 +675,10 @@
   <domicile>
     <code>RU</code>
     <name>Russia</name>
+  </domicile>
+  <domicile>
+    <code>RU</code>
+    <name>USSR (not otherwise specified)</name>
   </domicile>
   <domicile>
     <code>RW</code>
@@ -734,7 +742,7 @@
   </domicile>
   <domicile>
     <code>ST</code>
-    <name>Sao Tome &amp; Principe</name>
+    <name>Sao Tome and Principe</name>
   </domicile>
   <domicile>
     <code>SV</code>
@@ -814,7 +822,7 @@
   </domicile>
   <domicile>
     <code>US</code>
-    <name>U.S.A.</name>
+    <name>United States of America</name>
   </domicile>
   <domicile>
     <code>UY</code>
@@ -826,7 +834,7 @@
   </domicile>
   <domicile>
     <code>VC</code>
-    <name>St Vincent and the Grenadines</name>
+    <name>St Vincent</name>
   </domicile>
   <domicile>
     <code>VE</code>
@@ -834,7 +842,7 @@
   </domicile>
   <domicile>
     <code>VG</code>
-    <name>Virgin Islands (British)</name>
+    <name>British Virgin Islands</name>
   </domicile>
   <domicile>
     <code>VI</code>
@@ -898,7 +906,7 @@
   </domicile>
   <domicile>
     <code>YT</code>
-    <name>Mayotte (French Territorial Collectives)</name>
+    <name>Mayotte</name>
   </domicile>
   <domicile>
     <code>ZA</code>
@@ -915,6 +923,10 @@
   <domicile>
     <code>ZZ</code>
     <name>Not Known</name>
+  </domicile>
+  <domicile>
+    <code>ZZ</code>
+    <name>Stateless</name>
   </domicile>
 </domiciles>
 

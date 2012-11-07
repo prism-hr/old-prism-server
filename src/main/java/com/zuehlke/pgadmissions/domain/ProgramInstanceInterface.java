@@ -4,7 +4,7 @@ import java.util.Date;
 
 public interface ProgramInstanceInterface extends CodeObject {
 
-	Integer getStudyOptionCode();
+	String getStudyOptionCode();
 
 	String getStudyOption();
 
@@ -13,5 +13,7 @@ public interface ProgramInstanceInterface extends CodeObject {
 	Date getApplicationStartDate();
 
 	Date getApplicationDeadline();
+
+	String getIdentifier();
 
 }

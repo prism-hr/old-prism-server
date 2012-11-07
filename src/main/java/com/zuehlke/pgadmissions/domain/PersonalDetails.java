@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,10 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
@@ -47,28 +50,25 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	@Column(name = "english_first_language")
 	private Boolean englishFirstLanguage;
 	
+	@Column(name = "language_qualification_available")
+	private Boolean languageQualificationAvailable;
+	
+	@Valid
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE }, orphanRemoval = true)
+    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "application_form_personal_detail_id")
+	private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
+	
 	@Column(name = "requires_visa")
 	private Boolean requiresVisa;
 	
-	@ESAPIConstraint(rule = "LettersAndNumbersOnly", maxLength = 35, message = "{text.field.nonlettersandnumbers}")
-	@Column(name = "passport_number")
-	private String passportNumber;
-	
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-	@Column(name = "passport_name")
-	private String nameOnPassport;
-	
-	@Column(name = "passport_issue_date")
-	@Temporal(TemporalType.DATE)
-	private Date passportIssueDate;
-	
-    @Column(name = "passport_expiry_date")
-	@Temporal(TemporalType.DATE)
-	private Date passportExpiryDate;
+	@Valid
+	@OneToOne(orphanRemoval = true, mappedBy = "personalDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private PassportInformation passportInformation;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_language_id") })
-	private List<Language> candidateNationalities= new ArrayList<Language>();
+	private List<Language> candidateNationalities = new ArrayList<Language>();
 	
 	@Column(name = "title")
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.TitleEnumUserType")
@@ -108,7 +108,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	@JoinColumn(name = "domicile_id")
 	private Domicile residenceCountry;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application = null;
 
@@ -124,39 +124,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	public Integer getId() {
 		return id;
 	}
-	
-	public String getPassportNumber() {
-        return passportNumber;
-    }
 
-    public void setPassportNumber(String passportNumber) {
-        this.passportNumber = passportNumber;
-    }
-
-    public String getNameOnPassport() {
-        return nameOnPassport;
-    }
-
-    public void setNameOnPassport(String nameOnPassport) {
-        this.nameOnPassport = nameOnPassport;
-    }
-
-    public Date getPassportIssueDate() {
-        return passportIssueDate;
-    }
-
-    public void setPassportIssueDate(Date passportIssueDate) {
-        this.passportIssueDate = passportIssueDate;
-    }
-
-    public Date getPassportExpiryDate() {
-        return passportExpiryDate;
-    }
-
-    public void setPassportExpiryDate(Date passportExpiryDate) {
-        this.passportExpiryDate = passportExpiryDate;
-    }
-	
 	public Title getTitle() {
 	    return title;
 	}
@@ -296,12 +264,20 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 		return (requiresVisa != null);
 	}
 	
+	//convenience metod for Freemarker
+    public boolean isLanguageQualificationAvailableSet() {
+        return (languageQualificationAvailable != null);
+    }
+	
 	public Boolean getRequiresVisa() {
 		return requiresVisa;
 	}
 
 	public void setRequiresVisa(Boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
+		if (this.requiresVisa != null && !this.requiresVisa) {
+		    this.passportInformation = null;
+		}
 	}
 
 	public boolean isAcceptedTerms() {
@@ -311,4 +287,43 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	public void setAcceptedTerms(boolean acceptedTerms) {
 		this.acceptedTerms = acceptedTerms;
 	}
+
+    public Boolean getLanguageQualificationAvailable() {
+        return languageQualificationAvailable;
+    }
+
+    public void setLanguageQualificationAvailable(Boolean languageQualificationAvailable) {
+        this.languageQualificationAvailable = languageQualificationAvailable;
+        if (this.languageQualificationAvailable != null && !this.languageQualificationAvailable) {
+            this.languageQualifications = new ArrayList<LanguageQualification>();
+        }
+    }
+
+    public PassportInformation getPassportInformation() {
+        return passportInformation;
+    }
+
+    public void setPassportInformation(PassportInformation passportInformation) {
+        this.passportInformation = passportInformation;
+        if (this.passportInformation != null) {
+            this.passportInformation.setPersonalDetails(this);
+        }
+    }
+
+    public List<LanguageQualification> getLanguageQualifications() {
+        return languageQualifications;
+    }
+
+    public void setLanguageQualifications(List<LanguageQualification> languageQualifications) {
+        this.languageQualifications = languageQualifications;
+    }
+    
+    public void addLanguageQualification(LanguageQualification languageQualification) {
+        if (languageQualification != null && languageQualification.getPersonalDetails() == null) {
+            languageQualification.setPersonalDetails(this);
+            this.languageQualifications.add(languageQualification);
+        } else if (languageQualification != null) {
+            this.languageQualifications.add(languageQualification);
+        }
+    }
 }

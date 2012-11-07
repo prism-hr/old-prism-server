@@ -36,6 +36,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.PassportInformation;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -372,7 +374,18 @@ public class PdfDocumentBuilder {
 				table.addCell(newTableCell("No", smallFont));
 			}
 		}
-
+		
+		table.addCell(newTableCell("Do you have an English language qualification?", smallBoldFont));
+		if (application.getPersonalDetails().getLanguageQualificationAvailable() == null) {
+		    table.addCell(newTableCell(null, smallFont));
+		} else {
+		    if (application.getPersonalDetails().getLanguageQualificationAvailable()) {
+		        table.addCell(newTableCell("Yes", smallFont));
+		    } else {
+		        table.addCell(newTableCell("No", smallFont));
+		    }
+		}
+		
 		table.addCell(newTableCell("Country of Residence", smallBoldFont));
 		if (application.getPersonalDetails().getResidenceCountry() == null) {
 			table.addCell(newTableCell(null, smallFont));
@@ -392,33 +405,37 @@ public class PdfDocumentBuilder {
 		}
 		
 		if (application.getPersonalDetails().getRequiresVisa() != null && application.getPersonalDetails().getRequiresVisa()) {
-		    table.addCell(newTableCell("Passport Number", smallBoldFont));
-	        if (StringUtils.isBlank(application.getPersonalDetails().getPassportNumber())) {
-	            table.addCell(newTableCell(null, smallFont));
-	        } else {
-	            table.addCell(newTableCell(application.getPersonalDetails().getPassportNumber(), smallFont));
-	        }
-	        
-	        table.addCell(newTableCell("Name on Passport", smallBoldFont));
-	        if (StringUtils.isBlank(application.getPersonalDetails().getNameOnPassport())) {
-                table.addCell(newTableCell(null, smallFont));
-            } else {
-                table.addCell(newTableCell(application.getPersonalDetails().getNameOnPassport(), smallFont));
-            }
-	        
-	        table.addCell(newTableCell("Passport Issue Date", smallBoldFont));
-	        if (application.getPersonalDetails().getPassportIssueDate() == null) {
-                table.addCell(newTableCell(null, smallFont));
-            } else {
-                table.addCell(newTableCell(simpleDateFormat.format(application.getPersonalDetails().getPassportIssueDate()), smallFont));
-            }
-	        
-	        table.addCell(newTableCell("Passport Expiry Date", smallBoldFont));
-	        if (application.getPersonalDetails().getPassportExpiryDate() == null) {
-                table.addCell(newTableCell(null, smallFont));
-            } else {
-                table.addCell(newTableCell(simpleDateFormat.format(application.getPersonalDetails().getPassportExpiryDate()), smallFont));
-            }
+		    PassportInformation passportInformation = application.getPersonalDetails().getPassportInformation();
+		    if (passportInformation != null) {
+    		    table.addCell(newTableCell("Passport Number", smallBoldFont));
+                
+    	        if (StringUtils.isBlank(passportInformation.getPassportNumber())) {
+    	            table.addCell(newTableCell(null, smallFont));
+    	        } else {
+    	            table.addCell(newTableCell(passportInformation.getPassportNumber(), smallFont));
+    	        }
+    	        
+    	        table.addCell(newTableCell("Name on Passport", smallBoldFont));
+    	        if (StringUtils.isBlank(passportInformation.getNameOnPassport())) {
+                    table.addCell(newTableCell(null, smallFont));
+                } else {
+                    table.addCell(newTableCell(passportInformation.getNameOnPassport(), smallFont));
+                }
+    	        
+    	        table.addCell(newTableCell("Passport Issue Date", smallBoldFont));
+    	        if (passportInformation.getPassportIssueDate() == null) {
+                    table.addCell(newTableCell(null, smallFont));
+                } else {
+                    table.addCell(newTableCell(simpleDateFormat.format(passportInformation.getPassportIssueDate()), smallFont));
+                }
+    	        
+    	        table.addCell(newTableCell("Passport Expiry Date", smallBoldFont));
+    	        if (passportInformation.getPassportExpiryDate() == null) {
+                    table.addCell(newTableCell(null, smallFont));
+                } else {
+                    table.addCell(newTableCell(simpleDateFormat.format(passportInformation.getPassportExpiryDate()), smallFont));
+                }
+		    }
 		}
 
 		table.addCell(newTableCell("Email", smallBoldFont));
@@ -430,6 +447,69 @@ public class PdfDocumentBuilder {
 		table.addCell(newTableCell("Skype", smallBoldFont));
 		table.addCell(newTableCell(application.getPersonalDetails().getMessenger(), smallFont));
 		document.add(table);
+		
+		document.add(new Paragraph(" "));
+		
+		if (application.getPersonalDetails().getLanguageQualifications().isEmpty()) {
+            table = new PdfPTable(2);
+            table.setWidthPercentage(100f);
+            table.addCell(newTableCell("English Language Qualifications", smallBoldFont));
+            table.addCell(newTableCell(null, smallFont));
+        } else {
+            int counter = 1;
+            for (LanguageQualification qualification : application.getPersonalDetails().getLanguageQualifications()) {
+                table = new PdfPTable(2);
+                table.setWidthPercentage(100f);
+                PdfPCell headerCell = newTableCell("English Language Qualification (" + counter++ + ")", smallBoldFont);
+                headerCell.setColspan(2);
+                table.addCell(headerCell);
+        
+                table.addCell(newTableCell("Qualification Type", smallBoldFont));
+                table.addCell(newTableCell(qualification.getQualificationType().getDisplayValue(), smallFont));
+                
+                table.addCell(newTableCell("Other Qualification Type Name", smallBoldFont));
+                table.addCell(newTableCell(qualification.getOtherQualificationTypeName(), smallFont));
+                
+                table.addCell(newTableCell("Date of Examination", smallBoldFont));
+                table.addCell(newTableCell(simpleDateFormat.format(qualification.getDateOfExamination()), smallFont));
+                
+                table.addCell(newTableCell("Overall Score", smallBoldFont));
+                table.addCell(newTableCell(qualification.getOverallScore(), smallFont));
+                
+                table.addCell(newTableCell("Reading Score", smallBoldFont));
+                table.addCell(newTableCell(qualification.getReadingScore(), smallFont));
+                
+                table.addCell(newTableCell("Writing Score", smallBoldFont));
+                table.addCell(newTableCell(qualification.getWritingScore(), smallFont));
+                
+                table.addCell(newTableCell("Speaking Score", smallBoldFont));
+                table.addCell(newTableCell(qualification.getSpeakingcore(), smallFont));
+                
+                table.addCell(newTableCell("Listening Score", smallBoldFont));
+                table.addCell(newTableCell(qualification.getListeningScore(), smallFont));
+                
+                table.addCell(newTableCell("Did you sit the exam online?", smallBoldFont));
+                if (qualification.getExamTakenOnline() == null) {
+                    table.addCell(newTableCell(null, smallFont));
+                } else {
+                    if (qualification.getExamTakenOnline()) {
+                        table.addCell(newTableCell("Yes", smallFont));
+                    } else {
+                        table.addCell(newTableCell("No", smallFont));
+                    }
+                }
+                
+                table.addCell(newTableCell("Proof of Language Qualification", smallBoldFont));
+                if (qualification.getLanguageQualificationDocument() != null) {
+                    table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
+                    bookmarkMap.put(appendixCounter++, qualification.getLanguageQualificationDocument());
+                } else {
+                    table.addCell(newTableCell("Not Provided", smallGrayFont));
+                }
+            }
+        }
+		
+        document.add(table);
 	}
 
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {

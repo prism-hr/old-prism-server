@@ -6,17 +6,31 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Years;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Component
 public class PersonalDetailsValidator extends FormSectionObjectValidator implements Validator {
 
+    private PassportInformationValidator passportInformationValidator;
+    
+    private LanguageQualificationValidator languageQualificationValidator;
+    
+    public PersonalDetailsValidator() {
+        this(null, null);
+    }
+    
+    @Autowired
+    public PersonalDetailsValidator(PassportInformationValidator passportInformationValidator, LanguageQualificationValidator languageQualificationValidator) {
+        this.passportInformationValidator = passportInformationValidator;
+        this.languageQualificationValidator = languageQualificationValidator;
+    }
+    
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return clazz.isAssignableFrom(PersonalDetails.class);
@@ -64,31 +78,23 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", "dropdown.radio.select.none");
 		
 		if (personalDetail.getRequiresVisa() != null && personalDetail.getRequiresVisa()) {
-		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportNumber", "text.field.empty");
-		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nameOnPassport", "text.field.empty");
-		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportIssueDate", "text.field.empty");
-		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportExpiryDate", "text.field.empty");
-		    
-		    Date passportExpiryDate = personalDetail.getPassportExpiryDate();
-		    Date passportIssueDate = personalDetail.getPassportIssueDate();
-		    
-		    if (passportExpiryDate != null) {
-		        if (!DateUtils.isToday(passportExpiryDate) && passportExpiryDate.before(new Date())) {
-		            errors.rejectValue("passportExpiryDate", "date.field.notfuture");
-		        }
+		    try {
+		        errors.pushNestedPath("passportInformation");
+    	        ValidationUtils.invokeValidator(passportInformationValidator, personalDetail.getPassportInformation(), errors);
+		    } finally {
+		        errors.popNestedPath();
 		    }
-		    
-		    if (passportIssueDate != null) {
-                if (!DateUtils.isToday(passportIssueDate) && passportIssueDate.after(new Date())) {
-                    errors.rejectValue("passportIssueDate", "date.field.notpast");
-                }
-            }
-		    
-		    if (passportExpiryDate != null && passportIssueDate != null) {
-		        if (org.apache.commons.lang.time.DateUtils.isSameDay(passportExpiryDate, passportIssueDate)) {
-		            errors.rejectValue("passportExpiryDate", "date.field.same");
-		            errors.rejectValue("passportIssueDate", "date.field.same");
-		        }
+		}
+		
+		if (personalDetail.getLanguageQualificationAvailable() != null && personalDetail.getLanguageQualificationAvailable()) {
+		    if (personalDetail.getLanguageQualifications().isEmpty()) {
+		        errors.rejectValue("languageQualifications", "text.field.empty");
+		    } else {
+	            for (int idx = 0; idx < personalDetail.getLanguageQualifications().size(); idx++) {
+	                errors.pushNestedPath(String.format("languageQualifications[%s]", idx));
+	                ValidationUtils.invokeValidator(languageQualificationValidator, personalDetail.getLanguageQualifications().get(idx), errors);	
+	                errors.popNestedPath();
+	            }
 		    }
 		}
 	}

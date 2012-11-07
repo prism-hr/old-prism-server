@@ -10,6 +10,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -60,7 +61,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "app_administrator_id")
 	private RegisteredUser applicationAdministrator;
 
-	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "rejection_id")
 	private Rejection rejection;
@@ -78,13 +79,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
 	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
-	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "current_address_id")
 	@Valid
 	private Address currentAddress;
 
-	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "contact_address_id")
 	@Valid
@@ -143,11 +144,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "program_id")
 	private Program program;
 
-	@OneToOne(mappedBy = "application")
+	@OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
 	@Valid
 	private PersonalDetails personalDetails;
 
-	@OneToOne(mappedBy = "application")
+	@OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
 	@Valid
 	private ProgrammeDetails programmeDetails;
 
@@ -194,7 +195,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Valid
 	private List<Referee> referees = new ArrayList<Referee>();
 
-	@OneToOne(mappedBy = "application")
+	@OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
 	@Valid
 	private AdditionalInformation additionalInformation;
 
@@ -202,15 +203,15 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date rejectNotificationDate;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "latest_interview_id")
 	private Interview latestInterview;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "latest_approval_round_id")
 	private ApprovalRound latestApprovalRound;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "latest_review_round_id")
 	private ReviewRound latestReviewRound;
 

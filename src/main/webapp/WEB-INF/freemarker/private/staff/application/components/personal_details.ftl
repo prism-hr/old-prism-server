@@ -79,6 +79,78 @@
         <div class="field"><#if applicationForm.personalDetails.englishFirstLanguage>Yes<#else>No</#if></div>
       </div>                              
       
+      <div class="admin_row">
+        <span class="admin_row_label">Do you have an English language qualification?</span>
+        <div class="field"><#if applicationForm.personalDetails.languageQualificationAvailable>Yes<#else>No</#if></div>
+      </div>                              
+    </div>
+      
+      <#list applicationForm.personalDetails.languageQualifications! as languageQualification>
+      <div class="row-group">
+          <div class="admin_row">
+            <label class="admin_header">Language Qualifications (${languageQualification_index + 1})</label>
+            <div class="field">&nbsp</div>
+          </div>
+
+          <div class="admin_row">
+            <span class="admin_row_label">Qualification Type</span>
+            <div class="field">${(languageQualification.qualificationType.displayValue?html)!"Not Provided"}</div>
+          </div>
+          
+          <div class="admin_row">
+            <span class="admin_row_label">Qualification Type</span>
+            <div class="field">${(languageQualification.otherQualificationTypeName?html)!"Not Provided"}</div>
+          </div>
+          
+          <div class="admin_row">
+            <span class="admin_row_label">Date of Examination</span>
+            <div class="field">${(languageQualification.dateOfExamination?string('dd MMM yyyy'))!"Not Provided"}</div>
+          </div>
+
+          <div class="admin_row">
+            <span class="admin_row_label">Overall Score</span>
+            <div class="field">${(languageQualification.overallScore?html)!"Not Provided"}</div>
+          </div>
+          
+          <div class="admin_row">
+            <span class="admin_row_label">Reading Score</span>
+            <div class="field">${(languageQualification.readingScore?html)!"Not Provided"}</div>
+          </div>
+          
+          <div class="admin_row">
+            <span class="admin_row_label">Writing Score</span>
+            <div class="field">${(languageQualification.writingScore?html)!"Not Provided"}</div>
+          </div>
+          
+          <div class="admin_row">
+            <span class="admin_row_label">Speaking Score</span>
+            <div class="field">${(languageQualification.speakingcore?html)!"Not Provided"}</div>
+          </div>
+          
+          <div class="admin_row">
+            <span class="admin_row_label">Listening Score</span>
+            <div class="field">${(languageQualification.listeningScore?html)!"Not Provided"}</div>
+          </div>    
+          
+          <div class="admin_row">
+            <span class="admin_row_label">Did you sit the exam online?</span>
+            <div class="field"><#if languageQualification.examTakenOnline>Yes<#else>No</#if></div>
+         </div>
+         
+         <div class="admin_row">
+            <span class="admin_row_label">Proof of award (PDF)</span>
+            <div class="field" id="referenceDocument">
+                <#if languageQualification.languageQualificationDocument??>
+                    <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(languageQualification.languageQualificationDocument.id))!}'/>" target="_blank">${(languageQualification.languageQualificationDocument.fileName)!}</a>
+                <#else>
+                    Not Provided
+                </#if>
+            </div>         
+        </div>
+      </div>  
+      </#list>
+    
+    <div class="row-group"> 
       <!-- Nationality -->
       <div class="admin_row">
         <span class="admin_row_label">Country of Residence</span>
@@ -127,17 +199,6 @@
 				<div class="field"><#if (applicationForm.personalDetails.messenger)?has_content>${(applicationForm.personalDetails.messenger?html)}<#else>Not Provided</#if></div>
       </div>
       
-<#--
-      <div class="admin_row">
-        <label class="admin_row_label">Ethnicity</label>
-        <div class="field">${(applicationForm.personalDetails.ethnicity.name?html)!"Not Provided"}</div>
-      </div>
-      
-      <div class="admin_row">
-        <label class="admin_row_label">Disability</label>
-        <div class="field">${(applicationForm.personalDetails.disability.name?html)!"Not Provided"}</div>
-      </div>
--->      
     </div>            
   </form>
   

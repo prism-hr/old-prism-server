@@ -15,7 +15,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
 
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -24,8 +25,11 @@ import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PassportInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,7 +49,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
     public void shouldRejectIfTitleIsEmpty() {
         personalDetails.setTitle(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "title");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("title").getCode());
@@ -54,7 +58,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfFirstNameIsEmpty() {
 		personalDetails.setFirstName(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "firstName");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstName").getCode());
@@ -63,7 +67,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
     public void shouldRejectIfFirstNameIsLongerThan30() {
         personalDetails.setFirstName("1234567890123456789012345678901234567890");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "firstName");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("A maximum of 30 characters are allowed.", mappingResult.getFieldError("firstName").getDefaultMessage());
@@ -72,7 +76,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
     public void shouldRejectIfPhoneNumberIsLongerThan35() {
         personalDetails.setPhoneNumber("1234567890123456789012345678901234567890");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "phoneNumber");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("A maximum of 35 characters are allowed.", mappingResult.getFieldError("phoneNumber").getDefaultMessage());
@@ -81,7 +85,7 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectIfPhoneNumberIsNotValid() {
         personalDetails.setPhoneNumber("+41-00-0-000--000");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "phoneNumber");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("You must enter telephone numbers in the following format +44 (0) 123 123 1234.", mappingResult.getFieldError("phoneNumber").getDefaultMessage());
@@ -91,7 +95,7 @@ public class PersonalDetailsValidatorTest {
     public void shouldRejectIfFirstNameContainsInvalidCharacters() {
 	    String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
         personalDetails.setFirstName(chineseName);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "firstName");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("firstName").getDefaultMessage());
@@ -100,7 +104,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfLasttNameIsEmpty() {
 		personalDetails.setLastName(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "lastName");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("lastName").getCode());
@@ -109,7 +113,7 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectIfLasttNameIsLongerThan40() {
         personalDetails.setLastName("12345678901234567890123456789012345678900123456789001234567890");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "lastName");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("A maximum of 40 characters are allowed.", mappingResult.getFieldError("lastName").getDefaultMessage());
@@ -119,7 +123,7 @@ public class PersonalDetailsValidatorTest {
     public void shouldRejectIfLastNameContainsInvalidCharacters() {
         String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
         personalDetails.setLastName(chineseName);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "lastName");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("lastName").getDefaultMessage());
@@ -128,7 +132,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfEmailIsEmpty() {
 		personalDetails.setEmail(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "email");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("email").getCode());
@@ -137,7 +141,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfEmailNotValidEmail() {
 		personalDetails.setEmail("rerewrew");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "email");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("You must enter a valid email address.", mappingResult.getFieldError("email").getDefaultMessage());
@@ -146,7 +150,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
     public void shouldRejectIfEmailIsLongerThan255Characters() {
         personalDetails.setEmail("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890@a.com");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "email");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("A maximum of 255 characters are allowed.", mappingResult.getFieldError("email").getDefaultMessage());
@@ -155,7 +159,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfGenderisNull() {
 		personalDetails.setGender(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "gender");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("gender").getCode());
@@ -164,7 +168,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfDateOfBirthisNull() {
 		personalDetails.setDateOfBirth(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "dateOfBirth");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("dateOfBirth").getCode());
@@ -173,7 +177,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfCountryIsNull() {
 		personalDetails.setCountry(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "country");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("country").getCode());
@@ -182,7 +186,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfResidenceCountryIsNull() {
 		personalDetails.setResidenceCountry(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "residenceCountry");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("residenceCountry").getCode());
@@ -191,7 +195,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfApplicationFormIsNull() {
 		personalDetails.setApplication(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "application");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("application").getCode());
@@ -200,7 +204,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfNoCandidateNationality() {
 		personalDetails.getCandidateNationalities().clear();
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "candidateNationalities");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("candidateNationalities").getCode());
@@ -213,7 +217,7 @@ public class PersonalDetailsValidatorTest {
 		calendar.add(Calendar.DATE, 1);
 		tomorrow = calendar.getTime();
 		personalDetails.setDateOfBirth(tomorrow);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "dateOfBirth");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("dateOfBirth").getCode());
@@ -222,7 +226,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfPhoneNumberIsEmpty() {
 		personalDetails.setPhoneNumber(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "phoneNumber");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("phoneNumber").getCode());
@@ -231,7 +235,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfDisabilityIsNull() {
 		personalDetails.setDisability(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "disability");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("disability").getCode());
@@ -240,7 +244,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfEthnicityIsNull() {
 		personalDetails.setEthnicity(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "ethnicity");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("ethnicity").getCode());
@@ -249,7 +253,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfRequiresVisaIsNull() {
 		personalDetails.setRequiresVisa(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "requiresVisa");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("requiresVisa").getCode());
@@ -258,7 +262,7 @@ public class PersonalDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfEnglishFirstLanguageIsNull() {
 		personalDetails.setEnglishFirstLanguage(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "englishFirstLanguage");
+		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 		personalDetailValidator.validate(personalDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("englishFirstLanguage").getCode());
@@ -266,46 +270,55 @@ public class PersonalDetailsValidatorTest {
 	
 	@Test
 	public void shouldRejectPassportNumberIfEmpty() {
-	    personalDetails.setPassportNumber(null);
-	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportNumber");
+	    personalDetails.getPassportInformation().setPassportNumber(null);
+	    BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportNumber").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportInformation.passportNumber").getCode());
 	}
+	
+    @Test
+    public void shouldRejectPassportNumberIfLongerThan35() {
+        personalDetails.getPassportInformation().setPassportNumber("0123456789012345678901234567890123456789");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 35 characters are allowed.", mappingResult.getFieldError("passportInformation.passportNumber").getDefaultMessage());
+    }	
 	
 	@Test
     public void shouldRejectNameOnPassportIfEmpty() {
-        personalDetails.setNameOnPassport(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "nameOnPassport");
+        personalDetails.getPassportInformation().setNameOnPassport(null);
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("nameOnPassport").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportInformation.nameOnPassport").getCode());
     }
 	
 	@Test
     public void shouldRejectPassportIssueDateIfEmpty() {
-        personalDetails.setPassportIssueDate(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportIssueDate");
+        personalDetails.getPassportInformation().setPassportIssueDate(null);
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportIssueDate").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportInformation.passportIssueDate").getCode());
     }
 	
 	@Test
     public void shouldRejectPassportExpiryDateIfEmpty() {
-        personalDetails.setPassportExpiryDate(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportExpiryDate");
+        personalDetails.getPassportInformation().setPassportExpiryDate(null);
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportExpiryDate").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("passportInformation.passportExpiryDate").getCode());
     }
     
 	@Test
     public void shouldRejectPassportExpiryAndIssueDateAreTheSame() {
 	    Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
-	    personalDetails.setPassportExpiryDate(oneMonthAgo);
-        personalDetails.setPassportIssueDate(oneMonthAgo);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportExpiryDate");
+	    personalDetails.getPassportInformation().setPassportExpiryDate(oneMonthAgo);
+        personalDetails.getPassportInformation().setPassportIssueDate(oneMonthAgo);
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(3, mappingResult.getErrorCount());
         Assert.assertEquals("date.field.notfuture", mappingResult.getFieldErrors().get(0).getCode());
@@ -316,28 +329,28 @@ public class PersonalDetailsValidatorTest {
 	@Test
     public void shouldRejectPassportExpiryDateIsInThePast() {
         Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
-        personalDetails.setPassportExpiryDate(oneMonthAgo);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportExpiryDate");
+        personalDetails.getPassportInformation().setPassportExpiryDate(oneMonthAgo);
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("passportExpiryDate").getCode());
+        Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("passportInformation.passportExpiryDate").getCode());
     }
     
 	@Test
     public void shouldRejectPassportIssueDateIsInTheFuture() {
         Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), +1);
-        personalDetails.setPassportIssueDate(oneMonthAgo);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "passportIssueDate");
+        personalDetails.getPassportInformation().setPassportIssueDate(oneMonthAgo);
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("passportIssueDate").getCode());
+        Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("passportInformation.passportIssueDate").getCode());
     }
 	
 	@Test
     public void shouldRejectDateOfBirthIfAgeIsLessThan10() {
         Date infant = org.apache.commons.lang.time.DateUtils.addYears(new Date(), -9);
         personalDetails.setDateOfBirth(infant);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "dateOfBirth");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("date.field.age", mappingResult.getFieldError("dateOfBirth").getCode());
@@ -347,7 +360,7 @@ public class PersonalDetailsValidatorTest {
     public void shouldRejectDateOfBirthIfAgeIsBiggerThan80() {
         Date oldGeezer = org.apache.commons.lang.time.DateUtils.addYears(new Date(), -81);
         personalDetails.setDateOfBirth(oldGeezer);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "dateOfBirth");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("date.field.age", mappingResult.getFieldError("dateOfBirth").getCode());
@@ -371,10 +384,17 @@ public class PersonalDetailsValidatorTest {
 				.disability(new DisabilityBuilder().id(23213).toDisability())//
 				.requiresVisa(true)
 				.englishFirstLanguage(true)
-				.passportNumber("11778899")
-				.nameOnPassport("Bob Smith")
-				.passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 5))
-				.passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -5))
+				.languageQualificationAvailable(true)
+                .passportInformation(
+                        new PassportInformationBuilder().nameOnPassport("Kevin Francis Denver").passportNumber("000")
+                                .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
+                                .passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10))
+                                .toPassportInformation())
+                .languageQualifications(
+                        new LanguageQualificationBuilder().id(1).dateOfExamination(new Date()).examTakenOnline(false)
+                                .languageQualification(LanguageQualificationEnum.OTHER)
+                                .otherQualificationTypeName("foobar").listeningScore("1").overallScore("1")
+                                .readingScore("1").writingScore("1").speakingScore("1").toLanguageQualification())
 				.toPersonalDetails();
 	}
 }

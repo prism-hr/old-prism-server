@@ -61,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PassportInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
@@ -186,8 +187,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
             .firstName("Kevin")
             .lastName("Denver")
             .gender(Gender.MALE)
-            .nameOnPassport("Kevin Francis Denver")
-            .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
+            .passportInformation(new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver").passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20)).toPassportInformation())
             .phoneNumber("+44 (0) 123 123 1234")
             .requiresVisa(false)
             .residenceDomicile(domicile)

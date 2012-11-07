@@ -11,6 +11,8 @@ import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.PassportInformation;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -32,32 +34,32 @@ public class PersonalDetailsBuilder {
 
 	private String messenger;
 	private List<Language> candiateNationalities = new ArrayList<Language>();
-	private Boolean englishFirstLanguage;
-	private Boolean requiresVisa;
 	private String phoneNumber;
 
-	private String passportNumber;
-    private String nameOnPassport;
-    private Date passportIssueDate;
-    private Date passportExpiryDate;
+	private Boolean englishFirstLanguage;
+	private Boolean languageQualificationAvailable;
+	private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
+	
+	private Boolean requiresVisa;
+	private PassportInformation passportInformation;
     
-    public PersonalDetailsBuilder passportNumber(String passportNumber) {
-        this.passportNumber = passportNumber;
+	public PersonalDetailsBuilder languageQualifications(List<LanguageQualification> languageQualifications) {
+	    this.languageQualifications = languageQualifications;
+	    return this;
+	}
+	
+	public PersonalDetailsBuilder languageQualifications(LanguageQualification... languageQualifications) {
+        this.languageQualifications = new ArrayList<LanguageQualification>(Arrays.asList(languageQualifications));
         return this;
     }
-    
-    public PersonalDetailsBuilder nameOnPassport(String nameOnPassport) {
-        this.nameOnPassport = nameOnPassport;
-        return this;
-    }
-    
-    public PersonalDetailsBuilder passportIssueDate(Date passportIssueDate) {
-        this.passportIssueDate = passportIssueDate;
-        return this;
-    }
-    
-    public PersonalDetailsBuilder passportExpiryDate(Date passportExpiryDate) {
-        this.passportExpiryDate = passportExpiryDate;
+	
+	public PersonalDetailsBuilder languageQualificationAvailable(Boolean flag) {
+	    this.languageQualificationAvailable = flag;
+	    return this;
+	}
+	
+    public PersonalDetailsBuilder passportInformation(PassportInformation passportInformation) {
+        this.passportInformation = passportInformation;
         return this;
     }
     
@@ -165,10 +167,9 @@ public class PersonalDetailsBuilder {
 		personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
 		personalDetails.setRequiresVisa(requiresVisa);
 		personalDetails.setPhoneNumber(phoneNumber);
-		personalDetails.setPassportExpiryDate(passportExpiryDate);
-		personalDetails.setPassportIssueDate(passportIssueDate);
-		personalDetails.setPassportNumber(passportNumber);
-		personalDetails.setNameOnPassport(nameOnPassport);
+		personalDetails.setLanguageQualifications(languageQualifications);
+		personalDetails.setPassportInformation(passportInformation);
+		personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
 		return personalDetails;
 	}
 }

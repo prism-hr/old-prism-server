@@ -15,10 +15,12 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
+import com.zuehlke.pgadmissions.dao.LanguageQualificationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
@@ -44,6 +46,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DisabilityPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
@@ -54,6 +57,7 @@ import com.zuehlke.pgadmissions.services.EthnicityService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.LanguageQualificationValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 
 public class PersonalDetailsControllerTest {
@@ -76,13 +80,19 @@ public class PersonalDetailsControllerTest {
 	private UserService userServiceMock;
 	private DomicileDAO domicileDAOMock;
 	private DomicilePropertyEditor domicilePropertyEditorMock;
+	
+	private Model modelMock;
+	
+	private LanguageQualificationValidator languageQualificationValidatorMock;
+    private LanguageQualificationDAO languageQualificationDAOMock;
+    private DocumentPropertyEditor documentPropertyEditorMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toPersonalDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(personalDetailsServiceMock, errors);
-		controller.editPersonalDetails(personalDetails, errors);
+		controller.editPersonalDetails(personalDetails, errors, modelMock);
 		EasyMock.verify(personalDetailsServiceMock);
 
 	}
@@ -90,18 +100,18 @@ public class PersonalDetailsControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
 		currentUser.getRoles().clear();
-		controller.editPersonalDetails(null, null);
+		controller.editPersonalDetails(null, null, null);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
 		currentUser.getRoles().clear();
-		controller.getPersonalDetailsView();
+		controller.getPersonalDetailsView(modelMock);
 	}
 
 	@Test
 	public void shouldReturnPersonalDetailsView() {
-		assertEquals("/private/pgStudents/form/components/personal_details", controller.getPersonalDetailsView());
+		assertEquals("/private/pgStudents/form/components/personal_details", controller.getPersonalDetailsView(modelMock));
 	}
 
 	@Test
@@ -197,7 +207,10 @@ public class PersonalDetailsControllerTest {
                 datePropertyEditorMock, countryServiceMock, ethnicityServiceMock, disabilityServiceMock,// 
                 languageServiceMok, languagePropertyEditorMopck, countryPropertyEditorMock,// 
                 disabilityPropertyEditorMock, ethnicityPropertyEditorMock,// 
-                personalDetailsValidatorMock, personalDetailsServiceMock, domicileDAOMock, domicilePropertyEditorMock) {
+                personalDetailsValidatorMock, personalDetailsServiceMock, domicileDAOMock, domicilePropertyEditorMock,
+                languageQualificationValidatorMock,
+                languageQualificationDAOMock, 
+                documentPropertyEditorMock) {
 	        @Override
             public StringTrimmerEditor newStringTrimmerEditor() {
                 return stringTrimmerEditor;
@@ -215,7 +228,7 @@ public class PersonalDetailsControllerTest {
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
 		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
 		EasyMock.replay(binderMock);
-		controller.registerPropertyEditors(binderMock);
+		controller.registerPropertyEditorsForPersonalDetails(binderMock);
 		EasyMock.verify(binderMock);
 	}
 
@@ -270,7 +283,7 @@ public class PersonalDetailsControllerTest {
 		personalDetailsServiceMock.save(personalDetails);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(personalDetailsServiceMock,applicationsServiceMock,  errors);
-		String view = controller.editPersonalDetails(personalDetails, errors);
+		String view = controller.editPersonalDetails(personalDetails, errors, modelMock);
 		EasyMock.verify(personalDetailsServiceMock, applicationsServiceMock);
 		assertEquals("redirect:/update/getPersonalDetails?applicationId=ABC", view);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
@@ -283,7 +296,7 @@ public class PersonalDetailsControllerTest {
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 
 		EasyMock.replay(personalDetailsServiceMock, errors);
-		String view = controller.editPersonalDetails(personalDetails, errors);
+		String view = controller.editPersonalDetails(personalDetails, errors, modelMock);
 		EasyMock.verify(personalDetailsServiceMock);
 		assertEquals("/private/pgStudents/form/components/personal_details", view);
 	}
@@ -296,6 +309,8 @@ public class PersonalDetailsControllerTest {
 		ethnicityServiceMock = EasyMock.createMock(EthnicityService.class);
 		languageServiceMok = EasyMock.createMock(LanguageService.class);
 		personalDetailsServiceMock = EasyMock.createMock(PersonalDetailsService.class);
+		
+		modelMock = EasyMock.createMock(Model.class);
 
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 		countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
@@ -305,14 +320,22 @@ public class PersonalDetailsControllerTest {
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 		domicileDAOMock = EasyMock.createMock(DomicileDAO.class);
 		domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
-
+		
+		languageQualificationValidatorMock = EasyMock.createMock(LanguageQualificationValidator.class); 
+	    languageQualificationDAOMock = EasyMock.createMock(LanguageQualificationDAO.class);
+	    documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+		
 		personalDetailsValidatorMock = EasyMock.createMock(PersonalDetailsValidator.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		controller = new PersonalDetailsController(applicationsServiceMock, userServiceMock, applicationFormPropertyEditorMock,// 
 				datePropertyEditorMock, countryServiceMock, ethnicityServiceMock, disabilityServiceMock,// 
 				languageServiceMok, languagePropertyEditorMopck, countryPropertyEditorMock,// 
 				disabilityPropertyEditorMock, ethnicityPropertyEditorMock,// 
-				personalDetailsValidatorMock, personalDetailsServiceMock, domicileDAOMock, domicilePropertyEditorMock);
+				personalDetailsValidatorMock, personalDetailsServiceMock, domicileDAOMock, 
+				domicilePropertyEditorMock, 
+				languageQualificationValidatorMock,
+				languageQualificationDAOMock, 
+				documentPropertyEditorMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);

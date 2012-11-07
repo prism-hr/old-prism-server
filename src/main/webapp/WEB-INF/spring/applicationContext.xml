@@ -13,8 +13,8 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
         http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd">
 
-    <!-- See TimeExecutionProfiler.java / Enable this statement to do some rudimentary execution time profiling. -->
-    <!-- <aop:aspectj-autoproxy /> -->
+<!--     See TimeExecutionProfiler.java / Enable this statement to do some rudimentary execution time profiling. -->
+<!--     <aop:aspectj-autoproxy /> -->
     
     <import resource="schedules/Spring-Scheduler.xml" />
     
@@ -99,9 +99,9 @@
 
     <import resource="hibernateEntities.xml" />
 
-    <!-- Mail configuration -->
-    <!-- Use this bean if you want to debug outgoing email messages locally on your development machine. <bean id="mailSender" 
-        class="com.zuehlke.pgadmissions.mail.FakeLoggingMailSender"> -->
+<!--     Mail configuration -->
+<!-- Use this bean if you want to debug outgoing email messages locally on your development machine. -->
+<!--     <bean id="mailSender"  class="com.zuehlke.pgadmissions.mail.FakeLoggingMailSender"> -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host">
             <value>${email.server}</value>

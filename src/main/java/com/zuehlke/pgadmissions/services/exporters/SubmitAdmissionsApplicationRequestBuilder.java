@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -20,9 +21,12 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.CountryTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.CourseApplicationTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.DisabilityTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.EmployerTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageScoreTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.EthnicityTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.GenderTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.InstitutionTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.LanguageBandScoreTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ModeofattendanceTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.NameTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.NationalityTp;
@@ -31,6 +35,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.PassportTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ProgrammeOccurrenceTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsinEnglishTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.RegistrypersonTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
@@ -40,6 +45,8 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.PassportInformation;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -49,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
 public class SubmitAdmissionsApplicationRequestBuilder {
 
@@ -100,10 +108,9 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicationTp.getQualificationDetails().addAll(buildQualificationDetails());
         applicationTp.getEmployer().addAll(buildEmployer());
         applicationTp.getReferee().addAll(buildReferee());
-        
-//      TODO
-//      applicationTp.getEnglishLanguageQualification().addAll(c);
-        
+        if (applicationForm.getPersonalDetails().getLanguageQualificationAvailable()) {
+            applicationTp.getEnglishLanguageQualification().addAll(buildEnglishLanguageQualification());
+        }
         return applicationTp;
     }
 
@@ -183,11 +190,12 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     
     private PassportTp buildPassport() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        PassportInformation passportInformation = personalDetails.getPassportInformation();
         PassportTp passportTp = xmlFactory.createPassportTp();
-        passportTp.setName(personalDetails.getNameOnPassport());
-        passportTp.setNumber(personalDetails.getPassportNumber());
-        passportTp.setExpiryDate(buildXmlDate(personalDetails.getPassportExpiryDate()));
-        passportTp.setIssueDate(buildXmlDate(personalDetails.getPassportIssueDate()));
+        passportTp.setName(passportInformation.getNameOnPassport());
+        passportTp.setNumber(passportInformation.getPassportNumber());
+        passportTp.setExpiryDate(buildXmlDate(passportInformation.getPassportExpiryDate()));
+        passportTp.setIssueDate(buildXmlDate(passportInformation.getPassportIssueDate()));
         return passportTp;
     }
     
@@ -210,14 +218,13 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
         
         AddressTp addressTp = xmlFactory.createAddressTp();
-//      TODO: We need to add these address lines to the database
-//      addressTp.setAddressLine1(value)
-//      addressTp.setAddressLine2(value)
-//      addressTp.setAddressLine3(value)
-//      addressTp.setAddressLine4(value)
-//      addressTp.setAddressLine5(value)
-//      addressTp.setCountry(value)
-//      addressTp.setPostCode(value);
+        Address currentAddress = applicationForm.getCurrentAddress();
+        addressTp.setAddressLine1(currentAddress.getAddress1());
+        addressTp.setAddressLine2(currentAddress.getAddress2());
+        addressTp.setAddressLine3(currentAddress.getAddress3());
+        addressTp.setAddressLine4(currentAddress.getAddress4());
+        addressTp.setAddressLine5(currentAddress.getAddress5());
+        addressTp.setCountry(currentAddress.getCountry().getCode());
         
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(personalDetails.getEmail());
@@ -235,14 +242,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setAddressLine4(contactAddress.getAddress4());
         addressTp.setAddressLine5(contactAddress.getAddress5());
         addressTp.setCountry(contactAddress.getCountry().getCode());
-//      TODO: We need to add these address lines to the database
-//      addressTp.setAddressLine1(value)
-//      addressTp.setAddressLine2(value)
-//      addressTp.setAddressLine3(value)
-//      addressTp.setAddressLine4(value)
-//      addressTp.setAddressLine5(value)
-//      addressTp.setCountry(value)
-//      addressTp.setPostCode(value);
+
         contactDtlsTp.setAddressDtls(addressTp);
         return contactDtlsTp;
     }
@@ -408,6 +408,58 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 
                 resultList.add(refereeTp);
             }
+        }
+        return resultList;
+    }
+    
+    private Collection<? extends EnglishLanguageTp> buildEnglishLanguageQualification() {
+        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        ArrayList<EnglishLanguageTp> resultList = new ArrayList<EnglishLanguageTp>();
+        for (LanguageQualification languageQualifications : personalDetails.getLanguageQualifications()) {
+            EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
+            englishLanguageTp.setDateTaken(buildXmlDate(languageQualifications.getDateOfExamination()));
+            
+            if (languageQualifications.getQualificationType() == LanguageQualificationEnum.OTHER) {
+                englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
+                englishLanguageTp.setOtherLanguageExam(languageQualifications.getOtherQualificationTypeName());
+            } else if (languageQualifications.getQualificationType() == LanguageQualificationEnum.TOEFL) {
+                englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
+            } else if (languageQualifications.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
+                englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
+            } else {
+                throw new IllegalArgumentException(String.format("QualificationType type [%s] could not be converted", languageQualifications.getQualificationType()));
+            }            
+        
+        
+            if (languageQualifications.getExamTakenOnline()) {
+                englishLanguageTp.setMethod("ONLINE");
+            } else {
+                englishLanguageTp.setMethod("WRITTEN");
+            }
+        
+            EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
+            overallScoreTp.setScore(String.valueOf(languageQualifications.getOverallScore()));
+            
+            EnglishLanguageScoreTp readingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            readingScoreTp.setName(LanguageBandScoreTp.READING);
+            readingScoreTp.setScore(String.valueOf(languageQualifications.getReadingScore()));
+            
+            EnglishLanguageScoreTp writingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            writingScoreTp.setName(LanguageBandScoreTp.WRITING);
+            writingScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
+            
+            EnglishLanguageScoreTp speakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            speakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
+            speakingScoreTp.setScore(String.valueOf(languageQualifications.getSpeakingcore()));
+            
+            EnglishLanguageScoreTp listeningScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
+            listeningScoreTp.setScore(String.valueOf(languageQualifications.getListeningScore()));
+            
+            englishLanguageTp.getLanguageScore().addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, speakingScoreTp, listeningScoreTp));
+            
+            resultList.add(englishLanguageTp);
         }
         return resultList;
     }

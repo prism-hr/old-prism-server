@@ -61,6 +61,8 @@
                 <value>com.zuehlke.pgadmissions.domain.Domicile</value>
                 <value>com.zuehlke.pgadmissions.domain.QualificationType</value>
 				<value>com.zuehlke.pgadmissions.domain.SourcesOfInterest</value>
+                <value>com.zuehlke.pgadmissions.domain.PassportInformation</value>
+                <value>com.zuehlke.pgadmissions.domain.LanguageQualification</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

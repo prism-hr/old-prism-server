@@ -9,23 +9,22 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 @Repository
 public class PersonalDetailDAO {
 
-	private final SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
-	PersonalDetailDAO(){
-		this(null);
-	}
-	@Autowired
-	public PersonalDetailDAO(SessionFactory sessionFactory){
-		this.sessionFactory = sessionFactory;
-	}
-	
+    PersonalDetailDAO() {
+        this(null);
+    }
 
-	public void save(PersonalDetails personalDetails) {
-		sessionFactory.getCurrentSession().saveOrUpdate(personalDetails);
-	}
-	
-	public PersonalDetails getPersonalDetailsById(Integer id) {
-		return (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, id);
-	}
+    @Autowired
+    public PersonalDetailDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
+    public void save(PersonalDetails personalDetails) {
+        sessionFactory.getCurrentSession().saveOrUpdate(personalDetails);
+    }
+    
+    public PersonalDetails getPersonalDetailsById(Integer id) {
+        return (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, id);
+    }
 }

@@ -18,15 +18,24 @@ public abstract class DomainObject<T> implements Serializable {
 		if (other == null) {
 			return false;
 		}
+		
 		if (id == null) {
 			return false;
 		}
+		
 		if (((DomainObject<?>) other).getId() == null) {
 			return false;
 		}
+		
+		if (this.getClass().isAssignableFrom(other.getClass())) {
+		    // for LAYZ loaded objects
+		    return id.equals(((DomainObject<?>) other).getId());
+		}
+		
 		if (!this.getClass().equals(other.getClass())) {
 			return false;
 		}
+		
 		return id.equals(((DomainObject<?>) other).getId());
 	}
 

@@ -24,7 +24,6 @@ public enum ApplicationTransferStatus {
     }
 
     public String displayValue() {
-
         return displayValue;
     }
 

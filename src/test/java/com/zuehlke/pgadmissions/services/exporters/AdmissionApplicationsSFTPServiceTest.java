@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.ZipEntry;
@@ -13,6 +12,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -35,8 +36,8 @@ public class AdmissionApplicationsSFTPServiceTest {
     
     @Before
     public void setup() throws IOException {
-        File pdfFile = new File("src/test/resources/pdf/valid.pdf");
-        document = new DocumentBuilder().content(FileUtils.readFileToByteArray(pdfFile)).toDocument();
+        Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
+        document = new DocumentBuilder().content(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).toDocument();
     }
     
     @Test

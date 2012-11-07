@@ -330,8 +330,8 @@ public class ApprovalServiceTest {
 		EasyMock.replay(userServiceMock);
 
 		Date startDate = new Date();
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption(1, "full").toProgrammeDetails();
-		ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate,1)).enabled(true).studyOption(1, "full").toProgramInstance();
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").toProgrammeDetails();
+		ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate,1)).enabled(true).studyOption("1", "full").toProgramInstance();
 		Program program = new ProgramBuilder().id(1).instances(instance).toProgram();
 		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).toApplicationForm();
 
@@ -360,9 +360,9 @@ public class ApprovalServiceTest {
 		EasyMock.replay(userServiceMock);
 
 		Date startDate = DateUtils.addDays(new Date(), 1);
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption(1, "full").toProgrammeDetails();
-		ProgramInstance instanceDisabled = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(false).studyOption(1, "full").toProgramInstance();
-		ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3)).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption(1, "full").toProgramInstance();
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").toProgrammeDetails();
+		ProgramInstance instanceDisabled = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(false).studyOption("1", "full").toProgramInstance();
+		ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3)).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption("1", "full").toProgramInstance();
 		Program program = new ProgramBuilder().id(1).instances(instanceDisabled, instanceEnabled).toProgram();
 		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).toApplicationForm();
 

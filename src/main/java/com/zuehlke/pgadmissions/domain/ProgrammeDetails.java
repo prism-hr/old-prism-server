@@ -47,7 +47,7 @@ public class ProgrammeDetails extends DomainObject<Integer> implements FormSecti
 	private String studyOption;
 	
 	@Column(name = "study_code")
-    private Integer studyOptionCode;
+    private String studyOptionCode;
 
 	@Column(name = "project_name")
 	private String projectName;
@@ -105,11 +105,11 @@ public class ProgrammeDetails extends DomainObject<Integer> implements FormSecti
 		this.studyOption = studyOption;
 	}
 	
-    public Integer getStudyOptionCode() {
+    public String getStudyOptionCode() {
         return studyOptionCode;
     }
 
-    public void setStudyOptionCode(Integer studyCode) {
+    public void setStudyOptionCode(String studyCode) {
         this.studyOptionCode = studyCode;
     }
 

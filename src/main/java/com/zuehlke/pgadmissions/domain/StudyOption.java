@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 public class StudyOption {
 
-    private Integer id;
+    private String id;
     
     private String name;
     
@@ -45,12 +45,12 @@ public class StudyOption {
         return "StudyOption [id=" + id + ", name=" + name + "]";
     }
 
-    public StudyOption(Integer id, String name) {
+    public StudyOption(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 

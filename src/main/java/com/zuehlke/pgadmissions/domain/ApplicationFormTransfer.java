@@ -14,41 +14,41 @@ import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
- * Stores information about a single transfer of application from PRISM to UCL-PORTICO system.
- * This transfer is supposed to happen via a mixture of webservice published by UCL-PORTICO and SFTP transfer.
- * For any given application several transfers may happen during the history of the system.
+ * I represent a single transfer of application form.
+ * Applications forms are transfered from PRISM system to UCL-PORTICO system.
+ * I represent the whole lifecycle of the transfer - from scheduling up to finishing (successfully or unsuccessfully).<p/>
  *
+ * Remark: the actual data transfer is supposed to happen via a mixture of webservice published by UCL-PORTICO and SFTP transfer.
+ * For any given application form several transfers may happen during the history of the system.
  * Business logic is deciding that at some point given application form should be transferred to UCL by creating
- * an ApplicationFormTransfer instance with status set to SCHEDULED.
+ * an ApplicationFormTransfer instance with status set to QUEUED_FOR_WEBSERVICE_CALL.
  */
-@Entity(name = "APPLICATION_TRANSFER")
+@Entity(name = "APPLICATION_FORM_TRANSFER")
 @Access(AccessType.FIELD)
 public class ApplicationFormTransfer extends DomainObject<Long> {
 
+    /** The application form that constitutes my payload (a payload of the transfer I am representing). */
     @ManyToOne
     @JoinColumn(name = "application_id")
-    private ApplicationForm application;
+    private ApplicationForm applicationForm;
 
+    /** Timepoint when I was created (so this is the timepoint of scheduling). */
     @Column(name = "transfer_begin_timepoint")
     private Date transferStartTimepoint;
 
+    /** Timepoint when I was successfully finished. In case of failed transfers this value stays null. */
     @Column(name = "transfer_end_timepoint")
     private Date transferFinishTimepoint;
-
-    @Column(name = "was_webservice_call_successful")
-    private Boolean wasWebserviceCallSuccessful;
-
-    @Column(name = "was_files_transfer_successful")
-    private Boolean wasFilesTransferSuccessful;
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationTransferStatusEnumUserType")
     @Column(name = "status")
     private ApplicationTransferStatus status;
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(name = "ucl_user_id_received")
+    private String uclUserIdReceived;
+
+    @Column(name = "ucl_booking_ref_number_received")
+    private String uclBookingReferenceReceived;
 
     @Override
     @Id
@@ -58,12 +58,17 @@ public class ApplicationFormTransfer extends DomainObject<Long> {
         return id;
     }
 
-    public ApplicationForm getApplication() {
-        return application;
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setApplication(ApplicationForm application) {
-        this.application = application;
+    public ApplicationForm getApplicationForm() {
+        return applicationForm;
+    }
+
+    public void setApplicationForm(ApplicationForm applicationForm) {
+        this.applicationForm = applicationForm;
     }
 
     public Date getTransferStartTimepoint() {
@@ -82,27 +87,27 @@ public class ApplicationFormTransfer extends DomainObject<Long> {
         this.transferFinishTimepoint = transferFinishTimepoint;
     }
 
-    public Boolean getWasWebserviceCallSuccessful() {
-        return wasWebserviceCallSuccessful;
-    }
-
-    public void setWasWebserviceCallSuccessful(Boolean wasWebserviceCallSuccessful) {
-        this.wasWebserviceCallSuccessful = wasWebserviceCallSuccessful;
-    }
-
-    public Boolean getWasFilesTransferSuccessful() {
-        return wasFilesTransferSuccessful;
-    }
-
-    public void setWasFilesTransferSuccessful(Boolean wasFilesTransferSuccessful) {
-        this.wasFilesTransferSuccessful = wasFilesTransferSuccessful;
-    }
-
     public ApplicationTransferStatus getStatus() {
         return status;
     }
 
     public void setStatus(ApplicationTransferStatus status) {
         this.status = status;
+    }
+
+    public String getUclBookingReferenceReceived() {
+        return uclBookingReferenceReceived;
+    }
+
+    public void setUclBookingReferenceReceived(String uclBookingReferenceReceived) {
+        this.uclBookingReferenceReceived = uclBookingReferenceReceived;
+    }
+
+    public String getUclUserIdReceived() {
+        return uclUserIdReceived;
+    }
+
+    public void setUclUserIdReceived(String uclUserIdReceived) {
+        this.uclUserIdReceived = uclUserIdReceived;
     }
 }

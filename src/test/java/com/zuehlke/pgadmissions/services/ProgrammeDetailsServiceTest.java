@@ -39,16 +39,16 @@ public class ProgrammeDetailsServiceTest {
 	
 	@Test
 	public void shouldReturnStudyOptionsAvaialbleForProgram(){
-		ProgramInstance programInstanceOne = new ProgramInstanceBuilder().id(1).studyOption(1, "Full-time").toProgramInstance();
-		ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().id(1).studyOption(31, "Part-time").toProgramInstance();
-		ProgramInstance programInstanceThree = new ProgramInstanceBuilder().id(1).studyOption(1, "Full-time").toProgramInstance();
+		ProgramInstance programInstanceOne = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time").toProgramInstance();
+		ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().id(1).studyOption("31", "Part-time").toProgramInstance();
+		ProgramInstance programInstanceThree = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time").toProgramInstance();
 		Program program = new ProgramBuilder().id(6).toProgram();
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstanceOne, programInstanceTwo, programInstanceThree));
 		EasyMock.replay(programInstanceDAOMock);
 		
 		List<StudyOption> options =  programmeService.getAvailableStudyOptions(program);
 		assertEquals(2, options.size());
-		assertTrue(options.containsAll(Arrays.asList(new StudyOption(1, "Full-time"), new StudyOption(31, "Part-time"))));
+		assertTrue(options.containsAll(Arrays.asList(new StudyOption("1", "Full-time"), new StudyOption("31", "Part-time"))));
 	}
 	
 	@Before

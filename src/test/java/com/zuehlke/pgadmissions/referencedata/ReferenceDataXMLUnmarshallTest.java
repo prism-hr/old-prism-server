@@ -25,9 +25,9 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions.Institution;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Nationalities.Nationality;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Programmes;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Programmes.Programme;
-import com.zuehlke.pgadmissions.referencedata.jaxb.Programmes.Programme.ModeOfAttendance;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications.Qualification;
 import com.zuehlke.pgadmissions.referencedata.jaxb.SourcesOfInterest;
@@ -43,7 +43,7 @@ public class ReferenceDataXMLUnmarshallTest {
         File f = new File("src/test/resources/reference_data/countriesOfBirth.xml");
         Countries countries = (Countries) u.unmarshal(f);
 
-        Assert.assertEquals(224, countries.getCountry().size());
+        Assert.assertEquals(249, countries.getCountry().size());
         Assert.assertEquals("AD", countries.getCountry().get(0).getCode());
     }
     
@@ -99,7 +99,7 @@ public class ReferenceDataXMLUnmarshallTest {
         File f = new File("src/test/resources/reference_data/countriesOfDomicile.xml");
         Domiciles countries = (Domiciles) u.unmarshal(f);
 
-        Assert.assertEquals(229, countries.getDomicile().size());
+        Assert.assertEquals(232, countries.getDomicile().size());
         Assert.assertEquals("AD", countries.getDomicile().get(0).getCode());
     }
     
@@ -187,8 +187,8 @@ public class ReferenceDataXMLUnmarshallTest {
         File f = new File("src/test/resources/reference_data/nationalities.xml");
         Nationalities nationalities = (Nationalities) u.unmarshal(f);
 
-        Assert.assertEquals(224, nationalities.getNationality().size());
-        Assert.assertEquals("AA", nationalities.getNationality().get(0).getCode());
+        Assert.assertEquals(228, nationalities.getNationality().size());
+        Assert.assertEquals("AD", nationalities.getNationality().get(0).getCode());
     }
     
     @Test
@@ -210,33 +210,33 @@ public class ReferenceDataXMLUnmarshallTest {
     
     @Test
     public void shouldUnmarshallPrismProgrammes() throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(Programmes.class);
+        JAXBContext jc = JAXBContext.newInstance(ProgrammeOccurrences.class);
         Unmarshaller u = jc.createUnmarshaller();
 
         File f = new File("src/test/resources/reference_data/prismProgrammes.xml");
-        Programmes prismProgrammes = (Programmes) u.unmarshal(f);
+        ProgrammeOccurrences prismProgrammes = (ProgrammeOccurrences) u.unmarshal(f);
 
-        Assert.assertEquals(66, prismProgrammes.getProgramme().size());
-        Assert.assertEquals("DDNBENSING09", prismProgrammes.getProgramme().get(0).getCode());
+        Assert.assertEquals(38, prismProgrammes.getProgrammeOccurrence().size());
+        Assert.assertEquals("DDNBENSING09", prismProgrammes.getProgrammeOccurrence().get(0).getProgramme().getCode());
     }
     
     @Test
     @Ignore
     public void createPrismProgrammesInsertStatements() throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(Programmes.class);
+        JAXBContext jc = JAXBContext.newInstance(ProgrammeOccurrences.class);
         Unmarshaller u = jc.createUnmarshaller();
 
         File f = new File("src/test/resources/reference_data/prismProgrammes.xml");
-        Programmes prismProgrammes = (Programmes) u.unmarshal(f);
+        ProgrammeOccurrences prismProgrammes = (ProgrammeOccurrences) u.unmarshal(f);
         
         System.out.println(String.format("INSERT INTO PROGRAM_TMP (code, name, academic_year, start_date, end_date, attendance_code, attendance_name, enabled) VALUES "));    
-        for (Programme prog : prismProgrammes.getProgramme()) {
+        for (ProgrammeOccurrence prog : prismProgrammes.getProgrammeOccurrence()) {
             ModeOfAttendance attendance = prog.getModeOfAttendance();
             
             System.out.println(StringEscapeUtils.escapeSql(
                     String.format("(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", true), ", 
-                    prog.getCode(),
-                    prog.getName(),
+                    prog.getProgramme().getCode(),
+                    prog.getProgramme().getName(),
                     prog.getAcademicYear(),
                     prog.getStartDate(),
                     prog.getEndDate(),

@@ -68,6 +68,9 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	@Column(name="completed")
 	private CheckedStatus completed;
 	
+	@Column(name="send_to_ucl")
+	private Boolean sendToUCL;
+	
 	public String getQualificationSubject() {
 		return qualificationSubject;
 	}
@@ -190,4 +193,12 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
     public void setQualificationType(QualificationType qualificationType) {
         this.qualificationType = qualificationType;
     }
+    
+    public Boolean getSendToUCL() {
+		return sendToUCL;
+	}
+    
+    public void setSendToUCL(Boolean sendToUCL) {
+		this.sendToUCL = sendToUCL;
+	}
 }

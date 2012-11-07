@@ -24,7 +24,7 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().id(1).firstname("first").lastname("last").email("email").toSuggestedSupervisor();
 
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test").projectName("project")
-				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption(1, "Full-time").sourcesOfInterest(interest)
+				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption("1", "Full-time").sourcesOfInterest(interest)
 				.suggestedSupervisors(suggestedSupervisor).toProgrammeDetails();
 
 		sessionFactory.getCurrentSession().save(programmeDetails);
@@ -51,7 +51,7 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().saveOrUpdate(suggestedSupervisor);
 
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test").projectName("project")
-				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption(1, "Full-time").sourcesOfInterest(interest)
+				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption("1", "Full-time").sourcesOfInterest(interest)
 				.suggestedSupervisors(suggestedSupervisor).toProgrammeDetails();
 
 		sessionFactory.getCurrentSession().save(programmeDetails);

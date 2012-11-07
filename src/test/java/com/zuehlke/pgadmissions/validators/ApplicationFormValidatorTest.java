@@ -77,7 +77,7 @@ public class ApplicationFormValidatorTest {
 	@Test
 	@DirtiesContext
 	public void shouldRejectIfProgrammeDetailsSectionNotSaved() {
-		ProgrammeDetails unsavedProgramDetails = new ProgrammeDetailsBuilder().studyOption(1, "Full-time").toProgrammeDetails();
+		ProgrammeDetails unsavedProgramDetails = new ProgrammeDetailsBuilder().studyOption("1", "Full-time").toProgrammeDetails();
 		applicationForm.setProgrammeDetails(unsavedProgramDetails);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, unsavedProgramDetails.getStudyOption())).andReturn(
@@ -188,7 +188,7 @@ public class ApplicationFormValidatorTest {
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
 		ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
 		programmeDetail.setStudyOption("Part-time");
-		programmeDetail.setStudyOptionCode(31);
+		programmeDetail.setStudyOptionCode("31");
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "programmeDetails.studyOption");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
 				null);
@@ -207,7 +207,7 @@ public class ApplicationFormValidatorTest {
 	public void shouldRejectIfNoCurrentProgrammeInstancesExist() {
 		ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
 		programmeDetail.setStudyOption("Part-time");
-        programmeDetail.setStudyOptionCode(31);
+        programmeDetail.setStudyOptionCode("31");
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "program");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
 				Collections.EMPTY_LIST);
@@ -238,10 +238,10 @@ public class ApplicationFormValidatorTest {
 	@Before
 	public void setup() throws ParseException {
 		program = new ProgramBuilder().id(1).title("Program 1").toProgram();
-		programInstance = new ProgramInstanceBuilder().id(1).studyOption(1, "Full-time")
+		programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
 				.applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
-		programmeDetails = new ProgrammeDetailsBuilder().studyOption(1, "Full-time").id(2).toProgrammeDetails();
+		programmeDetails = new ProgrammeDetailsBuilder().studyOption("1", "Full-time").id(2).toProgrammeDetails();
 		applicationForm = new ApplicationFormBuilder().program(program).programmeDetails(programmeDetails)
 				.acceptedTerms(CheckedStatus.YES).personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails())
 				.additionalInformation(new AdditionalInformationBuilder().id(3).toAdditionalInformation())//

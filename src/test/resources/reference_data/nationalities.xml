@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <nationalities>
   <nationality>
-    <code>AA</code>
-    <name>Stateless</name>
-  </nationality>
-  <nationality>
     <code>AD</code>
-    <name>Andorra</name>
+    <name>Andorran</name>
   </nationality>
   <nationality>
     <code>AE</code>
-    <name>United Arab Emirates</name>
+    <name>Emirati</name>
   </nationality>
   <nationality>
     <code>AF</code>
-    <name>Afghanistan</name>
+    <name>Afghan</name>
   </nationality>
   <nationality>
     <code>AG</code>
-    <name>Antigua (and Barbuda)</name>
+    <name>Antigua and Barbuda</name>
   </nationality>
   <nationality>
     <code>AI</code>
@@ -26,71 +22,71 @@
   </nationality>
   <nationality>
     <code>AL</code>
-    <name>Albania</name>
+    <name>Albanian</name>
   </nationality>
   <nationality>
     <code>AM</code>
-    <name>Armenia</name>
+    <name>Armenian</name>
   </nationality>
   <nationality>
     <code>AO</code>
-    <name>Angola</name>
+    <name>Angolan</name>
   </nationality>
   <nationality>
     <code>AR</code>
-    <name>Argentina</name>
+    <name>Argentine</name>
   </nationality>
   <nationality>
     <code>AS</code>
-    <name>Samoa US</name>
+    <name>American Samoan</name>
   </nationality>
   <nationality>
     <code>AT</code>
-    <name>Austria</name>
+    <name>Austrian</name>
   </nationality>
   <nationality>
     <code>AU</code>
-    <name>Australia</name>
+    <name>Australian</name>
   </nationality>
   <nationality>
     <code>AZ</code>
-    <name>Azerbaijan</name>
+    <name>Azerbaijani</name>
   </nationality>
   <nationality>
     <code>BA</code>
-    <name>Bosnia and Herzegovina</name>
+    <name>Bosnian</name>
   </nationality>
   <nationality>
     <code>BB</code>
-    <name>Barbados</name>
+    <name>Barbadian</name>
   </nationality>
   <nationality>
     <code>BD</code>
-    <name>Bangladesh</name>
+    <name>Bangladeshi</name>
   </nationality>
   <nationality>
     <code>BE</code>
-    <name>Belgium</name>
+    <name>Belgian</name>
   </nationality>
   <nationality>
     <code>BF</code>
-    <name>Burkina-Faso</name>
+    <name>Burkinan</name>
   </nationality>
   <nationality>
     <code>BG</code>
-    <name>Bulgaria</name>
+    <name>Bulgarian</name>
   </nationality>
   <nationality>
     <code>BH</code>
-    <name>Bahrain</name>
+    <name>Bahraini</name>
   </nationality>
   <nationality>
     <code>BI</code>
-    <name>Burundi</name>
+    <name>Burundian</name>
   </nationality>
   <nationality>
     <code>BJ</code>
-    <name>Benin</name>
+    <name>Beninese</name>
   </nationality>
   <nationality>
     <code>BM</code>
@@ -98,107 +94,107 @@
   </nationality>
   <nationality>
     <code>BN</code>
-    <name>Brunei</name>
+    <name>Bruneian</name>
   </nationality>
   <nationality>
     <code>BO</code>
-    <name>Bolivia</name>
+    <name>Bolivian</name>
   </nationality>
   <nationality>
     <code>BR</code>
-    <name>Brazil</name>
+    <name>Brazilian</name>
   </nationality>
   <nationality>
     <code>BS</code>
-    <name>Bahamas</name>
+    <name>Bahamian</name>
   </nationality>
   <nationality>
     <code>BT</code>
-    <name>Bhutan</name>
+    <name>Bhutanese</name>
   </nationality>
   <nationality>
     <code>BW</code>
-    <name>Botswana</name>
+    <name>Botswanan</name>
   </nationality>
   <nationality>
     <code>BY</code>
-    <name>Belarus</name>
+    <name>Belarusian</name>
   </nationality>
   <nationality>
     <code>BZ</code>
-    <name>Belize</name>
+    <name>Belizean</name>
   </nationality>
   <nationality>
     <code>CA</code>
-    <name>Canada</name>
+    <name>Canadian</name>
   </nationality>
   <nationality>
     <code>CD</code>
-    <name>Congo (Democratic Republic) (Zaire)</name>
+    <name>Congolese (DRC)</name>
   </nationality>
   <nationality>
     <code>CF</code>
-    <name>Central African Republic</name>
+    <name>Central African</name>
   </nationality>
   <nationality>
     <code>CG</code>
-    <name>Congo (People&apos;s Republic)</name>
+    <name>Congolese (PR)</name>
   </nationality>
   <nationality>
     <code>CH</code>
-    <name>Switzerland</name>
+    <name>Swiss</name>
   </nationality>
   <nationality>
     <code>CI</code>
-    <name>Ivory Coast</name>
+    <name>Ivorian</name>
   </nationality>
   <nationality>
     <code>CL</code>
-    <name>Chile</name>
+    <name>Chilean</name>
   </nationality>
   <nationality>
     <code>CM</code>
-    <name>Cameroon</name>
+    <name>Cameroonian</name>
   </nationality>
   <nationality>
     <code>CN</code>
-    <name>China (People&apos;s Republic)</name>
+    <name>Chinese</name>
   </nationality>
   <nationality>
     <code>CO</code>
-    <name>Colombia</name>
+    <name>Colombian</name>
   </nationality>
   <nationality>
     <code>CR</code>
-    <name>Costa Rica</name>
+    <name>Costa Rican</name>
   </nationality>
   <nationality>
     <code>CU</code>
-    <name>Cuba</name>
+    <name>Cuban</name>
   </nationality>
   <nationality>
     <code>CV</code>
-    <name>Cape Verde Islands</name>
+    <name>Cape Verdean</name>
   </nationality>
   <nationality>
     <code>CZ</code>
-    <name>Czech Republic</name>
+    <name>Czech</name>
   </nationality>
   <nationality>
     <code>DE</code>
-    <name>Germany</name>
+    <name>German</name>
   </nationality>
   <nationality>
     <code>DJ</code>
-    <name>Djibouti</name>
+    <name>Djiboutian</name>
   </nationality>
   <nationality>
     <code>DK</code>
-    <name>Denmark</name>
+    <name>Danish</name>
   </nationality>
   <nationality>
     <code>DM</code>
-    <name>Dominica</name>
+    <name>Dominican</name>
   </nationality>
   <nationality>
     <code>DO</code>
@@ -206,39 +202,43 @@
   </nationality>
   <nationality>
     <code>DZ</code>
-    <name>Algeria</name>
+    <name>Algerian</name>
   </nationality>
   <nationality>
     <code>EC</code>
-    <name>Ecuador</name>
+    <name>Ecuadorian</name>
   </nationality>
   <nationality>
     <code>EE</code>
-    <name>Estonia</name>
+    <name>Estonian</name>
   </nationality>
   <nationality>
     <code>EG</code>
-    <name>Egypt</name>
+    <name>Egyptian</name>
+  </nationality>
+  <nationality>
+    <code>EH</code>
+    <name>Sahrawi</name>
   </nationality>
   <nationality>
     <code>ER</code>
-    <name>Eritrea</name>
+    <name>Eritrean</name>
   </nationality>
   <nationality>
     <code>ES</code>
-    <name>Spain</name>
+    <name>Spanish</name>
   </nationality>
   <nationality>
     <code>ET</code>
-    <name>Ethiopia</name>
+    <name>Ethiopian</name>
   </nationality>
   <nationality>
     <code>FI</code>
-    <name>Finland</name>
+    <name>Finnish</name>
   </nationality>
   <nationality>
     <code>FJ</code>
-    <name>Fiji</name>
+    <name>Fijian</name>
   </nationality>
   <nationality>
     <code>FK</code>
@@ -246,19 +246,19 @@
   </nationality>
   <nationality>
     <code>FM</code>
-    <name>Micronesia ( Federated States of )</name>
+    <name>Micronesian</name>
   </nationality>
   <nationality>
     <code>FO</code>
-    <name>Faroe Islands</name>
+    <name>Faroese</name>
   </nationality>
   <nationality>
     <code>FR</code>
-    <name>France</name>
+    <name>French</name>
   </nationality>
   <nationality>
     <code>GA</code>
-    <name>Gabon</name>
+    <name>Gabonese</name>
   </nationality>
   <nationality>
     <code>GB</code>
@@ -290,15 +290,15 @@
   </nationality>
   <nationality>
     <code>GD</code>
-    <name>Grenada</name>
+    <name>Grenadian</name>
   </nationality>
   <nationality>
     <code>GE</code>
-    <name>Georgia</name>
+    <name>Georgian</name>
   </nationality>
   <nationality>
     <code>GH</code>
-    <name>Ghana</name>
+    <name>Ghanaian</name>
   </nationality>
   <nationality>
     <code>GI</code>
@@ -306,75 +306,75 @@
   </nationality>
   <nationality>
     <code>GL</code>
-    <name>Greenland (&amp; Faroe Isles)</name>
+    <name>Greenlander</name>
   </nationality>
   <nationality>
     <code>GM</code>
-    <name>Gambia</name>
+    <name>Gambian</name>
   </nationality>
   <nationality>
     <code>GN</code>
-    <name>Guinea</name>
+    <name>Guinean</name>
   </nationality>
   <nationality>
     <code>GQ</code>
-    <name>Equatorial Guinea</name>
+    <name>Equatorial Guinean</name>
   </nationality>
   <nationality>
     <code>GR</code>
-    <name>Greece</name>
+    <name>Greek</name>
   </nationality>
   <nationality>
     <code>GS</code>
-    <name>South Georgia and the South Sandwich Islands</name>
+    <name>South Georgia and South Sandwich Islands</name>
   </nationality>
   <nationality>
     <code>GT</code>
-    <name>Guatemala</name>
+    <name>Guatemalan</name>
   </nationality>
   <nationality>
     <code>GU</code>
-    <name>Guam</name>
+    <name>Guamanian</name>
   </nationality>
   <nationality>
     <code>GW</code>
-    <name>Guinea Bissau</name>
+    <name>Guinea-Bissau</name>
   </nationality>
   <nationality>
     <code>GY</code>
-    <name>Guyana</name>
+    <name>Guyanese</name>
   </nationality>
   <nationality>
     <code>HK</code>
-    <name>Hong Kong (SAR), People&apos;s Republic of China</name>
+    <name>Hong Kong</name>
   </nationality>
   <nationality>
     <code>HN</code>
-    <name>Honduras</name>
+    <name>Honduran</name>
   </nationality>
   <nationality>
     <code>HR</code>
-    <name>Croatia</name>
+    <name>Croatian</name>
   </nationality>
   <nationality>
     <code>HT</code>
-    <name>Haiti</name>
+    <name>Haitian</name>
   </nationality>
   <nationality>
     <code>HU</code>
-    <name>Hungary</name>
+    <name>Hungarian</name>
   </nationality>
   <nationality>
     <code>ID</code>
-    <name>Indonesia</name>
+    <name>Indonesian</name>
   </nationality>
   <nationality>
     <code>IE</code>
-    <name>Ireland (Republic)</name>
+    <name>Irish</name>
   </nationality>
   <nationality>
     <code>IL</code>
-    <name>Israel</name>
+    <name>Israeli</name>
   </nationality>
   <nationality>
     <code>IM</code>
@@ -382,75 +382,71 @@
   </nationality>
   <nationality>
     <code>IN</code>
-    <name>India</name>
-  </nationality>
-  <nationality>
-    <code>IO</code>
-    <name>British Indian Ocean Territory</name>
+    <name>Indian</name>
   </nationality>
   <nationality>
     <code>IQ</code>
-    <name>Iraq</name>
+    <name>Iraqi</name>
   </nationality>
   <nationality>
     <code>IR</code>
-    <name>Iran</name>
+    <name>Iranian</name>
   </nationality>
   <nationality>
     <code>IS</code>
-    <name>Iceland</name>
+    <name>Icelander</name>
   </nationality>
   <nationality>
     <code>IT</code>
-    <name>Italy</name>
+    <name>Italian</name>
   </nationality>
   <nationality>
     <code>JM</code>
-    <name>Jamaica</name>
+    <name>Jamaican</name>
   </nationality>
   <nationality>
     <code>JO</code>
-    <name>Jordan</name>
+    <name>Jordanian</name>
   </nationality>
   <nationality>
     <code>JP</code>
-    <name>Japan</name>
+    <name>Japanese</name>
   </nationality>
   <nationality>
     <code>KE</code>
-    <name>Kenya</name>
+    <name>Kenyan</name>
   </nationality>
   <nationality>
     <code>KG</code>
-    <name>Kyrgyzstan</name>
+    <name>Kyrgyz</name>
   </nationality>
   <nationality>
     <code>KH</code>
-    <name>Cambodia (Kampuchea)</name>
+    <name>Cambodian</name>
   </nationality>
   <nationality>
     <code>KI</code>
-    <name>Kiribati (Gilbert and Ellice Islands)</name>
+    <name>Kiribati</name>
   </nationality>
   <nationality>
     <code>KM</code>
-    <name>Comoros</name>
+    <name>Comoran</name>
   </nationality>
   <nationality>
     <code>KN</code>
-    <name>St Kitts-Nevis</name>
+    <name>St Kitts and Nevis</name>
   </nationality>
   <nationality>
     <code>KP</code>
-    <name>Korea (Dem Ppl Republic - North)</name>
+    <name>North Korean</name>
   </nationality>
   <nationality>
     <code>KR</code>
-    <name>Korea (Republic - South)</name>
+    <name>South Korean</name>
   </nationality>
   <nationality>
     <code>KW</code>
-    <name>Kuwait</name>
+    <name>Kuwaiti</name>
   </nationality>
   <nationality>
     <code>KY</code>
@@ -458,15 +454,15 @@
   </nationality>
   <nationality>
     <code>KZ</code>
-    <name>Kazakhstan</name>
+    <name>Kazakh</name>
   </nationality>
   <nationality>
     <code>LA</code>
-    <name>Laos</name>
+    <name>Lao</name>
   </nationality>
   <nationality>
     <code>LB</code>
-    <name>Lebanon</name>
+    <name>Lebanese</name>
   </nationality>
   <nationality>
     <code>LC</code>
@@ -474,15 +470,15 @@
   </nationality>
   <nationality>
     <code>LI</code>
-    <name>Liechtenstein</name>
+    <name>Lichtensteiner</name>
   </nationality>
   <nationality>
     <code>LK</code>
-    <name>Sri Lanka</name>
+    <name>Sri Lankan</name>
   </nationality>
   <nationality>
     <code>LR</code>
-    <name>Liberia</name>
+    <name>Liberian</name>
   </nationality>
   <nationality>
     <code>LS</code>
@@ -490,67 +486,71 @@
   </nationality>
   <nationality>
     <code>LT</code>
-    <name>Lithuania</name>
+    <name>Lithuanian</name>
   </nationality>
   <nationality>
     <code>LU</code>
-    <name>Luxembourg</name>
+    <name>Luxembourger</name>
   </nationality>
   <nationality>
     <code>LV</code>
-    <name>Latvia</name>
+    <name>Latvian</name>
   </nationality>
   <nationality>
     <code>LY</code>
-    <name>Libya</name>
+    <name>Libyan</name>
   </nationality>
   <nationality>
     <code>MA</code>
-    <name>Morocco</name>
+    <name>Moroccan</name>
   </nationality>
   <nationality>
     <code>MC</code>
-    <name>Monaco</name>
+    <name>Monegasque</name>
   </nationality>
   <nationality>
     <code>MD</code>
-    <name>Moldova</name>
+    <name>Moldovan</name>
   </nationality>
   <nationality>
     <code>ME</code>
-    <name>Montenegro</name>
+    <name>Montenegrin</name>
   </nationality>
   <nationality>
     <code>MG</code>
-    <name>Madagascar</name>
+    <name>Malagasy</name>
   </nationality>
   <nationality>
     <code>MH</code>
-    <name>Marshall Islands</name>
+    <name>Marshall Islander</name>
   </nationality>
   <nationality>
     <code>MK</code>
-    <name>Macedonia</name>
+    <name>Macedonian</name>
   </nationality>
   <nationality>
     <code>ML</code>
-    <name>Mali</name>
+    <name>Malian</name>
   </nationality>
   <nationality>
     <code>MM</code>
-    <name>Burma (Myanmar)</name>
+    <name>Burmese</name>
   </nationality>
   <nationality>
     <code>MN</code>
-    <name>Mongolia</name>
+    <name>Mongolian</name>
   </nationality>
   <nationality>
     <code>MO</code>
-    <name>Macao</name>
+    <name>Macanese</name>
+  </nationality>
+  <nationality>
+    <code>MP</code>
+    <name>Northern Mariana Islands</name>
   </nationality>
   <nationality>
     <code>MR</code>
-    <name>Mauritania</name>
+    <name>Mauritanian</name>
   </nationality>
   <nationality>
     <code>MS</code>
@@ -558,35 +558,35 @@
   </nationality>
   <nationality>
     <code>MT</code>
-    <name>Malta</name>
+    <name>Maltese</name>
   </nationality>
   <nationality>
     <code>MU</code>
-    <name>Mauritius</name>
+    <name>Mauritian</name>
   </nationality>
   <nationality>
     <code>MV</code>
-    <name>Maldive Islands</name>
+    <name>Maldivian</name>
   </nationality>
   <nationality>
     <code>MW</code>
-    <name>Malawi</name>
+    <name>Malawian</name>
   </nationality>
   <nationality>
     <code>MX</code>
-    <name>Mexico</name>
+    <name>Mexican</name>
   </nationality>
   <nationality>
     <code>MY</code>
-    <name>Malaysia</name>
+    <name>Malaysian</name>
   </nationality>
   <nationality>
     <code>MZ</code>
-    <name>Mozambique</name>
+    <name>Mozambican</name>
   </nationality>
   <nationality>
     <code>NA</code>
-    <name>Namibia</name>
+    <name>Namibian</name>
   </nationality>
   <nationality>
     <code>NE</code>
@@ -594,59 +594,59 @@
   </nationality>
   <nationality>
     <code>NG</code>
-    <name>Nigeria</name>
+    <name>Nigerian</name>
   </nationality>
   <nationality>
     <code>NI</code>
-    <name>Nicaragua</name>
+    <name>Nicaraguan</name>
   </nationality>
   <nationality>
     <code>NL</code>
-    <name>Netherlands</name>
+    <name>Dutch</name>
   </nationality>
   <nationality>
     <code>NO</code>
-    <name>Norway</name>
+    <name>Norwegian</name>
   </nationality>
   <nationality>
     <code>NP</code>
-    <name>Nepal</name>
+    <name>Nepalese</name>
   </nationality>
   <nationality>
     <code>NR</code>
-    <name>Nauru</name>
+    <name>Nauruan</name>
   </nationality>
   <nationality>
     <code>NZ</code>
-    <name>New Zealand</name>
+    <name>New Zealander</name>
   </nationality>
   <nationality>
     <code>OM</code>
-    <name>Oman</name>
+    <name>Omani</name>
   </nationality>
   <nationality>
     <code>PA</code>
-    <name>Panama</name>
+    <name>Panamanian</name>
   </nationality>
   <nationality>
     <code>PE</code>
-    <name>Peru</name>
+    <name>Peruvian</name>
   </nationality>
   <nationality>
     <code>PG</code>
-    <name>Papua New Guinea</name>
+    <name>Papua New Guinean</name>
   </nationality>
   <nationality>
     <code>PH</code>
-    <name>Philippines</name>
+    <name>Philippine</name>
   </nationality>
   <nationality>
     <code>PK</code>
-    <name>Pakistan</name>
+    <name>Pakistani</name>
   </nationality>
   <nationality>
     <code>PL</code>
-    <name>Poland</name>
+    <name>Polish</name>
   </nationality>
   <nationality>
     <code>PN</code>
@@ -654,43 +654,47 @@
   </nationality>
   <nationality>
     <code>PS</code>
-    <name>Palestine</name>
+    <name>Palestinian</name>
   </nationality>
   <nationality>
     <code>PT</code>
-    <name>Portugal</name>
+    <name>Portuguese</name>
+  </nationality>
+  <nationality>
+    <code>PW</code>
+    <name>Palauan</name>
   </nationality>
   <nationality>
     <code>PY</code>
-    <name>Paraguay</name>
+    <name>Paraguayan</name>
   </nationality>
   <nationality>
     <code>QA</code>
-    <name>Qatar</name>
+    <name>Qatari</name>
   </nationality>
   <nationality>
     <code>QO</code>
-    <name>Kosovo</name>
+    <name>Kosovan</name>
   </nationality>
   <nationality>
     <code>RO</code>
-    <name>Romania</name>
+    <name>Romanian</name>
   </nationality>
   <nationality>
     <code>RS</code>
-    <name>Serbia</name>
+    <name>Serbian</name>
   </nationality>
   <nationality>
     <code>RU</code>
-    <name>Russia</name>
+    <name>Russian</name>
   </nationality>
   <nationality>
     <code>RW</code>
-    <name>Rwanda</name>
+    <name>Rwandan</name>
   </nationality>
   <nationality>
     <code>SA</code>
-    <name>Saudi Arabia</name>
+    <name>Saudi Arabian</name>
   </nationality>
   <nationality>
     <code>SB</code>
@@ -702,15 +706,15 @@
   </nationality>
   <nationality>
     <code>SD</code>
-    <name>Sudan</name>
+    <name>Sudanese</name>
   </nationality>
   <nationality>
     <code>SE</code>
-    <name>Sweden</name>
+    <name>Swedish</name>
   </nationality>
   <nationality>
     <code>SG</code>
-    <name>Singapore</name>
+    <name>Singaporean</name>
   </nationality>
   <nationality>
     <code>SH</code>
@@ -718,11 +722,11 @@
   </nationality>
   <nationality>
     <code>SI</code>
-    <name>Slovenia</name>
+    <name>Slovenian</name>
   </nationality>
   <nationality>
     <code>SK</code>
-    <name>Slovakia</name>
+    <name>Slovak</name>
   </nationality>
   <nationality>
     <code>SL</code>
@@ -734,31 +738,31 @@
   </nationality>
   <nationality>
     <code>SN</code>
-    <name>Senegal</name>
+    <name>Senegalese</name>
   </nationality>
   <nationality>
     <code>SO</code>
-    <name>Somalia</name>
+    <name>Somali</name>
   </nationality>
   <nationality>
     <code>SR</code>
-    <name>Surinam</name>
+    <name>Surinamese</name>
   </nationality>
   <nationality>
     <code>ST</code>
-    <name>Sao Tome &amp; Principe</name>
+    <name>Sao Tome and Principe</name>
   </nationality>
   <nationality>
     <code>SV</code>
-    <name>El Salvador</name>
+    <name>Salvadorean</name>
   </nationality>
   <nationality>
     <code>SY</code>
-    <name>Syria</name>
+    <name>Syrian</name>
   </nationality>
   <nationality>
     <code>SZ</code>
-    <name>Swaziland</name>
+    <name>Swazi</name>
   </nationality>
   <nationality>
     <code>TC</code>
@@ -766,39 +770,39 @@
   </nationality>
   <nationality>
     <code>TD</code>
-    <name>Chad</name>
+    <name>Chadian</name>
   </nationality>
   <nationality>
     <code>TG</code>
-    <name>Togo</name>
+    <name>Togolese</name>
   </nationality>
   <nationality>
     <code>TH</code>
-    <name>Thailand</name>
+    <name>Thai</name>
   </nationality>
   <nationality>
     <code>TJ</code>
-    <name>Tajikistan</name>
+    <name>Tajik</name>
   </nationality>
   <nationality>
     <code>TL</code>
-    <name>Timor (Portuguese)</name>
+    <name>East Timorese</name>
   </nationality>
   <nationality>
     <code>TM</code>
-    <name>Turkmenistan</name>
+    <name>Turkmen</name>
   </nationality>
   <nationality>
     <code>TN</code>
-    <name>Tunisia</name>
+    <name>Tunisian</name>
   </nationality>
   <nationality>
     <code>TO</code>
-    <name>Tonga</name>
+    <name>Tongan</name>
   </nationality>
   <nationality>
     <code>TR</code>
-    <name>Turkey</name>
+    <name>Turkish</name>
   </nationality>
   <nationality>
     <code>TT</code>
@@ -806,51 +810,55 @@
   </nationality>
   <nationality>
     <code>TV</code>
-    <name>Tuvalu</name>
+    <name>Tuvaluan</name>
   </nationality>
   <nationality>
     <code>TW</code>
-    <name>Taiwan</name>
+    <name>Taiwanese</name>
   </nationality>
   <nationality>
     <code>TZ</code>
-    <name>Tanzania</name>
+    <name>Tanzanian</name>
   </nationality>
   <nationality>
     <code>UA</code>
-    <name>Ukraine</name>
+    <name>Ukrainian</name>
   </nationality>
   <nationality>
     <code>UG</code>
-    <name>Uganda</name>
+    <name>Ugandan</name>
   </nationality>
   <nationality>
     <code>US</code>
-    <name>U.S.A.</name>
+    <name>United States citizen</name>
   </nationality>
   <nationality>
     <code>UY</code>
-    <name>Uruguay</name>
+    <name>Uruguayan</name>
   </nationality>
   <nationality>
     <code>UZ</code>
-    <name>Uzbekistan</name>
+    <name>Uzbek</name>
+  </nationality>
+  <nationality>
+    <code>VA</code>
+    <name>Vatican City</name>
   </nationality>
   <nationality>
     <code>VC</code>
-    <name>St Vincent and the Grenadines</name>
+    <name>St Vincent</name>
   </nationality>
   <nationality>
     <code>VE</code>
-    <name>Venezuela</name>
+    <name>Venezuelan</name>
   </nationality>
   <nationality>
     <code>VG</code>
-    <name>Virgin Islands (British)</name>
+    <name>Virgin Islander (British)</name>
   </nationality>
   <nationality>
     <code>VN</code>
-    <name>Vietnam</name>
+    <name>Vietnamese</name>
   </nationality>
   <nationality>
     <code>VU</code>
@@ -858,31 +866,35 @@
   </nationality>
   <nationality>
     <code>WS</code>
-    <name>Samoa</name>
+    <name>Samoan</name>
   </nationality>
   <nationality>
     <code>XA</code>
-    <name>Cyprus EU</name>
+    <name>Cypriot (European Union)</name>
   </nationality>
   <nationality>
     <code>XB</code>
-    <name>Cyprus Non EU</name>
+    <name>Cypriot (Non-European Union)</name>
+  </nationality>
+  <nationality>
+    <code>XX</code>
+    <name>British Indian Ocean Territory</name>
   </nationality>
   <nationality>
     <code>YE</code>
-    <name>Yemen</name>
+    <name>Yemeni</name>
   </nationality>
   <nationality>
     <code>ZA</code>
-    <name>South Africa</name>
+    <name>South African</name>
   </nationality>
   <nationality>
     <code>ZM</code>
-    <name>Zambia</name>
+    <name>Zambian</name>
   </nationality>
   <nationality>
     <code>ZW</code>
-    <name>Zimbabwe</name>
+    <name>Zimbabwean</name>
   </nationality>
   <nationality>
     <code>ZZ</code>
@@ -891,6 +903,10 @@
   <nationality>
     <code>ZZ</code>
     <name>Not known</name>
+  </nationality>
+  <nationality>
+    <code>ZZ</code>
+    <name>Stateless</name>
   </nationality>
   <nationality>
     <code>ZZ</code>

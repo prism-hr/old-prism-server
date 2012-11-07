@@ -24,6 +24,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -864,6 +866,31 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 			}
 		}
 		return false;
+	}
+
+	public List<Document> getQualificationsToSend() {
+		List<Document> result = new ArrayList<Document>(2);
+		for (Qualification qualification : getQualifications()) {
+			Document proofOfAward = qualification.getProofOfAward();
+			if (proofOfAward != null && BooleanUtils.toBoolean(proofOfAward.getSendToUCL())) {
+				result.add(proofOfAward);
+			}
+		}
+		return result;
+	}
+
+	public List<Document> getReferencesToSend() {
+		List<Document> result = new ArrayList<Document>(2);
+		for (Referee refree : getReferees()) {
+			ReferenceComment referenceComment = refree.getReference();
+			if (referenceComment != null && !referenceComment.getDocuments().isEmpty()) {
+				for (Document document : referenceComment.getDocuments()) {
+					if (BooleanUtils.toBoolean(document.getSendToUCL()))
+						result.add(document);
+				}
+			}
+		}
+		return result;
 	}
 
 }

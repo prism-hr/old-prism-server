@@ -35,10 +35,17 @@ public class ApplicationFormTransferError extends DomainObject<Long> {
     @Column(name = "diagnostic_info")
     private String diagnosticInfo;
 
+    /** Webservice request message copy. */
+    @Column(name = "request_copy")
+    private String requestCopy;
+
+    /** Webservice response message copy. */
+    private String responseCopy;
+
     /** Type of the problem as recognized by PRISM. */
     @Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormTransferErrorTypeEnumUserType")
     @Column(name = "problem_classification")
-    private ApplicationFormTransferErrorType ploblemClassification;
+    private ApplicationFormTransferErrorType problemClassification;
 
     /** Decision (programatically) made by PRISM on how to handle the situation. */
     @Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormTransferErrorHandlingDecisionEnumUserType")
@@ -58,4 +65,59 @@ public class ApplicationFormTransferError extends DomainObject<Long> {
         this.id = id;
     }
 
+    public ApplicationFormTransfer getTransfer() {
+        return transfer;
+    }
+
+    public void setTransfer(ApplicationFormTransfer transfer) {
+        this.transfer = transfer;
+    }
+
+    public Date getTimepoint() {
+        return timepoint;
+    }
+
+    public void setTimepoint(Date timepoint) {
+        this.timepoint = timepoint;
+    }
+
+    public String getDiagnosticInfo() {
+        return diagnosticInfo;
+    }
+
+    public void setDiagnosticInfo(String diagnosticInfo) {
+        this.diagnosticInfo = diagnosticInfo;
+    }
+
+    public String getRequestCopy() {
+        return requestCopy;
+    }
+
+    public void setRequestCopy(String requestCopy) {
+        this.requestCopy = requestCopy;
+    }
+
+    public String getResponseCopy() {
+        return responseCopy;
+    }
+
+    public void setResponseCopy(String responseCopy) {
+        this.responseCopy = responseCopy;
+    }
+
+    public ApplicationFormTransferErrorType getProblemClassification() {
+        return problemClassification;
+    }
+
+    public void setProblemClassification(ApplicationFormTransferErrorType problemClassification) {
+        this.problemClassification = problemClassification;
+    }
+
+    public ApplicationFormTransferErrorHandlingDecision getErrorHandlingStrategy() {
+        return errorHandlingStrategy;
+    }
+
+    public void setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision errorHandlingStrategy) {
+        this.errorHandlingStrategy = errorHandlingStrategy;
+    }
 }

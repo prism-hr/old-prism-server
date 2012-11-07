@@ -30,7 +30,7 @@ public class ApplicationFormTransfer extends DomainObject<Long> {
     /** The application form that constitutes my payload (a payload of the transfer I am representing). */
     @ManyToOne
     @JoinColumn(name = "application_id")
-    private ApplicationForm application;
+    private ApplicationForm applicationForm;
 
     /** Timepoint when I was created (so this is the timepoint of scheduling). */
     @Column(name = "transfer_begin_timepoint")
@@ -63,12 +63,12 @@ public class ApplicationFormTransfer extends DomainObject<Long> {
         this.id = id;
     }
 
-    public ApplicationForm getApplication() {
-        return application;
+    public ApplicationForm getApplicationForm() {
+        return applicationForm;
     }
 
-    public void setApplication(ApplicationForm application) {
-        this.application = application;
+    public void setApplicationForm(ApplicationForm applicationForm) {
+        this.applicationForm = applicationForm;
     }
 
     public Date getTransferStartTimepoint() {

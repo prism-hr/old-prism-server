@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.exporters;
+package com.zuehlke.pgadmissions.services.uclexport;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Session;
@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
 import org.apache.commons.io.FileUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -22,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class DocumentExportServiceTest {
+public class SftpAttachmentsSendingServiceTest {
 
 	private JSchFactory jSchFactoryMock;
 	private SftpAttachmentsSendingService documentExportService;
@@ -57,7 +58,7 @@ public class DocumentExportServiceTest {
 		os.close();
 		EasyMock.expectLastCall().anyTimes();
 		EasyMock.replay(jSchFactoryMock, session, channelSftp, os);
-		documentExportService.sendApplicationFormDocuments(form);
+		documentExportService.sendApplicationFormDocuments(form, new DeafListener());
 		EasyMock.verify(jSchFactoryMock, session, channelSftp,os);
 	}
 	
@@ -79,6 +80,6 @@ public class DocumentExportServiceTest {
 	 public void setup() {
 		jSchFactoryMock = EasyMock.createMock(JSchFactory.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
-		documentExportService = new SftpAttachmentsSendingService(jSchFactoryMock, pdfDocumentBuilderMock, "folder");
+		documentExportService = new SftpAttachmentsSendingService(jSchFactoryMock, pdfDocumentBuilderMock);
 	}
 }

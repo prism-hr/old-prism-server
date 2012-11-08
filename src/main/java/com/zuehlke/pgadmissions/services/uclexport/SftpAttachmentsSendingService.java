@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.exporters;
+package com.zuehlke.pgadmissions.services.uclexport;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
@@ -10,6 +10,8 @@ import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
+import com.zuehlke.pgadmissions.services.exporters.PorticoDocumentNameMappings;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +30,7 @@ import java.util.zip.ZipOutputStream;
  * </ol>
  */
 @Service
-public class SftpAttachmentsSendingService {
+class SftpAttachmentsSendingService {
 
     public static class CouldNotCreateAttachmentsPack extends Exception {
         public CouldNotCreateAttachmentsPack(String message) {
@@ -63,6 +65,9 @@ public class SftpAttachmentsSendingService {
     private final JSchFactory jSchFactory;
     private final PdfDocumentBuilder pdfDocumentBuilder;
 
+    @Autowired
+    private UclExportServiceImpl uclExportService;
+
     @Value("${xml.data.export.sftp.host}")
     private String sftpHost;
 
@@ -94,7 +99,7 @@ public class SftpAttachmentsSendingService {
      * @throws SftpTargetDirectoryNotAccessible target directory does not exist or our SSH user has no permissions to access this directory
      * @throws SftpTransmissionFailedOrProtocolError we were able to establish SSH connection but SFTP transfer over this connection failed - protocol error happened (possibly we lost the connection to the remote host)
      */
-    public void sendApplicationFormDocuments(ApplicationForm applicationForm)  throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
+    public void sendApplicationFormDocuments(ApplicationForm applicationForm, TransferListener listener)  throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
         CouldNotOpenSshConnectionToRemoteHost,  SftpTargetDirectoryNotAccessible, SftpTransmissionFailedOrProtocolError
     {
         Session session = null;
@@ -117,6 +122,8 @@ public class SftpAttachmentsSendingService {
                 throw new CouldNotOpenSshConnectionToRemoteHost("Failed to open SSH connection to PORTICO host, configured address was: " + sftpHost + ":" + sftpPort + " username/password=" + sftpUsername + "/" + sftpPassword, e);
             }
 
+            uclExportService.triggerSshConnectionEstablished(listener);
+
             //possible errors: sftp protocol-level problems
             try {
                 sftpChannel = (ChannelSftp) session.openChannel("sftp");
@@ -131,6 +138,8 @@ public class SftpAttachmentsSendingService {
             } catch (SftpException e) {
                 throw new SftpTargetDirectoryNotAccessible("Failed to access remote directory for SFTP transmission: " + targetFolder + ", remote host address is: " + sftpHost + ":" + sftpPort, e);
             }
+
+            uclExportService.triggerAttachmentsSftpTransmissionStarted(listener);
 
             //possible errors: sftp protocol-level problems, connection lost during transmission and local problem with building zip-pack with attachments
             try {
@@ -195,7 +204,6 @@ public class SftpAttachmentsSendingService {
             zos.write(cv.getContent());
             zos.closeEntry();
         }
-
     }
 
     private void addLanguageTestCertificate(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException, CouldNotCreateAttachmentsPack {

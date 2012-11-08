@@ -67,6 +67,9 @@ public class LanguageQualification extends DomainObject<Integer> {
     @Column(name = "exam_taken_online")
     private Boolean examTakenOnline;
     
+	@Column(name="send_to_ucl")
+	private Boolean sendToUCL;
+    
     public LanguageQualification() {
     }
     
@@ -175,6 +178,14 @@ public class LanguageQualification extends DomainObject<Integer> {
     public void setLanguageQualificationDocument(Document languageQualificationDocument) {
         this.languageQualificationDocument = languageQualificationDocument;
     }
+    
+    public Boolean getSendToUCL() {
+		return sendToUCL;
+	}
+    
+    public void setSendToUCL(Boolean sendToUCL) {
+		this.sendToUCL = sendToUCL;
+	}
 
     @Override
     public String toString() {

@@ -9,6 +9,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.AddressTp;
@@ -128,7 +129,12 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
         applicant.setEmployerList(buildEmployer());
-        applicant.setApplicantID(String.valueOf(applicationForm.getApplication().getId()));
+        
+        if (StringUtils.isNotBlank( applicationForm.getApplicant().getUclUserId())) {
+            applicant.setApplicantID(String.valueOf(applicationForm.getApplicant().getId()));
+        } else {
+            applicant.setApplicantID(applicationForm.getApplicant().getUclUserId());
+        }
         
         return applicant;
     }
@@ -170,7 +176,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         }
         
         if (idx < candidateNationalities.size()) {
-            nationalityTp.setCode(candidateNationalities.get(idx).getCode());            
+            nationalityTp.setCode(candidateNationalities.get(idx).getCode());
+            nationalityTp.setName(candidateNationalities.get(idx).getName());   
             return nationalityTp;
         } else {
             return null;
@@ -181,6 +188,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         CountryTp countryTp = xmlFactory.createCountryTp();
         countryTp.setCode(personalDetails.getCountry().getCode());
+        countryTp.setName(personalDetails.getCountry().getName());
         return countryTp;
     }
     
@@ -199,6 +207,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         DisabilityTp disabilityTp = xmlFactory.createDisabilityTp();
         disabilityTp.setCode(Integer.toString(personalDetails.getDisability().getCode()));
+        disabilityTp.setName(personalDetails.getDisability().getName());
         return disabilityTp;
     }
     
@@ -206,6 +215,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EthnicityTp ethnicityTp = xmlFactory.createEthnicityTp();
         ethnicityTp.setCode(Integer.toString(personalDetails.getEthnicity().getCode()));
+        ethnicityTp.setName(personalDetails.getEthnicity().getName());
         return ethnicityTp;
     }
     
@@ -246,7 +256,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private CourseApplicationTp buildCourseApplication() {
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
-        applicationTp.setExternalApplicationID(String.valueOf(applicationForm.getApplicant().getId()));
+        applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
         applicationTp.setProgramme(buildProgrammeOccurence());
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
         if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
@@ -312,6 +322,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
         SourcesOfInterest sourcesOfInterest = programmeDetails.getSourcesOfInterest();
         interestTp.setCode(sourcesOfInterest.getCode());
+        interestTp.setName(sourcesOfInterest.getName());
         if (sourcesOfInterest.isFreeText()) {
             applicationTp.setOtherSourceofInterest(programmeDetails.getSourcesOfInterestText());
         }
@@ -339,6 +350,12 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 InstitutionTp institutionTp = xmlFactory.createInstitutionTp();
                 institutionTp.setCode(qualification.getInstitutionCountry().getCode());
                 institutionTp.setName(qualification.getQualificationInstitution());
+                
+                CountryTp countryTp = xmlFactory.createCountryTp();
+                countryTp.setCode(qualification.getInstitutionCountry().getCode());
+                countryTp.setName(qualification.getInstitutionCountry().getName());
+                institutionTp.setCountry(countryTp);
+                
                 qualificationsTp.setInstitution(institutionTp);
                 
                 resultList.getQualificationDetail().add(qualificationsTp);

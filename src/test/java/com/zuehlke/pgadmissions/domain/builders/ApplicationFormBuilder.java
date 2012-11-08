@@ -70,8 +70,12 @@ public class ApplicationFormBuilder {
 	private String applicationNumber;
 	private boolean pendingApprovalRestart;
 	private RegisteredUser approverRequestedRestart = null;
+	private String uclBookingReferenceNumber;
 	
-	
+	public ApplicationFormBuilder uclBookingReferenceNumber(String number) {
+	    this.uclBookingReferenceNumber = number;
+	    return this;
+	}
 
 	public ApplicationFormBuilder approverRequestedRestart(RegisteredUser approverRequestedRestart) {
 		this.approverRequestedRestart = approverRequestedRestart;
@@ -361,6 +365,7 @@ public class ApplicationFormBuilder {
 		application.setAdminRequestedRegistry(adminRequestedRegistry);
 		application.setPendingApprovalRestart(pendingApprovalRestart);
 		application.setApproverRequestedRestart(approverRequestedRestart);
+		application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
 		return application;
 	}
 }

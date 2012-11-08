@@ -29,11 +29,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.CourseApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.ApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.CourseApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -86,7 +86,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
     private final Logger logger = Logger.getLogger(AdmissionsApplicationsServiceTest.class);
     
     @Autowired
-    @Qualifier("webServiceTemplateV1")
+    @Qualifier("webServiceTemplateV2")
     private WebServiceTemplate webServiceTemplate;
     
     private ProgramInstanceDAO programInstanceDAOMock = null;
@@ -134,7 +134,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
                 applicationForm.getProgram().getInstances().get(0));
         EasyMock.replay(programInstanceDAOMock);
         
-        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV1(programInstanceDAOMock,
+        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV2(programInstanceDAOMock,
                 new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
         
         AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
@@ -145,19 +145,39 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
     @Test
     @Ignore
     public void testConnectivity() throws IOException {
-        SubmitAdmissionsApplicationRequestBuilderV1 submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilderV1(programInstanceDAO, new ObjectFactory());
-        ApplicationForm applicationForm2 = applicationFormDAO.get(2682);
-        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm2).toSubmitAdmissionsApplicationRequest();   
+        ProgramInstance instance = new ProgramInstanceBuilder().academicYear("2013")
+                .applicationDeadline(DateUtils.addMonths(new Date(), 1)).applicationStartDate(new Date()).enabled(true)
+                .identifier("0009").studyOption("F+++++", "Full-time").toProgramInstance();
+    
+        EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);
+        EasyMock.replay(programInstanceDAOMock);
+    
+        SubmitAdmissionsApplicationRequestBuilderV2 submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(programInstanceDAOMock, new ObjectFactory());
+        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+    
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+        webServiceTemplate.getMarshaller().marshal(request, result);
+    
+        String requestAsString = writer.toString();
+    
+        assertNotNull(requestAsString);
+        assertTrue(StringUtils.isNotBlank(requestAsString));
+    
+        System.out.println(requestAsString);        
+        
         AdmissionsApplicationResponse response = null;
         try {
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
         } catch (SoapFaultClientException e) {
+            System.err.println(e.getSoapFault().getFaultStringOrReason());
+            System.err.println(e.getSoapFault().getFaultDetail());
             e.printStackTrace();
         }
         
         assertNotNull(response);
-        assertEquals(response.getReference().getReferenceID(), "");
-        assertEquals(response.getReference().getUserCode(), "");
+        assertEquals(response.getReference().getApplicantID(), "");
+        assertEquals(response.getReference().getApplicationID(), "");
     }
     
     @Test
@@ -175,7 +195,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
         EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);
         EasyMock.replay(programInstanceDAOMock);
         
-        SubmitAdmissionsApplicationRequestBuilderV1 submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilderV1(programInstanceDAOMock, new ObjectFactory());
+        SubmitAdmissionsApplicationRequestBuilderV2 submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(programInstanceDAOMock, new ObjectFactory());
         SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
         
         StringWriter writer = new StringWriter();
@@ -262,7 +282,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
             .projectName("Project Title")
             .sourcesOfInterest(interest)
             .startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
-            .studyOption("1", "Full-time")
+            .studyOption("F+++++", "Full-time")
             .toProgrammeDetails();
         QualificationType qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").toQualificationTitle();
         Qualification qualification = new QualificationBuilder()

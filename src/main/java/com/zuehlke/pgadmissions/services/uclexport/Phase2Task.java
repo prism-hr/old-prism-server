@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
+import org.apache.log4j.Logger;
+
 /**
  * Task for phase 2 of application form transfer. This task has the following general plan:
  *   1. Extract application attachments and prepare zip package containing them all.
@@ -7,6 +9,8 @@ package com.zuehlke.pgadmissions.services.uclexport;
  *   3. Handle sftp errors (if any).
  */
 class Phase2Task implements Runnable {
+    private static final Logger log = Logger.getLogger(Phase1Task.class);
+
     private Integer applicationId;
     private Long transferId;
     private TransferListener listener;
@@ -21,7 +25,9 @@ class Phase2Task implements Runnable {
 
     @Override
     public void run() {
-        uclExportService.transactionallyExecuteSftpTransferAndHandlePersistentQueue(transferId, listener);
+        log.debug("starting phase-2 task for transfer " + transferId);
+        uclExportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(transferId, listener);
+        log.debug("finishing phase-2 task for transfer " + transferId);
     }
 
     @Override

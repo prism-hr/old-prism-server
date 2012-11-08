@@ -19,7 +19,7 @@ class DeafListener implements TransferListener {
     }
 
     @Override
-    public void attachmentsTransferStarted() {
+    public void attachmentsSftpTransmissionStarted() {
         //ignore by design
     }
 
@@ -30,6 +30,11 @@ class DeafListener implements TransferListener {
 
     @Override
     public void transferFailed(ApplicationFormTransferError error) {
+        //ignore by design
+    }
+
+    @Override
+    public void sshConnectionEstablished() {
         //ignore by design
     }
 }

@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ws.WebServiceMessage;
@@ -57,6 +58,7 @@ class UclExportServiceImpl implements UCLExportService {
     private PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutor;
 
     @Autowired
+    @Qualifier("webServiceTemplateV1")
     private WebServiceTemplate webServiceTemplate;
 
     @Autowired

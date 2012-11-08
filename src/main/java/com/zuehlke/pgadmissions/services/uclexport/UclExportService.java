@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
  * This is UCL data export service contract.
  * The service handles pushing business data from PRISM to UCL-PORTICO.
  */
-public interface UCLExportService {
+public interface UclExportService {
 
     /**
      * I am scheduling a new application form transfer for a given application form.

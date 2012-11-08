@@ -227,7 +227,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
             .employerCountry(country)
             .employerName("Zuhlke Ltd.")
             .toEmploymentPosition();
-        Language language = new LanguageBuilder().code("XK").name("United Kingdom").toLanguage();
+        Language language = new LanguageBuilder().code("GB").name("England").toLanguage();
         Disability disability = new DisabilityBuilder().code(0).name("No Disability").toDisability();
         Ethnicity ethnicity = new EthnicityBuilder().code(10).name("White").toEthnicity();
         Domicile domicile = new DomicileBuilder().code("XK").name("United Kingdom").toDomicile();
@@ -243,13 +243,12 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
             .lastName("Denver")
             .gender(Gender.MALE)
             .requiresVisa(true)
-            .passportInformation(new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver").passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20)).toPassportInformation())
+            .passportInformation(new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver").passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20)).passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).toPassportInformation())
             .languageQualificationAvailable(true)
             .languageQualifications(new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false).languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1").toLanguageQualification())
             .phoneNumber("+44 (0) 123 123 1234")
-            .requiresVisa(false)
             .residenceDomicile(domicile)
-            .title(Title.EUROPEAN_ENGINEER)
+            .title(Title.MR)
             .toPersonalDetails();
         AdditionalInformation additionalInformation = new AdditionalInformationBuilder()
             .setConvictions(false)
@@ -288,7 +287,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
         Qualification qualification = new QualificationBuilder()
             .awardDate(new Date())
             .grade("6")
-            .institution("ZHAW")
+            .institution("AF0001")
             .institutionCountry(domicile)
             .languageOfStudy("English")
             .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1))

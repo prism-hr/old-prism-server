@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.ContactDtlsTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.CountryTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.CourseApplicationTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.DisabilityTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.DomicileTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.EmployerTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.EmploymentDetailsTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.EnglishLanguageQualificationDetailsTp;
@@ -116,7 +117,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicant.setNationality(buildNationality(0));
         applicant.setSecondaryNationality(buildNationality(1));
         applicant.setCountryOfBirth(buildCountry());
-        applicant.setVisaRequired(applicant.isVisaRequired());
+        applicant.setCountryOfDomicile(buildDomicile());
+        applicant.setVisaRequired(applicationForm.getPersonalDetails().getRequiresVisa());            
         if (applicationForm.getPersonalDetails().getRequiresVisa()) {
             applicant.setPassport(buildPassport());
         }
@@ -138,13 +140,20 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         
         return applicant;
     }
+    
+    private DomicileTp buildDomicile() {
+        DomicileTp domicileTp = xmlFactory.createDomicileTp();
+        domicileTp.setCode(applicationForm.getPersonalDetails().getResidenceCountry().getCode());
+        domicileTp.setName(applicationForm.getPersonalDetails().getResidenceCountry().getName());
+        return domicileTp;
+    }
 
     private NameTp buildFullName() {
         NameTp nameTp = xmlFactory.createNameTp();
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        nameTp.setTitle(personalDetails.getTitle().getDisplayValue().toUpperCase());
         nameTp.setSurname(personalDetails.getLastName());
         nameTp.setForename1(personalDetails.getFirstName());
+        nameTp.setTitle(personalDetails.getTitle().toString());
         return nameTp;
     }
     
@@ -234,7 +243,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(personalDetails.getEmail());
-        contactDtlsTp.setLandline(personalDetails.getPhoneNumber());
+        contactDtlsTp.setLandline(StringUtils.deleteWhitespace(personalDetails.getPhoneNumber()));
         return contactDtlsTp;
     }
     
@@ -248,8 +257,9 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         addressTp.setAddressLine4(contactAddress.getAddress4());
         addressTp.setAddressLine5(contactAddress.getAddress5());
         addressTp.setCountry(contactAddress.getCountry().getCode());
-
         contactDtlsTp.setAddressDtls(addressTp);
+        contactDtlsTp.setEmail(applicationForm.getPersonalDetails().getEmail());
+        contactDtlsTp.setLandline(StringUtils.deleteWhitespace(applicationForm.getPersonalDetails().getPhoneNumber()));
         return contactDtlsTp;
     }
     
@@ -345,10 +355,13 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 
                 QualificationTp qualificationTp = xmlFactory.createQualificationTp();
                 qualificationTp.setCode(qualification.getQualificationType().getCode());
+                qualificationTp.setName(qualification.getQualificationType().getName());
                 qualificationsTp.setQualification(qualificationTp);
                 
                 InstitutionTp institutionTp = xmlFactory.createInstitutionTp();
-                institutionTp.setCode(qualification.getInstitutionCountry().getCode());
+                // TODO: we allow free text
+                //institutionTp.setCode("");
+                institutionTp.setCode("CO0031");
                 institutionTp.setName(qualification.getQualificationInstitution());
                 
                 CountryTp countryTp = xmlFactory.createCountryTp();
@@ -402,7 +415,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 
                 ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
                 contactDtlsTp.setEmail(referee.getEmail());
-                contactDtlsTp.setLandline(referee.getPhoneNumber());
+                contactDtlsTp.setLandline(StringUtils.deleteWhitespace(referee.getPhoneNumber()));
                 
                 AddressTp addressTp = xmlFactory.createAddressTp();
                 addressTp.setAddressLine1(referee.getAddressLocation().getAddress1());
@@ -473,15 +486,21 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         return resultList;
     }
     
-    private XMLGregorianCalendar buildXmlDate(Date date) {  
-        GregorianCalendar gc = new GregorianCalendar();
-        gc.setTimeInMillis(date.getTime());
-        return datatypeFactory.newXMLGregorianCalendar(gc);
+    private XMLGregorianCalendar buildXmlDate(Date date) {
+        if (date != null) {
+            GregorianCalendar gc = new GregorianCalendar();
+            gc.setTimeInMillis(date.getTime());
+            return datatypeFactory.newXMLGregorianCalendar(gc);
+        }
+        return null;
     }
     
     private XMLGregorianCalendar buildXmlDateYearOnly(String date) {
-        XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-        xmlCalendar.setYear(Integer.valueOf(date));
-        return xmlCalendar;
+        if (date != null) {
+            XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
+            xmlCalendar.setYear(Integer.valueOf(date));
+            return xmlCalendar;
+        } 
+        return null;
     }
 }

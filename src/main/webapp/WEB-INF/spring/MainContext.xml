@@ -50,10 +50,12 @@
     	<property name="cacheSeconds" value="0" />
 	</bean>
 
-	<tx:annotation-driven transaction-manager="transactionManager" />
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!-- shared transaction template for programmatic transaction control -->
-    <bean id="defaultTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate"/>
+    <bean id="defaultTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
 
 	<import resource="applicationContext.xml" />
 

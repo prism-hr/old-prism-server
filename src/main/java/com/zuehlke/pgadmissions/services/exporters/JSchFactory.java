@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services.exporters;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -33,15 +34,24 @@ public class JSchFactory {
     @Value("${xml.data.export.sftp.privatekeyfile}")
     private Resource privateKeyFile;
 
+    @Value("${xml.data.export.sftp.privatekeyfile}")
+    private String privateKeyFilePathAsString;
+
     private JSch jSch = null;
     
     public JSchFactory() {
     }
     
-    public Session getInstance() throws JSchException, IOException {
+    public Session getInstance() throws JSchException, ResourceNotFoundException {
         jSch = new JSch();
-        
-        final byte[] privateKeyAsByteArray = FileUtils.readFileToByteArray(privateKeyFile.getFile());
+
+        byte[] privateKeyAsByteArray;
+        try {
+            privateKeyAsByteArray = FileUtils.readFileToByteArray(privateKeyFile.getFile());
+        } catch (IOException e) {
+            throw new ResourceNotFoundException("Could not access SSH private key file, configured path was: " + privateKeyFilePathAsString, e);
+        }
+
         final byte[] emptyPassPhrase = new byte[0];
         
         jSch.addIdentity("prismIdentity", privateKeyAsByteArray, null, emptyPassPhrase);

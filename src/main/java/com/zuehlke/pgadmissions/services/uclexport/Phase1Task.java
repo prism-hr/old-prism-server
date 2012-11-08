@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
+import org.apache.log4j.Logger;
+
 /**
  * Task for phase 1 of application form transfer. This task has the following general plan:
  *   1. Try to call PORTICO webserwice.
@@ -7,6 +9,8 @@ package com.zuehlke.pgadmissions.services.uclexport;
  *   3. Schedule phase 2 if there were no errors
  */
 class Phase1Task implements Runnable {
+    private static final Logger log = Logger.getLogger(Phase1Task.class);
+
     private Integer applicationId;
     private Long transferId;
     private TransferListener listener;
@@ -21,7 +25,9 @@ class Phase1Task implements Runnable {
 
     @Override
     public void run() {
-        uclExportService.transactionallyExecuteWebserviceCallAndHandlePersistentQueue(transferId, listener);
+        log.debug("starting phase-1 task for transfer " + transferId);
+        uclExportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(transferId, listener);
+        log.debug("finishing phase-1 task for transfer " + transferId);
     }
 
     @Override

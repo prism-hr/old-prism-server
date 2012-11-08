@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlin
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
-import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService;
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV1;
 import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
@@ -42,7 +41,7 @@ import java.util.Date;
  */
 @Service
 @Async("central-events-queue")
-class UclExportServiceImpl implements UCLExportService {
+class UclExportServiceImpl implements UclExportService {
     private static final Logger log = Logger.getLogger(UclExportServiceImpl.class);
 
     @Resource(name = "webservice-calling-queue-executor")
@@ -67,7 +66,7 @@ class UclExportServiceImpl implements UCLExportService {
     private int numberOfConsecutiveSoapFaults = 0;
 
     @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}")
-    private int consecutiveSoapFaultsLimit = 5;
+    private int consecutiveSoapFaultsLimit;
 
     @Value("${xml.data.export.queue_pausing_delay_in_case_of_network_problem}")
     private int queuePausingDelayInCaseOfNetworkProblemsDiscovered;
@@ -146,6 +145,7 @@ class UclExportServiceImpl implements UCLExportService {
             log.debug("WebServiceTransportException during webservice call for transfer " + transferId, e);
             //CASE 1: webservice call failed because of network failure, protocol problems etc
             //seems like we have communication problems so makes no sense to push more appliaction forms at the moment
+            //todo: we should measure the time of this problem constantly occuring; after some treashold (1 day?) we should inform admins
 
             //save error information
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -158,6 +158,9 @@ class UclExportServiceImpl implements UCLExportService {
 
             //pause the queue for some time
             this.pauseQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
+
+            //inform the listener
+            this.triggerTransferFailed(listener, error);
 
             //schedudle the same transfer again
             this.sendToUCL(applicationForm, listener);
@@ -185,6 +188,9 @@ class UclExportServiceImpl implements UCLExportService {
             }
             error.setResponseCopy(responseMessageBuffer.toString());
             applicationFormTransferErrorDAO.save(error);
+
+            //inform the listener
+            this.triggerTransferFailed(listener, error);
 
             //update transfer status
             transfer.setStatus(ApplicationTransferStatus.REJECTED_BY_WEBSERVICE);
@@ -221,47 +227,53 @@ class UclExportServiceImpl implements UCLExportService {
         //schedule phase 2 (sftp)
         sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(), transferId, listener));
 
+        //inform the listener
         this.triggerWebserviceCallCompleted(listener);
     }
 
     @Transactional
     public void transactionallyExecuteSftpTransferAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
+        this.triggerAttachmentsSftpTransmissionStarted(listener);
+
         //retrieve AppliationForm and ApplicationFormTransfer instances from the db
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
         ApplicationForm applicationForm  = transfer.getApplicationForm();
 
-        this.triggerAttachmentsTransferStarted(listener);
+        this.triggerAttachmentsSftpTransmissionStarted(listener);
 
         //pack attachments and send them over sftp
         try {
-            sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm);
+            sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm, listener);
         } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
-            //todo
+            //try 5 times then stop the queue
+
+
 
         } catch (SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong locallyDefinedSshConfigurationIsWrong) {
-            //todo
+            //stop queue
 
         } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost couldNotOpenSshConnectionToRemoteHost) {
-            //todo
+            //network problems - just wait some time and try again (pause queue)
 
         } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible sftpTargetDirectoryNotAccessible) {
-            //todo
+            //stop queue, inform admin (possibly ucl has to correct their config)
 
         } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError sftpTransmissionFailedOrProtocolError) {
-            //todo
+            //network problems - just wait some time and try again (pause queue)
+
         }
 
-
-            //todo: register error, pause the queue for some time, inform admins
+        //todo: register error, pause the queue for some time, inform admins
 
     }
 
     private void pauseQueueForMinutes(int minutes) {
         //todo: implement this!
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Async
-    private void triggerQueued(TransferListener listener) {
+    void triggerQueued(TransferListener listener) {
         try {
             listener.queued();
         } catch (RuntimeException e) {
@@ -270,7 +282,7 @@ class UclExportServiceImpl implements UCLExportService {
     }
 
     @Async
-    private void triggerTransferStarted(TransferListener listener) {
+    void triggerTransferStarted(TransferListener listener) {
         try {
             listener.transferStarted();
         } catch (RuntimeException e) {
@@ -279,7 +291,7 @@ class UclExportServiceImpl implements UCLExportService {
     }
 
     @Async
-    private void triggerWebserviceCallCompleted(TransferListener listener) {
+    void triggerWebserviceCallCompleted(TransferListener listener) {
         try {
             listener.webserviceCallCompleted();
         } catch (RuntimeException e) {
@@ -288,16 +300,25 @@ class UclExportServiceImpl implements UCLExportService {
     }
 
     @Async
-    private void triggerAttachmentsTransferStarted(TransferListener listener) {
+    void triggerSshConnectionEstablished(TransferListener listener) {
         try {
-            listener.attachmentsTransferStarted();
+            listener.sshConnectionEstablished();
         } catch (RuntimeException e) {
             e.printStackTrace();//there is nothing better we can do with this exeption
         }
     }
 
     @Async
-    private void triggerTransferCompleted(TransferListener listener, String uclUserId, String uclBookingReferenceNumber) {
+    void triggerAttachmentsSftpTransmissionStarted(TransferListener listener) {
+        try {
+            listener.attachmentsSftpTransmissionStarted();
+        } catch (RuntimeException e) {
+            e.printStackTrace();//there is nothing better we can do with this exeption
+        }
+    }
+
+    @Async
+    void triggerTransferCompleted(TransferListener listener, String uclUserId, String uclBookingReferenceNumber) {
         try {
             listener.transferCompleted(uclUserId, uclBookingReferenceNumber);
         } catch (RuntimeException e) {
@@ -306,7 +327,7 @@ class UclExportServiceImpl implements UCLExportService {
     }
 
     @Async
-    private void triggerTransferFailed(TransferListener listener, ApplicationFormTransferError error) {
+    void triggerTransferFailed(TransferListener listener, ApplicationFormTransferError error) {
         try {
             listener.transferFailed(error);
         } catch (RuntimeException e) {

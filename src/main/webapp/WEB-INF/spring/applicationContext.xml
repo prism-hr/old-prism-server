@@ -152,10 +152,12 @@
 
     <bean id="webservice-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor">
         <property name="name" value="webservice-executor"/>
+        <property name="transactionTemplate" ref="defaultTransactionTemplate"/>
     </bean>
 
     <bean id="sftp-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor">
         <property name="name" value="sftp-executor"/>
+        <property name="transactionTemplate" ref="defaultTransactionTemplate"/>
     </bean>
 
 </beans>

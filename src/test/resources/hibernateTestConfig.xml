@@ -35,5 +35,8 @@
 		</property>
 	</bean>
 
+    <!-- shared transaction template for programmatic transaction control -->
+    <bean id="defaultTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate"/>
+
 	<import resource="../../src/main/webapp/WEB-INF/spring/hibernateEntities.xml" />
 </beans>

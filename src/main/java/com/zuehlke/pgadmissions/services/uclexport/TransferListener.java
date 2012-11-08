@@ -2,6 +2,10 @@ package com.zuehlke.pgadmissions.services.uclexport;
 
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 
+/**
+ * Callback interface for UCLExportService clients.
+ * Allows for observing progress of submitted transfers.
+ */
 public interface TransferListener {
     void queued();
     void transferStarted();

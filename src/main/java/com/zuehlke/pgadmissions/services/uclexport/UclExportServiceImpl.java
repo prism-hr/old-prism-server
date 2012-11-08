@@ -14,8 +14,6 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
@@ -25,6 +23,7 @@ import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskE
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ws.WebServiceMessage;
@@ -47,6 +46,7 @@ import java.util.zip.ZipOutputStream;
  * Used for situations where we push data to UCL system (PORTICO).
  */
 @Service
+@Async("central-events-queue")
 class UclExportServiceImpl implements UCLExportService {
 
     @Resource(name = "webservice-calling-queue-executor")
@@ -80,14 +80,14 @@ class UclExportServiceImpl implements UCLExportService {
     //oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 
     public Long sendToUCL(ApplicationForm applicationForm) {
-        return this.sendToUCL(applicationForm, null);
+        return this.sendToUCL(applicationForm, new DeafListener());
     }
 
     public Long sendToUCL(ApplicationForm applicationForm, TransferListener listener) {
         ApplicationFormTransfer transfer = this.createPersistentQueueItem(applicationForm);
         //todo: create an event in application form's timeline ("scheduled transfer to UCL-PORTICO")
         webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
-        listener.queued();
+        this.triggerQueued(listener);
         return transfer.getId();
     }
 
@@ -110,6 +110,8 @@ class UclExportServiceImpl implements UCLExportService {
 
     @Transactional
     public void transactionallyExecuteWebserviceCallAndHandlePersistentQueue(Long transferId, TransferListener listener) {
+        this.triggerTransferStarted(listener);
+
         //retrieve AppliationForm and ApplicationFormTransfer instances from the db
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
         ApplicationForm applicationForm  = transfer.getApplicationForm();
@@ -198,23 +200,31 @@ class UclExportServiceImpl implements UCLExportService {
         //todo: store these idenfitiers also into (respectively) ApplicationForm and RegisteredUser
 
         //schedule phase 2 (sftp)
-        sftpCallingQueueExecutor.execute(new Phase2Task());
-
-
+        sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(), transferId, listener));
 
         //update transfer status in the database
         transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING);
 
+        this.triggerWebserviceCallCompleted(listener);
+    }
+
+    @Transactional
+    public void transactionallyExecuteSftpTransferAndHandlePersistentQueue(Long transferId, TransferListener listener) {
+        //prepare attached documents as a single packed file
+        //todo: plug here the zip package containing all attachments
+
+        //open SFTP connection, send file, close connection
+        try {
+            this.sftpSendFile(new byte[] {}, null, listener);//finish this
+        } catch (Exception e) {
+            //register error
+
+            //pause the queue for some time
+
+            //inform administrators
 
 
-
-
-
-        //handle possible websersice call errors
-            //decide about handling strategy
-            //store the error information
-
-
+        }
     }
 
     private void pauseQueueForMinutes(int minutes) {
@@ -222,17 +232,18 @@ class UclExportServiceImpl implements UCLExportService {
     }
 
 
-    private void sftpSendFile(Document document) throws JSchException, IOException, SftpException {
+    private void sftpSendFile(byte[] fileContents, String filename, TransferListener listener) throws JSchException, IOException, SftpException {
+        //todo: this was copied from test, refactor to use real values
         Session session = jSchFactory.getInstance();
         session.connect();
         Channel channel = session.openChannel("sftp");
         ChannelSftp sftpChannel = (ChannelSftp) channel;
         sftpChannel.connect();
-        //todo: plug the zip package from Maciek
+        this.triggerTransferStarted(listener);
         OutputStream put = sftpChannel.put("test.zip");
         ZipOutputStream os = new ZipOutputStream(put);
         os.putNextEntry(new ZipEntry("test1.pdf"));
-        os.write(document.getContent());
+        os.write(fileContents);
         os.closeEntry();
         IOUtils.closeQuietly(os);
         IOUtils.closeQuietly(put);
@@ -240,5 +251,58 @@ class UclExportServiceImpl implements UCLExportService {
         session.disconnect();
     }
 
+    @Async
+    private void triggerQueued(TransferListener listener) {
+        try {
+            listener.queued();
+        } catch (RuntimeException e) {
+            e.printStackTrace();//there is nothing better we can do with this exeption
+        }
+    }
+
+    @Async
+    private void triggerTransferStarted(TransferListener listener) {
+        try {
+            listener.transferStarted();
+        } catch (RuntimeException e) {
+            e.printStackTrace();//there is nothing better we can do with this exeption
+        }
+    }
+
+    @Async
+    private void triggerWebserviceCallCompleted(TransferListener listener) {
+        try {
+            listener.webserviceCallCompleted();
+        } catch (RuntimeException e) {
+            e.printStackTrace();//there is nothing better we can do with this exeption
+        }
+    }
+
+    @Async
+    private void triggerAttachmentsTransferStarted(TransferListener listener) {
+        try {
+            listener.attachmentsTransferStarted();
+        } catch (RuntimeException e) {
+            e.printStackTrace();//there is nothing better we can do with this exeption
+        }
+    }
+
+    @Async
+    private void triggerTransferCompleted(TransferListener listener, String uclUserId, String uclBookingReferenceNumber) {
+        try {
+            listener.transferCompleted(uclUserId, uclBookingReferenceNumber);
+        } catch (RuntimeException e) {
+            e.printStackTrace();//there is nothing better we can do with this exeption
+        }
+    }
+
+    @Async
+    private void triggerTransferFailed(TransferListener listener, ApplicationFormTransferError error) {
+        try {
+            listener.transferFailed(error);
+        } catch (RuntimeException e) {
+            e.printStackTrace();//there is nothing better we can do with this exeption
+        }
+    }
 
 }

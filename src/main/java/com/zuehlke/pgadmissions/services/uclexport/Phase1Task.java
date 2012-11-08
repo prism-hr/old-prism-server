@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
 /**
- * Taks for phase 1 of application form transfer: this is:
- *   1. try to call PORTICO webserwice
- *   2. handle errors
- *   3. schedule phase 2 if there were no errors
+ * Task for phase 1 of application form transfer. This task has the following general plan:
+ *   1. Try to call PORTICO webserwice.
+ *   2. Handle webservice call errors (if any).
+ *   3. Schedule phase 2 if there were no errors
  */
 class Phase1Task implements Runnable {
     private Integer applicationId;
@@ -21,8 +21,11 @@ class Phase1Task implements Runnable {
 
     @Override
     public void run() {
-        listener.transferStarted();
         uclExportService.transactionallyExecuteWebserviceCallAndHandlePersistentQueue(transferId, listener);
-        listener.webserviceCallCompleted();
+    }
+
+    @Override
+    public String toString() {
+        return "UCL transfer phase 1 task: applicationForm=" + applicationId + " transfer=" + transferId;
     }
 }

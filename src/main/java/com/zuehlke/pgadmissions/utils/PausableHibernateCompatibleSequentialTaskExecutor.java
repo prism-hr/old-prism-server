@@ -6,15 +6,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * This is a custom task executor implementation suitable for our needs. The specific feature are:<ol>
- * <li>Ensure that tasks execute sequentially (FIFO queue).</li>
- * <li>Each task has to be executed by a new thread, created just for executing this task (this ensure compatibility with the way we use Hibernate,
- * specifically - our session factory assigns one sessions per thread; and we want each task to be executed in a fresh session).</li>
+ * <li>Tasks execute sequentially (FIFO queue).</li>
+ * <li>Each task is executed by a new thread, created just for executing this task.
  * <li>The executor has soft  pausing/resuming feature. "Soft" means that calling pause() stops just after finishing currently executing task and before taking the next one
  * (of course paused executor can still collect tasks to be done later).</li>
  * </ol>
+ * <p/>
+ *
+ * Above semantics allows executing tasks that access database via Spring/Hibernate cooperation and sessionFactory.getCurrentSession() pattern.
+ * This is because hibernate sessions are being coupled with java threads.
  *
  * <b>Implementation remarks:</b><p/>
- * 1. Please observe that althougth the executor runs tasks sequentially, we need fully concurrent-aware implementation because
+ * 1. Please observe that although the executor runs tasks sequentially, we need fully concurrent-aware implementation because
  * the executor instance is being accessed concurrently by:<ul>
  *     <li>client threads that are submitting tasks for execution (i.e. calling execute() method)</li>
  *     <li>client threads that are controlling the executor (pause(), resume(), shutdown())</li>
@@ -178,10 +181,21 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
 
         @Override
         public void run() {
-            //first - do what the client wanted to be done
-            clientTask.run();
+            //step 1 - do what the client wanted to be done
+            try {
+                clientTask.run();
+            } catch (Throwable e) {
+                //in general tasks should handle all exceptions, in case of some exception propagating from run() we could:
+                //1. log the error
+                //2. invoke some (pluggable) master error handler
+                //Currently only stratego (1) is implemented.
+                //todo: consider implementing pluggable "master exception handler queue" feature
+                System.out.println("Exeption propagation from task submitted to task executor. Exception was ignored." +
+                    "\n    task info: " + this.getName() +
+                    "\n" + StacktraceDump.forException(e));
+            }
 
-            //then - inform my executor that I just finished my work.
+            //step 2 - inform my executor that I have just finished my work.
             synchronized (PausableHibernateCompatibleSequentialTaskExecutor.this) {
                 lastTaskFinished = id;
                 someTaskIsJustExecuting = false;

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 
 /**
  * This is UCL data export service contract.

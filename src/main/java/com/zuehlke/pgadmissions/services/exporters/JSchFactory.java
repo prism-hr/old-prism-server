@@ -27,6 +27,9 @@ public class JSchFactory {
     @Value("${xml.data.export.sftp.password}")
     private String sftpPassword;
     
+    @Value("${xml.data.export.sftp.folder}")
+    private String folder;
+    
     @Value("${xml.data.export.sftp.privatekeyfile}")
     private Resource privateKeyFile;
 
@@ -94,5 +97,13 @@ public class JSchFactory {
 
     public void setSftpKeyfile(Resource sftpKeyfile) {
         this.privateKeyFile = sftpKeyfile;
+    }
+
+    public String getFolder() {
+        return folder;
+    }
+
+    public void setFolder(String folder) {
+        this.folder = folder;
     }
 }

@@ -42,7 +42,7 @@ public class XMLDataImportTask {
 	public void imoprtData() {
 		for (Importer importer : importers) {
 			try {
-				System.setProperty("http.maxRedirects", "2");
+				System.setProperty("http.maxRedirects", "5");
 				Authenticator.setDefault(authenticator);
 				importer.importData();
 			} catch (XMLDataImportException e) {

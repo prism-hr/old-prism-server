@@ -51,6 +51,8 @@ public class AdmissionApplicationsSFTPServiceTest {
         ChannelSftp sftpChannel = (ChannelSftp) channel;
 
         sftpChannel.connect();
+        
+        sftpChannel.cd(jSchFactory.getFolder());
 
         OutputStream put = sftpChannel.put("test.zip");
         

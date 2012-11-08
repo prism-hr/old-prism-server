@@ -8,6 +8,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -22,18 +23,20 @@ import com.zuehlke.pgadmissions.exceptions.DocumentExportException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 
 @Service
-public class DocumentExportService {
+public class SftpAttachmentsSendingService {
 
-	private JSchFactory jSchFactory;
-	private PdfDocumentBuilder pdfDocumentBuilder;
+	private final JSchFactory jSchFactory;
+	private final PdfDocumentBuilder pdfDocumentBuilder;
+    private final String targetFolder;
 
 	@Autowired
-	public DocumentExportService(JSchFactory jSchFactory, PdfDocumentBuilder pdfDocumentBuilder) {
+	public SftpAttachmentsSendingService(JSchFactory jSchFactory, PdfDocumentBuilder pdfDocumentBuilder, @Value("${xml.data.export.sftp.folder}") final String targetFolder) {
 		this.jSchFactory = jSchFactory;
 		this.pdfDocumentBuilder = pdfDocumentBuilder;
+        this.targetFolder = targetFolder;
 	}
 
-	public void sendApplicationFormDocuments(ApplicationForm applicationForm, String referenceNumber) throws DocumentExportException, JSchException,
+	public void sendApplicationFormDocuments(ApplicationForm applicationForm) throws DocumentExportException, JSchException,
 			IOException, SftpException {
 		Session session = null;
 		ChannelSftp sftpChannel = null;
@@ -43,8 +46,9 @@ public class DocumentExportService {
 			session.connect();
 			sftpChannel = (ChannelSftp) session.openChannel("sftp");
 			sftpChannel.connect();
-			sftpOs = sftpChannel.put(referenceNumber + ".zip");
-			writeZipEntries(applicationForm, referenceNumber, sftpOs);
+            sftpChannel.cd(targetFolder);
+			sftpOs = sftpChannel.put(applicationForm.getUclBookingReferenceNumber() + ".zip");
+			writeZipEntries(applicationForm, applicationForm.getUclBookingReferenceNumber(), sftpOs);
 		} finally {
 			IOUtils.closeQuietly(sftpOs);
 			if (sftpChannel != null && sftpChannel.isConnected())
@@ -140,7 +144,7 @@ public class DocumentExportService {
 			zos.write(qualifications.get(0).getContent());
 			zos.closeEntry();
 		case 0:
-			break;
+			break;//todo: check if business ruless force us to have at least one transcript file attached - it yes, throw DocumentExportException
 		default:
 			throw new DocumentExportException("There should be at most 2 qualifications marked for sending to UCL");		
 		}

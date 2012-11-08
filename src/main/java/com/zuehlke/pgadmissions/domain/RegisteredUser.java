@@ -122,6 +122,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@JoinTable(name = "PROGRAM_SUPERVISOR_LINK", joinColumns = { @JoinColumn(name = "supervisor_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
 
+    @Column(name = "ucl_user_id")
+    private String uclUserId;
+
 	public List<Role> getRoles() {
 		return roles;
 	}
@@ -181,7 +184,15 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.password = password;
 	}
 
-	@Override
+    public String getUclUserId() {
+        return uclUserId;
+    }
+
+    public void setUclUserId(String uclUserId) {
+        this.uclUserId = uclUserId;
+    }
+
+    @Override
 	@Transient
 	public Collection<Role> getAuthorities() {
 		return getRoles();

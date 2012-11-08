@@ -1,31 +1,5 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Date;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.annotation.Resource;
-import javax.xml.transform.TransformerException;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.client.WebServiceTransportException;
-import org.springframework.ws.client.core.WebServiceMessageCallback;
-import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.client.SoapFaultClientException;
-
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.SubmitAdmissionsApplicationRequest;
@@ -35,15 +9,30 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService;
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV1;
 import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.client.WebServiceTransportException;
+import org.springframework.ws.client.core.WebServiceMessageCallback;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.client.SoapFaultClientException;
+
+import javax.annotation.Resource;
+import javax.xml.transform.TransformerException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * This is UCL data export service.
@@ -75,6 +64,9 @@ class UclExportServiceImpl implements UCLExportService {
     private int numberOfConsecutiveSoapFaults = 0;
 
     private int consecutiveSoapFaultsLimit = 5;//todo: move to the configuration
+
+    @Autowired
+    private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
     public UclExportServiceImpl() {
     }
@@ -189,7 +181,7 @@ class UclExportServiceImpl implements UCLExportService {
             numberOfConsecutiveSoapFaults++;
             if (numberOfConsecutiveSoapFaults > consecutiveSoapFaultsLimit) {
                 webserviceCallingQueueExecutor.pause();
-                //todo: inform the admins that we have repeating webservice problems (probably by sending an email with problem description)
+                //todo: inform admins that we have repeating webservice problems (probably by sending an email with problem description)
 
             }
 
@@ -199,10 +191,17 @@ class UclExportServiceImpl implements UCLExportService {
         //CASE 3; webservice answer was ok (transmission succesful, request approved)
         numberOfConsecutiveSoapFaults = 0;
 
-        //extract precious IDs received from UCL and store them into ApplicationTransfer
+        //extract precious IDs received from UCL and store them into ApplicationTransfer, ApplicationForm and RegisteredUser
         transfer.setUclUserIdReceived(response.getReference().getUserCode());
         transfer.setUclBookingReferenceReceived(response.getReference().getReferenceID());
-        //todo: store these idenfitiers also into (respectively) ApplicationForm and RegisteredUser
+        applicationForm.setUclBookingReferenceNumber(response.getReference().getReferenceID());
+        if (applicationForm.getApplicant().getUclUserId() == null)
+            applicationForm.getApplicant().setUclUserId(response.getReference().getUserCode());
+        else {
+            if (! applicationForm.getApplicant().getUclUserId().equals(response.getReference().getUserCode()))
+                throw new RuntimeException("User code received from PORTICO do not mach with our PRISM user id: PRISM_ID=" +
+                    applicationForm.getApplicant().getUclUserId() + " PORTICO_ID=" + response.getReference().getUserCode());
+        }
 
         //schedule phase 2 (sftp)
         sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(), transferId, listener));
@@ -215,45 +214,29 @@ class UclExportServiceImpl implements UCLExportService {
 
     @Transactional
     public void transactionallyExecuteSftpTransferAndHandlePersistentQueue(Long transferId, TransferListener listener) {
-        //prepare attached documents as a single packed file
-        //todo: plug here the zip package containing all attachments
+        //retrieve AppliationForm and ApplicationFormTransfer instances from the db
+        ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
+        ApplicationForm applicationForm  = transfer.getApplicationForm();
 
-        //open SFTP connection, send file, close connection
+        this.triggerAttachmentsTransferStarted(listener);
+
+        //pack attachments and send them over sftp
         try {
-            this.sftpSendFile(new byte[] {}, null, listener);//finish this
+            sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm);
         } catch (Exception e) {
+            //todo: handle exception
+
             //register error
 
             //pause the queue for some time
 
             //inform administrators
 
-
         }
     }
 
     private void pauseQueueForMinutes(int minutes) {
         //todo
-    }
-
-
-    private void sftpSendFile(byte[] fileContents, String filename, TransferListener listener) throws JSchException, IOException, SftpException {
-        //todo: this was copied from test, refactor to use real values
-        Session session = jSchFactory.getInstance();
-        session.connect();
-        Channel channel = session.openChannel("sftp");
-        ChannelSftp sftpChannel = (ChannelSftp) channel;
-        sftpChannel.connect();
-        this.triggerTransferStarted(listener);
-        OutputStream put = sftpChannel.put("test.zip");
-        ZipOutputStream os = new ZipOutputStream(put);
-        os.putNextEntry(new ZipEntry("test1.pdf"));
-        os.write(fileContents);
-        os.closeEntry();
-        IOUtils.closeQuietly(os);
-        IOUtils.closeQuietly(put);
-        sftpChannel.disconnect();
-        session.disconnect();
     }
 
     @Async

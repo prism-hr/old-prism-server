@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 public class DocumentExportServiceTest {
 
 	private JSchFactory jSchFactoryMock;
-	private DocumentExportService documentExportService;
+	private SftpAttachmentsSendingService documentExportService;
 	private PdfDocumentBuilder pdfDocumentBuilderMock;
 	
 
@@ -81,6 +81,6 @@ public class DocumentExportServiceTest {
 	 public void setup() {
 		jSchFactoryMock = EasyMock.createMock(JSchFactory.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
-		documentExportService = new DocumentExportService(jSchFactoryMock, pdfDocumentBuilderMock);
+		documentExportService = new SftpAttachmentsSendingService(jSchFactoryMock, pdfDocumentBuilderMock);
 	}
 }

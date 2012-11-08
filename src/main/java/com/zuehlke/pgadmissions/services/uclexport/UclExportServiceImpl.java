@@ -41,8 +41,6 @@ import com.zuehlke.pgadmissions.utils.StacktraceDump;
  * Used for situations where we push data to UCL system (PORTICO).
  */
 @Service
-//@Async("central-events-queue") -- only availabe in Spring 3.1.2
-@Async()
 class UclExportServiceImpl implements UclExportService {
     private static final Logger log = Logger.getLogger(UclExportServiceImpl.class);
 

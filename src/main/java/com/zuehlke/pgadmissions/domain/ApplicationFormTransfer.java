@@ -33,7 +33,7 @@ public class ApplicationFormTransfer extends DomainObject<Long> {
     private ApplicationForm applicationForm;
 
     /** Timepoint when I was created (so this is the timepoint of scheduling). */
-    @Column(name = "transfer_begin_timepoint")
+    @Column(name = "transfer_begin_timeppoint")
     private Date transferStartTimepoint;
 
     /** Timepoint when I was successfully finished. In case of failed transfers this value stays null. */

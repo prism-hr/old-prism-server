@@ -74,6 +74,7 @@ public class ProgrammesImporter implements Importer {
 	
 	private ProgrammeOccurrences unmarshallXML() throws JAXBException {
 		Unmarshaller unmarshaller = context.createUnmarshaller();
+		Authenticator.setDefault(null);
 		Authenticator.setDefault(new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(user, password.toCharArray());

@@ -17,8 +17,10 @@ import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV1;
 import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,7 @@ import java.util.Date;
 @Service
 @Async("central-events-queue")
 class UclExportServiceImpl implements UCLExportService {
+    private static final Logger log = Logger.getLogger(UclExportServiceImpl.class);
 
     @Resource(name = "webservice-calling-queue-executor")
     private PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutor;
@@ -63,7 +66,11 @@ class UclExportServiceImpl implements UCLExportService {
 
     private int numberOfConsecutiveSoapFaults = 0;
 
-    private int consecutiveSoapFaultsLimit = 5;//todo: move to the configuration
+    @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}")
+    private int consecutiveSoapFaultsLimit = 5;
+
+    @Value("${xml.data.export.queue_pausing_delay_in_case_of_network_problem}")
+    private int queuePausingDelayInCaseOfNetworkProblemsDiscovered;
 
     @Autowired
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
@@ -81,10 +88,12 @@ class UclExportServiceImpl implements UCLExportService {
     }
 
     public Long sendToUCL(ApplicationForm applicationForm, TransferListener listener) {
+        log.debug("submitting application form " + applicationForm.getId() + " for ucl-eexport processing");
         ApplicationFormTransfer transfer = this.createPersistentQueueItem(applicationForm);
         //todo: create an event in application form's timeline ("scheduled transfer to UCL-PORTICO")
         webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
         this.triggerQueued(listener);
+        log.debug("succecfully added application form " + applicationForm.getId() + " to ucl-export queue (transfer-id=" + transfer.getId() +")");
         return transfer.getId();
     }
 
@@ -106,7 +115,7 @@ class UclExportServiceImpl implements UCLExportService {
     }
 
     @Transactional
-    public void transactionallyExecuteWebserviceCallAndHandlePersistentQueue(Long transferId, TransferListener listener) {
+    public void transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
         this.triggerTransferStarted(listener);
 
         //retrieve AppliationForm and ApplicationFormTransfer instances from the db
@@ -129,9 +138,12 @@ class UclExportServiceImpl implements UCLExportService {
 
         try  {
             //call webservice
+            log.debug("calling marshalSendAndReceive for transfer " + transferId);
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
+            log.debug("successfully returned from webservice call for transfer " + transferId);
 
         }  catch (WebServiceTransportException e) {
+            log.debug("WebServiceTransportException during webservice call for transfer " + transferId, e);
             //CASE 1: webservice call failed because of network failure, protocol problems etc
             //seems like we have communication problems so makes no sense to push more appliaction forms at the moment
 
@@ -145,7 +157,7 @@ class UclExportServiceImpl implements UCLExportService {
             applicationFormTransferErrorDAO.save(error);
 
             //pause the queue for some time
-            this.pauseQueueForMinutes(10); //todo: refactor - read delay value from config
+            this.pauseQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
 
             //schedudle the same transfer again
             this.sendToUCL(applicationForm, listener);
@@ -153,6 +165,7 @@ class UclExportServiceImpl implements UCLExportService {
             return;
 
         } catch (SoapFaultClientException e) {
+            log.debug("SoapFaultClientException during webservice call for transfer " + transferId, e);
             //CASE 2: webservice is alive but refused to accept our request
             //usually this will be caused by validation problems - and is actually expected as side effect of PORTICO and PRISM evolution
 
@@ -182,7 +195,6 @@ class UclExportServiceImpl implements UCLExportService {
             if (numberOfConsecutiveSoapFaults > consecutiveSoapFaultsLimit) {
                 webserviceCallingQueueExecutor.pause();
                 //todo: inform admins that we have repeating webservice problems (probably by sending an email with problem description)
-
             }
 
             return;
@@ -203,17 +215,17 @@ class UclExportServiceImpl implements UCLExportService {
                     applicationForm.getApplicant().getUclUserId() + " PORTICO_ID=" + response.getReference().getUserCode());
         }
 
-        //schedule phase 2 (sftp)
-        sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(), transferId, listener));
-
         //update transfer status in the database
         transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING);
+
+        //schedule phase 2 (sftp)
+        sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(), transferId, listener));
 
         this.triggerWebserviceCallCompleted(listener);
     }
 
     @Transactional
-    public void transactionallyExecuteSftpTransferAndHandlePersistentQueue(Long transferId, TransferListener listener) {
+    public void transactionallyExecuteSftpTransferAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
         //retrieve AppliationForm and ApplicationFormTransfer instances from the db
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
         ApplicationForm applicationForm  = transfer.getApplicationForm();
@@ -223,20 +235,29 @@ class UclExportServiceImpl implements UCLExportService {
         //pack attachments and send them over sftp
         try {
             sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm);
-        } catch (Exception e) {
-            //todo: handle exception
+        } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
+            //todo
 
-            //register error
+        } catch (SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong locallyDefinedSshConfigurationIsWrong) {
+            //todo
 
-            //pause the queue for some time
+        } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost couldNotOpenSshConnectionToRemoteHost) {
+            //todo
 
-            //inform administrators
+        } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible sftpTargetDirectoryNotAccessible) {
+            //todo
 
+        } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError sftpTransmissionFailedOrProtocolError) {
+            //todo
         }
+
+
+            //todo: register error, pause the queue for some time, inform admins
+
     }
 
     private void pauseQueueForMinutes(int minutes) {
-        //todo
+        //todo: implement this!
     }
 
     @Async

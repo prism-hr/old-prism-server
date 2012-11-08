@@ -1,10 +1,14 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.Session;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
+import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import org.apache.commons.io.FileUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -13,18 +17,10 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.exceptions.DocumentExportException;
-import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class DocumentExportServiceTest {
 
@@ -34,7 +30,7 @@ public class DocumentExportServiceTest {
 	
 
 	@Test
-	public void testSendApplicationFormDocuments() throws DocumentExportException, JSchException, IOException, SftpException {
+	public void testSendApplicationFormDocuments() throws Exception {
 		
 		String referenceNumber = "123";
 		Document cv = new DocumentBuilder().id(1).content("content".getBytes()).toDocument();

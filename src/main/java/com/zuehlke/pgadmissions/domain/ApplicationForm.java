@@ -26,6 +26,7 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Generated;
@@ -757,8 +758,15 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.ipAddress = ipAddress;
 	}
 	
-	public String getIpAddressAsString() throws UnknownHostException {
-		return InetAddress.getByAddress(ipAddress).getHostAddress();
+	/**
+	 * @return IP address or an EMPTY string if there was an exception.
+	 */
+	public String getIpAddressAsString() {
+		try {
+            return InetAddress.getByAddress(ipAddress).getHostAddress();
+        } catch (UnknownHostException e) {
+            return StringUtils.EMPTY;
+        }
 	}
 	
 	public void setIpAddressAsString(String ipAddress) throws UnknownHostException {
@@ -888,6 +896,18 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 				Validate.notNull(refree.getReference(), "Referee with id: " + refree.getId()
 						+ " is marked for sending to UCL but has no reference assosiated with it.");
 				result.add(refree.getReference());
+			}
+		}
+		return result;
+	}
+	
+	public List<LanguageQualification> getLanguageQualificationToSend() {
+		List<LanguageQualification> result = new ArrayList<LanguageQualification>(1);
+		for (LanguageQualification languageQualification : personalDetails.getLanguageQualifications()) {
+			if(BooleanUtils.toBoolean(languageQualification.getSendToUCL())) {
+				Validate.notNull(languageQualification.getLanguageQualificationDocument(), "LanguageQualification with id: " + languageQualification.getId()
+						+ " is marked for sending to UCL but has no document assosiated with it.");
+				result.add(languageQualification);
 			}
 		}
 		return result;

@@ -12,6 +12,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
@@ -20,6 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,11 +29,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.CourseApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.CourseApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -61,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PassportInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -73,6 +76,7 @@ import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -82,6 +86,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
     private final Logger logger = Logger.getLogger(AdmissionsApplicationsServiceTest.class);
     
     @Autowired
+    @Qualifier("webServiceTemplateV1")
     private WebServiceTemplate webServiceTemplate;
     
     private ProgramInstanceDAO programInstanceDAOMock = null;
@@ -129,7 +134,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
                 applicationForm.getProgram().getInstances().get(0));
         EasyMock.replay(programInstanceDAOMock);
         
-        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAOMock,
+        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV1(programInstanceDAOMock,
                 new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
         
         AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
@@ -140,7 +145,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
     @Test
     @Ignore
     public void testConnectivity() throws IOException {
-        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAO, new ObjectFactory());
+        SubmitAdmissionsApplicationRequestBuilderV1 submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilderV1(programInstanceDAO, new ObjectFactory());
         ApplicationForm applicationForm2 = applicationFormDAO.get(2682);
         SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm2).toSubmitAdmissionsApplicationRequest();   
         AdmissionsApplicationResponse response = null;
@@ -155,6 +160,36 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
         assertEquals(response.getReference().getUserCode(), "");
     }
     
+    @Test
+    public void marshallRequest() throws XmlMappingException, IOException {
+        
+        ProgramInstance instance = new ProgramInstanceBuilder()
+            .academicYear("2013")
+            .applicationDeadline(DateUtils.addMonths(new Date(), 1))
+            .applicationStartDate(new Date())
+            .enabled(true)
+            .identifier("0009")
+            .studyOption("F+++++", "Full-time")
+            .toProgramInstance();
+        
+        EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);
+        EasyMock.replay(programInstanceDAOMock);
+        
+        SubmitAdmissionsApplicationRequestBuilderV1 submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilderV1(programInstanceDAOMock, new ObjectFactory());
+        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+        webServiceTemplate.getMarshaller().marshal(request, result);
+        
+        String requestAsString = writer.toString();
+        
+        assertNotNull(requestAsString);
+        assertTrue(StringUtils.isNotBlank(requestAsString));
+        
+        System.out.println(requestAsString);
+    }
+    
     @Before
     public void setup() {
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
@@ -165,7 +200,7 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon W1T 4HD\nUnited Kingdom";
         RegisteredUser user = new RegisteredUserBuilder().id(1).username("denk@zhaw.ch").toUser();
         Country country = new CountryBuilder().id(1).code("XK").name("United Kingdom").toCountry();
-        Address address = new AddressBuilder().id(1).country(country).address1(addressStr).toAddress();
+        Address address = new AddressBuilder().id(1).country(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).toAddress();
         EmploymentPosition employmentPosition = new EmploymentPositionBuilder()
             .current(true)
             .employerAdress1(addressStr)
@@ -187,7 +222,10 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
             .firstName("Kevin")
             .lastName("Denver")
             .gender(Gender.MALE)
+            .requiresVisa(true)
             .passportInformation(new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver").passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20)).toPassportInformation())
+            .languageQualificationAvailable(true)
+            .languageQualifications(new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false).languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1").toLanguageQualification())
             .phoneNumber("+44 (0) 123 123 1234")
             .requiresVisa(false)
             .residenceDomicile(domicile)
@@ -202,8 +240,8 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
             .applicationDeadline(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
             .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1))
             .enabled(true)
-            .studyOption("1", "Full-time")
-            .sequence(1)
+            .studyOption("F+++++", "Full-time")
+            .identifier("0009")
             .toProgramInstance();
         Program program = new ProgramBuilder()
             .id(1)

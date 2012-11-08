@@ -16,6 +16,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.exceptions.DocumentExportException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -101,8 +102,16 @@ public class DocumentExportService {
 		
 	}
 
-	private void addLanguageTestCertificate(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) {
-		// TODO FIXME Auto-generated method stub
+	private void addLanguageTestCertificate(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException, DocumentExportException {
+		List<LanguageQualification> languageQualifications = applicationForm.getLanguageQualificationToSend();
+		if(languageQualifications.size() > 1)
+			throw new DocumentExportException("There should be at most 1 languageQualification marked for sending to UCL");
+		if(!languageQualifications.isEmpty()) {			
+			String filename  = PorticoDocumentNameMappings.getEnglishLanguageCertificateFilename(referenceNumber) + ".pdf";
+			zos.putNextEntry(new ZipEntry(filename));
+			zos.write(languageQualifications.get(0).getLanguageQualificationDocument().getContent());
+			zos.closeEntry();
+		}
 	}
 
 	private void addReserchProposal(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException {

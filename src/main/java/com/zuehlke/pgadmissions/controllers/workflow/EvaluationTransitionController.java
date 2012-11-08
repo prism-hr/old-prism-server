@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.uclexport.UclExportService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.StateTransitionViewResolver;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
@@ -34,19 +35,20 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 @RequestMapping("/progress")
 public class EvaluationTransitionController extends StateTransitionController {
 
+    private final UclExportService uclExportService;
+    
 	EvaluationTransitionController() {
-		this(null, null, null, null, null, null, null, null, null, null);
-
+		this(null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
 			CommentFactory commentFactory, StateTransitionViewResolver stateTransitionViewResolver, EncryptionHelper encryptionHelper,
 			DocumentService documentService, ApprovalService approvalService, StateChangeValidator stateChangeValidator,
-			DocumentPropertyEditor documentPropertyEditor) {
+			DocumentPropertyEditor documentPropertyEditor, UclExportService uclExportService) {
 		super(applicationsService, userService, commentService, commentFactory, stateTransitionViewResolver, encryptionHelper, documentService,
 				approvalService, stateChangeValidator, documentPropertyEditor);
-
+		this.uclExportService = uclExportService;
 	}
 
 	@ModelAttribute("comment")
@@ -82,6 +84,7 @@ public class EvaluationTransitionController extends StateTransitionController {
 				if(approvalService.moveToApproved(applicationForm)) {					
 					modelMap.put("messageCode", "move.approved");
 					modelMap.put("application", applicationForm.getApplicationNumber());
+					uclExportService.sendToUCL(applicationForm);
 				} else {
 					return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber()+"&rejectionId=7";
 				}

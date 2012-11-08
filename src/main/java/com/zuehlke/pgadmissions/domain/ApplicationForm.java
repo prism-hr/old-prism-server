@@ -26,6 +26,7 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Generated;
@@ -757,8 +758,15 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.ipAddress = ipAddress;
 	}
 	
-	public String getIpAddressAsString() throws UnknownHostException {
-		return InetAddress.getByAddress(ipAddress).getHostAddress();
+	/**
+	 * @return IP address or an EMPTY string if there was an exception.
+	 */
+	public String getIpAddressAsString() {
+		try {
+            return InetAddress.getByAddress(ipAddress).getHostAddress();
+        } catch (UnknownHostException e) {
+            return StringUtils.EMPTY;
+        }
 	}
 	
 	public void setIpAddressAsString(String ipAddress) throws UnknownHostException {

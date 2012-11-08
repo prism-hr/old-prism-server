@@ -1,5 +1,24 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Date;
+
+import javax.annotation.Resource;
+import javax.xml.transform.TransformerException;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.client.WebServiceTransportException;
+import org.springframework.ws.client.core.WebServiceMessageCallback;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.client.SoapFaultClientException;
+
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.SubmitAdmissionsApplicationRequest;
@@ -16,31 +35,14 @@ import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV1;
 import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.client.WebServiceTransportException;
-import org.springframework.ws.client.core.WebServiceMessageCallback;
-import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.client.SoapFaultClientException;
-
-import javax.annotation.Resource;
-import javax.xml.transform.TransformerException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Date;
 
 /**
  * This is UCL data export service.
  * Used for situations where we push data to UCL system (PORTICO).
  */
 @Service
-@Async("central-events-queue")
+//@Async("central-events-queue") -- only availabe in Spring 3.1.2
+@Async()
 class UclExportServiceImpl implements UclExportService {
     private static final Logger log = Logger.getLogger(UclExportServiceImpl.class);
 
@@ -51,7 +53,6 @@ class UclExportServiceImpl implements UclExportService {
     private PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutor;
 
     @Autowired
-    @Qualifier("webServiceTemplateV1")
     private WebServiceTemplate webServiceTemplate;
 
     @Autowired

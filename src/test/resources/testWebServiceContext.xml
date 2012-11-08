@@ -14,20 +14,11 @@
         http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <oxm:jaxb2-marshaller id="marshallerV1" contextPath="com.zuehlke.pgadmissions.admissionsservice.jaxb.v1" />
-    <oxm:jaxb2-marshaller id="marshallerV2" contextPath="com.zuehlke.pgadmissions.admissionsservice.jaxb.v2" />
+    <oxm:jaxb2-marshaller id="marshaller" contextPath="com.zuehlke.pgadmissions.admissionsservice.jaxb.v2" />
 
-    <bean id="webServiceTemplateV1" class="com.zuehlke.pgadmissions.services.exporters.KeystoreEnabledWebServiceTemplate">
-        <property name="marshaller" ref="marshallerV1" />
-        <property name="unmarshaller" ref="marshallerV1" />
-        <property name="defaultUri" value="${xml.data.export.webservice.url}" />
-        <property name="keyStorePassword" value="${xml.data.export.webservice.keystorePassword}" />
-        <property name="keyStoreLocation" value="${xml.data.export.webservice.keystore}" />
-    </bean>
-    
-    <bean id="webServiceTemplateV2" class="com.zuehlke.pgadmissions.services.exporters.KeystoreEnabledWebServiceTemplate">
-        <property name="marshaller" ref="marshallerV2" />
-        <property name="unmarshaller" ref="marshallerV2" />
+    <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.services.exporters.KeystoreEnabledWebServiceTemplate">
+        <property name="marshaller" ref="marshaller" />
+        <property name="unmarshaller" ref="marshaller" />
         <property name="defaultUri" value="${xml.data.export.webservice.url}" />
         <property name="keyStorePassword" value="${xml.data.export.webservice.keystorePassword}" />
         <property name="keyStoreLocation" value="${xml.data.export.webservice.keystore}" />

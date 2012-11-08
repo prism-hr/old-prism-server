@@ -1,0 +1,41 @@
+package com.zuehlke.pgadmissions.services.importers;
+
+import java.net.URL;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
+import com.zuehlke.pgadmissions.referencedata.jaxb.Institutions;
+
+//@Service - no import of institutions
+public class InstitutionsImporter implements Importer {
+	
+	private final JAXBContext context;
+	
+	@Value("${xml.data.import.institutions.url}")
+	private URL xmlFileLocation;
+	@Autowired
+	private ImportService importService;
+	
+	public InstitutionsImporter() throws JAXBException {
+		context = JAXBContext.newInstance(Institutions.class);
+	}
+
+	@Override
+	@Transactional
+	public void importData() throws XMLDataImportException {
+		try {
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        Institutions institutions = (Institutions) unmarshaller.unmarshal(xmlFileLocation);
+		} catch (Throwable e) {
+			throw new XMLDataImportException("Error during the import of file: " + xmlFileLocation, e);
+		}
+	}
+
+}

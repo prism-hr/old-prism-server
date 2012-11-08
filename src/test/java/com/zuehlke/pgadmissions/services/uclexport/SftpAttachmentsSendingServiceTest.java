@@ -1,5 +1,18 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
+import org.apache.commons.io.FileUtils;
+import org.easymock.EasyMock;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Session;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -10,26 +23,13 @@ import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
-import org.apache.commons.io.FileUtils;
-import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
 
 public class SftpAttachmentsSendingServiceTest {
 
-	private JSchFactory jSchFactoryMock;
-	private SftpAttachmentsSendingService documentExportService;
+	private JSchFactory jSchFactoryMock;	
 	private PdfDocumentBuilder pdfDocumentBuilderMock;
+    private SftpAttachmentsSendingService documentExportService;
 	
-
 	@Test
 	public void testSendApplicationFormDocuments() throws Exception {
 		
@@ -46,7 +46,7 @@ public class SftpAttachmentsSendingServiceTest {
 		EasyMock.expect(channelSftp.put(referenceNumber+".zip")).andReturn(os);
 		EasyMock.expect(channelSftp.isConnected()).andReturn(true);
 		channelSftp.connect();
-		channelSftp.cd("folder");
+		channelSftp.cd(null);
 		session.connect();
 		os.write(EasyMock.anyInt());
 		EasyMock.expectLastCall().anyTimes();

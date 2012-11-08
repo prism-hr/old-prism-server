@@ -1,5 +1,17 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -12,16 +24,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
 import com.zuehlke.pgadmissions.services.exporters.PorticoDocumentNameMappings;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * This service encapsulates:<ol>
@@ -64,9 +66,6 @@ class SftpAttachmentsSendingService {
 
     private final JSchFactory jSchFactory;
     private final PdfDocumentBuilder pdfDocumentBuilder;
-
-    @Autowired
-    private UclExportServiceImpl uclExportService;
 
     @Value("${xml.data.export.sftp.host}")
     private String sftpHost;
@@ -122,7 +121,7 @@ class SftpAttachmentsSendingService {
                 throw new CouldNotOpenSshConnectionToRemoteHost("Failed to open SSH connection to PORTICO host, configured address was: " + sftpHost + ":" + sftpPort + " username/password=" + sftpUsername + "/" + sftpPassword, e);
             }
 
-            uclExportService.triggerSshConnectionEstablished(listener);
+            this.triggerSshConnectionEstablished(listener);
 
             //possible errors: sftp protocol-level problems
             try {
@@ -139,7 +138,7 @@ class SftpAttachmentsSendingService {
                 throw new SftpTargetDirectoryNotAccessible("Failed to access remote directory for SFTP transmission: " + targetFolder + ", remote host address is: " + sftpHost + ":" + sftpPort, e);
             }
 
-            uclExportService.triggerAttachmentsSftpTransmissionStarted(listener);
+            this.triggerAttachmentsSftpTransmissionStarted(listener);
 
             //possible errors: sftp protocol-level problems, connection lost during transmission and local problem with building zip-pack with attachments
             try {
@@ -249,5 +248,24 @@ class SftpAttachmentsSendingService {
                 throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
         }
     }
+    
+    @Async
+    void triggerSshConnectionEstablished(TransferListener listener) {
+        try {
+            listener.sshConnectionEstablished();
+        } catch (RuntimeException e) {
+            e.printStackTrace();//there is nothing better we can do with this exeption
+        }
+    }
+
+    @Async
+    void triggerAttachmentsSftpTransmissionStarted(TransferListener listener) {
+        try {
+            listener.attachmentsSftpTransmissionStarted();
+        } catch (RuntimeException e) {
+            e.printStackTrace();//there is nothing better we can do with this exeption
+        }
+    }
+
 
 }

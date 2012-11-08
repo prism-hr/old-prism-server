@@ -21,7 +21,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.test.context.ContextConfiguration;
@@ -86,7 +85,6 @@ public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase
     private final Logger logger = Logger.getLogger(AdmissionsApplicationsServiceTest.class);
     
     @Autowired
-    @Qualifier("webServiceTemplateV2")
     private WebServiceTemplate webServiceTemplate;
     
     private ProgramInstanceDAO programInstanceDAOMock = null;

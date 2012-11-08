@@ -1,14 +1,16 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+
+import org.springframework.ws.client.core.WebServiceTemplate;
+
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilder;
-import org.springframework.ws.client.core.WebServiceTemplate;
+import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV1;
 
 /**
  * Taks for phase 1 of application form transfer: this is:
@@ -44,7 +46,7 @@ class Phase1Task implements Runnable {
         //try to call the webservice
         try  {
 
-            SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAO,new ObjectFactory())
+            SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV1(programInstanceDAO, new ObjectFactory())
                 .applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
             AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
         }  catch (Throwable e) {

@@ -1,13 +1,30 @@
 package com.zuehlke.pgadmissions.services.uclexport;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ws.client.WebServiceTransportException;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.client.SoapFaultClientException;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
@@ -19,23 +36,9 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlin
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
-import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilder;
+import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV1;
 import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ws.client.WebServiceTransportException;
-import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.client.SoapFaultClientException;
-
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Date;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * This is UCL data export service.
@@ -51,6 +54,7 @@ class UclExportServiceImpl implements UCLExportService {
     private PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutor;
 
     @Autowired
+    @Qualifier("webServiceTemplateV1")
     private WebServiceTemplate webServiceTemplate;
 
     @Autowired
@@ -115,7 +119,7 @@ class UclExportServiceImpl implements UCLExportService {
         AdmissionsApplicationResponse response;
 
         try  {
-            request = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAO,new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+            request = new SubmitAdmissionsApplicationRequestBuilderV1(programInstanceDAO, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
 
         }  catch (WebServiceTransportException e) {

@@ -892,5 +892,17 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return result;
 	}
+	
+	public List<LanguageQualification> getLanguageQualificationToSend() {
+		List<LanguageQualification> result = new ArrayList<LanguageQualification>(1);
+		for (LanguageQualification languageQualification : personalDetails.getLanguageQualifications()) {
+			if(BooleanUtils.toBoolean(languageQualification.getSendToUCL())) {
+				Validate.notNull(languageQualification.getLanguageQualificationDocument(), "LanguageQualification with id: " + languageQualification.getId()
+						+ " is marked for sending to UCL but has no document assosiated with it.");
+				result.add(languageQualification);
+			}
+		}
+		return result;
+	}
 
 }

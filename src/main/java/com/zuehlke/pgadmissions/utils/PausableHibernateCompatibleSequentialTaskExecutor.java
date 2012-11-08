@@ -13,13 +13,16 @@ import java.util.concurrent.LinkedBlockingQueue;
  * (of course paused executor can still collect tasks to be done later).</li>
  * </ol>
  *
- * Implementation remark: please observe that althougth the executor runs tasks sequentially, we need fully concurrent-aware implementation because
+ * <b>Implementation remarks:</b><p/>
+ * 1. Please observe that althougth the executor runs tasks sequentially, we need fully concurrent-aware implementation because
  * the executor instance is being accessed concurrently by:<ul>
  *     <li>client threads that are submitting tasks for execution (i.e. calling execute() method)</li>
  *     <li>client threads that are controlling the executor (pause(), resume(), shutdown())</li>
  *     <li>worker threads that are executing tasks (actually we ensure that there is always at most one such thread)</li>
  *     <li>the Queue Consumer thread</li>
  * </ul>
+ * <p/>
+ * 2. Both "queue consumer thread" and "queueWe run all threads issued inside implementation with background priority (Thread.MIN_PRIORITY).
  */
 public class PausableHibernateCompatibleSequentialTaskExecutor implements Executor {
     private boolean pickingTasksIsPaused = false;
@@ -36,7 +39,6 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
     }
 
     public PausableHibernateCompatibleSequentialTaskExecutor(String name) {
-        queueConsumer.setDaemon(true);
         this.setName(name);
         queueConsumer.start();
     }
@@ -139,6 +141,11 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
      */
     private class QueueConsumerThread extends Thread {
 
+        private QueueConsumerThread() {
+            this.setDaemon(true);
+            this.setPriority(Thread.MIN_PRIORITY);//this executor is designed to run tasks in background
+        }
+
         @Override
         public void run() {
             try {
@@ -166,6 +173,7 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
             this.clientTask = clientTask;
             this.id = id;
             this.setName(name);
+            queueConsumer.setPriority(Thread.MIN_PRIORITY);//this executor is designed to run tasks in background
         }
 
         @Override

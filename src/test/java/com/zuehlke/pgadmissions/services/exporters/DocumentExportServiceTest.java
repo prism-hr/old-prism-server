@@ -39,6 +39,7 @@ public class DocumentExportServiceTest {
 		String referenceNumber = "123";
 		Document cv = new DocumentBuilder().id(1).content("content".getBytes()).toDocument();
 		ApplicationForm form = new ApplicationFormBuilder().id(1).cv(cv).toApplicationForm();
+		form.setUclBookingReferenceNumber(referenceNumber);
 		Session session = EasyMock.createMock(Session.class);
 		ChannelSftp channelSftp = EasyMock.createMock(ChannelSftp.class);
 		OutputStream os = EasyMock.createMock(OutputStream.class);
@@ -48,6 +49,7 @@ public class DocumentExportServiceTest {
 		EasyMock.expect(channelSftp.put(referenceNumber+".zip")).andReturn(os);
 		EasyMock.expect(channelSftp.isConnected()).andReturn(true);
 		channelSftp.connect();
+		channelSftp.cd("folder");
 		session.connect();
 		os.write(EasyMock.anyInt());
 		EasyMock.expectLastCall().anyTimes();
@@ -59,7 +61,7 @@ public class DocumentExportServiceTest {
 		os.close();
 		EasyMock.expectLastCall().anyTimes();
 		EasyMock.replay(jSchFactoryMock, session, channelSftp, os);
-		documentExportService.sendApplicationFormDocuments(form, referenceNumber);
+		documentExportService.sendApplicationFormDocuments(form);
 		EasyMock.verify(jSchFactoryMock, session, channelSftp,os);
 	}
 	
@@ -81,6 +83,6 @@ public class DocumentExportServiceTest {
 	 public void setup() {
 		jSchFactoryMock = EasyMock.createMock(JSchFactory.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
-		documentExportService = new SftpAttachmentsSendingService(jSchFactoryMock, pdfDocumentBuilderMock);
+		documentExportService = new SftpAttachmentsSendingService(jSchFactoryMock, pdfDocumentBuilderMock, "folder");
 	}
 }

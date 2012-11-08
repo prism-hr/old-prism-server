@@ -1,5 +1,11 @@
 package com.zuehlke.pgadmissions.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -36,6 +42,12 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
     private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
     private Thread queueConsumer = new QueueConsumerThread();
     private boolean isDead = false;
+
+    private TransactionTemplate transactionTemplate;
+
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
 
     public PausableHibernateCompatibleSequentialTaskExecutor() {
         this("no-name");
@@ -183,7 +195,13 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
         public void run() {
             //step 1 - do what the client wanted to be done
             try {
-                clientTask.run();
+                transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                        clientTask.run();
+                    }
+                });
+
             } catch (Throwable e) {
                 //in general tasks should handle all exceptions, in case of some exception propagating from run() we could:
                 //1. log the error

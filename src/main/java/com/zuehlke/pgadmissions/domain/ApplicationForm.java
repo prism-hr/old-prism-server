@@ -223,6 +223,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "ip_address")
 	private byte[] ipAddress;
 
+    @Column(name = "ucl_booking_ref_number")
+    private String uclBookingReferenceNumber;
+
 	public List<Qualification> getQualifications() {
 		return qualifications;
 	}
@@ -686,7 +689,15 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.applicationNumber = applicationNumber;
 	}
 
-	public Date getBatchDeadline() {
+    public String getUclBookingReferenceNumber() {
+        return uclBookingReferenceNumber;
+    }
+
+    public void setUclBookingReferenceNumber(String uclBookingReferenceNumber) {
+        this.uclBookingReferenceNumber = uclBookingReferenceNumber;
+    }
+
+    public Date getBatchDeadline() {
 		return batchDeadline;
 	}
 

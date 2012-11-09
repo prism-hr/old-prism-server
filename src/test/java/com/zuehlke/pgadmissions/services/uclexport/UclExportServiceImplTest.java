@@ -55,8 +55,9 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration("/testContext.xml")
+@Ignore
 public class UclExportServiceImplTest {
 
     private ApplicationForm applicationForm;

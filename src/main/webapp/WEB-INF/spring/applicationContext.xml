@@ -159,5 +159,7 @@
         <property name="name" value="sftp-executor"/>
         <property name="transactionTemplate" ref="defaultTransactionTemplate"/>
     </bean>
+    
+    <task:scheduler id="ucl-export-service-scheduler" pool-size="1"/>
 
 </beans>

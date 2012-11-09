@@ -57,6 +57,7 @@ public class JSchFactory {
         jSch.addIdentity("prismIdentity", privateKeyAsByteArray, null, emptyPassPhrase);
         
         Session session = jSch.getSession(getSftpUsername(), getSftpHost(), Integer.valueOf(getSftpPort()));
+        session.setPassword(sftpPassword);
 
         Properties config = new Properties();
         config.put("StrictHostKeyChecking", "no");

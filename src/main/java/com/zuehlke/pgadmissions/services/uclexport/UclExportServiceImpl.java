@@ -258,6 +258,7 @@ class UclExportServiceImpl implements UclExportService {
         //pack attachments and send them over sftp
         try {
             sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm, listener);
+            transfer.setStatus(ApplicationTransferStatus.COMPLETED);
         } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
             //try 5 times then stop the queue
 
@@ -280,7 +281,6 @@ class UclExportServiceImpl implements UclExportService {
 
         //todo: register error, pause the queue for some time, inform admins
         
-        transfer.setStatus(ApplicationTransferStatus.COMPLETED);
     }
 
     private void pauseWsQueueForMinutes(int minutes) {

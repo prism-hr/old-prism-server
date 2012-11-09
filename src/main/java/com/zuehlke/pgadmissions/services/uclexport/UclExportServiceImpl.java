@@ -168,7 +168,7 @@ class UclExportServiceImpl implements UclExportService {
             error.setTimepoint(new Date());
             error.setProblemClassification(ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE);
             error.setDiagnosticInfo(StacktraceDump.forException(e));
-            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_AND_PAUSE_TRANSFERS);
+            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
             applicationFormTransferErrorDAO.save(error);
 
             //pause the queue for some time
@@ -259,28 +259,107 @@ class UclExportServiceImpl implements UclExportService {
         try {
             sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm, listener);
             transfer.setStatus(ApplicationTransferStatus.COMPLETED);
+            transfer.setTransferFinishTimepoint(new Date());
+            this.triggerTransferCompleted(listener, transfer.getUclUserIdReceived(), transfer.getUclBookingReferenceReceived());
         } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
             //try 5 times then stop the queue
+            ApplicationFormTransferError error = new ApplicationFormTransferError();
+            error.setTransfer(transfer);
+            error.setTimepoint(new Date());
+            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION);
+            error.setDiagnosticInfo(StacktraceDump.forException(couldNotCreateAttachmentsPack));
+            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY);
+            applicationFormTransferErrorDAO.save(error);
 
-
+            //inform the listener
+            this.triggerTransferFailed(listener, error);
+            transfer.setStatus(ApplicationTransferStatus.CANCELLED);
+            
+            //TODO: notify administrators, needs attention
 
         } catch (SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong locallyDefinedSshConfigurationIsWrong) {
             //stop queue
+            ApplicationFormTransferError error = new ApplicationFormTransferError();
+            error.setTransfer(transfer);
+            error.setTimepoint(new Date());
+            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION);
+            error.setDiagnosticInfo(StacktraceDump.forException(locallyDefinedSshConfigurationIsWrong));
+            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION);
+            applicationFormTransferErrorDAO.save(error);
+            
+            //pause the queue
+            sftpCallingQueueExecutor.pause();
+            
+            //inform the listener
+            this.triggerTransferFailed(listener, error);
+
+            //Schedule the same transfer again
+            sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+
+            //TODO: notify administrators, needs attention
 
         } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost couldNotOpenSshConnectionToRemoteHost) {
             //network problems - just wait some time and try again (pause queue)
+            ApplicationFormTransferError error = new ApplicationFormTransferError();
+            error.setTransfer(transfer);
+            error.setTimepoint(new Date());
+            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE);
+            error.setDiagnosticInfo(StacktraceDump.forException(couldNotOpenSshConnectionToRemoteHost));
+            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
+            applicationFormTransferErrorDAO.save(error);
+            
+            // pause
             this.pauseSftpQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
+            
+            //inform the listener
+            this.triggerTransferFailed(listener, error);
+
+            //Schedule the same transfer again
+            sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
             
         } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible sftpTargetDirectoryNotAccessible) {
             //stop queue, inform admin (possibly ucl has to correct their config)
+            ApplicationFormTransferError error = new ApplicationFormTransferError();
+            error.setTransfer(transfer);
+            error.setTimepoint(new Date());
+            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE);
+            error.setDiagnosticInfo(StacktraceDump.forException(sftpTargetDirectoryNotAccessible));
+            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION);
+            applicationFormTransferErrorDAO.save(error);
+
+            //pause the queue
+            sftpCallingQueueExecutor.pause();
+            
+            //inform the listener
+            this.triggerTransferFailed(listener, error);
+
+            //Schedule the same transfer again
+            sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+
+            //TODO: notify administrators, needs attention
 
         } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError sftpTransmissionFailedOrProtocolError) {
             //network problems - just wait some time and try again (pause queue)
             this.pauseSftpQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
-        }
+            
+            //network problems - just wait some time and try again (pause queue)
+            ApplicationFormTransferError error = new ApplicationFormTransferError();
+            error.setTransfer(transfer);
+            error.setTimepoint(new Date());
+            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE);
+            error.setDiagnosticInfo(StacktraceDump.forException(sftpTransmissionFailedOrProtocolError));
+            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
+            applicationFormTransferErrorDAO.save(error);
+            
+            // pause
+            this.pauseSftpQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
+            
+            //inform the listener
+            this.triggerTransferFailed(listener, error);
 
-        //todo: register error, pause the queue for some time, inform admins
-        
+            //Schedule the same transfer again
+            sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+        }
     }
 
     private void pauseWsQueueForMinutes(int minutes) {

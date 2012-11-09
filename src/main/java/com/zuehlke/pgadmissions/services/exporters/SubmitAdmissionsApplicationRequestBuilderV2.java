@@ -204,12 +204,15 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private PassportTp buildPassport() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         PassportInformation passportInformation = personalDetails.getPassportInformation();
-        PassportTp passportTp = xmlFactory.createPassportTp();
-        passportTp.setName(passportInformation.getNameOnPassport());
-        passportTp.setNumber(passportInformation.getPassportNumber());
-        passportTp.setExpiryDate(buildXmlDate(passportInformation.getPassportExpiryDate()));
-        passportTp.setIssueDate(buildXmlDate(passportInformation.getPassportIssueDate()));
-        return passportTp;
+        if (passportInformation != null) {
+            PassportTp passportTp = xmlFactory.createPassportTp();
+            passportTp.setName(passportInformation.getNameOnPassport());
+            passportTp.setNumber(passportInformation.getPassportNumber());
+            passportTp.setExpiryDate(buildXmlDate(passportInformation.getPassportExpiryDate()));
+            passportTp.setIssueDate(buildXmlDate(passportInformation.getPassportIssueDate()));
+            return passportTp;
+        }
+        return null;
     }
     
     private DisabilityTp buildDisability() {

@@ -7,21 +7,24 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.client.WebServiceIOException;
 import org.springframework.ws.client.WebServiceTransportException;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
@@ -32,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlin
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
-import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV1;
+import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
 import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
@@ -78,6 +81,9 @@ class UclExportServiceImpl implements UclExportService {
 
     @Autowired
     private JSchFactory jSchFactory;
+    
+    @Resource(name = "ucl-export-service-scheduler")
+    private TaskScheduler scheduler;
 
     //oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 
@@ -96,8 +102,19 @@ class UclExportServiceImpl implements UclExportService {
     }
 
     public void systemStartupSendingQueuesRecovery() {
-        //todo recreate the contents of both task queues from what we have in database
-        //todo plug-in this method to application startup sequence
+        // allowing system to start smoothly before working on the queues.
+        this.pauseWsQueueForMinutes(2);
+        this.pauseSftpQueueForMinutes(2);
+        
+        log.debug("re-initialising the queues for ucl-eexport processing");
+        
+        for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForWebserviceCall()) {
+            webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationFormTransfer.getApplicationForm().getId(),  applicationFormTransfer.getId(), new DeafListener()));
+        }
+        
+        for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForAttachmentsSending()) {
+            webserviceCallingQueueExecutor.execute(new Phase2Task(this, applicationFormTransfer.getApplicationForm().getId(),  applicationFormTransfer.getId(), new DeafListener()));
+        }
     }
 
     //ooooooooooooooooooooooooooooooo PRIVATE oooooooooooooooooooooooooooooooo
@@ -132,15 +149,14 @@ class UclExportServiceImpl implements UclExportService {
         };
 
         //build webservice request
-        request = new SubmitAdmissionsApplicationRequestBuilderV1(programInstanceDAO, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        request = new SubmitAdmissionsApplicationRequestBuilderV2(programInstanceDAO, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
 
         try  {
             //call webservice
             log.debug("calling marshalSendAndReceive for transfer " + transferId);
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
             log.debug("successfully returned from webservice call for transfer " + transferId);
-
-        }  catch (WebServiceTransportException e) {
+        } catch (WebServiceIOException e) {            
             log.debug("WebServiceTransportException during webservice call for transfer " + transferId, e);
             //CASE 1: webservice call failed because of network failure, protocol problems etc
             //seems like we have communication problems so makes no sense to push more appliaction forms at the moment
@@ -156,13 +172,13 @@ class UclExportServiceImpl implements UclExportService {
             applicationFormTransferErrorDAO.save(error);
 
             //pause the queue for some time
-            this.pauseQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
+            this.pauseWsQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
 
             //inform the listener
             this.triggerTransferFailed(listener, error);
 
             //schedudle the same transfer again
-            this.sendToUCL(applicationForm, listener);
+            webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
 
             return;
 
@@ -201,7 +217,6 @@ class UclExportServiceImpl implements UclExportService {
                 webserviceCallingQueueExecutor.pause();
                 //todo: inform admins that we have repeating webservice problems (probably by sending an email with problem description)
             }
-
             return;
         }
 
@@ -209,15 +224,15 @@ class UclExportServiceImpl implements UclExportService {
         numberOfConsecutiveSoapFaults = 0;
 
         //extract precious IDs received from UCL and store them into ApplicationTransfer, ApplicationForm and RegisteredUser
-        transfer.setUclUserIdReceived(response.getReference().getUserCode());
-        transfer.setUclBookingReferenceReceived(response.getReference().getReferenceID());
-        applicationForm.setUclBookingReferenceNumber(response.getReference().getReferenceID());
+        transfer.setUclUserIdReceived(response.getReference().getApplicantID());
+        transfer.setUclBookingReferenceReceived(response.getReference().getApplicationID());
+        applicationForm.setUclBookingReferenceNumber(response.getReference().getApplicationID());
         if (applicationForm.getApplicant().getUclUserId() == null)
-            applicationForm.getApplicant().setUclUserId(response.getReference().getUserCode());
+            applicationForm.getApplicant().setUclUserId(response.getReference().getApplicantID());
         else {
-            if (! applicationForm.getApplicant().getUclUserId().equals(response.getReference().getUserCode()))
+            if (! applicationForm.getApplicant().getUclUserId().equals(response.getReference().getApplicantID()))
                 throw new RuntimeException("User code received from PORTICO do not mach with our PRISM user id: PRISM_ID=" +
-                    applicationForm.getApplicant().getUclUserId() + " PORTICO_ID=" + response.getReference().getUserCode());
+                    applicationForm.getApplicant().getUclUserId() + " PORTICO_ID=" + response.getReference().getApplicantID());
         }
 
         //update transfer status in the database
@@ -253,22 +268,39 @@ class UclExportServiceImpl implements UclExportService {
 
         } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost couldNotOpenSshConnectionToRemoteHost) {
             //network problems - just wait some time and try again (pause queue)
-
+            this.pauseSftpQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
+            
         } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible sftpTargetDirectoryNotAccessible) {
             //stop queue, inform admin (possibly ucl has to correct their config)
 
         } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError sftpTransmissionFailedOrProtocolError) {
             //network problems - just wait some time and try again (pause queue)
-
+            this.pauseSftpQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
         }
 
         //todo: register error, pause the queue for some time, inform admins
-
+        
+        transfer.setStatus(ApplicationTransferStatus.COMPLETED);
     }
 
-    private void pauseQueueForMinutes(int minutes) {
-        //todo: implement this!
-        throw new RuntimeException("Not implemented yet");
+    private void pauseWsQueueForMinutes(int minutes) {
+        webserviceCallingQueueExecutor.pause();
+        scheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                webserviceCallingQueueExecutor.resume();
+            }
+        }, DateUtils.addMinutes(new Date(), minutes));
+    }
+    
+    private void pauseSftpQueueForMinutes(int minutes) {
+        sftpCallingQueueExecutor.pause();
+        scheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                sftpCallingQueueExecutor.resume();
+            }
+        }, DateUtils.addMinutes(new Date(), minutes));
     }
 
     @Async
@@ -333,5 +365,4 @@ class UclExportServiceImpl implements UclExportService {
             e.printStackTrace();//there is nothing better we can do with this exeption
         }
     }
-
 }

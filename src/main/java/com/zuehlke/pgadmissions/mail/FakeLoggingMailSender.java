@@ -21,19 +21,19 @@ public class FakeLoggingMailSender extends JavaMailSenderImpl {
     protected void doSend(MimeMessage[] mimeMessages, Object[] originalMessages) throws MailException {
         try {
             for (MimeMessage mimeMessage : mimeMessages) {
-                LOG.info(String.format("Sender: %s", mimeMessage.getSender()));
+                LOG.trace(String.format("Sender: %s", mimeMessage.getSender()));
                 for (Address address : mimeMessage.getAllRecipients()) {
-                    LOG.info(String.format("Recipient: %s", address.toString()));
+                    LOG.trace(String.format("Recipient: %s", address.toString()));
                 }
-                LOG.info(String.format("Subject: %s", mimeMessage.getSubject()));
+                LOG.trace(String.format("Subject: %s", mimeMessage.getSubject()));
                 if (mimeMessage.getContent() instanceof MimeMultipart) {
                     MimeMultipart multiPart = (MimeMultipart) mimeMessage.getContent();
                     for (int idx = 0; idx < multiPart.getCount(); idx++) {
                         BodyPart bodyPart = multiPart.getBodyPart(idx);
-                        LOG.info(String.format("Body: %s", IOUtils.toString(bodyPart.getInputStream())));
+                        LOG.trace(String.format("Body: %s", IOUtils.toString(bodyPart.getInputStream())));
                     }
                 } else {
-                    LOG.info(String.format("Body: %s", mimeMessage.getContent()));
+                    LOG.trace(String.format("Body: %s", mimeMessage.getContent()));
                 }
             }
         } catch (Exception e) {

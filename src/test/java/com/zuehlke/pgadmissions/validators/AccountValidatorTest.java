@@ -5,13 +5,14 @@ import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -19,44 +20,40 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class AccountValidatorTest {
 
-    @Autowired
+    @Autowired  
+    private Validator validator;  
+    
 	private AccountValidator accountValidator;
     
-    @Autowired
 	private EncryptionUtils encryptionUtilsMock;
 	
-    @Autowired
     private UserService userServiceMock;
 	
     private RegisteredUser user;
 	
     private RegisteredUser currentUser;
 	
-
 	@Before
-	public void setup(){
+	public void setup() {
+	    userServiceMock = EasyMock.createMock(UserService.class);
+	    encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 		user = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
 		currentUser = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-//		accountValidator = new AccountValidator(userServiceMock, encryptionUtilsMock){
-//			@Override
-//			public RegisteredUser getCurrentUser() {
-//				return currentUser;
-//			}
-//		};
+		
+		accountValidator = new AccountValidator(userServiceMock, encryptionUtilsMock);
+		accountValidator.setValidator((javax.validation.Validator) validator);
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldSupportApplicantRecordValidator() {
 	    assertTrue(accountValidator.supports(RegisteredUser.class));
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfNewPasswordIsNotSetAndCurrentAndConfirmAreSet() {
 		user.setNewPassword(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
@@ -69,7 +66,6 @@ public class AccountValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfCurrentPasswordIsNotSetAndConfirmAndNewPasswordAreSet() {
 		user.setPassword(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
@@ -82,7 +78,6 @@ public class AccountValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfConfirmPasswordIsNotSetAndCurrentAndNewPasswordAreSet() {
 		user.setConfirmPassword(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "confirmPassword");
@@ -95,7 +90,6 @@ public class AccountValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfCurrentPasswordNotSameWithExisting() {
 		user.setPassword("12345678");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
@@ -109,6 +103,8 @@ public class AccountValidatorTest {
 		Assert.assertEquals("account.currentpassword.notmatch", mappingResult.getFieldError("password").getCode());
 	}
 	
+	@Test
+	@Ignore
 	public void shouldRejectIfNewAndConfirmPasswordsNotSame() {
 		user.setConfirmPassword("password");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
@@ -124,7 +120,6 @@ public class AccountValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfNewPasswordIsLessThan8Chars() {
 		user.setNewPassword("1234");
 		user.setConfirmPassword("1234");
@@ -140,7 +135,6 @@ public class AccountValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfNewPasswordIsMoreThan15Chars() {
 		user.setNewPassword("1234567891234567");
 		user.setConfirmPassword("1234567891234567");
@@ -156,7 +150,6 @@ public class AccountValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldNotRejectIfContainsSpecialChars() {
 		user.setNewPassword(" 12o*-lala");
 		user.setConfirmPassword(" 12o*-lala");
@@ -171,7 +164,6 @@ public class AccountValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfNewEmailAlreadyExists() {
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(2).username("email2@test.com").firstName("bob").lastName("bobson").
 				email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
@@ -189,7 +181,6 @@ public class AccountValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldNotRejectIfuserWithEmailExistsButIsCUrrentUser() {
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(1).username("email2@test.com").firstName("bob").lastName("bobson").
 				email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
@@ -207,7 +198,6 @@ public class AccountValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfEmailNotValidEmail() {
 		user.setEmail("notvalidemail");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
@@ -222,7 +212,6 @@ public class AccountValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfFirstNameEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
 		user.setFirstName("");
@@ -237,7 +226,6 @@ public class AccountValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfLastNameNull() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "lastName");
 		user.setLastName(null);

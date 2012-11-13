@@ -2,14 +2,16 @@ package com.zuehlke.pgadmissions.validators;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-@Service
+
+@Component
 public class AccountValidator extends AbstractValidator {
 
 	private static final int MINIMUM_PASSWORD_CHARACTERS = 8;

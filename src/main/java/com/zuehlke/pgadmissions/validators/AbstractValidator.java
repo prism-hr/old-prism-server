@@ -66,4 +66,12 @@ public abstract class AbstractValidator implements org.springframework.validatio
     }
 
     protected abstract void addExtraValidation(final Object target, final Errors errors);
+    
+    public Validator getValidator() {
+        return validator;
+    }
+    
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -20,11 +21,14 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class ApprovalRoundValidatorTest {
-	private ApprovalRound approvalRound;
 	
-	@Autowired
+    @Autowired  
+    private Validator validator;  
+    
+    private ApprovalRound approvalRound;
+	
 	private ApprovalRoundValidator approvalRoundValidator;
 	
 	@Test
@@ -47,5 +51,8 @@ public class ApprovalRoundValidatorTest {
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		
 		approvalRound = new ApprovalRoundBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).supervisors(new SupervisorBuilder().id(4).toSupervisor()).toApprovalRound();
+		
+		approvalRoundValidator = new ApprovalRoundValidator();
+		approvalRoundValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

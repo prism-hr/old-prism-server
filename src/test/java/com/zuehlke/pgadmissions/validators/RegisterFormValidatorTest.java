@@ -12,19 +12,21 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class RegisterFormValidatorTest {
 
     @Autowired
+    private Validator validator;
+    
 	private RegisterFormValidator recordValidator;
     
-    @Autowired
 	private UserService userServiceMock;
     
 	private RegisteredUser user;
@@ -35,8 +37,11 @@ public class RegisterFormValidatorTest {
 	}
 
 	@Before
-	public void setup(){
+	public void setup() {
 		user = new RegisteredUserBuilder().id(4).username("email").firstName("Hans-Peter").lastName("Mueller").email("meuston@gmail.com").confirmPassword("12345678").password("12345678").toUser();
+		userServiceMock = EasyMock.createMock(UserService.class);
+		recordValidator = new RegisterFormValidator(userServiceMock);
+		recordValidator.setValidator((javax.validation.Validator) validator);
 	}
 	
 	@Test

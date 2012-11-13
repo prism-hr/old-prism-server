@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -24,19 +25,22 @@ import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class SuperadminUserDTOValidatorTest {
 
+    @Autowired  
+    private Validator validator;  
+    
 	private UserDTO user;
 	
-	@Autowired
-	private SuperadminUserDTOValidator validator;
+	private SuperadminUserDTOValidator superadminUserDTOValidator;
 	
-	@Autowired
 	private UserService userServiceMock;
 
 	@Before
 	public void setup() {
+	    userServiceMock = EasyMock.createMock(UserService.class);
+	    
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null).anyTimes();
 		EasyMock.replay(userServiceMock);
 
@@ -46,19 +50,22 @@ public class SuperadminUserDTOValidatorTest {
 		user.setEmail("email@test.com");
 		user.setSelectedProgram(new ProgramBuilder().id(4).toProgram());
 		user.setSelectedAuthorities(Authority.REVIEWER);
+		
+		superadminUserDTOValidator = new SuperadminUserDTOValidator();
+		superadminUserDTOValidator.setValidator((javax.validation.Validator) validator);
 	}
 
 	@Test
 	@DirtiesContext
 	public void shouldSupportNewUserDTO() {
-		assertTrue(validator.supports(UserDTO.class));
+		assertTrue(superadminUserDTOValidator.supports(UserDTO.class));
 	}
 
 	@Test
 	@DirtiesContext
 	public void shouldNotRejectValidUser() {
 		BindingResult mappingResult = new BeanPropertyBindingResult(user, "*");
-		validator.validate(user, mappingResult);
+		superadminUserDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 
@@ -67,7 +74,7 @@ public class SuperadminUserDTOValidatorTest {
 	public void shouldRejectIfFirstNameEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
 		user.setFirstName("");
-		validator.validate(user, mappingResult);
+		superadminUserDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstName").getCode());
 	}
@@ -77,7 +84,7 @@ public class SuperadminUserDTOValidatorTest {
 	public void shouldRejectIfLastNameNull() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "lastName");
 		user.setLastName(null);
-		validator.validate(user, mappingResult);
+		superadminUserDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("lastName").getCode());
 	}
@@ -87,7 +94,7 @@ public class SuperadminUserDTOValidatorTest {
 	public void shouldRejectIfEmailNotValid() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		user.setEmail("");
-		validator.validate(user, mappingResult);
+		superadminUserDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 	}	
@@ -102,7 +109,7 @@ public class SuperadminUserDTOValidatorTest {
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("applicant@test.com"))
 				.andReturn(new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).toRole()).toUser()).anyTimes();
 		EasyMock.replay(userServiceMock);
-		validator.validate(user, mappingResult);
+		superadminUserDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.email.applicant", mappingResult.getFieldError("email").getCode());
 	}

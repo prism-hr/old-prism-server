@@ -10,16 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class RejectionValidatorTest {
-	private Rejection rejection;
-	@Autowired
+	
+    @Autowired
+    private Validator validator;
+    
+    private Rejection rejection;
+
 	private RejectionValidator rejectionValidator;
 	
 	@Test
@@ -35,8 +40,11 @@ public class RejectionValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("rejectionReason").getCode());
 	}
+	
 	@Before
 	public void setup(){
 		rejection = new RejectionBuilder().rejectionReason(new RejectReasonBuilder().id(1).toRejectReason()).toRejection();
+		rejectionValidator = new RejectionValidator();
+		rejectionValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

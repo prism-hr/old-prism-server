@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -19,11 +20,14 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UpdateUserRolesDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class UpdateUserRolesDTOValidatorTest {
 
-    @Autowired
-	private UpdateUserRolesDTOValidator validator;
+    @Autowired  
+    private Validator validator;  
+    
+    private UpdateUserRolesDTOValidator updateUserRolesDTOValidator;
+    
 	private UpdateUserRolesDTO user;
 
 	@Before
@@ -32,17 +36,20 @@ public class UpdateUserRolesDTOValidatorTest {
 		user.setSelectedUser(new RegisteredUserBuilder().id(5).toUser());
 		user.setSelectedProgram(new ProgramBuilder().id(4).toProgram());
 		user.setSelectedAuthorities(Authority.REVIEWER);
+		
+		updateUserRolesDTOValidator = new UpdateUserRolesDTOValidator();
+		updateUserRolesDTOValidator.setValidator((javax.validation.Validator) validator);
 	}
 
 	@Test
 	public void shouldSupportUpdateUserRolesDTO() {
-		assertTrue(validator.supports(UpdateUserRolesDTO.class));
+		assertTrue(updateUserRolesDTOValidator.supports(UpdateUserRolesDTO.class));
 	}
 
 	@Test
 	public void shouldNotRejectValidUser() {
 		BindingResult mappingResult = new BeanPropertyBindingResult(user, "*");
-		validator.validate(user, mappingResult);
+		updateUserRolesDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 
@@ -50,7 +57,7 @@ public class UpdateUserRolesDTOValidatorTest {
 	public void shouldRejectIfUserEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "selectedUser");
 		user.setSelectedUser(null);
-		validator.validate(user, mappingResult);
+		updateUserRolesDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedUser").getCode());
 	}
@@ -61,7 +68,7 @@ public class UpdateUserRolesDTOValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "selectedProgram");
 		user.setSelectedProgram(null);
 		user.setSelectedAuthorities(Authority.REVIEWER, Authority.SUPERADMINISTRATOR);
-		validator.validate(user, mappingResult);
+		updateUserRolesDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedProgram").getCode());
 	}
@@ -70,7 +77,7 @@ public class UpdateUserRolesDTOValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "selectedProgram");
 		user.setSelectedProgram(null);
 		user.setSelectedAuthorities(Authority.SUPERADMINISTRATOR);
-		validator.validate(user, mappingResult);
+		updateUserRolesDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 		
 	}

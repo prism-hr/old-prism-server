@@ -10,23 +10,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class AdditionalInformationValidatorTest {
 
 	private AdditionalInformation info;
 	
-	@Autowired
 	private AdditionalInformationValidator infoValidator;
+	
+	@Autowired  
+    private Validator validator;
 
 	@Before
 	public void setup() {
 		info = new AdditionalInformationBuilder().convictionsText("blabla").setConvictions(true).applicationForm(new ApplicationFormBuilder().id(8).toApplicationForm()).toAdditionalInformation();
+		infoValidator = new AdditionalInformationValidator();
+		infoValidator.setValidator((javax.validation.Validator) validator);
 	}
 
 	@Test

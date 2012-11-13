@@ -17,11 +17,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -44,17 +44,18 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class ProgrammeDetailsValidatorTest {
 
-    @Autowired
+    @Autowired  
+    private Validator validator;
+    
 	private ProgrammeDetailsValidator programmeDetailsValidator;
     
 	private ProgrammeDetails programmeDetail;
 	
 	private ProgramInstance programInstance;
 	
-	@Autowired
 	private ProgramInstanceDAO programInstanceDAOMock;
 	
 	private Program program;
@@ -67,7 +68,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfProgrammeNameIsEmpty() {
 		programmeDetail.setProgrammeName(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "programmeName");
@@ -81,7 +81,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfStudyOptionIsEmpty() {
 		programmeDetail.setStudyOption(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
@@ -96,7 +95,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfStartDateIsEmpty() {
 		programmeDetail.setStartDate(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
@@ -110,7 +108,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfStartDateIsFutureDate() {
 		programmeDetail.setStartDate(DateUtils.addDays(new Date(), -1));
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
@@ -124,7 +121,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfSourcesOfInterestIsEmpty() {
 		programmeDetail.setSourcesOfInterest(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "sourcesOfInterest");
@@ -139,7 +135,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfSourcesOfInterestFreeTextIsEmpty() {
 	    SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).toSourcesOfInterest();
 	    programmeDetail.setSourcesOfInterest(sourcesOfInterest);
@@ -155,7 +150,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
     public void shouldRejectIfStartDateIsNotInRange() {
 	    programmeDetail.setStartDate(DateUtils.addYears(new Date(), 5));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
@@ -169,7 +163,6 @@ public class ProgrammeDetailsValidatorTest {
     }
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfSuggestedSupervisorFirstNameIsEmpty() {
 		programmeDetail.getSuggestedSupervisors().get(0).setFirstname(null);
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
@@ -184,7 +177,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 	
     @Test
-    @DirtiesContext
     public void shouldRejectIfSuggestedSupervisorFirstNameContainsInvalidCharacter() {
         String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
         programmeDetail.getSuggestedSupervisors().get(0).setFirstname(chineseName);
@@ -200,7 +192,6 @@ public class ProgrammeDetailsValidatorTest {
     }	
 
     @Test
-    @DirtiesContext
     public void shouldRejectIfSuggestedSupervisorFirstNameIsLongerThan30() {
         programmeDetail.getSuggestedSupervisors().get(0).setFirstname("PaulinePaulinePaulinePaulinePaulinePaulinePauline");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
@@ -215,7 +206,6 @@ public class ProgrammeDetailsValidatorTest {
     }    
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfSuggestedSupervisorLastNameIsEmpty() {
 		programmeDetail.getSuggestedSupervisors().get(0).setLastname(null);
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
@@ -230,7 +220,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 	
     @Test
-    @DirtiesContext
     public void shouldRejectIfSuggestedSupervisorLastNameContainsInvalidCharacter() {
         String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
         programmeDetail.getSuggestedSupervisors().get(0).setLastname(chineseName);
@@ -246,7 +235,6 @@ public class ProgrammeDetailsValidatorTest {
     }   
 
     @Test
-    @DirtiesContext
     public void shouldRejectIfSuggestedSupervisorLastNameIsLongerThan40() {
         programmeDetail.getSuggestedSupervisors().get(0).setLastname("PaulinePaulinePaulinePaulinePaulinePaulinePaulinePaulinePaulinePauline");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
@@ -261,7 +249,6 @@ public class ProgrammeDetailsValidatorTest {
     }
     
     @Test
-    @DirtiesContext
     public void shouldRejectIfSuggestedSupervisorEmailIsEmpty() {
         programmeDetail.getSuggestedSupervisors().get(0).setEmail(null);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
@@ -276,7 +263,6 @@ public class ProgrammeDetailsValidatorTest {
     }
     
     @Test
-    @DirtiesContext
     public void shouldRejectIfSuggestedSupervisorEmailContainsInvalidCharacter() {
         programmeDetail.getSuggestedSupervisors().get(0).setEmail("paul@never.com!");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
@@ -291,7 +277,6 @@ public class ProgrammeDetailsValidatorTest {
     }   
 
     @Test
-    @DirtiesContext
     public void shouldRejectIfSuggestedSupervisorEmailIsLongerThan255() {
         programmeDetail.getSuggestedSupervisors().get(0).setEmail("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890@a.com");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
@@ -306,7 +291,6 @@ public class ProgrammeDetailsValidatorTest {
     }    
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
 		programmeDetail.setStudyOption("Part-time");
 		programmeDetail.setStudyOptionCode("31");
@@ -321,7 +305,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfApplicationDateHasPassed() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_WEEK, -1);
@@ -335,7 +318,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfApplicationSubmittedAndTermsAcceptedIsFalse() {
 		form.setStatus(ApplicationFormStatus.VALIDATION);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
@@ -346,7 +328,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldNotRejectIfApplicationsubmittedAndTermsAcceptedIsTrue() {
 		programmeDetail.setAcceptedTerms(true);
 		form.setStatus(ApplicationFormStatus.VALIDATION);
@@ -357,7 +338,6 @@ public class ProgrammeDetailsValidatorTest {
 	}
 	
 	@Test
-	@DirtiesContext
 	public void shouldNotRejectIfApplicationUnsubmittedAndTermsAcceptedIsFalse() {
 		form.setStatus(ApplicationFormStatus.UNSUBMITTED);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
@@ -399,5 +379,10 @@ public class ProgrammeDetailsValidatorTest {
 		    .sourcesOfInterest(interest)
 		    .startDate(DateUtils.addDays(new Date(),10)).applicationForm(form)
 		    .studyOption("1", "Full-time").toProgrammeDetails();
+		
+		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
+		
+		programmeDetailsValidator = new ProgrammeDetailsValidator(programInstanceDAOMock);
+		programmeDetailsValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

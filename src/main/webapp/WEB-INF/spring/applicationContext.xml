@@ -38,8 +38,6 @@
 
     <context:annotation-config id="springConfig" />
 
-    <context:component-scan base-package="com.zuehlke.pgadmissions" />
-
     <bean id="simplerHandlerMapping" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 
     <!-- JSR-303 support will be detected on classpath and enabled automatically -->
@@ -161,5 +159,7 @@
     </bean>
     
     <task:scheduler id="ucl-export-service-scheduler" pool-size="1"/>
+    
+    <context:component-scan base-package="com.zuehlke.pgadmissions" />
 
 </beans>

@@ -13,34 +13,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class ReferenceValidatorTest {
 
     @Autowired
-	private ReferenceValidator validator;
+    private Validator validator;
+    
+	private ReferenceValidator referenceValidator;
+    
 	private ReferenceComment reference;
 
 	@Test
 	public void shouldSupporReference(){
-		assertTrue(validator.supports(ReferenceComment.class));
+		assertTrue(referenceValidator.supports(ReferenceComment.class));
 	}
+	
 	@Test
 	public void shouldAcceptReference(){
 
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reference, "documents");
-		validator.validate(reference, mappingResult);
+		referenceValidator.validate(reference, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
+	
 	@Test
 	public void shouldRejectIfFileIsMissing(){
 		reference.setDocuments(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reference, "documents");
-		validator.validate(reference, mappingResult);
+		referenceValidator.validate(reference, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 	
@@ -48,7 +54,7 @@ public class ReferenceValidatorTest {
 	public void shouldRejectIfCommentIsMissing(){
 		reference.setComment(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reference, "comment");
-		validator.validate(reference, mappingResult);
+		referenceValidator.validate(reference, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
 	}
@@ -57,7 +63,7 @@ public class ReferenceValidatorTest {
 	public void shouldRejectIfSuitableForUCLIsNotSelected(){
 		reference.setSuitableForUCL(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reference, "suitableForUCL");
-		validator.validate(reference, mappingResult);
+		referenceValidator.validate(reference, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForUCL").getCode());
 	}
@@ -66,7 +72,7 @@ public class ReferenceValidatorTest {
 	public void shouldRejectIfSuitableForProgrammeIsNotSelected(){
 		reference.setSuitableForProgramme(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reference, "suitableForProgramme");
-		validator.validate(reference, mappingResult);
+		referenceValidator.validate(reference, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForProgramme").getCode());
 
@@ -79,5 +85,8 @@ public class ReferenceValidatorTest {
 		reference.setComment("comment");
 		reference.setSuitableForProgramme(false);
 		reference.setSuitableForUCL(false);
+		
+		referenceValidator = new ReferenceValidator();
+		referenceValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

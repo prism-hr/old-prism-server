@@ -79,7 +79,7 @@ import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testWebServiceContext.xml")
 public class AdmissionsApplicationsServiceTest extends AutomaticRollbackTestCase {
 
     private final Logger logger = Logger.getLogger(AdmissionsApplicationsServiceTest.class);

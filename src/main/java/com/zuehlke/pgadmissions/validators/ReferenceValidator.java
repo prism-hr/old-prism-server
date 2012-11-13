@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 public class ReferenceValidator extends AbstractValidator {
 
 	@Override	
-	
 	public boolean supports(Class<?> clazz) {		
 		return ReferenceComment.class.isAssignableFrom(clazz);
 	}

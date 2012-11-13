@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -33,13 +34,19 @@ import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class PersonalDetailsValidatorTest {
 
+    @Autowired  
+    private Validator validator; 
+    
 	private PersonalDetails personalDetails;
 	
-	@Autowired
 	private PersonalDetailsValidator personalDetailValidator;
+	
+	private PassportInformationValidator passportInformationValidator;
+	
+	private LanguageQualificationValidator languageQualificationValidator;
 
 	@Test
 	public void shouldSupportPersonalDetail() {
@@ -149,7 +156,11 @@ public class PersonalDetailsValidatorTest {
 	
 	@Test
     public void shouldRejectIfEmailIsLongerThan255Characters() {
-        personalDetails.setEmail("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890@a.com");
+	    StringBuilder builder = new StringBuilder();
+	    for (int i = 0; i < 300; i++) {
+            builder.append("a");
+        }
+        personalDetails.setEmail(builder.append("@1.com").toString());
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -396,5 +407,14 @@ public class PersonalDetailsValidatorTest {
                                 .otherQualificationTypeName("foobar").listeningScore("1").overallScore("1")
                                 .readingScore("1").writingScore("1").speakingScore("1").toLanguageQualification())
 				.toPersonalDetails();
+		
+		passportInformationValidator = new PassportInformationValidator();
+		passportInformationValidator.setValidator((javax.validation.Validator) validator);
+		
+		languageQualificationValidator = new LanguageQualificationValidator();
+		languageQualificationValidator.setValidator((javax.validation.Validator) validator);
+		
+		personalDetailValidator = new PersonalDetailsValidator(passportInformationValidator, languageQualificationValidator);
+		personalDetailValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

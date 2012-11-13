@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
@@ -23,12 +24,14 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class EmploymentPositionValidatorTest {
 
 	private EmploymentPosition position;
 	
-	@Autowired
+    @Autowired  
+    private Validator validator; 
+	
 	private EmploymentPositionValidator positionValidator;
 	
 	@Test
@@ -141,5 +144,8 @@ public class EmploymentPositionValidatorTest {
 		position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		position.setPosition("head of department");
 		position.setEmployerAddress(new AddressBuilder().address1("address").address3("address3").country(new CountryBuilder().id(1).toCountry()).toAddress());
+		
+		positionValidator = new EmploymentPositionValidator();
+		positionValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

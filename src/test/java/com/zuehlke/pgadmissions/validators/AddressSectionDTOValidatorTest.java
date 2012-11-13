@@ -10,17 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class AddressSectionDTOValidatorTest {
 
-    @Autowired
-	private AddressSectionDTOValidator validator;
+    @Autowired  
+    private Validator validator;  
+    
+	private AddressSectionDTOValidator addressSectionDTOValidator;
     
 	private AddressSectionDTO address;
 
@@ -34,17 +37,20 @@ public class AddressSectionDTOValidatorTest {
 	    address.setCurrentAddress1("New York");
 	    address.setCurrentAddress3("New York3");
 	    address.setCurrentAddressCountry(new Country());
+	    
+	    addressSectionDTOValidator = new AddressSectionDTOValidator();
+	    addressSectionDTOValidator.setValidator((javax.validation.Validator) validator);
 	}
 	
 	@Test
 	public void shouldSupportAddress() {
-		assertTrue(validator.supports(AddressSectionDTO.class));
+		assertTrue(addressSectionDTOValidator.supports(AddressSectionDTO.class));
 	}
 	
 	@Test
 	public void shouldAcceptAddress() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		validator.validate(address, mappingResult);
+		addressSectionDTOValidator.validate(address, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
@@ -52,7 +58,7 @@ public class AddressSectionDTOValidatorTest {
 	public void shouldRejectIfCurrentLocationIsNull() {
 		address.setCurrentAddress1(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		validator.validate(address, mappingResult);
+		addressSectionDTOValidator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 	
@@ -60,7 +66,7 @@ public class AddressSectionDTOValidatorTest {
 	public void shouldRejectIfContactLocationIsNull() {
 		address.setContactAddress1(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		validator.validate(address, mappingResult);
+		addressSectionDTOValidator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 	
@@ -68,7 +74,7 @@ public class AddressSectionDTOValidatorTest {
 	public void shouldRejectIfContactCountryIsNull() {
 		address.setContactAddressCountry(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		validator.validate(address, mappingResult);
+		addressSectionDTOValidator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 	
@@ -76,7 +82,7 @@ public class AddressSectionDTOValidatorTest {
 	public void shouldRejectIfCurrentCountryIsNull() {
 		address.setCurrentAddressCountry(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		validator.validate(address, mappingResult);
+		addressSectionDTOValidator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 	
@@ -88,7 +94,7 @@ public class AddressSectionDTOValidatorTest {
 		}
 		address.setCurrentAddress1(currentAddressLoc.toString());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		validator.validate(address, mappingResult);
+		addressSectionDTOValidator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 	
@@ -100,7 +106,7 @@ public class AddressSectionDTOValidatorTest {
 		}
 		address.setContactAddress1(contactAddressLoc.toString());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		validator.validate(address, mappingResult);
+		addressSectionDTOValidator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 }

@@ -59,6 +59,4 @@
 
 	<import resource="applicationContext.xml" />
 
-
-	<!-- <import resource="dwrContext.xml"/>-->
 </beans>

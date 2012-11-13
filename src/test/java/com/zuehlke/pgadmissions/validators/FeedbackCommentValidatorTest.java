@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -19,27 +20,32 @@ import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class FeedbackCommentValidatorTest {
+
+    @Autowired  
+    private Validator validator;  
     
-    @Autowired
-	private FeedbackCommentValidator validator;
+	private FeedbackCommentValidator feedbackCommentValidator;
+    
 	private ReviewComment reviewComment;
+	
 	private InterviewComment interviewComment;
+	
 	private ReferenceComment referenceComment;
 
 	@Test
 	public void shouldSupportComment() {
-		assertTrue(validator.supports(ReviewComment.class));
-		assertTrue(validator.supports(InterviewComment.class));
-		assertTrue(validator.supports(ReferenceComment.class));
+		assertTrue(feedbackCommentValidator.supports(ReviewComment.class));
+		assertTrue(feedbackCommentValidator.supports(InterviewComment.class));
+		assertTrue(feedbackCommentValidator.supports(ReferenceComment.class));
 	}
 
 	@Test
 	public void shouldRejectIfNotDeclinedAndCommentIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "comment");
 		reviewComment.setComment("");
-		validator.validate(reviewComment, mappingResult);
+		feedbackCommentValidator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
 	}
@@ -48,7 +54,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectIfNotDeclinedAndWillingToInterviewIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "willingToInterview");
 		reviewComment.setWillingToInterview(null);
-		validator.validate(reviewComment, mappingResult);
+		feedbackCommentValidator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToInterview").getCode());
 	}
@@ -57,7 +63,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectIfNotDeclinedAndSuitableCandidateForUclIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "suitableCandidateForUcl");
 		reviewComment.setSuitableCandidateForUcl(null);
-		validator.validate(reviewComment, mappingResult);
+		feedbackCommentValidator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableCandidateForUcl").getCode());
 	}
@@ -66,7 +72,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectIfNotDeclinedAndSuitableCandidateForProgrammeIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "suitableCandidateForProgramme");
 		reviewComment.setSuitableCandidateForProgramme(null);
-		validator.validate(reviewComment, mappingResult);
+		feedbackCommentValidator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableCandidateForProgramme").getCode());
 	}
@@ -79,7 +85,7 @@ public class FeedbackCommentValidatorTest {
 		reviewComment.setComment(null);
 		reviewComment.setSuitableCandidateForUcl(null);
 		reviewComment.setWillingToInterview(null);
-		validator.validate(reviewComment, mappingResult);
+		feedbackCommentValidator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
@@ -87,7 +93,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectIfNotDeclinedAndInterviewCommentIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "comment");
 		interviewComment.setComment("");
-		validator.validate(interviewComment, mappingResult);
+		feedbackCommentValidator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
 	}
@@ -96,7 +102,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectInterviewCommentIfNotDeclinedAndWillingToSuperviseIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "willingToSupervise");
 		interviewComment.setWillingToSupervise(null);
-		validator.validate(interviewComment, mappingResult);
+		feedbackCommentValidator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("willingToSupervise").getCode());
 	}
@@ -105,7 +111,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectInterviewCommentIfNotDeclinedAndSuitableCandidateForUclIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "suitableCandidateForUcl");
 		interviewComment.setSuitableCandidateForUcl(null);
-		validator.validate(interviewComment, mappingResult);
+		feedbackCommentValidator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableCandidateForUcl").getCode());
 	}
@@ -114,7 +120,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectInterviewCommentIfNotDeclinedAndSuitableCandidateForProgrammeIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "suitableCandidateForProgramme");
 		interviewComment.setSuitableCandidateForProgramme(null);
-		validator.validate(interviewComment, mappingResult);
+		feedbackCommentValidator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableCandidateForProgramme").getCode());
 	}
@@ -127,7 +133,7 @@ public class FeedbackCommentValidatorTest {
 		interviewComment.setComment(null);
 		interviewComment.setSuitableCandidateForUcl(null);
 		interviewComment.setWillingToSupervise(null);
-		validator.validate(interviewComment, mappingResult);
+		feedbackCommentValidator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
@@ -135,7 +141,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectIfCommentIsMissing(){
 		referenceComment.setComment(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "comment");
-		validator.validate(referenceComment, mappingResult);
+		feedbackCommentValidator.validate(referenceComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
 	}
@@ -144,7 +150,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectIfSuitableForUCLIsNotSelected(){
 		referenceComment.setSuitableForUCL(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForUCL");
-		validator.validate(referenceComment, mappingResult);
+		feedbackCommentValidator.validate(referenceComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForUCL").getCode());
 	}
@@ -153,7 +159,7 @@ public class FeedbackCommentValidatorTest {
 	public void shouldRejectIfSuitableForProgrammeIsNotSelected(){
 		referenceComment.setSuitableForProgramme(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referenceComment, "suitableForProgramme");
-		validator.validate(referenceComment, mappingResult);
+		feedbackCommentValidator.validate(referenceComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("suitableForProgramme").getCode());
 	}
@@ -163,5 +169,8 @@ public class FeedbackCommentValidatorTest {
 		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidateForProgramme(false).suitableCandidateForUCL(false).willingToInterview(true).decline(false).toReviewComment();
 		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervise(true).decline(false).toInterviewComment();
 		referenceComment = new ReferenceCommentBuilder().comment("reference comment").suitableForProgramme(false).suitableForUcl(false).toReferenceComment();
+		
+		feedbackCommentValidator = new FeedbackCommentValidator();
+		feedbackCommentValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

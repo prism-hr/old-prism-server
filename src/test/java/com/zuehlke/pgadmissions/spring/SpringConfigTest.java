@@ -9,16 +9,20 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 public class SpringConfigTest {
 
 	@Test
-	public void shouldLoadSpringConfigWithoutError() throws Exception {
-
+	public void shouldLoadSpringTestContextWithoutError() throws Exception {
 		ServletContext servletContext = new MockServletContext();	
-
 		XmlWebApplicationContext context = new XmlWebApplicationContext();
 		context.setServletContext(servletContext);
-		
-		context.setConfigLocations(new String[] { "/testContext.xml" });
-
+		context.setConfigLocation("/testContext.xml");
 		context.refresh();
-
 	}
+	
+	@Test
+    public void shouldLoadSpringApplicationContextWithoutError() throws Exception {
+        ServletContext servletContext = new MockServletContext();   
+        XmlWebApplicationContext context = new XmlWebApplicationContext();
+        context.setServletContext(servletContext);
+        context.setConfigLocation("file:src/main/webapp/WEB-INF/spring/MainContext.xml");
+        context.refresh();
+    }
 }

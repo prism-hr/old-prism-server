@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -11,8 +11,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
-
-@Service
+@Component
 public class QualificationValidator  extends FormSectionObjectValidator implements Validator {
     
     private static final int MAX_NUMBER_OF_POSITIONS = 6;

@@ -8,10 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -22,38 +22,40 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class RefereeValidatorTest {
 
+    @Autowired
+    private Validator validator;
+    
 	private Referee referee;
 	
-	@Autowired
 	private RefereeValidator refereeValidator;
 	
-	@Autowired
 	private UserService userServiceMock;
 	
 	private RegisteredUser currentUser;
 	
 	@Before
     public void setup() {
+	    userServiceMock = EasyMock.createMock(UserService.class);
         currentUser = new RegisteredUserBuilder().id(9).email("me@test.com").toUser();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
         referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm())
                 .email("email@test.com").firstname("bob").lastname("smith").addressCountry(new Country())
                 .address1("london").address3("london3").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress")
-                .phoneNumber("hallihallo").phoneNumber("0000").toReferee();
+                .phoneNumber("hallihallo").phoneNumber("0000").toReferee();        
+        refereeValidator = new RefereeValidator(userServiceMock);
+        refereeValidator.setValidator((javax.validation.Validator) validator);
     }
 	
 	@Test
-	@DirtiesContext
 	public void shouldSupportRefereeValidator() {
 		assertTrue(refereeValidator.supports(Referee.class));
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfFirstNameIsEmpty() {
 		referee.setFirstname(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "firstname");
@@ -63,7 +65,6 @@ public class RefereeValidatorTest {
 	}
 	
     @Test
-    @DirtiesContext
     public void shouldRejectIfPhoneNumberIsLargerThan35() {
         referee.setPhoneNumber("0123456789012345678901234567890123456789");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
@@ -73,7 +74,6 @@ public class RefereeValidatorTest {
     }	
     
     @Test
-    @DirtiesContext
     public void shouldRejectIfPhoneNumberIsInvalid() {
         referee.setPhoneNumber("012345678901234567--8901");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
@@ -83,7 +83,6 @@ public class RefereeValidatorTest {
     }       
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfLasttNameIsEmpty() {
 		referee.setLastname(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "lastname");
@@ -93,7 +92,6 @@ public class RefereeValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfAddressLocationIsEmpty() {
 		referee.setAddressLocation(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressLocation");
@@ -103,7 +101,6 @@ public class RefereeValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfJobEmployeeIsEmpty() {
 		referee.setJobEmployer(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobEmployer");
@@ -113,7 +110,6 @@ public class RefereeValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfJobTitleIsEmpty() {
 		referee.setJobTitle(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobTitle");
@@ -123,7 +119,6 @@ public class RefereeValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfEmailNotValidEmail() {
 		referee.setEmail("nonvalidemail");
 		EasyMock.reset(userServiceMock);
@@ -137,7 +132,6 @@ public class RefereeValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfEmailSameAsCurrentUser() {
 		referee.setEmail("me@test.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "email");
@@ -147,7 +141,6 @@ public class RefereeValidatorTest {
 	}
 
 	@Test
-	@DirtiesContext
 	public void shouldRejectIfNoTelephone() {
 		referee.setPhoneNumber(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");

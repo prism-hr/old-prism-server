@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.validators;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -23,72 +23,74 @@ import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testValidatorContext.xml")
 public class FundingValidatorTest {
 
-    @Autowired
-	private FundingValidator validator;
+    @Autowired  
+    private Validator validator;  
+    
+	private FundingValidator fundingValidator;
     
 	private Funding funding;
 	
 	@Test
 	public void shouldSupportFunding() {
-		assertTrue(validator.supports(Funding.class));
+		assertTrue(fundingValidator.supports(Funding.class));
 	}
 	
 	@Test
 	public void shouldAcceptFunding() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		validator.validate(funding, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
+		fundingValidator.validate(funding, mappingResult);
+		assertEquals(0, mappingResult.getErrorCount());
 	}
 	
 	@Test
 	public void shouldRejectIfAwardDateNull() {
 		funding.setAwardDate(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		validator.validate(funding, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		fundingValidator.validate(funding, mappingResult);
+		assertEquals(1, mappingResult.getErrorCount());
 	}
 	
 	@Test
 	public void shouldRejectIfFundingDescriptionNull() {
 		funding.setDescription(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		validator.validate(funding, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		fundingValidator.validate(funding, mappingResult);
+		assertEquals(1, mappingResult.getErrorCount());
 	}
 	
 	@Test
 	public void shouldRejectIfFundingTypeNull() {
 		funding.setType(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		validator.validate(funding, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		fundingValidator.validate(funding, mappingResult);
+		assertEquals(1, mappingResult.getErrorCount());
 	}
 	
 	@Test
 	public void shouldRejectIfDocumentIsNull() {
 		funding.setDocument(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		validator.validate(funding, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		fundingValidator.validate(funding, mappingResult);
+		assertEquals(1, mappingResult.getErrorCount());
 	}
 	
 	@Test 
 	public void shouldRejectIfFundingValueNull() {
 		funding.setValue(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		validator.validate(funding, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		fundingValidator.validate(funding, mappingResult);
+		assertEquals(1, mappingResult.getErrorCount());
 	}
 	
 	@Test 
     public void shouldRejectIfFundingValueIsNotNumbers() {
         funding.setValue("abc123");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-        validator.validate(funding, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
+        fundingValidator.validate(funding, mappingResult);
+        assertEquals(1, mappingResult.getErrorCount());
     }
 	
 	@Test
@@ -99,9 +101,9 @@ public class FundingValidatorTest {
 		tomorrow = calendar.getTime();
 		funding.setAwardDate(tomorrow);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "awardDate");
-		validator.validate(funding, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("awardDate").getCode());
+		fundingValidator.validate(funding, mappingResult);
+		assertEquals(1, mappingResult.getErrorCount());
+		assertEquals("date.field.notpast", mappingResult.getFieldError("awardDate").getCode());
 	}
 	
 	@Test
@@ -113,12 +115,12 @@ public class FundingValidatorTest {
 		
 		funding.setDescription(fundDescription.toString());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "awardDate");
-		validator.validate(funding, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		fundingValidator.validate(funding, mappingResult);
+		assertEquals(1, mappingResult.getErrorCount());
 	}
 	
 	@Before
-	public void setup() throws ParseException{
+    public void setup() throws ParseException{
 		funding = new Funding();
 		funding.setApplication(new ApplicationFormBuilder().id(3).toApplicationForm());
 		funding.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
@@ -127,5 +129,8 @@ public class FundingValidatorTest {
 		funding.setType(FundingType.EMPLOYER);
 		funding.setValue("2000");
 		funding.setDocument( new DocumentBuilder().id(1).toDocument());
+		
+		fundingValidator = new FundingValidator();
+		fundingValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

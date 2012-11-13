@@ -1,26 +1,16 @@
 package com.zuehlke.pgadmissions.validators;
 
 import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.dto.UserDTO;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class SuperadminUserDTOValidator extends AbstractValidator {
 
-	private final UserService userService;
-
-	SuperadminUserDTOValidator(){
-		this(null);
-	}
-	
-	@Autowired
-	public SuperadminUserDTOValidator(UserService userService) {
-		this.userService = userService;
+	public SuperadminUserDTOValidator() {
 	}
 
 	@Override

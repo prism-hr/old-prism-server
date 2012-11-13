@@ -5,13 +5,13 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.Interview;
 
-@Service
+@Component
 public class InterviewValidator extends AbstractValidator {
 
 	@Override

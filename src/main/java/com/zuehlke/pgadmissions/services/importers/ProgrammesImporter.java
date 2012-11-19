@@ -38,6 +38,9 @@ public class ProgrammesImporter implements Importer {
 	private final String user;
 	private final String password;
 
+	public ProgrammesImporter() throws JAXBException {
+	    this(null, null, null, null, null, null);
+	}
 	
 	@Autowired
 	public ProgrammesImporter(ProgramInstanceDAO programDAO, ProgramDAO programDao, ImportService importService,

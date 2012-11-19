@@ -26,13 +26,14 @@ public class CountriesOfDomicileImporter implements Importer {
 	private static final Logger log = Logger.getLogger(CountriesOfDomicileImporter.class);
 
 	private final JAXBContext context;
-
-
 	private final URL xmlFileLocation;
-
 	private final DomicileDAO domicileDAO;
 	private final ImportService importService;
 
+	public CountriesOfDomicileImporter() throws JAXBException {
+	    this(null, null, null);
+	}
+	
 	@Autowired
 	public CountriesOfDomicileImporter(DomicileDAO countriesDAO, ImportService importService,
 			@Value("${xml.data.import.countriesOfDomicile.url}") URL xmlFileLocation) throws JAXBException {

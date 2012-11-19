@@ -31,6 +31,10 @@ public class DisabilitiesImporter implements Importer {
 	private final DisabilityDAO disabilityDAO;
 	private final ImportService importService;
 
+	public DisabilitiesImporter() throws JAXBException {
+	    this(null, null, null);
+	}
+	
 	@Autowired
 	public DisabilitiesImporter(DisabilityDAO disabilityDAO, ImportService importService,
 			@Value("${xml.data.import.disabilities.url}") URL xmlFileLocation) throws JAXBException {

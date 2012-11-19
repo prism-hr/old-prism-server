@@ -1,19 +1,24 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 
 @Repository
 public class ApplicationFormTransferDAO {
 
     private final SessionFactory sessionFactory;
 
+    public ApplicationFormTransferDAO() {
+        this(null);
+    }
+    
     @Autowired
     public ApplicationFormTransferDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -26,7 +31,7 @@ public class ApplicationFormTransferDAO {
     public ApplicationFormTransfer getById(Long id) {
         return (ApplicationFormTransfer) sessionFactory.getCurrentSession().get(ApplicationFormTransfer.class, id);
     }
-
+    
     @SuppressWarnings("unchecked")
     public List<ApplicationFormTransfer> getAllTransfersWaitingForWebserviceCall() {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).

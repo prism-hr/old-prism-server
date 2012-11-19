@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.uclexport;
+package com.zuehlke.pgadmissions.services.exporters;
 
 import org.apache.log4j.Logger;
 
@@ -14,9 +14,9 @@ class Phase2Task implements Runnable {
     private Integer applicationId;
     private Long transferId;
     private TransferListener listener;
-    private UclExportServiceImpl uclExportService;
+    private UclExportService uclExportService;
 
-    Phase2Task(UclExportServiceImpl uclExportService, Integer applicationId, Long transferId, TransferListener listener) {
+    Phase2Task(UclExportService uclExportService, Integer applicationId, Long transferId, TransferListener listener) {
         this.uclExportService = uclExportService;
         this.applicationId = applicationId;
         this.transferId = transferId;

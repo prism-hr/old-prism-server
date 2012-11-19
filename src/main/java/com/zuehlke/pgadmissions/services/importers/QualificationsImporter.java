@@ -33,6 +33,10 @@ public class QualificationsImporter implements Importer {
 	private final QualificationTypeDAO qualificationDAO;
 	private final ImportService importService;
 	
+	public QualificationsImporter() throws JAXBException {
+	    this(null, null, null);
+	}
+	
 	@Autowired
 	public QualificationsImporter(QualificationTypeDAO qualificationDAO, ImportService importService,
 			@Value("${xml.data.import.qualifications.url}") URL xmlFileLocation) throws JAXBException {

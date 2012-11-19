@@ -1,18 +1,8 @@
-package com.zuehlke.pgadmissions.services.uclexport;
+package com.zuehlke.pgadmissions.services.exporters;
 
 import java.util.Date;
 
-import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -55,39 +45,26 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration("/testContext.xml")
-@Ignore
-public class UclExportServiceImplTest {
+public class UclIntegrationTest extends AutomaticRollbackTestCase {
 
-    private ApplicationForm applicationForm;
-
-    @Autowired
-    UclExportService exportService;
-    
-    @Test
-    @Ignore
-    public void shouldSendToUcl() {
-        exportService.sendToUCL(applicationForm);
-    }
-    
-    @Before
-    public void setup() {
+    public ApplicationForm getValidApplicationForm() {
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon W1T 4HD\nUnited Kingdom";
-        RegisteredUser user = new RegisteredUserBuilder().id(1).username("denk@zhaw.ch").toUser();
-        Country country = new CountryBuilder().id(1).code("XK").name("United Kingdom").toCountry();
-        Address address = new AddressBuilder().id(1).country(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).toAddress();
+        RegisteredUser user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).username("denk@zhaw.ch").enabled(true).toUser();
+        RegisteredUser approverUser = new RegisteredUserBuilder().id(Integer.MAX_VALUE-1).username("approver@zhaw.ch").enabled(true).toUser();
+        Country country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).toCountry();
+        Address address = new AddressBuilder().id(Integer.MAX_VALUE).country(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).toAddress();
         EmploymentPosition employmentPosition = new EmploymentPositionBuilder()
             .current(true)
             .employerAdress1(addressStr)
             .employerCountry(country)
             .employerName("Zuhlke Ltd.")
             .toEmploymentPosition();
-        Language language = new LanguageBuilder().code("GB").name("England").toLanguage();
-        Disability disability = new DisabilityBuilder().code(0).name("No Disability").toDisability();
-        Ethnicity ethnicity = new EthnicityBuilder().code(10).name("White").toEthnicity();
-        Domicile domicile = new DomicileBuilder().code("XK").name("United Kingdom").toDomicile();
+        Language language = new LanguageBuilder().id(Integer.MAX_VALUE).code("GB").name("England").enabled(true).toLanguage();
+        Disability disability = new DisabilityBuilder().id(Integer.MAX_VALUE).code(0).name("No Disability").enabled(true).toDisability();
+        Ethnicity ethnicity = new EthnicityBuilder().id(Integer.MAX_VALUE).code(10).name("White").enabled(true).toEthnicity();
+        Domicile domicile = new DomicileBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).toDomicile();
         PersonalDetails personalDetails = new PersonalDetailsBuilder()
+            .id(Integer.MAX_VALUE)
             .candiateNationalities(language)
             .country(country)
             .dateOfBirth(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -28))
@@ -107,10 +84,11 @@ public class UclExportServiceImplTest {
             .title(Title.MR)
             .toPersonalDetails();
         AdditionalInformation additionalInformation = new AdditionalInformationBuilder()
+            .id(Integer.MAX_VALUE)
             .setConvictions(false)
             .toAdditionalInformation();
         ProgramInstance instance = new ProgramInstanceBuilder()
-            .id(1)
+            .id(Integer.MAX_VALUE)
             .academicYear("2013")
             .applicationDeadline(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
             .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1))
@@ -119,10 +97,10 @@ public class UclExportServiceImplTest {
             .identifier("0009")
             .toProgramInstance();
         Program program = new ProgramBuilder()
-            .id(1)
+            .id(Integer.MAX_VALUE)
             .administrators(user)
             .approver(user)
-            .code("TMRMBISING01")
+            .code("TMRMBISING99")
             .enabled(true)
             .instances(instance)
             .interviewers(user)
@@ -130,17 +108,18 @@ public class UclExportServiceImplTest {
             .supervisors(user)
             .title("MRes Medical and Biomedical Imaging")
             .toProgram();
-        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).code("BRIT_COUN").name("British Council").toSourcesOfInterest();
+        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(Integer.MAX_VALUE).code("BRIT_COUN").name("British Council").toSourcesOfInterest();
         ProgrammeDetails programDetails = new ProgrammeDetailsBuilder()
-            .id(1)
+            .id(Integer.MAX_VALUE)
             .programmeName("MRes Medical and Biomedical Imaging")
             .projectName("Project Title")
             .sourcesOfInterest(interest)
             .startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
             .studyOption("F+++++", "Full-time")
             .toProgrammeDetails();
-        QualificationType qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").toQualificationTitle();
+        QualificationType qualificationType = new QualificationTypeBuilder().id(Integer.MAX_VALUE).code("DEGTRE").name("Bachelors Degree - France").enabled(true).toQualificationTitle();
         Qualification qualification = new QualificationBuilder()
+            .id(Integer.MAX_VALUE)
             .awardDate(new Date())
             .grade("6")
             .institution("AF0001")
@@ -149,16 +128,17 @@ public class UclExportServiceImplTest {
             .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1))
             .subject("Engineering")
             .type(qualificationType)
+            .isCompleted(CheckedStatus.YES)
             .toQualification();
-        applicationForm = new ApplicationFormBuilder()
-            .id(1)
+        ApplicationForm applicationForm = new ApplicationFormBuilder()
+            .id(Integer.MAX_VALUE)
             .acceptedTerms(CheckedStatus.YES)
             .additionalInformation(additionalInformation)
             .appDate(new Date())
             .applicant(user)
             .applicationAdministrator(user)
-            .applicationNumber("TMRMBISING01-2012-000001")
-            .approver(user)
+            .applicationNumber("TMRMBISING01-2012-999999")
+            .approver(approverUser)
             .batchDeadline(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
             .contactAddress(address)
             .currentAddress(address)
@@ -173,5 +153,9 @@ public class UclExportServiceImplTest {
             .status(ApplicationFormStatus.APPROVED)
             .submittedDate(new Date())
             .toApplicationForm();
+        
+        save(user, approverUser, language, country, domicile, address, program, applicationForm);
+        
+        return applicationForm;
     }
 }

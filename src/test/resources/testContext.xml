@@ -9,10 +9,7 @@
 	<import resource="hibernateTestConfig.xml" />
     
     <import resource="../../src/main/webapp/WEB-INF/spring/applicationContext.xml" /> 
-    
-    <!-- Workaround for: http://forum.springsource.org/showthread.php?89210-Testing-using-ContextConfiguration-and-XmlWebApplicationContext-and-dwr -->
-<!--     <bean id="dwrController" class="com.zuehlke.pgadmissions.test.utils.DwrControllerWithTestSupport" /> -->
-    
+     
     <bean id="defaultTransactionTemplate" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
         <constructor-arg value="org.springframework.transaction.support.TransactionTemplate" />
     </bean>

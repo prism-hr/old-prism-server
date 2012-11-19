@@ -27,14 +27,15 @@ public class CountriesOfBirthImporter implements Importer {
 
 	private final JAXBContext context;
 	private final URL xmlFileLocation;
-
-	@Autowired
 	private final CountriesDAO countriesDAO;
 	private final ImportService importService;
 
+	public CountriesOfBirthImporter() throws JAXBException {
+	    this(null, null, null);
+	}
+	
 	@Autowired
-	public CountriesOfBirthImporter(CountriesDAO countriesDAO, ImportService importService,
-			@Value("${xml.data.import.countriesOfBirth.url}") URL xmlFileLocation) throws JAXBException {
+	public CountriesOfBirthImporter(CountriesDAO countriesDAO, ImportService importService, @Value("${xml.data.import.countriesOfBirth.url}") URL xmlFileLocation) throws JAXBException {
 		this.countriesDAO = countriesDAO;
 		this.importService = importService;
 		this.xmlFileLocation = xmlFileLocation;

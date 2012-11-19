@@ -1,40 +1,39 @@
-package com.zuehlke.pgadmissions.services.uclexport;
+package com.zuehlke.pgadmissions.services.exporters;
 
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 
-class DeafListener implements TransferListener {
+public class DeafListener implements TransferListener {
+
     @Override
     public void queued() {
-        //ignore by design
     }
 
     @Override
     public void transferStarted() {
-        //ignore by design
     }
 
     @Override
     public void webserviceCallCompleted() {
-        //ignore by design
     }
 
     @Override
     public void attachmentsSftpTransmissionStarted() {
-        //ignore by design
     }
 
     @Override
     public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-        //ignore by design
     }
 
     @Override
     public void transferFailed(ApplicationFormTransferError error) {
-        //ignore by design
     }
 
     @Override
     public void sshConnectionEstablished() {
-        //ignore by design
+    }
+
+    @Override
+    public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
     }
 }

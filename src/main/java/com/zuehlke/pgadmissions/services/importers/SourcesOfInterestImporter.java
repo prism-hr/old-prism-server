@@ -33,6 +33,10 @@ public class SourcesOfInterestImporter implements Importer {
 
 	private final ImportService importService;
 
+	public SourcesOfInterestImporter() throws JAXBException {
+	    this(null, null, null);
+	}
+	
 	@Autowired
 	public SourcesOfInterestImporter(SourcesOfInterestDAO sourcesOfInterestDAO, ImportService importService,
 			@Value("${xml.data.import.sourcesOfInterest.url}") URL xmlFileLocation) throws JAXBException {

@@ -1,5 +1,6 @@
-package com.zuehlke.pgadmissions.services.uclexport;
+package com.zuehlke.pgadmissions.services.exporters;
 
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 
 /**
@@ -14,4 +15,5 @@ public interface TransferListener {
     void attachmentsSftpTransmissionStarted();
     void transferCompleted(String uclUserId, String uclBookingReferenceNumber);
     void transferFailed(ApplicationFormTransferError error);
+    void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request);
 }

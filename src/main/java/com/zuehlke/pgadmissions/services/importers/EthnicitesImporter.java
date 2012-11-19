@@ -32,6 +32,10 @@ public class EthnicitesImporter implements Importer {
 	private final EthnicityDAO ethnicityDAO;
 	private final ImportService importService;
 	
+	public EthnicitesImporter() throws JAXBException {
+	    this(null, null, null);
+	}
+	
 	@Autowired
 	public EthnicitesImporter(EthnicityDAO ethnicityDAO, ImportService importService,
 			@Value("${xml.data.import.ethnicities.url}") URL xmlFileLocation) throws JAXBException {

@@ -20,7 +20,7 @@
 
 	<context:property-placeholder location="classpath:environment.properties" />
 	<import resource="../../src/main/webapp/WEB-INF/spring/hibernateEntities.xml" />
-    <import resource="../../src/main/webapp/WEB-INF/spring/webServiceContext.xml" />
+    <import resource="../../src/main/webapp/WEB-INF/spring/uclIntegrationContext.xml" />
 
 	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.uclexport;
+package com.zuehlke.pgadmissions.services.exporters;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,8 +22,6 @@ import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
-import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
-import com.zuehlke.pgadmissions.services.exporters.PorticoDocumentNameMappings;
 
 /**
  * This service encapsulates:<ol>
@@ -35,57 +33,75 @@ import com.zuehlke.pgadmissions.services.exporters.PorticoDocumentNameMappings;
 class SftpAttachmentsSendingService {
 
     public static class CouldNotCreateAttachmentsPack extends Exception {
+        private static final long serialVersionUID = 79819935845687782L;
         public CouldNotCreateAttachmentsPack(String message) {
             super(message);
         }
     }
 
     public static class LocallyDefinedSshConfigurationIsWrong extends Exception {
+        private static final long serialVersionUID = -3795035471781335158L;
         public LocallyDefinedSshConfigurationIsWrong(String message, Throwable cause) {
             super(message, cause);
         }
     }
 
     public static class CouldNotOpenSshConnectionToRemoteHost extends Exception {
+        private static final long serialVersionUID = -7766133504265217986L;
         public CouldNotOpenSshConnectionToRemoteHost(String message, Throwable cause) {
             super(message, cause);
         }
     }
 
     public static class SftpTargetDirectoryNotAccessible extends Exception {
+        private static final long serialVersionUID = 1205344425274265339L;
         public SftpTargetDirectoryNotAccessible(String message, Throwable cause) {
             super(message, cause);
         }
     }
 
     public static class SftpTransmissionFailedOrProtocolError extends Exception {
+        private static final long serialVersionUID = -3899282644603215520L;
         public SftpTransmissionFailedOrProtocolError(String message, Throwable cause) {
             super(message, cause);
         }
     }
 
     private final JSchFactory jSchFactory;
+    
     private final PdfDocumentBuilder pdfDocumentBuilder;
 
-    @Value("${xml.data.export.sftp.host}")
     private String sftpHost;
 
-    @Value("${xml.data.export.sftp.port}")
     private String sftpPort;
 
-    @Value("${xml.data.export.sftp.username}")
     private String sftpUsername;
 
-    @Value("${xml.data.export.sftp.password}")
     private String sftpPassword;
 
-    @Value("${xml.data.export.sftp.folder}")
     private String targetFolder;
 
+    public SftpAttachmentsSendingService() {
+        this(null, null, null, null, null, null, null);
+    }
+    
     @Autowired
-    public SftpAttachmentsSendingService(JSchFactory jSchFactory, PdfDocumentBuilder pdfDocumentBuilder) {
+    public SftpAttachmentsSendingService(
+            JSchFactory jSchFactory, 
+            PdfDocumentBuilder pdfDocumentBuilder,
+            @Value("${xml.data.export.sftp.host}") String sftpHost, 
+            @Value("${xml.data.export.sftp.port}") String sftpPort, 
+            @Value("${xml.data.export.sftp.username}") String sftpUsername, 
+            @Value("${xml.data.export.sftp.password}") String sftpPassword, 
+            @Value("${xml.data.export.sftp.folder}") String targetFolder) {
+        super();
         this.jSchFactory = jSchFactory;
         this.pdfDocumentBuilder = pdfDocumentBuilder;
+        this.sftpHost = sftpHost;
+        this.sftpPort = sftpPort;
+        this.sftpUsername = sftpUsername;
+        this.sftpPassword = sftpPassword;
+        this.targetFolder = targetFolder;
     }
 
     /**

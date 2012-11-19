@@ -10,8 +10,7 @@
 	<!-- DWR Confing-->
 	<dwr:annotation-config id="dwrConfig"/>
  
- 	<dwr:annotation-scan base-package="com.zuehlke.pgadmissions.dwr" 
-						scanDataTransferObject="true" scanRemoteProxy="true" />
+ 	<dwr:annotation-scan base-package="com.zuehlke.pgadmissions.dwr" scanDataTransferObject="true" scanRemoteProxy="true" />
  
  	<dwr:url-mapping />
 	

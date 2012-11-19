@@ -34,6 +34,10 @@ public class NationalitiesImporter implements Importer {
 
 	private final ImportService importService;
 	
+	public NationalitiesImporter() throws JAXBException {
+	    this(null, null, null);
+	}
+	
 	@Autowired
 	public NationalitiesImporter(LanguageDAO languageDAO, ImportService importService,
 			@Value("${xml.data.import.nationalities.url}") URL xmlFileLocation) throws JAXBException {

@@ -132,7 +132,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
         applicant.setEmployerList(buildEmployer());
         
-        if (StringUtils.isNotBlank( applicationForm.getApplicant().getUclUserId())) {
+        if (StringUtils.isNotBlank(applicationForm.getApplicant().getUclUserId())) {
             applicant.setApplicantID(String.valueOf(applicationForm.getApplicant().getId()));
         } else {
             applicant.setApplicantID(applicationForm.getApplicant().getUclUserId());

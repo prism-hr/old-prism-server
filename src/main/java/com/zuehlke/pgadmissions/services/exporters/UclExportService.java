@@ -1,15 +1,15 @@
-package com.zuehlke.pgadmissions.services.uclexport;
+package com.zuehlke.pgadmissions.services.exporters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.annotation.Resource;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.WebServiceIOException;
-import org.springframework.ws.client.WebServiceTransportException;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
@@ -34,8 +33,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
-import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
-import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
 import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
@@ -44,63 +41,99 @@ import com.zuehlke.pgadmissions.utils.StacktraceDump;
  * Used for situations where we push data to UCL system (PORTICO).
  */
 @Service
-class UclExportServiceImpl implements UclExportService {
-    private static final Logger log = Logger.getLogger(UclExportServiceImpl.class);
+public class UclExportService {
+    private static final Logger log = Logger.getLogger(UclExportService.class);
 
-    @Resource(name = "webservice-calling-queue-executor")
     private PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutor;
-
-    @Resource(name = "sftp-calling-queue-executor")
+    
     private PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutor;
 
-    @Autowired
     private WebServiceTemplate webServiceTemplate;
 
-    @Autowired
     private ProgramInstanceDAO programInstanceDAO;
 
-    @Autowired
     private ApplicationFormTransferDAO applicationFormTransferDAO;
 
-    @Autowired
     private ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO;
 
     private int numberOfConsecutiveSoapFaults = 0;
 
-    @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}")
     private int consecutiveSoapFaultsLimit;
 
-    @Value("${xml.data.export.queue_pausing_delay_in_case_of_network_problem}")
     private int queuePausingDelayInCaseOfNetworkProblemsDiscovered;
 
-    @Autowired
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
-    public UclExportServiceImpl() {
-    }
-
-    @Autowired
-    private JSchFactory jSchFactory;
-    
-    @Resource(name = "ucl-export-service-scheduler")
     private TaskScheduler scheduler;
+
+    public UclExportService() {
+        this(null, null, null, null, null, null, 0, 0, null, null);
+    }
+    
+    @Autowired
+    public UclExportService(
+            @Qualifier("webservice-calling-queue-executor") PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutor,
+            @Qualifier("sftp-calling-queue-executor") PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutor,
+            WebServiceTemplate webServiceTemplate, 
+            ProgramInstanceDAO programInstanceDAO,
+            ApplicationFormTransferDAO applicationFormTransferDAO,
+            ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO, 
+            @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}") int consecutiveSoapFaultsLimit,
+            @Value("${xml.data.export.queue_pausing_delay_in_case_of_network_problem}") int queuePausingDelayInCaseOfNetworkProblemsDiscovered,
+            SftpAttachmentsSendingService sftpAttachmentsSendingService, 
+            @Qualifier("ucl-export-service-scheduler") TaskScheduler scheduler) {
+        super();
+        this.webserviceCallingQueueExecutor = webserviceCallingQueueExecutor;
+        this.sftpCallingQueueExecutor = sftpCallingQueueExecutor;
+        this.webServiceTemplate = webServiceTemplate;
+        this.programInstanceDAO = programInstanceDAO;
+        this.applicationFormTransferDAO = applicationFormTransferDAO;
+        this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;
+        this.consecutiveSoapFaultsLimit = consecutiveSoapFaultsLimit;
+        this.queuePausingDelayInCaseOfNetworkProblemsDiscovered = queuePausingDelayInCaseOfNetworkProblemsDiscovered;
+        this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
+        this.scheduler = scheduler;
+    }
 
     //oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 
+    /**
+     * I am scheduling a new application form transfer for a given application form.
+     * As a consequence this application form will be sent to UCL (some time later .. this goes in background).
+     * The scheduling mechanism is reliable i.e. is able to survive possible system crash.<p/>
+     *
+     * If the caller wants to observe the sending process - please use sendToUCL(ApplicationForm,TransferListener) method.
+     *
+     * @param applicationForm application form to be transferred
+     * @return application transfer id - may be usable for diagnostic purposes, but usually simple ignore this
+     */
     public Long sendToUCL(ApplicationForm applicationForm) {
         return this.sendToUCL(applicationForm, new DeafListener());
     }
 
+    /**
+     * I am scheduling a new application form transfer for a given application form.
+     * As a consequence this application form will be sent to UCL (some time later .. this goes in background).
+     * The scheduling mechanism is reliable i.e. is able to survive possible system crash.
+     *
+     * @param applicationForm application form to be transferred
+     * @param listener callback listener for observing the sending process
+     * @return application transfer id - may be usable for diagnostic purposes, but usually simple ignore this
+     */
     public Long sendToUCL(ApplicationForm applicationForm, TransferListener listener) {
-        log.debug("submitting application form " + applicationForm.getId() + " for ucl-eexport processing");
+        log.debug("submitting application form " + applicationForm.getId() + " for ucl-export processing");
         ApplicationFormTransfer transfer = this.createPersistentQueueItem(applicationForm);
-        //todo: create an event in application form's timeline ("scheduled transfer to UCL-PORTICO")
+        //TODO: create an event in application form's timeline ("scheduled transfer to UCL-PORTICO")
         webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
         this.triggerQueued(listener);
         log.debug("succecfully added application form " + applicationForm.getId() + " to ucl-export queue (transfer-id=" + transfer.getId() +")");
         return transfer.getId();
     }
 
+    /**
+     * I am recreating the application form transfers executors queues contents based on what we have in the database.
+     * This is supposed to be invoked at system startup and is crucial to system crash recovery.
+     */
     public void systemStartupSendingQueuesRecovery() {
         // allowing system to start smoothly before working on the queues.
         this.pauseWsQueueForMinutes(2);
@@ -150,7 +183,8 @@ class UclExportServiceImpl implements UclExportService {
 
         //build webservice request
         request = new SubmitAdmissionsApplicationRequestBuilderV2(programInstanceDAO, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
-
+        listener.sendingSubmitAdmissionsApplicantRequest(request);
+        
         try  {
             //call webservice
             log.debug("calling marshalSendAndReceive for transfer " + transferId);
@@ -160,7 +194,7 @@ class UclExportServiceImpl implements UclExportService {
             log.debug("WebServiceTransportException during webservice call for transfer " + transferId, e);
             //CASE 1: webservice call failed because of network failure, protocol problems etc
             //seems like we have communication problems so makes no sense to push more appliaction forms at the moment
-            //todo: we should measure the time of this problem constantly occuring; after some treashold (1 day?) we should inform admins
+            //TODO: we should measure the time of this problem constantly occuring; after some treashold (1 day?) we should inform admins
 
             //save error information
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -177,7 +211,7 @@ class UclExportServiceImpl implements UclExportService {
             //inform the listener
             this.triggerTransferFailed(listener, error);
 
-            //schedudle the same transfer again
+            //Schedule the same transfer again
             webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
 
             return;
@@ -215,12 +249,12 @@ class UclExportServiceImpl implements UclExportService {
             numberOfConsecutiveSoapFaults++;
             if (numberOfConsecutiveSoapFaults > consecutiveSoapFaultsLimit) {
                 webserviceCallingQueueExecutor.pause();
-                //todo: inform admins that we have repeating webservice problems (probably by sending an email with problem description)
+                //TODO: inform admins that we have repeating webservice problems (probably by sending an email with problem description)
             }
             return;
         }
 
-        //CASE 3; webservice answer was ok (transmission succesful, request approved)
+        //CASE 3; webservice answer was ok (transmission successful, request approved)
         numberOfConsecutiveSoapFaults = 0;
 
         //extract precious IDs received from UCL and store them into ApplicationTransfer, ApplicationForm and RegisteredUser

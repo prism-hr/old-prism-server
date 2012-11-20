@@ -63,20 +63,13 @@
 	<bean id="mailSender" class="com.zuehlke.pgadmissions.services.FakeMailSender" />
 
 	<bean id="mailService" class="com.zuehlke.pgadmissions.services.MailService" />
+    
     <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
+    
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     
-    <bean id="webservice-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor">
-        <property name="name" value="webservice-executor"/>
-    </bean>
-
-    <bean id="sftp-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor">
-        <property name="name" value="sftp-executor"/>
+    <bean id="defaultTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"/>
     </bean>
     
-    <bean id="defaultTransactionTemplate" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
-        <constructor-arg value="org.springframework.transaction.support.TransactionTemplate" />
-    </bean>
-    
-    <task:scheduler id="ucl-export-service-scheduler" pool-size="1"/>
 </beans>

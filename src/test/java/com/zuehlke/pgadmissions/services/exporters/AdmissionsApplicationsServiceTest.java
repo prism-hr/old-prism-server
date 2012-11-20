@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -28,16 +29,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.AdmissionsApplicationResponse;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.ApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.CourseApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.CourseApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,18 +54,18 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
     
     private ProgramInstanceDAO programInstanceDAOMock = null;
     
-    private ApplicationFormDAO applicationFormDAO = null;
-    
-    private ProgramInstanceDAO programInstanceDAO = null;
-    
     private ApplicationForm applicationForm = null;
+
+    private DomicileDAO domicileDAOMock;
+
+    private QualificationInstitutionDAO qualificationInstitutionDAOMock;
     
     @Test
     public void shouldMarshallGMonthCorrectly() throws XmlMappingException, IOException, DatatypeConfigurationException {
         /*
          * http://java.net/jira/browse/JAXB-643?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aworklog-tabpanel
          * Sun's DatatypeFactory#newXMLGregorianCalendar(String) and XMLGregorianCalendar 
-         * which was buldled in jdk/jre6 lost backward compatibility in xsd:gMonth.
+         * which was bundled in jdk/jre6 lost backward compatibility in xsd:gMonth.
         */
         
         DateTime firstDayOfMonth = new DateTime().dayOfMonth().withMinimumValue();
@@ -92,10 +95,11 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
                 programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(applicationForm.getProgram(),
                         applicationForm.getProgrammeDetails().getStudyOption())).andReturn(
                 applicationForm.getProgram().getInstances().get(0));
+        
         EasyMock.replay(programInstanceDAOMock);
         
-        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV2(programInstanceDAOMock,
-                new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(
+                programInstanceDAOMock, qualificationInstitutionDAOMock, domicileDAOMock, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
         
         AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
         
@@ -112,7 +116,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
         EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);
         EasyMock.replay(programInstanceDAOMock);
     
-        SubmitAdmissionsApplicationRequestBuilderV2 submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(programInstanceDAOMock, new ObjectFactory());
+        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAOMock, qualificationInstitutionDAOMock, domicileDAOMock, new ObjectFactory());
         SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
     
         StringWriter writer = new StringWriter();
@@ -153,9 +157,12 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
             .toProgramInstance();
         
         EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);
-        EasyMock.replay(programInstanceDAOMock);
         
-        SubmitAdmissionsApplicationRequestBuilderV2 submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(programInstanceDAOMock, new ObjectFactory());
+        EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
+        
+        EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
+        
+        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAOMock, qualificationInstitutionDAOMock, domicileDAOMock, new ObjectFactory());
         SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
         
         StringWriter writer = new StringWriter();
@@ -172,8 +179,8 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
     
     @Before
     public void setup() {
-        applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-        programInstanceDAO = new ProgramInstanceDAO(sessionFactory);
+        qualificationInstitutionDAOMock = EasyMock.createMock(QualificationInstitutionDAO.class);
+        domicileDAOMock = EasyMock.createMock(DomicileDAO.class);
         programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
         applicationForm = getValidApplicationForm();
     }

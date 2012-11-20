@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -11,38 +9,47 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.AddressTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.AppointmentTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ContactDtlsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.CountryTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.CourseApplicationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.DisabilityTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.EmployerTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.EnglishLanguageScoreTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.EnglishLanguageTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.EthnicityTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.GenderTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.InstitutionTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.LanguageBandScoreTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ModeofattendanceTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.NameTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.NationalityTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ObjectFactory;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.PassportTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.ProgrammeOccurrenceTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.QualificationTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.QualificationsTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.QualificationsinEnglishTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.RefereeTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.RegistrypersonTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.SourceOfInterestTp;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v1.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.AddressTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicantTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.AppointmentTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ContactDtlsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.CountryTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.CourseApplicationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.DisabilityTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.DomicileTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EmployerTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EmploymentDetailsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageQualificationDetailsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageScoreTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EnglishLanguageTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.EthnicityTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.GenderTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.InstitutionTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.LanguageBandScoreTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ModeofattendanceTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.NameTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.NationalityTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.PassportTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.ProgrammeOccurrenceTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationDetailsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsinEnglishTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeListTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -52,13 +59,14 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
-public class SubmitAdmissionsApplicationRequestBuilderV1 {
+public class SubmitAdmissionsApplicationRequestBuilder {
 
     private static final String REFER_TO_ATTACHED_DOCUMENT = "Refer to attached document.";
 
@@ -68,13 +76,21 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
     
     private final ProgramInstanceDAO programInstanceDAO;
     
+    private final QualificationInstitutionDAO qualificationInstitutionDAO;
+    
+    private final DomicileDAO domicileDAO;
+    
     private final DatatypeFactory datatypeFactory;
     
     private ApplicationForm applicationForm;
     
-    public SubmitAdmissionsApplicationRequestBuilderV1(ProgramInstanceDAO programInstanceDAO, ObjectFactory xmlFactory) {
+    public SubmitAdmissionsApplicationRequestBuilder(ProgramInstanceDAO programInstanceDAO, 
+            QualificationInstitutionDAO qualificationInstitutionDAO, DomicileDAO domicileDAO,
+            ObjectFactory xmlFactory) {
         this.xmlFactory = xmlFactory;
         this.programInstanceDAO = programInstanceDAO;
+        this.domicileDAO = domicileDAO;
+        this.qualificationInstitutionDAO = qualificationInstitutionDAO;
         try {
             datatypeFactory = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException dce) {
@@ -82,11 +98,11 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
         }
     }
     
-    public SubmitAdmissionsApplicationRequestBuilderV1() {
-        this(null, null);
+    public SubmitAdmissionsApplicationRequestBuilder() {
+        this(null, null, null, null);
     }
     
-    public SubmitAdmissionsApplicationRequestBuilderV1 applicationForm(final ApplicationForm applicationForm) {
+    public SubmitAdmissionsApplicationRequestBuilder applicationForm(final ApplicationForm applicationForm) {
         this.applicationForm = applicationForm;
         return this;
     }
@@ -100,32 +116,22 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
     private ApplicationTp buildApplication() {
         ApplicationTp applicationTp = xmlFactory.createApplicationTp();
         applicationTp.setSource(SOURCE_IDENTIFIER);
-//      Schema is wrong (should not be an option)  
-//      applicationTp.setExternalApplicationID(applicationForm.getApplicationNumber());
-        applicationTp.setUclApplicationID(String.valueOf(applicationForm.getApplicant().getId()));
         applicationTp.setApplicant(buildApplicant());
         applicationTp.setCourseApplication(buildCourseApplication());
-        applicationTp.getQualificationDetails().addAll(buildQualificationDetails());
-        applicationTp.getEmployer().addAll(buildEmployer());
-        applicationTp.getReferee().addAll(buildReferee());
-        if (applicationForm.getPersonalDetails().getLanguageQualificationAvailable()) {
-            applicationTp.getEnglishLanguageQualification().addAll(buildEnglishLanguageQualification());
-        }
         return applicationTp;
     }
 
-    private RegistrypersonTp buildApplicant() {
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        RegistrypersonTp applicant = xmlFactory.createRegistrypersonTp();
-        
+    private ApplicantTp buildApplicant() {
+        ApplicantTp applicant = xmlFactory.createApplicantTp();
         applicant.setFullName(buildFullName());
-        applicant.setSex(buildSex());
+        applicant.setSex(buildSex());        
         applicant.setDateOfBirth(buildDateOfBirth());
         applicant.setNationality(buildNationality(0));
         applicant.setSecondaryNationality(buildNationality(1));
         applicant.setCountryOfBirth(buildCountry());
-        applicant.setVisaRequired(personalDetails.getRequiresVisa());
-        if (personalDetails.getRequiresVisa()) {
+        applicant.setCountryOfDomicile(buildDomicile());
+        applicant.setVisaRequired(applicationForm.getPersonalDetails().getRequiresVisa());            
+        if (applicationForm.getPersonalDetails().getRequiresVisa()) {
             applicant.setPassport(buildPassport());
         }
         applicant.setDisability(buildDisability());
@@ -134,15 +140,32 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
         applicant.setCorrespondenceAddress(buildCorrespondenceAddress());
         applicant.setCriminalConvictionDetails(applicationForm.getAdditionalInformation().getConvictionsText());
         applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getConvictions());
+        applicant.setQualificationList(buildQualificationDetails());
+        applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
+        applicant.setEmployerList(buildEmployer());
+        
+        if (StringUtils.isNotBlank(applicationForm.getApplicant().getUclUserId())) {
+            applicant.setApplicantID(String.valueOf(applicationForm.getApplicant().getId()));
+        } else {
+            applicant.setApplicantID(applicationForm.getApplicant().getUclUserId());
+        }
+        
         return applicant;
+    }
+    
+    private DomicileTp buildDomicile() {
+        DomicileTp domicileTp = xmlFactory.createDomicileTp();
+        domicileTp.setCode(applicationForm.getPersonalDetails().getResidenceCountry().getCode());
+        domicileTp.setName(applicationForm.getPersonalDetails().getResidenceCountry().getName());
+        return domicileTp;
     }
 
     private NameTp buildFullName() {
         NameTp nameTp = xmlFactory.createNameTp();
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        nameTp.setTitle(personalDetails.getTitle().getDisplayValue().toUpperCase());
         nameTp.setSurname(personalDetails.getLastName());
         nameTp.setForename1(personalDetails.getFirstName());
+        nameTp.setTitle(personalDetails.getTitle().toString());
         return nameTp;
     }
     
@@ -174,7 +197,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
         }
         
         if (idx < candidateNationalities.size()) {
-            nationalityTp.setCode(candidateNationalities.get(idx).getCode());            
+            nationalityTp.setCode(candidateNationalities.get(idx).getCode());
+            nationalityTp.setName(candidateNationalities.get(idx).getName());   
             return nationalityTp;
         } else {
             return null;
@@ -185,24 +209,29 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         CountryTp countryTp = xmlFactory.createCountryTp();
         countryTp.setCode(personalDetails.getCountry().getCode());
+        countryTp.setName(personalDetails.getCountry().getName());
         return countryTp;
     }
     
     private PassportTp buildPassport() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         PassportInformation passportInformation = personalDetails.getPassportInformation();
-        PassportTp passportTp = xmlFactory.createPassportTp();
-        passportTp.setName(passportInformation.getNameOnPassport());
-        passportTp.setNumber(passportInformation.getPassportNumber());
-        passportTp.setExpiryDate(buildXmlDate(passportInformation.getPassportExpiryDate()));
-        passportTp.setIssueDate(buildXmlDate(passportInformation.getPassportIssueDate()));
-        return passportTp;
+        if (passportInformation != null) {
+            PassportTp passportTp = xmlFactory.createPassportTp();
+            passportTp.setName(passportInformation.getNameOnPassport());
+            passportTp.setNumber(passportInformation.getPassportNumber());
+            passportTp.setExpiryDate(buildXmlDate(passportInformation.getPassportExpiryDate()));
+            passportTp.setIssueDate(buildXmlDate(passportInformation.getPassportIssueDate()));
+            return passportTp;
+        }
+        return null;
     }
     
     private DisabilityTp buildDisability() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         DisabilityTp disabilityTp = xmlFactory.createDisabilityTp();
         disabilityTp.setCode(Integer.toString(personalDetails.getDisability().getCode()));
+        disabilityTp.setName(personalDetails.getDisability().getName());
         return disabilityTp;
     }
     
@@ -210,6 +239,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EthnicityTp ethnicityTp = xmlFactory.createEthnicityTp();
         ethnicityTp.setCode(Integer.toString(personalDetails.getEthnicity().getCode()));
+        ethnicityTp.setName(personalDetails.getEthnicity().getName());
         return ethnicityTp;
     }
     
@@ -228,7 +258,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
         
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(personalDetails.getEmail());
-        contactDtlsTp.setLandline(personalDetails.getPhoneNumber());
+        contactDtlsTp.setLandline(StringUtils.deleteWhitespace(personalDetails.getPhoneNumber()));
         return contactDtlsTp;
     }
     
@@ -242,30 +272,34 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
         addressTp.setAddressLine4(contactAddress.getAddress4());
         addressTp.setAddressLine5(contactAddress.getAddress5());
         addressTp.setCountry(contactAddress.getCountry().getCode());
-
         contactDtlsTp.setAddressDtls(addressTp);
+        contactDtlsTp.setEmail(applicationForm.getPersonalDetails().getEmail());
+        contactDtlsTp.setLandline(StringUtils.deleteWhitespace(applicationForm.getPersonalDetails().getPhoneNumber()));
         return contactDtlsTp;
     }
     
     private CourseApplicationTp buildCourseApplication() {
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
+        applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
         applicationTp.setProgramme(buildProgrammeOccurence());
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
         if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
+            // TODO: Which supervisor to pick if there are multiple
             applicationTp.setSupervisorName(buildSupervisorName(0));
         }
         applicationTp.setPersonalStatement(REFER_TO_ATTACHED_DOCUMENT);
+        
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
         applicationTp.setApplicationStatus(applicationForm.getStatus().displayValue());
         applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
         applicationTp.setDepartmentalDecision(applicationForm.getStatus().displayValue());
+        applicationTp.setRefereeList(buildReferee());
         
-//      TODO 
+//      TODO: applicationTp.setApplicationStatus("Active"); ?
 //      <v1_0:atasStatement>string</v1_0:atasStatement> // Project description
-//      <v1_0:departmentalOfferConditions>string</v1_0:departmentalOfferConditions>
         
         return applicationTp;
     }
@@ -279,29 +313,21 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
         
         ProgramInstance currentProgramInstanceForStudyOption = programInstanceDAO.getCurrentProgramInstanceForStudyOption(program, programmeDetails.getStudyOption());
         occurrenceTp.setAcademicYear(buildXmlDateYearOnly(currentProgramInstanceForStudyOption.getAcademic_year()));
-        
-//      TODO: ONLY FOR TEST
-//      ============================================================================================================
-        occurrenceTp.setAcademicYearOccurrence("F"); // TODO: ONLY FOR TEST
-        occurrenceTp.setBlock("1"); // TODO: ONLY FOR TEST
-//      ============================================================================================================
-        
-        // TODO: We do not have the following data values
-        // <v1_0:academicYearOccurrence>F</v1_0:academicYearOccurrence>
-        // <v1_0:block>1</v1_0:block>
+        occurrenceTp.setIdentifier(currentProgramInstanceForStudyOption.getIdentifier());
+        occurrenceTp.setStartDate(buildXmlDate(currentProgramInstanceForStudyOption.getApplicationStartDate()));
+        occurrenceTp.setEndDate(buildXmlDate(currentProgramInstanceForStudyOption.getApplicationDeadline()));
         return occurrenceTp;
     }
     
     private ModeofattendanceTp buildModeofattendance() {
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         ModeofattendanceTp modeofattendanceTp = xmlFactory.createModeofattendanceTp();
-        modeofattendanceTp.setCode(String.valueOf(programmeDetails.getStudyOptionCode()));
+        modeofattendanceTp.setCode(programmeDetails.getStudyOptionCode());
         modeofattendanceTp.setName(programmeDetails.getStudyOption());
         return modeofattendanceTp;
     }
     
     private NameTp buildSupervisorName(int idx) {
-        // TODO: This should be selectable in the future by an administrator
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         NameTp nameTp = xmlFactory.createNameTp();
         List<SuggestedSupervisor> suggestedSupervisors = programmeDetails.getSuggestedSupervisors();
@@ -321,14 +347,16 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
         SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
         SourcesOfInterest sourcesOfInterest = programmeDetails.getSourcesOfInterest();
         interestTp.setCode(sourcesOfInterest.getCode());
+        interestTp.setName(sourcesOfInterest.getName());
         if (sourcesOfInterest.isFreeText()) {
             applicationTp.setOtherSourceofInterest(programmeDetails.getSourcesOfInterestText());
         }
         return interestTp;
     }
 
-    private Collection<? extends QualificationsTp> buildQualificationDetails() {
-        List<QualificationsTp> resultList = new ArrayList<QualificationsTp>();
+    private QualificationDetailsTp buildQualificationDetails() {
+        QualificationDetailsTp resultList = xmlFactory.createQualificationDetailsTp();
+        
         List<Qualification> qualifications = applicationForm.getQualifications();
         if (!qualifications.isEmpty()) {
             for (Qualification qualification : qualifications) {
@@ -342,21 +370,55 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
                 
                 QualificationTp qualificationTp = xmlFactory.createQualificationTp();
                 qualificationTp.setCode(qualification.getQualificationType().getCode());
+                qualificationTp.setName(qualification.getQualificationType().getName());
                 qualificationsTp.setQualification(qualificationTp);
                 
                 InstitutionTp institutionTp = xmlFactory.createInstitutionTp();
-                institutionTp.setCode(qualification.getInstitutionCountry().getCode());
-                institutionTp.setName(qualification.getQualificationInstitution());
-                qualificationsTp.setInstitution(institutionTp);
                 
-                resultList.add(qualificationsTp);
+                QualificationInstitution appropriateInstitution = selectAppropriateInstitution(qualification.getQualificationInstitution());
+                if (appropriateInstitution == null) {
+                    institutionTp.setCode("OTHER");
+                    institutionTp.setName(qualification.getQualificationInstitution());
+                    CountryTp countryTp = xmlFactory.createCountryTp();
+                    countryTp.setCode(qualification.getInstitutionCountry().getCode());
+                    countryTp.setName(qualification.getInstitutionCountry().getName());
+                    institutionTp.setCountry(countryTp);
+                } else {
+                    institutionTp.setCode(appropriateInstitution.getCode());
+                    institutionTp.setName(appropriateInstitution.getName());
+                    CountryTp countryTp = xmlFactory.createCountryTp();
+                    
+                    Domicile domicileById = domicileDAO.getDomicileById(Integer.valueOf(appropriateInstitution.getDomicileCode()));
+                    if (domicileById == null) {
+                        throw new IllegalStateException(String.format("Institution [id=%s] references an obsolete Domicile [id=%s]", appropriateInstitution.getId(), appropriateInstitution.getDomicileCode()));
+                    }
+                    countryTp.setCode(domicileById.getCode());
+                    countryTp.setName(domicileById.getName());
+                    institutionTp.setCountry(countryTp);
+                }
+                qualificationsTp.setInstitution(institutionTp);
+                resultList.getQualificationDetail().add(qualificationsTp);
             }
         }
         return resultList;
     }
     
-    private Collection<? extends AppointmentTp> buildEmployer() {
-        List<AppointmentTp> resultList = new ArrayList<AppointmentTp>();
+    private QualificationInstitution selectAppropriateInstitution(String name) {
+        List<QualificationInstitution> institutionsByName = qualificationInstitutionDAO.getAllInstitutionByName(name);
+        QualificationInstitution selectedInstitution = null;
+        for (QualificationInstitution institution : institutionsByName) {
+            if (institution.getEnabled()) {
+                selectedInstitution = institution;
+            }
+        }
+        if (selectedInstitution == null && !institutionsByName.isEmpty()) {
+            institutionsByName.get(0);
+        }
+        return selectedInstitution;
+    }
+    
+    private EmploymentDetailsTp buildEmployer() {
+        EmploymentDetailsTp resultList = xmlFactory.createEmploymentDetailsTp();
         List<EmploymentPosition> employmentPositions = applicationForm.getEmploymentPositions();
         if (!employmentPositions.isEmpty()) {
             for (EmploymentPosition employmentPosition : employmentPositions) {
@@ -371,15 +433,14 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
                 employerTp.setName(employmentPosition.getEmployerName());
                 appointmentTp.setEmployer(employerTp);
                 
-                resultList.add(appointmentTp);
+                resultList.getEmployer().add(appointmentTp);
             }
-            
         }
         return resultList;
     }
     
-    private Collection<? extends RefereeTp> buildReferee() {
-        List<RefereeTp> resultList = new ArrayList<RefereeTp>();
+    private RefereeListTp buildReferee() {
+        RefereeListTp resultList = xmlFactory.createRefereeListTp();
         List<Referee> referees = applicationForm.getReferees();
         if (!referees.isEmpty()) {
             for (Referee referee : referees) {
@@ -394,7 +455,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
                 
                 ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
                 contactDtlsTp.setEmail(referee.getEmail());
-                contactDtlsTp.setLandline(referee.getPhoneNumber());
+                contactDtlsTp.setLandline(StringUtils.deleteWhitespace(referee.getPhoneNumber()));
                 
                 AddressTp addressTp = xmlFactory.createAddressTp();
                 addressTp.setAddressLine1(referee.getAddressLocation().getAddress1());
@@ -407,15 +468,15 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
                 
                 refereeTp.setContactDetails(contactDtlsTp);
                 
-                resultList.add(refereeTp);
+                resultList.getReferee().add(refereeTp);
             }
         }
         return resultList;
     }
     
-    private Collection<? extends EnglishLanguageTp> buildEnglishLanguageQualification() {
+    private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        ArrayList<EnglishLanguageTp> resultList = new ArrayList<EnglishLanguageTp>();
+        EnglishLanguageQualificationDetailsTp resultList = xmlFactory.createEnglishLanguageQualificationDetailsTp();
         for (LanguageQualification languageQualifications : personalDetails.getLanguageQualifications()) {
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(buildXmlDate(languageQualifications.getDateOfExamination()));
@@ -460,20 +521,26 @@ public class SubmitAdmissionsApplicationRequestBuilderV1 {
             
             englishLanguageTp.getLanguageScore().addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, speakingScoreTp, listeningScoreTp));
             
-            resultList.add(englishLanguageTp);
+            resultList.getEnglishLanguageQualification().add(englishLanguageTp);
         }
         return resultList;
     }
     
-    private XMLGregorianCalendar buildXmlDate(Date date) {  
-        GregorianCalendar gc = new GregorianCalendar();
-        gc.setTimeInMillis(date.getTime());
-        return datatypeFactory.newXMLGregorianCalendar(gc);
+    private XMLGregorianCalendar buildXmlDate(Date date) {
+        if (date != null) {
+            GregorianCalendar gc = new GregorianCalendar();
+            gc.setTimeInMillis(date.getTime());
+            return datatypeFactory.newXMLGregorianCalendar(gc);
+        }
+        return null;
     }
     
     private XMLGregorianCalendar buildXmlDateYearOnly(String date) {
-        XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
-        xmlCalendar.setYear(Integer.valueOf(date));
-        return xmlCalendar;
+        if (date != null) {
+            XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
+            xmlCalendar.setYear(Integer.valueOf(date));
+            return xmlCalendar;
+        } 
+        return null;
     }
 }

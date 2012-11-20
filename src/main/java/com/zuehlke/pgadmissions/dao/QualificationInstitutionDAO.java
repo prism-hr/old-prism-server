@@ -39,6 +39,14 @@ public class QualificationInstitutionDAO {
                 .addOrder(Order.asc("name"))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<QualificationInstitution> getAllInstitutionByName(String name) {
+        return (List<QualificationInstitution>) sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class)
+                .add(Restrictions.eq("name", name))
+                .addOrder(Order.asc("name"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
 
     public QualificationInstitution getInstitutionById(Integer id) {
         return (QualificationInstitution) sessionFactory.getCurrentSession().get(QualificationInstitution.class, id);

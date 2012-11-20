@@ -315,23 +315,10 @@
 							<goal>xjc</goal>
 						</goals>
 						<configuration>
-							<packageName>com.zuehlke.pgadmissions.admissionsservice.jaxb.v1</packageName>
+							<packageName>com.zuehlke.pgadmissions.admissionsservice.jaxb</packageName>
 							<outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-							<schemaDirectory>${project.basedir}/src/main/xsd/export.v1</schemaDirectory>
+							<schemaDirectory>${project.basedir}/src/main/xsd/export</schemaDirectory>
 							<staleFile>${project.build.directory}/jaxb2/.schema2XjcStaleFlag</staleFile>
-							<clearOutputDir>false</clearOutputDir>
-						</configuration>
-					</execution>
-					<execution>
-						<id>xjc-3</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<packageName>com.zuehlke.pgadmissions.admissionsservice.jaxb.v2</packageName>
-							<outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-							<schemaDirectory>${project.basedir}/src/main/xsd/export.v2</schemaDirectory>
-							<staleFile>${project.build.directory}/jaxb2/.schema3XjcStaleFlag</staleFile>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>

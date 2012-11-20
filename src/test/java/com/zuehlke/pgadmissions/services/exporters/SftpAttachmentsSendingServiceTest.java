@@ -1,27 +1,18 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
-import org.apache.commons.io.FileUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Session;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 
 public class SftpAttachmentsSendingServiceTest {
@@ -77,20 +68,6 @@ public class SftpAttachmentsSendingServiceTest {
         EasyMock.replay(jSchFactoryMock, session, channelSftp, os);
         documentExportService.sendApplicationFormDocuments(form, new DeafListener());
         EasyMock.verify(jSchFactoryMock, session, channelSftp, os);
-    }
-
-    @Test
-    @Ignore
-    public void pdfMergeTest() throws IOException {
-        PdfDocumentBuilder pdfDocumentBuilder = new PdfDocumentBuilder();
-        ReferenceComment referenceComment = new ReferenceCommentBuilder().comment("Comment\nBlablabla blabla.").toReferenceComment();
-        ArrayList<Document> documents = new ArrayList<Document>();
-        Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
-        documents.add(new DocumentBuilder().content(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).toDocument());
-        documents.add(new DocumentBuilder().content(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).toDocument());
-        referenceComment.setDocuments(documents);
-        OutputStream outputStream = new FileOutputStream("C:\\Users\\maciej.charatonik\\Desktop\\out.pdf");
-        pdfDocumentBuilder.writePdf(referenceComment, outputStream);
     }
 
     @Before

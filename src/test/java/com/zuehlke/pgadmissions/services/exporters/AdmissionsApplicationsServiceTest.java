@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWebServiceContext.xml")
-public class AdmissionsApplicationsServiceTest extends UclIntegrationTest {
+public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
 
     private final Logger logger = Logger.getLogger(AdmissionsApplicationsServiceTest.class);
     

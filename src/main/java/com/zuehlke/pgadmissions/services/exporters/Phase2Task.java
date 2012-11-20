@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
  *   2. Send this package via sftp to PORTICO.
  *   3. Handle sftp errors (if any).
  */
-class Phase2Task implements Runnable {
+public class Phase2Task implements Runnable {
     private static final Logger log = Logger.getLogger(Phase1Task.class);
 
     private Integer applicationId;

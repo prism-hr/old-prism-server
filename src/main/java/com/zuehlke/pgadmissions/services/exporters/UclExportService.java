@@ -193,8 +193,8 @@ public class UclExportService {
         } catch (WebServiceIOException e) {            
             log.debug("WebServiceTransportException during webservice call for transfer " + transferId, e);
             //CASE 1: webservice call failed because of network failure, protocol problems etc
-            //seems like we have communication problems so makes no sense to push more appliaction forms at the moment
-            //TODO: we should measure the time of this problem constantly occuring; after some treashold (1 day?) we should inform admins
+            //seems like we have communication problems so makes no sense to push more application forms at the moment
+            //TODO: we should measure the time of this problem constantly occurring; after some threshold (1 day?) we should inform admins
 
             //save error information
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -296,7 +296,6 @@ public class UclExportService {
             transfer.setTransferFinishTimepoint(new Date());
             this.triggerTransferCompleted(listener, transfer.getUclUserIdReceived(), transfer.getUclBookingReferenceReceived());
         } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
-            //try 5 times then stop the queue
             ApplicationFormTransferError error = new ApplicationFormTransferError();
             error.setTransfer(transfer);
             error.setTimepoint(new Date());
@@ -374,9 +373,6 @@ public class UclExportService {
 
         } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError sftpTransmissionFailedOrProtocolError) {
             //network problems - just wait some time and try again (pause queue)
-            this.pauseSftpQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
-            
-            //network problems - just wait some time and try again (pause queue)
             ApplicationFormTransferError error = new ApplicationFormTransferError();
             error.setTransfer(transfer);
             error.setTimepoint(new Date());
@@ -396,7 +392,7 @@ public class UclExportService {
         }
     }
 
-    private void pauseWsQueueForMinutes(int minutes) {
+    protected void pauseWsQueueForMinutes(int minutes) {
         webserviceCallingQueueExecutor.pause();
         scheduler.schedule(new Runnable() {
             @Override
@@ -406,7 +402,7 @@ public class UclExportService {
         }, DateUtils.addMinutes(new Date(), minutes));
     }
     
-    private void pauseSftpQueueForMinutes(int minutes) {
+    protected void pauseSftpQueueForMinutes(int minutes) {
         sftpCallingQueueExecutor.pause();
         scheduler.schedule(new Runnable() {
             @Override

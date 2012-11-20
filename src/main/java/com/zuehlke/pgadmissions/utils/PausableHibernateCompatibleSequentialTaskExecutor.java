@@ -33,12 +33,19 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class PausableHibernateCompatibleSequentialTaskExecutor implements Executor {
     private boolean pickingTasksIsPaused = false;
+    
     private String name;
+    
     private long lastTaskPickedUpSeqentialNumber = 0L;
+    
     private long lastTaskFinished = 0L;
+    
     private boolean someTaskIsJustExecuting = false;
+    
     private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
+    
     private Thread queueConsumer = new QueueConsumerThread();
+    
     private boolean isDead = false;
 
     private TransactionTemplate transactionTemplate;
@@ -219,5 +226,8 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
             }
         }
     }
-
+    
+    public boolean isPickingTasksIsPaused() {
+        return pickingTasksIsPaused;
+    }
 }

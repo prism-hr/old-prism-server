@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
  * </ol>
  */
 @Service
-class SftpAttachmentsSendingService {
+public class SftpAttachmentsSendingService {
 
     public static class CouldNotCreateAttachmentsPack extends Exception {
         private static final long serialVersionUID = 79819935845687782L;

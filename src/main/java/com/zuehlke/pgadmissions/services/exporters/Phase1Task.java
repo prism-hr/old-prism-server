@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
  *   2. Handle webservice call errors (if any).
  *   3. Schedule phase 2 if there were no errors
  */
-class Phase1Task implements Runnable {
+public class Phase1Task implements Runnable {
     private static final Logger log = Logger.getLogger(Phase1Task.class);
 
     private Integer applicationId;

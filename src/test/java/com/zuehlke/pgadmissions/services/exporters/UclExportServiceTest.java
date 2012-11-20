@@ -7,19 +7,14 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.StringUtils;
 import org.springframework.ws.client.WebServiceIOException;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -28,6 +23,10 @@ import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.ReferenceTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.SubmitAdmissionsApplicationRequest;
@@ -41,56 +40,30 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
-public class UclExportServiceTest extends UclIntegrationTest {
+public class UclExportServiceTest extends UclIntegrationBaseTest {
 
-    @Autowired
-    @Qualifier("webservice-calling-queue-executor")
-    private PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutor;
-
-    @Autowired
-    @Qualifier("webservice-calling-queue-executor")
-    private PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutor;
+    private PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutorMock;
 
     private PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutorMock;
 
     private WebServiceTemplate webServiceTemplateMock;
 
-    @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}")
-    private int consecutiveSoapFaultsLimit;
+    private JSchFactory jschfactoryMock;
 
-    @Value("${xml.data.export.queue_pausing_delay_in_case_of_network_problem}")
-    private int queuePausingDelayInCaseOfNetworkProblemsDiscovered;
+    private PdfDocumentBuilder pdfDocumentBuilderMock;
 
-    @Value("${xml.data.export.sftp.host}")
-    private String sftpHost;
-
-    @Value("${xml.data.export.sftp.port}")
-    private String sftpPort;
-
-    @Value("${xml.data.export.sftp.username}")
-    private String sftpUsername;
-
-    @Value("${xml.data.export.sftp.password}")
-    private String sftpPassword;
-
-    @Value("${xml.data.export.sftp.folder}")
-    private String targetFolder;
-
-    @Autowired
-    private JSchFactory jschfactory;
-
-    @Autowired
-    private PdfDocumentBuilder pdfDocumentBuilder;
-
-    @Autowired
-    @Qualifier("ucl-export-service-scheduler")
-    private TaskScheduler scheduler;
+    private TaskScheduler schedulerMock;
 
     private ProgramInstanceDAO programInstanceDAO;
 
@@ -131,7 +104,7 @@ public class UclExportServiceTest extends UclIntegrationTest {
             @Override
             public void transferFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
-                assertTrue(StringUtils.startsWithIgnoreCase(error.getDiagnosticInfo(),
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
                         "org.springframework.ws.client.WebServiceIOException: Error"));
                 assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY,
                         error.getErrorHandlingStrategy());
@@ -175,22 +148,24 @@ public class UclExportServiceTest extends UclIntegrationTest {
                         EasyMock.anyObject(String.class)))
                 .andReturn(applicationForm.getProgram().getInstances().get(0));
 
-        EasyMock.replay(webServiceTemplateMock, programInstanceDAOMock);
+        webserviceCallingQueueExecutorMock.pause();
+        webserviceCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
 
-        exportService = new UclExportService(webserviceCallingQueueExecutor, sftpCallingQueueExecutor,
+        EasyMock.replay(webServiceTemplateMock, programInstanceDAOMock, webserviceCallingQueueExecutorMock);
+
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, scheduler);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock);
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
 
-        EasyMock.verify(webServiceTemplateMock, programInstanceDAOMock);
+        EasyMock.verify(webServiceTemplateMock, programInstanceDAOMock, webserviceCallingQueueExecutorMock);
     }
 
     @Test
-    public void shouldReportWebServiceSoapFaultAndRetryFor5Times() throws IOException {
-        // TODO: Check the scheduler implementation for pause();
+    public void shouldReportWebServiceSoapFaultAndGiveUpThisTransferOnly() throws IOException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
@@ -205,7 +180,7 @@ public class UclExportServiceTest extends UclIntegrationTest {
             @Override
             public void transferFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
-                assertTrue(StringUtils.startsWithIgnoreCase(error.getDiagnosticInfo(),
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
                         "org.springframework.ws.soap.client.SoapFaultClientException: Authentication Failed"));
                 assertEquals(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY,
                         error.getErrorHandlingStrategy());
@@ -263,19 +238,62 @@ public class UclExportServiceTest extends UclIntegrationTest {
                         EasyMock.anyObject(String.class)))
                 .andReturn(applicationForm.getProgram().getInstances().get(0));
 
-        EasyMock.replay(webServiceTemplateMock, programInstanceDAOMock);
+        EasyMock.replay(webServiceTemplateMock, programInstanceDAOMock, webserviceCallingQueueExecutorMock);
 
-        exportService = new UclExportService(webserviceCallingQueueExecutor, sftpCallingQueueExecutor,
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, scheduler);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock);
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
 
-        EasyMock.verify(webServiceTemplateMock, programInstanceDAOMock);
+        EasyMock.verify(webServiceTemplateMock, programInstanceDAOMock, webserviceCallingQueueExecutorMock);
 
         assertEquals(ApplicationTransferStatus.REJECTED_BY_WEBSERVICE, applicationFormTransfer.getStatus());
+    }
+
+    @Test
+    public void shouldReportWebServiceSoapFaultAndGiveUpCompletelyAfterConfiguredRetries() throws IOException {
+        ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
+                webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
+                applicationFormTransferErrorDAO, 0, queuePausingDelayInCaseOfNetworkProblemsDiscovered,
+                attachmentsSendingService, schedulerMock);
+
+        SoapFault mockFault = EasyMock.createMock(SoapFault.class);
+        EasyMock.expect(mockFault.getFaultStringOrReason()).andReturn("Authentication Failed");
+
+        SoapBody mockBody = EasyMock.createMock(SoapBody.class);
+        EasyMock.expect(mockBody.getFault()).andReturn(mockFault);
+
+        SoapMessage mockFaultMessage = EasyMock.createMock(SoapMessage.class);
+        EasyMock.expect(mockFaultMessage.getFaultReason()).andReturn("Authentication Failed");
+        EasyMock.expect(mockFaultMessage.getSoapBody()).andReturn(mockBody);
+        mockFaultMessage.writeTo(EasyMock.anyObject(OutputStream.class));
+
+        EasyMock.replay(mockFault, mockBody, mockFaultMessage);
+
+        SoapFaultClientException e = new SoapFaultClientException(mockFaultMessage);
+
+        EasyMock.expect(
+                webServiceTemplateMock.marshalSendAndReceive(
+                        EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
+                        EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(e);
+
+        EasyMock.expect(
+                programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class),
+                        EasyMock.anyObject(String.class)))
+                .andReturn(applicationForm.getProgram().getInstances().get(0));
+
+        webserviceCallingQueueExecutorMock.pause();
+
+        EasyMock.replay(webServiceTemplateMock, programInstanceDAOMock, webserviceCallingQueueExecutorMock);
+
+        exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(),
+                new DeafListener());
+
+        EasyMock.verify(webServiceTemplateMock, programInstanceDAOMock, webserviceCallingQueueExecutorMock);
     }
 
     @Test
@@ -320,9 +338,6 @@ public class UclExportServiceTest extends UclIntegrationTest {
                 assertNotNull(request);
             }
         };
-        
-        String uclUserId = "ucl-user-AX78101";
-        String uclBookingReferenceNumber = "b-ref-123456";
 
         ReferenceTp referenceTp = new ReferenceTp();
         referenceTp.setApplicantID(uclUserId);
@@ -340,7 +355,7 @@ public class UclExportServiceTest extends UclIntegrationTest {
                         EasyMock.anyObject(String.class)))
                 .andReturn(applicationForm.getProgram().getInstances().get(0));
 
-        sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Runnable.class));
+        sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase2Task.class));
         EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
             @Override
             public Object answer() throws Throwable {
@@ -348,47 +363,651 @@ public class UclExportServiceTest extends UclIntegrationTest {
             }
         });
         
+
         EasyMock.replay(webServiceTemplateMock, programInstanceDAOMock, sftpCallingQueueExecutorMock);
 
-        exportService = new UclExportService(webserviceCallingQueueExecutor, sftpCallingQueueExecutorMock,
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, scheduler);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock);
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
 
         EasyMock.verify(webServiceTemplateMock, programInstanceDAOMock, sftpCallingQueueExecutorMock);
-        
+
         assertEquals(uclUserId, applicationForm.getApplicant().getUclUserId());
         assertEquals(uclBookingReferenceNumber, applicationForm.getApplication().getUclBookingReferenceNumber());
-        
+
         assertEquals(uclUserId, applicationFormTransfer.getUclUserIdReceived());
         assertEquals(uclBookingReferenceNumber, applicationFormTransfer.getUclBookingReferenceReceived());
+    }
+
+    @Test
+    public void shouldGiveUpSendingDocumentsBecauseOfFailureInLocalConfigurationAndRescheduleForLater()
+            throws ResourceNotFoundException, JSchException {
+        ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
+        TransferListener listener = new TransferListener() {
+            @Override
+            public void webserviceCallCompleted() {
+                Assert.fail();
+            }
+
+            @Override
+            public void transferStarted() {
+            }
+
+            @Override
+            public void transferFailed(ApplicationFormTransferError error) {
+                assertNotNull(error);
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
+                        "Failed to configure SSH connection"));
+                assertTrue(DateUtils.isToday(error.getTimepoint()));
+                assertEquals(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION,
+                        error.getProblemClassification());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION,
+                        error.getErrorHandlingStrategy());
+            }
+
+            @Override
+            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sshConnectionEstablished() {
+            }
+
+            @Override
+            public void queued() {
+            }
+
+            @Override
+            public void attachmentsSftpTransmissionStarted() {
+            }
+
+            @Override
+            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+                Assert.fail();
+            }
+        };
+
+        EasyMock.expect(jschfactoryMock.getInstance()).andThrow(new JSchException());
+
+        sftpCallingQueueExecutorMock.pause();
+        sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
+
+        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
+                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
+                webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
+                applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
+
+        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock);
+
+        exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
+                listener);
+
+        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+
+        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock);
+    }
+
+    @Test
+    public void shoulRescheduleSendingDocumentsBecauseOfNetworkFailure() throws ResourceNotFoundException,
+            JSchException {
+        ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
+        TransferListener listener = new TransferListener() {
+            @Override
+            public void webserviceCallCompleted() {
+                Assert.fail();
+            }
+
+            @Override
+            public void transferStarted() {
+            }
+
+            @Override
+            public void transferFailed(ApplicationFormTransferError error) {
+                assertNotNull(error);
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
+                        "Failed to open SSH connection to PORTICO host"));
+                assertTrue(DateUtils.isToday(error.getTimepoint()));
+                assertEquals(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE, error.getProblemClassification());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY,
+                        error.getErrorHandlingStrategy());
+            }
+
+            @Override
+            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sshConnectionEstablished() {
+            }
+
+            @Override
+            public void queued() {
+            }
+
+            @Override
+            public void attachmentsSftpTransmissionStarted() {
+            }
+
+            @Override
+            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+                Assert.fail();
+            }
+        };
+
+        Session sessionMock = EasyMock.createMock(Session.class);
+
+        EasyMock.expect(jschfactoryMock.getInstance()).andReturn(sessionMock);
+
+        sessionMock.connect();
+        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
+            @Override
+            public Object answer() throws Throwable {
+                throw new JSchException();
+            }
+        });
+
+        EasyMock.expect(sessionMock.isConnected()).andReturn(false);
+
+        sftpCallingQueueExecutorMock.pause();
+        sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
+
+        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
+                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
+                webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
+                applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
+
+        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock);
+
+        exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
+                listener);
+
+        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+
+        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock);
+    }
+
+    @Test
+    public void shoulRescheduleSendingDocumentsBecauseOfSftpProtocolFailure() throws ResourceNotFoundException,
+            JSchException {
+        ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
+        TransferListener listener = new TransferListener() {
+            @Override
+            public void webserviceCallCompleted() {
+                Assert.fail();
+            }
+
+            @Override
+            public void transferStarted() {
+            }
+
+            @Override
+            public void transferFailed(ApplicationFormTransferError error) {
+                assertNotNull(error);
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
+                        "Failed to open sftp channel over previously established SSH connection"));
+                assertTrue(DateUtils.isToday(error.getTimepoint()));
+                assertEquals(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE, error.getProblemClassification());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY,
+                        error.getErrorHandlingStrategy());
+            }
+
+            @Override
+            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sshConnectionEstablished() {
+            }
+
+            @Override
+            public void queued() {
+            }
+
+            @Override
+            public void attachmentsSftpTransmissionStarted() {
+            }
+
+            @Override
+            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+                Assert.fail();
+            }
+        };
+
+        Session sessionMock = EasyMock.createMock(Session.class);
+
+        EasyMock.expect(jschfactoryMock.getInstance()).andReturn(sessionMock);
+
+        sessionMock.connect();
+
+        ChannelSftp sftpChannelMock = EasyMock.createMock(ChannelSftp.class);
+
+        EasyMock.expect(sessionMock.openChannel("sftp")).andReturn(sftpChannelMock);
+
+        sftpChannelMock.connect();
+
+        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
+            @Override
+            public Object answer() throws Throwable {
+                throw new JSchException();
+            }
+        });
+
+        EasyMock.expect(sessionMock.isConnected()).andReturn(true);
+
+        EasyMock.expect(sftpChannelMock.isConnected()).andReturn(false);
+
+        sessionMock.disconnect();
+
+        sftpCallingQueueExecutorMock.pause();
+        sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
+
+        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
+                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
+                webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
+                applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
+
+        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock);
+
+        exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
+                listener);
+
+        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+
+        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock);
+    }
+
+    @Test
+    public void shouldPauseAndRescheduleSendingDocumentsBecauseThereWasAProblemWithTheTargetFolder()
+            throws ResourceNotFoundException, JSchException, SftpException {
+        ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
+        TransferListener listener = new TransferListener() {
+            @Override
+            public void webserviceCallCompleted() {
+                Assert.fail();
+            }
+
+            @Override
+            public void transferStarted() {
+            }
+
+            @Override
+            public void transferFailed(ApplicationFormTransferError error) {
+                assertNotNull(error);
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
+                        "Failed to access remote directory for SFTP transmission"));
+                assertTrue(DateUtils.isToday(error.getTimepoint()));
+                assertEquals(ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE,
+                        error.getProblemClassification());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION,
+                        error.getErrorHandlingStrategy());
+            }
+
+            @Override
+            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sshConnectionEstablished() {
+            }
+
+            @Override
+            public void queued() {
+            }
+
+            @Override
+            public void attachmentsSftpTransmissionStarted() {
+            }
+
+            @Override
+            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+                Assert.fail();
+            }
+        };
+
+        Session sessionMock = EasyMock.createMock(Session.class);
+
+        EasyMock.expect(jschfactoryMock.getInstance()).andReturn(sessionMock);
+
+        sessionMock.connect();
+
+        ChannelSftp sftpChannelMock = EasyMock.createMock(ChannelSftp.class);
+
+        EasyMock.expect(sessionMock.openChannel("sftp")).andReturn(sftpChannelMock);
+
+        sftpChannelMock.connect();
+
+        sftpChannelMock.cd(targetFolder);
+
+        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
+            @Override
+            public Object answer() throws Throwable {
+                throw new SftpException(1, "Permission denied");
+            }
+        });
+
+        EasyMock.expect(sessionMock.isConnected()).andReturn(true);
+
+        EasyMock.expect(sftpChannelMock.isConnected()).andReturn(false);
+
+        sessionMock.disconnect();
+
+        sftpCallingQueueExecutorMock.pause();
+        sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
+
+        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
+                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
+                webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
+                applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
+
+        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock);
+
+        exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
+                listener);
+
+        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+
+        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock);
+    }
+
+    @Test
+    public void shouldPauseAndRescheduleSendingDocumentsBecauseThereWasAProblemWithTheUpload()
+            throws ResourceNotFoundException, JSchException, SftpException {
+        ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
+        applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
+
+        TransferListener listener = new TransferListener() {
+            @Override
+            public void webserviceCallCompleted() {
+                Assert.fail();
+            }
+
+            @Override
+            public void transferStarted() {
+            }
+
+            @Override
+            public void transferFailed(ApplicationFormTransferError error) {
+                assertNotNull(error);
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
+                        "SFTP protocol error during transmission of attachments for application form"));
+                assertTrue(DateUtils.isToday(error.getTimepoint()));
+                assertEquals(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE, error.getProblemClassification());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY,
+                        error.getErrorHandlingStrategy());
+            }
+
+            @Override
+            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sshConnectionEstablished() {
+            }
+
+            @Override
+            public void queued() {
+            }
+
+            @Override
+            public void attachmentsSftpTransmissionStarted() {
+            }
+
+            @Override
+            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+                Assert.fail();
+            }
+        };
+
+        Session sessionMock = EasyMock.createMock(Session.class);
+
+        EasyMock.expect(jschfactoryMock.getInstance()).andReturn(sessionMock);
+
+        sessionMock.connect();
+
+        ChannelSftp sftpChannelMock = EasyMock.createMock(ChannelSftp.class);
+
+        EasyMock.expect(sessionMock.openChannel("sftp")).andReturn(sftpChannelMock);
+
+        sftpChannelMock.connect();
+
+        sftpChannelMock.cd(targetFolder);
+
+        sftpChannelMock.put(applicationForm.getUclBookingReferenceNumber() + ".zip");
+
+        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
+            @Override
+            public Object answer() throws Throwable {
+                throw new SftpException(1, "Error");
+            }
+        });
+
+        EasyMock.expect(sessionMock.isConnected()).andReturn(true);
+
+        EasyMock.expect(sftpChannelMock.isConnected()).andReturn(false);
+
+        sessionMock.disconnect();
+
+        sftpCallingQueueExecutorMock.pause();
+        sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
+
+        SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
+                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
+                webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
+                applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
+
+        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock);
+
+        exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
+                listener);
+
+        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+
+        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock);
+    }
+
+    @Test
+    public void shouldCancelTransmitAttachedDocumentsOverSftpAfterFailingToCreateDocumentPack()
+            throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
+            CouldNotOpenSshConnectionToRemoteHost, SftpTargetDirectoryNotAccessible,
+            SftpTransmissionFailedOrProtocolError {
+        ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
+        applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
+
+        TransferListener listener = new TransferListener() {
+            @Override
+            public void webserviceCallCompleted() {
+                Assert.fail();
+            }
+
+            @Override
+            public void transferStarted() {
+            }
+
+            @Override
+            public void transferFailed(ApplicationFormTransferError error) {
+                assertNotNull(error);
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Error"));
+                assertTrue(DateUtils.isToday(error.getTimepoint()));
+                assertEquals(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION,
+                        error.getProblemClassification());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY,
+                        error.getErrorHandlingStrategy());
+            }
+
+            @Override
+            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sshConnectionEstablished() {
+            }
+
+            @Override
+            public void queued() {
+            }
+
+            @Override
+            public void attachmentsSftpTransmissionStarted() {
+            }
+
+            @Override
+            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+                Assert.fail();
+            }
+        };
+
+        SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock
+                .createMock(SftpAttachmentsSendingService.class);
+
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
+                webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
+                applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingServiceMock, schedulerMock);
+
+        sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener);
+
+        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
+            @Override
+            public Object answer() throws Throwable {
+                throw new CouldNotCreateAttachmentsPack("Error");
+            }
+        });
+
+        EasyMock.replay(sftpAttachmentsSendingServiceMock, sftpCallingQueueExecutorMock);
+
+        exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
+                listener);
+
+        assertEquals(ApplicationTransferStatus.CANCELLED, applicationFormTransfer.getStatus());
+
+        EasyMock.verify(sftpAttachmentsSendingServiceMock, sftpCallingQueueExecutorMock);
+    }
+
+    @Test
+    public void shouldSuccessfullyTransmitDocumentPackOverSftp() throws CouldNotCreateAttachmentsPack,
+            LocallyDefinedSshConfigurationIsWrong, CouldNotOpenSshConnectionToRemoteHost,
+            SftpTargetDirectoryNotAccessible, SftpTransmissionFailedOrProtocolError {
+        ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
+        applicationFormTransfer.setUclBookingReferenceReceived(uclBookingReferenceNumber);
+        applicationFormTransfer.setUclUserIdReceived(uclUserId);
+        applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
+
+        TransferListener listener = new TransferListener() {
+            @Override
+            public void webserviceCallCompleted() {
+            }
+
+            @Override
+            public void transferStarted() {
+            }
+
+            @Override
+            public void transferFailed(ApplicationFormTransferError error) {
+                Assert.fail();
+            }
+
+            @Override
+            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
+                assertNotNull(uclUserId, uclBookingReferenceNumber);
+                assertTrue(StringUtils.isNotBlank(uclUserId));
+                assertTrue(StringUtils.isNotBlank(uclBookingReferenceNumber));
+            }
+
+            @Override
+            public void sshConnectionEstablished() {
+            }
+
+            @Override
+            public void queued() {
+            }
+
+            @Override
+            public void attachmentsSftpTransmissionStarted() {
+            }
+
+            @Override
+            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+                Assert.fail();
+            }
+        };
+
+        SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock
+                .createMock(SftpAttachmentsSendingService.class);
+
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
+                webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
+                applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingServiceMock, schedulerMock);
+
+        sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener);
+
+        EasyMock.replay(sftpAttachmentsSendingServiceMock, sftpCallingQueueExecutorMock);
+
+        exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
+                listener);
+
+        assertEquals(ApplicationTransferStatus.COMPLETED, applicationFormTransfer.getStatus());
+
+        EasyMock.verify(sftpAttachmentsSendingServiceMock, sftpCallingQueueExecutorMock);
+
     }
 
     @Before
     public void setup() {
         applicationForm = getValidApplicationForm();
 
+        pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
+
         programInstanceDAO = new ProgramInstanceDAO(sessionFactory);
 
         programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
 
+        jschfactoryMock = EasyMock.createMock(JSchFactory.class);
+
         sftpCallingQueueExecutorMock = EasyMock.createMock(PausableHibernateCompatibleSequentialTaskExecutor.class);
+
+        webserviceCallingQueueExecutorMock = EasyMock
+                .createMock(PausableHibernateCompatibleSequentialTaskExecutor.class);
 
         applicationFormTransferDAO = new ApplicationFormTransferDAO(sessionFactory);
 
         applicationFormTransferErrorDAO = new ApplicationFormTransferErrorDAO(sessionFactory);
 
-        attachmentsSendingService = new SftpAttachmentsSendingService(jschfactory, pdfDocumentBuilder, sftpHost,
-                sftpPort, sftpUsername, sftpPassword, targetFolder);
+        attachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, pdfDocumentBuilderMock,
+                sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         webServiceTemplateMock = EasyMock.createMock(WebServiceTemplate.class);
 
-        exportService = new UclExportService(webserviceCallingQueueExecutor, sftpCallingQueueExecutor,
+        schedulerMock = EasyMock.createMock(TaskScheduler.class);
+
+        exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAO, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, scheduler);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock);
     }
 }

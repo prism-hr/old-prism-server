@@ -45,8 +45,27 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
-public class UclIntegrationTest extends AutomaticRollbackTestCase {
+public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
 
+    protected String uclUserId = "ucl-user-AX78101";
+    
+    protected String uclBookingReferenceNumber = "b-ref-123456";
+    
+    protected String sftpHost = "localhost";
+
+    protected String sftpPort = "22";
+
+    protected String sftpUsername = "foo";
+
+    protected String sftpPassword = "bar";
+
+    protected String targetFolder = "/home/prism";
+    
+    protected int consecutiveSoapFaultsLimit = 5;
+
+    protected int queuePausingDelayInCaseOfNetworkProblemsDiscovered = 15;
+    
+    
     public ApplicationForm getValidApplicationForm() {
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon W1T 4HD\nUnited Kingdom";
         RegisteredUser user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).username("denk@zhaw.ch").enabled(true).toUser();

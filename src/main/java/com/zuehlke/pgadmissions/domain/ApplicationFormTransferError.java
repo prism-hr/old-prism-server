@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
-import org.hibernate.annotations.Type;
+import java.util.Date;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -12,7 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.util.Date;
+
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 
 /**
  * I represent the error situation recognized during transfer of application form (PRISM ----> PORTICO).
@@ -21,6 +23,8 @@ import java.util.Date;
 @Entity(name = "APPLICATION_FORM_TRANSFER_ERROR")
 @Access(AccessType.FIELD)
 public class ApplicationFormTransferError extends DomainObject<Long> {
+
+    private static final long serialVersionUID = -8609731063290824582L;
 
     /** The transfer that I am documenting. */
     @ManyToOne

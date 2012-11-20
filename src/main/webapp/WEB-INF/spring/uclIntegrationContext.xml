@@ -15,7 +15,7 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <!-- WebService -->
-    <oxm:jaxb2-marshaller id="marshaller" contextPath="com.zuehlke.pgadmissions.admissionsservice.jaxb.v2" />
+    <oxm:jaxb2-marshaller id="marshaller" contextPath="com.zuehlke.pgadmissions.admissionsservice.jaxb" />
     <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.services.exporters.KeystoreEnabledWebServiceTemplate">
         <property name="marshaller" ref="marshaller" />
         <property name="unmarshaller" ref="marshaller" />

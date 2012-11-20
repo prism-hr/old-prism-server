@@ -141,7 +141,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .id(Integer.MAX_VALUE)
             .awardDate(new Date())
             .grade("6")
-            .institution("AF0001")
+            .institution("University of London")
             .institutionCountry(domicile)
             .languageOfStudy("English")
             .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1))

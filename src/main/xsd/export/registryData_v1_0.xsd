@@ -22,6 +22,14 @@
 	       ********************************************* 
 	--> 
 	
+	<!--
+		*****************************************************************
+						Types defined in v1.0 start
+		Types modelled for student and applicant person and course details. These types are used to publish information about a student and applicant
+	  
+		*****************************************************************
+	-->
+	
 	 <!--Decision Response Type -->   
 	 <xs:complexType name="decisionResponseTp">
 	    <xs:sequence>
@@ -153,26 +161,51 @@
 	    </xs:sequence>
 	 </xs:complexType>   
 	  
+	 <!--
+		*****************************************************************
+					Types defined in v1.0 end			 
+		*****************************************************************
+	-->
+	
+	<!--
+		*****************************************************************
+					Types defined in v1.1 start			 
+		*****************************************************************
+	-->
      
-    <!-- Source of Interest:
-        Implies where have you heard about us question.
-    -->
+     
+     
+    
+    <!--
+		*****************************************************************
+			Source of Interest: Sources of interest in Registry captures where an applicant has heard about UCL	 
+		*****************************************************************
+	--> 
     <xs:complexType name="sourceOfInterestTp">
         <xs:sequence>        
             <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-   
-    <!-- Qualification -->
+       
+     <!--
+		*****************************************************************
+			Qualification examples: BA, BSc, MA, B.Eng etc	 
+		*****************************************************************
+	--> 
     <xs:complexType name="qualificationTp">
         <xs:sequence>      
             <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1" />      
             <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-   
-   
+      
+   <!--
+		*****************************************************************
+					English language types	 
+		*****************************************************************
+	-->   
+      
    <!-- Qualifications in English language -->
      <xs:simpleType name="qualificationsinEnglishTp">
         <xs:restriction base="xs:string">
@@ -190,53 +223,82 @@
             <xs:enumeration value="WRITING" />
             <xs:enumeration value="SPEAKING" />
             <xs:enumeration value="LISTENING" />
+            <xs:enumeration value="ESSAY" />
+            <xs:enumeration value="OTHER" />
         </xs:restriction>
     </xs:simpleType>
     
     <!-- English language score -->
     <xs:complexType name="englishLanguageScoreTp">
         <xs:sequence>          
-        	 <!-- Values allowed: READING, WRITING, SPEAKING, LISTENING and OVERALL-->		
+        	 <!-- Values allowed: READING, WRITING, SPEAKING, LISTENING, ESSAY, OVERALL, OTHER -->		
             <xs:element name="name" type="v1_0:languageBandScoreTp" minOccurs="1" maxOccurs="1" />
+            <!-- Score label when name is OTHER -->
+            <xs:element name="otherLanguageBand" type="xs:string" minOccurs="0" maxOccurs="1" />
             <!--Actual score against the name  -->
             <xs:element name="score" type="xs:string" minOccurs="1" maxOccurs="1" />           
         </xs:sequence>
     </xs:complexType>
     
-    <!-- English Language Qualifications -->
-    
+    <!-- English Language exam details -->    
     <xs:complexType name="englishLanguageTp">
         <xs:sequence>
         	<!--Values expected are : TOEFL, IELTS or OTHER  -->
         	<xs:element name="languageExam" type="v1_0:qualificationsinEnglishTp" minOccurs="1" maxOccurs="1" />
         	<!--If the value in languageExam is OTHER then specify the name of the other English exam -->
         	<xs:element name="otherLanguageExam" type="xs:string" minOccurs="0" maxOccurs="1" />
-        	<!--Internet or paper based etc -->
+        	<!--Internet or paper based etc. Required for TOEFL. -->
         	<xs:element name="method" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <xs:element name="dateTaken" type="xs:date" minOccurs="0" maxOccurs="1" />
+            <xs:element name="dateTaken" type="xs:date" minOccurs="1" maxOccurs="1" />
             <xs:element name="languageScore" type="v1_0:englishLanguageScoreTp" minOccurs="0" maxOccurs="unbounded" />            
             <xs:element name="additionalDetails" type="xs:string" minOccurs="0" maxOccurs="1" />            
         </xs:sequence>
     </xs:complexType>
     
-   
-    <!-- Programme -->
+    <!-- English Language qualification list -->
+     <xs:complexType name="englishLanguageQualificationDetailsTp">
+        <xs:sequence>
+            <xs:element name="englishLanguageQualification" type="v1_0:englishLanguageTp" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+       
+ 	 <!--
+		*****************************************************************
+					Mode of attendance
+		   modeofattendanceTp.code is UCL's student record data system defined  mode of attendance code. 
+           HESA defined codes are not sufficient. UCL allows additional modes than HESA.->
+		*****************************************************************
+	-->
+    
+    <xs:complexType name="modeofattendanceTp">
+        <xs:sequence>            	
+         	<xs:element name="code" type="xs:string"  minOccurs="1" maxOccurs="1" />
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />           
+        </xs:sequence>
+    </xs:complexType>
+       
+    <!--
+		*****************************************************************
+			Programme and its occurrence
+		*****************************************************************
+	--> 
     <xs:complexType name="programmeTp">
         <xs:sequence>
             <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1" />  
             <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />                    
-            <xs:element name="modeOfAttendance" type="v1_0:modeofattendanceTp" minOccurs="0" maxOccurs="1" />                          
+            <xs:element name="modeOfAttendance" type="v1_0:modeofattendanceTp" minOccurs="1" maxOccurs="1" />                          
         </xs:sequence>
     </xs:complexType>
             
+    <!-- A programme occurrence is essential to identify a programme uniquely in Registry  -->        
     <xs:complexType name="programmeOccurrenceTp">
         <xs:complexContent>
                  <xs:extension base="v1_0:programmeTp">
                  <xs:sequence>
-                 	<xs:element name="academicYear" type="xs:gYear" minOccurs="0" maxOccurs="1" />
-                 	<!--Maps to blocks in SITS  -->
-                    <xs:element name="academicYearOccurrence" type="xs:string" minOccurs="1" maxOccurs="1" />                      
-            		<xs:element name="block" type="xs:string" minOccurs="1" maxOccurs="1" />            		
+                 	<!-- This is the identifier in SITS, which is essential to identify a programme in Student records system. -->
+                 	<xs:element name="identifier" type="xs:string" minOccurs="1" maxOccurs="1" />
+                 	<xs:element name="academicYear" type="xs:gYear" minOccurs="1" maxOccurs="1" />                 	                         		
             		<xs:element name="startDate" type="xs:date" minOccurs="0" maxOccurs="1" />
                     <xs:element name="endDate" type="xs:date" minOccurs="0" maxOccurs="1" />     
                  </xs:sequence>
@@ -245,17 +307,12 @@
     </xs:complexType>
     
     
-    <!--Mode of attendance  -->
-    
-    <xs:complexType name="modeofattendanceTp">
-        <xs:sequence>    
-        	<!-- HESA define mode of attendance codes -->
-         	<xs:element name="code" type="xs:string"  minOccurs="1" maxOccurs="1" />
-            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />           
-        </xs:sequence>
-    </xs:complexType>
         
-    <!-- Institution -->
+   <!--
+		*****************************************************************
+					Institutions
+		*****************************************************************
+	--> 
     <xs:complexType name="institutionTp">
         <xs:sequence>    
          	<xs:element name="code" type="xs:string"  minOccurs="1" maxOccurs="1" />
@@ -265,17 +322,30 @@
     </xs:complexType>
     
    
-    <!-- Referee -->
+   <!--
+		*****************************************************************
+					Referee
+		*****************************************************************
+	--> 
     <xs:complexType name="refereeTp">
         <xs:sequence>
             <xs:element name="name" type="uclBasic_v1_0:nameTp" minOccurs="1" maxOccurs="1" />
             <xs:element name="position" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <xs:element name="contactDetails" type="regBasic_v1:contactDtlsTp" minOccurs="0" maxOccurs="1" />
-            
+            <xs:element name="contactDetails" type="regBasic_v1:contactDtlsTp" minOccurs="0" maxOccurs="1" />            
         </xs:sequence>
     </xs:complexType>
     
-    <!-- Qualifications in progress or obtained -->
+     <xs:complexType name="refereeListTp">
+        <xs:sequence>
+            <xs:element name="referee" type="v1_0:refereeTp" minOccurs="0" maxOccurs="unbounded" />                
+        </xs:sequence>
+    </xs:complexType>
+    
+     <!--
+		*****************************************************************
+					Qualifications associated with an application
+		*****************************************************************
+	-->
     <xs:complexType name="qualificationsTp">
         <xs:sequence>         
             <xs:element name="institution" type="v1_0:institutionTp" minOccurs="0" maxOccurs="1" />
@@ -288,6 +358,31 @@
         </xs:sequence>
     </xs:complexType>
     
+    <xs:complexType name="qualificationDetailsTp">
+        <xs:sequence>
+            <xs:element name="qualificationDetail" type="v1_0:qualificationsTp" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+     <!--
+		*****************************************************************
+					Appointments/Employment details
+		*****************************************************************
+	-->
+    <xs:complexType name="employmentDetailsTp">
+        <xs:sequence>
+            <xs:element name="employer" type="uclBasic_v1_0:appointmentTp" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+     <!--
+		*****************************************************************
+					Funding available for application
+					Scholarship available for application
+		*****************************************************************
+	-->
+	
      <xs:simpleType name="fundingTp">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Self" />
@@ -298,43 +393,13 @@
         </xs:restriction>
     </xs:simpleType>
     
-    <!-- Course Application -->
-    <xs:complexType name="courseApplicationTp">
+    <xs:complexType name="fundingsTp">
         <xs:sequence>
-        	<!-- If the application source is an external system -->
-            <xs:element name="externalApplicationID" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <!-- UCL's application identifier -->
-            <xs:element name="applicationID" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <!--Programme includes the programme and its occurrence. Both together identify the programme in SITS  -->
-            <xs:element name="programme" type="v1_0:programmeOccurrenceTp" minOccurs="1" maxOccurs="1" />                        
-            <xs:element name="startMonth" type="xs:gMonth" minOccurs="0" maxOccurs="1" />
-            <xs:element name="supervisorName" type="uclBasic_v1_0:nameTp" minOccurs="0" maxOccurs="1" />
-            <xs:element name="personalStatement" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <xs:element name="interviewAvailability" type="xs:string" minOccurs="0" maxOccurs="1" />
             <xs:element name="funding" type="v1_0:fundingTp" minOccurs="0" maxOccurs="unbounded" />
-            <!--If funding takes a value of Other then details about which other funding set against otherFunding  -->   
-            <xs:element name="otherFunding" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <xs:element name="scholarship" type="v1_0:scholarshipTp" minOccurs="0" maxOccurs="1" />     
-            <xs:element name="sourcesOfInterest" type="v1_0:sourceOfInterestTp" minOccurs="0" maxOccurs="1" />
-            <!--If sources of interest takes a value of Other then details about which other source of interest is set against otherSourceofInterest element  -->   
-            <xs:element name="otherSourceofInterest" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <!-- ATAS statement -->
-            <xs:element name="atasStatement" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <!--IP address  for the person who submitted the application-->
-            <xs:element name="ipAddress" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <!--Application creation date  -->
-            <xs:element name="creationDate" type="xs:dateTime" minOccurs="0" maxOccurs="1" />
-            <!-- Application status -->
-            <xs:element name="applicationStatus" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <!--TODO: Can be modelled as a seperate type for recommended decision and offer conditions to be met -->
-            <!--Recommended decision: R=> Rejected C=> Conditional or any other -->
-            <xs:element name="departmentalDecision" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <!-- Recommended offer conditions -->
-            <xs:element name="departmentalOfferConditions" type="xs:string" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
     
-        <!-- Scholarship or Studentship -->
+     <!-- Scholarship or Studentship -->
     <xs:complexType name="scholarshipTp">
         <xs:sequence>
             <xs:element name="awardName" type="xs:string" minOccurs="1" maxOccurs="1" />            
@@ -344,8 +409,68 @@
         </xs:sequence>
     </xs:complexType>
     
-     <!-- Applicant Type -->
-    <xs:complexType name="registrypersonTp">
+     <xs:complexType name="scholarshipsTp">
+        <xs:sequence>
+            <xs:element name="scholarship" type="v1_0:scholarshipTp" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+     <!--
+		*****************************************************************
+						Course application
+		*****************************************************************
+	-->
+     
+    <xs:complexType name="courseApplicationTp">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="1" >                    
+                    <!--UCL's application identifier. This identifier will is expected to identify an applicant uniquely. 
+                    	Note: Registry's TRAN process is where de-duplication of applicants takes place, after which an applicant identifier is assigned.
+                    		  TRAN happens much later in the process from when applicants submit their application. This identifier will either hold Registry defined applicant id
+                    		  or a unique identifier that can be used to identify applications submitted by the same person. This in SITS system can also be the user code. 
+                    -->
+                    <xs:element name="uclApplicationID" type="xs:string" />
+                    <!--Application id if the application is submitted by an external system -->
+                    <xs:element name="externalApplicationID" type="xs:string" />
+            </xs:choice>  
+            <!--Programme includes the programme and its occurrence. Both together identify the programme in SITS  -->
+            <xs:element name="programme" type="v1_0:programmeOccurrenceTp" minOccurs="1" maxOccurs="1" />                        
+            <xs:element name="startMonth" type="xs:gMonth" minOccurs="0" maxOccurs="1" />
+            <xs:element name="supervisorName" type="uclBasic_v1_0:nameTp" minOccurs="0" maxOccurs="1" />
+            <xs:element name="personalStatement" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="interviewAvailability" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="fundings" type="v1_0:fundingsTp" minOccurs="0" maxOccurs="1" />
+            <!--If funding takes a value of Other then details about which other funding set against otherFunding  -->   
+            <xs:element name="otherFunding" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="scholarships" type="v1_0:scholarshipsTp" minOccurs="0" maxOccurs="1" />     
+            <xs:element name="sourcesOfInterest" type="v1_0:sourceOfInterestTp" minOccurs="0" maxOccurs="1" />
+            <!--If sources of interest takes a value of Other then details about which other source of interest -->   
+            <xs:element name="otherSourceofInterest" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <!-- ATAS statement -->
+            <xs:element name="atasStatement" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <!--IP address  for the person who submitted the application-->
+            <xs:element name="ipAddress" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <!--Application creation date  -->
+            <xs:element name="creationDate" type="xs:dateTime" minOccurs="0" maxOccurs="1" />
+            <!-- Application status -->
+            <xs:element name="applicationStatus" type="xs:string" minOccurs="0" maxOccurs="1" />            
+            <!--Recommended decision: R=> Rejected C=> Conditional or any other -->
+            <xs:element name="departmentalDecision" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <!-- Recommended offer conditions, this can hold details if the application is Accepted conditionally -->
+            <xs:element name="departmentalOfferConditions" type="xs:string" minOccurs="0" maxOccurs="1" />          
+            <!--Details about the referees' associated with the application  -->  
+            <xs:element name="refereeList" type="v1_0:refereeListTp" minOccurs="0" maxOccurs="1" /> 
+        </xs:sequence>
+    </xs:complexType>
+    
+       
+    <!--
+		*****************************************************************
+						Registry person type.
+		*****************************************************************
+	-->
+    <xs:complexType name="registryPersonTp">
         <xs:complexContent>
             <xs:extension base="uclBasic_v1_0:personTp">
                  <xs:sequence>               
@@ -358,59 +483,64 @@
                 <xs:element name="visaRequired" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false"/>
                 <xs:element name="disability" type="uclBasic_v1_0:disabilityTp" minOccurs="0" maxOccurs="1" />
                 <xs:element name="ethnicity" type="uclBasic_v1_0:ethnicityTp" minOccurs="0" maxOccurs="1" />                
-                <xs:element name="professionalAssoc" type="uclBasic_v1_0:professionalAssociationTp" minOccurs="0" maxOccurs="1" />
-                <!--Changing the address types from v1_0:registryaddressTp to regBasic_v1:contactDtlsTp  -->
+                <xs:element name="professionalAssoc" type="uclBasic_v1_0:professionalAssociationTp" minOccurs="0" maxOccurs="1" />                
                 <xs:element name="homeAddress" type="regBasic_v1:contactDtlsTp" minOccurs="1" maxOccurs="1" />
                 <xs:element name="correspondenceAddress" type="regBasic_v1:contactDtlsTp" minOccurs="0" maxOccurs="1" />
-                <xs:element name="criminalConvictions" type="xs:boolean" minOccurs="1" maxOccurs="1" default="false"/>
+                <xs:element name="criminalConvictions" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false"/>
                 <xs:element name="criminalConvictionDetails" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="qualificationList" type="v1_0:qualificationDetailsTp" minOccurs="0" maxOccurs="1" />
+                <xs:element name="englishIsFirstLanguage" type="xs:boolean" minOccurs="0" maxOccurs="1" default="true" />
+            	<xs:element name="englishLanguageQualificationList" type="v1_0:englishLanguageQualificationDetailsTp" minOccurs="0" maxOccurs="1" />
+            	<xs:element name="employerList" type="v1_0:employmentDetailsTp" minOccurs="0" maxOccurs="1" />
            </xs:sequence>
         </xs:extension>
        </xs:complexContent>
     </xs:complexType>
     
-    <!-- Application Address Type -->
-    <!-- 
-    <xs:complexType name="registryaddressTp">
+     <!--
+		*****************************************************************
+						Registry applicant type.
+		*****************************************************************
+	-->
+    
+     <xs:complexType name="applicantTp">
         <xs:complexContent>
-            <xs:extension base="uclBasic_v1_0:addressTp">
-                <xs:sequence>
-                    <xs:element name="homeTelephone" type="xs:string" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="workTelephone" type="xs:string" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="mobile" type="xs:string" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="fax" type="xs:string" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="email" type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
+            <xs:extension base="v1_0:registryPersonTp">
+                <xs:sequence>      
+            	 <!--Applicant identifier. If present it will be used to find the applicant in Student records system  -->     
+            	<xs:element name="applicantID" type="xs:string" minOccurs="0" maxOccurs="1"/>                                
+           </xs:sequence>
+        </xs:extension>
+       </xs:complexContent>
     </xs:complexType>
-     -->
-    <!-- Application -->
+      
+      <!--
+		*****************************************************************
+		A application type, which is a collection of the applicant and the course application
+		Source indicates the system where the application is created first.
+		Applicant identifier is UCL student record system identifier for an applicant
+		*****************************************************************
+	-->
     <xs:complexType name="applicationTp">
-        <xs:sequence>            
-             <xs:choice minOccurs="0" maxOccurs="1" >                    
-                    <!--This is UCL's applicantion id -->
-                    <xs:element name="uclApplicationID" type="xs:string" />
-                    <!--This is applicantion id for any external system
-                       Q: Will there be a need to store the name of the external system that sends UCL an application
-                     -->
-                    <xs:element name="externalApplicationID" type="xs:string" />
-            </xs:choice>   
-            <!--Name for source system which calls the service to send the application  
-                eg: 1) PRISM
-                    2) UCL
+        <xs:sequence>                             
+           
+            <!-- Name for source system which calls the service to send the application  
+                 Example: PRISM, UCL
             --> 
             <xs:element name="source" type="xs:string" minOccurs="1" maxOccurs="1" />
-            <xs:element name="applicant" type="v1_0:registrypersonTp" minOccurs="1" maxOccurs="1" />
-            <xs:element name="courseApplication" type="v1_0:courseApplicationTp" minOccurs="1" maxOccurs="1" />
-            <xs:element name="qualificationDetails" type="v1_0:qualificationsTp" minOccurs="1" maxOccurs="unbounded" />
-            <xs:element name="englishLanguageQualification" type="v1_0:englishLanguageTp" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="employer" type="uclBasic_v1_0:appointmentTp" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="referee" type="v1_0:refereeTp" minOccurs="0" maxOccurs="unbounded" />      
-            
+            <!-- Details about the applicant -->
+            <xs:element name="applicant" type="v1_0:applicantTp" minOccurs="1" maxOccurs="1" />
+            <!-- Details about the application -->
+            <xs:element name="courseApplication" type="v1_0:courseApplicationTp" minOccurs="1" maxOccurs="1" />                                                  
         </xs:sequence>
     </xs:complexType>
     
+        
+    <!--
+		*****************************************************************
+					Types defined in v1.1 end			 
+		*****************************************************************
+	-->
     <!-- *********************************************
               COMPLEX TYPES SECTION END
        *********************************************

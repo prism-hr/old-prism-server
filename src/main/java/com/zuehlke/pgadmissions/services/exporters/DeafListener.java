@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.v2.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 
 public class DeafListener implements TransferListener {

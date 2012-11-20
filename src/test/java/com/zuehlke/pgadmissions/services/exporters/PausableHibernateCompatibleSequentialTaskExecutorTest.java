@@ -42,7 +42,9 @@ public class PausableHibernateCompatibleSequentialTaskExecutorTest {
         UclExportServiceQueueTest exportServiceQueueTest = new UclExportServiceQueueTest();
         exportServiceQueueTest.pauseWsQueueForMinutes(5);
         assertTrue(executor.isPickingTasksIsPaused());
-        latch.await(10, TimeUnit.SECONDS);
+        while (!latch.await(10, TimeUnit.SECONDS)) {
+            // wait
+        }
         assertFalse(executor.isPickingTasksIsPaused());
     }
     

@@ -136,10 +136,10 @@ public class UclExportService {
      */
     public void systemStartupSendingQueuesRecovery() {
         // allowing system to start smoothly before working on the queues.
-        this.pauseWsQueueForMinutes(2);
-        this.pauseSftpQueueForMinutes(2);
+        this.pauseWsQueueForMinutes(1);
+        this.pauseSftpQueueForMinutes(1);
         
-        log.debug("re-initialising the queues for ucl-eexport processing");
+        log.info("Re-initialising the queues for ucl-eexport processing");
         
         for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForWebserviceCall()) {
             webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationFormTransfer.getApplicationForm().getId(),  applicationFormTransfer.getId(), new DeafListener()));

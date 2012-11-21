@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.services.exporters;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class PorticoDocumentNameMappingsTest {
 
     private static final String BOOKING_REF = "0035965";

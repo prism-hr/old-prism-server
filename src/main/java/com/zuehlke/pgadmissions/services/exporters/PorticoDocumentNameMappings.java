@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+/**
+ * @deprecated This name schema for sending files to PORTICO has been deprecated on 21/11/2012
+ */
+@Deprecated
 public class PorticoDocumentNameMappings {
 
     private static final String TILDA = "~";

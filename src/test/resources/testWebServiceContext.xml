@@ -14,6 +14,8 @@
         http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+    <context:property-placeholder location="classpath:environment.properties" />
+
     <oxm:jaxb2-marshaller id="marshaller" contextPath="com.zuehlke.pgadmissions.admissionsservice.jaxb" />
 
     <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.services.exporters.KeystoreEnabledWebServiceTemplate">

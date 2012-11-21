@@ -143,6 +143,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
         applicant.setEmployerList(buildEmployer());
+        applicant.setEnglishIsFirstLanguage(applicationForm.getPersonalDetails().getEnglishFirstLanguage());
         
         if (StringUtils.isNotBlank(applicationForm.getApplicant().getUclUserId())) {
             applicant.setApplicantID(String.valueOf(applicationForm.getApplicant().getId()));
@@ -165,7 +166,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         nameTp.setSurname(personalDetails.getLastName());
         nameTp.setForename1(personalDetails.getFirstName());
-        nameTp.setTitle(personalDetails.getTitle().toString());
+        nameTp.setTitle(personalDetails.getTitle().getDisplayValue());
         return nameTp;
     }
     
@@ -258,7 +259,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(personalDetails.getEmail());
-        contactDtlsTp.setLandline(StringUtils.deleteWhitespace(personalDetails.getPhoneNumber()));
+        contactDtlsTp.setLandline(personalDetails.getPhoneNumber());
         return contactDtlsTp;
     }
     
@@ -274,7 +275,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setCountry(contactAddress.getCountry().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(applicationForm.getPersonalDetails().getEmail());
-        contactDtlsTp.setLandline(StringUtils.deleteWhitespace(applicationForm.getPersonalDetails().getPhoneNumber()));
+        contactDtlsTp.setLandline(applicationForm.getPersonalDetails().getPhoneNumber());
         return contactDtlsTp;
     }
     
@@ -377,7 +378,9 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 
                 QualificationInstitution appropriateInstitution = selectAppropriateInstitution(qualification.getQualificationInstitution());
                 if (appropriateInstitution == null) {
-                    institutionTp.setCode("OTHER");
+                    // TODO: Institution codes seems not to be working with OTHER, other, Other and we have some codes which are not accepted such as L75
+                    //institutionTp.setCode("OTHER");
+                    institutionTp.setCode("UK0092");
                     institutionTp.setName(qualification.getQualificationInstitution());
                     CountryTp countryTp = xmlFactory.createCountryTp();
                     countryTp.setCode(qualification.getInstitutionCountry().getCode());
@@ -455,7 +458,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 
                 ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
                 contactDtlsTp.setEmail(referee.getEmail());
-                contactDtlsTp.setLandline(StringUtils.deleteWhitespace(referee.getPhoneNumber()));
+                contactDtlsTp.setLandline(referee.getPhoneNumber());
                 
                 AddressTp addressTp = xmlFactory.createAddressTp();
                 addressTp.setAddressLine1(referee.getAddressLocation().getAddress1());
@@ -476,7 +479,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     
     private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        EnglishLanguageQualificationDetailsTp resultList = xmlFactory.createEnglishLanguageQualificationDetailsTp();
+        EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory.createEnglishLanguageQualificationDetailsTp();
         for (LanguageQualification languageQualifications : personalDetails.getLanguageQualifications()) {
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(buildXmlDate(languageQualifications.getDateOfExamination()));
@@ -486,19 +489,17 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 englishLanguageTp.setOtherLanguageExam(languageQualifications.getOtherQualificationTypeName());
             } else if (languageQualifications.getQualificationType() == LanguageQualificationEnum.TOEFL) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
+                if (languageQualifications.getExamTakenOnline()) {
+                    englishLanguageTp.setMethod("TOEFL_INTERNET");
+                } else {
+                    englishLanguageTp.setMethod("TOEFL_PAPER");
+                }
             } else if (languageQualifications.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
             } else {
                 throw new IllegalArgumentException(String.format("QualificationType type [%s] could not be converted", languageQualifications.getQualificationType()));
-            }            
-        
-        
-            if (languageQualifications.getExamTakenOnline()) {
-                englishLanguageTp.setMethod("ONLINE");
-            } else {
-                englishLanguageTp.setMethod("WRITTEN");
             }
-        
+            
             EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
             overallScoreTp.setScore(String.valueOf(languageQualifications.getOverallScore()));
@@ -521,9 +522,9 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             
             englishLanguageTp.getLanguageScore().addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, speakingScoreTp, listeningScoreTp));
             
-            resultList.getEnglishLanguageQualification().add(englishLanguageTp);
+            englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);
         }
-        return resultList;
+        return englishLanguageQualificationDetailsTp;
     }
     
     private XMLGregorianCalendar buildXmlDate(Date date) {

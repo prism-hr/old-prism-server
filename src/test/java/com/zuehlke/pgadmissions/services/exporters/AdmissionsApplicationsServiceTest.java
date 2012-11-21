@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -27,7 +26,6 @@ import org.springframework.oxm.XmlMappingException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
@@ -89,62 +87,6 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
     }
     
     @Test
-    @Ignore
-    public void sendValidApplicationForm() {
-        EasyMock.expect(
-                programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(applicationForm.getProgram(),
-                        applicationForm.getProgrammeDetails().getStudyOption())).andReturn(
-                applicationForm.getProgram().getInstances().get(0));
-        
-        EasyMock.replay(programInstanceDAOMock);
-        
-        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(
-                programInstanceDAOMock, qualificationInstitutionDAOMock, domicileDAOMock, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
-        
-        AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
-        
-        assertNotNull(response);
-    }
-    
-    @Test
-    @Ignore
-    public void testConnectivity() throws IOException {
-        ProgramInstance instance = new ProgramInstanceBuilder().academicYear("2013")
-                .applicationDeadline(DateUtils.addMonths(new Date(), 1)).applicationStartDate(new Date()).enabled(true)
-                .identifier("0009").studyOption("F+++++", "Full-time").toProgramInstance();
-    
-        EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);
-        EasyMock.replay(programInstanceDAOMock);
-    
-        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAOMock, qualificationInstitutionDAOMock, domicileDAOMock, new ObjectFactory());
-        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
-    
-        StringWriter writer = new StringWriter();
-        StreamResult result = new StreamResult(writer);
-        webServiceTemplate.getMarshaller().marshal(request, result);
-    
-        String requestAsString = writer.toString();
-    
-        assertNotNull(requestAsString);
-        assertTrue(StringUtils.isNotBlank(requestAsString));
-    
-        System.out.println(requestAsString);        
-        
-        AdmissionsApplicationResponse response = null;
-        try {
-            response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
-        } catch (SoapFaultClientException e) {
-            System.err.println(e.getSoapFault().getFaultStringOrReason());
-            System.err.println(e.getSoapFault().getFaultDetail());
-            e.printStackTrace();
-        }
-        
-        assertNotNull(response);
-        assertEquals(response.getReference().getApplicantID(), "");
-        assertEquals(response.getReference().getApplicationID(), "");
-    }
-    
-    @Test
     public void marshallRequest() throws XmlMappingException, IOException {
         
         ProgramInstance instance = new ProgramInstanceBuilder()
@@ -175,6 +117,30 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
         assertTrue(StringUtils.isNotBlank(requestAsString));
         
         System.out.println(requestAsString);
+    }
+
+    /**
+     * Sends a valid application form to the UCL test web service configured in the environment.properties.
+     * Run this test when connected to the UCL network.
+     */
+    @Test
+    @Ignore
+    public void sendValidApplicationForm() {
+        EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(applicationForm.getProgram(), applicationForm.getProgrammeDetails().getStudyOption())).andReturn(applicationForm.getProgram().getInstances().get(0));
+        
+        EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
+        
+        EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
+        
+        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAOMock, qualificationInstitutionDAOMock, domicileDAOMock, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        
+        AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
+        
+        assertNotNull(response);
+        
+        System.out.println(String.format("ApplicantID [id=%s], ApplicationID [id=%s]", response.getReference().getApplicantID(), response.getReference().getApplicationID()));
+        
+        EasyMock.verify(programInstanceDAOMock, qualificationInstitutionDAOMock);
     }
     
     @Before

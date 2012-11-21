@@ -23,7 +23,13 @@ public class QualificationBuilder {
 	private CheckedStatus completed;
 	private Domicile institutionCountry;
 	private Document proofOfAward;
-	
+    private boolean sendToUCL;
+
+    public QualificationBuilder sendToUCL(Boolean sendToUCL) {
+        this.sendToUCL = sendToUCL;
+        return this;
+    }
+    
 	public QualificationBuilder proofOfAward(Document proofOfAward) {
 		this.proofOfAward = proofOfAward;
 		return this;
@@ -33,7 +39,6 @@ public class QualificationBuilder {
 		this.institutionCountry = institutionCountry;
 		return this;
 	}
-	
 	
 	public QualificationBuilder application(ApplicationForm application) {
 		this.application = application;
@@ -95,6 +100,7 @@ public class QualificationBuilder {
 		qualification.setCompleted(completed);
 		qualification.setInstitutionCountry(institutionCountry);
 		qualification.setProofOfAward(proofOfAward);
+		qualification.setSendToUCL(sendToUCL);
 		return qualification;
 	}
 

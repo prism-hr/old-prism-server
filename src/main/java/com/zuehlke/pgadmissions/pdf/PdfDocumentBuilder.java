@@ -74,6 +74,7 @@ public class PdfDocumentBuilder {
 			
 			Document document = new Document(PageSize.A4, 50, 50, 100, 50);
 			PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+			writer.setCloseStream(false); // otherwise we're loosing our ZipOutputstream for calling zos.closeEntry();
 			document.open();
 			//addCoverPage(referenceComment.getApplication(), writer, document);
 			document.add(new Paragraph("Refree comment:\n"+referenceComment.getComment()));

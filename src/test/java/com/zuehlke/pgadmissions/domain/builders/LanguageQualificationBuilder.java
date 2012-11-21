@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
@@ -29,8 +30,22 @@ public class LanguageQualificationBuilder {
     private String listeningScore;
 
     private Boolean examTakenOnline;
+    
+    private Document qualificationDocument;
+
+    private boolean sendToUCL;
 
     public LanguageQualificationBuilder() {
+    }
+    
+    public LanguageQualificationBuilder sendToUCL(boolean flag) {
+        this.sendToUCL = flag;
+        return this;
+    }    
+    
+    public LanguageQualificationBuilder languageQualificationDocument(Document document) {
+        this.qualificationDocument = document;
+        return this;
     }
     
     public LanguageQualificationBuilder personalDetails(PersonalDetails details) {
@@ -101,6 +116,8 @@ public class LanguageQualificationBuilder {
         qualification.setReadingScore(readingScore);
         qualification.setSpeakingcore(speakingcore);
         qualification.setWritingScore(writingScore);
+        qualification.setLanguageQualificationDocument(qualificationDocument);
+        qualification.setSendToUCL(sendToUCL);
         return qualification;
     }
 }

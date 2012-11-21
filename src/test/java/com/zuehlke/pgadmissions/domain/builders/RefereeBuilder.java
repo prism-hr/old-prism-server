@@ -35,8 +35,14 @@ public class RefereeBuilder {
 	private boolean declined;
 	
 	private Date lastNotified;
+
+    private boolean sendToUCL;
 	
-	
+    public RefereeBuilder sendToUCL(Boolean sendToUCL) {
+        this.sendToUCL = sendToUCL;
+        return this;
+    }
+    
 	public RefereeBuilder lastNotified(Date lastNotified){
 		this.lastNotified = lastNotified;
 		return this;
@@ -146,6 +152,7 @@ public class RefereeBuilder {
 		referee.setPhoneNumber(phoneNumber);
 		referee.setDeclined(declined);
 		referee.setLastNotified(lastNotified);
+		referee.setSendToUCL(sendToUCL);
 		return referee;
 	}
 }

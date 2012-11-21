@@ -2,9 +2,6 @@ package com.zuehlke.pgadmissions.services.exporters;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +14,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 
 /**
  * This service encapsulates:<ol>
@@ -69,7 +62,7 @@ public class SftpAttachmentsSendingService {
 
     private final JSchFactory jSchFactory;
     
-    private final PdfDocumentBuilder pdfDocumentBuilder;
+    private final PorticoAttachmentsZipCreator attachmentsZipCreator;
 
     private String sftpHost;
 
@@ -88,7 +81,7 @@ public class SftpAttachmentsSendingService {
     @Autowired
     public SftpAttachmentsSendingService(
             JSchFactory jSchFactory, 
-            PdfDocumentBuilder pdfDocumentBuilder,
+            PorticoAttachmentsZipCreator attachmentsZipCreator,
             @Value("${xml.data.export.sftp.host}") String sftpHost, 
             @Value("${xml.data.export.sftp.port}") String sftpPort, 
             @Value("${xml.data.export.sftp.username}") String sftpUsername, 
@@ -96,7 +89,7 @@ public class SftpAttachmentsSendingService {
             @Value("${xml.data.export.sftp.folder}") String targetFolder) {
         super();
         this.jSchFactory = jSchFactory;
-        this.pdfDocumentBuilder = pdfDocumentBuilder;
+        this.attachmentsZipCreator = attachmentsZipCreator;
         this.sftpHost = sftpHost;
         this.sftpPort = sftpPort;
         this.sftpUsername = sftpUsername;
@@ -159,7 +152,7 @@ public class SftpAttachmentsSendingService {
             //possible errors: sftp protocol-level problems, connection lost during transmission and local problem with building zip-pack with attachments
             try {
                 sftpOs = sftpChannel.put(applicationForm.getUclBookingReferenceNumber() + ".zip");
-                this.writeZipEntries(applicationForm, applicationForm.getUclBookingReferenceNumber(), sftpOs);
+                attachmentsZipCreator.writeZipEntries(applicationForm, applicationForm.getUclBookingReferenceNumber(), sftpOs);
             } catch (SftpException e) {
                 throw new SftpTransmissionFailedOrProtocolError("SFTP protocol error during transmission of attachments for application form " + applicationForm.getId(), e);
             } catch (IOException e) {
@@ -175,96 +168,6 @@ public class SftpAttachmentsSendingService {
         }
     }
 
-    private void writeZipEntries(ApplicationForm applicationForm, String referenceNumber, OutputStream sftpOs) throws IOException, CouldNotCreateAttachmentsPack {
-        ZipOutputStream zos = null;
-        try {
-            zos = new ZipOutputStream(sftpOs);
-            addTranscriptFiles(zos, applicationForm, referenceNumber);
-            addReserchProposal(zos, applicationForm, referenceNumber);
-            addLanguageTestCertificate(zos, applicationForm, referenceNumber);
-            addCV(zos, applicationForm, referenceNumber);
-            addReferences(zos, applicationForm, referenceNumber);
-        } finally {
-            IOUtils.closeQuietly(zos);
-        }
-    }
-
-    private void addReferences(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException, CouldNotCreateAttachmentsPack {
-        List<ReferenceComment> references = applicationForm.getReferencesToSend();
-        String filename;
-        switch (references.size()) {
-            case 2:
-                filename = PorticoDocumentNameMappings.getReferenceFilename(referenceNumber, 2) + ".pdf";
-                zos.putNextEntry(new ZipEntry(filename));
-                pdfDocumentBuilder.writePdf(references.get(1), zos);
-                zos.closeEntry();
-            case 1:
-                filename = PorticoDocumentNameMappings.getReferenceFilename(referenceNumber, 1) + ".pdf";
-                zos.putNextEntry(new ZipEntry(filename));
-                zos.putNextEntry(new ZipEntry(filename));
-                pdfDocumentBuilder.writePdf(references.get(0), zos);
-                zos.closeEntry();
-            case 0:
-                break;
-            default:
-                throw new CouldNotCreateAttachmentsPack("There should be at most 2 references marked for sending to UCL");
-        }
-    }
-
-    private void addCV(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException {
-        Document cv = applicationForm.getCv();
-        if (cv != null) {
-            String filename = PorticoDocumentNameMappings.getCVFilename(referenceNumber) + ".pdf";
-            zos.putNextEntry(new ZipEntry(filename));
-            zos.write(cv.getContent());
-            zos.closeEntry();
-        }
-    }
-
-    private void addLanguageTestCertificate(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException, CouldNotCreateAttachmentsPack {
-        List<LanguageQualification> languageQualifications = applicationForm.getLanguageQualificationToSend();
-        if (languageQualifications.size() > 1)
-            throw new CouldNotCreateAttachmentsPack("There should be at most 1 languageQualification marked for sending to UCL");
-        if (!languageQualifications.isEmpty()) {
-            String filename = PorticoDocumentNameMappings.getEnglishLanguageCertificateFilename(referenceNumber) + ".pdf";
-            zos.putNextEntry(new ZipEntry(filename));
-            zos.write(languageQualifications.get(0).getLanguageQualificationDocument().getContent());
-            zos.closeEntry();
-        }
-    }
-
-    private void addReserchProposal(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException {
-        Document personalStatement = applicationForm.getPersonalStatement();
-        if (personalStatement != null) {
-            String filename = PorticoDocumentNameMappings.getResearchProposalFilename(referenceNumber) + ".pdf";
-            zos.putNextEntry(new ZipEntry(filename));
-            zos.write(personalStatement.getContent());
-            zos.closeEntry();
-        }
-    }
-
-    private void addTranscriptFiles(ZipOutputStream zos, ApplicationForm applicationForm, String referenceNumber) throws IOException, CouldNotCreateAttachmentsPack {
-        List<Document> qualifications = applicationForm.getQualificationsToSend();
-        String filename;
-        switch (qualifications.size()) {
-            case 2:
-                filename = PorticoDocumentNameMappings.getTranscriptFilename(referenceNumber, 2) + ".pdf";
-                zos.putNextEntry(new ZipEntry(filename));
-                zos.write(qualifications.get(1).getContent());
-                zos.closeEntry();
-            case 1:
-                filename = PorticoDocumentNameMappings.getTranscriptFilename(referenceNumber, 1) + ".pdf";
-                zos.putNextEntry(new ZipEntry(filename));
-                zos.putNextEntry(new ZipEntry(filename));
-                zos.write(qualifications.get(0).getContent());
-                zos.closeEntry();
-            case 0:
-                break;//todo: check if business ruless force us to have at least one transcript file attached - it yes, throw CouldNotCreateAttachmentsPack
-            default:
-                throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
-        }
-    }
-    
     @Async
     void triggerSshConnectionEstablished(TransferListener listener) {
         try {
@@ -282,6 +185,4 @@ public class SftpAttachmentsSendingService {
             e.printStackTrace();//there is nothing better we can do with this exeption
         }
     }
-
-
 }

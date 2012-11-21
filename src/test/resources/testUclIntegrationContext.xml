@@ -7,6 +7,8 @@
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
         http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
+    <context:property-placeholder location="classpath:environment.properties" />
+
 	<import resource="hibernateTestConfig.xml" />
 
     <import resource="../../src/main/webapp/WEB-INF/spring/uclIntegrationContext.xml" />

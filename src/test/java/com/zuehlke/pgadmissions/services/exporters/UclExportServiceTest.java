@@ -14,8 +14,10 @@ import org.easymock.IAnswer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.WebServiceIOException;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -54,6 +56,7 @@ import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService
 import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
 public class UclExportServiceTest extends UclIntegrationBaseTest {
 
@@ -86,6 +89,8 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
     private QualificationInstitutionDAO qualificationInstitutionDAOMock;
     
     private DomicileDAO domicileDAOMock;
+    
+    private PorticoAttachmentsZipCreator attachmentsZipCreatorMock;
 
     @Test
     public void shouldCreatePersistentQueueItem() {
@@ -456,7 +461,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
 
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
-                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+                jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
@@ -540,7 +545,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
 
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
-                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+                jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
@@ -635,7 +640,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
 
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
-                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+                jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
@@ -733,7 +738,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
 
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
-                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+                jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
@@ -834,7 +839,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
 
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
-                jschfactoryMock, pdfDocumentBuilderMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+                jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAOMock, applicationFormTransferDAO,
@@ -1016,15 +1021,14 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
 
         sftpCallingQueueExecutorMock = EasyMock.createMock(PausableHibernateCompatibleSequentialTaskExecutor.class);
 
-        webserviceCallingQueueExecutorMock = EasyMock
-                .createMock(PausableHibernateCompatibleSequentialTaskExecutor.class);
+        webserviceCallingQueueExecutorMock = EasyMock.createMock(PausableHibernateCompatibleSequentialTaskExecutor.class);
 
         applicationFormTransferDAO = new ApplicationFormTransferDAO(sessionFactory);
 
         applicationFormTransferErrorDAO = new ApplicationFormTransferErrorDAO(sessionFactory);
 
-        attachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, pdfDocumentBuilderMock,
-                sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
+        attachmentsSendingService = new SftpAttachmentsSendingService(jschfactoryMock, 
+                attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         webServiceTemplateMock = EasyMock.createMock(WebServiceTemplate.class);
 
@@ -1033,6 +1037,8 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         qualificationInstitutionDAOMock = EasyMock.createMock(QualificationInstitutionDAO.class);
         
         domicileDAOMock = EasyMock.createMock(DomicileDAO.class);
+        
+        attachmentsZipCreatorMock = EasyMock.createMock(PorticoAttachmentsZipCreator.class);
 
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, programInstanceDAO, applicationFormTransferDAO,

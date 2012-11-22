@@ -512,6 +512,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             writingScoreTp.setName(LanguageBandScoreTp.WRITING);
             writingScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
             
+            EnglishLanguageScoreTp essayScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            writingScoreTp.setName(LanguageBandScoreTp.ESSAY);
+            writingScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
+            
             EnglishLanguageScoreTp speakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             speakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
             speakingScoreTp.setScore(String.valueOf(languageQualifications.getSpeakingcore()));
@@ -520,7 +524,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
             listeningScoreTp.setScore(String.valueOf(languageQualifications.getListeningScore()));
             
-            englishLanguageTp.getLanguageScore().addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, speakingScoreTp, listeningScoreTp));
+            englishLanguageTp.getLanguageScore().addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayScoreTp, speakingScoreTp, listeningScoreTp));
             
             englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);
         }

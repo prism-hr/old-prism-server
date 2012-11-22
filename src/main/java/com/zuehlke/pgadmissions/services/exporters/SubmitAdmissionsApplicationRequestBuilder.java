@@ -513,8 +513,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             writingScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
             
             EnglishLanguageScoreTp essayScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-            writingScoreTp.setName(LanguageBandScoreTp.ESSAY);
-            writingScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
+            essayScoreTp.setName(LanguageBandScoreTp.ESSAY);
+            essayScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
             
             EnglishLanguageScoreTp speakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             speakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);

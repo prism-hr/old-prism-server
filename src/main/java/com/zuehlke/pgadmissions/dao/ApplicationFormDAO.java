@@ -357,4 +357,10 @@ public class ApplicationFormDAO {
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
+    @SuppressWarnings("unchecked")
+    public List<ApplicationForm> getAllApplicationsByStatus(ApplicationFormStatus status) {
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)	            
+                .add(Restrictions.eq("status", status))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
 }

@@ -26,8 +26,6 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
@@ -52,8 +50,6 @@ public class UclExportService {
 
     private final WebServiceTemplate webServiceTemplate;
 
-    private final ProgramInstanceDAO programInstanceDAO;
-
     private final ApplicationFormTransferDAO applicationFormTransferDAO;
 
     private final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO;
@@ -70,10 +66,8 @@ public class UclExportService {
 
     private QualificationInstitutionDAO qualificationInstitutionDAO;
 
-    private DomicileDAO domicileDAO;
-
     public UclExportService() {
-        this(null, null, null, null, null, null, 0, 0, null, null, null, null);
+        this(null, null, null, null, null, 0, 0, null, null, null);
     }
     
     @Autowired
@@ -81,20 +75,17 @@ public class UclExportService {
             @Qualifier("webservice-calling-queue-executor") PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutor,
             @Qualifier("sftp-calling-queue-executor") PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutor,
             WebServiceTemplate webServiceTemplate, 
-            ProgramInstanceDAO programInstanceDAO,
             ApplicationFormTransferDAO applicationFormTransferDAO,
             ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO, 
             @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}") int consecutiveSoapFaultsLimit,
             @Value("${xml.data.export.queue_pausing_delay_in_case_of_network_problem}") int queuePausingDelayInCaseOfNetworkProblemsDiscovered,
             SftpAttachmentsSendingService sftpAttachmentsSendingService, 
             @Qualifier("ucl-export-service-scheduler") TaskScheduler scheduler,
-            QualificationInstitutionDAO qualificationInstitutionDAO,
-            DomicileDAO domicileDAO) {
+            QualificationInstitutionDAO qualificationInstitutionDAO) {
         super();
         this.webserviceCallingQueueExecutor = webserviceCallingQueueExecutor;
         this.sftpCallingQueueExecutor = sftpCallingQueueExecutor;
         this.webServiceTemplate = webServiceTemplate;
-        this.programInstanceDAO = programInstanceDAO;
         this.applicationFormTransferDAO = applicationFormTransferDAO;
         this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;
         this.consecutiveSoapFaultsLimit = consecutiveSoapFaultsLimit;
@@ -102,7 +93,6 @@ public class UclExportService {
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
         this.scheduler = scheduler;
         this.qualificationInstitutionDAO = qualificationInstitutionDAO;
-        this.domicileDAO = domicileDAO;
     }
 
     //oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
@@ -192,7 +182,7 @@ public class UclExportService {
         };
 
         //build webservice request
-        request = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAO, qualificationInstitutionDAO, domicileDAO, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        request = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAO, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
         listener.sendingSubmitAdmissionsApplicantRequest(request);
         
         try  {

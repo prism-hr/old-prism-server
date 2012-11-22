@@ -44,12 +44,9 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeListTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -74,22 +71,14 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     
     private final ObjectFactory xmlFactory;
     
-    private final ProgramInstanceDAO programInstanceDAO;
-    
     private final QualificationInstitutionDAO qualificationInstitutionDAO;
-    
-    private final DomicileDAO domicileDAO;
     
     private final DatatypeFactory datatypeFactory;
     
     private ApplicationForm applicationForm;
     
-    public SubmitAdmissionsApplicationRequestBuilder(ProgramInstanceDAO programInstanceDAO, 
-            QualificationInstitutionDAO qualificationInstitutionDAO, DomicileDAO domicileDAO,
-            ObjectFactory xmlFactory) {
+    public SubmitAdmissionsApplicationRequestBuilder(QualificationInstitutionDAO qualificationInstitutionDAO, ObjectFactory xmlFactory) {
         this.xmlFactory = xmlFactory;
-        this.programInstanceDAO = programInstanceDAO;
-        this.domicileDAO = domicileDAO;
         this.qualificationInstitutionDAO = qualificationInstitutionDAO;
         try {
             datatypeFactory = DatatypeFactory.newInstance();
@@ -99,7 +88,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     }
     
     public SubmitAdmissionsApplicationRequestBuilder() {
-        this(null, null, null, null);
+        this(null, null);
     }
     
     public SubmitAdmissionsApplicationRequestBuilder applicationForm(final ApplicationForm applicationForm) {
@@ -311,12 +300,26 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         ProgrammeOccurrenceTp occurrenceTp = xmlFactory.createProgrammeOccurrenceTp();
         occurrenceTp.setCode(program.getCode());
         occurrenceTp.setModeOfAttendance(buildModeofattendance());
+
+        // TODO: SELECT the right programme instance
+        ProgramInstance activeInstance = null;
+        for (ProgramInstance instance : program.getInstances()) {
+            if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate()) || instance.getApplicationStartDate().after(new Date())) {
+                if (instance.getStudyOption().equalsIgnoreCase(programmeDetails.getStudyOption())) {
+                    activeInstance = instance;                    
+                    break;
+                }
+            }
+        }
         
-        ProgramInstance currentProgramInstanceForStudyOption = programInstanceDAO.getCurrentProgramInstanceForStudyOption(program, programmeDetails.getStudyOption());
-        occurrenceTp.setAcademicYear(buildXmlDateYearOnly(currentProgramInstanceForStudyOption.getAcademic_year()));
-        occurrenceTp.setIdentifier(currentProgramInstanceForStudyOption.getIdentifier());
-        occurrenceTp.setStartDate(buildXmlDate(currentProgramInstanceForStudyOption.getApplicationStartDate()));
-        occurrenceTp.setEndDate(buildXmlDate(currentProgramInstanceForStudyOption.getApplicationDeadline()));
+        if (activeInstance == null) {
+            throw new IllegalArgumentException("No active program instance found");
+        }
+        
+        occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademic_year()));
+        occurrenceTp.setIdentifier(activeInstance.getIdentifier());
+        occurrenceTp.setStartDate(buildXmlDate(activeInstance.getApplicationStartDate()));
+        occurrenceTp.setEndDate(buildXmlDate(activeInstance.getApplicationDeadline()));
         return occurrenceTp;
     }
     
@@ -378,9 +381,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 
                 QualificationInstitution appropriateInstitution = selectAppropriateInstitution(qualification.getQualificationInstitution());
                 if (appropriateInstitution == null) {
-                    // TODO: Institution codes seems not to be working with OTHER, other, Other and we have some codes which are not accepted such as L75
-                    //institutionTp.setCode("OTHER");
-                    institutionTp.setCode("UK0092");
+                    institutionTp.setCode("OTHER");
                     institutionTp.setName(qualification.getQualificationInstitution());
                     CountryTp countryTp = xmlFactory.createCountryTp();
                     countryTp.setCode(qualification.getInstitutionCountry().getCode());
@@ -390,13 +391,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                     institutionTp.setCode(appropriateInstitution.getCode());
                     institutionTp.setName(appropriateInstitution.getName());
                     CountryTp countryTp = xmlFactory.createCountryTp();
-                    
-                    Domicile domicileById = domicileDAO.getDomicileById(Integer.valueOf(appropriateInstitution.getDomicileCode()));
-                    if (domicileById == null) {
-                        throw new IllegalStateException(String.format("Institution [id=%s] references an obsolete Domicile [id=%s]", appropriateInstitution.getId(), appropriateInstitution.getDomicileCode()));
-                    }
-                    countryTp.setCode(domicileById.getCode());
-                    countryTp.setName(domicileById.getName());
+                    countryTp.setCode(appropriateInstitution.getDomicileCode());
                     institutionTp.setCountry(countryTp);
                 }
                 qualificationsTp.setInstitution(institutionTp);

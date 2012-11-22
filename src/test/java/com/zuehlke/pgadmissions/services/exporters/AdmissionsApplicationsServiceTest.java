@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.ApplicationTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.CourseApplicationTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -53,8 +52,6 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
     private ProgramInstanceDAO programInstanceDAOMock = null;
     
     private ApplicationForm applicationForm = null;
-
-    private DomicileDAO domicileDAOMock;
 
     private QualificationInstitutionDAO qualificationInstitutionDAOMock;
     
@@ -104,7 +101,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
         
         EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
         
-        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAOMock, qualificationInstitutionDAOMock, domicileDAOMock, new ObjectFactory());
+        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory());
         SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
         
         StringWriter writer = new StringWriter();
@@ -132,7 +129,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
         
         EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
         
-        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(programInstanceDAOMock, qualificationInstitutionDAOMock, domicileDAOMock, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
         
         AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
         
@@ -146,7 +143,6 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
     @Before
     public void setup() {
         qualificationInstitutionDAOMock = EasyMock.createMock(QualificationInstitutionDAO.class);
-        domicileDAOMock = EasyMock.createMock(DomicileDAO.class);
         programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
         applicationForm = getValidApplicationForm();
     }

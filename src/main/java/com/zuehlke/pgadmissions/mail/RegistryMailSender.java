@@ -65,7 +65,7 @@ public class RegistryMailSender extends MailSender {
 				createModel(applicationForm, currentUser, registryContacts),
 				ccAdminAddres,
 				pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber() + ".pdf",
-						pdfDocumentBuilder.buildPdf(applicationForm)));
+						pdfDocumentBuilder.buildPdfWithAttachments(applicationForm)));
 		javaMailSender.send(mimeMessagePreparator);
 
 	}

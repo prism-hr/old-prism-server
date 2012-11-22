@@ -53,7 +53,7 @@ public class PrintController {
 			throw new ResourceNotFoundException();
 		}
 
-		sendPDF(response, applicationFormNumber, builder.buildPdf(application));
+		sendPDF(response, applicationFormNumber, builder.buildPdfWithAttachments(application));
 
 	}
 
@@ -71,7 +71,7 @@ public class PrintController {
 			}
 
 		}
-		sendPDF(response,getTimestamp(), builder.buildPdf(applicationList.toArray(new ApplicationForm[] {})));
+		sendPDF(response,getTimestamp(), builder.buildPdfWithAttachments(applicationList.toArray(new ApplicationForm[] {})));
 
 	}
 

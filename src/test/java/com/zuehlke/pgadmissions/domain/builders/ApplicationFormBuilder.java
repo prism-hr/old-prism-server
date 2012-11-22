@@ -374,6 +374,8 @@ public class ApplicationFormBuilder {
 		application.setApproverRequestedRestart(approverRequestedRestart);
 		application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
 		
+		application.setEmploymentPositions(employmentPositions);
+		
 		try {
 		    application.setIpAddressAsString(ipAddress);
 		} catch (UnknownHostException e) {

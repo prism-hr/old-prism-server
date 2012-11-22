@@ -71,7 +71,7 @@ public class PrintControllerTest {
 		EasyMock.replay(currentUser);
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
 		byte[] bytes = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdf(applicationForm)).andReturn(bytes);
+		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments(applicationForm)).andReturn(bytes);
 
 		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
 
@@ -104,7 +104,7 @@ public class PrintControllerTest {
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
 		byte[] bytes = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdf(applicationFormOne, applicationFormTwo)).andReturn(bytes);
+		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments(applicationFormOne, applicationFormTwo)).andReturn(bytes);
 
 		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
 
@@ -136,7 +136,7 @@ public class PrintControllerTest {
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(null).anyTimes();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
 		byte[] bytes = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdf( applicationFormTwo)).andReturn(bytes);
+		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments( applicationFormTwo)).andReturn(bytes);
 
 		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
 
@@ -167,7 +167,7 @@ public class PrintControllerTest {
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
 		byte[] bytes = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdf( applicationFormTwo)).andReturn(bytes);
+		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments( applicationFormTwo)).andReturn(bytes);
 
 		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
 

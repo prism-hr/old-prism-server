@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +72,13 @@ public class ApplicationFormBuilder {
 	private boolean pendingApprovalRestart;
 	private RegisteredUser approverRequestedRestart = null;
 	private String uclBookingReferenceNumber;
+    private String ipAddress;
 	
+    public ApplicationFormBuilder ipAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+        return this;
+    }
+    
 	public ApplicationFormBuilder uclBookingReferenceNumber(String number) {
 	    this.uclBookingReferenceNumber = number;
 	    return this;
@@ -366,6 +373,13 @@ public class ApplicationFormBuilder {
 		application.setPendingApprovalRestart(pendingApprovalRestart);
 		application.setApproverRequestedRestart(approverRequestedRestart);
 		application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
+		
+		try {
+		    application.setIpAddressAsString(ipAddress);
+		} catch (UnknownHostException e) {
+		    throw new IllegalArgumentException("There was an error setting the ip address");
+		}
+		
 		return application;
 	}
 }

@@ -388,7 +388,7 @@
             </#list>
             
             <div class="row">
-                <label id="lbl-writingScore" class="plain-label">Writing Score<em>*</em></label>
+                <label id="lbl-writingScore" class="plain-label">Essay / Writing Score<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.score.writing'/>"></span>
                 <div class="field">
                     <input class="full" readonly="readonly" type="text" value="${(languageQualification.writingScore?html)!}" name="writingScore" id="writingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> />

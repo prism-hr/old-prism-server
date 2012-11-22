@@ -118,7 +118,7 @@
           </div>
           
           <div class="admin_row">
-            <span class="admin_row_label">Writing Score</span>
+            <span class="admin_row_label">Essay / Writing Score</span>
             <div class="field">${(languageQualification.writingScore?html)!"Not Provided"}</div>
           </div>
           

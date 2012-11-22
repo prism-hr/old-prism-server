@@ -71,12 +71,10 @@ public class PdfDocumentBuilder {
 	
 	public void writePdf(ReferenceComment referenceComment, OutputStream outputStream) {
 		try {
-			
 			Document document = new Document(PageSize.A4, 50, 50, 100, 50);
 			PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 			writer.setCloseStream(false); // otherwise we're loosing our ZipOutputstream for calling zos.closeEntry();
 			document.open();
-			//addCoverPage(referenceComment.getApplication(), writer, document);
 			document.add(new Paragraph("Refree comment:\n"+referenceComment.getComment()));
 			PdfContentByte cb = writer.getDirectContent();
 	        for (com.zuehlke.pgadmissions.domain.Document in : referenceComment.getDocuments()) {
@@ -505,7 +503,7 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell("Reading Score", smallBoldFont));
                 table.addCell(newTableCell(qualification.getReadingScore(), smallFont));
                 
-                table.addCell(newTableCell("Writing Score", smallBoldFont));
+                table.addCell(newTableCell("Essay / Writing Score", smallBoldFont));
                 table.addCell(newTableCell(qualification.getWritingScore(), smallFont));
                 
                 table.addCell(newTableCell("Speaking Score", smallBoldFont));

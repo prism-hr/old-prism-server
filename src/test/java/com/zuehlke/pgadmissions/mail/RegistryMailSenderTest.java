@@ -102,7 +102,7 @@ public class RegistryMailSenderTest {
 		InternetAddress toAddress3 = new InternetAddress("hobnob@test.com", "Hanna Hobnop");
 		
 		byte[] pdf = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdf(applicationForm)).andReturn(pdf);		
+		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments(applicationForm)).andReturn(pdf);		
 		PdfAttachmentInputSource attachmentInputSource = EasyMock.createMock(PdfAttachmentInputSource.class);
 		EasyMock.expect(pdfAttachmentInputSourceFactoryMock.getAttachmentDataSource("application number.pdf", pdf)).andReturn(attachmentInputSource);
 

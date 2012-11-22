@@ -69,7 +69,7 @@ public class PdfDocumentBuilder {
 	private HeaderEvent headerEvent;
 	private int pageCounter = 0;
 	
-	public void writePdf(ReferenceComment referenceComment, OutputStream outputStream) {
+	public void writeCombinedReferencesAsPdfToOutputstream(ReferenceComment referenceComment, OutputStream outputStream) {
 		try {
 			Document document = new Document(PageSize.A4, 50, 50, 100, 50);
 			PdfWriter writer = PdfWriter.getInstance(document, outputStream);
@@ -92,21 +92,33 @@ public class PdfDocumentBuilder {
 		}
 	}
 
-	public byte[] buildPdf(ApplicationForm... applications) {
+   public void buildPdf(ApplicationForm applicationForm, OutputStream outputStream, boolean includeAttachments) {
+        try {
+            Document document = new Document(PageSize.A4, 50, 50, 100, 50);
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            writer.setCloseStream(false); // otherwise we're loosing our ZipOutputstream for calling zos.closeEntry();
+            document.open();
+            buildDocument(applicationForm, document, writer, includeAttachments);
+            document.newPage();
+            document.close();
+        } catch (Exception e) {
+            throw new PDFException(e);
+        }
+    }
+
+	public byte[] buildPdfWithAttachments(ApplicationForm... applications) {
 		try {
 			Document document = new Document(PageSize.A4, 50, 50, 100, 50);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PdfWriter writer = PdfWriter.getInstance(document, baos);
 			document.open();
 			for (ApplicationForm applicationForm : applications) {
-		
 				try {
 					buildDocument(applicationForm, document, writer);
 				} catch (Exception e) {
 					LOG.warn("Error in generating pdf for application " + applicationForm.getApplicationNumber(), e);
 				}
 				document.newPage();
-			
 			}
 			document.close();
 			return baos.toByteArray();
@@ -114,8 +126,12 @@ public class PdfDocumentBuilder {
 			throw new PDFException(e);
 		}
 	}
-
+	
 	private void buildDocument(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
+	    buildDocument(application, document, writer, true);
+	}
+	
+	private void buildDocument(ApplicationForm application, Document document, PdfWriter writer, boolean includeAttachments) throws DocumentException, MalformedURLException, IOException {
 		bookmarkMap = new HashMap<Integer, Object>();
 		appendixCounter = 1;
 		addCoverPage(application, writer, document);
@@ -154,8 +170,7 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 
-		if (SecurityContextHolder.getContext().getAuthentication() != null && 
-		        ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)) {
+		if (SecurityContextHolder.getContext().getAuthentication() != null && ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)) {
 			addReferencesSection(application, document);
 		}
 
@@ -169,7 +184,7 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 
-		addSupportingDocuments(application, document, writer);
+		addSupportingDocuments(application, document, writer, includeAttachments);
 	}
 
 	private void addCoverPage(ApplicationForm application, PdfWriter writer, Document document) throws DocumentException, MalformedURLException, IOException {
@@ -533,6 +548,23 @@ public class PdfDocumentBuilder {
             }
         }
 		
+		if (SecurityContextHolder.getContext().getAuthentication() != null && ( 
+                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).isInRole(Authority.SUPERADMINISTRATOR) ||
+                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).equals(application.getApplicant()))) {
+            table.addCell(newTableCell("Ethnicity", smallBoldFont));
+            if (application.getPersonalDetails().getEthnicity() == null) {
+                table.addCell(newTableCell("Not Provided", smallGrayFont));
+            } else {
+                table.addCell(newTableCell(application.getPersonalDetails().getEthnicity().getName(), smallFont));                
+            }
+            
+            table.addCell(newTableCell("Disability", smallBoldFont));
+            if (application.getPersonalDetails().getDisability() == null) {
+                table.addCell(newTableCell("Not Provided", smallGrayFont));
+            } else {
+                table.addCell(newTableCell(application.getPersonalDetails().getDisability().getName(), smallFont));                
+            }
+        }
         document.add(table);
 	}
 
@@ -880,8 +912,12 @@ public class PdfDocumentBuilder {
 		document.add(table);
 	}
 
-	private void addSupportingDocuments(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
-		for (Integer integer : bookmarkMap.keySet()) {
+	private void addSupportingDocuments(ApplicationForm application, Document document, PdfWriter writer, boolean includeAttachments) throws DocumentException, MalformedURLException, IOException {
+	    if (!includeAttachments) {
+	        return;
+	    }
+	    
+	    for (Integer integer : bookmarkMap.keySet()) {
 			
 		    document.newPage();
 			

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -98,7 +99,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
     public ApplicationForm getValidApplicationForm() {
         
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon W1T 4HD\nUnited Kingdom";
-        RegisteredUser user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).username("denk@zhaw.ch").enabled(true).toUser();
+        RegisteredUser user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).firstName("Kevin").lastName("Denver").username("denk@zhaw.ch").enabled(true).toUser();
         Document cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
         Document referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
         Document personalStatement = getRandomDocument(DocumentType.PERSONAL_STATEMENT, "My Personal Statement (v1.0).pdf", user);
@@ -112,8 +113,12 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
         Referee refereeTwo = new RefereeBuilder().user(approverUser).email("ked2@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(reference).toReferee();
         EmploymentPosition employmentPosition = new EmploymentPositionBuilder()
             .current(true)
-            .employerAdress1(addressStr)
-            .employerCountry(country)
+            .address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3])
+            .country(country)
+            .position("Software Engineer")
+            .current(true)
+            .startDate(DateUtils.addYears(new Date(), -2))
+            .remit("Developer")
             .employerName("Zuhlke Ltd.")
             .toEmploymentPosition();
         Language language = new LanguageBuilder().id(Integer.MAX_VALUE).code("GB").name("England").enabled(true).toLanguage();
@@ -191,6 +196,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .toQualification();
         ApplicationForm applicationForm = new ApplicationFormBuilder()
             .id(Integer.MAX_VALUE)
+            .applicant(user)
             .acceptedTerms(CheckedStatus.YES)
             .additionalInformation(additionalInformation)
             .appDate(new Date())
@@ -217,7 +223,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .ipAddress("127.0.0.1")
             .toApplicationForm();
         
-        save(user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser, language, country, domicile, address, program, applicationForm);
+        save(user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser, language, country, domicile, address, program, employmentPosition, applicationForm);
         
         program.setCode("TMRMBISING01");
         

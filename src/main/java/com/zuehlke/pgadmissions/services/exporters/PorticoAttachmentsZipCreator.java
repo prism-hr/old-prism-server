@@ -44,6 +44,9 @@ public class PorticoAttachmentsZipCreator {
             addLanguageTestCertificate(applicationForm, referenceNumber, contentsProperties, zos);
             addCV(applicationForm, referenceNumber, contentsProperties, zos);
             addReferences(applicationForm, referenceNumber, contentsProperties, zos);
+            addApplicationForm(applicationForm, referenceNumber, contentsProperties, zos);
+            addMergedApplicationForm(applicationForm, referenceNumber, contentsProperties, zos);
+            
             addContentsFiles(applicationForm, referenceNumber, contentsProperties, zos);
         } finally {
             IOUtils.closeQuietly(zos);
@@ -65,14 +68,14 @@ public class PorticoAttachmentsZipCreator {
             case 2:
                 filename = UUID.randomUUID() + ".pdf";
                 zos.putNextEntry(new ZipEntry(filename));
-                pdfDocumentBuilder.writePdf(references.get(1), zos);
+                pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputstream(references.get(1), zos);
                 zos.closeEntry();
                 contentsProperties.put("reference.2.serverFilename", filename);
                 contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
             case 1:
                 filename = UUID.randomUUID() + ".pdf";
                 zos.putNextEntry(new ZipEntry(filename));
-                pdfDocumentBuilder.writePdf(references.get(0), zos);
+                pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputstream(references.get(0), zos);
                 zos.closeEntry();
                 contentsProperties.put("reference.1.serverFilename", filename);
                 contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
@@ -144,5 +147,25 @@ public class PorticoAttachmentsZipCreator {
             default:
                 throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
         }
+    }
+    
+    protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+        String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
+        String applicationFilename = "ApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
+        zos.putNextEntry(new ZipEntry(serverfilename));
+        pdfDocumentBuilder.buildPdf(applicationForm, zos, false);
+        zos.closeEntry();
+        contentsProperties.put("applicationForm.1.serverFilename", serverfilename);
+        contentsProperties.put("applicationForm.1.applicationFilename", applicationFilename);
+    }
+    
+    protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+        String serverfilename = "MergedApplicationForm" + referenceNumber + ".pdf";
+        String applicationFilename = "MergedApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
+        zos.putNextEntry(new ZipEntry(serverfilename));
+        pdfDocumentBuilder.buildPdf(applicationForm, zos, true);
+        zos.closeEntry();
+        contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);
+        contentsProperties.put("mergedApplication.1.applicationFilename", applicationFilename);        
     }
 }

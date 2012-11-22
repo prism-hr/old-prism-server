@@ -40,28 +40,27 @@ public class EmploymentPositionBuilder {
 		return this;
 	}
 	
-	public EmploymentPositionBuilder employerAdress1(String employerAdress){
+	public EmploymentPositionBuilder address1(String employerAdress){
 		this.employerAdress1 = employerAdress;
 		return this;
 	}
-	public EmploymentPositionBuilder employerAdress2(String employerAdress){
+	public EmploymentPositionBuilder address2(String employerAdress){
 		this.employerAdress2 = employerAdress;
 		return this;
 	}
-	public EmploymentPositionBuilder employerAdress3(String employerAdress){
+	public EmploymentPositionBuilder address3(String employerAdress){
 		this.employerAdress3 = employerAdress;
 		return this;
 	}
-	public EmploymentPositionBuilder employerAdress4(String employerAdress){
+	public EmploymentPositionBuilder address4(String employerAdress){
 		this.employerAdress4 = employerAdress;
 		return this;
 	}
 	
-	public EmploymentPositionBuilder employerCountry(Country employerCountry){
+	public EmploymentPositionBuilder country(Country employerCountry){
 		this.employerCountry = employerCountry;
 		return this;
 	}
-	
 	
 	public EmploymentPositionBuilder employerName(String employerName){
 		this.employerName = employerName;

@@ -17,7 +17,6 @@ import java.util.zip.ZipFile;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -38,7 +37,6 @@ public class PorticoAttachmentsZipCreatorTest extends UclIntegrationBaseTest {
     private File zipFile;
 
     @Test
-    @DirtiesContext
     public void shouldWriteZipFile() throws IOException, CouldNotCreateAttachmentsPack {
 
         zipFile = File.createTempFile(uclBookingReferenceNumber,".zip");
@@ -64,10 +62,10 @@ public class PorticoAttachmentsZipCreatorTest extends UclIntegrationBaseTest {
             }
         }
 
-        assertEquals("There are to few or to many files in the Zip", 7, numberOfFiles);
-        assertEquals("There are duplicate file names", 7, fileNames.size());
+        assertEquals("There are to few or to many files in the Zip", 9, numberOfFiles);
+        assertEquals("There are duplicate file names", 9, fileNames.size());
         assertTrue("The contents file is missing.", fileNames.contains("P123456Contents.txt"));
-        assertEquals("The contents file has to few or to many entries", 14, contentProperties.size());
+        assertEquals("The contents file has to few or to many entries", 18, contentProperties.size());
 
         assertEquals("TMRMBISING01-2012-999999", contentProperties.get("applicationNumber"));
         assertEquals("References.1.pdf", contentProperties.get("reference.1.applicationFilename"));
@@ -77,6 +75,10 @@ public class PorticoAttachmentsZipCreatorTest extends UclIntegrationBaseTest {
         assertEquals("My Personal Statement (v1.0).pdf", contentProperties.get("researchProposal.1.applicationFilename"));
         assertEquals("My CV.pdf", contentProperties.get("curriculumVitae.1.applicationFilename"));
         assertEquals("References.2.pdf", contentProperties.get("reference.2.applicationFilename"));
+        assertEquals("ApplicationFormP123456.pdf", contentProperties.get("applicationForm.1.serverFilename"));
+        assertEquals("ApplicationFormTMRMBISING01-2012-999999.pdf", contentProperties.get("applicationForm.1.applicationFilename"));
+        assertEquals("MergedApplicationFormP123456.pdf", contentProperties.get("mergedApplication.1.serverFilename"));
+        assertEquals("MergedApplicationFormTMRMBISING01-2012-999999.pdf", contentProperties.get("mergedApplication.1.applicationFilename"));
     }
 
     @Before

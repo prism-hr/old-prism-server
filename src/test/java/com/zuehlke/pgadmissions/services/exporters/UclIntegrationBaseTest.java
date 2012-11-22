@@ -214,6 +214,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .cv(cvDocument)
             .personalStatement(personalStatement)
             .referees(refereeOne, refereeTwo)
+            .ipAddress("127.0.0.1")
             .toApplicationForm();
         
         save(user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser, language, country, domicile, address, program, applicationForm);

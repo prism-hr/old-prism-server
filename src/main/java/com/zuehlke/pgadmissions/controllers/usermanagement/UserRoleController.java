@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -47,7 +48,6 @@ public class UserRoleController {
 		this.programPropertyEditor = programPropertyEditor;
 		this.newUserDTOValidator = newUserDTOValidator;
 		this.encryptionHelper = encryptionHelper;
-
 	}
 
 	@ModelAttribute("programs")
@@ -65,7 +65,7 @@ public class UserRoleController {
 
 	@ModelAttribute("authorities")
 	public List<Authority> getAuthorities() {
-			return Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR);
+	    return Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR);
 	}
 
 	@ModelAttribute("userDTO")
@@ -103,7 +103,6 @@ public class UserRoleController {
 		checkPermissions();
 		return NEW_USER_VIEW_NAME;
 	}
-
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/edit")
 	public String handleEditUserRoles(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult result) {
@@ -135,9 +134,12 @@ public class UserRoleController {
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.setValidator(newUserDTOValidator);
 		binder.registerCustomEditor(Program.class, programPropertyEditor);
-
-	}
-	
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+        
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }	
 
 	Program getSelectedProgram( String programCode) {
 		if (programCode == null) {
@@ -148,7 +150,6 @@ public class UserRoleController {
 			throw new ResourceNotFoundException();
 		}
 		return selectedProgram;
-			
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/remove")
@@ -157,7 +158,4 @@ public class UserRoleController {
 		userService.updateUserWithNewRoles(userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail()), userDTO.getSelectedProgram());		
 		return "redirect:/manageUsers/edit?programCode="  + userDTO.getSelectedProgram().getCode();
 	}
-	
-
-
 }

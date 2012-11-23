@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.workflow.review;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -39,7 +40,6 @@ public class MoveToReviewController extends ReviewController {
 		super(applicationsService, userService, reviewService);
 		this.reviewRoundValidator = reviewRoundValidator;
 		this.reviewerPropertyEditor = reviewerPropertyEditor;
-
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToReview")
@@ -80,6 +80,10 @@ public class MoveToReviewController extends ReviewController {
 	public void registerReviewRoundValidator(WebDataBinder binder) {
 		binder.setValidator(reviewRoundValidator);
 		binder.registerCustomEditor(Reviewer.class, reviewerPropertyEditor);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 	}
-
+	            
+	public StringTrimmerEditor newStringTrimmerEditor() {
+	    return new StringTrimmerEditor(false);
+	}
 }

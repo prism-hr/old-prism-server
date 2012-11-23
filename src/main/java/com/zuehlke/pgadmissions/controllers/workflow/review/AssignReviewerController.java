@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -83,6 +84,10 @@ public class AssignReviewerController extends ReviewController {
 	public void registerReviewRoundValidator(WebDataBinder binder) {
 		binder.setValidator(reviewRoundValidator);
 		binder.registerCustomEditor(Reviewer.class, reviewerPropertyEditor);
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 	}
-	
+	        
+	public StringTrimmerEditor newStringTrimmerEditor() {
+	    return new StringTrimmerEditor(false);
+	}
 }

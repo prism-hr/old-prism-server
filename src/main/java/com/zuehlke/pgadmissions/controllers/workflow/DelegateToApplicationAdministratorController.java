@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -58,7 +59,11 @@ public class DelegateToApplicationAdministratorController {
 	@InitBinder(value = "applicationForm")
 	public void registerPropertyEditors(WebDataBinder dataBinder) {
 		dataBinder.registerCustomEditor(RegisteredUser.class, "applicationAdministrator", userPropertyEditor);
-
+		dataBinder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+        
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -71,5 +76,4 @@ public class DelegateToApplicationAdministratorController {
 		applicationsService.save(applicationForm);
 		return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
 	}
-
 }

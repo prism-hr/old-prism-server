@@ -148,24 +148,13 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldBindPropertyEditors() {
-	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
-	    controller = new EmploymentController(employmentServiceMock, languageServiceMock, countriesServiceMock, applicationsServiceMock,
-                languagePropertyEditorMock, datePropertyEditorMock, countryPropertyEditor, 
-                applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock) {
-	        @Override
-            public StringTrimmerEditor newStringTrimmerEditor() {
-                return stringTrimmerEditor;
-            }
-	    };
-
-	    
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(employmentValidatorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMock);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
-		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);

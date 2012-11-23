@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.controllers.workflow.review;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -23,6 +22,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
+
 @Controller
 @RequestMapping("/review")
 public class CreateNewReviewerController {
@@ -42,8 +42,6 @@ public class CreateNewReviewerController {
 				this.applicationsService = applicationsService;
 				this.userService = userService;
 				this.reviewerValidator = reviewerValidator;
-			
-		
 	}
 
 	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
@@ -81,9 +79,13 @@ public class CreateNewReviewerController {
 	@InitBinder(value = "reviewer")
 	public void registerReviewerValidators(WebDataBinder binder) {
 		binder.setValidator(reviewerValidator);
-
-	}
-	
+        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+            
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }
+    
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 

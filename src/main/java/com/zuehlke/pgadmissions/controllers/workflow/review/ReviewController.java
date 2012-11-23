@@ -33,9 +33,6 @@ public abstract class ReviewController {
 		this.reviewService = reviewService;
 	}
 
-
-
-
 	@ModelAttribute("programmeReviewers")
 	public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId) {
 		return getApplicationForm(applicationId).getProgram().getProgramReviewers();
@@ -45,8 +42,6 @@ public abstract class ReviewController {
 	public RegisteredUser getUser() {
 		return userService.getCurrentUser();
 	}
-
-
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -61,8 +56,6 @@ public abstract class ReviewController {
 
 	public abstract ReviewRound getReviewRound(@RequestParam Object id);
 
-
-
 	@ModelAttribute("previousReviewers")
 	public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId) {
 		List<RegisteredUser> availablePreviousReviewers = new ArrayList<RegisteredUser>();
@@ -74,9 +67,6 @@ public abstract class ReviewController {
 				availablePreviousReviewers.add(registeredUser);
 			}
 		}
-
 		return availablePreviousReviewers;
-
 	}
-
 }

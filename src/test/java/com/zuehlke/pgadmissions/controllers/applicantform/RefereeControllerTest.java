@@ -129,20 +129,11 @@ public class RefereeControllerTest {
 
 	@Test
 	public void shouldBindPropertyEditors() {
-	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
-	    controller = new RefereeController(refereeServiceMock, userServiceMock,countriesServiceMock, applicationsServiceMock,// 
-                countryPropertyEditor, applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock) {
-	        @Override
-            public StringTrimmerEditor newStringTrimmerEditor() {
-                return stringTrimmerEditor;
-            }
-	    };
-	    
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(refereeValidatorMock);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
-		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);

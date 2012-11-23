@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,7 +42,6 @@ public class StateTransitionController {
 
 	StateTransitionController() {
 		this(null, null, null, null, null, null, null, null, null, null);
-
 	}
 
 	@Autowired
@@ -65,7 +64,12 @@ public class StateTransitionController {
 	public void registerBinders(WebDataBinder binder) {
 		binder.setValidator(stateChangeValidator);
 		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-	}
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+        
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {

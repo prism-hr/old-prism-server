@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -201,6 +202,8 @@ public class ReferenceControllerTest {
 	public void shouldBindPRopertyEditorAndValidator() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(referenceValidator);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		
 		binderMock.registerCustomEditor(Document.class, documentPropertyEditor);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);

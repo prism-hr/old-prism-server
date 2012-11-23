@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.referees;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -104,7 +105,12 @@ public class ReferenceController {
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.setValidator(referenceValidator);
 		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-	}
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+        
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }
 	
 	@RequestMapping(value = "/submitReference", method = RequestMethod.POST)
 	public String handleReferenceSubmission(@Valid @ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult) {

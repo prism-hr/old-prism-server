@@ -6,7 +6,7 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.MessageSource;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.propertyeditors.AssignReviewersReviewerPropertyE
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 public class AssignReviewerControllerTest {
@@ -122,6 +121,8 @@ public class AssignReviewerControllerTest {
 	public void shouldAddReviewRoundValidator() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(reviewRoundValidatorMock);		
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		
 		binderMock.registerCustomEditor(Reviewer.class, reviewerPropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerReviewRoundValidator(binderMock);

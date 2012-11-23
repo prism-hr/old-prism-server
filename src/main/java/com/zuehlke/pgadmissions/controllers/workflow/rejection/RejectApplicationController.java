@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -76,13 +77,10 @@ public class RejectApplicationController {
 		return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
 	}
 
-	
-
 	@ModelAttribute("availableReasons")
 	public List<RejectReason> getAvailableReasons() {
 		return rejectService.getAllRejectionReasons();
 	}
-
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -91,7 +89,6 @@ public class RejectApplicationController {
 		checkApplicationStatus(application);
 		return application;
 	}
-
 
 	private void checkApplicationStatus(ApplicationForm application) {
 		switch (application.getStatus()) {
@@ -128,11 +125,15 @@ public class RejectApplicationController {
 	public void registerBindersAndValidators(WebDataBinder binder) {
 		binder.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditor);
 		binder.setValidator(rejectionValidator);
-
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 	}
+	        
+	public StringTrimmerEditor newStringTrimmerEditor() {
+	    return new StringTrimmerEditor(false);
+	}
+
 	@ModelAttribute("user")
 	public RegisteredUser getUser() {	
 		return getCurrentUser();
 	}
-
 }

@@ -10,6 +10,7 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -165,6 +166,8 @@ public class MoveToReviewControllerTest {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(reviewRoundValidatorMock);		
 		binderMock.registerCustomEditor(Reviewer.class, reviewerPropertyEditorMock);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		
 		EasyMock.replay(binderMock);
 		controller.registerReviewRoundValidator(binderMock);
 		EasyMock.verify(binderMock);

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -134,8 +135,13 @@ public class MoveToInterviewController {
 		binder.setValidator(interviewValidator);
 		binder.registerCustomEditor(Interviewer.class, interviewerPropertyEditor);
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
-	}
-
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+        
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }
+    
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
 	public String moveToInterview(@RequestParam String applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
@@ -145,6 +151,4 @@ public class MoveToInterviewController {
 		interviewService.moveApplicationToInterview(interview, applicationForm);
 		return "/private/common/ajax_OK";
 	}
-	
-
 }

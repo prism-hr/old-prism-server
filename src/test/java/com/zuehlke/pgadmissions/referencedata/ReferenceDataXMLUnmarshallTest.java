@@ -229,21 +229,22 @@ public class ReferenceDataXMLUnmarshallTest {
         File f = new File("src/test/resources/reference_data/prismProgrammes.xml");
         ProgrammeOccurrences prismProgrammes = (ProgrammeOccurrences) u.unmarshal(f);
         
-        System.out.println(String.format("INSERT INTO PROGRAM_TMP (code, name, academic_year, start_date, end_date, attendance_code, attendance_name, enabled) VALUES "));    
+        System.out.println(String.format("INSERT INTO PROGRAM_TMP (code, name, academic_year, start_date, end_date, attendance_code, attendance_name, identifier, enabled) VALUES "));
+        System.out.println(prismProgrammes.getProgrammeOccurrence().size());
         for (ProgrammeOccurrence prog : prismProgrammes.getProgrammeOccurrence()) {
             ModeOfAttendance attendance = prog.getModeOfAttendance();
             
             System.out.println(StringEscapeUtils.escapeSql(
-                    String.format("(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", true), ", 
+                    String.format("(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", true), ", 
                     prog.getProgramme().getCode(),
                     prog.getProgramme().getName(),
                     prog.getAcademicYear(),
                     prog.getStartDate(),
                     prog.getEndDate(),
                     attendance.getCode(),
+                    prog.getIdentifier(),
                     attendance.getName())));
         }
-
     }
     
     @Test

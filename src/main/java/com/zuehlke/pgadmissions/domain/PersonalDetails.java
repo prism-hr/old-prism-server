@@ -23,7 +23,9 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -325,5 +327,18 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
         } else if (languageQualification != null) {
             this.languageQualifications.add(languageQualification);
         }
+    }
+    
+    public List<LanguageQualification> getLanguageQualificationToSend() {
+        List<LanguageQualification> result = new ArrayList<LanguageQualification>(1);
+        for (LanguageQualification languageQualification : languageQualifications) {
+            if (BooleanUtils.isTrue(languageQualification.getSendToUCL())) {
+                Validate.notNull(languageQualification.getLanguageQualificationDocument(),
+                        "LanguageQualification with id: " + languageQualification.getId()
+                                + " is marked for sending to UCL but has no document assosiated with it.");
+                result.add(languageQualification);
+            }
+        }
+        return result;
     }
 }

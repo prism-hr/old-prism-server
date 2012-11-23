@@ -130,23 +130,12 @@ public class FundingControllerTest {
 
 	@Test
 	public void shouldBindPropertyEditors() {
-	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
-	    controller = new FundingController(applicationsServiceMock, applicationFormPropertyEditorMock, 
-	            datePropertyEditorMock, fundingValidatorMock, fundingServiceMock, documentPropertyEditorMock, 
-	            userServiceMock, encryptionHelperMock) {
-	        @Override
-            public StringTrimmerEditor newStringTrimmerEditor() {
-                return stringTrimmerEditor;
-            }
-	    };
-
-	    
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(fundingValidatorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
 		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);

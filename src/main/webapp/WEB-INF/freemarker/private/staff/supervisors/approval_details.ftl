@@ -84,9 +84,6 @@
 										</div>
 															
 										<div class="buttons">
-<#--
-											<button value="cancel" class="clear" type="reset">Clear</button>
--->
 											<button class="blue" type="button" id="moveToApprovalBtn">Submit</button>
 										</div>
 

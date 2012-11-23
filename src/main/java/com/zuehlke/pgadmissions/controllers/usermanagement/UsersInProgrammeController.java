@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -26,19 +25,16 @@ public class UsersInProgrammeController {
 	private static final String USERS_ROLES_VIEW = "private/staff/superAdmin/users_roles";
 	private final UserService userService;
 	private final ProgramsService programsService;
-	private final EncryptionHelper encryptionHelper;
 
 	UsersInProgrammeController(){
-		this(null, null, null);
+		this(null, null);
 	}
 	
 	@Autowired
-	public UsersInProgrammeController(UserService userService, ProgramsService programsService, EncryptionHelper encryptionHelper) {
+	public UsersInProgrammeController(UserService userService, ProgramsService programsService) {
 		this.userService = userService;
 		this.programsService = programsService;
-		this.encryptionHelper = encryptionHelper;
 	}
-
 
 	@ModelAttribute("usersInRoles")
 	public List<RegisteredUser> getUsersInProgram(@RequestParam(required = false) String programCode) {
@@ -85,6 +81,4 @@ public class UsersInProgrammeController {
 		}
 		return programsService.getProgramByCode(programCode);
 	}
-
-	
 }

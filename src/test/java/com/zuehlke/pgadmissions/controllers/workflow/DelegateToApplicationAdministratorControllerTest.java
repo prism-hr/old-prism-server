@@ -7,6 +7,7 @@ import static org.junit.Assert.assertSame;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -82,7 +83,8 @@ public class DelegateToApplicationAdministratorControllerTest {
 	public void shouldRegisterUserPropertyEditor() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.registerCustomEditor(RegisteredUser.class,"applicationAdministrator", userPropertyEditorMock);
-
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);

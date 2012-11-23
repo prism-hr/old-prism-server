@@ -9,6 +9,7 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
@@ -90,6 +91,8 @@ public class CreateNewReviewerControllerTest {
 	public void shouldBindValidator() {		
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(newUserValidatorMock);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		
 		EasyMock.replay(binderMock);
 		controller.registerReviewerValidators(binderMock);
 		EasyMock.verify(binderMock);

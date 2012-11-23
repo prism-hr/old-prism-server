@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.workflow.interview;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -42,8 +43,6 @@ public class CreateNewInterviewerController {
 				this.applicationsService = applicationsService;
 				this.userService = userService;
 				this.interviewerValidator = interviewerValidator;
-			
-		
 	}
 
 	@RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
@@ -81,9 +80,13 @@ public class CreateNewInterviewerController {
 	@InitBinder(value = "interviewer")
 	public void registerInterviewerValidators(WebDataBinder binder) {
 		binder.setValidator(interviewerValidator);
-
-	}
-	
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+        
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }	
+    
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 

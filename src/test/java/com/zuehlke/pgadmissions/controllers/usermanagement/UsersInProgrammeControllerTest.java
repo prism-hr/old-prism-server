@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -25,16 +24,13 @@ public class UsersInProgrammeControllerTest {
 	private UserService userServiceMock;
 	private ProgramsService programsServiceMock;
 	private RegisteredUser currentUserMock;
-	private EncryptionHelper encryptionHelperMock;
 	private UsersInProgrammeController controller;
-
 
 	@Test
 	public void shouldReturnEmptyUserInRoleListIfNoProgram() {		
 		List<RegisteredUser> users = controller.getUsersInProgram(null);
 		assertTrue(users.isEmpty());
 	}
-
 	
 	@Test
 	public void shouldReturnUsersForProgramOrderedByLastnaeFirstname() {
@@ -127,17 +123,12 @@ public class UsersInProgrammeControllerTest {
 	public void shoudlReturnNullIfProgramIdNotProvided() {
 		assertNull(controller.getSelectedProgram(null));
 	}
- 
-
 
 	@Before
 	public void setUp(){
 		userServiceMock = EasyMock.createMock(UserService.class);
 		programsServiceMock = EasyMock.createMock(ProgramsService.class);
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);		
-		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-		
-
-		controller = new UsersInProgrammeController(userServiceMock, programsServiceMock,  encryptionHelperMock);
+		controller = new UsersInProgrammeController(userServiceMock, programsServiceMock);
 	}
 }

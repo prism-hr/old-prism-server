@@ -185,20 +185,12 @@ public class AdditionalInformationControllerTest {
 
 	@Test
 	public void shouldBindPropertyEditors() {
-	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
-	    controller = new AdditionalInformationController(applicationServiceMock, userServiceMock, 
-	            applFormPropertyEditorMock, booleanPropertyEditorMock, addInfoServiceMock, validatorMock) {
-	        @Override
-            public StringTrimmerEditor newStringTrimmerEditor() {
-                return stringTrimmerEditor;
-            }
-	    };      
-	    
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(validatorMock);
 		binderMock.registerCustomEditor(ApplicationForm.class, applFormPropertyEditorMock);
 		binderMock.registerCustomEditor(Boolean.class, booleanPropertyEditorMock);
-		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		
 		EasyMock.replay(binderMock);
 		controller.registerValidatorsEditors(binderMock);
 		EasyMock.verify(binderMock);

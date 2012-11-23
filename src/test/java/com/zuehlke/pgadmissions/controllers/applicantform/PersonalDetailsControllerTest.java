@@ -202,21 +202,6 @@ public class PersonalDetailsControllerTest {
 
 	@Test
 	public void shouldBindPropertyEditors() {
-	    final StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
-	    controller = new PersonalDetailsController(applicationsServiceMock, userServiceMock, applicationFormPropertyEditorMock,// 
-                datePropertyEditorMock, countryServiceMock, ethnicityServiceMock, disabilityServiceMock,// 
-                languageServiceMok, languagePropertyEditorMopck, countryPropertyEditorMock,// 
-                disabilityPropertyEditorMock, ethnicityPropertyEditorMock,// 
-                personalDetailsValidatorMock, personalDetailsServiceMock, domicileDAOMock, domicilePropertyEditorMock,
-                languageQualificationValidatorMock,
-                languageQualificationDAOMock, 
-                documentPropertyEditorMock) {
-	        @Override
-            public StringTrimmerEditor newStringTrimmerEditor() {
-                return stringTrimmerEditor;
-            }
-	    };
-	    
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(personalDetailsValidatorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
@@ -226,7 +211,7 @@ public class PersonalDetailsControllerTest {
 		binderMock.registerCustomEditor(Ethnicity.class, ethnicityPropertyEditorMock);
 		binderMock.registerCustomEditor(Disability.class, disabilityPropertyEditorMock);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
-		binderMock.registerCustomEditor(String.class, stringTrimmerEditor);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditorsForPersonalDetails(binderMock);
 		EasyMock.verify(binderMock);

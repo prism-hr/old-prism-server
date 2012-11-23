@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.workflow.approval;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -40,13 +41,10 @@ public class CreateNewSupervisorController {
 				this.applicationsService = applicationsService;
 				this.userService = userService;
 				this.supervisorValidator = supervisorValidator;
-			
-		
 	}
 
 	@RequestMapping(value = "/createSupervisor", method = RequestMethod.POST)
-	public ModelAndView createNewSupervisorUser(@Valid @ModelAttribute("supervisor") RegisteredUser suggestedNewSupervisorUser, BindingResult bindingResult,
-			@ModelAttribute("applicationForm") ApplicationForm applicationForm) {
+	public ModelAndView createNewSupervisorUser(@Valid @ModelAttribute("supervisor") RegisteredUser suggestedNewSupervisorUser, BindingResult bindingResult, @ModelAttribute("applicationForm") ApplicationForm applicationForm) {
 		if (bindingResult.hasErrors()) {
 			return new ModelAndView(CREATE_SUPERVISOR_SECTION);
 		}
@@ -65,7 +63,6 @@ public class CreateNewSupervisorController {
 		return modelAndView;
 	}
 
-
 	@RequestMapping(method = RequestMethod.GET, value = "create_supervisor_section")
 	public String getCreateSupervisorSection() {
 			return CREATE_SUPERVISOR_SECTION;
@@ -79,7 +76,11 @@ public class CreateNewSupervisorController {
 	@InitBinder(value = "supervisor")
 	public void registerSupervisorValidators(WebDataBinder binder) {
 		binder.setValidator(supervisorValidator);
-
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+        
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
 	}
 	
 	@ModelAttribute("applicationForm")

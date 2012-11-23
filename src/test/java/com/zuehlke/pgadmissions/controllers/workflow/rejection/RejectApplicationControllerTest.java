@@ -11,6 +11,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -35,7 +36,6 @@ import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.validators.RejectionValidator;
 
 public class RejectApplicationControllerTest {
@@ -109,6 +109,7 @@ public class RejectApplicationControllerTest {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditorMock);
 		binderMock.setValidator(rejectionValidatorMock);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 		EasyMock.replay(binderMock);
 		controllerUT.registerBindersAndValidators(binderMock);
 		EasyMock.verify(binderMock);

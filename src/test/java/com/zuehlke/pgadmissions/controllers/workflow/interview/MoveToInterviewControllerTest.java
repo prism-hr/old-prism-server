@@ -12,6 +12,7 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -291,6 +292,7 @@ public class MoveToInterviewControllerTest {
 	public void shouldAddInterviewValidatorAndInterviewerPropertyEditor() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(interviewValidatorMock);		
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 		binderMock.registerCustomEditor(Interviewer.class, interviewerPropertyEditorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		EasyMock.replay(binderMock);

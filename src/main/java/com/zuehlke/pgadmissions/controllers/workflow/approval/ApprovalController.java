@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -71,18 +72,10 @@ public class ApprovalController {
 	@RequestMapping(method = RequestMethod.GET, value = "supervisors_section")
 	public String getSupervisorSection() {
 		return SUPERVISORS_SECTION;
-
 	}
-
-//  Kevin: This form is now obsolete
-//	@RequestMapping(method = RequestMethod.GET, value = "requestRestart")
-//	public String getRequestRestartPage() {
-//		return REQUEST_RESTART_APPROVE_PAGE;
-//	}
 	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null//
 				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()//
@@ -146,14 +139,18 @@ public class ApprovalController {
 	public void registerValidatorAndPropertyEditorForApprovalRound(WebDataBinder binder) {
 		binder.setValidator(approvalRoundValidator);
 		binder.registerCustomEditor(Supervisor.class, supervisorPropertyEditor);
-		
+	    binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+	}
+	    
+	public StringTrimmerEditor newStringTrimmerEditor() {
+	    return new StringTrimmerEditor(false);
 	}
 	
 	@InitBinder("comment")
 	public void registerValidatorAndPropertyEditorForComment(WebDataBinder binder) {
 		binder.setValidator(commentValidator);
 		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-		
+		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
 	}
 
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
@@ -172,7 +169,6 @@ public class ApprovalController {
 		comment.setApplication(getApplicationForm(applicationId));
 		comment.setUser(getUser());
 		return comment;
-		
 	}
 
 	@RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)

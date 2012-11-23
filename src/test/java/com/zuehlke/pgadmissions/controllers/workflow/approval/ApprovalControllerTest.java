@@ -11,6 +11,7 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -311,7 +312,8 @@ public class ApprovalControllerTest {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(approvalRoundValidatorMock);
 		binderMock.registerCustomEditor(Supervisor.class, supervisorPropertyEditorMock);
-
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		
 		EasyMock.replay(binderMock);
 		controller.registerValidatorAndPropertyEditorForApprovalRound(binderMock);
 		EasyMock.verify(binderMock);
@@ -340,7 +342,8 @@ public class ApprovalControllerTest {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(commentValidatorMock);
 		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		
 		EasyMock.replay(binderMock);
 		controller.registerValidatorAndPropertyEditorForComment(binderMock);
 		EasyMock.verify(binderMock);

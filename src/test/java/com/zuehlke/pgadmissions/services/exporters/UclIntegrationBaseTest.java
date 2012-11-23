@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
+import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
+import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PassportInformationBuilder;
@@ -54,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -105,6 +108,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
         Document personalStatement = getRandomDocument(DocumentType.PERSONAL_STATEMENT, "My Personal Statement (v1.0).pdf", user);
         Document proofOfAwardDocument = getRandomDocument(DocumentType.PROOF_OF_AWARD, "My Proof of Award.pdf", user);
         Document languageQualificationDocument = getRandomDocument(DocumentType.LANGUAGE_QUALIFICATION, "Language Qualification - My Name.pdf", user);
+        Document fundingDocument = getRandomDocument(DocumentType.SUPPORTING_FUNDING, "Supporting Funding - My Name.pdf", user);
         RegisteredUser approverUser = new RegisteredUserBuilder().id(Integer.MAX_VALUE-1).username("approver@zhaw.ch").enabled(true).toUser();
         Country country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).toCountry();
         Address address = new AddressBuilder().id(Integer.MAX_VALUE).country(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).toAddress();
@@ -140,7 +144,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .requiresVisa(true)
             .passportInformation(new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver").passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20)).passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).toPassportInformation())
             .languageQualificationAvailable(true)
-            .languageQualifications(new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false).languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1").languageQualificationDocument(languageQualificationDocument).sendToUCL(true).toLanguageQualification())
+            .languageQualifications(new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false).languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1").sendToUCL(true).languageQualificationDocument(languageQualificationDocument).sendToUCL(true).toLanguageQualification())
             .phoneNumber("+44 (0) 123 123 1234")
             .residenceDomicile(domicile)
             .title(Title.MR)
@@ -194,6 +198,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .proofOfAward(proofOfAwardDocument)
             .sendToUCL(true)
             .toQualification();
+        Funding funding = new FundingBuilder().id(Integer.MAX_VALUE).awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument).type(FundingType.SCHOLARSHIP).value("5").toFunding();
         ApplicationForm applicationForm = new ApplicationFormBuilder()
             .id(Integer.MAX_VALUE)
             .applicant(user)
@@ -209,6 +214,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .currentAddress(address)
             .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
             .employmentPositions(employmentPosition)
+            .fundings(funding)
             .lastUpdated(new Date())
             .personalDetails(personalDetails)
             .program(program)

@@ -374,7 +374,7 @@ public class ApplicationFormBuilder {
 		application.setApproverRequestedRestart(approverRequestedRestart);
 		application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
 		
-		application.setEmploymentPositions(employmentPositions);
+		application.getEmploymentPositions().addAll(employmentPositions);
 		
 		try {
 		    application.setIpAddressAsString(ipAddress);

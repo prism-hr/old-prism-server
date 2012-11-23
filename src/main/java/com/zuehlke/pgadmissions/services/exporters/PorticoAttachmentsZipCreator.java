@@ -99,7 +99,7 @@ public class PorticoAttachmentsZipCreator {
     }
 
     protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
-        List<LanguageQualification> languageQualifications = applicationForm.getLanguageQualificationToSend();
+        List<LanguageQualification> languageQualifications = applicationForm.getPersonalDetails().getLanguageQualificationToSend();
         if (languageQualifications.size() > 1)
             throw new CouldNotCreateAttachmentsPack("There should be at most 1 languageQualification marked for sending to UCL");
         if (!languageQualifications.isEmpty()) {

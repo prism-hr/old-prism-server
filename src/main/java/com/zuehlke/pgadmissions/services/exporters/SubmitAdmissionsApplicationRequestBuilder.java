@@ -60,6 +60,7 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
@@ -285,10 +286,17 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicationTp.setApplicationStatus(applicationForm.getStatus().displayValue());
         applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
-        applicationTp.setDepartmentalDecision(applicationForm.getStatus().displayValue());
         applicationTp.setRefereeList(buildReferee());
         
-//      TODO: applicationTp.setApplicationStatus("Active"); ?
+        if (applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN) {
+            applicationTp.setApplicationStatus("W");
+        } else {
+            applicationTp.setApplicationStatus("A");
+        }
+        
+        applicationTp.setDepartmentalDecision(applicationForm.getStatus().displayValue().toUpperCase());
+
+//      TODO: ATASSTatement
 //      <v1_0:atasStatement>string</v1_0:atasStatement> // Project description
         
         return applicationTp;
@@ -301,7 +309,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         occurrenceTp.setCode(program.getCode());
         occurrenceTp.setModeOfAttendance(buildModeofattendance());
 
-        // TODO: SELECT the right programme instance
         ProgramInstance activeInstance = null;
         for (ProgramInstance instance : program.getInstances()) {
             if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate()) || instance.getApplicationStartDate().after(new Date())) {
@@ -314,6 +321,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         if (activeInstance == null) {
             throw new IllegalArgumentException("No active program instance found");
+        }
+        
+        if (StringUtils.isBlank(activeInstance.getIdentifier())) {
+            throw new IllegalArgumentException("No identifer for program instance found");
         }
         
         occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademic_year()));
@@ -475,6 +486,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory.createEnglishLanguageQualificationDetailsTp();
+        
         for (LanguageQualification languageQualifications : personalDetails.getLanguageQualifications()) {
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
             englishLanguageTp.setDateTaken(buildXmlDate(languageQualifications.getDateOfExamination()));

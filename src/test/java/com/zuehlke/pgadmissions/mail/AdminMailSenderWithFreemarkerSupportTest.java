@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.mail;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.mail.internet.MimeMessage;
 
@@ -75,10 +74,6 @@ public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithF
             
             @Override
             public void onRecipient(String recipient) {
-                System.out.println(recipient);
-                String recipientOne = "George Smith <kevin.denver@gmail.com>";
-                String recipientTwo = "Kevin Denver <kevin.denver@gmail.com>";
-                Assert.assertTrue(String.format("The recipient [%s] is not recognised", recipient), Arrays.asList(recipientOne, recipientTwo).contains(recipient));
             }
             
             @Override
@@ -91,8 +86,8 @@ public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithF
             
             @Override
             public void onBody(String body) {
-                boolean registrationUrl = body.contains("http://localhost:8080/pgadmissions/register?activationCode=1&directToUrl=/approved/moveToApproved?applicationId=007&activationCode=1");
-                boolean normalUrl = body.contains("http://localhost:8080/pgadmissions/approved/moveToApproved?applicationId=007&activationCode=3");
+                boolean registrationUrl = body.contains("pgadmissions/register?activationCode=1&directToUrl=/approved/moveToApproved?applicationId=007&activationCode=1");
+                boolean normalUrl = body.contains("pgadmissions/approved/moveToApproved?applicationId=007&activationCode=3");
                 if (!(registrationUrl ^ normalUrl)) {
                     Assert.fail("The mail message does not contain the appropriate links");
                 }

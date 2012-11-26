@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.util.Arrays;
-
 import javax.mail.internet.MimeMessage;
 
 import junit.framework.Assert;
@@ -50,8 +48,6 @@ public class ReviewerMailSenderWithFreemarkerSupportTest extends BaseEmailTestWi
             
             @Override
             public void onRecipient(String recipient) {
-                String recipientOne = "Hanna Hoopla <kevin.denver@gmail.com>";
-                Assert.assertTrue(String.format("The recipient [%s] is not recognised", recipient), Arrays.asList(recipientOne).contains(recipient));
             }
             
             @Override
@@ -65,8 +61,8 @@ public class ReviewerMailSenderWithFreemarkerSupportTest extends BaseEmailTestWi
             @Override
             public void onBody(String body) {
                 System.out.println(body);
-                boolean registrationUrl = body.contains("http://localhost:8080/pgadmissions/reviewFeedback?applicationId=123&activationCode=1234");
-                boolean normalUrl = body.contains("http://localhost:8080/pgadmissions/decline/review?applicationId=123&activationCode=1234");
+                boolean registrationUrl = body.contains("pgadmissions/reviewFeedback?applicationId=123&activationCode=1234");
+                boolean normalUrl = body.contains("pgadmissions/decline/review?applicationId=123&activationCode=1234");
                 if (!(registrationUrl && normalUrl)) {
                     Assert.fail("The mail message does not contain the appropriate links");
                 }

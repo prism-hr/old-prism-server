@@ -1,0 +1,116 @@
+package com.zuehlke.pgadmissions.mail;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.mail.internet.MimeMessage;
+
+import junit.framework.Assert;
+
+import org.easymock.EasyMock;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ConfigurationService;
+
+import freemarker.template.TemplateException;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testMailContext.xml")
+public class AdminMailSenderWithFreemarkerSupport extends BaseEmailTestWithFreemarkerSupport {
+
+    private ApplicationsService applicationsServiceMock;
+    
+    private ConfigurationService personServiceMock;
+    
+    @Autowired
+    private MessageSource messageSource;
+
+    private AdminMailSender adminMailSender;
+
+    @Test
+    public void shouldSendApproverEmailWithRegistrationLink() throws IOException {
+        RegisteredUser admin = new RegisteredUserBuilder().id(1).email("ked@zuhlke.com").firstName("Kevin").lastName("Denver").enabled(false).activationCode("1").toUser();
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").enabled(true).activationCode("2").id(10).toUser();
+        RegisteredUser approver = new RegisteredUserBuilder().firstName("George").lastName("Smith").email("george.smith@test.com").enabled(true).activationCode("3").id(90).toUser();
+
+        RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").enabled(true).activationCode("4").toUser();
+        Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).toSupervisor();
+        ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).toApprovalRound();
+
+        RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").enabled(true).activationCode("5").toUser();
+        Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).toSupervisor();
+
+        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor3).toApprovalRound();
+
+        Program program = new ProgramBuilder().title("prg").administrators(admin).approver(approver, admin).toProgram();
+        ApplicationForm application = new ApplicationFormBuilder().id(4).approvalRounds(previousApprovalRound, latestApprovalRound)
+                .latestApprovalRound(latestApprovalRound).applicationNumber("007").applicant(applicant)
+                .program(program).toApplicationForm();
+
+        String expTemplate = "private/approvers/mail/application_approval_reminder.ftl";
+        
+        fakeLoggingMailSender.registerListeners(new FakeLoggingMailSenderListener() {
+            
+            @Override
+            public void onSubject(String subject) {
+                Assert.assertEquals("REMINDER: Jane Smith Application 007 for UCL prg - Approval Request", subject);
+            }
+            
+            @Override
+            public void onSender(String sender) {
+            }
+            
+            @Override
+            public void onRecipient(String recipient) {
+                String recipientOne = "George Smith <kevin.denver@gmail.com>";
+                String recipientTwo = "Kevin Denver <kevin.denver@gmail.com>";
+                Assert.assertTrue(Arrays.asList(recipientOne, recipientTwo).contains(recipient));
+            }
+            
+            @Override
+            public void onDoSend(MimeMessage message) {
+            }
+            
+            @Override
+            public void onDoSend(String message) {
+            }
+            
+            @Override
+            public void onBody(String body) {
+                boolean registrationUrl = body.contains("http://localhost:8080/pgadmissions/register?activationCode=1&directToUrl=/approved/moveToApproved?applicationId=007&activationCode=1");
+                boolean normalUrl = body.contains("http://localhost:8080/pgadmissions/approved/moveToApproved?applicationId=007&activationCode=3");
+                if (!(registrationUrl ^ normalUrl)) {
+                    Assert.fail("The mail message does not contain the appropriate links");
+                }
+            }
+        });
+        
+        adminMailSender.sendMailsForApplication(application, "approval.request.reminder", expTemplate, NotificationType.APPROVAL_REMINDER);
+    }
+    
+    @Before
+    public void setup() throws IOException, TemplateException {
+        fakeLoggingMailSender = new FakeLoggingMailSender();
+        personServiceMock = EasyMock.createMock(ConfigurationService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        adminMailSender = new AdminMailSender(mimeMessagePreparatorFactory, fakeLoggingMailSender, applicationsServiceMock, messageSource, personServiceMock);
+    }
+}

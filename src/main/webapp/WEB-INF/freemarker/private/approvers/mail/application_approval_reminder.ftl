@@ -29,12 +29,17 @@
 			      	</p>
 			      	
 						<p>
-			            	<!-- Button -->
-							<a style="text-decoration:none;" href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}&activationCode=${approver.activationCode}" title="Approval">
-								<img border="0" style="border: none;" width="167" height="36" alt="Approval" src="${host}/pgadmissions/design/default/images/email/approve_app.png">
-							</a>
+						  <!-- Button -->
+						  <a style="text-decoration:none;" 
+						      <#if !approver.enabled>
+                                href="${host}/pgadmissions/register?activationCode=${approver.activationCode}&directToUrl=/approved/moveToApproved?applicationId=${application.applicationNumber}&activationCode=${approver.activationCode}"
+                              <#else>
+                                href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}&activationCode=${approver.activationCode}"
+                              </#if> 
+						      title="Approval">
+						      <img border="0" style="border: none;" width="167" height="36" alt="Approval" src="${host}/pgadmissions/design/default/images/email/approve_app.png">
+                          </a>
 						</p>
-			      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will continue to send reminders until you respond to this request.</font>
 			      	</p>

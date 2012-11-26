@@ -75,9 +75,10 @@ public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithF
             
             @Override
             public void onRecipient(String recipient) {
+                System.out.println(recipient);
                 String recipientOne = "George Smith <kevin.denver@gmail.com>";
                 String recipientTwo = "Kevin Denver <kevin.denver@gmail.com>";
-                Assert.assertTrue(Arrays.asList(recipientOne, recipientTwo).contains(recipient));
+                Assert.assertTrue(String.format("The recipient [%s] is not recognised", recipient), Arrays.asList(recipientOne, recipientTwo).contains(recipient));
             }
             
             @Override

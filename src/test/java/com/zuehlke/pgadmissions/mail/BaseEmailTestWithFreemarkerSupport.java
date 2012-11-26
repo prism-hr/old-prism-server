@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import freemarker.cache.FileTemplateLoader;
@@ -20,6 +22,9 @@ public abstract class BaseEmailTestWithFreemarkerSupport {
 
     protected MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 
+    @Autowired
+    protected MessageSource messageSource;
+    
     @Before
     @SuppressWarnings("deprecation")
     public void prepareFreemarkerConfig() throws IOException, TemplateException {

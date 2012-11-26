@@ -40,7 +40,7 @@ public class FakeLoggingMailSender extends JavaMailSenderImpl implements FakeLog
                 
                 for (Address address : mimeMessage.getAllRecipients()) {
                     LOG.trace(String.format("Recipient: %s", address));
-                    onSender(String.format("Recipient: %s", address));
+                    onRecipient(String.format("%s", address));
                 }
                 
                 LOG.trace(String.format("Subject: %s", mimeMessage.getSubject()));

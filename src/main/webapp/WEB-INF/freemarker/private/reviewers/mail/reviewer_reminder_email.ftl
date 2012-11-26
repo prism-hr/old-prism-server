@@ -39,11 +39,17 @@
 			      
 
 				        <p>
-				          <!-- Button -->
-							<a style="text-decoration:none;" href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}"
-								title="Provide Review">
-				            	<img border="0" style="border: none;" width="143" height="36" alt="Provide Review" src="${host}/pgadmissions/design/default/images/email/provide_review.png" />
-				          	</a>
+				            <!-- Button -->
+                            <a style="text-decoration:none;" 
+                                <#if !reviewer.user?? || !reviewer.user.enabled>
+                                    href="${host}/pgadmissions/register?activationCode=${reviewer.user.activationCode}&directToUrl=${"/reviewFeedback?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
+                                <#else>
+                                    href="${host}/pgadmissions/reviewFeedback?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}"
+                                </#if>                              
+                                
+                                title="Provide Review">
+                                <img border="0" style="border: none;" width="143" height="36" alt="Provide Review" src="${host}/pgadmissions/design/default/images/email/provide_review.png" />
+                            </a>
 
 				          <!-- Button -->
 							<a style="text-decoration:none;" href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&activationCode=${reviewer.user.activationCode}"

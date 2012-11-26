@@ -11,8 +11,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -34,15 +32,12 @@ import freemarker.template.TemplateException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testMailContext.xml")
-public class AdminMailSenderWithFreemarkerSupport extends BaseEmailTestWithFreemarkerSupport {
+public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithFreemarkerSupport {
 
     private ApplicationsService applicationsServiceMock;
     
     private ConfigurationService personServiceMock;
     
-    @Autowired
-    private MessageSource messageSource;
-
     private AdminMailSender adminMailSender;
 
     @Test

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -84,8 +85,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
     }
     
     @Test
-    public void marshallRequest() throws XmlMappingException, IOException {
-        
+    public void shouldMarshallRequest() throws XmlMappingException, IOException {
         ProgramInstance instance = new ProgramInstanceBuilder()
             .academicYear("2013")
             .applicationDeadline(DateUtils.addMonths(new Date(), 1))
@@ -95,10 +95,8 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
             .studyOption("F+++++", "Full-time")
             .toProgramInstance();
         
-        EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);
-        
+        EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);       
         EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
-        
         EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
         
         SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory());
@@ -112,9 +110,54 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
         
         assertNotNull(requestAsString);
         assertTrue(StringUtils.isNotBlank(requestAsString));
-        
-        System.out.println(requestAsString);
     }
+    
+    @Test
+    public void shouldCleanPhoneNumber() throws XmlMappingException, IOException {
+        ProgramInstance instance = new ProgramInstanceBuilder()
+            .academicYear("2013")
+            .applicationDeadline(DateUtils.addMonths(new Date(), 1))
+            .applicationStartDate(new Date())
+            .enabled(true)
+            .identifier("0009")
+            .studyOption("F+++++", "Full-time")
+            .toProgramInstance();
+        
+        applicationForm.getPersonalDetails().setPhoneNumber("+44 7500-934 2");
+        
+        EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);       
+        EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
+        EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
+        
+        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory());
+        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        
+        assertEquals("+44 7500934 2", request.getApplication().getApplicant().getCorrespondenceAddress().getLandline());
+    }  
+    
+    @Test
+    public void shouldAddOneYearToTheQualificationDateIfAwardDateIsEmpty() throws XmlMappingException, IOException {
+        ProgramInstance instance = new ProgramInstanceBuilder()
+            .academicYear("2013")
+            .applicationDeadline(DateUtils.addMonths(new Date(), 1))
+            .applicationStartDate(new Date())
+            .enabled(true)
+            .identifier("0009")
+            .studyOption("F+++++", "Full-time")
+            .toProgramInstance();
+        
+        applicationForm.getQualifications().get(0).setQualificationAwardDate(null);
+        
+        EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);       
+        EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
+        EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
+        
+        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory());
+        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        
+        int nextYear = new DateTime().plusYears(1).getYear();
+        assertEquals(nextYear, request.getApplication().getApplicant().getQualificationList().getQualificationDetail().get(0).getEndDate().getYear());
+    }      
 
     /**
      * Sends a valid application form to the UCL test web service configured in the environment.properties.
@@ -124,9 +167,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
     @Ignore
     public void sendValidApplicationForm() {
         EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(applicationForm.getProgram(), applicationForm.getProgrammeDetails().getStudyOption())).andReturn(applicationForm.getProgram().getInstances().get(0));
-        
         EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
-        
         EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
         
         SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();

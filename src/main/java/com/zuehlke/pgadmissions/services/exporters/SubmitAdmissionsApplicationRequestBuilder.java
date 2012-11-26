@@ -10,6 +10,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AddressTp;
@@ -249,7 +250,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(personalDetails.getEmail());
-        contactDtlsTp.setLandline(personalDetails.getPhoneNumber());
+        contactDtlsTp.setLandline(cleanPhoneNumber(personalDetails.getPhoneNumber()));
         return contactDtlsTp;
     }
     
@@ -265,7 +266,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setCountry(contactAddress.getCountry().getCode());
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(applicationForm.getPersonalDetails().getEmail());
-        contactDtlsTp.setLandline(applicationForm.getPersonalDetails().getPhoneNumber());
+        contactDtlsTp.setLandline(cleanPhoneNumber(applicationForm.getPersonalDetails().getPhoneNumber()));
         return contactDtlsTp;
     }
     
@@ -378,7 +379,15 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
                 
                 qualificationsTp.setStartDate(buildXmlDate(qualification.getQualificationStartDate()));
-                qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
+                
+                if (qualification.getQualificationAwardDate() == null) {
+                    // endDate is a mandatory fields. We do not collect an end date if it is the 
+                    // current position. Just add a year in the future to now (Alastair)
+                    qualificationsTp.setEndDate(buildXmlDate(DateUtils.addYears(new Date(), 1)));
+                } else {
+                    qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
+                }
+                
                 qualificationsTp.setGrade(qualification.getQualificationGrade());
                 qualificationsTp.setLanguageOfInstruction(qualification.getQualificationLanguage());
                 qualificationsTp.setMainSubject(qualification.getQualificationSubject());
@@ -464,7 +473,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 
                 ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
                 contactDtlsTp.setEmail(referee.getEmail());
-                contactDtlsTp.setLandline(referee.getPhoneNumber());
+                contactDtlsTp.setLandline(cleanPhoneNumber(referee.getPhoneNumber()));
                 
                 AddressTp addressTp = xmlFactory.createAddressTp();
                 addressTp.setAddressLine1(referee.getAddressLocation().getAddress1());
@@ -536,6 +545,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);
         }
         return englishLanguageQualificationDetailsTp;
+    }
+    
+    private String cleanPhoneNumber(String number) {
+        return number.replaceAll("[^0-9()+ ]", ""); 
     }
     
     private XMLGregorianCalendar buildXmlDate(Date date) {

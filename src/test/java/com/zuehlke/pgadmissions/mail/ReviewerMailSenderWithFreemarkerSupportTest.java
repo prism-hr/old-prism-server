@@ -51,7 +51,7 @@ public class ReviewerMailSenderWithFreemarkerSupportTest extends BaseEmailTestWi
             @Override
             public void onRecipient(String recipient) {
                 String recipientOne = "Hanna Hoopla <kevin.denver@gmail.com>";
-                Assert.assertTrue(Arrays.asList(recipientOne).contains(recipient));
+                Assert.assertTrue(String.format("The recipient [%s] is not recognised", recipient), Arrays.asList(recipientOne).contains(recipient));
             }
             
             @Override

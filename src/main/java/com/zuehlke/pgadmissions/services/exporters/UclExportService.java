@@ -182,7 +182,7 @@ public class UclExportService {
         };
 
         //build webservice request
-        request = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAO, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        request = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAO, new ObjectFactory()).applicationForm(applicationForm).build();
         listener.sendingSubmitAdmissionsApplicantRequest(request);
         
         try  {
@@ -201,7 +201,7 @@ public class UclExportService {
             error.setTransfer(transfer);
             error.setTimepoint(new Date());
             error.setProblemClassification(ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE);
-            error.setDiagnosticInfo(StacktraceDump.forException(e));
+            error.setDiagnosticInfo(StacktraceDump.printRootCauseStackTrace(e));
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
             applicationFormTransferErrorDAO.save(error);
 

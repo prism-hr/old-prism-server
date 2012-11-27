@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 public class StacktraceDump {
 
      public static String forException(Throwable t) {
@@ -13,4 +15,15 @@ public class StacktraceDump {
         return buf.toString();
     }
 
+     public static String printRootCauseStackTrace(Throwable t) {
+         StringWriter buf = new StringWriter(5000);
+         PrintWriter pw = new PrintWriter(buf);
+         ExceptionUtils.printRootCauseStackTrace(t, pw);
+         pw.close();
+         return buf.toString();
+     }
+     
+     public static String getFullStackTrace(Throwable t) {
+         return ExceptionUtils.getFullStackTrace(t);
+     }
 }

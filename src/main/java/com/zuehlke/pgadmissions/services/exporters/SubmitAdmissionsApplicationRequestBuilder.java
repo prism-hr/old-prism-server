@@ -67,6 +67,8 @@ import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
 public class SubmitAdmissionsApplicationRequestBuilder {
 
+    private static final String INSTITUTION_OTHER_CODE = "OTHER";
+
     private static final String REFER_TO_ATTACHED_DOCUMENT = "Refer to attached document.";
 
     private final static String SOURCE_IDENTIFIER = "PRISM";
@@ -98,7 +100,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         return this;
     }
     
-    public SubmitAdmissionsApplicationRequest toSubmitAdmissionsApplicationRequest() {
+    public SubmitAdmissionsApplicationRequest build() {
         SubmitAdmissionsApplicationRequest request = xmlFactory.createSubmitAdmissionsApplicationRequest();
         request.setApplication(buildApplication());
         return request;
@@ -401,15 +403,22 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 
                 QualificationInstitution appropriateInstitution = selectAppropriateInstitution(qualification.getQualificationInstitution());
                 if (appropriateInstitution == null) {
-                    institutionTp.setCode("OTHER");
+                    institutionTp.setCode(INSTITUTION_OTHER_CODE);
                     institutionTp.setName(qualification.getQualificationInstitution());
                     CountryTp countryTp = xmlFactory.createCountryTp();
                     countryTp.setCode(qualification.getInstitutionCountry().getCode());
                     countryTp.setName(qualification.getInstitutionCountry().getName());
                     institutionTp.setCountry(countryTp);
                 } else {
-                    institutionTp.setCode(appropriateInstitution.getCode());
-                    institutionTp.setName(appropriateInstitution.getName());
+                    // The web service does only understand 6-digit codes.
+                    // Use "OTHER" if it is not
+                    if (appropriateInstitution.getCode().length() >= 6) {
+                        institutionTp.setCode(appropriateInstitution.getCode());
+                        institutionTp.setName(appropriateInstitution.getName());
+                    } else {
+                        institutionTp.setCode(INSTITUTION_OTHER_CODE);
+                        institutionTp.setName(appropriateInstitution.getName());
+                    }
                     CountryTp countryTp = xmlFactory.createCountryTp();
                     countryTp.setCode(appropriateInstitution.getDomicileCode());
                     institutionTp.setCountry(countryTp);

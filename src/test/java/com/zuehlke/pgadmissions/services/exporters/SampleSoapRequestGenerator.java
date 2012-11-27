@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +10,8 @@ import java.util.Random;
 
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,19 +21,25 @@ import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.ws.client.WebServiceIOException;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.client.SoapFaultClientException;
 
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
 public class SampleSoapRequestGenerator extends UclIntegrationBaseTest {
 
+    private static final Logger LOG = Logger.getLogger(SampleSoapRequestGenerator.class);
+    
     @Autowired
     WebServiceTemplate webServiceTemplate;
     
@@ -94,8 +104,29 @@ public class SampleSoapRequestGenerator extends UclIntegrationBaseTest {
                     form.getQualifications().addAll(validApplicationForm.getQualifications());
                 }
                 
-                SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(form).toSubmitAdmissionsApplicationRequest();
+                // Generate request
+                SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(form).build();
+                
+                // Save request to file
                 marshaller.marshal(request, new StreamResult(new File("request_" + ++idx + ".txt")));
+                
+                // Send request and record response
+                try {
+                    LOG.info(String.format("Sending request [id=%s]", idx));
+                    AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
+                    marshaller.marshal(response, new StreamResult(new File("response_success_" + idx + ".txt")));
+                } catch (WebServiceIOException e) {
+                    String forException = StacktraceDump.printRootCauseStackTrace(e);
+                    IOUtils.write(forException, new FileOutputStream(new File("response_error_" + idx + ".txt")));
+                } catch (SoapFaultClientException e) {
+                    ByteArrayOutputStream responseMessageBuffer = new ByteArrayOutputStream(5000);
+                    try {
+                        e.getWebServiceMessage().writeTo(responseMessageBuffer);
+                    } catch (IOException ioex) {
+                        throw new RuntimeException();
+                    }
+                    responseMessageBuffer.writeTo(new FileOutputStream(new File("response_error_" + idx + ".txt")));
+                }
             } catch (Throwable e) {
                 e.printStackTrace();
             }

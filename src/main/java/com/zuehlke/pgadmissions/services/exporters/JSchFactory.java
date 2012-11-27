@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services.exporters;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
 @Component
 public class JSchFactory {
@@ -56,7 +56,7 @@ public class JSchFactory {
         
         jSch.addIdentity("prismIdentity", privateKeyAsByteArray, null, emptyPassPhrase);
         
-        Session session = jSch.getSession(getSftpUsername(), getSftpHost(), Integer.valueOf(getSftpPort()));
+        Session session = jSch.getSession(sftpUsername, sftpHost, Integer.valueOf(sftpPort));
         session.setPassword(sftpPassword);
 
         Properties config = new Properties();

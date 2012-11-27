@@ -100,7 +100,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
         EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
         
         SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory());
-        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).build();
         
         StringWriter writer = new StringWriter();
         StreamResult result = new StreamResult(writer);
@@ -130,7 +130,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
         EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
         
         SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory());
-        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).build();
         
         assertEquals("+44 7500934 2", request.getApplication().getApplicant().getCorrespondenceAddress().getLandline());
     }  
@@ -153,7 +153,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
         EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
         
         SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory());
-        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).build();
         
         int nextYear = new DateTime().plusYears(1).getYear();
         assertEquals(nextYear, request.getApplication().getApplicant().getQualificationList().getQualificationDetail().get(0).getEndDate().getYear());
@@ -170,7 +170,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
         EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
         EasyMock.replay(programInstanceDAOMock, qualificationInstitutionDAOMock);
         
-        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory()).applicationForm(applicationForm).toSubmitAdmissionsApplicationRequest();
+        SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAOMock, new ObjectFactory()).applicationForm(applicationForm).build();
         
         AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
         

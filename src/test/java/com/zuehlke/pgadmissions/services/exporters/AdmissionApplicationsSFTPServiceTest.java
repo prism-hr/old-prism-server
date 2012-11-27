@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/testContext.xml")
+@ContextConfiguration("/testUclIntegrationContext.xml")
 public class AdmissionApplicationsSFTPServiceTest {
 
     @Autowired

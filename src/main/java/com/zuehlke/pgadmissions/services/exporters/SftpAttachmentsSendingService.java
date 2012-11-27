@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -142,7 +143,9 @@ public class SftpAttachmentsSendingService {
 
             //possible errors: target directory does not exist or permission denied
             try {
-                sftpChannel.cd(targetFolder);
+                if (StringUtils.isNotBlank(targetFolder)) {
+                    sftpChannel.cd(targetFolder);
+                }
             } catch (SftpException e) {
                 throw new SftpTargetDirectoryNotAccessible("Failed to access remote directory for SFTP transmission: " + targetFolder + ", remote host address is: " + sftpHost + ":" + sftpPort, e);
             }

@@ -264,7 +264,7 @@ public class ProgrammeDetailsValidatorTest {
     
     @Test
     public void shouldRejectIfSuggestedSupervisorEmailContainsInvalidCharacter() {
-        programmeDetail.getSuggestedSupervisors().get(0).setEmail("paul@never.com!");
+        programmeDetail.getSuggestedSupervisors().get(0).setEmail("paul.@never.com");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
         EasyMock.replay(programInstanceDAOMock);

@@ -390,7 +390,7 @@ public class PersonalDetailsValidatorTest {
 				.gender(Gender.INDETERMINATE_GENDER).lastName("smith")//
 				.title(Title.PROFESSOR)//
 				.residenceDomicile(new DomicileBuilder().toDomicile())//
-				.phoneNumber("0123456")//
+				.phoneNumber("+44 (0) 20 7911 5000")//
 				.ethnicity(new EthnicityBuilder().id(23).toEthnicity())//
 				.disability(new DisabilityBuilder().id(23213).toDisability())//
 				.requiresVisa(true)

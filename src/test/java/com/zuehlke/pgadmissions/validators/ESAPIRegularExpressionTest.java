@@ -10,6 +10,14 @@ import org.owasp.esapi.ESAPI;
 
 public class ESAPIRegularExpressionTest {
 
+    private String[] validEmailAddresses = new String[] { "mkyong@yahoo.com", "mkyong-100@yahoo.com",
+            "mkyong.100@yahoo.com", "mkyong111@mkyong.com", "mkyong-100@mkyong.net", "mkyong.100@mkyong.com.au",
+            "mkyong@1.com", "mkyong@gmail.com.com", "mkyong+100@gmail.com", "mkyong-100@yahoo-test.com" };
+    
+    private String[] invalidEmailAddresses = new String[] { "mkyong", "mkyong@.com.my", "mkyong123@gmail.a",
+            "mkyong123@.com", "mkyong123@.com.com", ".mkyong@mkyong.com", "mkyong()*@gmail.com", "mkyong@%*.com",
+            "mkyong..2002@gmail.com", "mkyong.@gmail.com", "mkyong@mkyong@gmail.com", "mkyong@gmail.com.1a" };
+
     @Before
     public void setUp() {
         System.setProperty("org.owasp.esapi.resources", "src/main/resources/");
@@ -29,5 +37,19 @@ public class ESAPIRegularExpressionTest {
         String russianName = StringEscapeUtils.unescapeJava("\\u0410\\u0444\\u0430\\u043d\\u0430\\u0441\\u0438\\u0439");
         assertFalse(ESAPI.validator().isValidInput("Input", chineseName, "ExtendedAscii", 30, false));
         assertFalse(ESAPI.validator().isValidInput("Input", russianName, "ExtendedAscii", 30, false));        
+    }
+    
+    @Test
+    public void shouldAcceptValidEmailAddresses() {
+        for (String emailAddress : validEmailAddresses) {
+            assertTrue(String.format("The email address [%s] should be valid.", emailAddress), ESAPI.validator().isValidInput("Email", emailAddress, "Email", 255, false));
+        }
+    }
+    
+    @Test
+    public void shouldRejectInValidEmailAddresses() {
+        for (String emailAddress : invalidEmailAddresses) {
+            assertFalse(String.format("The email address [%s] should be invalid.", emailAddress), ESAPI.validator().isValidInput("Email", emailAddress, "Email", 255, false));
+        }
     }
 }

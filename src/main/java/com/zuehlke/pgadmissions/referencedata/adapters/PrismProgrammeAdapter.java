@@ -56,7 +56,7 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
 	@Override
 	public Date getApplicationStartDate() {
 		try {
-			return DateUtils.parseDate(programme.getStartDate(), new String[] {"yyyy-MM-dd"});
+			return DateUtils.parseDate(programme.getStartDate(), new String[] {"yyyy-MM-dd", "dd-MMM-yy"});
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
@@ -65,7 +65,7 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
 	@Override
 	public Date getApplicationDeadline() {
 		try {
-			return DateUtils.parseDate(programme.getEndDate(), new String[] {"yyyy-MM-dd"});
+			return DateUtils.parseDate(programme.getEndDate(), new String[] {"yyyy-MM-dd", "dd-MMM-yy"});
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}

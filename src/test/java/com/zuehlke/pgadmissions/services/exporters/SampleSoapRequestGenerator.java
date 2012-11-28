@@ -6,9 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
@@ -20,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Marshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.WebServiceIOException;
-import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
@@ -47,10 +43,6 @@ public class SampleSoapRequestGenerator extends UclIntegrationBaseTest {
     private QualificationInstitutionDAO qualificationInstitutionDAO;
     
     private SubmitAdmissionsApplicationRequestBuilder requestBuilder;
-    
-    private Random r = new Random();
-    
-    private ApplicationForm validApplicationForm;
     
     /**
      * This test collects all the completed application forms (except test applications) from the database 
@@ -81,10 +73,11 @@ public class SampleSoapRequestGenerator extends UclIntegrationBaseTest {
         
         for (ApplicationForm form : applications) {
             try {
-                
                 if (isTestProgram(form)) {
                     continue;
                 }
+                
+                idx++;
                 
                 if (idx % 2 == 0) {
                     form.setStatus(ApplicationFormStatus.APPROVED);
@@ -96,40 +89,15 @@ public class SampleSoapRequestGenerator extends UclIntegrationBaseTest {
                     form.setStatus(ApplicationFormStatus.WITHDRAWN);
                 }
                 
-                form.setIpAddressAsString(generateRandomIpAddress());
-                
-                if (form.getFundings().isEmpty()) {
-                    form.getFundings().addAll(validApplicationForm.getFundings());
-                }
-                
-                if (form.getPersonalDetails().getLanguageQualifications().isEmpty()) {
-                    form.getPersonalDetails().getLanguageQualifications().addAll(validApplicationForm.getPersonalDetails().getLanguageQualifications());
-                }
-                
-                if (form.getPersonalDetails().isRequiresVisaSet()) {
-                    form.getPersonalDetails().setPassportInformation(validApplicationForm.getPersonalDetails().getPassportInformation());
-                }
-                
-                if (form.getQualifications().isEmpty()) {
-                    form.getQualifications().addAll(validApplicationForm.getQualifications());
-                }
-                
                 // Generate request
                 SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(form).build();
-                
-                final ByteArrayOutputStream requestMessageBuffer = new ByteArrayOutputStream(5000);
 
-                WebServiceMessageCallback webServiceMessageCallback = new WebServiceMessageCallback() {
-                    public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
-                        webServiceMessage.writeTo(requestMessageBuffer);
-                    }
-                };
-                
+                // Save request to file
+                marshaller.marshal(request, new StreamResult(new File("request_" + idx + ".txt")));                    
+
                 // Send request and record response
                 try {
-                    AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
-                    // Save request to file
-                    requestMessageBuffer.writeTo(new FileOutputStream(new File("request_" + ++idx + ".txt")));
+                    AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
                     marshaller.marshal(response, new StreamResult(new File("response_success_" + idx + ".txt")));
                 } catch (WebServiceIOException e) {
                     String forException = StacktraceDump.printRootCauseStackTrace(e);
@@ -144,22 +112,19 @@ public class SampleSoapRequestGenerator extends UclIntegrationBaseTest {
                     responseMessageBuffer.writeTo(new FileOutputStream(new File("response_error_" + idx + ".txt")));
                 }
             } catch (Throwable e) {
-                StacktraceDump.printRootCauseStackTrace(e);
+                System.err.println(StacktraceDump.printRootCauseStackTrace(e));
             }
         }
+        
+        System.out.println(idx);
     }
 
     private boolean isTestProgram(ApplicationForm form) {
         return form.getProgram().getTitle().equalsIgnoreCase("ABC") || form.getProgram().getTitle().equalsIgnoreCase("Test Programme");
     }
     
-    private String generateRandomIpAddress() {
-        return r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256);
-    }
-    
     @Before
     public void initialise() {
-        validApplicationForm = getValidApplicationForm();
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
         qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
         requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAO, new ObjectFactory());

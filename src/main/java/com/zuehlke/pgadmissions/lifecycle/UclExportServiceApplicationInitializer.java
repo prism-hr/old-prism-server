@@ -10,6 +10,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 
 @Component
 public class UclExportServiceApplicationInitializer {
@@ -20,21 +21,24 @@ public class UclExportServiceApplicationInitializer {
     
     private final TransactionTemplate transactionTemplate;
     
+    private final XMLDataImportTask xMLDataImportTask;
+    
     public UclExportServiceApplicationInitializer() {
-        this(null, null);
+        this(null, null, null);
     }
     
     @Autowired
-    public UclExportServiceApplicationInitializer(UclExportService exportService, TransactionTemplate transactionTemplate) {
+    public UclExportServiceApplicationInitializer(UclExportService exportService, 
+            TransactionTemplate transactionTemplate, XMLDataImportTask xMLDataImportTask) {
         this.exportService = exportService;
         this.transactionTemplate = transactionTemplate;
+        this.xMLDataImportTask = xMLDataImportTask;
     }
     
     /**
      * I am initialising the queue for transferring applications to PORTICO 
      * after the web application has been re-deployed.
      */
-    @PostConstruct
     public void initialiseQueueAfterSystemStartup() {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -42,10 +46,33 @@ public class UclExportServiceApplicationInitializer {
                 try {
                     exportService.systemStartupSendingQueuesRecovery();
                 } catch (Throwable e) {
-                    log.error("There was an error re-initialising the queues for UCL-Export processing", e);
+                    log.error("There was an error re-initialising the queues for UCL-Export processing.", e);
                     status.setRollbackOnly();
                 }
             }
         });
+    }
+    
+    /**
+     * I am downloading the latest set of reference data from UCL after the web application has been re-deployed.
+     */
+    public void initialiseReferenceDataAfterSystemStartup() {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    xMLDataImportTask.imoprtData();
+                } catch (Throwable e) {
+                    log.error("There was an error downloading the latest reference data.", e);
+                    status.setRollbackOnly();
+                }
+            }
+        });
+    }
+    
+    @PostConstruct
+    public void postConstruct() {
+        initialiseReferenceDataAfterSystemStartup();
+        initialiseQueueAfterSystemStartup();
     }
 }

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
 
 public class QualificationInstitutionBuilder {
     
@@ -37,6 +38,16 @@ public class QualificationInstitutionBuilder {
 
     public QualificationInstitution toQualificationInstitution() {
         QualificationInstitution institution = new QualificationInstitution();
+        institution.setId(id);
+        institution.setDomicileCode(countryCode);
+        institution.setCode(code);
+        institution.setName(name);
+        institution.setEnabled(enabled);
+        return institution;
+    }
+    
+    public QualificationInstitutionReference toQualificationInstitutionReference() {
+        QualificationInstitutionReference institution = new QualificationInstitutionReference();
         institution.setId(id);
         institution.setDomicileCode(countryCode);
         institution.setCode(code);

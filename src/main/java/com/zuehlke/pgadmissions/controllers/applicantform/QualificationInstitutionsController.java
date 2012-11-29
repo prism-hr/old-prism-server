@@ -43,7 +43,8 @@ public class QualificationInstitutionsController {
         Integer decryptedCountryId = encryptionHelper.decryptToInteger(country_id);
         Domicile domicileCountry = domicileDAO.getDomicileById(decryptedCountryId);
         
-        List<QualificationInstitution> institutions = qualificationInstitutionDAO.getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(domicileCountry.getCode(), term);
+        List<QualificationInstitution> institutions = 
+                qualificationInstitutionDAO.getEnableAndValiddInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(domicileCountry.getCode(), term);
         List<String> institutionsNameList = new ArrayList<String>();
         for (QualificationInstitution inst : institutions) {
             institutionsNameList.add(inst.getName());

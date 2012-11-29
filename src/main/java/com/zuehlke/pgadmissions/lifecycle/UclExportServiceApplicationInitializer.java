@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.lifecycle;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -23,16 +25,20 @@ public class UclExportServiceApplicationInitializer {
     
     private final XMLDataImportTask xMLDataImportTask;
     
+    private final String loadReferenceDataOnStartup;
+    
     public UclExportServiceApplicationInitializer() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
     
     @Autowired
     public UclExportServiceApplicationInitializer(UclExportService exportService, 
-            TransactionTemplate transactionTemplate, XMLDataImportTask xMLDataImportTask) {
+            TransactionTemplate transactionTemplate, XMLDataImportTask xMLDataImportTask,
+            @Value("${xml.data.import.onstartup}") String loadReferenceDataOnStartup) {
         this.exportService = exportService;
         this.transactionTemplate = transactionTemplate;
         this.xMLDataImportTask = xMLDataImportTask;
+        this.loadReferenceDataOnStartup = loadReferenceDataOnStartup;
     }
     
     /**
@@ -57,6 +63,10 @@ public class UclExportServiceApplicationInitializer {
      * I am downloading the latest set of reference data from UCL after the web application has been re-deployed.
      */
     public void initialiseReferenceDataAfterSystemStartup() {
+        if (!BooleanUtils.toBoolean(loadReferenceDataOnStartup)) {
+            return;
+        }
+        
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {

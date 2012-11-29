@@ -126,7 +126,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
         
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
-        List<QualificationInstitution> returnList = qualificationInstitutionDAO.getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitiveOnlyValidReferenceData("UK", "Univers");
+        List<QualificationInstitution> returnList = qualificationInstitutionDAO.getEnableAndValiddInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive("UK", "Univers");
 
         assertNotNull(returnList);
         assertEquals(1, returnList.size());

@@ -56,6 +56,10 @@ public class QualificationInstitutionDAO {
         return (QualificationInstitution) sessionFactory.getCurrentSession().get(QualificationInstitution.class, id);
     }
 
+    /**
+     * @deprecated Use {@link #getEnableAndValiddInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String, String)} instead.
+     */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public List<QualificationInstitution> getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String domicileCode, String term) {
         return sessionFactory
@@ -70,8 +74,17 @@ public class QualificationInstitutionDAO {
                 .addOrder(Order.asc("name")).list();
     }
     
+    /**
+     * Returns all the institutions matching the given domicile code which title contains the provided term. 
+     * Additionally, this method filters any institutions out which are not part of the reference data 
+     * provided by PORTICO.
+     * @param domicileCode the domicile code of the institution
+     * @param term a search term such as "Univers" which then finds all universities containing 
+     * "Univers" in its name e.g "University of London", "University of Cambridge" etc.
+     * @return a list of matching institutions
+     */
     @SuppressWarnings("unchecked")
-    public List<QualificationInstitution> getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitiveOnlyValidReferenceData(String domicileCode, String term) {        
+    public List<QualificationInstitution> getEnableAndValiddInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String domicileCode, String term) {        
         DetachedCriteria qReferenceInstitutionCriteria = DetachedCriteria.forClass(QualificationInstitutionReference.class, "qr");
         qReferenceInstitutionCriteria.setProjection(Projections.property("qr.code"));
         qReferenceInstitutionCriteria.add(Restrictions.eq("enabled", true));

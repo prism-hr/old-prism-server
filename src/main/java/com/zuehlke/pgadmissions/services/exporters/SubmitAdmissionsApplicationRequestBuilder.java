@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.owasp.esapi.ESAPI;
 
@@ -68,6 +70,8 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
 public class SubmitAdmissionsApplicationRequestBuilder {
+    
+    private final Logger log = Logger.getLogger(SubmitAdmissionsApplicationRequestBuilder.class);
 
     private static final String IP_ADDRESS_NOT_PROVIDED_VALUE = "127.0.0.1";
 
@@ -90,6 +94,34 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private final DatatypeFactory datatypeFactory;
     
     private ApplicationForm applicationForm;
+    
+    private static class NoActiveProgrameInstanceFoundException extends RuntimeException {
+        private final ProgrammeOccurrenceTp occurrenceTp;
+        private static final long serialVersionUID = 8359986556018188704L;
+
+        public NoActiveProgrameInstanceFoundException(ProgrammeOccurrenceTp occurrenceTp, String message) {
+            super(message);
+            this.occurrenceTp = occurrenceTp;
+        }
+
+        public ProgrammeOccurrenceTp getOccurrenceTp() {
+            return occurrenceTp;
+        }
+    }
+    
+    private static class NoIdentifierForProgrameInstanceFoundException extends RuntimeException {
+        private static final long serialVersionUID = 1820912139538020762L;
+        private final ProgrammeOccurrenceTp occurrenceTp;
+
+        public NoIdentifierForProgrameInstanceFoundException(ProgrammeOccurrenceTp occurrenceTp, String message) {
+            super(message);
+            this.occurrenceTp = occurrenceTp;
+        }
+
+        public ProgrammeOccurrenceTp getOccurrenceTp() {
+            return occurrenceTp;
+        }
+    }
     
     public SubmitAdmissionsApplicationRequestBuilder(QualificationInstitutionDAO qualificationInstitutionDAO, ObjectFactory xmlFactory) {
         this.xmlFactory = xmlFactory;
@@ -149,8 +181,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
         
         if (StringUtils.isNotBlank(applicationForm.getApplicant().getUclUserId())) {
-            applicant.setApplicantID(String.valueOf(applicationForm.getApplicant().getId()));
-        } else {
             applicant.setApplicantID(applicationForm.getApplicant().getUclUserId());
         }
         
@@ -303,7 +333,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
         applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
-        applicationTp.setProgramme(buildProgrammeOccurence());
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
         if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
             // TODO: Which supervisor to pick if there are multiple
@@ -331,6 +360,18 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         applicationTp.setDepartmentalDecision(applicationForm.getStatus().displayValue().toUpperCase());
 
+        try {
+            applicationTp.setProgramme(buildProgrammeOccurence());
+        } catch (NoActiveProgrameInstanceFoundException exp) {
+            log.warn(exp.getMessage(), exp);
+            applicationTp.setProgramme(exp.getOccurrenceTp());
+            applicationTp.setApplicationStatus("W");
+        } catch (NoIdentifierForProgrameInstanceFoundException exp) {
+            log.warn(exp.getMessage(), exp);
+            applicationTp.setProgramme(exp.getOccurrenceTp());
+            applicationTp.setApplicationStatus("W");
+        }
+        
 //      TODO: ATASSTatement
 //      <v1_0:atasStatement>string</v1_0:atasStatement> // Project description
         
@@ -355,17 +396,23 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         }
         
         if (activeInstance == null) {
-            throw new IllegalArgumentException(String.format("No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]", program.getCode(), programmeDetails.getStudyOption()));
-        }
-        
-        if (StringUtils.isBlank(activeInstance.getIdentifier())) {
-            throw new IllegalArgumentException(String.format("No identifier for program instance found. Program[code=%s]", program.getCode()));
+            occurrenceTp.setAcademicYear(buildXmlDateYearOnly(programmeDetails.getStartDate()));
+            occurrenceTp.setIdentifier(NOT_PROVIDED_VALUE);
+            occurrenceTp.setStartDate(buildXmlDate(programmeDetails.getStartDate()));
+            occurrenceTp.setEndDate(buildXmlDate(DateUtils.addYears(programmeDetails.getStartDate(), 1)));
+            throw new NoActiveProgrameInstanceFoundException(occurrenceTp, String.format("No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]", program.getCode(), programmeDetails.getStudyOption()));
         }
         
         occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademic_year()));
         occurrenceTp.setIdentifier(activeInstance.getIdentifier());
         occurrenceTp.setStartDate(buildXmlDate(activeInstance.getApplicationStartDate()));
         occurrenceTp.setEndDate(buildXmlDate(activeInstance.getApplicationDeadline()));
+
+        if (StringUtils.isBlank(activeInstance.getIdentifier())) {
+            occurrenceTp.setIdentifier(NOT_PROVIDED_VALUE);
+            throw new NoIdentifierForProgrameInstanceFoundException(occurrenceTp, String.format("No identifier for program instance found. Program[code=%s]", program.getCode()));
+        }
+        
         return occurrenceTp;
     }
     
@@ -442,6 +489,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                     countryTp.setName(qualification.getInstitutionCountry().getName());
                     institutionTp.setCountry(countryTp);
                 } else {
+                    // TODO: Remove this in the future
                     // The web service does only understand 6-digit codes. Use "OTHER" if it is not.
                     if (appropriateInstitution.getCode().length() >= 6) {
                         institutionTp.setCode(appropriateInstitution.getCode());
@@ -640,6 +688,17 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         if (date != null) {
             XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
             xmlCalendar.setYear(Integer.valueOf(date));
+            return xmlCalendar;
+        } 
+        return null;
+    }
+    
+    private XMLGregorianCalendar buildXmlDateYearOnly(Date date) {
+        if (date != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
+            xmlCalendar.setYear(cal.get(Calendar.YEAR));
             return xmlCalendar;
         } 
         return null;

@@ -244,7 +244,7 @@ $(document).ready(function() {
                 400 : function() { window.location.href = "/pgadmissions/400"; },
                 403 : function() { window.location.href = "/pgadmissions/404"; }
             },
-            url : "/pgadmissions/update/editLanguageQualifications",
+            url : "/pgadmissions/update/addLanguageQualifications",
             data : {
             	'qualificationType': $('#qualificationType').val(),
             	'otherQualificationTypeName' : $('#otherQualificationTypeName').val(),
@@ -280,15 +280,18 @@ $(document).ready(function() {
 	// -------------------------------------------------------------------------------
 	// Delete Language Qualification
 	// -------------------------------------------------------------------------------
-	$("#languageQualification_div").on("click", "a[name=\"deleteLanguageQualification\"]", function() {	
-		var id = this.id;
-		if(id.indexOf("usd_") != -1) {
-			id = id.replace('usd_', '');
-			$('#'+id+"_uslanguageQualification").val('');
-		} else {
-			id = id.replace('languageQualificationDelete_', '');
-			$('#'+id+"_languageQualification").val('');
-		}
+	$("#languageQualification_div").on("click", "a[name=\"deleteLanguageQualification\"]", function() {
+		var $edit_row = $(this).parent().parent('tr');
+		currentRel = $edit_row.attr('rel');
+		
+//		var id = this.id;
+//		if(id.indexOf("usd_") != -1) {
+//			id = id.replace('usd_', '');
+//			$('#'+id+"_uslanguageQualification").val('');
+//		} else {
+//			id = id.replace('languageQualificationDelete_', '');
+//			$('#'+id+"_languageQualification").val('');
+//		}
 		
 		$('#personalDetailsSection > div').append('<div class="ajax" />');
 		$.ajax({
@@ -302,7 +305,7 @@ $(document).ready(function() {
             },
             url : "/pgadmissions/update/deleteLanguageQualifications",
             data : {
-            	languageQualificationId: id,
+            	languageQualificationId: $('input[name="lq_listId"]', $edit_row).val(),
             	applicationId: $('#applicationId').val(),
             	cacheBreaker: new Date().getTime()
             },
@@ -333,7 +336,7 @@ $(document).ready(function() {
             },
             url : "/pgadmissions/update/getLanguageQualifications",
             data : {
-            	languageQualificationId: $('input[name="lq_Id"]', $edit_row).val(),
+            	languageQualificationId: $('input[name="lq_listId"]', $edit_row).val(),
             	applicationId: $('#applicationId').val(),
             	cacheBreaker: new Date().getTime()
             },
@@ -428,7 +431,12 @@ function ajaxLanguageQualificationDocumentDelete() {
 				'languageQualificationId': $('#languageQualificationId').val(),
 				applicationId: $('#applicationId').val(),
 				cacheBreaker: new Date().getTime()
-				}
+			},
+			success : function(data) {
+				$('#personalDetailsSection').html(data);				
+			},
+			complete : function() {
+			}
 		});
 	}
 }
@@ -566,13 +574,10 @@ function postPersonalDetailsData(message) {
         candidateNationalities : "",
         ethnicity : $("#ethnicity").val(),
         disability : $("#disability").val(),
-        requiresVisa : $("#requiresVisa").val(),
-        englishFirstLanguage : $("#englishFirstLanguage").val(),
         'passportInformation.passportNumber' : $("#passportNumber").val(),
         'passportInformation.nameOnPassport' : $("#nameOnPassport").val(),
         'passportInformation.passportIssueDate' : $("#passportIssueDate").val(),
         'passportInformation.passportExpiryDate' : $("#passportExpiryDate").val(),
-        'languageQualificationAvailable' : $("#languageQualificationAvailable").val(),
         message : message,
         acceptedTerms : acceptedTheTerms,
         cacheBreaker: new Date().getTime()
@@ -585,12 +590,16 @@ function postPersonalDetailsData(message) {
     if ($('input:radio[name=requiresVisa]:checked').length > 0) {
         postData.requiresVisa = $('input:radio[name=requiresVisa]:checked').val();
     }
+    
+    if ($('input:radio[name=languageQualificationAvailable]:checked').length > 0) {
+        postData.languageQualificationAvailable = $('input:radio[name=languageQualificationAvailable]:checked').val();
+    }
 
     var gender = $("input[name='genderRadio']:checked").val();
     if (gender) {
         postData.gender = gender;
     }
-
+    
     // do the post!
     $('#personalDetailsSection > div').append('<div class="ajax" />');
 

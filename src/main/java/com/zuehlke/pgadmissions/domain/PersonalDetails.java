@@ -56,7 +56,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	private Boolean languageQualificationAvailable;
 	
 	@Valid
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE }, orphanRemoval = true)
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE, javax.persistence.CascadeType.MERGE }, orphanRemoval = true)
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_personal_detail_id")
 	private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
@@ -256,7 +256,6 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 		return englishFirstLanguage;
 	}
 
-
 	public void setEnglishFirstLanguage(Boolean englishFirstLanguage) {
 		this.englishFirstLanguage = englishFirstLanguage;
 	}
@@ -277,7 +276,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 
 	public void setRequiresVisa(Boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
-		if (this.requiresVisa != null && !this.requiresVisa) {
+		if (BooleanUtils.isFalse(requiresVisa)) {
 		    this.passportInformation = null;
 		}
 	}
@@ -296,7 +295,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 
     public void setLanguageQualificationAvailable(Boolean languageQualificationAvailable) {
         this.languageQualificationAvailable = languageQualificationAvailable;
-        if (this.languageQualificationAvailable != null && !this.languageQualificationAvailable) {
+        if (BooleanUtils.isFalse(languageQualificationAvailable)) {
             this.languageQualifications = new ArrayList<LanguageQualification>();
         }
     }

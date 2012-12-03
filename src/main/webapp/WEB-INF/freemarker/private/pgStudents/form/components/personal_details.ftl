@@ -216,7 +216,7 @@
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.available'/>"></span>
                 <div class="field">
                     <label>
-                        <input type="radio" name="languageQualificationAvailable" id="languageQualificationAvailable" value="true"
+                        <input type="radio" name="languageQualificationAvailable" id="languageQualificationAvailableYes" value="true"
                         <#if personalDetails.isLanguageQualificationAvailableSet() && personalDetails.getLanguageQualificationAvailable()>
                             checked="checked"
                         </#if>
@@ -225,7 +225,7 @@
                         </#if>/> Yes
                     </label>                            
                     <label>
-                        <input type="radio" name="languageQualificationAvailable" id="languageQualificationAvailable" value="false"
+                        <input type="radio" name="languageQualificationAvailable" id="languageQualificationAvailableNo" value="false"
                         <#if personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()>
                             checked="checked"
                         </#if>
@@ -256,7 +256,10 @@
                             <col style="width: 60px;" />
                         </colgroup>
                         <tbody>
+                        
+                        <#assign x = -1>
                         <#list personalDetails.languageQualifications! as languageQualification>
+                        <#assign x = x + 1>
                             <tr <#if languageQualification.id??> rel="${encrypter.encrypt(languageQualification.id)!}"</#if>>
                                 <td>${(languageQualification.qualificationType.displayValue?html)!} ${(languageQualification.otherQualificationTypeName?html)!}</td>
                                 <td>
@@ -275,6 +278,7 @@
                                     <input type="hidden" name="lq_listeningScore" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_listeningScore" value="${(languageQualification.listeningScore?html)!}"/>
                                     <input type="hidden" name="lq_examTakenOnline" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_examTakenOnline" value="<#if languageQualification.examTakenOnline??>true<#else>false</#if>"/>
                                     <input type="hidden" name="lq_languageQualificationDocument" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_languageQualificationDocument" value="<#if languageQualification.languageQualificationDocument?? && languageQualification.languageQualificationDocument.id??>${encrypter.encrypt(languageQualification.languageQualificationDocument.id)!}</#if>"/>
+                                    <input type="hidden" name="lq_listId" id="lq_listId" value="${x}" />
                                 </td>
                             </tr>
                         </#list>
@@ -285,7 +289,7 @@
             
             <div class="row">
             
-                <input type="hidden" id="languageQualificationId" name="languageQualificationId" value="<#if languageQualificationId??>${encrypter.encrypt(languageQualificationId)!}</#if>" />
+                <input type="hidden" id="languageQualificationId" name="languageQualificationId" value="<#if languageQualificationId??>${languageQualificationId!}</#if>" />
             
                 <label id="lbl-qualificationType" class="plain-label">Qualification Type<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.type'/>"></span>

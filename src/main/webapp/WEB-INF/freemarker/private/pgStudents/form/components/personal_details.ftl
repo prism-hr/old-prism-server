@@ -500,7 +500,7 @@
 
             <!-- Attachment / supporting document -->
             <div class="row">
-                <span id="lbl-languageQualificationDocument" class="plain-label">Proof of Language Qualification (PDF)</span>
+                <span id="lbl-languageQualificationDocument" class="plain-label">Certificate (PDF)</span>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.pdf'/>"></span>
                 <div class="field <#if languageQualification.languageQualificationDocument??>uploaded</#if>" id="uploadFields">                      
                     <input id="languageQualificationDocument" data-type="LANGUAGE_QUALIFICATION" data-reference="Language Qualification" class="full" type="file" name="file" value="" disabled="disabled" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>                    

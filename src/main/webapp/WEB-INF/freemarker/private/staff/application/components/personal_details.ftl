@@ -138,7 +138,7 @@
          </div>
          
          <div class="admin_row">
-            <span class="admin_row_label">Proof of award (PDF)</span>
+            <span class="admin_row_label">Certificate (PDF)</span>
             <div class="field" id="referenceDocument">
                 <#if languageQualification.languageQualificationDocument??>
                     <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(languageQualification.languageQualificationDocument.id))!}'/>" target="_blank">${(languageQualification.languageQualificationDocument.fileName)!}</a>

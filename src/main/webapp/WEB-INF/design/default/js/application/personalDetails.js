@@ -284,15 +284,6 @@ $(document).ready(function() {
 		var $edit_row = $(this).parent().parent('tr');
 		currentRel = $edit_row.attr('rel');
 		
-//		var id = this.id;
-//		if(id.indexOf("usd_") != -1) {
-//			id = id.replace('usd_', '');
-//			$('#'+id+"_uslanguageQualification").val('');
-//		} else {
-//			id = id.replace('languageQualificationDelete_', '');
-//			$('#'+id+"_languageQualification").val('');
-//		}
-		
 		$('#personalDetailsSection > div').append('<div class="ajax" />');
 		$.ajax({
         	type : 'POST',
@@ -505,7 +496,7 @@ function enableLanguageQualifications() {
 	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').removeAttr("readonly", "readonly");
 	
 	$("#lbl-qualificationType, #lbl-otherQualificationTypeName, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, " +
-			"#lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument").removeClass("grey-label");
+			"#lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").removeClass("grey-label");
 	
 	$("#addLanguageQualificationButton").show();
 	$("#updateLanguageQualificationButton").hide();
@@ -522,7 +513,7 @@ function disableLanguageQualifications() {
 	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').attr("readonly", "readonly");
 	
 	$("#lbl-qualificationType, #lbl-otherQualificationTypeName, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, " +
-			"#lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument").addClass("grey-label");
+			"#lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").addClass("grey-label");
 	
 	$("#addLanguageQualificationButton").hide();
 	$("#updateLanguageQualificationButton").hide();

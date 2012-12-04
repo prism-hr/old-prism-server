@@ -26,13 +26,16 @@
 		<property name="jdbcUrl" value="jdbc:mysql://${db.host}/${db.schema}?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true" />
 		<property name="user" value="${db.username}" />
 		<property name="password" value="${db.password}" />
-        
-        <!-- these are C3P0 properties -->
+		
+		<!-- these are C3P0 properties -->
         <property name="acquireIncrement" value="${db.acquireIncrement}" />
         <property name="minPoolSize" value="${db.minPoolSize}" />
         <property name="maxPoolSize" value="${db.maxPoolSize}" />
-        <property name="testConnectionOnCheckout" value="true" />  
-	</bean>
+        <property name="idleConnectionTestPeriod" value="3600" />
+        <property name="testConnectionOnCheckin" value="true" />
+        <property name="numHelperThreads" value="6" />
+        <property name="preferredTestQuery" value="SELECT 1 FROM CHANGELOG" />
+    </bean>
 
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">

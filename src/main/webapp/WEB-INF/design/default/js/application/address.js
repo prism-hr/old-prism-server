@@ -2,20 +2,6 @@ $(document).ready(function(){
 	
 	var addrImgCount = 0; 
 	
-	/*
-	if($("#currentAddressInvalid").html() !== null || $("#currentAddressCountryInvalid").html() !== null
-			|| $("#contactAddressLocationInvalid").html() !== null || $("#contactAddressCountryInvalid").html() !== null
-			|| $("#currentAddressInvalidInvalid").html() !== null || $("#currentAddressCountryInvalid").html() !== null){
-		$("#addr-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
-		$("#addr-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-		if(addrImgCount == 0){
-			$("#addr-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-			addrImgCount = addrImgCount + 1;
-		}
-		addToolTips();
-	}
-	*/
-	
 	$("#acceptTermsADValue").val("NO");
 	limitTextArea();
 
@@ -23,46 +9,39 @@ $(document).ready(function(){
 		$('#address-H2').trigger('click');
 		return false;
 	});
+	
 	$('#currentAddress1').change(function(){
-		
 		if(isSame()){
-
 			$('#contactAddress1').val($('#currentAddress1').val());
 		}
 	});
+	
 	$('#currentAddress2').change(function(){
-		
 		if(isSame()){
-
 			$('#contactAddress2').val($('#currentAddress2').val());
 		}
 	});
+	
 	$('#currentAddress3').change(function(){
-		
 		if(isSame()){
-
 			$('#contactAddress3').val($('#currentAddress3').val());
 		}
 	});
+	
 	$('#currentAddress4').change(function(){
-		
 		if(isSame()){
-
 			$('#contactAddress4').val($('#currentAddress4').val());
 		}
 	});
+	
 	$('#currentAddress5').change(function(){
-		
 		if(isSame()){
-
 			$('#contactAddress5').val($('#currentAddress5').val());
 		}
 	});
 
 	$('#currentAddressCountry').change(function(){
-		
 		if(isSame()){
-
 			$('#contactAddressCountry').val($('#currentAddressCountry').val());
 		}
 	});
@@ -72,88 +51,28 @@ $(document).ready(function(){
 			$("#acceptTermsADValue").val("NO");
 		} else {	
 			$("#acceptTermsADValue").val("YES");
-			
-			/*
-			$(".terms-box").attr('style','');
-			$("#addr-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#addr-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#addr-info-bar-div .row span.error-hint").remove();
-			*/
 			addrImgCount = 0;
-
 		}
 	});
 	
-	$('#addressSaveAndAddButton').click(function()
-	{
-	/*	if( $("#acceptTermsADValue").val() =='NO')
-		{ 
-
-			
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			var $infobar = $('#addr-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$infobar.prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				addrImgCount = addrImgCount + 1;
-			}
-			addToolTips();
-			
-		}
-		else
-		{*/
+	$('#addressSaveAndAddButton').click(function()	{
 			$("span[name='nonAcceptedAD']").html('');
 			postAddressData("close");
-		//}
 	});
 	
 	$("#sameAddressCB").click(function() {
-		
 		if (isSame()){
-			$("#contactAddress1").val($("#currentAddress1").val());
-			$("#contactAddress2").val($("#currentAddress2").val());
-			$("#contactAddress3").val($("#currentAddress3").val());
-			$("#contactAddress4").val($("#currentAddress4").val());
-			$("#contactAddress5").val($("#currentAddress5").val());
-			$("#contactAddressCountry").val($("#currentAddressCountry").val());
-			$("#contactAddress1").attr('disabled','disabled');
-			$("#contactAddress2").attr('disabled','disabled');
-			$("#contactAddress3").attr('disabled','disabled');
-			$("#contactAddress4").attr('disabled','disabled');
-			$("#contactAddress5").attr('disabled','disabled');
-			$("#contactAddressCountry").attr('disabled','disabled');
-			
-			$("#add-two-lb").addClass("grey-label");
-			$("#country-two-lb").addClass("grey-label");
-			$("#add-two-em").addClass("grey-label");
-			$("#country-two-em").addClass("grey-label");
-
-			
+			disableContactAddress();
 		} else {		
-			$("#contactAddressLocation").val("");
-			$("#contactAddressCountry").val("");
-			$("#contactAddressLocation").removeAttr('disabled');
-			$("#contactAddressCountry").removeAttr('disabled');
-			$("#add-two-lb").removeClass("grey-label");
-			$("#country-two-lb").removeClass("grey-label");
-			$("#add-two-em").removeClass("grey-label");
-			$("#country-two-em").removeClass("grey-label");
-
+			enableContactAddress();
 		}
 	});
 	
-	
-	
 	$('#addressClearButton').click(function(){
-
-		loadAddresSection(true);
-		
+		loadAddresSection(true);	
 	});
 
 	$('a[name="addressCancelButton"]').click(function(){
-
 		$.ajax({
 			 type: 'GET',
 			 statusCode: {
@@ -185,7 +104,12 @@ $(document).ready(function(){
 	});
 	
 	addToolTips();
-
+	
+	if (isSame()){
+		disableContactAddress();
+	} else {		
+		enableContactAddress();
+	}
 });
 
 function postAddressData(message)
@@ -265,4 +189,49 @@ function isSame(){
 		same = true;
 	}
 	return same;
+}
+
+function disableContactAddress() {
+	$("#contactAddress1").val($("#currentAddress1").val());
+	$("#contactAddress2").val($("#currentAddress2").val());
+	$("#contactAddress3").val($("#currentAddress3").val());
+	$("#contactAddress4").val($("#currentAddress4").val());
+	$("#contactAddress5").val($("#currentAddress5").val());
+	$("#contactAddressCountry").val($("#currentAddressCountry").val());
+	$("#contactAddress1").attr('disabled','disabled');
+	$("#contactAddress2").attr('disabled','disabled');
+	$("#contactAddress3").attr('disabled','disabled');
+	$("#contactAddress4").attr('disabled','disabled');
+	$("#contactAddress5").attr('disabled','disabled');
+	$("#contactAddressCountry").attr('disabled','disabled');
+	
+	$("#add-two-lb-1").addClass("grey-label");
+	$("#add-two-lb-2").addClass("grey-label");
+	$("#add-two-lb-3").addClass("grey-label");
+	$("#add-two-lb-4").addClass("grey-label");
+	
+	$("#country-two-lb").addClass("grey-label");
+	$("#add-two-em").addClass("grey-label");
+	$("#country-two-em").addClass("grey-label");
+}
+
+function enableContactAddress() {
+	$("#contactAddressLocation").val("");
+	$("#contactAddressCountry").val("");
+	$("#contactAddressLocation").removeAttr('disabled');
+	$("#contactAddressCountry").removeAttr('disabled');
+	$("#add-two-lb-1").removeClass("grey-label");
+	$("#add-two-lb-2").removeClass("grey-label");
+	$("#add-two-lb-3").removeClass("grey-label");
+	$("#add-two-lb-4").removeClass("grey-label");
+	$("#country-two-lb").removeClass("grey-label");
+	$("#add-two-em").removeClass("grey-label");
+	$("#country-two-em").removeClass("grey-label");
+	
+	$("#contactAddress1").removeAttr('disabled','disabled');
+	$("#contactAddress2").removeAttr('disabled','disabled');
+	$("#contactAddress3").removeAttr('disabled','disabled');
+	$("#contactAddress4").removeAttr('disabled','disabled');
+	$("#contactAddress5").removeAttr('disabled','disabled');
+	$("#contactAddressCountry").removeAttr('disabled','disabled');
 }

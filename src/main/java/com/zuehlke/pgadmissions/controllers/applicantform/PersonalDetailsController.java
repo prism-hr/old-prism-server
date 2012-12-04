@@ -192,7 +192,7 @@ public class PersonalDetailsController {
     }
     
     @RequestMapping(value = "/addLanguageQualifications", method = RequestMethod.POST)
-    public String editLanguageQualifications(@Valid LanguageQualification languageQualification, BindingResult result, 
+    public String addLanguageQualification(@Valid LanguageQualification languageQualification, BindingResult result, 
             @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
 
         personalDetails.setLanguageQualificationAvailable(true);
@@ -212,7 +212,7 @@ public class PersonalDetailsController {
     }
 
     @RequestMapping(value = "/getLanguageQualifications", method = RequestMethod.POST)
-    public String getLanguageQualifications(String languageQualificationId, 
+    public String getLanguageQualification(String languageQualificationId, 
             @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
             throw new ResourceNotFoundException();
@@ -228,7 +228,7 @@ public class PersonalDetailsController {
     }
     
     @RequestMapping(value = "/deleteLanguageQualifications", method = RequestMethod.POST)
-    public String deleteLanguageQualifications(String languageQualificationId, 
+    public String deleteLanguageQualification(String languageQualificationId, 
             @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
             throw new ResourceNotFoundException();
@@ -244,7 +244,7 @@ public class PersonalDetailsController {
     }
     
     @RequestMapping(value = "/updateLanguageQualifications", method = RequestMethod.POST)
-    public String updateLanguageQualifications(@Valid LanguageQualification languageQualification, 
+    public String updateLanguageQualification(@Valid LanguageQualification languageQualification, 
             BindingResult result, String languageQualificationId,
             @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {

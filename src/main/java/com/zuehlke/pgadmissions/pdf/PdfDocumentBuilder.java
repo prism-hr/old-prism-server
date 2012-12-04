@@ -142,7 +142,8 @@ public class PdfDocumentBuilder {
 			submittedDateHeader = new Chunk("", smallerFont);
 		}
 
-		headerEvent = new HeaderEvent(new Chunk(application.getProgram().getTitle(), smallerFont), new Chunk(application.getApplicationNumber(), smallerFont), submittedDateHeader);
+        headerEvent = new HeaderEvent(new Chunk(application.getProgram().getTitle(), smallerFont), new Chunk(
+                application.getApplicationNumber(), smallerFont), submittedDateHeader);
 		
 		writer.setPageEvent(headerEvent);
 		
@@ -170,7 +171,9 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 
-		if (SecurityContextHolder.getContext().getAuthentication() != null && ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).hasAdminRightsOnApplication(application)) {
+        if (SecurityContextHolder.getContext().getAuthentication() != null
+                && ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails())
+                        .hasAdminRightsOnApplication(application)) {
 			addReferencesSection(application, document);
 		}
 
@@ -309,9 +312,7 @@ public class PdfDocumentBuilder {
 				}
 				document.add(table);
 				document.add(new Paragraph(" "));
-
 			}
-
 		}
 	}
 
@@ -538,7 +539,7 @@ public class PdfDocumentBuilder {
                     }
                 }
                 
-                table.addCell(newTableCell("Proof of Language Qualification", smallBoldFont));
+                table.addCell(newTableCell("Certificate (PDF)", smallBoldFont));
                 if (qualification.getLanguageQualificationDocument() != null) {
                     table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
                     bookmarkMap.put(appendixCounter++, qualification.getLanguageQualificationDocument());

@@ -6,8 +6,7 @@ $(document).ready(function()
 	// Modal window functionality.
 	setupModalBox();
 	
-	populateApplicationList(true);
-	
+//	populateApplicationList(true);
 	
 	// --------------------------------------------------------------------------------
 	// TABLE SORTING
@@ -15,7 +14,6 @@ $(document).ready(function()
 	// Add a SPAN tag to table headers for the arrows.
 	$('table.data thead th.sortable').prepend('<span />');
 	
-
 	// --------------------------------------------------------------------------------
 	// SEARCH / FILTERING
 	// --------------------------------------------------------------------------------
@@ -47,7 +45,6 @@ $(document).ready(function()
 			$('#search-go').removeData('qtip');
 		}
 	});
-	
 
 	// ------------------------------------------------------------------------------
 	// SELECT ALL/NO APPLICATIONS
@@ -70,7 +67,6 @@ $(document).ready(function()
 		$appList.val(list);
   });
   
-	
 	// --------------------------------------------------------------------------------
 	// SELECT APPLICATIONS
 	// --------------------------------------------------------------------------------
@@ -89,7 +85,6 @@ $(document).ready(function()
 		}
 	});
 
-
 	// --------------------------------------------------------------------------------
 	// DOWNLOAD SELECTED APPLICATIONS
 	// --------------------------------------------------------------------------------
@@ -103,7 +98,6 @@ $(document).ready(function()
 	});
 
 });
-
 
 function populateApplicationList(reset)
 {

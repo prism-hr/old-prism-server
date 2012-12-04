@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,8 +43,15 @@ public class ApplicationListController {
 	}
 
 	@RequestMapping(value = "/section", method = RequestMethod.GET)
-	public String getApplicationListSection() {
-		
+    public String getApplicationListSection(
+            @RequestParam(required = false) SearchCategory searchCategory,
+            @RequestParam(required = false) String searchTerm, 
+            @RequestParam(required = false) SortCategory sortCategory, 
+            @RequestParam(required = false) SortOrder order,
+            @RequestParam(required = false) Integer blockCount, 
+            Model model) {
+	    int blockIx = blockCount == null ? 1 : blockCount;
+	    model.addAttribute("applications", applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, order, blockIx));
 		return APPLICATION_LIST_SECTION_VIEW_NAME;
 	}
 
@@ -58,14 +66,8 @@ public class ApplicationListController {
 	}
 
 	@ModelAttribute("applications")
-	public List<ApplicationForm> getApplications(//
-			@RequestParam(required = false) SearchCategory searchCategory, @RequestParam(required = false) String searchTerm, //
-			@RequestParam(required = false) SortCategory sortCategory, @RequestParam(required = false) SortOrder order,//
-			@RequestParam(required = false) Integer blockCount) {
-
-		int blockIx = blockCount == null ? 1 : blockCount;
-		
-		return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, order, blockIx);
+	public List<ApplicationForm> getApplications() {
+		return java.util.Collections.emptyList();
 	}
 
 	@ModelAttribute("message")

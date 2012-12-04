@@ -72,9 +72,8 @@
 							<div id="table-bar">
 							
 								<!-- Download button. -->
-								<#if (applications?size > 0)>
 								<a target="_blank" name="downloadAll" id="downloadAll" data-desc="<@spring.message 'myApps.downloadAll'/>">Download</a>
-								</#if>
+								
 				
 								<!-- Search/filter box. -->
 								<div id="search-box"> 

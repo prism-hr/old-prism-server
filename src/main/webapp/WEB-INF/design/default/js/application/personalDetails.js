@@ -138,6 +138,7 @@ $(document).ready(function() {
     // Language Qualification available
     // -------------------------------------------------------------------------------
     $("input[name='languageQualificationAvailable']").bind('change', function() {
+    	$('#languageQualification_div span.invalid').remove();
     	var selected_radio = $("input[name='languageQualificationAvailable']:checked").val();
     	if (selected_radio == 'true')   {
     		enableLanguageQualifications();

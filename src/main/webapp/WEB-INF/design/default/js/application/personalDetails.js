@@ -135,6 +135,20 @@ $(document).ready(function() {
     });            
 
     // -------------------------------------------------------------------------------
+    // Is English your first language?*
+    // -------------------------------------------------------------------------------
+    $("input[name='englishFirstLanguage']").bind('change', function() {
+    	var selected_radio = $("input[name='englishFirstLanguage']:checked").val();
+    	if (selected_radio == 'true')   {
+    		$("input[name='languageQualificationAvailable']").attr("disabled", "disabled");
+    		$("input[name='languageQualificationAvailable']").prop('checked', false);
+    		disableLanguageQualifications();
+    	} else {
+    		$("input[name='languageQualificationAvailable']").removeAttr("disabled");
+    	}
+    });
+    
+    // -------------------------------------------------------------------------------
     // Language Qualification available
     // -------------------------------------------------------------------------------
     $("input[name='languageQualificationAvailable']").bind('change', function() {

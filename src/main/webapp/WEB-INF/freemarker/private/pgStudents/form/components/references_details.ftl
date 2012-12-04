@@ -213,15 +213,6 @@
           /> 
         </div>
       </div>          
-
-    <@spring.bind "referee.addressLocation.address1" />         
-    <#list spring.status.errorMessages as error>
-      <div class="row">
-        <div class="field">
-          <span class="invalid">${error}</span>
-        </div>
-      </div>
-    </#list>
     
     <div class="row">
         <div class="field">
@@ -232,7 +223,15 @@
           /> 
         </div>
       </div>          
-
+      <@spring.bind "referee.addressLocation.address1" />         
+    <#list spring.status.errorMessages as error>
+      <div class="row">
+        <div class="field">
+          <span class="invalid">${error}</span>
+        </div>
+      </div>
+    </#list>
+    
     <@spring.bind "referee.addressLocation.address2" />         
     <#list spring.status.errorMessages as error>
       <div class="row">

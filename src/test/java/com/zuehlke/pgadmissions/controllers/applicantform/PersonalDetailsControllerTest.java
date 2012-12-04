@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -35,12 +36,14 @@ import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -304,6 +307,148 @@ public class PersonalDetailsControllerTest {
 		String view = controller.editPersonalDetails(personalDetails, errors, modelMock, sessionStatusMock);
 		EasyMock.verify(personalDetailsServiceMock);
 		assertEquals("/private/pgStudents/form/components/personal_details", view);
+	}
+	
+	@Test
+	public void shouldAddLanguageQualification() {
+	    BindingResult resultMock = EasyMock.createMock(BindingResult.class);
+	    Model modelMock = EasyMock.createMock(Model.class);
+	    PersonalDetails personalDetailsMock = EasyMock.createMock(PersonalDetails.class);
+	    currentUser = EasyMock.createMock(RegisteredUser.class);
+        LanguageQualification qualification = new LanguageQualificationBuilder().id(1).dateOfExamination(new Date())
+                .examTakenOnline(false).languageQualification(LanguageQualificationEnum.IELTS_ACADEMIC)
+                .listeningScore("1").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
+                .toLanguageQualification();
+        
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
+        EasyMock.expect(resultMock.hasErrors()).andReturn(false);
+        personalDetailsMock.addLanguageQualification(qualification);
+        personalDetailsMock.setLanguageQualificationAvailable(true);
+        EasyMock.expect(modelMock.addAttribute("languageQualification", qualification)).andReturn(modelMock);
+        EasyMock.expect(modelMock.addAttribute(EasyMock.eq("languageQualification"), EasyMock.isA(LanguageQualification.class))).andReturn(modelMock);
+
+        EasyMock.replay(userServiceMock, currentUser, resultMock, modelMock, personalDetailsMock);
+        
+	    String resultView = controller.addLanguageQualification(qualification, resultMock, personalDetailsMock, modelMock);
+	    assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+	    
+	    EasyMock.verify(userServiceMock, currentUser, resultMock, modelMock, personalDetailsMock);
+	}
+	
+	@Test
+	public void shouldReturnLanguageQualification() {
+	    PersonalDetails personalDetailsMock = EasyMock.createMock(PersonalDetails.class);
+	    Model modelMock = EasyMock.createMock(Model.class);
+	    LanguageQualification qualification = new LanguageQualificationBuilder().id(1).dateOfExamination(new Date())
+                .examTakenOnline(false).languageQualification(LanguageQualificationEnum.IELTS_ACADEMIC)
+                .listeningScore("1").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
+                .toLanguageQualification();
+	    
+	    EasyMock.expect(personalDetailsMock.getLanguageQualifications()).andReturn(Arrays.asList(qualification));
+	    EasyMock.expect(modelMock.addAttribute("languageQualificationId", "0")).andReturn(modelMock);
+	    EasyMock.expect(modelMock.addAttribute("languageQualification", qualification)).andReturn(modelMock);
+
+	    EasyMock.replay(personalDetailsMock, modelMock);
+	    
+	    String resultView = controller.getLanguageQualification("0", personalDetailsMock, modelMock);
+	    assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+	    
+	    EasyMock.verify(personalDetailsMock, modelMock);
+	}
+	
+	@Test
+	@SuppressWarnings("unchecked")
+    public void shouldDeleteLanguageQualification() {
+        PersonalDetails personalDetailsMock = EasyMock.createMock(PersonalDetails.class);
+        currentUser = EasyMock.createMock(RegisteredUser.class);
+        Model modelMock = EasyMock.createMock(Model.class);
+        LanguageQualification qualification = new LanguageQualificationBuilder().id(1).dateOfExamination(new Date())
+                .examTakenOnline(false).languageQualification(LanguageQualificationEnum.IELTS_ACADEMIC)
+                .listeningScore("1").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
+                .toLanguageQualification();
+        
+        ArrayList<LanguageQualification> listMock = EasyMock.createMock(ArrayList.class);
+        
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
+        
+        EasyMock.expect(personalDetailsMock.getLanguageQualifications()).andReturn(listMock);
+        EasyMock.expect(listMock.remove(0)).andReturn(qualification);
+        EasyMock.expect(modelMock.addAttribute(EasyMock.eq("languageQualification"), EasyMock.isA(LanguageQualification.class))).andReturn(modelMock);
+
+        EasyMock.replay(userServiceMock, currentUser, personalDetailsMock, modelMock, listMock);
+        
+        String resultView = controller.deleteLanguageQualification("0", personalDetailsMock, modelMock);
+        assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+        
+        EasyMock.verify(userServiceMock, currentUser, personalDetailsMock, modelMock, listMock);
+    }
+	
+	@Test
+	@SuppressWarnings("unchecked")
+	public void shouldUpdateLanguageQualification() {
+	    BindingResult resultMock = EasyMock.createMock(BindingResult.class);
+	    PersonalDetails personalDetailsMock = EasyMock.createMock(PersonalDetails.class);
+        currentUser = EasyMock.createMock(RegisteredUser.class);
+        Model modelMock = EasyMock.createMock(Model.class);
+        LanguageQualification qualification = new LanguageQualificationBuilder().id(1).dateOfExamination(new Date())
+                .examTakenOnline(false).languageQualification(LanguageQualificationEnum.IELTS_ACADEMIC)
+                .listeningScore("1").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
+                .toLanguageQualification();
+        
+        LanguageQualification qualificationMock = EasyMock.createMock(LanguageQualification.class);
+        
+        ArrayList<LanguageQualification> listMock = EasyMock.createMock(ArrayList.class);
+	    
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
+        
+        EasyMock.expect(resultMock.hasErrors()).andReturn(false);
+        
+        EasyMock.expect(personalDetailsMock.getLanguageQualifications()).andReturn(listMock);
+        EasyMock.expect(listMock.remove(0)).andReturn(qualificationMock);
+        qualificationMock.setLanguageQualificationDocument(null);
+        
+        personalDetailsMock.addLanguageQualification(qualification);
+        
+        EasyMock.expect(modelMock.addAttribute(EasyMock.eq("languageQualification"), EasyMock.isA(LanguageQualification.class))).andReturn(modelMock);
+
+        EasyMock.replay(userServiceMock, currentUser, personalDetailsMock, modelMock, listMock, resultMock, qualificationMock);
+        
+        String resultView = controller.updateLanguageQualification(qualification, resultMock, "0", personalDetailsMock, modelMock);
+        assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+        
+        EasyMock.verify(userServiceMock, currentUser, personalDetailsMock, modelMock, listMock, resultMock, qualificationMock);
+	}
+	
+	@Test
+	public void shouldDeleteLanguageQualificationsDocument() {
+	    BindingResult resultMock = EasyMock.createMock(BindingResult.class);
+        PersonalDetails personalDetailsMock = EasyMock.createMock(PersonalDetails.class);
+        currentUser = EasyMock.createMock(RegisteredUser.class);
+        Model modelMock = EasyMock.createMock(Model.class);
+        
+        LanguageQualification qualificationMock = EasyMock.createMock(LanguageQualification.class);
+        
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
+        
+        EasyMock.expect(personalDetailsMock.getLanguageQualifications()).andReturn(Arrays.asList(qualificationMock));
+        qualificationMock.setLanguageQualificationDocument(null);
+        
+        EasyMock.expect(modelMock.addAttribute(EasyMock.eq("languageQualification"), EasyMock.isA(LanguageQualification.class))).andReturn(modelMock);
+
+        EasyMock.replay(userServiceMock, currentUser, personalDetailsMock, modelMock, resultMock, qualificationMock);
+        
+        String resultView = controller.deleteLanguageQualificationsDocument(personalDetailsMock, "0", modelMock);
+        assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+        
+        EasyMock.verify(userServiceMock, currentUser, personalDetailsMock, modelMock, resultMock, qualificationMock);
 	}
 
 	@Before

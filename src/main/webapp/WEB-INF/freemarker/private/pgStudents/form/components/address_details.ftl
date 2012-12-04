@@ -41,14 +41,6 @@
 					>
 				</div>
 			</div>
-			<@spring.bind "addressSectionDTO.currentAddress1" /> 
-			<#list spring.status.errorMessages as error>
-			<div class="row">
-				<div class="field">
-					<span id="currentAddressInvalid" class="invalid">${error}</span>
-				</div>
-			</div>
-			</#list>
 			
 			<div class="row">
 				<div class="field">
@@ -59,6 +51,14 @@
 					>
 				</div>
 			</div>
+			<@spring.bind "addressSectionDTO.currentAddress1" /> 
+            <#list spring.status.errorMessages as error>
+            <div class="row">
+                <div class="field">
+                    <span id="currentAddressInvalid" class="invalid">${error}</span>
+                </div>
+            </div>
+            </#list>
 			<@spring.bind "addressSectionDTO.currentAddress2" /> 
 			<#list spring.status.errorMessages as error>
 			<div class="row">
@@ -194,15 +194,7 @@
 					/>
 				</div>
 			</div>
-			<@spring.bind "addressSectionDTO.contactAddress1" /> 
-			<#list spring.status.errorMessages as error>
-			<div class="row">
-				<div class="field">
-					<span id="contactAddressLocationInvalid" class="invalid">${error}</span>
-				</div>
-			</div>
-			</#list>
-			
+
 			<div class="row">
 				<div class="field">
 					<input id="contactAddress2" class="max"
@@ -216,6 +208,14 @@
 					/>
 				</div>
 			</div>
+            <@spring.bind "addressSectionDTO.contactAddress1" /> 
+            <#list spring.status.errorMessages as error>
+            <div class="row">
+                <div class="field">
+                    <span id="contactAddressLocationInvalid" class="invalid">${error}</span>
+                </div>
+            </div>
+            </#list>
 			<@spring.bind "addressSectionDTO.contactAddress2" /> 
 			<#list spring.status.errorMessages as error>
 			<div class="row">

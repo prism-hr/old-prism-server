@@ -120,16 +120,8 @@
                   		/>
                	</div>
             </div>
-            <@spring.bind "employmentPosition.employerAddress.address1" />
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
-						</div>
-					</div>
-				</#list>
-				
-			<div class="row">
+            
+            <div class="row">
                 <div class="field">
                   		<input id="position_employer_address2" name="position_employer_address2" value="${(employmentPosition.employerAddress.address2?html)!}"
                   		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -138,15 +130,24 @@
                   		/>
                	</div>
             </div>
+            <@spring.bind "employmentPosition.employerAddress.address1" />
+            <#list spring.status.errorMessages as error>
+                <div class="row">
+                    <div class="field">
+                        <span class="invalid">${error}</span>
+                    </div>
+                </div>
+            </#list>
+            
             <@spring.bind "employmentPosition.employerAddress.address2" />
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
-						</div>
+			<#list spring.status.errorMessages as error>
+				<div class="row">
+					<div class="field">
+						<span class="invalid">${error}</span>
 					</div>
-				</#list>
-				
+				</div>
+			</#list>
+			
 			<div class="row">
             	<span class="plain-label">Town / city / suburb<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'addressDetails.town'/>"></span>

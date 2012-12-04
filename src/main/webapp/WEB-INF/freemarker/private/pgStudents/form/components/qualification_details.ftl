@@ -283,7 +283,7 @@
 
 			<!-- Attachment / supporting document -->
 			<div class="row">
-				<span id="quali-proof-of-award-lb" class="plain-label<#if !qualification.isQualificationCompleted()> grey-label</#if>">Proof of Award (PDF)</span>
+				<span id="quali-proof-of-award-lb" class="plain-label<#if !qualification.isQualificationCompleted()> grey-label</#if>">Transcript (PDF)</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
 				<div class="field <#if qualification.proofOfAward??>uploaded</#if>" id="uploadFields">         		       	
 					<input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if !qualification.isQualificationCompleted() || applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					

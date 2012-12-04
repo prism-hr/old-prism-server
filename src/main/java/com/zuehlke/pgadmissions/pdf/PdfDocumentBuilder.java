@@ -667,7 +667,7 @@ public class PdfDocumentBuilder {
 					table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationAwardDate()), smallFont));
 				}
 
-				table.addCell(newTableCell("Proof Of Award", smallBoldFont));
+				table.addCell(newTableCell("Transcript", smallBoldFont));
 				if (qualification.isQualificationCompleted() && qualification.getProofOfAward() != null) {
 					table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
 					bookmarkMap.put(appendixCounter++, qualification.getProofOfAward());
@@ -935,7 +935,7 @@ public class PdfDocumentBuilder {
 					} else if (DocumentType.SUPPORTING_FUNDING == doc.getType()) {
 						document.add(new Chunk(" - Funding proof of award"));
 					} else if (DocumentType.PROOF_OF_AWARD == doc.getType()) {
-						document.add(new Chunk(" - Qualification proof of award"));
+						document.add(new Chunk(" - Qualification Transcript"));
 					}
 					
 					try {

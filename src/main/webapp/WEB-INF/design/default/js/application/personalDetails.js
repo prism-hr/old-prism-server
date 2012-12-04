@@ -18,6 +18,12 @@ $(document).ready(function() {
     	disableLanguageQualifications();
     }
     
+    if ($('#qualificationType').val() === "OTHER") {
+		enableOtherLanguageQualification();
+	} else {
+		disableOtherLanguageQualification();
+	}
+    
     $("#acceptTermsPEDValue").val("NO");
 
     // -------------------------------------------------------------------------------
@@ -143,6 +149,7 @@ $(document).ready(function() {
     		$("input[name='languageQualificationAvailable']").attr("disabled", "disabled");
     		$("input[name='languageQualificationAvailable']").prop('checked', false);
     		disableLanguageQualifications();
+    		disableOtherLanguageQualification();
     	} else {
     		$("input[name='languageQualificationAvailable']").removeAttr("disabled");
     	}
@@ -231,6 +238,12 @@ $(document).ready(function() {
 		} else {
 			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').show();
 			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').hide();
+		}
+		
+		if (selectedType === "OTHER") {
+			enableOtherLanguageQualification();
+		} else {
+			disableOtherLanguageQualification();
 		}
 		
 		$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').val("");
@@ -502,8 +515,8 @@ function enablePassportInformation() {
 }
 
 function enableLanguageQualifications() {
-	$("#qualificationType, #otherQualificationTypeName, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").removeAttr("disabled", "disabled");
-	$("#qualificationType, #otherQualificationTypeName, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").removeAttr("readonly", "readonly");
+	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").removeAttr("disabled", "disabled");
+	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").removeAttr("readonly", "readonly");
 	
 	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').removeAttr("disabled", "disabled");
 	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').removeAttr("readonly", "readonly");
@@ -518,8 +531,8 @@ function enableLanguageQualifications() {
 }
 
 function disableLanguageQualifications() {
-	$("#qualificationType, #otherQualificationTypeName, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").attr("disabled", "disabled");
-	$("#qualificationType, #otherQualificationTypeName, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").attr("readonly", "readonly");
+	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").attr("disabled", "disabled");
+	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").attr("readonly", "readonly");
 	
 	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').attr("disabled", "disabled");
 	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').attr("readonly", "readonly");
@@ -550,8 +563,17 @@ function clearLanguageQualification() {
 	$("#languageQualificationDocument").val();
 }
 
-function postPersonalDetailsData(message) {
+function disableOtherLanguageQualification() {
+	$('#otherQualificationTypeName').attr("disabled", "disabled");
+	$('#otherQualificationTypeName').attr("readonly", "readonly");
+}
 
+function enableOtherLanguageQualification() {
+	$('#otherQualificationTypeName').removeAttr("disabled");
+	$('#otherQualificationTypeName').removeAttr("readonly");
+}
+
+function postPersonalDetailsData(message) {
     // candidate nationalities
     if ($('#candidateNationalityCountry option:selected').val() != '') {
         var html = "<span><input type='hidden' name='candidateNationalities' value='"

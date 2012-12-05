@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
@@ -12,7 +13,7 @@ public class ApprovalStateChangeEvent extends StateChangeEvent {
 
 	private static final long serialVersionUID = -2095890298884570733L;
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "approval_round_id")
 	private ApprovalRound approvalRound;
 

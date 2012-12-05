@@ -28,22 +28,22 @@ public class Program extends DomainObject<Integer> {
 	
 	private boolean enabled;
 
-	@ManyToMany(mappedBy = "programsOfWhichApprover")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichApprover")
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
 
-	@ManyToMany(mappedBy = "programsOfWhichAdministrator")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichAdministrator")
 	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
 
-	@ManyToMany(mappedBy = "programsOfWhichReviewer")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichReviewer")
 	private List<RegisteredUser> programReviewers = new ArrayList<RegisteredUser>();
 	
-	@ManyToMany(mappedBy = "programsOfWhichInterviewer")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichInterviewer")
 	private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
 
-	@ManyToMany(mappedBy = "programsOfWhichSupervisor")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichSupervisor")
 	private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
 	
-	@OneToMany(mappedBy = "program")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
 	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 	
 	@OneToMany(fetch = FetchType.LAZY)

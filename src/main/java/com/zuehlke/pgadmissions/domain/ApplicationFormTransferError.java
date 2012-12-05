@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -27,7 +28,7 @@ public class ApplicationFormTransferError extends DomainObject<Long> {
     private static final long serialVersionUID = -8609731063290824582L;
 
     /** The transfer that I am documenting. */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transfer_id")
     private ApplicationFormTransfer transfer;
 

@@ -8,6 +8,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -41,7 +42,7 @@ public class Interview extends DomainObject<Integer> {
 	@Column(name = "further_details")
 	private String furtherDetails;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
 
@@ -52,13 +53,14 @@ public class Interview extends DomainObject<Integer> {
 	@Column(name = "due_date")
 	private Date interviewDueDate;
 
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "interview_id")
 	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
 
 	@Transient
 	private String timeHours;
+	
 	@Transient
 	private String timeMinutes;
 

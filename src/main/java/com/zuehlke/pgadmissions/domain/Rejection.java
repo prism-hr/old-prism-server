@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,11 +16,10 @@ public class Rejection extends DomainObject<Integer> {
 	
 	private static final long serialVersionUID = 6510744657140247807L;
 	
-	@OneToOne(mappedBy="rejection")	
+	@OneToOne(fetch = FetchType.LAZY, mappedBy="rejection")	
 	private ApplicationForm applicationForm;
 	
-	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reject_reason_id")
 	private RejectReason rejectionReason;
 	

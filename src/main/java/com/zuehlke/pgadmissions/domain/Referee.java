@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -33,14 +34,14 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastNotified;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "registered_user_id")
 	private RegisteredUser user;
 
-	@OneToOne(mappedBy = "referee")
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "referee")
 	private ReferenceComment reference;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
 
@@ -68,7 +69,7 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String jobTitle;
 
-	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "address_id")
 	@Valid

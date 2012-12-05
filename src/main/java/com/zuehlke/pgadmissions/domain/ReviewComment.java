@@ -4,11 +4,11 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Type;
-
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -22,11 +22,10 @@ public class ReviewComment extends Comment{
 
 	private static final long serialVersionUID = 9120577563568889651L;
 
-	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "reviewer_id")
 	private Reviewer reviewer;
-	
 	
 	@Column(name = "willing_to_interview")
 	private Boolean willingToInterview;

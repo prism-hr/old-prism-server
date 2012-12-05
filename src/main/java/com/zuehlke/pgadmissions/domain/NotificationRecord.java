@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -23,11 +24,11 @@ public class NotificationRecord extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = 8927883549224930562L;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private RegisteredUser user;
 
@@ -40,7 +41,6 @@ public class NotificationRecord extends DomainObject<Integer> {
 	private NotificationType notificationType;
 
 	public NotificationRecord() {
-
 	}
 
 	public NotificationRecord(NotificationType notificationType) {

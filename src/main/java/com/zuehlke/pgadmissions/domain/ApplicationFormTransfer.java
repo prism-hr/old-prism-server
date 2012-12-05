@@ -1,17 +1,20 @@
 package com.zuehlke.pgadmissions.domain;
 
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
-import org.hibernate.annotations.Type;
+import java.util.Date;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.util.Date;
+
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 
 /**
  * I represent a single transfer of application form.
@@ -27,8 +30,10 @@ import java.util.Date;
 @Access(AccessType.FIELD)
 public class ApplicationFormTransfer extends DomainObject<Long> {
 
+    private static final long serialVersionUID = 9133196638104217546L;
+
     /** The application form that constitutes my payload (a payload of the transfer I am representing). */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private ApplicationForm applicationForm;
 

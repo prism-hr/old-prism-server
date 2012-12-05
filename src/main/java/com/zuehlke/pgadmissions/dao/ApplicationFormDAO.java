@@ -154,15 +154,15 @@ public class ApplicationFormDAO {
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
 	    LinkedHashSet<ApplicationForm> apps = new LinkedHashSet<ApplicationForm>();
 
+	    if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+	        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+	                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
+	                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	    }
+
 	    if (user.isInRole(Authority.APPLICANT)) {
 			apps.addAll(applicationsOfWhichApplicant(user));
 			apps.addAll(applicationsOfWhichReferee(user));
-		}
-
-		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-            return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                    .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
-                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		}
 
 		if (user.isInRole(Authority.REFEREE)) {

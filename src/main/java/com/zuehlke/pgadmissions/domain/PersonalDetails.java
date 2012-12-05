@@ -64,6 +64,9 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	@Column(name = "requires_visa")
 	private Boolean requiresVisa;
 	
+	@Column(name = "passport_available")
+	private Boolean passportAvailable;
+	
 	@Valid
 	@OneToOne(orphanRemoval = true, mappedBy = "personalDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private PassportInformation passportInformation;
@@ -222,7 +225,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	public void setCandidateNationalities(List<Language> candiateNationalities) {
 		this.candidateNationalities.clear();
 		for (Language nationality : candiateNationalities) {
-			if(nationality != null){
+			if (nationality != null) {
 				this.candidateNationalities.add(nationality);
 			}
 		}
@@ -233,7 +236,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	}
 
 	public void setMessenger(String messenger) {
-		if(StringUtils.isBlank(messenger)){
+		if (StringUtils.isBlank(messenger)) {
 			this.messenger = null;
 		}
 		this.messenger = messenger;
@@ -269,6 +272,11 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
     public boolean isLanguageQualificationAvailableSet() {
         return (languageQualificationAvailable != null);
     }
+    
+    //convenience metod for Freemarker
+    public boolean isPassportAvailableSet() {
+        return (passportAvailable != null);
+    }
 	
 	public Boolean getRequiresVisa() {
 		return requiresVisa;
@@ -279,6 +287,14 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 		if (BooleanUtils.isFalse(requiresVisa)) {
 		    this.passportInformation = null;
 		}
+	}
+	
+	public Boolean getPassportAvailable() {
+	    return passportAvailable;
+	}
+
+	public void setPassportAvailable(Boolean passportAvailable) {
+	    this.passportAvailable = passportAvailable;
 	}
 
 	public boolean isAcceptedTerms() {

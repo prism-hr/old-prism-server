@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.Date;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -26,7 +27,8 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
     }
     
     @Autowired
-    public PersonalDetailsValidator(PassportInformationValidator passportInformationValidator, LanguageQualificationValidator languageQualificationValidator) {
+    public PersonalDetailsValidator(PassportInformationValidator passportInformationValidator,
+            LanguageQualificationValidator languageQualificationValidator) {
         this.passportInformationValidator = passportInformationValidator;
         this.languageQualificationValidator = languageQualificationValidator;
     }
@@ -77,7 +79,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", "dropdown.radio.select.none");
 		
-		if (personalDetail.getRequiresVisa() != null && personalDetail.getRequiresVisa()) {
+		if (BooleanUtils.isTrue(personalDetail.getPassportAvailable())) {
 		    try {
 		        errors.pushNestedPath("passportInformation");
     	        ValidationUtils.invokeValidator(passportInformationValidator, personalDetail.getPassportInformation(), errors);
@@ -86,7 +88,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		    }
 		}
 		
-		if (personalDetail.getLanguageQualificationAvailable() != null && personalDetail.getLanguageQualificationAvailable()) {
+		if (BooleanUtils.isTrue(personalDetail.getLanguageQualificationAvailable())) {
 		    if (personalDetail.getLanguageQualifications().isEmpty()) {
 		        errors.rejectValue("languageQualifications", "text.field.empty");
 		    } else {

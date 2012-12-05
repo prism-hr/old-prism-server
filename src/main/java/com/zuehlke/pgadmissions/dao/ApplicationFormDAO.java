@@ -175,11 +175,11 @@ public class ApplicationFormDAO {
 			apps.addAll(getSubmittedApplicationsInProgramsOfWhichAdmin(user));
 		}
 		
-		apps.addAll(getSubmittedApplicationsOfWhichApplicationAdministrator(user));
-		
 		if (!user.getProgramsOfWhichApprover().isEmpty()) {
 			apps.addAll(getApprovedApplicationsInProgramsOfWhichApprover(user));
 		}
+
+		apps.addAll(getSubmittedApplicationsOfWhichApplicationAdministrator(user));
 
 		apps.addAll(getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(user));
 		

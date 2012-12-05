@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
@@ -12,10 +13,9 @@ public class ReviewStateChangeEvent extends StateChangeEvent {
 
 	private static final long serialVersionUID = -67490702968630612L;
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "review_round_id")
 	private ReviewRound reviewRound;
-	
 	
 	public ReviewRound getReviewRound() {
 		return reviewRound;

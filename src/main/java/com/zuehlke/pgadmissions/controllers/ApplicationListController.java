@@ -48,7 +48,7 @@ public class ApplicationListController {
             @RequestParam(required = false) String searchTerm, 
             @RequestParam(required = false) SortCategory sortCategory, 
             @RequestParam(required = false) SortOrder order,
-            @RequestParam(required = false) Integer blockCount, 
+            @RequestParam(required = false) Integer blockCount,
             Model model) {
 	    model.addAttribute("applications", getApplications(searchCategory, searchTerm, sortCategory, order, blockCount));
 		return APPLICATION_LIST_SECTION_VIEW_NAME;

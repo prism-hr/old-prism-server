@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -19,7 +20,6 @@ import javax.persistence.TemporalType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Access(AccessType.FIELD) 
 public abstract class Event extends DomainObject<Integer> {
-
 	
 	private static final long serialVersionUID = -3417291018172094109L;
 
@@ -27,11 +27,11 @@ public abstract class Event extends DomainObject<Integer> {
 	@Column(name = "event_date")
 	protected Date date;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "application_form_id")
 	protected ApplicationForm application;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "registered_user_id")
 	protected RegisteredUser user;
 

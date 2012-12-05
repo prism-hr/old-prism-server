@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -31,7 +32,7 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 150)
 	private String employerName;
 	
-	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "address_id")
 	@Valid
@@ -53,7 +54,7 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	@Column(name="end_date")
 	private Date endDate;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
 

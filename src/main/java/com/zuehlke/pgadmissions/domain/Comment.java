@@ -8,6 +8,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -37,7 +38,7 @@ public class Comment extends DomainObject<Integer> implements Comparable<Comment
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "comment_id")
 	private List<Document> documents = new ArrayList<Document>(); 
 	
@@ -68,11 +69,11 @@ public class Comment extends DomainObject<Integer> implements Comparable<Comment
 		this.application = application;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	private RegisteredUser user = null;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application = null;
 	

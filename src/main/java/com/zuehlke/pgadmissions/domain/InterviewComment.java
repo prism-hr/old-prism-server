@@ -4,6 +4,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
@@ -11,25 +12,19 @@ import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
-
 @Entity(name="INTERVIEW_COMMENT")
 @Access(AccessType.FIELD)
 public class InterviewComment extends Comment{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 9120577563568889651L;
 
-	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "interviewer_id")
 	private Interviewer interviewer;
 	
-	
 	@Column(name = "willing_to_supervise")
 	private Boolean willingToSupervise;
-	
 	
 	@Column(name="suitable_candidate")
 	private Boolean suitableCandidateForUcl;
@@ -37,10 +32,8 @@ public class InterviewComment extends Comment{
 	@Column(name="applicant_suitable_for_programme")
 	private Boolean suitableCandidateForProgramme;
 	
-	
 	@Column(name = "decline")
 	private boolean decline;
-	
 	
 	@Column(name = "admins_notified")
 	private boolean adminsNotified;
@@ -49,8 +42,6 @@ public class InterviewComment extends Comment{
 	@Column(name="comment_type")
 	private CommentType type;
 	
-
-
 	public CommentType getType() {
 		return type;
 	}

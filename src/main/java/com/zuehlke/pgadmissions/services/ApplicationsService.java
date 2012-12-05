@@ -22,8 +22,9 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @Service("applicationsService")
 public class ApplicationsService {
-	private final int APPLICATION_BLOCK_SIZE = 25;
-
+	
+    private final int APPLICATION_BLOCK_SIZE = 25;
+    
 	private final ApplicationFormDAO applicationFormDAO;
 
 	ApplicationsService() {
@@ -74,8 +75,6 @@ public class ApplicationsService {
 		return applicationFormDAO.getApplicationsDueUpdateNotification();
 	}
 
-
-
 	/**
 	 * Returns all applications matching the given parameters
 	 * 
@@ -90,8 +89,8 @@ public class ApplicationsService {
 	 * @return
 	 */
 	@Transactional
-	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,//
-			SearchCategory searchCategory, String term,//
+	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,
+			SearchCategory searchCategory, String term,
 			SortCategory sortCategory, SortOrder sortOrder, int blockCount) {
 
 		List<ApplicationForm> matchingApplications = new ArrayList<ApplicationForm>();

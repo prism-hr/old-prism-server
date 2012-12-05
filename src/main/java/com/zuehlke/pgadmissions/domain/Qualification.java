@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,7 +29,7 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	@Transient
 	private boolean acceptedTerms;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "proof_of_award_id")
 	private Document proofOfAward;
 	
@@ -40,7 +41,7 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	private String qualificationSubject;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "institution_domicile_id")	
 	private Domicile institutionCountry;
 	
@@ -52,7 +53,7 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	@Column(name="qualification_language")
 	private String qualificationLanguage;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="qualification_type_id")
 	private QualificationType qualificationType;
 	

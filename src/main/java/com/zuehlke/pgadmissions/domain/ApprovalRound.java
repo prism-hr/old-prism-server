@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,15 +24,14 @@ import org.hibernate.annotations.GenerationTime;
 @Access(AccessType.FIELD)
 public class ApprovalRound extends DomainObject<Integer> {
 
-
 	private static final long serialVersionUID = 1068777060574638531L;
 	
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "approval_round_id")
 	private List<Supervisor> supervisors = new ArrayList<Supervisor>();	
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_form_id")	
 	private ApplicationForm application;	
 	

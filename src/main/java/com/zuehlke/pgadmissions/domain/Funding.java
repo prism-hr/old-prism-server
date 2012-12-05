@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -33,7 +34,7 @@ public class Funding extends DomainObject<Integer> implements FormSectionObject{
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.FundingTypeEnumUserType")
 	private FundingType type;
 	
-	@OneToOne(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY, orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "document_id")
 	private Document document;
@@ -49,7 +50,7 @@ public class Funding extends DomainObject<Integer> implements FormSectionObject{
 	@Column(name="award_date")
 	private Date awardDate;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
 	

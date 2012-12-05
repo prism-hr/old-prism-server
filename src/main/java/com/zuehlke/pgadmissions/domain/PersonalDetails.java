@@ -56,7 +56,7 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	private Boolean languageQualificationAvailable;
 	
 	@Valid
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE, javax.persistence.CascadeType.MERGE }, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE, javax.persistence.CascadeType.MERGE }, orphanRemoval = true)
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_personal_detail_id")
 	private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
@@ -97,19 +97,19 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	@Temporal(TemporalType.DATE)
 	private Date dateOfBirth;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "country_id")
 	private Country country;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ethnicity_id")
 	private Ethnicity ethnicity;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "disability_id")
 	private Disability disability;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "domicile_id")
 	private Domicile residenceCountry;
 

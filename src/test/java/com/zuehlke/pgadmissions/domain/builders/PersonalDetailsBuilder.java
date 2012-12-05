@@ -40,9 +40,15 @@ public class PersonalDetailsBuilder {
 	private Boolean languageQualificationAvailable;
 	private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
 	
+	private Boolean passportAvailable;
 	private Boolean requiresVisa;
 	private PassportInformation passportInformation;
     
+	public PersonalDetailsBuilder passportAvailable(Boolean passportAvailable) {
+        this.passportAvailable = passportAvailable;
+        return this;
+    }
+	
 	public PersonalDetailsBuilder languageQualifications(List<LanguageQualification> languageQualifications) {
 	    this.languageQualifications = languageQualifications;
 	    return this;
@@ -170,6 +176,7 @@ public class PersonalDetailsBuilder {
 		personalDetails.setLanguageQualifications(languageQualifications);
 		personalDetails.setPassportInformation(passportInformation);
 		personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
+		personalDetails.setPassportAvailable(passportAvailable);
 		return personalDetails;
 	}
 }

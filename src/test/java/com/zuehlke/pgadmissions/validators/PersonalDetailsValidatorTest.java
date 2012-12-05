@@ -380,20 +380,21 @@ public class PersonalDetailsValidatorTest {
 	@Before
 	public void setup() {
 		Language nationality = new Language();
-		personalDetails = new PersonalDetailsBuilder()//
-				.candiateNationalities(nationality)//
-				.applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm())//
-				.country(new CountryBuilder().toCountry())//
+		personalDetails = new PersonalDetailsBuilder()
+				.candiateNationalities(nationality)
+				.applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm())
+				.country(new CountryBuilder().toCountry())
 				.dateOfBirth(DateUtils.addYears(new Date(), -28))
 				.email("email@test.com")
-				.firstName("bob")//
-				.gender(Gender.INDETERMINATE_GENDER).lastName("smith")//
-				.title(Title.PROFESSOR)//
-				.residenceDomicile(new DomicileBuilder().toDomicile())//
-				.phoneNumber("+44 (0) 20 7911 5000")//
-				.ethnicity(new EthnicityBuilder().id(23).toEthnicity())//
-				.disability(new DisabilityBuilder().id(23213).toDisability())//
+				.firstName("bob")
+				.gender(Gender.INDETERMINATE_GENDER).lastName("smith")
+				.title(Title.PROFESSOR)
+				.residenceDomicile(new DomicileBuilder().toDomicile())
+				.phoneNumber("+44 (0) 20 7911 5000")
+				.ethnicity(new EthnicityBuilder().id(23).toEthnicity())
+				.disability(new DisabilityBuilder().id(23213).toDisability())
 				.requiresVisa(true)
+				.passportAvailable(true)
 				.englishFirstLanguage(true)
 				.languageQualificationAvailable(true)
                 .passportInformation(

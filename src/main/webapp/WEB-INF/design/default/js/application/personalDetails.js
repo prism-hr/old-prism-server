@@ -6,11 +6,13 @@ $(document).ready(function() {
     
     showOrHideNationalityButton();
     
-    if ($("input[name='requiresVisa']:checked").val() == "true") {
+    if ($("input[name='passportAvailable']:checked").val() == "true") {
     	enablePassportInformation();
     } else {
     	disablePassportInformation();
     }
+    
+    isRequireVisa();
     
     if ($("input[name='languageQualificationAvailable']:checked").val() == "true") {
     	enableLanguageQualifications();
@@ -23,6 +25,8 @@ $(document).ready(function() {
 	} else {
 		disableOtherLanguageQualification();
 	}
+    
+    isEnglishFirstLanguage();
     
     $("#acceptTermsPEDValue").val("NO");
 
@@ -122,9 +126,7 @@ $(document).ready(function() {
             $("#acceptTermsPEDValue").val("NO");
         } else {
             $("#acceptTermsPEDValue").val("YES");
-
             persImgCount = 0;
-
         }
     });
     
@@ -132,27 +134,26 @@ $(document).ready(function() {
     // Require visa
     // -------------------------------------------------------------------------------
     $("input[name='requiresVisa']").bind('change', function() {
-    	var selected_radio = $("input[name='requiresVisa']:checked").val();
+    	isRequireVisa();
+    }); 
+    
+    // -------------------------------------------------------------------------------
+    // Passport Available
+    // -------------------------------------------------------------------------------
+    $("input[name='passportAvailable']").bind('change', function() {
+    	var selected_radio = $("input[name='passportAvailable']:checked").val();
     	if (selected_radio == 'true')   {
     		enablePassportInformation();
     	} else {
     		disablePassportInformation();
     	}
-    });            
+    }); 
 
     // -------------------------------------------------------------------------------
     // Is English your first language?*
     // -------------------------------------------------------------------------------
     $("input[name='englishFirstLanguage']").bind('change', function() {
-    	var selected_radio = $("input[name='englishFirstLanguage']:checked").val();
-    	if (selected_radio == 'true')   {
-    		$("input[name='languageQualificationAvailable']").attr("disabled", "disabled");
-    		$("input[name='languageQualificationAvailable']").prop('checked', false);
-    		disableLanguageQualifications();
-    		disableOtherLanguageQualification();
-    	} else {
-    		$("input[name='languageQualificationAvailable']").removeAttr("disabled");
-    	}
+    	isEnglishFirstLanguage();
     });
     
     // -------------------------------------------------------------------------------
@@ -573,6 +574,33 @@ function enableOtherLanguageQualification() {
 	$('#otherQualificationTypeName').removeAttr("readonly");
 }
 
+function isEnglishFirstLanguage() {
+	var selected_radio = $("input[name='englishFirstLanguage']:checked").val();
+	if (selected_radio == 'true')   {
+		$("#lbl-languageQualificationAvailable").addClass("grey-label");
+		$("input[name='languageQualificationAvailable']").attr("disabled", "disabled");
+		$("input[name='languageQualificationAvailable']").prop('checked', false);
+		disableLanguageQualifications();
+		disableOtherLanguageQualification();
+	} else {
+		$("#lbl-languageQualificationAvailable").removeClass("grey-label");
+		$("input[name='languageQualificationAvailable']").removeAttr("disabled");
+	}
+}
+
+function isRequireVisa() {
+	var selected_radio = $("input[name='requiresVisa']:checked").val();
+	if (selected_radio == 'true')   {
+		$("#lbl-passportAvailable").removeClass("grey-label");
+		$("input[name='passportAvailable']").removeAttr("disabled", "disabled");
+	} else {
+		$("#lbl-passportAvailable").addClass("grey-label");
+		$("input[name='passportAvailable']").attr("disabled", "disabled");
+		$("input[name='passportAvailable']").prop('checked', false);
+		disablePassportInformation();
+	}
+}
+
 function postPersonalDetailsData(message) {
     // candidate nationalities
     if ($('#candidateNationalityCountry option:selected').val() != '') {
@@ -622,7 +650,11 @@ function postPersonalDetailsData(message) {
     if ($('input:radio[name=languageQualificationAvailable]:checked').length > 0) {
         postData.languageQualificationAvailable = $('input:radio[name=languageQualificationAvailable]:checked').val();
     }
-
+    
+    if ($('input:radio[name=passportAvailable]:checked').length > 0) {
+        postData.passportAvailable = $('input:radio[name=passportAvailable]:checked').val();
+    }
+    
     var gender = $("input[name='genderRadio']:checked").val();
     if (gender) {
         postData.gender = gender;

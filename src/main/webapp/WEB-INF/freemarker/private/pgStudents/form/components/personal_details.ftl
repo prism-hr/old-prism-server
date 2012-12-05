@@ -212,7 +212,7 @@
             </div>
             
             <div class="row">
-                <label class="plain-label">Do you have an English language qualification?<em>*</em></label>
+                <label id="lbl-languageQualificationAvailable" class="plain-label grey-label">Do you have an English language qualification?<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.available'/>"></span>
                 <div class="field">
                     <label>
@@ -560,7 +560,7 @@
                     <div class="field">                             
                         <label>
                             <input type="radio" name="requiresVisa" id="requiresVisaYes" value="true"
-                            <#if  personalDetails.isRequiresVisaSet() &&  personalDetails.getRequiresVisa() >
+                            <#if  personalDetails.isRequiresVisaSet() && personalDetails.getRequiresVisa() >
                                       checked="checked"
                             </#if>
                             <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -568,8 +568,8 @@
                             </#if>/> Yes
                         </label>
                         <label>
-                            <input type="radio" name="requiresVisa" id="requiresVisaYes" value="false"
-                            <#if personalDetails.isRequiresVisaSet() &&  !personalDetails.getRequiresVisa()>
+                            <input type="radio" name="requiresVisa" id="requiresVisaNo" value="false"
+                            <#if personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa()>
                                       checked="checked"
                             </#if>
                             <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -578,6 +578,39 @@
                         </label>
                     </div>
                     <@spring.bind "personalDetails.requiresVisa" />
+                    <#list spring.status.errorMessages as error >
+                        <div class="row">
+                            <div class="field">
+                                <span class="invalid">${error}</span>
+                            </div>
+                        </div>
+                    </#list>
+                </div>
+
+                <div class="row">
+                    <label id="lbl-passportAvailable" class="plain-label grey-label">Do you have a passport?<em>*</em></label>
+                    <span class="hint" data-desc="<@spring.message 'personalDetails.passportAvailable'/>"></span>
+                    <div class="field">                             
+                        <label>
+                            <input type="radio" name="passportAvailable" id="passportAvailableYes" value="true"
+                            <#if  personalDetails.isPassportAvailableSet() && personalDetails.getPassportAvailable() >
+                                      checked="checked"
+                            </#if>
+                            <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+                                      disabled="disabled"
+                            </#if>/> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="passportAvailable" id="passportAvailableNo" value="false"
+                            <#if personalDetails.isPassportAvailableSet() && !personalDetails.getPassportAvailable()>
+                                      checked="checked"
+                            </#if>
+                            <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+                                      disabled="disabled"
+                            </#if>/> No
+                        </label>
+                    </div>
+                    <@spring.bind "personalDetails.passportAvailable" />
                     <#list spring.status.errorMessages as error >
                         <div class="row">
                             <div class="field">

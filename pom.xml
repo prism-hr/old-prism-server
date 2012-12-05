@@ -435,7 +435,7 @@
 			<id>jenkins</id>
 			<properties>
 				<sql.host>192.168.11.115</sql.host>
-				<sql.db>pgadmissions</sql.db>
+				<sql.db>pgadmissions_prod</sql.db>
 			</properties>
 			<build>
 				<plugins>

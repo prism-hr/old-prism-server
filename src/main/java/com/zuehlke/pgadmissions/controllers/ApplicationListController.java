@@ -50,9 +50,18 @@ public class ApplicationListController {
             @RequestParam(required = false) SortOrder order,
             @RequestParam(required = false) Integer blockCount, 
             Model model) {
-	    int blockIx = blockCount == null ? 1 : blockCount;
-	    model.addAttribute("applications", applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, order, blockIx));
+	    model.addAttribute("applications", getApplications(searchCategory, searchTerm, sortCategory, order, blockCount));
 		return APPLICATION_LIST_SECTION_VIEW_NAME;
+	}
+	
+	public List<ApplicationForm> getApplications(
+	        SearchCategory searchCategory,
+            String searchTerm, 
+            SortCategory sortCategory, 
+            SortOrder order,
+            Integer blockCount) {
+	    int blockIx = blockCount == null ? 1 : blockCount;
+	    return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, order, blockIx);
 	}
 
 	@ModelAttribute("user")

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 @Service("applicationsService")
 public class ApplicationsService {
 	
-    private final int APPLICATION_BLOCK_SIZE = 25;
+    private final int APPLICATION_BLOCK_SIZE = 50;
     
 	private final ApplicationFormDAO applicationFormDAO;
 
@@ -75,26 +74,24 @@ public class ApplicationsService {
 		return applicationFormDAO.getApplicationsDueUpdateNotification();
 	}
 
-	/**
-	 * Returns all applications matching the given parameters
-	 * 
-	 * @param user
-	 * @param searchCategory
-	 * @param term
-	 * @param sortCategory
-	 * @param sortOrder
-	 * @param blockCount
-	 *            number of blocks of applications which should be returned (see
-	 *            {@link #APPLICATION_BLOCK_SIZE}).
-	 * @return
-	 */
 	@Transactional
-	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,
-			SearchCategory searchCategory, String term,
-			SortCategory sortCategory, SortOrder sortOrder, int blockCount) {
+    public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,
+            SearchCategory searchCategory,
+            String term, 
+            SortCategory sort, 
+            SortOrder order,
+            Integer blockCount) {
 
+	    int pageCount = blockCount == null ? 1 : blockCount;
+        SortCategory sortCategory = sort == null ? SortCategory.DEFAULT : sort;
+        SortOrder sortOrder = order == null ? SortOrder.ASCENDING : order;
+        
+        if (pageCount < 0) {
+            pageCount = 0;
+        }
+	    
 		List<ApplicationForm> matchingApplications = new ArrayList<ApplicationForm>();
-		List<ApplicationForm> visibleApplications = applicationFormDAO.getVisibleApplications(user);
+		List<ApplicationForm> visibleApplications = applicationFormDAO.getVisibleApplications(user, sortCategory, sortOrder, pageCount, APPLICATION_BLOCK_SIZE);
 
 		if (searchCategory == null) {
 			matchingApplications = visibleApplications;
@@ -104,19 +101,19 @@ public class ApplicationsService {
 			}
 			for (ApplicationForm applicationForm : visibleApplications) {
 				if (searchCategory == SearchCategory.APPLICATION_NUMBER) {
-					if (applicationForm.getApplicationNumber().toLowerCase().contains(term.toLowerCase())) {
+					if (StringUtils.containsIgnoreCase(applicationForm.getApplicationNumber(), term)) {
 						matchingApplications.add(applicationForm);
 					}
 				}
 				if (searchCategory == SearchCategory.PROGRAMME_NAME) {
 					String fullProgramName = applicationForm.getProgram().getCode() + applicationForm.getProgram().getTitle();
-					if (fullProgramName.toLowerCase().contains(term.toLowerCase())) {
+					if (StringUtils.containsIgnoreCase(fullProgramName, term)) {
 						matchingApplications.add(applicationForm);
 					}
 				}
 				if (searchCategory == SearchCategory.APPLICANT_NAME) {
 					String fullApplicantName = applicationForm.getApplicant().getFirstName() + applicationForm.getApplicant().getLastName();
-					if (fullApplicantName.toLowerCase().contains(term.toLowerCase())) {
+					if (StringUtils.containsIgnoreCase(fullApplicantName, term)) {
 						matchingApplications.add(applicationForm);
 					}
 				}
@@ -132,34 +129,12 @@ public class ApplicationsService {
 				}
 			}
 		}
-		matchingApplications = sortApplicationList(matchingApplications, sortCategory, sortOrder);
-
-		matchingApplications = reduceApplicationListSize(matchingApplications, blockCount);
-		
+	
+//		if (sortCategory == SortCategory.DEFAULT) {
+//		    Collections.sort(matchingApplications);
+//		}
+	
 		return matchingApplications;
-	}
-
-	private List<ApplicationForm> sortApplicationList(List<ApplicationForm> applications, SortCategory sortCategory, SortOrder sortOrder) {
-		if (sortCategory == null) {// natural ordering on submitted date.
-			Collections.sort(applications);
-			return applications;
-		}
-		if (sortOrder == null) {
-			throw new IllegalArgumentException("Sort order cannot be null when a sort-category is set!");
-		}
-		Collections.sort(applications, sortCategory.getComparator(sortOrder));
-		return applications;
-	}
-
-	private List<ApplicationForm> reduceApplicationListSize(List<ApplicationForm> applications, int blockCount) {
-		if (blockCount < 1) {
-			throw new IllegalArgumentException("Number of application blocks must be greater than 0!");
-		}
-		int toIndex = blockCount * APPLICATION_BLOCK_SIZE;
-		if (toIndex > applications.size()) {
-			return applications;
-		}
-		return applications.subList(0, toIndex);
 	}
 
 	@Transactional

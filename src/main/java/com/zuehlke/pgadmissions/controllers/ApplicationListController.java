@@ -57,11 +57,21 @@ public class ApplicationListController {
 	public List<ApplicationForm> getApplications(
 	        SearchCategory searchCategory,
             String searchTerm, 
-            SortCategory sortCategory, 
+            SortCategory sort, 
             SortOrder order,
             Integer blockCount) {
-	    int blockIx = blockCount == null ? 1 : blockCount;
-	    return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, order, blockIx);
+	    
+	    int pageCount = blockCount == null ? 1 : blockCount;
+        
+	    SortCategory sortCategory = sort == null ? SortCategory.APPLICATION_DATE : sort;
+        
+	    SortOrder sortOrder = order == null ? SortOrder.DESCENDING : order;
+        
+        if (pageCount < 0) {
+            pageCount = 0;
+        }
+	    
+	    return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, sortOrder, pageCount);
 	}
 
 	@ModelAttribute("user")

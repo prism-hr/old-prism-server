@@ -154,7 +154,7 @@ public class ApplicationFormDAO {
 	}
 	
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
-	    return this.getVisibleApplications(user, SortCategory.DEFAULT, SortOrder.DESCENDING, 1, 25);
+	    return this.getVisibleApplications(user, SortCategory.DEFAULT, SortOrder.DESCENDING, 1, 50);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -199,7 +199,6 @@ public class ApplicationFormDAO {
         criteria = sortCategory.setOrderCriteria(sortOrder, criteria);
         
         return criteria.setMaxResults(pageCount * itemsPerPage).setFirstResult((pageCount - 1) * itemsPerPage).list();
-        //return criteria.setMaxResults(pageCount * itemsPerPage).setFirstResult(0).list();
     }
 
 	private Criterion getAllApplicationsForSuperAdministrator() {

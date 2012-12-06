@@ -57,6 +57,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.domain.enums.SortCategory;
+import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
@@ -935,14 +937,14 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldReturnAllSubmittedApplicationsForSuperAdmin() {
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).submittedDate(new Date())
 				.toApplicationForm();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED)
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).submittedDate(new Date())
 				.toApplicationForm();
 		save(applicationFormOne, applicationFormTwo);
 		flushAndClearSession();
 		RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
-		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin);
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin, SortCategory.DEFAULT, SortOrder.DESCENDING, 1, 25);
 		assertTrue(applications.contains(applicationFormOne));
 		assertFalse(applications.contains(applicationFormTwo));
 	}

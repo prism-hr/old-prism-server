@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao.mappings;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
@@ -18,6 +20,12 @@ public abstract class AutomaticRollbackTestCase {
 		sessionFactory = (SessionFactory) ApplicationContext.getInstance().getClassPathXmlApplicationContext().getBean("sessionFactory");
 	}
 
+	protected void save(List<? extends DomainObject<?>> domainObjects) {
+        for (DomainObject<?> domainObject : domainObjects) {
+            sessionFactory.getCurrentSession().save(domainObject);
+        }
+    }
+	
 	protected void save(DomainObject<?>... domainObjects) {
 		for (DomainObject<?> domainObject : domainObjects) {
 			sessionFactory.getCurrentSession().save(domainObject);

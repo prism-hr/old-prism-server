@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -13,9 +12,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -27,14 +24,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @Repository
 public class ApplicationFormDAO {
@@ -153,119 +146,6 @@ public class ApplicationFormDAO {
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
-	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
-	    return this.getVisibleApplications(user, SortCategory.DEFAULT, SortOrder.DESCENDING, 1, 50);
-	}
-	
-	@SuppressWarnings("unchecked")
-    public List<ApplicationForm> getVisibleApplications(RegisteredUser user, SortCategory sortCategory, SortOrder sortOrder, int pageCount, int itemsPerPage) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
-        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-            criteria.add(getAllApplicationsForSuperAdministrator());
-        } else {
-            
-            Disjunction disjunction = Restrictions.disjunction();
-            
-            if (user.isInRole(Authority.APPLICANT)) {
-                disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichApplicant(user)));
-                disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichReferee(user)));
-            }
-            
-            if (user.isInRole(Authority.REFEREE)) {
-                disjunction.add(Subqueries.propertyIn("id", applicationsOfWhichReferee(user)));
-            }
-            
-            if (!user.getProgramsOfWhichAdministrator().isEmpty()) {
-                disjunction.add(Subqueries.propertyIn("id", getSubmittedApplicationsInProgramsOfWhichAdmin(user)));
-            }
-
-            if (!user.getProgramsOfWhichApprover().isEmpty()) {
-                disjunction.add(Subqueries.propertyIn("id", getApprovedApplicationsInProgramsOfWhichApprover(user)));
-            }
-            
-            disjunction.add(Subqueries.propertyIn("id", getSubmittedApplicationsOfWhichApplicationAdministrator(user)));
-
-            disjunction.add(Subqueries.propertyIn("id", getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(user)));
-            
-            disjunction.add(Subqueries.propertyIn("id", getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(user)));
-            
-            disjunction.add(Subqueries.propertyIn("id", getApplicationsCurrentlyInApprovalOrApprovedOfWhichSupervisorOfLatestApprovalRound(user)));                
-
-            criteria.add(disjunction);
-        }
-        
-        criteria = sortCategory.setOrderCriteria(sortOrder, criteria);
-        
-        return criteria.setMaxResults(pageCount * itemsPerPage).setFirstResult((pageCount - 1) * itemsPerPage).list();
-    }
-
-	private Criterion getAllApplicationsForSuperAdministrator() {
-	    return Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED));
-	}
-	
-	private DetachedCriteria applicationsOfWhichReferee(RegisteredUser user) {
-        return DetachedCriteria.forClass(ApplicationForm.class)
-                .setProjection(Projections.property("id"))
-                .createAlias("referees", "referee")
-                .add(Restrictions.eq("referee.user", user));
-	}
-
-	private DetachedCriteria applicationsOfWhichApplicant(RegisteredUser user) {
-		return DetachedCriteria.forClass(ApplicationForm.class)
-		        .setProjection(Projections.property("id"))
-		        .add(Restrictions.eq("applicant", user));    
-	}
-
-	private DetachedCriteria getSubmittedApplicationsOfWhichApplicationAdministrator(RegisteredUser user) {
-	    return DetachedCriteria.forClass(ApplicationForm.class)
-	            .setProjection(Projections.property("id"))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
-                .add(Restrictions.eq("applicationAdministrator", user));
-	}
-
-	private DetachedCriteria getSubmittedApplicationsInProgramsOfWhichAdmin(RegisteredUser user) {
-	    return DetachedCriteria.forClass(ApplicationForm.class)
-	            .setProjection(Projections.property("id"))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
-                .add(Restrictions.in("program", user.getProgramsOfWhichAdministrator()));
-	}
-
-	private DetachedCriteria getApprovedApplicationsInProgramsOfWhichApprover(RegisteredUser user) {
-	    return DetachedCriteria.forClass(ApplicationForm.class)
-	            .setProjection(Projections.property("id"))
-                .add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
-                .add(Restrictions.in("program", user.getProgramsOfWhichApprover()));
-	}
-
-	private DetachedCriteria getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(RegisteredUser user) {
-	    return DetachedCriteria.forClass(ApplicationForm.class)
-	            .setProjection(Projections.property("id"))
-                .add(Restrictions.eq("status", ApplicationFormStatus.REVIEW))
-                .createAlias("latestReviewRound", "latestReviewRound")
-                .createAlias("latestReviewRound.reviewers", "reviewer")
-                .add(Restrictions.eq("reviewer.user", user));
-	}
-
-	private DetachedCriteria getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(RegisteredUser user) {
-	    return DetachedCriteria.forClass(ApplicationForm.class)
-	            .setProjection(Projections.property("id"))
-                .add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
-                .createAlias("latestInterview", "latestInterview")
-                .createAlias("latestInterview.interviewers", "interviewer")
-                .add(Restrictions.eq("interviewer.user", user));
-	}
-
-	private DetachedCriteria getApplicationsCurrentlyInApprovalOrApprovedOfWhichSupervisorOfLatestApprovalRound(RegisteredUser user) {
-	    return DetachedCriteria.forClass(ApplicationForm.class)
-	            .setProjection(Projections.property("id"))
-                .add(Restrictions.in("status", Arrays.asList(ApplicationFormStatus.APPROVAL, ApplicationFormStatus.APPROVED)))
-                .createAlias("latestApprovalRound", "latestApprovalRound")
-                .createAlias("latestApprovalRound.supervisors", "supervisor")
-                .add(Restrictions.eq("supervisor.user", user));
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueRejectNotifications() {
 		Session session = sessionFactory.getCurrentSession();

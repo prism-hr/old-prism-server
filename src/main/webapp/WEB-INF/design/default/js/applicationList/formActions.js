@@ -1,3 +1,5 @@
+var loading = false;
+
 $(document).ready(function() {
 
     // Modal window functionality.
@@ -5,8 +7,6 @@ $(document).ready(function() {
 
     populateApplicationList(true);
     
-    var loading = false;
-
     // --------------------------------------------------------------------------------
     // TABLE SORTING
     // --------------------------------------------------------------------------------
@@ -21,6 +21,7 @@ $(document).ready(function() {
             fixedTip($('#search-go'), 'You must specify your filter.');
             return;
         }
+        resetPageCount();
         populateApplicationList();
     });
 
@@ -85,20 +86,28 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // INFINITE SCROLL
     // --------------------------------------------------------------------------------
-    $(window).scroll(function() {
+//    $(window).scroll(function() {
+//        if (loading) {
+//            return;
+//        }
+//        
+//        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+//            $(window).scrollTop($(window).scrollTop() - 80);
+//            increasePageCount();
+//            populateApplicationList();
+//        }
+//    });
+    
+    $("td#loadMoreApplications").live('click', function() {
         if (loading) {
-            return;
+          return;
         }
-        
-        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-            $(window).scrollTop($(window).scrollTop() - 80);
-            increasePageCount();
-            populateApplicationList();
-        }
-    });  
+        increasePageCount();
+        populateApplicationList();
+    });
 });
 
-function resetPageCount(count) {
+function resetPageCount() {
     $('#block-index').val("1");
 }
 
@@ -146,6 +155,9 @@ function populateApplicationList(reset) {
     $('div.content-box-inner').append('<div class="ajax" />');
     $('.content-box-inner').append('<div class="fetching">Fetching more applications...</div>');
     
+    $('#loadMoreApplicationsTable').show();
+    var dataWasEmpty = false;
+    
     $.ajax({
         type : 'GET',
         statusCode : {
@@ -160,13 +172,21 @@ function populateApplicationList(reset) {
         success : function(data) {
             if (reset || getPageCount() === 1) {
                 $('#applicationListSection').empty();
-            } 
-            $('#applicationListSection').append(data);                
+            }
+            
+            if (data.indexOf("applicationRow") !== -1) {
+                $('#applicationListSection').append(data);
+            } else {
+                dataWasEmpty = true;
+            }
         },
         complete : function() {
             $('.content-box-inner div.fetching, .content-box-inner div.ajax').remove();
             addToolTips();
             loading = false;
+            if (dataWasEmpty) {
+                $('#loadMoreApplicationsTable').hide();
+            }
         }
     });
 }

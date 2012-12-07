@@ -110,7 +110,7 @@ public class ApplicationListControllerTest {
 			
 		};
 		
-		List<ApplicationForm> applications = controller.getApplications(SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, null);
+		List<ApplicationForm> applications = controller.getApplications(SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1);
 		
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals(2, applications.size());

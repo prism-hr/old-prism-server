@@ -195,6 +195,7 @@ public class PersonalDetailsController {
     public String addLanguageQualification(@Valid LanguageQualification languageQualification, BindingResult result, 
             @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
 
+        personalDetails.setEnglishFirstLanguage(false);
         personalDetails.setLanguageQualificationAvailable(true);
         model.addAttribute("languageQualification", languageQualification);
         
@@ -279,6 +280,27 @@ public class PersonalDetailsController {
             LanguageQualification languageQualification = personalDetails.getLanguageQualifications().get(listIndex);
             languageQualification.setLanguageQualificationDocument(null);
         }
+        model.addAttribute("languageQualification", new LanguageQualification());
+        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+    }
+    
+    @RequestMapping(value = "/deleteAllLanguageQualifications", method = RequestMethod.POST)
+    public String deleteAllLanguageQualifications(
+            @RequestParam(value = "englishFirstLanguage", required = false) Boolean englishFirstLanguage,
+            @RequestParam(value = "languageQualificationAvailable", required = false) Boolean languageQualificationAvailable,
+            @ModelAttribute("personalDetails") PersonalDetails personalDetails, 
+            Model model) {
+        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+            throw new ResourceNotFoundException();
+        }
+        
+        for (LanguageQualification languageQualification : personalDetails.getLanguageQualifications()) {
+            languageQualification.setLanguageQualificationDocument(null);
+        }
+        
+        personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
+        personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
+        personalDetails.getLanguageQualifications().clear();
         model.addAttribute("languageQualification", new LanguageQualification());
         return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
     }

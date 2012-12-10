@@ -153,7 +153,7 @@ function populateApplicationList(reset) {
     $('#search-box span.invalid').remove();
 
     $('div.content-box-inner').append('<div class="ajax" />');
-    $('.content-box-inner').append('<div class="fetching">Fetching more applications...</div>');
+    //$('.content-box-inner').append('<div class="fetching">Fetching more applications...</div>');
     
     $('#loadMoreApplicationsTable').show();
     var dataWasEmpty = false;
@@ -185,7 +185,7 @@ function populateApplicationList(reset) {
             addToolTips();
             loading = false;
             if (dataWasEmpty) {
-                $('#loadMoreApplicationsTable').hide();
+                //$('#loadMoreApplicationsTable').hide();
             }
         }
     });

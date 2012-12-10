@@ -153,7 +153,10 @@ $(document).ready(function() {
     // Is English your first language?*
     // -------------------------------------------------------------------------------
     $("input[name='englishFirstLanguage']").bind('change', function() {
-    	isEnglishFirstLanguage();
+    	var returnVal = isEnglishFirstLanguage();
+    	if (returnVal) {
+    	    ajaxDeleteAllLanguageQualifications();
+    	}
     });
     
     // -------------------------------------------------------------------------------
@@ -162,10 +165,11 @@ $(document).ready(function() {
     $("input[name='languageQualificationAvailable']").bind('change', function() {
     	$('#languageQualification_div span.invalid').remove();
     	var selected_radio = $("input[name='languageQualificationAvailable']:checked").val();
-    	if (selected_radio == 'true')   {
+    	if (selected_radio == 'true') {
     		enableLanguageQualifications();
         } else {
         	disableLanguageQualifications();
+        	ajaxDeleteAllLanguageQualifications();
         }
     });  
     
@@ -252,7 +256,7 @@ $(document).ready(function() {
 		$("#examTakenOnlineNo").removeAttr("checked");
 		$("#examTakenOnlineYes").removeAttr("checked");
 		
-		//$('#languageQualification_div span.invalid').remove();
+		$('#languageQualification_div span.invalid').remove();
 		
 		$("#otherQualificationTypeName, #dateOfExamination").val("");
 		ajaxLanguageQualificationDocumentDelete();
@@ -461,6 +465,40 @@ function ajaxLanguageQualificationDocumentDelete() {
 	}
 }
 
+function ajaxDeleteAllLanguageQualifications() {
+
+    var postData = {
+            applicationId: $('#applicationId').val(),
+            cacheBreaker: new Date().getTime(),
+    };
+    
+    if ($('input:radio[name=englishFirstLanguage]:checked').length > 0) {
+        postData.englishFirstLanguage = $('input:radio[name=englishFirstLanguage]:checked').val();
+    }
+    
+    if ($('input:radio[name=languageQualificationAvailable]:checked').length > 0) {
+        postData.languageQualificationAvailable = $('input:radio[name=languageQualificationAvailable]:checked').val();
+    }
+    
+    $.ajax({
+        type : 'POST',
+        statusCode : {
+            401 : function() { window.location.reload(); },
+            500 : function() { window.location.href = "/pgadmissions/error"; },
+            404 : function() { window.location.href = "/pgadmissions/404"; },
+            400 : function() { window.location.href = "/pgadmissions/400"; },
+            403 : function() { window.location.href = "/pgadmissions/404"; }
+        },
+        url : "/pgadmissions/update/deleteAllLanguageQualifications",
+        data : postData,
+        success : function(data) {
+            $('#personalDetailsSection').html(data);                
+        },
+        complete : function() {
+        }
+    });
+}
+
 function selectValue(elementName) {
 	var elemenList = $("input[name='" + elementName + "'],select[name='" + elementName + "']");
 	for (var idx = 0; idx < elemenList.length; idx++) {
@@ -582,10 +620,12 @@ function isEnglishFirstLanguage() {
 		$("input[name='languageQualificationAvailable']").prop('checked', false);
 		disableLanguageQualifications();
 		disableOtherLanguageQualification();
-		//$("#languageQualificationsTable > td").remove();
+		$("#languageQualificationsTable").empty();
+		return true;
 	} else {
 		$("#lbl-languageQualificationAvailable").removeClass("grey-label");
 		$("input[name='languageQualificationAvailable']").removeAttr("disabled");
+		return false;
 	}
 }
 

@@ -252,7 +252,7 @@ $(document).ready(function() {
 		$("#examTakenOnlineNo").removeAttr("checked");
 		$("#examTakenOnlineYes").removeAttr("checked");
 		
-		$('#languageQualification_div span.invalid').remove();
+		//$('#languageQualification_div span.invalid').remove();
 		
 		$("#otherQualificationTypeName, #dateOfExamination").val("");
 		ajaxLanguageQualificationDocumentDelete();
@@ -582,6 +582,7 @@ function isEnglishFirstLanguage() {
 		$("input[name='languageQualificationAvailable']").prop('checked', false);
 		disableLanguageQualifications();
 		disableOtherLanguageQualification();
+		//$("#languageQualificationsTable > td").remove();
 	} else {
 		$("#lbl-languageQualificationAvailable").removeClass("grey-label");
 		$("input[name='languageQualificationAvailable']").removeAttr("disabled");

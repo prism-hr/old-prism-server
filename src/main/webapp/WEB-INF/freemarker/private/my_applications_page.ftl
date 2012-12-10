@@ -107,7 +107,7 @@
                         
                         <table id="loadMoreApplicationsTable" class="data" border="0">
                             <tr>
-                                <td id="loadMoreApplications" align="center" style="cursor:pointer"><b>Display next 50 Applications</b></td>                                             
+                                <td id="loadMoreApplications" align="center" style="cursor:pointer; background:#FFFFFF; border:1px solid #AAAAAA"><span style="color:blue;font-weight:bold">Display next 50 Applications</span></td>                                             
                             </tr>
                         </table>
 

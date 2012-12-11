@@ -562,8 +562,7 @@ function enableLanguageQualifications() {
 	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').removeAttr("disabled", "disabled");
 	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').removeAttr("readonly", "readonly");
 	
-	$("#lbl-qualificationType, #lbl-otherQualificationTypeName, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, " +
-			"#lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").removeClass("grey-label");
+	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").removeClass("grey-label");
 	
 	$("#addLanguageQualificationButton").show();
 	$("#updateLanguageQualificationButton").hide();
@@ -579,8 +578,7 @@ function disableLanguageQualifications() {
 	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').attr("disabled", "disabled");
 	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').attr("readonly", "readonly");
 	
-	$("#lbl-qualificationType, #lbl-otherQualificationTypeName, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, " +
-			"#lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").addClass("grey-label");
+	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").addClass("grey-label");
 	
 	$("#addLanguageQualificationButton").hide();
 	$("#updateLanguageQualificationButton").hide();
@@ -605,11 +603,13 @@ function clearLanguageQualification() {
 function disableOtherLanguageQualification() {
 	$('#otherQualificationTypeName').attr("disabled", "disabled");
 	$('#otherQualificationTypeName').attr("readonly", "readonly");
+	$('#lbl-otherQualificationTypeName').addClass("grey-label");
 }
 
 function enableOtherLanguageQualification() {
 	$('#otherQualificationTypeName').removeAttr("disabled");
 	$('#otherQualificationTypeName').removeAttr("readonly");
+	$('#lbl-otherQualificationTypeName').removeClass("grey-label");
 }
 
 function isEnglishFirstLanguage() {

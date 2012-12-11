@@ -312,7 +312,7 @@
             </#list>
             
             <div class="row">
-                <label id="lbl-otherQualificationTypeName" class="plain-label">Other Qualification Type Name<em>*</em></label>
+                <label id="lbl-otherQualificationTypeName" class="plain-label grey-label">Other Qualification Type Name<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.type.other'/>"></span>
                 <div class="field">
                     <input class="full" readonly="readonly" disabled="disabled" type="text" name="otherQualificationTypeName" id="otherQualificationTypeName" value="${(languageQualification.otherQualificationTypeName?html)!}" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> />

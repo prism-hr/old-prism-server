@@ -326,6 +326,7 @@ public class PersonalDetailsControllerTest {
         EasyMock.expect(resultMock.hasErrors()).andReturn(false);
         personalDetailsMock.addLanguageQualification(qualification);
         personalDetailsMock.setLanguageQualificationAvailable(true);
+        personalDetailsMock.setEnglishFirstLanguage(false);
         EasyMock.expect(modelMock.addAttribute("languageQualification", qualification)).andReturn(modelMock);
         EasyMock.expect(modelMock.addAttribute(EasyMock.eq("languageQualification"), EasyMock.isA(LanguageQualification.class))).andReturn(modelMock);
 

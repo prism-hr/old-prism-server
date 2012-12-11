@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -82,8 +83,11 @@ public class QualificationInstitutionDAO {
      * @param term a search term such as "Univers" which then finds all universities containing 
      * "Univers" in its name e.g "University of London", "University of Cambridge" etc.
      * @return a list of matching institutions
+     * 
+     * @deprecated PRISM is switching back to a drop down element rather than autosuggest.
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public List<QualificationInstitution> getEnableAndValiddInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String domicileCode, String term) {        
         DetachedCriteria qReferenceInstitutionCriteria = DetachedCriteria.forClass(QualificationInstitutionReference.class, "qr");
         qReferenceInstitutionCriteria.setProjection(Projections.property("qr.code"));
@@ -98,5 +102,19 @@ public class QualificationInstitutionDAO {
         qInstitutionsCriteria.add(Property.forName("q.code").in(qReferenceInstitutionCriteria));
 
         return qInstitutionsCriteria.getExecutableCriteria(sessionFactory.getCurrentSession()).list(); 
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<QualificationInstitution> getEnabledInstitutionsByCountryCode(String domicileCode) {
+        Conjunction conjunction = Restrictions.conjunction();
+        conjunction.add(Restrictions.eq("enabled", true));
+        conjunction.add(Restrictions.eq("domicileCode", domicileCode));
+        
+        return sessionFactory.getCurrentSession()
+            .createCriteria(QualificationInstitution.class)
+            .add(conjunction)
+            .addOrder(Order.asc("name"))
+            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+            .list();
     }
 }

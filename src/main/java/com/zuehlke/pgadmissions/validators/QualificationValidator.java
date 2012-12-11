@@ -33,26 +33,40 @@ public class QualificationValidator  extends FormSectionObjectValidator implemen
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "text.field.empty");		
+		
 		Qualification qualification = (Qualification) target;
 		String startDate = qualification.getQualificationStartDate() == null ? "": qualification.getQualificationStartDate().toString();
 		String awardDate = qualification.getQualificationAwardDate() == null ? "": qualification.getQualificationAwardDate().toString();
+		
 		if (StringUtils.isNotBlank(startDate) && qualification.getQualificationAwardDate() != null && qualification.getQualificationStartDate().after(qualification.getQualificationAwardDate())) {
 			errors.rejectValue("qualificationStartDate", "qualification.start_date.notvalid");
 		}
+		
 		if (StringUtils.isNotBlank(startDate) && qualification.getQualificationStartDate().after(today)) {
 			errors.rejectValue("qualificationStartDate", "date.field.notpast");
 		}
+		
 		if (StringUtils.isNotBlank(awardDate) && qualification.getQualificationAwardDate().after(today)) {
 			errors.rejectValue("qualificationAwardDate", "date.field.notpast");
 		}
+		
 		if (qualification.getCompleted()== CheckedStatus.YES && StringUtils.isBlank(awardDate)){
 			errors.rejectValue("qualificationAwardDate", "text.field.empty");
 		}
+		
 		if (qualification.getCompleted() == CheckedStatus.NO && StringUtils.isNotBlank(awardDate)){
 			errors.rejectValue("qualificationAwardDate", "text.field.empty");
 		}
+		
 		if (qualification.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
             errors.reject("");
         }
+		
+		String institutionCode = qualification.getQualificationInstitutionCode();
+		if (StringUtils.isNotBlank(institutionCode) && StringUtils.equalsIgnoreCase("OTHER", institutionCode)) {
+		    if (StringUtils.isBlank(qualification.getOtherQualificationInstitution())) {
+		        errors.rejectValue("otherQualificationInstitution", "text.field.empty");
+		    }
+		}
 	}
 }

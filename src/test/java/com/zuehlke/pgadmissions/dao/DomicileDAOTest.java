@@ -3,7 +3,10 @@ package com.zuehlke.pgadmissions.dao;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigInteger;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -43,4 +46,18 @@ public class DomicileDAOTest extends AutomaticRollbackTestCase{
         
         assertEquals(numberOfDomiciles.intValue() + 1, domicileDAO.getAllEnabledDomiciles().size());
     }
+	
+	@Test
+	public void shouldReturnEnabledDomicilesWithoutAlternateValues() {
+	    DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
+	    List<Domicile> domiciles = domicileDAO.getAllEnabledDomicilesExceptAlternateValues();
+	    for (Domicile domicile : domiciles) {
+	        Assert.assertTrue("The list contains a disabled domicile.", domicile.getEnabled());
+	        Assert.assertFalse("The list contains an alternate code.", StringUtils.equalsIgnoreCase(domicile.getCode(), "XF"));
+	        Assert.assertFalse("The list contains an alternate code.", StringUtils.equalsIgnoreCase(domicile.getCode(), "XG"));
+	        Assert.assertFalse("The list contains an alternate code.", StringUtils.equalsIgnoreCase(domicile.getCode(), "ZZ"));
+	        Assert.assertFalse("The list contains an alternate code.", StringUtils.equalsIgnoreCase(domicile.getCode(), "XH"));
+	        Assert.assertFalse("The list contains an alternate code.", StringUtils.equalsIgnoreCase(domicile.getCode(), "XI"));
+	    }
+	}
 }

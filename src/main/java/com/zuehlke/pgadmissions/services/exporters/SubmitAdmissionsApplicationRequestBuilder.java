@@ -49,7 +49,6 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeListTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.RefereeTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -61,7 +60,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -88,8 +86,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private final static String PHONE_NUMBER_NOT_PROVIDED_VALUE = "+44 (0) 0000 000 000";
     
     private final ObjectFactory xmlFactory;
-    
-    private final QualificationInstitutionDAO qualificationInstitutionDAO;
     
     private final DatatypeFactory datatypeFactory;
     
@@ -123,9 +119,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         }
     }
     
-    public SubmitAdmissionsApplicationRequestBuilder(QualificationInstitutionDAO qualificationInstitutionDAO, ObjectFactory xmlFactory) {
+    public SubmitAdmissionsApplicationRequestBuilder(ObjectFactory xmlFactory) {
         this.xmlFactory = xmlFactory;
-        this.qualificationInstitutionDAO = qualificationInstitutionDAO;
         try {
             datatypeFactory = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException dce) {
@@ -134,7 +129,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     }
     
     public SubmitAdmissionsApplicationRequestBuilder() {
-        this(null, null);
+        this(null);
     }
     
     public SubmitAdmissionsApplicationRequestBuilder applicationForm(final ApplicationForm applicationForm) {
@@ -480,28 +475,13 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 
                 InstitutionTp institutionTp = xmlFactory.createInstitutionTp();
                 
-                QualificationInstitution appropriateInstitution = selectAppropriateInstitution(qualification.getQualificationInstitution());
-                if (appropriateInstitution == null) {
-                    institutionTp.setCode(INSTITUTION_OTHER_CODE);
-                    institutionTp.setName(qualification.getQualificationInstitution());
-                    CountryTp countryTp = xmlFactory.createCountryTp();
-                    countryTp.setCode(qualification.getInstitutionCountry().getCode());
-                    countryTp.setName(qualification.getInstitutionCountry().getName());
-                    institutionTp.setCountry(countryTp);
-                } else {
-                    // TODO: Remove this in the future
-                    // The web service does only understand 6-digit codes. Use "OTHER" if it is not.
-                    if (appropriateInstitution.getCode().length() >= 6) {
-                        institutionTp.setCode(appropriateInstitution.getCode());
-                        institutionTp.setName(appropriateInstitution.getName());
-                    } else {
-                        institutionTp.setCode(INSTITUTION_OTHER_CODE);
-                        institutionTp.setName(appropriateInstitution.getName());
-                    }
-                    CountryTp countryTp = xmlFactory.createCountryTp();
-                    countryTp.setCode(appropriateInstitution.getDomicileCode());
-                    institutionTp.setCountry(countryTp);
-                }
+                institutionTp.setCode(qualification.getQualificationInstitutionCode());
+                institutionTp.setName(qualification.getQualificationInstitution());
+                CountryTp countryTp = xmlFactory.createCountryTp();
+                countryTp.setCode(qualification.getInstitutionCountry().getCode());
+                countryTp.setName(qualification.getInstitutionCountry().getName());
+                institutionTp.setCountry(countryTp);
+                
                 qualificationsTp.setInstitution(institutionTp);
                 resultList.getQualificationDetail().add(qualificationsTp);
             }
@@ -531,20 +511,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             resultList.getQualificationDetail().add(qualificationsTp);
         }
         return resultList;
-    }
-    
-    private QualificationInstitution selectAppropriateInstitution(String name) {
-        List<QualificationInstitution> institutionsByName = qualificationInstitutionDAO.getAllInstitutionByName(name);
-        QualificationInstitution selectedInstitution = null;
-        for (QualificationInstitution institution : institutionsByName) {
-            if (institution.getEnabled()) {
-                selectedInstitution = institution;
-            }
-        }
-        if (selectedInstitution == null && !institutionsByName.isEmpty()) {
-            institutionsByName.get(0);
-        }
-        return selectedInstitution;
     }
     
     private EmploymentDetailsTp buildEmployer() {

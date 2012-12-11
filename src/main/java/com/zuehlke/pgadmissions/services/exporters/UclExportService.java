@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
@@ -64,10 +63,8 @@ public class UclExportService {
 
     private final TaskScheduler scheduler;
 
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
-
     public UclExportService() {
-        this(null, null, null, null, null, 0, 0, null, null, null);
+        this(null, null, null, null, null, 0, 0, null, null);
     }
     
     @Autowired
@@ -80,8 +77,7 @@ public class UclExportService {
             @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}") int consecutiveSoapFaultsLimit,
             @Value("${xml.data.export.queue_pausing_delay_in_case_of_network_problem}") int queuePausingDelayInCaseOfNetworkProblemsDiscovered,
             SftpAttachmentsSendingService sftpAttachmentsSendingService, 
-            @Qualifier("ucl-export-service-scheduler") TaskScheduler scheduler,
-            QualificationInstitutionDAO qualificationInstitutionDAO) {
+            @Qualifier("ucl-export-service-scheduler") TaskScheduler scheduler) {
         super();
         this.webserviceCallingQueueExecutor = webserviceCallingQueueExecutor;
         this.sftpCallingQueueExecutor = sftpCallingQueueExecutor;
@@ -92,7 +88,6 @@ public class UclExportService {
         this.queuePausingDelayInCaseOfNetworkProblemsDiscovered = queuePausingDelayInCaseOfNetworkProblemsDiscovered;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
         this.scheduler = scheduler;
-        this.qualificationInstitutionDAO = qualificationInstitutionDAO;
     }
 
     //oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
@@ -182,7 +177,7 @@ public class UclExportService {
         };
 
         //build webservice request
-        request = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAO, new ObjectFactory()).applicationForm(applicationForm).build();
+        request = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory()).applicationForm(applicationForm).build();
         listener.sendingSubmitAdmissionsApplicantRequest(request);
         
         try  {

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -18,12 +20,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
+import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
@@ -59,16 +63,21 @@ public class QualificationController {
 	private final EncryptionHelper encryptionHelper;
     private final QualificationTypeDAO qualificationTypeDAO;
     private final QualificationTypePropertyEditor qualificationTypePropertyEditor;
+    private final QualificationInstitutionDAO qualificationInstitutionDAO;
 
 	QualificationController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
-	@Autowired
-	public QualificationController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
-			DatePropertyEditor datePropertyEditor, DomicileDAO domicileDAO, LanguageService languageService,
-			LanguagePropertyEditor languagePropertyEditor, DomicilePropertyEditor domicilePropertyEditor, QualificationValidator qualificationValidator,
-			QualificationService qualificationService, DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper, QualificationTypeDAO qualificationTypeDAO, QualificationTypePropertyEditor qualificationTypePropertyEditor) {
+    @Autowired
+    public QualificationController(ApplicationsService applicationsService,
+            ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor,
+            DomicileDAO domicileDAO, LanguageService languageService, LanguagePropertyEditor languagePropertyEditor,
+            DomicilePropertyEditor domicilePropertyEditor, QualificationValidator qualificationValidator,
+            QualificationService qualificationService, DocumentPropertyEditor documentPropertyEditor,
+            UserService userService, EncryptionHelper encryptionHelper, QualificationTypeDAO qualificationTypeDAO,
+            QualificationTypePropertyEditor qualificationTypePropertyEditor, 
+            QualificationInstitutionDAO qualificationInstitutionDAO) {
 		this.applicationService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
@@ -83,6 +92,7 @@ public class QualificationController {
 		this.encryptionHelper = encryptionHelper;
         this.qualificationTypeDAO = qualificationTypeDAO;
         this.qualificationTypePropertyEditor = qualificationTypePropertyEditor;
+        this.qualificationInstitutionDAO = qualificationInstitutionDAO;
 	}
 	
 	@InitBinder(value="qualification")
@@ -103,7 +113,6 @@ public class QualificationController {
 	
 	@RequestMapping(value = "/getQualification", method = RequestMethod.GET)
 	public String getQualificationView() {
-
 		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
@@ -111,39 +120,46 @@ public class QualificationController {
 	}
 	
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public String editQualification(@Valid Qualification qualification, BindingResult result) {
-
+	public String editQualification(@Valid Qualification qualification, BindingResult result, Model model) {
 		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
+		
 		if(qualification.getApplication().isDecided()){
 			throw new CannotUpdateApplicationException();
 		}
-		if(result.hasErrors()){
+		
+		if (result.hasErrors()) {
+		    model.addAttribute("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(qualification.getInstitutionCountry().getCode()));
 			return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
 		}
+		
 		qualificationService.save(qualification);
 		qualification.getApplication().setLastUpdated(new Date());
 		applicationService.save(qualification.getApplication());
+		
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
-			
 	}
 
 	@ModelAttribute
-	public Qualification getQualification(@RequestParam(value="qualificationId", required=false) String encryptedQualificationId) {
+	public Qualification getQualification(@RequestParam(value="qualificationId", required=false) String encryptedQualificationId, Model model) {
 		if (StringUtils.isBlank(encryptedQualificationId)) {
 			return new Qualification();
 		}
+		
 		Qualification qualification = qualificationService.getQualificationById(encryptionHelper.decryptToInteger(encryptedQualificationId));
 		if (qualification == null) {
 			throw new ResourceNotFoundException();
 		}
+		
+		model.addAttribute("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(qualification.getInstitutionCountry().getCode()));
 		return qualification;
 	}
 
-	
-
-	/* Reference data section */
+	@ModelAttribute("institutions")
+	public List<QualificationInstitution> getEmptyQualificationInstitution() {
+	    return Collections.emptyList();
+	}
 	
 	@ModelAttribute("languages")
 	public List<Language> getAllEnabledLanguages() {
@@ -152,7 +168,7 @@ public class QualificationController {
 
 	@ModelAttribute("countries")
 	public List<Domicile> getAllEnabledDomiciles() {
-		return domicileDAO.getAllEnabledDomiciles();
+		return domicileDAO.getAllEnabledDomicilesExceptAlternateValues();
 	}
 	
 	@ModelAttribute("types")

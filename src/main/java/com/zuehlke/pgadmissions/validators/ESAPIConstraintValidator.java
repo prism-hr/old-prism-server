@@ -16,7 +16,12 @@ public class ESAPIConstraintValidator implements ConstraintValidator<ESAPIConstr
     
     private String esapiValidationRule;
     
+    @SuppressWarnings("unused")
     private String message;
+    
+    private String maximumExceededMessage = "{text.field.maximumexceeded}";
+    
+    private String minimumExceededMessage = "{text.field.minimumexceeded}";
         
     public ESAPIConstraintValidator() {
     }
@@ -43,13 +48,11 @@ public class ESAPIConstraintValidator implements ConstraintValidator<ESAPIConstr
         
         if (!returnValue) {
             if (isInputTooLong(input)) {
-                message = "{text.field.maximumexceeded}";
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
+                context.buildConstraintViolationWithTemplate(maximumExceededMessage).addConstraintViolation();
             } else if (isInputTooShort(input)) {
-                message = "{text.field.minimumexceeded}";
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
+                context.buildConstraintViolationWithTemplate(minimumExceededMessage).addConstraintViolation();
             }
         }
         return returnValue;

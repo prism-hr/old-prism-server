@@ -238,11 +238,11 @@ $(document).ready(function() {
 	$('#qualificationType').on('change', function() {
 		var selectedType = $('#qualificationType').val();
 		if (selectedType === "IELTS_ACADEMIC") {
-			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').show();
-			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').hide();
+			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
+			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').hide();
 		} else {
-			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').show();
-			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').hide();
+			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').show();
+			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').hide();
 		}
 		
 		if (selectedType === "OTHER") {
@@ -251,8 +251,8 @@ $(document).ready(function() {
 			disableOtherLanguageQualification();
 		}
 		
-		$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').val("");
-		$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').val("");
+		$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').val("");
+		$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').val("");
 		$("#examTakenOnlineNo").removeAttr("checked");
 		$("#examTakenOnlineYes").removeAttr("checked");
 		
@@ -285,7 +285,7 @@ $(document).ready(function() {
             	'overallScore' : selectValue('overallScore'),
             	'readingScore' : selectValue('readingScore'),
             	'writingScore' : selectValue('writingScore'),
-            	'speakingcore' : selectValue('speakingcore'),
+            	'speakingScore' : selectValue('speakingScore'),
             	'listeningScore' : selectValue('listeningScore'),
             	'examTakenOnline' : $("input[name='examTakenOnline']:checked").val(),
             	'languageQualificationDocument' : $('#document_LANGUAGE_QUALIFICATION').val(),
@@ -296,12 +296,12 @@ $(document).ready(function() {
             	$('#personalDetailsSection').html(data);
             	var selectedType = $('#qualificationType').val();
         		if (selectedType === "IELTS_ACADEMIC") {
-        			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').show();
-        			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').hide();
+        			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
+        			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').hide();
         			$('#overallScoreSelect').val(selectValue('overallScore'));
         			$('#readingScoreSelect').val(selectValue('readingScore'));
         			$('#writingScoreSelect').val(selectValue('writingScore'));
-        			$('#speakingcoreSelect').val(selectValue('speakingcore'));
+        			$('#speakingScoreSelect').val(selectValue('speakingScore'));
         			$('#listeningScoreSelect').val(selectValue('listeningScore'));
         		}
             },
@@ -404,7 +404,7 @@ $(document).ready(function() {
             	'overallScore' : selectValue('overallScore'),
             	'readingScore' : selectValue('readingScore'),
             	'writingScore' : selectValue('writingScore'),
-            	'speakingcore' : selectValue('speakingcore'),
+            	'speakingScore' : selectValue('speakingScore'),
             	'listeningScore' : selectValue('listeningScore'),
             	'examTakenOnline' : $("input[name='examTakenOnline']:checked").val(),
             	'languageQualificationDocument' : $('#document_LANGUAGE_QUALIFICATION').val(),
@@ -415,12 +415,12 @@ $(document).ready(function() {
             	$('#personalDetailsSection').html(data);
             	var selectedType = $('#qualificationType').val();
         		if (selectedType === "IELTS_ACADEMIC") {
-        			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').show();
-        			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').hide();
+        			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
+        			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').hide();
         			$('#overallScoreSelect').val(selectValue('overallScore'));
         			$('#readingScoreSelect').val(selectValue('readingScore'));
         			$('#writingScoreSelect').val(selectValue('writingScore'));
-        			$('#speakingcoreSelect').val(selectValue('speakingcore'));
+        			$('#speakingScoreSelect').val(selectValue('speakingScore'));
         			$('#listeningScoreSelect').val(selectValue('listeningScore'));
         		}
         		
@@ -557,12 +557,12 @@ function enableLanguageQualifications() {
 	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").removeAttr("disabled", "disabled");
 	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").removeAttr("readonly", "readonly");
 	
-	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').removeAttr("disabled", "disabled");
-	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').removeAttr("readonly", "readonly");
-	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').removeAttr("disabled", "disabled");
-	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').removeAttr("readonly", "readonly");
+	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').removeAttr("disabled", "disabled");
+	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').removeAttr("readonly", "readonly");
+	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').removeAttr("disabled", "disabled");
+	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').removeAttr("readonly", "readonly");
 	
-	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").removeClass("grey-label");
+	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").removeClass("grey-label");
 	
 	$("#addLanguageQualificationButton").show();
 	$("#updateLanguageQualificationButton").hide();
@@ -572,13 +572,13 @@ function disableLanguageQualifications() {
 	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").attr("disabled", "disabled");
 	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").attr("readonly", "readonly");
 	
-	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').attr("disabled", "disabled");
-	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').attr("readonly", "readonly");
+	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').attr("disabled", "disabled");
+	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').attr("readonly", "readonly");
 	
-	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').attr("disabled", "disabled");
-	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').attr("readonly", "readonly");
+	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').attr("disabled", "disabled");
+	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').attr("readonly", "readonly");
 	
-	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingcore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").addClass("grey-label");
+	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").addClass("grey-label");
 	
 	$("#addLanguageQualificationButton").hide();
 	$("#updateLanguageQualificationButton").hide();
@@ -590,11 +590,11 @@ function clearLanguageQualification() {
 	$("#examTakenOnlineNo").removeAttr("checked");
 	$("#examTakenOnlineYes").removeAttr("checked");
 	
-	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').val("");
-	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').val("");
+	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').val("");
+	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').val("");
 	
-	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingcoreFree, #listeningScoreFree').show();
-	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingcoreSelect, #listeningScoreSelect').hide();
+	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').show();
+	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').hide();
 	
 	ajaxLanguageQualificationDocumentDelete();
 	$("#languageQualificationDocument").val();

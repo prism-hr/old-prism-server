@@ -534,7 +534,7 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell(qualification.getWritingScore(), smallFont));
                 
                 table.addCell(newTableCell("Speaking Score", smallBoldFont));
-                table.addCell(newTableCell(qualification.getSpeakingcore(), smallFont));
+                table.addCell(newTableCell(qualification.getSpeakingScore(), smallFont));
                 
                 table.addCell(newTableCell("Listening Score", smallBoldFont));
                 table.addCell(newTableCell(qualification.getListeningScore(), smallFont));

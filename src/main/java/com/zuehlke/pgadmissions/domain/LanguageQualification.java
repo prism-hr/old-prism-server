@@ -45,23 +45,23 @@ public class LanguageQualification extends DomainObject<Integer> {
     private Date dateOfExamination;
 
     @Column(name = "overall_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notnumber}")
+    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
     private String overallScore;
 
     @Column(name = "reading_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notnumber}")
+    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
     private String readingScore;
 
     @Column(name = "writing_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notnumber}")
+    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
     private String writingScore;
 
     @Column(name = "speaking_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notnumber}")
-    private String speakingcore;
+    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
+    private String speakingScore;
 
     @Column(name = "listening_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notnumber}")
+    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
     private String listeningScore;
 
     @Column(name = "exam_taken_online")
@@ -134,12 +134,12 @@ public class LanguageQualification extends DomainObject<Integer> {
         this.writingScore = writingScore;
     }
 
-    public String getSpeakingcore() {
-        return speakingcore;
+    public String getSpeakingScore() {
+        return speakingScore;
     }
 
-    public void setSpeakingcore(String speakingcore) {
-        this.speakingcore = speakingcore;
+    public void setSpeakingScore(String speakingcore) {
+        this.speakingScore = speakingcore;
     }
 
     public String getListeningScore() {
@@ -192,7 +192,7 @@ public class LanguageQualification extends DomainObject<Integer> {
         return String
                 .format("LanguageQualification [personalDetails=%s, qualificationType=%s, otherQualificationTypeName=%s, dateOfExamination=%s, overallScore=%s, readingScore=%s, writingScore=%s, speakingcore=%s, listeningScore=%s, examTakenOnline=%s]",
                         personalDetails, qualificationType, otherQualificationTypeName, dateOfExamination,
-                        overallScore, readingScore, writingScore, speakingcore, listeningScore, examTakenOnline);
+                        overallScore, readingScore, writingScore, speakingScore, listeningScore, examTakenOnline);
     }
 
 }

@@ -20,15 +20,15 @@ public class LanguageQualificationValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "overallScore", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "readingScore", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "writingScore", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "speakingcore", "text.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "speakingScore", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "listeningScore", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examTakenOnline", "text.field.empty");
-
+        
         LanguageQualification qualification = (LanguageQualification) target;
         if (qualification == null) {
             return;
         }
-
+       
         Date examDate = qualification.getDateOfExamination();
         if (examDate != null && examDate.after(new Date()) && !DateUtils.isToday(qualification.getDateOfExamination())) {
             errors.rejectValue("dateOfExamination", "date.field.notpast");

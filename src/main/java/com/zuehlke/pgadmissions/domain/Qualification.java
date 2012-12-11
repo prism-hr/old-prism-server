@@ -45,10 +45,18 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	@JoinColumn(name = "institution_domicile_id")	
 	private Domicile institutionCountry;
 	
-	@Column(name="institution")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+	@Column(name="institution_name")
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String qualificationInstitution;
 	
+	@Column(name="other_institution_name")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
+    private String otherQualificationInstitution;
+    
+	@Column(name="institution_code")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 10)
+    private String qualificationInstitutionCode;
+    
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	@Column(name="qualification_language")
 	private String qualificationLanguage;
@@ -202,4 +210,20 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
     public void setSendToUCL(Boolean sendToUCL) {
 		this.sendToUCL = sendToUCL;
 	}
+
+    public String getOtherQualificationInstitution() {
+        return otherQualificationInstitution;
+    }
+
+    public void setOtherQualificationInstitution(String otherQualificationInstitution) {
+        this.otherQualificationInstitution = otherQualificationInstitution;
+    }
+
+    public String getQualificationInstitutionCode() {
+        return qualificationInstitutionCode;
+    }
+
+    public void setQualificationInstitutionCode(String qualificationInstitutionCode) {
+        this.qualificationInstitutionCode = qualificationInstitutionCode;
+    }
 }

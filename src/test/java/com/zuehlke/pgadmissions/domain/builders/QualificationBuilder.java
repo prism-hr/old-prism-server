@@ -24,6 +24,18 @@ public class QualificationBuilder {
 	private Domicile institutionCountry;
 	private Document proofOfAward;
     private boolean sendToUCL;
+    private String otherQualificationInstitution;
+    private String qualificationInstitutionCode;
+    
+    public QualificationBuilder otherQualificationInstitution(String name) {
+        this.otherQualificationInstitution = name;
+        return this;
+    }
+    
+    public QualificationBuilder qualificationInstitutionCode(String code) {
+        this.qualificationInstitutionCode = code;
+        return this;
+    }
 
     public QualificationBuilder sendToUCL(Boolean sendToUCL) {
         this.sendToUCL = sendToUCL;
@@ -101,6 +113,8 @@ public class QualificationBuilder {
 		qualification.setInstitutionCountry(institutionCountry);
 		qualification.setProofOfAward(proofOfAward);
 		qualification.setSendToUCL(sendToUCL);
+		qualification.setOtherQualificationInstitution(otherQualificationInstitution);
+		qualification.setQualificationInstitutionCode(qualificationInstitutionCode);
 		return qualification;
 	}
 

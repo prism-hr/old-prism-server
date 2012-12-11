@@ -16,10 +16,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
+import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -69,15 +71,18 @@ public class QualificationControllerTest {
 	private UserService userServiceMock;
 	private EncryptionHelper encryptionHelperMock;
 	
+	private Model modelMock;
+	
+	private QualificationInstitutionDAO institutionDAOMock;
+	
 	private QualificationTypeDAO qualificationTypeDAOMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-		Qualification qualification = new QualificationBuilder().id(1)
-				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toQualification();
+		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toQualification();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(qualificationServiceMock, errors);
-		controller.editQualification(qualification, errors);
+		controller.editQualification(qualification, errors, modelMock);
 		EasyMock.verify(qualificationServiceMock);
 
 	}
@@ -85,7 +90,7 @@ public class QualificationControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
 		currentUser.getRoles().clear();
-		controller.editQualification(null, null);
+		controller.editQualification(null, null, null);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -112,7 +117,7 @@ public class QualificationControllerTest {
 	@Test
 	public void shouldReturnAllDomiciles() {
 		List<Domicile> domicileList = Arrays.asList(new DomicileBuilder().id(1).enabled(true).toDomicile(), new DomicileBuilder().id(2).enabled(false).toDomicile());
-		EasyMock.expect(domicileDAOMock.getAllEnabledDomiciles()).andReturn(Collections.singletonList(domicileList.get(0)));
+		EasyMock.expect(domicileDAOMock.getAllEnabledDomicilesExceptAlternateValues()).andReturn(Collections.singletonList(domicileList.get(0)));
 		EasyMock.replay(domicileDAOMock);
 		List<Domicile> allDomiciles = controller.getAllEnabledDomiciles();
 		assertEquals(1, allDomiciles.size());
@@ -175,22 +180,22 @@ public class QualificationControllerTest {
 	@Test
 	public void shouldGetQualificationFromServiceIfIdProvided() {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-		Qualification qualification = new QualificationBuilder().id(1).toQualification();
+		Qualification qualification = new QualificationBuilder().id(1).institutionCountry(new DomicileBuilder().id(1).name("Foo").code("XL").toDomicile()).toQualification();
 		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qualification);
 		EasyMock.replay(qualificationServiceMock, encryptionHelperMock);
-		Qualification returnedQualification = controller.getQualification("bob");
+		Qualification returnedQualification = controller.getQualification("bob", modelMock);
 		assertEquals(qualification, returnedQualification);
 	}
 
 	@Test
 	public void shouldReturnNewQualificationIfIdIsNull() {
-		Qualification returnedQualification = controller.getQualification(null);
+		Qualification returnedQualification = controller.getQualification(null, null);
 		assertNull(returnedQualification.getId());
 	}
 
 	@Test
 	public void shouldReturnNewQualificationIfIdIsBlank() {
-		Qualification returnedQualification = controller.getQualification("");
+		Qualification returnedQualification = controller.getQualification("", modelMock);
 		assertNull(returnedQualification.getId());
 	}
 	
@@ -199,7 +204,7 @@ public class QualificationControllerTest {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(null);
 		EasyMock.replay(qualificationServiceMock,encryptionHelperMock);
-		controller.getQualification("bob");
+		controller.getQualification("bob", modelMock);
 
 	}
 
@@ -218,7 +223,7 @@ public class QualificationControllerTest {
 		qualificationServiceMock.save(qualification);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(qualificationServiceMock, applicationsServiceMock, errors);
-		String view = controller.editQualification(qualification, errors);
+		String view = controller.editQualification(qualification, errors, modelMock);
 		EasyMock.verify(qualificationServiceMock, applicationsServiceMock);
 		assertEquals("redirect:/update/getQualification?applicationId=ABC", view);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
@@ -226,12 +231,12 @@ public class QualificationControllerTest {
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {
-		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toQualification();
+		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).institutionCountry(new DomicileBuilder().id(1).name("Foo").code("XL").toDomicile()).toQualification();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 
 		EasyMock.replay(qualificationServiceMock, errors);
-		String view = controller.editQualification(qualification, errors);
+		String view = controller.editQualification(qualification, errors, modelMock);
 		EasyMock.verify(qualificationServiceMock);
 		assertEquals(QualificationController.APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, view);
 	}
@@ -261,9 +266,13 @@ public class QualificationControllerTest {
 
 		qualificationTypePropertyEditorMock = EasyMock.createMock(QualificationTypePropertyEditor.class);
 		
+		modelMock = EasyMock.createMock(Model.class);
+		
+		institutionDAOMock = EasyMock.createMock(QualificationInstitutionDAO.class);
+		
 		controller = new QualificationController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, domicileDAOMock,
 				languageServiceMock, languagePropertyEditorMock, domicilePropertyEditor, qualificationValidatorMock, qualificationServiceMock,
-				documentPropertyEditorMock, userServiceMock, encryptionHelperMock, qualificationTypeDAOMock, qualificationTypePropertyEditorMock);
+				documentPropertyEditorMock, userServiceMock, encryptionHelperMock, qualificationTypeDAOMock, qualificationTypePropertyEditorMock, institutionDAOMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();

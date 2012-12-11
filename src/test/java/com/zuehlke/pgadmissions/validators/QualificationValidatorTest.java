@@ -130,16 +130,16 @@ public class QualificationValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfQualificationSubjectIsLongerThan100Chars() {
+    public void shouldRejectIfQualificationInstitutionIsLongerThan200Chars() {
         StringBuilder builder = new StringBuilder();
-        for (int idx = 0; idx < 200; idx++) {
+        for (int idx = 0; idx < 250; idx++) {
             builder.append("a");
         }
         qualification.setQualificationInstitution(builder.toString());
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 100 characters are allowed.",
+        Assert.assertEquals("A maximum of 200 characters are allowed.",
                 mappingResult.getFieldError("qualificationInstitution").getDefaultMessage());
     }
 

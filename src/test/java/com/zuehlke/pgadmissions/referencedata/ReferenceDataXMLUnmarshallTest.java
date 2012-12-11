@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.referencedata;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,6 +15,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
 import com.zuehlke.pgadmissions.referencedata.jaxb.Countries.Country;
@@ -303,7 +308,20 @@ public class ReferenceDataXMLUnmarshallTest {
                     StringUtils.trim(interest.getName()),
                     StringUtils.trim(interest.getCode()))));
         }
+    }
+    
+    @Test
+    @Ignore
+    public void createInstitutionsInsertStatementFromCleanedUpVersion() throws IOException {
+        CSVReader reader = new CSVReader(new FileReader("src/main/resources/prism_institution_list_encoded_for_web.csv"));
+        List<String[]> myEntries = reader.readAll();
+        reader.close();
         
+        System.out.println("INSERT INTO INSTITUTION (code, name, domicile_code, enabled) VALUES ");
+        
+        for (String[] entry : myEntries) {
+            System.out.println(String.format("(\"%s\", \"%s\", \"%s\", true), ", entry[0], StringEscapeUtils.unescapeHtml(entry[1]), entry[2]));
+        }
     }
     
     public static String mysql_escape_string(String str) {

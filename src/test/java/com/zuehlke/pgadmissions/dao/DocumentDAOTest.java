@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationTypeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -91,7 +90,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		dao.save(document);
 		flushAndClearSession();
 		Qualification qualification = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
-				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES)
+				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).qualificationInstitutionCode("AS009Z")
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0))
 				.proofOfAward(document).toQualification();
 		sessionFactory.getCurrentSession().save(qualification);

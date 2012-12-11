@@ -154,8 +154,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock);
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
@@ -239,8 +238,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock);
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
@@ -256,7 +254,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, 0, queuePausingDelayInCaseOfNetworkProblemsDiscovered,
-                attachmentsSendingService, schedulerMock, qualificationInstitutionDAOMock);
+                attachmentsSendingService, schedulerMock);
 
         SoapFault mockFault = EasyMock.createMock(SoapFault.class);
         EasyMock.expect(mockFault.getFaultStringOrReason()).andReturn("Authentication Failed");
@@ -359,8 +357,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock);
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
@@ -434,8 +431,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
 
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock);
 
@@ -518,8 +514,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
 
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock);
 
@@ -613,8 +608,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
 
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock);
 
@@ -711,8 +705,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
 
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock);
 
@@ -812,8 +805,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, schedulerMock);
 
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock);
 
@@ -883,8 +875,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingServiceMock, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingServiceMock, schedulerMock);
 
         sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener);
 
@@ -959,8 +950,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingServiceMock, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingServiceMock, schedulerMock);
 
         sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener);
 
@@ -1003,7 +993,6 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
         exportService = new UclExportService(webserviceCallingQueueExecutorMock, sftpCallingQueueExecutorMock,
                 webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock,
-                qualificationInstitutionDAOMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, schedulerMock);
     }
 }

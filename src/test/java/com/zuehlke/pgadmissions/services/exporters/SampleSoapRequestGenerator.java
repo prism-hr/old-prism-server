@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
@@ -39,8 +38,6 @@ public class SampleSoapRequestGenerator extends UclIntegrationBaseTest {
     private WebServiceTemplate webServiceTemplate;
     
     private ApplicationFormDAO applicationFormDAO;
-    
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
     
     private SubmitAdmissionsApplicationRequestBuilder requestBuilder;
     
@@ -126,7 +123,6 @@ public class SampleSoapRequestGenerator extends UclIntegrationBaseTest {
     @Before
     public void initialise() {
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-        qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
-        requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(qualificationInstitutionDAO, new ObjectFactory());
+        requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory());
     }
 }

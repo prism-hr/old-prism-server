@@ -261,7 +261,15 @@
                         <#list personalDetails.languageQualifications! as languageQualification>
                         <#assign x = x + 1>
                             <tr <#if languageQualification.id??> rel="${encrypter.encrypt(languageQualification.id)!}"</#if>>
-                                <td>${(languageQualification.qualificationType.displayValue?html)!} ${(languageQualification.otherQualificationTypeName?html)!}</td>
+                                <td>
+                                    <#if languageQualification.languageQualificationDocument??> 
+                                        <a class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(languageQualification.languageQualificationDocument.id))!}'/>" target="_blank">
+                                        ${(languageQualification.qualificationType.displayValue?html)!} ${(languageQualification.otherQualificationTypeName?html)!}
+                                        </a>
+                                    <#else>
+                                        ${(languageQualification.qualificationType.displayValue?html)!} ${(languageQualification.otherQualificationTypeName?html)!}
+                                    </#if>
+                                </td>
                                 <td>
                                     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>                    
                                         <a class="button-edit" data-desc="Edit" id="languageQualification_<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>" name="editLanguageQualificationLink">edit</a>
@@ -274,7 +282,7 @@
                                     <input type="hidden" name="lq_overallScore" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_overallScore" value="${(languageQualification.overallScore?html)!}"/>
                                     <input type="hidden" name="lq_readingScore" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_readingScore" value="${(languageQualification.readingScore?html)!}"/>
                                     <input type="hidden" name="lq_writingScore" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_writingScore" value="${(languageQualification.writingScore?html)!}"/>
-                                    <input type="hidden" name="lq_speakingcore" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_speakingcore" value="${(languageQualification.speakingcore?html)!}"/>
+                                    <input type="hidden" name="lq_speakingScore" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_speakingScore" value="${(languageQualification.speakingScore?html)!}"/>
                                     <input type="hidden" name="lq_listeningScore" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_listeningScore" value="${(languageQualification.listeningScore?html)!}"/>
                                     <input type="hidden" name="lq_examTakenOnline" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_examTakenOnline" value="<#if languageQualification.examTakenOnline??>true<#else>false</#if>"/>
                                     <input type="hidden" name="lq_languageQualificationDocument" id="<#if languageQualification.id??>${encrypter.encrypt(languageQualification.id)!}</#if>_languageQualificationDocument" value="<#if languageQualification.languageQualificationDocument?? && languageQualification.languageQualificationDocument.id??>${encrypter.encrypt(languageQualification.languageQualificationDocument.id)!}</#if>"/>
@@ -418,11 +426,11 @@
             </#list>            
             
             <div class="row">
-                <label id="lbl-speakingcore" class="plain-label">Speaking Score<em>*</em></label>
+                <label id="lbl-speakingScore" class="plain-label">Speaking Score<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.score.speaking'/>"></span>
                 <div class="field">
-                    <input class="full" readonly="readonly" type="text" value="${(languageQualification.speakingcore?html)!}" name="speakingcore" id="speakingcoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> />
-                    <select class="full" readonly="readonly" style="display:none" name="speakingcore" id="speakingcoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly="readonly" type="text" value="${(languageQualification.speakingScore?html)!}" name="speakingScore" id="speakingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> />
+                    <select class="full" readonly="readonly" style="display:none" name="speakingScore" id="speakingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -438,7 +446,7 @@
                     </select>                    
                 </div>
             </div>
-            <@spring.bind "languageQualification.speakingcore" />
+            <@spring.bind "languageQualification.speakingScore" />
             <#list spring.status.errorMessages as error>
                 <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
             </#list>            

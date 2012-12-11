@@ -658,7 +658,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             
             EnglishLanguageScoreTp speakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             speakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
-            speakingScoreTp.setScore(String.valueOf(languageQualifications.getSpeakingcore()));
+            speakingScoreTp.setScore(String.valueOf(languageQualifications.getSpeakingScore()));
             
             EnglishLanguageScoreTp listeningScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);

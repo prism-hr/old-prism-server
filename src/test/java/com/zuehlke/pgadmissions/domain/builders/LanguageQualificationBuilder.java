@@ -114,7 +114,7 @@ public class LanguageQualificationBuilder {
         qualification.setPersonalDetails(personalDetails);
         qualification.setQualificationType(qualificationType);
         qualification.setReadingScore(readingScore);
-        qualification.setSpeakingcore(speakingcore);
+        qualification.setSpeakingScore(speakingcore);
         qualification.setWritingScore(writingScore);
         qualification.setLanguageQualificationDocument(qualificationDocument);
         qualification.setSendToUCL(sendToUCL);

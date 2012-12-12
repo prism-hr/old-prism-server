@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -50,13 +51,16 @@ public class SourcesOfInterestDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetAllEnabledSourcesOfInterest() {
-        BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from SOURCES_OF_INTEREST WHERE enabled = true").uniqueResult();
+        BigInteger numberOfSourcesOfInterest = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from SOURCES_OF_INTEREST WHERE enabled = true").uniqueResult();
         SourcesOfInterest sourcesOfInterest1 = new SourcesOfInterestBuilder().name("ZZZZZZ").code("ZZ").enabled(false).toSourcesOfInterest();
         SourcesOfInterest sourcesOfInterest2 = new SourcesOfInterestBuilder().name("AAAAAAAA").code("AA").enabled(true).toSourcesOfInterest();
         save(sourcesOfInterest1, sourcesOfInterest2);
         flushAndClearSession();
         SourcesOfInterestDAO sourcesOfInterestDAO = new SourcesOfInterestDAO(sessionFactory);
-        List<SourcesOfInterest> allSourcesOfInterest = sourcesOfInterestDAO.getAllEnabledSourcesOfInterest();
-        assertEquals(numberOfEthnicities.intValue() + 1, allSourcesOfInterest.size());
+        List<SourcesOfInterest> allEnabledSourcesOfInterest = sourcesOfInterestDAO.getAllEnabledSourcesOfInterest();
+        assertEquals(numberOfSourcesOfInterest.intValue() + 1, allEnabledSourcesOfInterest.size());
+        for (SourcesOfInterest sInterest : allEnabledSourcesOfInterest) {
+            assertTrue("SourcesOfInterest is disabled but has been loaded anyway.", sInterest.getEnabled());
+        }
     }
 }

@@ -103,6 +103,8 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/timeline.css' />"/>
 
+<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
+
 <!-- Scripts -->
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js' />"></script>
@@ -112,6 +114,10 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/withdraw_modal_window.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/timeline_application.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>
+
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
+<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -146,7 +152,7 @@
   <!-- Middle. -->
   <div id="middle">
   
-    <#include "/private/common/parts/nav_with_user_info.ftl"/>
+    <#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
     <@header/>
     <!-- Main content area. -->
     <article id="content" role="main">

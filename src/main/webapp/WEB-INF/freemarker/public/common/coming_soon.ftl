@@ -15,6 +15,12 @@
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/comingsoon.css' />"/>
+		<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
+		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
+        <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+        
 				<!-- Styles for Application List Page -->
 
 		<!--[if lt IE 9]>
@@ -40,7 +46,7 @@
 			 <!-- Middle Starts -->
 			<div id="middle">
 			
-				<#include "/private/common/parts/nav_with_user_info.ftl"/>
+				<#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
 				<@header activeTab="help"/>
 					<!-- Main content area. -->
 					<article id="content" role="main">		    

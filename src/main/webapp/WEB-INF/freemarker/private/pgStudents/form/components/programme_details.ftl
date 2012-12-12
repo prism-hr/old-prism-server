@@ -115,7 +115,7 @@
       
       <!-- Referrer Free Text-->
       <div class="row">
-        <label id="referrer-text-lbl" class="plain-label grey-label">Please explain</label>
+        <label id="referrer-text-lbl" class="plain-label grey-label">Please explain<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.howDidYouFindUsExplain'/>"></span>
         <div class="field">
           <input class="full grey-label" id="referrer_text" name="referrer_text" type="text" value=<#if programmeDetails.sourcesOfInterestText??>"${(programmeDetails.sourcesOfInterestText?html)}"<#else>"Not Required" disabled="disabled"</#if> />

@@ -35,6 +35,11 @@
         <div class="field" id="qualificationInstitution">${(qualification.qualificationInstitution?html)!"Not Provided"}</div>
       </div>
       
+      <div class="admin_row">
+        <span class="admin_row_label">Other Institution / Provider Name</span>
+        <div class="field" id="qualificationInstitution">${(qualification.otherQualificationInstitution?html)!"Not Provided"}</div>
+      </div>
+      
       <!-- Type -->
       <div class="admin_row">
         <span class="admin_row_label">QualificationType</span>

@@ -106,13 +106,13 @@
 </section>
 
 <section id="linkAcountDetailsSection" class="form-rows">
-<h2 class="no-arrow">Link Accounts</h2>
+<h2 class="no-arrow">Linked Accounts</h2>
 <div id="linkAccountsSection">
     <form autocomplete="off">
         <#if RequestParameters.messageCodeLink??>
             <div class="section-info-bar"><@spring.message '${RequestParameters.messageCodeLink}'/></div>    
         <#else>        
-            <div class="section-info-bar">Link your current PRISM account to another account you own.</div>
+            <div class="section-info-bar">Link <span style="text-decoration:underline">${user.email!}</span> to another account that you own.</div>
         </#if>
         
             <#if user.linkedAccounts?has_content>
@@ -130,7 +130,7 @@
             
             <div class="row-group">
                 <div class="row"> 
-                    <span class="plain-label">Current Password</span>
+                    <span class="plain-label">Password</span>
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.currentPw' />"></span>
                     <div class="field"> 
                         <input class="full" id="linkCurrentPassword" type="password" value="${switchAndLinkUserAccountDTO.currentPassword!}" />
@@ -145,8 +145,9 @@
             </div>
             
             <div class="row-group">
+                <h3>Account to be Linked</h3>
                 <div class="row"> 
-                    <span class="plain-label">Email of the 2nd Account</span>
+                    <span class="plain-label">Email</span>
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.email' />"></span>
                     <div class="field"> 
                         <input class="full" id="linkEmail" type="text" value="${switchAndLinkUserAccountDTO.email!}" />
@@ -160,7 +161,7 @@
                 </#list>
                         
                 <div class="row"> 
-                    <span class="plain-label">Password of the 2nd Account</span>
+                    <span class="plain-label">Password</span>
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.password' />"></span>
                     <div class="field"> 
                         <input class="full" id="linkPassword" type="password" value="${switchAndLinkUserAccountDTO.password!}"/>
@@ -179,4 +180,5 @@
         </div>
     </form>
 </div>
+<a href="#linkAcountDetailsSection"> </a>
 </section>

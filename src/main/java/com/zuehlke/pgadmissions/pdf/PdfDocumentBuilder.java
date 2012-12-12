@@ -645,6 +645,13 @@ public class PdfDocumentBuilder {
 
                 table.addCell(newTableCell("Institution/Provider Name", smallBoldFont));
                 table.addCell(newTableCell(qualification.getQualificationInstitution(), smallFont));
+                
+                table.addCell(newTableCell("Other Institution / Provider Name", smallBoldFont));
+                if (StringUtils.isNotBlank(qualification.getOtherQualificationInstitution())) {
+                    table.addCell(newTableCell(qualification.getOtherQualificationInstitution(), smallFont));                    
+                } else {
+                    table.addCell(newTableCell("Not Provided", smallGrayFont));                    
+                }
 
                 table.addCell(newTableCell("Qualification Type", smallBoldFont));
                 table.addCell(newTableCell(qualification.getQualificationType().getName(), smallFont));

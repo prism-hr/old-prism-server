@@ -136,6 +136,11 @@ function getAccountDetailsSection() {
         },
         complete: function() {
             $('.content-box-inner div.ajax').remove();
+            var urllocation = location.href;
+            if (urllocation.indexOf("#") != -1 && urllocation.indexOf("#linkAcountDetailsSection") > -1) {
+                window.location.hash = "linkAcountDetailsSectionChromeFix";
+                window.location.hash = "linkAcountDetailsSection";
+            }
         }
     });
 }

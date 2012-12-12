@@ -15,7 +15,8 @@
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
-				<!-- Styles for Application List Page -->
+		<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
+		<!-- Styles for Application List Page -->
 
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -27,6 +28,9 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/upload.js'/>"></script>
 	    
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
+	    
+	    <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
+        <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 	    
 	    
 	</head>
@@ -49,7 +53,7 @@
 			 <!-- Middle Starts -->
 			<div id="middle">
 			
-				<#include "/private/common/parts/nav_with_user_info.ftl"/>
+				<#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
 				 <@header/>
 				<!-- Main content area. -->
 				<article id="content" role="main">		    

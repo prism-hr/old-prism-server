@@ -14,7 +14,9 @@
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
-				<!-- Styles for Application List Page -->
+        <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
+        <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
+        <!-- Styles for Application List Page -->
 
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -69,5 +71,7 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/my-account.js' />"></script>
+        <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+		
 	</body>
 </html>

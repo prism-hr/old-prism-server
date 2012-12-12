@@ -13,8 +13,10 @@ function enableOrDisableStartDate() {
 }
 
 function enableOrDisableReferrerText() {
-	if ($("#referrer option:selected").text() === "Other") {
-		$("#referrer-text-lbl").text($.trim($("#referrer-text-lbl").text())).append('<em>*</em>');
+    var selectedText = $("#referrer option:selected").text(); 
+	if (selectedText === "Other" || selectedText === "Other Academic Staff" || selectedText === "Other Website" || 
+	        selectedText === "Newspaper/Recruitment guide/Magazine advertisement") {
+		//$("#referrer-text-lbl").text($.trim($("#referrer-text-lbl").text())).append('<em>*</em>');
 		$("#referrer-text-lbl").removeClass("grey-label");
 		$("#referrer_text").removeClass("grey-label");
 		$("#referrer_text").removeAttr("disabled", "disabled");
@@ -22,7 +24,7 @@ function enableOrDisableReferrerText() {
 			$("#referrer_text").val("");
 		}
 	} else {
-		$("#referrer-text-lbl em").remove();
+		//$("#referrer-text-lbl em").remove();
 		$("#referrer-text-lbl").addClass("grey-label");
 		$("#referrer_text").addClass("grey-label");
 		$("#referrer_text").attr("disabled", "disabled");

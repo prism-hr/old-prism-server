@@ -1,15 +1,19 @@
-$(document).ready(function()
-{
+$(document).ready(function() {
+    
+    $(".dropdown-toggle").dropdown();
+    
     // --------------------------------------------------------------------------------
     // SWITCH USER ACCOUNTS
     // --------------------------------------------------------------------------------
-    $(document).on('change', 'select#linkedUserAccountsDrop', function() {
-        
-        if ($("select#linkedUserAccountsDrop").val() === "LINK") {
-            window.location.replace("/pgadmissions/myAccount");
+    $("#switchUserList li a").unbind('click').click(function() { 
+        var userEmail = $(this).text();
+
+        if (userEmail === "Link Accounts...") {
+            window.location.href = "/pgadmissions/myAccount#linkAcountDetailsSection";
+            return;
         }
         
-        var postData = { email : $("select#linkedUserAccountsDrop").val() };
+        var postData = { email : userEmail };
         $.ajax({
             type: 'POST',
              statusCode: {
@@ -22,8 +26,8 @@ $(document).ready(function()
              url:"/pgadmissions/myAccount/switch", 
              data:$.param(postData),
              success: function(data) {
-                 if (data == "OK") {    
-                     window.location.reload(true);
+                 if (data == "OK") {
+                     window.location.href = "/pgadmissions/applications";
                 } else {                
                 }
              },
@@ -31,7 +35,7 @@ $(document).ready(function()
              }
         });
     });
-
+    
 	// ------------------------------------------------------------------------------
 	// Apply a class to the BODY tag if we're in "beta".
 	// ------------------------------------------------------------------------------

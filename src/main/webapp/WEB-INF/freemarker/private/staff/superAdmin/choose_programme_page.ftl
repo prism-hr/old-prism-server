@@ -13,6 +13,8 @@
 		<!-- Styles for Application List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/superadmin.css' />"/>
+		<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
+		
 		<!-- Styles for Application List Page -->
 
 		<!--[if lt IE 9]>

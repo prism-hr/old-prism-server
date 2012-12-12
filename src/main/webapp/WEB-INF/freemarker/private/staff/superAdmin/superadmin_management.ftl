@@ -11,6 +11,12 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/superadmin.css' />"/>
+<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
+
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
+<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -23,7 +29,7 @@
 	
 	<!-- Middle. -->
 	<div id="middle">
-		<#include "/private/common/parts/nav_with_user_info.ftl"/>
+		<#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
 		<@header activeTab="users"/>
 		<!-- Main content area. -->
 		<article id="content" role="main">

@@ -292,7 +292,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setCountry(currentAddress.getCountry().getCode());
         
         // addressLine3 is mandatory but PRISM did not collect addresses in this format before
-        if (StringUtils.isEmpty(currentAddress.getAddress3())) {
+        if (StringUtils.isBlank(currentAddress.getAddress3())) {
             addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);    
         }
         
@@ -314,7 +314,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setCountry(contactAddress.getCountry().getCode());
         
         // addressLine3 is mandatory but PRISM did not collect addresses in this format before
-        if (StringUtils.isEmpty(contactAddress.getAddress3())) {
+        if (StringUtils.isBlank(contactAddress.getAddress3())) {
             addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);    
         }
 
@@ -568,7 +568,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 addressTp.setCountry(referee.getAddressLocation().getCountry().getCode());
                 
                 // addressLine3 is mandatory but PRISM did not collect addresses in this format before.
-                if (StringUtils.isEmpty(referee.getAddressLocation().getAddress3())) {
+                if (StringUtils.isBlank(referee.getAddressLocation().getAddress3())) {
                     addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);    
                 }
                 

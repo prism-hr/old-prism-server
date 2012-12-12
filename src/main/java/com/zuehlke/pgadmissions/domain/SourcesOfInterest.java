@@ -60,7 +60,8 @@ public class SourcesOfInterest extends DomainObject<Integer> implements Imported
     }
     
     public boolean isFreeText() {
-        return code.equalsIgnoreCase("OTHER");
+        return code.equalsIgnoreCase("OTHER") || code.equalsIgnoreCase("NEWS_AD") || code.equalsIgnoreCase("OTH_ACAD ")
+                || code.equalsIgnoreCase("OTH_WEB");
     }
 
 	@Override

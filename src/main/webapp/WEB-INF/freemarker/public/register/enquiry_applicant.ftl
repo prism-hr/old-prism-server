@@ -14,6 +14,7 @@
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 		
+		<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/global_public.css' />" />
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/enquiry.css' />" />
 		

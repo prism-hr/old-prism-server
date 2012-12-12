@@ -13,6 +13,8 @@
 <!-- Styles for Application List Page -->
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />" />
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application_list.css' />" />
+<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
+
 <!-- Styles for Application List Page -->
 
 <!--[if lt IE 9]>
@@ -25,6 +27,10 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/scrollpagination.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>
+
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
+<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+
 </head>
 
 <!--[if IE 9]>
@@ -107,7 +113,7 @@
                         
                         <table id="loadMoreApplicationsTable" class="data" border="0">
                             <tr>
-                                <td id="loadMoreApplications" align="center" style="cursor:pointer; background:#FFFFFF; border:1px solid #AAAAAA;height:25px;"><span style="color:blue;">Display next 50 Applications</span></td>                                             
+                                <td id="loadMoreApplications" align="center" style="cursor:pointer; background:#FFFFFF; border:1px solid #AAAAAA;height:25px;"><span style="color:blue;text-decoration:underline">Display next 50 Applications</span></td>                                             
                             </tr>
                         </table>
 

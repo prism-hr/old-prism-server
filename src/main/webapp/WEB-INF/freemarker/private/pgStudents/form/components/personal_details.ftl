@@ -770,11 +770,8 @@
                     <select class="full" name="ethnicity" id="ethnicity" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <#list ethnicities as ethnicity>
-                        <option value="${encrypter.encrypt(ethnicity.id)}"
-                        <#if personalDetails.ethnicity?? &&  personalDetails.ethnicity.id == ethnicity.id >
-                        selected="selected"
-                        </#if>   
-                      >${ethnicity.name}</option>               
+                        <option value="${(encrypter.encrypt(ethnicity.id))!}"
+                        <#if personalDetails.ethnicity?? && personalDetails.ethnicity.id?? && personalDetails.ethnicity.id == ethnicity.id >selected="selected"</#if> >${ethnicity.name}</option>               
                     </#list>
                     </select>
                     
@@ -797,7 +794,7 @@
                         <option value="">Select...</option>
                         <#list disabilities as disability>
                         <option value="${encrypter.encrypt(disability.id)}"
-                        <#if personalDetails.disability?? &&  personalDetails.disability.id == disability.id >
+                        <#if personalDetails.disability?? && personalDetails.disability.id?? && personalDetails.disability.id == disability.id >
                         selected="selected"
                         </#if>   
                       >${disability.name}</option>               

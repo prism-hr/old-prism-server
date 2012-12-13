@@ -8,6 +8,7 @@
 <#import "/spring.ftl" as spring />
 <html>
 	<head>
+	       <meta name="prism.version" content="<@spring.message 'prism.version'/>" >
     	   <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
 			<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 			<script type="text/javascript">

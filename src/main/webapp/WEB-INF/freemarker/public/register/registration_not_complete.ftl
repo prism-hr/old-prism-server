@@ -8,6 +8,7 @@
 
 <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
+<meta name="prism.version" content="<@spring.message 'prism.version'/>" >
 
 <!-- Let Internet Explorer 8 and below recognise HTML5 tags. -->
 <!--[if lt IE 9]>

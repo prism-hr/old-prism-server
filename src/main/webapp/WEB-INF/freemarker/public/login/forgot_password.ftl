@@ -4,6 +4,8 @@
 	<head>
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="prism.version" content="<@spring.message 'prism.version'/>" >
+		
 		<title>UCL Postgraduate Admissions</title>
 		
 		<!-- Styles for Login List Page -->

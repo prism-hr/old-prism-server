@@ -8,6 +8,7 @@
 		
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 		<meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
+		<meta name="prism.version" content="<@spring.message 'prism.version'/>" >
 		
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />"/>

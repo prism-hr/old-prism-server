@@ -113,14 +113,14 @@
 
             <!-- Provider -->
             <div class="row">
-                <span class="plain-label">Institution / Provider Name<em>*</em></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
+                <span id="lbl-providerName" class="plain-label grey-label">Institution / Provider Name<em>*</em></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
                 <div class="field">
                     <select class="full" id="qualificationInstitution" name="qualificationInstitution"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
                         <option value="">Select...</option>
                         <#list institutions as inst>
                             <option value="${inst.code}" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == inst.code> selected="selected"</#if>>${inst.name?html}</option> 
                         </#list>
-                        <option value="OTHER" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == "OTHER">selected="selected"</#if>>Other...</option>
+                        <option value="OTHER" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == "OTHER">selected="selected"</#if>>Other</option>
                     </select>
                 </div>
             </div>
@@ -134,7 +134,7 @@
 
             <!-- Other name-->
             <div class="row">
-                <span id="lbl-otherInstitutionProviderName" class="plain-label grey-label">Other Institution / Provider Name<em>*</em></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.subject'/>"></span>
+                <span id="lbl-otherInstitutionProviderName" class="plain-label grey-label">Please Specify<em>*</em></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.subject'/>"></span>
                 <div class="field">
                     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> 
                         <input readonly="readonly" disabled="disabled" id="otherInstitutionProviderName" class="full" type="text" value="${(qualification.otherQualificationInstitution?html)!}" /> 

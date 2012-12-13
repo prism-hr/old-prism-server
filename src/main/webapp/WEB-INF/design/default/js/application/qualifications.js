@@ -88,7 +88,7 @@ $(document).ready(function() {
                 for ( var i = 0; i < institutions.length; i++) {
                     options.append($("<option />").val(institutions[i][1]).text(institutions[i][2]));
                 }
-                options.append($("<option />").val("OTHER").text("Other..."));
+                options.append($("<option />").val("OTHER").text("Other"));
             },
             completed : function() {
             }

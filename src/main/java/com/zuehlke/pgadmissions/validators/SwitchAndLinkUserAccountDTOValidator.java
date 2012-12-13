@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
 import org.apache.commons.lang.StringUtils;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -44,7 +45,7 @@ public class SwitchAndLinkUserAccountDTOValidator extends AbstractValidator {
         
         if (currentAccount != null && StringUtils.isNotBlank(userDTO.getEmail())) {
             RegisteredUser secondAccount = userService.getUserByEmail(userDTO.getEmail());
-            if (secondAccount == null) {
+            if (secondAccount == null && ESAPI.validator().isValidInput("Email", userDTO.getEmail(), "Email", 255, true)) {
                 errors.rejectValue("email", "account.not.exists");
             }
             

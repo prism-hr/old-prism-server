@@ -179,7 +179,7 @@
                 </#list>
             </div>
             <div class="buttons">
-                <button class="blue" id="linkAccounts" type="button">Link Accounts</button>
+                <button class="blue" id="linkAccounts" type="button">Submit</button>
             </div>
     </div>
     </form>

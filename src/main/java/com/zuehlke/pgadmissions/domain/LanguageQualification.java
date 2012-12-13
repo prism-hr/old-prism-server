@@ -45,23 +45,18 @@ public class LanguageQualification extends DomainObject<Integer> {
     private Date dateOfExamination;
 
     @Column(name = "overall_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
     private String overallScore;
 
     @Column(name = "reading_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
     private String readingScore;
 
     @Column(name = "writing_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
     private String writingScore;
 
     @Column(name = "speaking_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
     private String speakingScore;
 
     @Column(name = "listening_score")
-    @ESAPIConstraint(rule = "NumbersOnlyAndDot", maxLength = 3, message = "{text.field.notValidNumberForLangugageScore}")
     private String listeningScore;
 
     @Column(name = "exam_taken_online")

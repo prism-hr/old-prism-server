@@ -18,8 +18,10 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
     function showOrHideQualificationInstitution() {
         $("#qualificationInstitution").attr("disabled", "disabled");
+        $("#lbl-providerName").addClass("grey-label");
         if ($("#institutionCountry").val() != "") {
             $("#qualificationInstitution").removeAttr("disabled", "disabled");
+            $("#lbl-providerName").removeClass("grey-label");
         }
     }
 

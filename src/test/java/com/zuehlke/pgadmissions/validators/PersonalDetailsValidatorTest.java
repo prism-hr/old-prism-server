@@ -378,15 +378,6 @@ public class PersonalDetailsValidatorTest {
     }
 	
 	@Test
-	public void shouldRejectLanguageQualificationIfOverallScoreIsNotNumeric() {
-	    personalDetails.getLanguageQualifications().get(0).setOverallScore("1 2");
-	    BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-        personalDetailValidator.validate(personalDetails, mappingResult);
-        Assert.assertEquals(2, mappingResult.getErrorCount());
-        Assert.assertEquals("You must enter a valid numerical score.", mappingResult.getFieldError("languageQualifications[0].overallScore").getDefaultMessage());
-	}
-	
-	@Test
 	public void shouldRejectLanguageQualificationIfOtherIsSelectedAnNoTitle() {
 	    personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.OTHER);
 	    personalDetails.getLanguageQualifications().get(0).setOtherQualificationTypeName(null);
@@ -406,12 +397,21 @@ public class PersonalDetailsValidatorTest {
     }
 	
 	@Test
+    public void shouldRejectLanguageQualificationIfOverallScoreIsNotNumeric() {
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("1 2");
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.general.score.notvalid", mappingResult.getFieldError("languageQualifications[0].overallScore").getCode());
+    }
+	
+	@Test
 	public void shouldRejectLanguageQualificationIfReadingScoreIsIsNotNumeric() {
 	    personalDetails.getLanguageQualifications().get(0).setReadingScore("1 2");
 	    BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 	    personalDetailValidator.validate(personalDetails, mappingResult);
-	    Assert.assertEquals(2, mappingResult.getErrorCount());
-	    Assert.assertEquals("You must enter a valid numerical score.", mappingResult.getFieldError("languageQualifications[0].readingScore").getDefaultMessage());
+	    Assert.assertEquals(1, mappingResult.getErrorCount());
+	    Assert.assertEquals("languageQualification.general.score.notvalid", mappingResult.getFieldError("languageQualifications[0].readingScore").getCode());
 	}
 	
 	@Test
@@ -419,8 +419,8 @@ public class PersonalDetailsValidatorTest {
 	    personalDetails.getLanguageQualifications().get(0).setWritingScore("1 2");
 	    BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 	    personalDetailValidator.validate(personalDetails, mappingResult);
-	    Assert.assertEquals(2, mappingResult.getErrorCount());
-	    Assert.assertEquals("You must enter a valid numerical score.", mappingResult.getFieldError("languageQualifications[0].writingScore").getDefaultMessage());
+	    Assert.assertEquals(1, mappingResult.getErrorCount());
+	    Assert.assertEquals("languageQualification.general.score.notvalid", mappingResult.getFieldError("languageQualifications[0].writingScore").getCode());
 	}
 	
 	@Test
@@ -428,8 +428,8 @@ public class PersonalDetailsValidatorTest {
 	    personalDetails.getLanguageQualifications().get(0).setSpeakingScore("1 2");
 	    BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 	    personalDetailValidator.validate(personalDetails, mappingResult);
-	    Assert.assertEquals(2, mappingResult.getErrorCount());
-	    Assert.assertEquals("You must enter a valid numerical score.", mappingResult.getFieldError("languageQualifications[0].speakingScore").getDefaultMessage());
+	    Assert.assertEquals(1, mappingResult.getErrorCount());
+	    Assert.assertEquals("languageQualification.general.score.notvalid", mappingResult.getFieldError("languageQualifications[0].speakingScore").getCode());
 	}
 	
     @Test
@@ -437,8 +437,8 @@ public class PersonalDetailsValidatorTest {
         personalDetails.getLanguageQualifications().get(0).setListeningScore("1 2");
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
-        Assert.assertEquals(2, mappingResult.getErrorCount());
-        Assert.assertEquals("You must enter a valid numerical score.", mappingResult.getFieldError("languageQualifications[0].listeningScore").getDefaultMessage());
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.general.score.notvalid", mappingResult.getFieldError("languageQualifications[0].listeningScore").getCode());
     }
     
     @Test
@@ -486,12 +486,246 @@ public class PersonalDetailsValidatorTest {
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("languageQualifications[0].listeningScore").getCode());
     }
     
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfOverallScoreIsAbove120() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("150");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.overallScore.notvalid", mappingResult.getFieldError("languageQualifications[0].overallScore").getCode());
+    }
     
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfReadingScoreIsAbove30() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setReadingScore("150");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.score.notvalid", mappingResult.getFieldError("languageQualifications[0].readingScore").getCode());
+    }
     
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfWritingScoreIsAbove30() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setWritingScore("150");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.score.notvalid", mappingResult.getFieldError("languageQualifications[0].writingScore").getCode());
+    }
     
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfSpeakingScoreIsAbove30() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setSpeakingScore("150");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.score.notvalid", mappingResult.getFieldError("languageQualifications[0].speakingScore").getCode());
+    }
     
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfListeningScoreIsAbove30() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setListeningScore("150");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.score.notvalid", mappingResult.getFieldError("languageQualifications[0].listeningScore").getCode());
+    }
     
-	
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfOverallScoreIsBelow0() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("-1");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.overallScore.notvalid", mappingResult.getFieldError("languageQualifications[0].overallScore").getCode());
+    }
+    
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfReadingScoreIsBelow0() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setReadingScore("-1");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.score.notvalid", mappingResult.getFieldError("languageQualifications[0].readingScore").getCode());
+    }
+    
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfWritingScoreIsBelow0() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setWritingScore("-1");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.score.notvalid", mappingResult.getFieldError("languageQualifications[0].writingScore").getCode());
+    }
+    
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfSpeakingScoreIsBelow0() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setSpeakingScore("-1");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.score.notvalid", mappingResult.getFieldError("languageQualifications[0].speakingScore").getCode());
+    }
+    
+    @Test
+    public void shouldRejectToeflLanguageQualificationIfListeningScoreIsBelow0() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setListeningScore("-1");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("languageQualification.score.notvalid", mappingResult.getFieldError("languageQualifications[0].listeningScore").getCode());
+    }
+    
+    @Test
+    public void shouldAcceptToeflLanguageQualificationIfOverallScoreIsBetween0And120() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("80");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptToeflLanguageQualificationIfReadingScoreIsBetween0And30() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setReadingScore("0");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptToeflLanguageQualificationIfWritingScoreIsBetween0And30() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setWritingScore("30");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptToeflLanguageQualificationIfSpeakingScoreIsBetween0And30() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setSpeakingScore("25");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptToeflLanguageQualificationIfListeningScoreIsBetween0And30() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
+        personalDetails.getLanguageQualifications().get(0).setListeningScore("28");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptIeltsLanguageQualificationIfOverallScoreIsBetween4And9() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.IELTS_ACADEMIC);
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("4");
+        personalDetails.getLanguageQualifications().get(0).setListeningScore("4");
+        personalDetails.getLanguageQualifications().get(0).setReadingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setSpeakingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setWritingScore("4");
+        
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("4");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptIeltsLanguageQualificationIfReadingScoreIsBetween4And9() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.IELTS_ACADEMIC);
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("4");
+        personalDetails.getLanguageQualifications().get(0).setListeningScore("4");
+        personalDetails.getLanguageQualifications().get(0).setReadingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setSpeakingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setWritingScore("4");
+        
+        personalDetails.getLanguageQualifications().get(0).setReadingScore("4.5");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptIeltsLanguageQualificationIfWritingScoreIsBetween4And9() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.IELTS_ACADEMIC);
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("4");
+        personalDetails.getLanguageQualifications().get(0).setListeningScore("4");
+        personalDetails.getLanguageQualifications().get(0).setReadingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setSpeakingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setWritingScore("4");
+        
+        personalDetails.getLanguageQualifications().get(0).setWritingScore("5");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptIeltsLanguageQualificationIfSpeakingScoreIsBetween4And9() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.IELTS_ACADEMIC);
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("4");
+        personalDetails.getLanguageQualifications().get(0).setListeningScore("4");
+        personalDetails.getLanguageQualifications().get(0).setReadingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setSpeakingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setWritingScore("4");
+        
+        personalDetails.getLanguageQualifications().get(0).setSpeakingScore("9");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldAcceptIeltsLanguageQualificationIfListeningScoreIsBetween4And9() {
+        personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.IELTS_ACADEMIC);
+        personalDetails.getLanguageQualifications().get(0).setOverallScore("4");
+        personalDetails.getLanguageQualifications().get(0).setListeningScore("4");
+        personalDetails.getLanguageQualifications().get(0).setReadingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setSpeakingScore("4");
+        personalDetails.getLanguageQualifications().get(0).setWritingScore("4");
+        
+        personalDetails.getLanguageQualifications().get(0).setListeningScore("8.5");
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
 	@Before
 	public void setup() {
 		Language nationality = new Language();

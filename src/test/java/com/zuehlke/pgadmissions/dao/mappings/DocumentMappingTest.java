@@ -67,7 +67,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
 		Qualification qualification = new QualificationBuilder().id(3).awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("")
-				.institution("").qualificationInstitutionCode("ABC").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
+				.institution("").institutionCode("ABC").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0))
 				.toQualification();
 

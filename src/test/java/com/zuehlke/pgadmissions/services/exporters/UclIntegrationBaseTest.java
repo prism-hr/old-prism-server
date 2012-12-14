@@ -188,6 +188,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .id(Integer.MAX_VALUE)
             .awardDate(new Date())
             .grade("6")
+            .institutionCode("UK0000")
             .institution("University of London")
             .institutionCountry(domicile)
             .languageOfStudy("English")

@@ -96,41 +96,43 @@
 
 <section id="linkAcountDetailsSection" class="form-rows">
     <h2 class="no-arrow">Linked Accounts</h2>
-    <div id="linkAccountsSection">
-        <form autocomplete="off">
-            <#if user.linkedAccounts?has_content>
-            <div id="existingUsers" class="tableContainer" style="height: auto;">
-                <table class="data">
-                    <colgroup>
-                        <col style="width: 30px" />
-                        <col />
-                        <col style="width: 90px" />
-                        <col style="width: 30px" />
-                        <col style="width: 30px" />
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th colspan="2" id="primary-header">Linked Accounts</th>
-                            <th>&nbsp;</th>
-                            <th>&nbsp;</th>
-                            <th id="last-col">&nbsp;</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <#list user.linkedAccounts as linkedAccount>
-                        <tr>
-                            <td><a class="row-arrow">-</a></td>
-                            <td>${linkedAccount.email?html}</td>
-                            <td></td>
-                            <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>
-                            <td></td>
-                        </tr>
-                        </#list>
-                    </tbody>
-                </table>
-            </div>
-            </#if>
-             
+</section>
+
+<#if user.linkedAccounts?has_content>
+<div id="existingUsers" class="tableContainer" style="height: auto;">
+    <table class="data">
+        <colgroup>
+            <col style="width: 30px" />
+            <col />
+            <col style="width: 90px" />
+            <col style="width: 30px" />
+            <col style="width: 30px" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th colspan="2" id="primary-header">Linked Accounts</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th id="last-col">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <#list user.linkedAccounts as linkedAccount>
+            <tr>
+                <td><a class="row-arrow">-</a></td>
+                <td>${linkedAccount.email?html}</td>
+                <td></td>
+                <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>
+                <td></td>
+            </tr>
+            </#list>
+        </tbody>
+    </table>
+</div>
+</#if>
+            
+<section id="linkAcountDetailsSection" class="form-rows">
+    <div id="linkAccountsSection">             
             <#if RequestParameters.messageCodeLink??>
                 <div class="section-info-bar"><@spring.message '${RequestParameters.messageCodeLink}'/></div>
             <#else>
@@ -182,6 +184,5 @@
                 <button class="blue" id="linkAccounts" type="button">Submit</button>
             </div>
     </div>
-    </form>
     <a href="#linkAcountDetailsSection"> </a>
 </section>

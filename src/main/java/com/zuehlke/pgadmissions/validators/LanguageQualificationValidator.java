@@ -152,7 +152,10 @@ public class LanguageQualificationValidator extends AbstractValidator {
         } else {
             if (StringUtils.isNotBlank(qualification.getOverallScore())) {
                 try {
-                    Double.valueOf(qualification.getOverallScore());
+                    Integer overallScore = Integer.valueOf(qualification.getOverallScore());
+                    if (!(overallScore >= 0 && overallScore <= 99)) {
+                        errors.rejectValue("overallScore", "languageQualification.general.score.notvalid");
+                    }
                 } catch (NumberFormatException e) {
                     errors.rejectValue("overallScore", "languageQualification.general.score.notvalid");
                 }
@@ -160,7 +163,10 @@ public class LanguageQualificationValidator extends AbstractValidator {
             
             if (StringUtils.isNotBlank(qualification.getListeningScore())) {
                 try {
-                    Double.valueOf(qualification.getListeningScore());
+                    Integer score = Integer.valueOf(qualification.getListeningScore());
+                    if (!(score >= 0 && score <= 99)) {
+                        errors.rejectValue("listeningScore", "languageQualification.general.score.notvalid");
+                    }
                 } catch (NumberFormatException e) {
                     errors.rejectValue("listeningScore", "languageQualification.general.score.notvalid");
                 }
@@ -168,7 +174,10 @@ public class LanguageQualificationValidator extends AbstractValidator {
             
             if (StringUtils.isNotBlank(qualification.getReadingScore())) {
                 try {
-                    Double.valueOf(qualification.getReadingScore());
+                    Integer score = Integer.valueOf(qualification.getReadingScore());
+                    if (!(score >= 0 && score <= 99)) {
+                        errors.rejectValue("readingScore", "languageQualification.general.score.notvalid");
+                    }
                 } catch (NumberFormatException e) {
                     errors.rejectValue("readingScore", "languageQualification.general.score.notvalid");
                 }
@@ -176,7 +185,10 @@ public class LanguageQualificationValidator extends AbstractValidator {
             
             if (StringUtils.isNotBlank(qualification.getSpeakingScore())) {
                 try {
-                    Double.valueOf(qualification.getSpeakingScore());
+                    Integer score = Integer.valueOf(qualification.getSpeakingScore());
+                    if (!(score >= 0 && score <= 99)) {
+                        errors.rejectValue("speakingScore", "languageQualification.general.score.notvalid");
+                    }
                 } catch (NumberFormatException e) {
                     errors.rejectValue("speakingScore", "languageQualification.general.score.notvalid");
                 }
@@ -184,7 +196,10 @@ public class LanguageQualificationValidator extends AbstractValidator {
             
             if (StringUtils.isNotBlank(qualification.getWritingScore())) {
                 try {
-                    Double.valueOf(qualification.getWritingScore());
+                    Integer score = Integer.valueOf(qualification.getWritingScore());
+                    if (!(score >= 0 && score <= 99)) {
+                        errors.rejectValue("writingScore", "languageQualification.general.score.notvalid");
+                    }
                 } catch (NumberFormatException e) {
                     errors.rejectValue("writingScore", "languageQualification.general.score.notvalid");
                 }

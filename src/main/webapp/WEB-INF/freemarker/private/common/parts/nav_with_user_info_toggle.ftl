@@ -23,7 +23,7 @@
         <div class="user">
             <#if model?? && model.user??>
                 <span class="dropdown">
-                    <button class="btn btn-small dropdown-toggle" data-toggle="dropdown" style="margin-bottom:10px">${model.user.email?html}<span class="caret"></span></button>
+                    <button class="btn btn-small dropdown-toggle" data-toggle="dropdown">${model.user.email?html}<span class="caret"></span></button>
                     <ul id="switchUserList" class="dropdown-menu">
                         <#list model.user.linkedAccounts as linkedAccount>
                             <li><a href="javascript:void(0)">${linkedAccount.email?html}</a></li>

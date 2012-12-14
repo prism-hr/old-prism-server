@@ -27,12 +27,12 @@ public class QualificationBuilder {
     private String otherQualificationInstitution;
     private String qualificationInstitutionCode;
     
-    public QualificationBuilder otherQualificationInstitution(String name) {
+    public QualificationBuilder otherInstitution(String name) {
         this.otherQualificationInstitution = name;
         return this;
     }
     
-    public QualificationBuilder qualificationInstitutionCode(String code) {
+    public QualificationBuilder institutionCode(String code) {
         this.qualificationInstitutionCode = code;
         return this;
     }

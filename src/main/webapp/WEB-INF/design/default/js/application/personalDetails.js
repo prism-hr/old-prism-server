@@ -1,7 +1,6 @@
 $(document).ready(function() {
 
     var persImgCount = 0;
-    var unsavedLanguageQualifications = 0;
     var currentRel = 0; // currently edited languageQualification row
     
     showOrHideNationalityButton();
@@ -29,7 +28,7 @@ $(document).ready(function() {
     isEnglishFirstLanguage();
     
     $("#acceptTermsPEDValue").val("NO");
-
+    
     // -------------------------------------------------------------------------------
     // Hide or show the national
     // -------------------------------------------------------------------------------
@@ -296,14 +295,18 @@ $(document).ready(function() {
             	$('#personalDetailsSection').html(data);
             	var selectedType = $('#qualificationType').val();
         		if (selectedType === "IELTS_ACADEMIC") {
-        			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
         			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').hide();
         			$('#overallScoreSelect').val(selectValue('overallScore'));
         			$('#readingScoreSelect').val(selectValue('readingScore'));
         			$('#writingScoreSelect').val(selectValue('writingScore'));
         			$('#speakingScoreSelect').val(selectValue('speakingScore'));
         			$('#listeningScoreSelect').val(selectValue('listeningScore'));
+        			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
         		}
+        		
+        		if ($('#languageQualification_div span.invalid').length <= 0) {
+        		    disableLanguageQualifications();
+        		}        		
             },
             complete : function() {
             }
@@ -366,6 +369,18 @@ $(document).ready(function() {
             },
             success : function(data) {
             	$('#personalDetailsSection').html(data);
+            	var selectedType = $('#qualificationType').val();
+                if (selectedType === "IELTS_ACADEMIC") {
+                    $('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
+                    $('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').hide();
+                    $('#overallScoreSelect').val(selectValue('overallScore'));
+                    $('#readingScoreSelect').val(selectValue('readingScore'));
+                    $('#writingScoreSelect').val(selectValue('writingScore'));
+                    $('#speakingScoreSelect').val(selectValue('speakingScore'));
+                    $('#listeningScoreSelect').val(selectValue('listeningScore'));
+                    $('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').val("");
+                }
+                
             	$('table#languageQualificationsTable .button-edit').show();
         		$("#addLanguageQualificationButton").hide();
         		$("#updateLanguageQualificationButton").show();
@@ -425,10 +440,8 @@ $(document).ready(function() {
         		}
         		
         		if ($('#languageQualification_div span.invalid').length <= 0) {
-                	$("#addLanguageQualificationButton").show();
-                	$("#updateLanguageQualificationButton").hide();
+        		    disableLanguageQualifications();
                 } else {
-                	$("#addLanguageQualificationButton").hide();
                 	$("#updateLanguageQualificationButton").show();
                 }
             },
@@ -466,7 +479,6 @@ function ajaxLanguageQualificationDocumentDelete() {
 }
 
 function ajaxDeleteAllLanguageQualifications() {
-
     var postData = {
             applicationId: $('#applicationId').val(),
             cacheBreaker: new Date().getTime(),
@@ -492,7 +504,7 @@ function ajaxDeleteAllLanguageQualifications() {
         url : "/pgadmissions/update/deleteAllLanguageQualifications",
         data : postData,
         success : function(data) {
-            $('#personalDetailsSection').html(data);                
+            $('#personalDetailsSection').html(data);
         },
         complete : function() {
         }
@@ -564,7 +576,10 @@ function enableLanguageQualifications() {
 	
 	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").removeClass("grey-label");
 	
-	$("#addLanguageQualificationButton").show();
+	if ($("#languageQualificationsTable tr").length <= 0) {
+	    $("#addLanguageQualificationButton").show();	    
+	}
+	
 	$("#updateLanguageQualificationButton").hide();
 }
 
@@ -582,6 +597,7 @@ function disableLanguageQualifications() {
 	
 	$("#addLanguageQualificationButton").hide();
 	$("#updateLanguageQualificationButton").hide();
+	
 	clearLanguageQualification();
 }
 
@@ -622,11 +638,12 @@ function isEnglishFirstLanguage() {
 		disableOtherLanguageQualification();
 		$("#languageQualificationsTable").empty();
 		return true;
-	} else {
-		$("#lbl-languageQualificationAvailable").removeClass("grey-label");
+	} else if (selected_radio == 'false') {
+	    $("#lbl-languageQualificationAvailable").removeClass("grey-label");
 		$("input[name='languageQualificationAvailable']").removeAttr("disabled");
 		return false;
 	}
+	return false;
 }
 
 function isRequireVisa() {
@@ -734,5 +751,26 @@ function postPersonalDetailsData(message) {
             $('#personalDetailsSection div.ajax').remove();
         }
     });
-
 }
+
+/*
+Element.addMethods({
+    redraw: function(element) {
+        element = $(element);
+        var n = document.createTextNode(' ');
+        element.appendChild(n);
+        (function(){n.parentNode.removeChild(n)}).defer();
+        return element;
+    }
+});
+*/
+
+(function($){
+    $.fn.redraw = function(){
+        return $(this).each(function(){
+            var n = document.createTextNode(' ');
+            $(this).append(n);
+            setTimeout(function(){n.parentNode.removeChild(n)}, 0);
+        });
+    }
+})(jQuery)

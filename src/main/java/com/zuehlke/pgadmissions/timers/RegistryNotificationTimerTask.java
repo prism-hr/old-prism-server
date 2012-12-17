@@ -43,7 +43,7 @@ public class RegistryNotificationTimerTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Registry Notification Task Running"); }
+	    log.info("Registry Notification Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<ApplicationForm> applications = applicationsService.getApplicationsDueRegistryNotification();
 		List<Person> registryContacts = configurationService.getAllRegistryUsers();
@@ -65,7 +65,7 @@ public class RegistryNotificationTimerTask extends TimerTask {
 				log.warn("Error while sending notification to registry persons for application " + applicationForm.getApplicationNumber(), e);
 			}
 		}
-		if (log.isDebugEnabled()) { log.debug("Registry Notification Task Complete"); }
+		log.info("Registry Notification Task Complete");
 	}
 
 	private String getCommentText(List<Person> registryContacts) {

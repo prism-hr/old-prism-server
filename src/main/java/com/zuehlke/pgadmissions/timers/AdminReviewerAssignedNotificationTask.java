@@ -27,7 +27,7 @@ public class AdminReviewerAssignedNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Assigned Reviewer Notification Task Running"); }
+	    log.info("Assigned Reviewer Notification Task Running");
 	    Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Reviewer> reviewers = reviewerDAO.getReviewersRequireAdminNotification();
 		transaction.commit();
@@ -46,6 +46,6 @@ public class AdminReviewerAssignedNotificationTask extends TimerTask {
 				log.warn("Error while sending notification to admins for reviewer " + reviewer.getUser().getEmail(), e);
 			}
 		}
-		if (log.isDebugEnabled()) { log.debug("Assigned Reviewer Notification Task Complete"); }
+		log.info("Assigned Reviewer Notification Task Complete");
 	}
 }

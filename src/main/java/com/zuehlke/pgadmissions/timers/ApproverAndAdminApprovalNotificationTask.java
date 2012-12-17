@@ -29,7 +29,7 @@ public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Application In Approval Notification To Approvers Task Running"); }
+	    log.info("Application In Approval Notification To Approvers Task Running");
 		Session session = sessionFactory.getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 
@@ -57,6 +57,6 @@ public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
 
 			}
 		}
-		if (log.isDebugEnabled()) { log.debug("Application In Approval Notification To Approvers Task  Complete"); }
+		log.info("Application In Approval Notification To Approvers Task  Complete");
 	}
 }

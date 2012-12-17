@@ -26,7 +26,7 @@ public class InterviewerNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Interviewer Notification Task Running"); }
+	    log.info("Interviewer Notification Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Interviewer> interviewersDueNotification = interviewerDAO.getInterviewersDueNotification();
 
@@ -47,6 +47,6 @@ public class InterviewerNotificationTask extends TimerTask {
 			}
 
 		}
-		if (log.isDebugEnabled()) { log.debug("Interviewer Notification Task Complete"); }
+		log.info("Interviewer Notification Task Complete");
 	}
 }

@@ -29,7 +29,7 @@ public class NewUserNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("New User Notification Task Running"); }
+	    log.info("New User Notification Task Running");
 	    
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
@@ -56,6 +56,6 @@ public class NewUserNotificationTask extends TimerTask {
 		    }
 	    }
 		
-		if (log.isDebugEnabled()) { log.debug("New User Notification Task Complete"); }
+		log.info("New User Notification Task Complete");
 	}
 }

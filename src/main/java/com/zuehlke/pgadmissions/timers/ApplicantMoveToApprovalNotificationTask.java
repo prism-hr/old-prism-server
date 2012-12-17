@@ -38,7 +38,7 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Applicant Move To Approval Notification Task Running"); }
+	    log.info("Applicant Move To Approval Notification Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 
 		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueMovedToApprovalNotifications();
@@ -64,6 +64,6 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 			}
 
 		}
-		if (log.isDebugEnabled()) { log.debug("ApplicantMoveToApprovalNotificationTask Complete"); }
+		log.info("ApplicantMoveToApprovalNotificationTask Complete");
 	}
 }

@@ -39,7 +39,7 @@ public class StateChangeNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug(notificationType +  " Notification Task Running"); }
+	    log.info(notificationType +  " Notification Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 
 		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus);
@@ -64,6 +64,6 @@ public class StateChangeNotificationTask extends TimerTask {
 				log.warn("Error in move to  "+  newStatus + " notification for " + application.getId(), e);
 			}
 		}
-		if (log.isDebugEnabled()) { log.debug(notificationType + " Notification Task Complete"); }
+		log.info(notificationType + " Notification Task Complete");
 	}
 }

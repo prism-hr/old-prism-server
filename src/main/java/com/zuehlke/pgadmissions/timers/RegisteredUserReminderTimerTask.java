@@ -44,7 +44,7 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug(notificationType +  " Reminder Task Running"); }
+	    log.info(notificationType +  " Reminder Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 
 		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueUserReminder(notificationType, status);
@@ -74,6 +74,6 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 				transaction.rollback();
 			}
 		}
-		if (log.isDebugEnabled()) { log.debug(notificationType +  " Reminder Task Complete"); }
+		log.info(notificationType +  " Reminder Task Complete");
 	}
 }

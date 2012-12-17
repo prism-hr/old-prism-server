@@ -32,7 +32,7 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Interview Comment Notification Task Running"); }
+	    log.info("Interview Comment Notification Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<InterviewComment> comments = commentService.getInterviewCommentsDueNotification();
 		transaction.commit();
@@ -50,6 +50,6 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
 				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
 			}
 		}
-		if (log.isDebugEnabled()) { log.debug("Interview Comment Task Complete"); }
+		log.info("Interview Comment Task Complete");
 	}
 }

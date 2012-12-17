@@ -96,42 +96,6 @@
 
 <section id="linkAcountDetailsSection" class="form-rows">
     <h2 class="no-arrow">Linked Accounts</h2>
-</section>
-
-<#if user.linkedAccounts?has_content>
-<div id="existingUsers" class="tableContainer" style="height: auto;">
-    <table class="data">
-        <colgroup>
-            <col style="width: 30px" />
-            <col />
-            <col style="width: 90px" />
-            <col style="width: 30px" />
-            <col style="width: 30px" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th colspan="2" id="primary-header">Linked Accounts</th>
-                <th>&nbsp;</th>
-                <th>&nbsp;</th>
-                <th id="last-col">&nbsp;</th>
-            </tr>
-        </thead>
-        <tbody>
-            <#list user.linkedAccounts as linkedAccount>
-            <tr>
-                <td><a class="row-arrow">-</a></td>
-                <td>${linkedAccount.email?html}</td>
-                <td></td>
-                <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>
-                <td></td>
-            </tr>
-            </#list>
-        </tbody>
-    </table>
-</div>
-</#if>
-            
-<section id="linkAcountDetailsSection" class="form-rows">
     <div id="linkAccountsSection">             
             <#if RequestParameters.messageCodeLink??>
                 <div class="section-info-bar"><@spring.message '${RequestParameters.messageCodeLink}'/></div>
@@ -155,7 +119,28 @@
             </div>
 
             <div class="row-group">
-                <h3>Account to be Linked</h3>
+                <div class="row">
+                    <span class="group-heading-label">Account to be Linked</span>
+                    <div class="field">
+                        <#if user.linkedAccounts?has_content>
+                            <table id="linkedAccountsTable" class="data-table">
+                                <colgroup>
+                                    <col />
+                                    <col style="width: 60px;" />
+                                </colgroup>
+                                <tbody>
+                                    <#list user.linkedAccounts as linkedAccount>
+                                    <tr>
+                                        <td>${linkedAccount.email?html}</td>
+                                        <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>
+                                    </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </#if>
+                    </div>
+                </div>
+
                 <div class="row">
                     <span class="plain-label">Email</span> <span class="hint" data-desc="<@spring.message 'myaccount.link.email' />"></span>
                     <div class="field">

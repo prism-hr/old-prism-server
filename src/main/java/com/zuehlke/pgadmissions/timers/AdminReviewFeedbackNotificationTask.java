@@ -52,6 +52,6 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask {
 			}
 
 		}
-		log.info("Review Comment Task Complete");
+		log.info("Review Comment Notification Task Complete");
 	}
 }

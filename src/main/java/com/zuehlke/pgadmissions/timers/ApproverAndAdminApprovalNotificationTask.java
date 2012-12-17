@@ -57,6 +57,6 @@ public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
 
 			}
 		}
-		log.info("Application In Approval Notification To Approvers Task  Complete");
+		log.info("Application In Approval Notification To Approvers Task Complete");
 	}
 }

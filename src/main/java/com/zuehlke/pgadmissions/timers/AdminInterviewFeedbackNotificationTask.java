@@ -50,6 +50,6 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
 				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
 			}
 		}
-		log.info("Interview Comment Task Complete");
+		log.info("Interview Comment Notification Task Complete");
 	}
 }

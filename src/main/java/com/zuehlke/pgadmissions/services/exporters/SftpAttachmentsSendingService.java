@@ -154,7 +154,7 @@ public class SftpAttachmentsSendingService {
 
             //possible errors: sftp protocol-level problems, connection lost during transmission and local problem with building zip-pack with attachments
             try {
-                sftpOs = sftpChannel.put(applicationForm.getUclBookingReferenceNumber() + ".zip");
+                sftpOs = sftpChannel.put(applicationForm.getUclBookingReferenceNumber() + ".zip", ChannelSftp.OVERWRITE);
                 attachmentsZipCreator.writeZipEntries(applicationForm, applicationForm.getUclBookingReferenceNumber(), sftpOs);
             } catch (SftpException e) {
                 throw new SftpTransmissionFailedOrProtocolError("SFTP protocol error during transmission of attachments for application form " + applicationForm.getId(), e);

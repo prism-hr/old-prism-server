@@ -781,7 +781,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
 
         sftpChannelMock.cd(targetFolder);
 
-        sftpChannelMock.put(applicationForm.getUclBookingReferenceNumber() + ".zip");
+        sftpChannelMock.put(applicationForm.getUclBookingReferenceNumber() + ".zip", ChannelSftp.OVERWRITE);
 
         EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
             @Override

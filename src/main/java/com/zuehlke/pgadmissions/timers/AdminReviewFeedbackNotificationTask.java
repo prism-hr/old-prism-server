@@ -33,25 +33,29 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Review Comment Notification Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<ReviewComment> comments = commentService.getReviewCommentsDueNotification();
-		transaction.commit();
-		for (ReviewComment comment : comments) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(comment);
-			try {
-				adminMailSender.sendAdminReviewNotification(comment.getApplication(), comment.getUser());
-				comment.setAdminsNotified(true);
-				commentService.save(comment);
-				transaction.commit();
-				log.info("Notification sent to admins for review comment " + comment.getId());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
-
-			}
-
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<ReviewComment> comments = commentService.getReviewCommentsDueNotification();
+    		transaction.commit();
+    		for (ReviewComment comment : comments) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(comment);
+    			try {
+    				adminMailSender.sendAdminReviewNotification(comment.getApplication(), comment.getUser());
+    				comment.setAdminsNotified(true);
+    				commentService.save(comment);
+    				transaction.commit();
+    				log.info("Notification sent to admins for review comment " + comment.getId());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
+    
+    			}
+    
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Review Comment Notification Task", e);
+	    }
 		log.info("Review Comment Notification Task Complete");
 	}
 }

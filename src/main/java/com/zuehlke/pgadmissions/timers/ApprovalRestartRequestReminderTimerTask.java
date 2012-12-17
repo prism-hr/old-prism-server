@@ -31,34 +31,35 @@ public class ApprovalRestartRequestReminderTimerTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Approval Restart Request Reminder Timer Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-
-		List<ApplicationForm> applications = applicationsService.getApplicationsDueApprovalRestartRequestReminder();
-
-		transaction.commit();
-		for (ApplicationForm application : applications) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(application);
-			try {
-
-				mailSender.sendRequestRestartApprovalReminder(application);
-				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
-				if (notificationRecord == null) {
-					notificationRecord = new NotificationRecord();
-					notificationRecord.setNotificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);					
-					application.addNotificationRecord(notificationRecord);
-				}
-				notificationRecord.setDate(new Date());
-				applicationsService.save(application);
-				transaction.commit();
-				log.info("Notification approval restart request reminder sent for " + application.getApplicationNumber());
-			} catch (Throwable e) {
-				e.printStackTrace();
-				log.warn("Error in sending Approval restart request reminder for " + application.getApplicationNumber());
-				transaction.rollback();
-			}
-
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<ApplicationForm> applications = applicationsService.getApplicationsDueApprovalRestartRequestReminder();
+    		transaction.commit();
+    		for (ApplicationForm application : applications) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(application);
+    			try {
+    
+    				mailSender.sendRequestRestartApprovalReminder(application);
+    				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);
+    				if (notificationRecord == null) {
+    					notificationRecord = new NotificationRecord();
+    					notificationRecord.setNotificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER);					
+    					application.addNotificationRecord(notificationRecord);
+    				}
+    				notificationRecord.setDate(new Date());
+    				applicationsService.save(application);
+    				transaction.commit();
+    				log.info("Notification approval restart request reminder sent for " + application.getApplicationNumber());
+    			} catch (Throwable e) {
+    				e.printStackTrace();
+    				log.warn("Error in sending Approval restart request reminder for " + application.getApplicationNumber());
+    				transaction.rollback();
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Approval Restart Request Reminder Timer Task", e);
+	    }
 		log.info("Approval Restart Request Reminder Timer Task Complete");
 	}
 }

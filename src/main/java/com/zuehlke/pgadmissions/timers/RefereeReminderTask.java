@@ -31,23 +31,27 @@ public class RefereeReminderTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Referee Reminder Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueAReminder();
-		transaction.commit();
-		for (Referee referee : refereesDueAReminder) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(referee);
-			try {				
-				mailService.sendRefereeReminder(referee);
-				referee.setLastNotified(new Date());
-				refereeDAO.save(referee);
-				transaction.commit();				
-				log.info("Notification reminder sent to referee " +  referee.getEmail());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending reminder to referee " + referee.getEmail(), e);
-			}
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueAReminder();
+    		transaction.commit();
+    		for (Referee referee : refereesDueAReminder) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(referee);
+    			try {				
+    				mailService.sendRefereeReminder(referee);
+    				referee.setLastNotified(new Date());
+    				refereeDAO.save(referee);
+    				transaction.commit();				
+    				log.info("Notification reminder sent to referee " +  referee.getEmail());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending reminder to referee " + referee.getEmail(), e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Referee Reminder Task", e);
+	    }
 		log.info("Referee Reminder Task Complete");
 	}
 }

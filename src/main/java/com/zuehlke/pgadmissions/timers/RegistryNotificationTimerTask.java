@@ -44,27 +44,30 @@ public class RegistryNotificationTimerTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Registry Notification Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<ApplicationForm> applications = applicationsService.getApplicationsDueRegistryNotification();
-		List<Person> registryContacts = configurationService.getAllRegistryUsers();
-		transaction.commit();
-		for (ApplicationForm applicationForm : applications) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(applicationForm);
-			try {
-
-				registryMailSender.sendApplicationToRegistryContacts(applicationForm, registryContacts);
-				applicationForm.setRegistryUsersDueNotification(false);
-				Comment comment = commentFactory.createComment(applicationForm, applicationForm.getAdminRequestedRegistry(), getCommentText(registryContacts), CommentType.GENERIC, null);
-				commentService.save(comment);
-				applicationsService.save(applicationForm);
-				transaction.commit();
-				log.info("Notification sent to registry persons for application " + applicationForm.getApplicationNumber());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending notification to registry persons for application " + applicationForm.getApplicationNumber(), e);
-			}
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<ApplicationForm> applications = applicationsService.getApplicationsDueRegistryNotification();
+    		List<Person> registryContacts = configurationService.getAllRegistryUsers();
+    		transaction.commit();
+    		for (ApplicationForm applicationForm : applications) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(applicationForm);
+    			try {
+    				registryMailSender.sendApplicationToRegistryContacts(applicationForm, registryContacts);
+    				applicationForm.setRegistryUsersDueNotification(false);
+    				Comment comment = commentFactory.createComment(applicationForm, applicationForm.getAdminRequestedRegistry(), getCommentText(registryContacts), CommentType.GENERIC, null);
+    				commentService.save(comment);
+    				applicationsService.save(applicationForm);
+    				transaction.commit();
+    				log.info("Notification sent to registry persons for application " + applicationForm.getApplicationNumber());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending notification to registry persons for application " + applicationForm.getApplicationNumber(), e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Registry Notification Task", e);
+	    }
 		log.info("Registry Notification Task Complete");
 	}
 

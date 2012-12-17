@@ -39,31 +39,32 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Applicant Move To Approval Notification Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-
-		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueMovedToApprovalNotifications();
-
-		transaction.commit();
-		for (ApplicationForm application : applications) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(application);
-			try {
-				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplate, null);
-				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
-				if (notificationRecord == null) {
-					notificationRecord = new NotificationRecord(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
-					application.addNotificationRecord(notificationRecord);
-				}
-				notificationRecord.setDate(new Date());
-				applicationFormDAO.save(application);
-				transaction.commit();
-				log.info("Notification move to approval sent for " + application.getApplicationNumber());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error in move to approval notification for " + application.getApplicationNumber(), e);
-			}
-
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueMovedToApprovalNotifications();
+    		transaction.commit();
+    		for (ApplicationForm application : applications) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(application);
+    			try {
+    				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplate, null);
+    				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
+    				if (notificationRecord == null) {
+    					notificationRecord = new NotificationRecord(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
+    					application.addNotificationRecord(notificationRecord);
+    				}
+    				notificationRecord.setDate(new Date());
+    				applicationFormDAO.save(application);
+    				transaction.commit();
+    				log.info("Notification move to approval sent for " + application.getApplicationNumber());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error in move to approval notification for " + application.getApplicationNumber(), e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Applicant Move To Approval Notification Task", e);
+	    }
 		log.info("Applicant Move To Approval Notification Task Complete");
 	}
 }

@@ -28,24 +28,28 @@ public class AdminReviewerAssignedNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Assigned Reviewer Notification Task Running");
-	    Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<Reviewer> reviewers = reviewerDAO.getReviewersRequireAdminNotification();
-		transaction.commit();
-		for (Reviewer reviewer : reviewers) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(reviewer);
-			ApplicationForm application = reviewer.getReviewRound().getApplication();
-			try {
-				adminMailSender.sendReviewerAssignedNotification(application, reviewer);
-				reviewer.setDateAdminsNotified(new Date());
-				reviewerDAO.save(reviewer);
-				transaction.commit();
-				log.info("Notification Reviewer assigned sent to admins for reviewer " + reviewer.getUser().getEmail());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending notification to admins for reviewer " + reviewer.getUser().getEmail(), e);
-			}
-		}
+	    try {
+    	    Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<Reviewer> reviewers = reviewerDAO.getReviewersRequireAdminNotification();
+    		transaction.commit();
+    		for (Reviewer reviewer : reviewers) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(reviewer);
+    			ApplicationForm application = reviewer.getReviewRound().getApplication();
+    			try {
+    				adminMailSender.sendReviewerAssignedNotification(application, reviewer);
+    				reviewer.setDateAdminsNotified(new Date());
+    				reviewerDAO.save(reviewer);
+    				transaction.commit();
+    				log.info("Notification Reviewer assigned sent to admins for reviewer " + reviewer.getUser().getEmail());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending notification to admins for reviewer " + reviewer.getUser().getEmail(), e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Assigned Reviewer Notification Task", e);
+	    }
 		log.info("Assigned Reviewer Notification Task Complete");
 	}
 }

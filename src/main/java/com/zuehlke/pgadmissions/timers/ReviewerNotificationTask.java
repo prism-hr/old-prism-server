@@ -27,24 +27,27 @@ public class ReviewerNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Reviewer Notification Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<Reviewer> reviewersDueNotification = reviewerDAO.getReviewersDueNotification();
-
-		transaction.commit();
-		for (Reviewer reviewer : reviewersDueNotification) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(reviewer);
-			try {
-				reviewerMailSender.sendReviewerNotification(reviewer);
-				reviewer.setLastNotified(new Date());
-				reviewerDAO.save(reviewer);
-				transaction.commit();
-				log.info("Notification sent to reviewer " + reviewer.getUser().getEmail());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending notification to reviewer " + reviewer.getUser().getEmail(), e);
-			}
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<Reviewer> reviewersDueNotification = reviewerDAO.getReviewersDueNotification();
+    		transaction.commit();
+    		for (Reviewer reviewer : reviewersDueNotification) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(reviewer);
+    			try {
+    				reviewerMailSender.sendReviewerNotification(reviewer);
+    				reviewer.setLastNotified(new Date());
+    				reviewerDAO.save(reviewer);
+    				transaction.commit();
+    				log.info("Notification sent to reviewer " + reviewer.getUser().getEmail());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending notification to reviewer " + reviewer.getUser().getEmail(), e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Reviewer Notification Task", e);
+	    }
 		log.info("Reviewer Notification Task Complete");
 	}
 }

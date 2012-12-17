@@ -30,33 +30,34 @@ public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Application In Approval Notification To Approvers Task Running");
-		Session session = sessionFactory.getCurrentSession();
-		Transaction transaction = session.beginTransaction();
-
-		List<ApplicationForm> applications = applicationDAO.getApplicationsDueApprovalNotifications();
-		
-		transaction.commit();
-
-		for (ApplicationForm application : applications) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(application);
-			try {
-				approverMailSender.sendApprovalNotificationToApproversAndAdmins(application);
-				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION);
-				if (notificationRecord == null) {
-					notificationRecord = new NotificationRecord(NotificationType.APPROVAL_NOTIFICATION);
-					application.addNotificationRecord(notificationRecord);
-				}
-				notificationRecord.setDate(new Date());
-				applicationDAO.save(application);
-				transaction.commit();
-				log.info("Notification Application In Approval notifications sent to approvers for " + application.getId());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending email", e);
-
-			}
-		}
+	    try {
+    		Session session = sessionFactory.getCurrentSession();
+    		Transaction transaction = session.beginTransaction();
+    		List<ApplicationForm> applications = applicationDAO.getApplicationsDueApprovalNotifications();
+    		transaction.commit();
+    		for (ApplicationForm application : applications) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(application);
+    			try {
+    				approverMailSender.sendApprovalNotificationToApproversAndAdmins(application);
+    				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION);
+    				if (notificationRecord == null) {
+    					notificationRecord = new NotificationRecord(NotificationType.APPROVAL_NOTIFICATION);
+    					application.addNotificationRecord(notificationRecord);
+    				}
+    				notificationRecord.setDate(new Date());
+    				applicationDAO.save(application);
+    				transaction.commit();
+    				log.info("Notification Application In Approval notifications sent to approvers for " + application.getId());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending email", e);
+    
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Application In Approval Notification To Approvers Task", e);
+	    }
 		log.info("Application In Approval Notification To Approvers Task Complete");
 	}
 }

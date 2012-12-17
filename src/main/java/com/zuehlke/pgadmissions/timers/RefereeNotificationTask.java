@@ -30,25 +30,29 @@ public class RefereeNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Referee Notification Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<Referee> refereesDueNotification = refereeDAO.getRefereesDueNotification();
-		refereeService.processRefereesRoles(refereesDueNotification);
-		transaction.commit();
-		for (Referee referee : refereesDueNotification) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(referee);
-			try {				
-				refereeMailService.sendRefereeNotification(referee);
-				referee.setLastNotified(new Date());
-				refereeDAO.save(referee);
-				transaction.commit();				
-				log.info("Notification sent to referee " +  referee.getEmail());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending notification to referee " + referee.getEmail(), e);
-
-			}
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<Referee> refereesDueNotification = refereeDAO.getRefereesDueNotification();
+    		refereeService.processRefereesRoles(refereesDueNotification);
+    		transaction.commit();
+    		for (Referee referee : refereesDueNotification) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(referee);
+    			try {				
+    				refereeMailService.sendRefereeNotification(referee);
+    				referee.setLastNotified(new Date());
+    				refereeDAO.save(referee);
+    				transaction.commit();				
+    				log.info("Notification sent to referee " +  referee.getEmail());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending notification to referee " + referee.getEmail(), e);
+    
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Referee Notification Task", e);
+	    }
 		log.info("Referee Notification Task Complete"); 
 	}
 }

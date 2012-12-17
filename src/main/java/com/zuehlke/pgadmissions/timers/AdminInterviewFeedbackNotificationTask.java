@@ -33,23 +33,27 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Interview Comment Notification Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<InterviewComment> comments = commentService.getInterviewCommentsDueNotification();
-		transaction.commit();
-		for (InterviewComment comment : comments) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(comment);
-			try {
-				adminMailSender.sendAdminInterviewNotification(comment.getApplication(), comment.getUser());
-				comment.setAdminsNotified(true);
-				commentService.save(comment);
-				transaction.commit();
-				log.info("Notification sent to admins for interview comment " + comment.getId());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
-			}
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<InterviewComment> comments = commentService.getInterviewCommentsDueNotification();
+    		transaction.commit();
+    		for (InterviewComment comment : comments) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(comment);
+    			try {
+    				adminMailSender.sendAdminInterviewNotification(comment.getApplication(), comment.getUser());
+    				comment.setAdminsNotified(true);
+    				commentService.save(comment);
+    				transaction.commit();
+    				log.info("Notification sent to admins for interview comment " + comment.getId());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Interview Comment Notification Task", e);
+	    }
 		log.info("Interview Comment Notification Task Complete");
 	}
 }

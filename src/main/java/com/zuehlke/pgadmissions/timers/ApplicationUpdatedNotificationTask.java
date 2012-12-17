@@ -31,28 +31,32 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Application Update Notification Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<ApplicationForm> applicationsDueUpdateNotification = applicationDAO.getApplicationsDueUpdateNotification();
-		transaction.commit();
-		for (ApplicationForm applicationForm : applicationsDueUpdateNotification) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(applicationForm);
-			try {
-				mailService.sendApplicationUpdatedMailToAdmins(applicationForm);
-				NotificationRecord notificationRecord = applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION);			
-			    if (notificationRecord == null) {
-			        notificationRecord = new NotificationRecord(NotificationType.UPDATED_NOTIFICATION);
-			        applicationForm.addNotificationRecord(notificationRecord);
-			    }
-			    notificationRecord.setDate(new Date());
-			    applicationDAO.save(applicationForm);			
-				transaction.commit();
-				log.info("Notification update sent for " + applicationForm.getId());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending email", e);
-			}
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<ApplicationForm> applicationsDueUpdateNotification = applicationDAO.getApplicationsDueUpdateNotification();
+    		transaction.commit();
+    		for (ApplicationForm applicationForm : applicationsDueUpdateNotification) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(applicationForm);
+    			try {
+    				mailService.sendApplicationUpdatedMailToAdmins(applicationForm);
+    				NotificationRecord notificationRecord = applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION);			
+    			    if (notificationRecord == null) {
+    			        notificationRecord = new NotificationRecord(NotificationType.UPDATED_NOTIFICATION);
+    			        applicationForm.addNotificationRecord(notificationRecord);
+    			    }
+    			    notificationRecord.setDate(new Date());
+    			    applicationDAO.save(applicationForm);			
+    				transaction.commit();
+    				log.info("Notification update sent for " + applicationForm.getId());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending email", e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Application Update Notification Task", e);
+	    }
 		log.info("Application Update Notification Task Complete");
 	}
 }

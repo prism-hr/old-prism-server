@@ -27,27 +27,29 @@ public class ReviewerReminderTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    log.info("Reviewer reminder Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<Reviewer> reviewersDuereminder = reviewerDAO.getReviewersDueReminder();
-
-		transaction.commit();
-		
-		for (Reviewer reviewer : reviewersDuereminder) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(reviewer);
-			try {
-				reviewerMailSender.sendReviewerReminder(reviewer);
-				reviewer.setLastNotified(new Date());
-				reviewerDAO.save(reviewer);
-				transaction.commit();
-				log.info("Notification reminder sent to reviewer " + reviewer.getUser().getEmail());
-			} catch (Throwable e) {
-				e.printStackTrace();
-				transaction.rollback();
-				log.warn("Error while sending reminder to reviewer " + reviewer.getUser().getEmail(), e);
-			}
-		}
-		log.info("Reviewer reminder Task Complete");
+	    log.info("Reviewer Reminder Task Running");
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<Reviewer> reviewersDuereminder = reviewerDAO.getReviewersDueReminder();
+    		transaction.commit();
+    		for (Reviewer reviewer : reviewersDuereminder) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(reviewer);
+    			try {
+    				reviewerMailSender.sendReviewerReminder(reviewer);
+    				reviewer.setLastNotified(new Date());
+    				reviewerDAO.save(reviewer);
+    				transaction.commit();
+    				log.info("Notification reminder sent to reviewer " + reviewer.getUser().getEmail());
+    			} catch (Throwable e) {
+    				e.printStackTrace();
+    				transaction.rollback();
+    				log.warn("Error while sending reminder to reviewer " + reviewer.getUser().getEmail(), e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Reviewer Reminder Task", e);
+	    }
+		log.info("Reviewer Reminder Task Complete");
 	}
 }

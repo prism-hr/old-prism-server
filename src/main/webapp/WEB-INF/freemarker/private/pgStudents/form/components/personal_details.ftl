@@ -244,7 +244,7 @@
         <div id="languageQualification_div" class="row-group">
             
             <div class="row">
-                <label id="lbl-englishLanguageQualifications" class="group-heading-label grey-label">English Language Qualifications</label>
+                <label id="lbl-englishLanguageQualifications" class="group-heading-label grey-label">English Language Qualification</label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.title'/>"></span>
                 
                 <div class="field">

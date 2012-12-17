@@ -251,15 +251,8 @@ public class RefereeService {
 			model.put("programme", form.getProgrammeDetails());
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-			
 			String subject = resolveMessage("reference.request", form);
-			if (referee.getUser() != null && referee.getUser().isEnabled()) {
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
-						"private/referees/mail/existing_user_referee_notification_email.ftl", model, null));
-			} else {
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
-						"private/referees/mail/referee_notification_email.ftl", model, null));
-			}
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/referees/mail/referee_notification_email.ftl", model, null));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}

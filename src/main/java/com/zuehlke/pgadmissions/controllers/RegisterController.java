@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,18 +137,13 @@ public class RegisterController {
 		String[] params = applicationQueryStringParser.parse(user.getOriginalApplicationQueryString());		
 		Program program = programService.getProgramByCode(params[0]);
 		Date batchDeadline = null;
-		if (params[2] != null) {
-			try {
-				batchDeadline = new SimpleDateFormat("dd-MMM-yyyy").parse(params[2]);
-			} catch (ParseException ignore) {
-				try {
-					batchDeadline = new SimpleDateFormat("dd MMM yyyy").parse(params[2]);
-				} catch (ParseException e) {
-					//log, but don't prevent user activating account!
-					log.warn("unparseable date in stored querystring:", e);		
-				}
-						
-			}
+		if (params[2] != null && StringUtils.isNotBlank(params[2])) {
+            try {
+                batchDeadline = DateUtils.parseDate(params[2], new String[] {"dd-MMM-yyyy", "dd MMM yyyy"});
+            } catch (ParseException e) {
+                //log, but don't prevent user activating account!
+                log.warn(String.format("Unparseable date in stored querystring: %s", params[2]), e);
+            }
 		}
 		String researchHomePage = params[1];
 		if(!UrlValidator.getInstance().isValid(researchHomePage)){

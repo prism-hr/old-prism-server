@@ -64,6 +64,6 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 			}
 
 		}
-		log.info("ApplicantMoveToApprovalNotificationTask Complete");
+		log.info("Applicant Move To Approval Notification Task Complete");
 	}
 }

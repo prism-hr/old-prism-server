@@ -26,7 +26,7 @@ public class InterviewerReminderTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Interviewer reminder Task Running"); }
+	    log.info("Interviewer reminder Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Interviewer> interviewersDuereminder = interviewerDAO.getInterviewersDueReminder();
 
@@ -48,6 +48,6 @@ public class InterviewerReminderTask extends TimerTask {
 				log.warn("Error while sending reminder to interviewer " + interviewer.getUser().getEmail(), e);
 			}
 		}
-		if (log.isDebugEnabled()) { log.debug("Interviewer reminder Task Complete"); }
+		log.info("Interviewer reminder Task Complete");
 	}
 }

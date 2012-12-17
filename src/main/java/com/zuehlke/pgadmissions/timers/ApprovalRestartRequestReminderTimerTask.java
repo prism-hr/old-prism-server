@@ -30,7 +30,7 @@ public class ApprovalRestartRequestReminderTimerTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Approval Restart Request Reminder Timer Task Running"); }
+	    log.info("Approval Restart Request Reminder Timer Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 
 		List<ApplicationForm> applications = applicationsService.getApplicationsDueApprovalRestartRequestReminder();
@@ -59,6 +59,6 @@ public class ApprovalRestartRequestReminderTimerTask extends TimerTask {
 			}
 
 		}
-		if (log.isDebugEnabled()) { log.debug("ApprovalRestartRequestReminderTimerTask Complete"); }
+		log.info("ApprovalRestartRequestReminderTimerTask Complete");
 	}
 }

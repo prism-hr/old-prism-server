@@ -28,7 +28,7 @@ public class AdminRejectNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Admin Reject Notification Task Running"); }
+	    log.info("Admin Reject Notification Task Running");
 		
 	    Session session = sessionFactory.getCurrentSession();
 		Transaction transaction = session.beginTransaction();
@@ -40,7 +40,7 @@ public class AdminRejectNotificationTask extends TimerTask {
 			sendRejectNotificationsForApplication(sessionFactory.getCurrentSession(), application);
 		}
 		
-		if (log.isDebugEnabled()) { log.debug("Admin Reject Notification Task Complete"); }
+		log.info("Admin Reject Notification Task Complete");
 	}
 
 	private void sendRejectNotificationsForApplication(Session session, ApplicationForm application) {
@@ -56,7 +56,7 @@ public class AdminRejectNotificationTask extends TimerTask {
 			log.info("Reject notification sent for application: " + application.getApplicationNumber());
 		} catch (Throwable e) {
 			transaction.rollback();
-			log.warn("Error in sending reject notification for application: " + application.getApplicationNumber(), e);
+			log.info("Error in sending reject notification for application: " + application.getApplicationNumber(), e);
 		}
 	}
 }

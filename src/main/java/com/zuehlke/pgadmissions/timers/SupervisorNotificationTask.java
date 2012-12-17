@@ -26,7 +26,7 @@ public class SupervisorNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Supervisor Notification Task Running"); }
+	    log.info("Supervisor Notification Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Supervisor> supervisorsDueNotification = supervisorDAO.getSupervisorsDueNotification();
 
@@ -45,6 +45,6 @@ public class SupervisorNotificationTask extends TimerTask {
 				log.warn("Error while sending notification to supervisor " + supervisor.getUser().getEmail(), e);
 			}
 		}
-		if (log.isDebugEnabled()) { log.debug("Supervisor Notification Task Complete"); }
+		log.info("Supervisor Notification Task Complete");
 	}
 }

@@ -32,7 +32,7 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
-	    if (log.isDebugEnabled()) { log.debug("Review Comment Notification Task Running"); }
+	    log.info("Review Comment Notification Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<ReviewComment> comments = commentService.getReviewCommentsDueNotification();
 		transaction.commit();
@@ -52,6 +52,6 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask {
 			}
 
 		}
-		if (log.isDebugEnabled()) { log.debug("Review Comment Task Complete"); }
+		log.info("Review Comment Task Complete");
 	}
 }

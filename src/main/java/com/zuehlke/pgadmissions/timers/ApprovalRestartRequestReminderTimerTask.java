@@ -59,6 +59,6 @@ public class ApprovalRestartRequestReminderTimerTask extends TimerTask {
 			}
 
 		}
-		log.info("ApprovalRestartRequestReminderTimerTask Complete");
+		log.info("Approval Restart Request Reminder Timer Task Complete");
 	}
 }

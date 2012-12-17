@@ -40,30 +40,32 @@ public class StateChangeNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info(notificationType +  " Notification Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-
-		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus);
-
-		transaction.commit();
-		for (ApplicationForm application : applications) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(application);
-			try {
-				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplate, null);
-				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
-				if (notificationRecord == null) {
-					notificationRecord = new NotificationRecord(notificationType);
-					application.addNotificationRecord(notificationRecord);
-				}
-				notificationRecord.setDate(new Date());
-				applicationFormDAO.save(application);
-				transaction.commit();
-				log.info("Notification move to " + newStatus + " notification sent for " + application.getId());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error in move to  "+  newStatus + " notification for " + application.getId(), e);
-			}
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus);
+    		transaction.commit();
+    		for (ApplicationForm application : applications) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(application);
+    			try {
+    				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplate, null);
+    				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
+    				if (notificationRecord == null) {
+    					notificationRecord = new NotificationRecord(notificationType);
+    					application.addNotificationRecord(notificationRecord);
+    				}
+    				notificationRecord.setDate(new Date());
+    				applicationFormDAO.save(application);
+    				transaction.commit();
+    				log.info("Notification move to " + newStatus + " notification sent for " + application.getId());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error in move to  "+  newStatus + " notification for " + application.getId(), e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing " + notificationType +  " Notification Task", e);
+	    }
 		log.info(notificationType + " Notification Task Complete");
 	}
 }

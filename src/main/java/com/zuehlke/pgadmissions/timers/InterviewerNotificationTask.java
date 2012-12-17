@@ -27,26 +27,27 @@ public class InterviewerNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Interviewer Notification Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-		List<Interviewer> interviewersDueNotification = interviewerDAO.getInterviewersDueNotification();
-
-		transaction.commit();
-		for (Interviewer interviewer : interviewersDueNotification) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(interviewer);
-			try {
-				interviewerMailSender.sendInterviewerNotification(interviewer);
-				interviewer.setLastNotified(new Date());
-				interviewerDAO.save(interviewer);
-				transaction.commit();
-				log.info("Notification sent to interviewer " + interviewer.getUser().getEmail());
-			} catch (Throwable e) {
-				transaction.rollback();
-				log.warn("Error while sending notification to interviewer " + interviewer.getUser().getEmail(), e);
-
-			}
-
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<Interviewer> interviewersDueNotification = interviewerDAO.getInterviewersDueNotification();
+    		transaction.commit();
+    		for (Interviewer interviewer : interviewersDueNotification) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(interviewer);
+    			try {
+    				interviewerMailSender.sendInterviewerNotification(interviewer);
+    				interviewer.setLastNotified(new Date());
+    				interviewerDAO.save(interviewer);
+    				transaction.commit();
+    				log.info("Notification sent to interviewer " + interviewer.getUser().getEmail());
+    			} catch (Throwable e) {
+    				transaction.rollback();
+    				log.warn("Error while sending notification to interviewer " + interviewer.getUser().getEmail(), e);
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing Interviewer Notification Task", e);
+	    }
 		log.info("Interviewer Notification Task Complete");
 	}
 }

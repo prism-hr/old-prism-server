@@ -45,35 +45,37 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info(notificationType +  " Reminder Task Running");
-		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-
-		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueUserReminder(notificationType, status);
-
-		transaction.commit();
-		for (ApplicationForm application : applications) {
-			transaction = sessionFactory.getCurrentSession().beginTransaction();
-			sessionFactory.getCurrentSession().refresh(application);
-			try {
-				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
-				
-				String useSubjectCode = subjectCode;
-				String useEmailTemplate = emailTemplate;
-				if (notificationRecord == null) {
-					notificationRecord = new NotificationRecord(notificationType);
-					application.addNotificationRecord(notificationRecord);
-					useSubjectCode = firstSubjectCode;
-					useEmailTemplate = firstEmailTemplate;
-				}
-				adminMailSender.sendMailsForApplication(application, useSubjectCode, useEmailTemplate, notificationType);
-				notificationRecord.setDate(new Date());
-				applicationFormDAO.save(application);
-				transaction.commit();
-				log.info("Notification " + status + " reminders sent to " + application.getId());
-			} catch (Throwable e) {
-				log.warn("Error in sending " + status + " reminders for " + application.getId(), e);
-				transaction.rollback();
-			}
-		}
+	    try {
+    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueUserReminder(notificationType, status);
+    		transaction.commit();
+    		for (ApplicationForm application : applications) {
+    			transaction = sessionFactory.getCurrentSession().beginTransaction();
+    			sessionFactory.getCurrentSession().refresh(application);
+    			try {
+    				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
+    				
+    				String useSubjectCode = subjectCode;
+    				String useEmailTemplate = emailTemplate;
+    				if (notificationRecord == null) {
+    					notificationRecord = new NotificationRecord(notificationType);
+    					application.addNotificationRecord(notificationRecord);
+    					useSubjectCode = firstSubjectCode;
+    					useEmailTemplate = firstEmailTemplate;
+    				}
+    				adminMailSender.sendMailsForApplication(application, useSubjectCode, useEmailTemplate, notificationType);
+    				notificationRecord.setDate(new Date());
+    				applicationFormDAO.save(application);
+    				transaction.commit();
+    				log.info("Notification " + status + " reminders sent to " + application.getId());
+    			} catch (Throwable e) {
+    				log.warn("Error in sending " + status + " reminders for " + application.getId(), e);
+    				transaction.rollback();
+    			}
+    		}
+	    } catch (Throwable e) {
+	        log.warn("Error in executing " + notificationType +  " Reminder Task", e);
+	    }
 		log.info(notificationType +  " Reminder Task Complete");
 	}
 }

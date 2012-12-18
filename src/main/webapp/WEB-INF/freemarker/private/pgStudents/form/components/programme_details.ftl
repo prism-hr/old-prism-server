@@ -102,7 +102,9 @@
           <select class="full" id="referrer" name="referrer"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
             <option value="">Select...</option>
             <#list sourcesOfInterests as interests>
-                <option value="${encrypter.encrypt(interests.id)!}"<#if programmeDetails.sourcesOfInterest?? &&  programmeDetails.sourcesOfInterest == interests> selected="selected"</#if>>${interests.name}</option>               
+                <option value="${encrypter.encrypt(interests.id)!}"
+                    <#if programmeDetails.sourcesOfInterest?? && programmeDetails.sourcesOfInterest.id?? && programmeDetails.sourcesOfInterest == interests> selected="selected"</#if>
+                    >${interests.name}</option>
             </#list>
           </select>    
           <@spring.bind "programmeDetails.sourcesOfInterest" /> 

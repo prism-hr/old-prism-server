@@ -3,16 +3,14 @@ package com.zuehlke.pgadmissions.services.exporters;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,31 +32,23 @@ public class PorticoAttachmentsZipCreatorTest extends UclIntegrationBaseTest {
 
     private PdfDocumentBuilder pdfDocumentBuilder;
 
-    private File zipFile;
-
     @Test
     public void shouldWriteZipFile() throws IOException, CouldNotCreateAttachmentsPack {
-
-        zipFile = File.createTempFile(uclBookingReferenceNumber,".zip");
-        zipFile.deleteOnExit();
-
-        FileOutputStream fileOutputStream = new FileOutputStream(zipFile);
+        ByteArrayOutputStream fileOutputStream = new ByteArrayOutputStream();
         attachmentsZipCreator.writeZipEntries(applicationForm, uclBookingReferenceNumber, fileOutputStream);
 
         int numberOfFiles = 0;
         Set<String> fileNames = new HashSet<String>();
         Properties contentProperties = new Properties();
 
-        ZipFile zip = new ZipFile(zipFile);
-        for (Enumeration<? extends ZipEntry> e = zip.entries(); e.hasMoreElements();) {
-            ZipEntry entry = (ZipEntry) e.nextElement();
-
+        ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(fileOutputStream.toByteArray()));
+        ZipEntry entry = null;
+        while((entry = zip.getNextEntry()) != null) {
             numberOfFiles++;
             fileNames.add(entry.getName());
 
             if (entry.getName().equalsIgnoreCase("P123456Contents.txt")) {
-                InputStream is = zip.getInputStream(entry);
-                contentProperties.load(is);
+                contentProperties.load(zip);
             }
         }
 

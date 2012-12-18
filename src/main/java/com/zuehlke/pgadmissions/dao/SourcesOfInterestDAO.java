@@ -28,8 +28,7 @@ public class SourcesOfInterestDAO {
     @SuppressWarnings("unchecked")
     public List<SourcesOfInterest> getAllEnabledSourcesOfInterest() {
         return sessionFactory.getCurrentSession().createCriteria(SourcesOfInterest.class)
-                .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("name"))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+                .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("name")).list();
     }
     
     @SuppressWarnings("unchecked")

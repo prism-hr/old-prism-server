@@ -106,7 +106,8 @@ public class EvaluationTransitionControllerTest {
 		};
 		EasyMock.expect(commentFactoryMock.createComment(applicationForm, null, stateComment.getComment(), stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
 		commentServiceMock.save(comment);
-		EasyMock.expect(uclExportServiceMock.sendToUCL(applicationForm)).andReturn(EasyMock.anyLong());
+		// TODO: Enable when ready for production
+		//EasyMock.expect(uclExportServiceMock.sendToUCL(applicationForm)).andReturn(EasyMock.anyLong());
 		EasyMock.expect(approvalServiceMock.moveToApproved(applicationForm)).andReturn(true);
 		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("bob");
 		EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewResolverMock, uclExportServiceMock);

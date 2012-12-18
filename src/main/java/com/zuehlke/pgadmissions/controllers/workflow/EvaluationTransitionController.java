@@ -84,7 +84,8 @@ public class EvaluationTransitionController extends StateTransitionController {
 				if(approvalService.moveToApproved(applicationForm)) {					
 					modelMap.put("messageCode", "move.approved");
 					modelMap.put("application", applicationForm.getApplicationNumber());
-					uclExportService.sendToUCL(applicationForm);
+					// TODO: Enable when ready for production
+					//uclExportService.sendToUCL(applicationForm);
 				} else {
 					return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber()+"&rejectionId=7";
 				}

@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
+
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -23,7 +25,7 @@ public class ReminderIntervalDAOTest extends AutomaticRollbackTestCase{
 		ReminderIntervalDAO reminderIntervalDAO = new ReminderIntervalDAO(sessionFactory);
 		ReminderInterval interval = reminderIntervalDAO.getReminderInterval();
 		
-		assertEquals(reminderInterval, interval);
+		assertEquals(reminderInterval.getId(), interval.getId());
 		assertEquals(reminderInterval.getDuration(), interval.getDuration());
 		assertEquals(reminderInterval.getUnit(), interval.getUnit());
 	}	
@@ -52,7 +54,7 @@ public class ReminderIntervalDAOTest extends AutomaticRollbackTestCase{
 		
 		ReminderInterval interval = reminderIntervalDAO.getReminderInterval();
 		
-		assertEquals(updatedReminderInterval, interval);
+		assertEquals(updatedReminderInterval.getId(), interval.getId());
 		assertEquals(updatedReminderInterval.getDuration(), interval.getDuration());
 		assertEquals(updatedReminderInterval.getUnit(), interval.getUnit());
 	}	

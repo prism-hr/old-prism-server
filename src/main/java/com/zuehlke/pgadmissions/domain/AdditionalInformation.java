@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,9 +14,13 @@ import javax.persistence.Transient;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_ADDITIONAL_INFO")
-@Access(AccessType.FIELD)
-public class AdditionalInformation extends DomainObject<Integer> implements FormSectionObject{
+public class AdditionalInformation implements FormSectionObject, Serializable {
+    
 	private static final long serialVersionUID = -1761742614792933388L;
+	
+	@Id
+	@GeneratedValue
+	private Integer id;
 	
 	@Transient
 	private boolean acceptedTerms;
@@ -32,15 +36,10 @@ public class AdditionalInformation extends DomainObject<Integer> implements Form
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 400)
 	private String convictionsText;
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

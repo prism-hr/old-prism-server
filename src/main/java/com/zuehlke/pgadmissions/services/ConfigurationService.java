@@ -57,7 +57,7 @@ public class ConfigurationService {
 
 		List<Person> allRegistryUsers = getAllRegistryUsers();
 		for (Person person : allRegistryUsers) {
-			if(!registryContacts.contains(person)){				
+			if(!listContainsId(person, registryContacts)) {				
 				personDAO.delete(person);
 			}
 		}
@@ -89,4 +89,13 @@ public class ConfigurationService {
 	public ReminderInterval getReminderInterval() {
 		return reminderIntervalDAO.getReminderInterval();
 	}
+	
+    private boolean listContainsId(Person person, List<Person> persons) {
+        for (Person entry : persons) {
+            if (entry.getId().equals(person.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }   	
 }

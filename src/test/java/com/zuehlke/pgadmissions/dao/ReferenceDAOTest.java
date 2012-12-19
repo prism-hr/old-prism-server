@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class ReferenceDAOTest extends AutomaticRollbackTestCase {
 		
 		ReferenceDAO referenceDAO = new ReferenceDAO(sessionFactory);
 		ReferenceComment returnedReference = referenceDAO.getReferenceById(reference.getId());
-		assertEquals(reference, returnedReference);
+		assertEquals(reference.getId(), returnedReference.getId());
 	}
 	
 

@@ -40,11 +40,11 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 		reloadedPendingRoleNotification = (PendingRoleNotification) sessionFactory.getCurrentSession().get(PendingRoleNotification.class,
 				notificationRecord.getId());
 		assertNotSame(notificationRecord, reloadedPendingRoleNotification);
-		assertEquals(notificationRecord, reloadedPendingRoleNotification);
+		assertEquals(notificationRecord.getId(), reloadedPendingRoleNotification.getId());
 
-		assertEquals(reviewerRole, reloadedPendingRoleNotification.getRole());
-		assertEquals(program, reloadedPendingRoleNotification.getProgram());
-		assertEquals(creatingUser, reloadedPendingRoleNotification.getAddedByUser());
+		assertEquals(reviewerRole.getId(), reloadedPendingRoleNotification.getRole().getId());
+		assertEquals(program.getId(), reloadedPendingRoleNotification.getProgram().getId());
+		assertEquals(creatingUser.getId(), reloadedPendingRoleNotification.getAddedByUser().getId());
 
 	}
 
@@ -61,7 +61,7 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 		PendingRoleNotification reloadedRecord = (PendingRoleNotification) sessionFactory.getCurrentSession().get(PendingRoleNotification.class,
 				pendingNotification.getId());
 
-		assertEquals(user, reloadedRecord.getUser());
+		assertEquals(user.getId(), reloadedRecord.getUser().getId());
 
 	}
 

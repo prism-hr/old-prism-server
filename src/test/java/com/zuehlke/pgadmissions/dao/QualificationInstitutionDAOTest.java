@@ -27,7 +27,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
         Integer id = qualificationInstitution1.getId();
         QualificationInstitutionDAO qualificationInstitutionsDAO = new QualificationInstitutionDAO(sessionFactory);
         QualificationInstitution reloadedInstitution = qualificationInstitutionsDAO.getInstitutionById(id);
-        assertEquals(qualificationInstitution1, reloadedInstitution);
+        assertEquals(qualificationInstitution1.getId(), reloadedInstitution.getId());
     }
 
     @Test
@@ -43,8 +43,8 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
         List<QualificationInstitution> resultList = qualificationInstitutionDAO.getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive("UK", "Univers");
         assertEquals(2, resultList.size());
-        assertEquals(institution2, resultList.get(0));
-        assertEquals(institution1, resultList.get(1));
+        assertEquals(institution2.getId(), resultList.get(0).getId());
+        assertEquals(institution1.getId(), resultList.get(1).getId());
     }
     
     @Test
@@ -59,7 +59,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
         List<QualificationInstitution> resultList = qualificationInstitutionDAO.getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive("UK", "urich");
         assertEquals(1, resultList.size());
-        assertEquals(institution2, resultList.get(0));
+        assertEquals(institution2.getId(), resultList.get(0).getId());
     }    
     
     @Test
@@ -74,7 +74,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
         List<QualificationInstitution> resultList = qualificationInstitutionDAO.getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive("UK", "London");
         assertEquals(1, resultList.size());
-        assertEquals(institution1, resultList.get(0));
+        assertEquals(institution1.getId(), resultList.get(0).getId());
     }
     
     @Test
@@ -90,7 +90,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
         List<QualificationInstitution> resultList = qualificationInstitutionDAO.getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive("UK", "Univers");
         assertEquals(1, resultList.size());
-        assertEquals(institution1, resultList.get(0));
+        assertEquals(institution1.getId(), resultList.get(0).getId());
     }
     
     @Test

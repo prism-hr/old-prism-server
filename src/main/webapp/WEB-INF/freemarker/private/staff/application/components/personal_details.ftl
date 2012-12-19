@@ -165,7 +165,7 @@
       
       <div class="admin_row">
         <span class="admin_row_label">Do you have a passport?</span>
-        <div class="field"><#if applicationForm.personalDetails.passportAvailable>Yes<#else>No</#if></div>
+        <div class="field"><#if personalDetails.isPassportAvailableSet() && personalDetails.getPassportAvailable()>Yes<#else>No</#if></div>
       </div> 
       
       <div class="admin_row">

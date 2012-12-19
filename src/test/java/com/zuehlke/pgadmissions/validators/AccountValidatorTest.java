@@ -182,19 +182,21 @@ public class AccountValidatorTest {
 	
 	@Test
 	public void shouldNotRejectIfuserWithEmailExistsButIsCUrrentUser() {
-		RegisteredUser existingUser = new RegisteredUserBuilder().id(1).username("email2@test.com").firstName("bob").lastName("bobson").
-				email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
-		
+        RegisteredUser existingUser = new RegisteredUserBuilder().id(1).username("email2@test.com").firstName("bob")
+                .lastName("bobson").email("email2@test.com").confirmPassword("12345678").newPassword("12345678")
+                .password("5f4dcc3b5aa").toUser();
 		user.setEmail("email2@test.com");
+		
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
+		
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email2@test.com")).andReturn(existingUser);
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
 		EasyMock.replay(userServiceMock, encryptionUtilsMock);
-		accountValidator.validate(user, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
 		
+		accountValidator.validate(user, mappingResult);
+		Assert.assertEquals(mappingResult.getAllErrors().toString(), 0, mappingResult.getErrorCount());
 	}
 	
 	@Test

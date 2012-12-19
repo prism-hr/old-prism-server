@@ -7,9 +7,7 @@ import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 
-import com.zuehlke.pgadmissions.domain.DomainObject;
 import com.zuehlke.pgadmissions.utils.ApplicationContext;
-
 
 public abstract class AutomaticRollbackTestCase {
 
@@ -20,14 +18,14 @@ public abstract class AutomaticRollbackTestCase {
 		sessionFactory = (SessionFactory) ApplicationContext.getInstance().getClassPathXmlApplicationContext().getBean("sessionFactory");
 	}
 
-	protected void save(List<? extends DomainObject<?>> domainObjects) {
-        for (DomainObject<?> domainObject : domainObjects) {
+	protected void save(List<? extends Object> domainObjects) {
+        for (Object domainObject : domainObjects) {
             sessionFactory.getCurrentSession().save(domainObject);
         }
     }
 	
-	protected void save(DomainObject<?>... domainObjects) {
-		for (DomainObject<?> domainObject : domainObjects) {
+	protected void save(Object... domainObjects) {
+		for (Object domainObject : domainObjects) {
 			sessionFactory.getCurrentSession().save(domainObject);
 		}
 	}

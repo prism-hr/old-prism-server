@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,10 +32,13 @@ import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
-@Access(AccessType.FIELD)
-public class PersonalDetails extends DomainObject<Integer> implements FormSectionObject {
+public class PersonalDetails implements FormSectionObject, Serializable {
 
 	private static final long serialVersionUID = 6549850558507667533L;
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 	
 	@Transient
 	private boolean acceptedTerms;
@@ -117,15 +119,10 @@ public class PersonalDetails extends DomainObject<Integer> implements FormSectio
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application = null;
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,10 +17,13 @@ import javax.persistence.TemporalType;
 
 @Entity(name = "EVENT")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Access(AccessType.FIELD) 
-public abstract class Event extends DomainObject<Integer> {
+public abstract class Event implements Serializable {
 	
 	private static final long serialVersionUID = -3417291018172094109L;
+
+	@Id
+    @GeneratedValue
+	private Integer id;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "event_date")
@@ -58,20 +60,12 @@ public abstract class Event extends DomainObject<Integer> {
 	public void setUser(RegisteredUser user) {
 		this.user = user;
 	}
-	
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}
-	
-
 }

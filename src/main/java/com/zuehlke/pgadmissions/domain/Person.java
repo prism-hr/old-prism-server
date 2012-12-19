@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,10 +12,13 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "PERSON")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Access(AccessType.FIELD)
-public class Person extends DomainObject<Integer> {
+public class Person implements Serializable {
 
     private static final long serialVersionUID = 1747305941073095458L;
+    
+    @Id
+    @GeneratedValue
+    private Integer id;
     
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     private String email;
@@ -26,15 +29,10 @@ public class Person extends DomainObject<Integer> {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     private String lastname;
 
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
-    @Override
-    @Id
-    @GeneratedValue
-    @Access(AccessType.PROPERTY)
     public Integer getId() {
         return id;
     }

@@ -8,13 +8,13 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ReviewRoundDAOTest extends AutomaticRollbackTestCase {
@@ -36,7 +36,7 @@ public class ReviewRoundDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		ReviewRound returnedReviewRound = (ReviewRound) sessionFactory.getCurrentSession().get(ReviewRound.class,reviewRound.getId());
-		assertEquals(returnedReviewRound, reviewRound);
+		assertEquals(returnedReviewRound.getId(), reviewRound.getId());
 		
 	}
 	
@@ -50,7 +50,7 @@ public class ReviewRoundDAOTest extends AutomaticRollbackTestCase {
 		dao.save(reviewRound);
 		assertNotNull(reviewRound.getId());
 		flushAndClearSession();
-		assertEquals(reviewRound, dao.getReviewRoundById(reviewRound.getId()));
+		assertEquals(reviewRound.getId(), dao.getReviewRoundById(reviewRound.getId()).getId());
 
 	}
 	

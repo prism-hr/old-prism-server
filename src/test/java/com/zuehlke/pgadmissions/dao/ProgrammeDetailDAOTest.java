@@ -32,7 +32,7 @@ public class ProgrammeDetailDAOTest extends AutomaticRollbackTestCase{
         flushAndClearSession();
 
         ProgrammeDetailDAO programmeDetailDAO = new ProgrammeDetailDAO(sessionFactory);
-        assertEquals(programmeDetail, programmeDetailDAO.getProgrammeDetailWithId(programmeDetail.getId()));
+        assertEquals(programmeDetail.getId(), programmeDetailDAO.getProgrammeDetailWithId(programmeDetail.getId()).getId());
 
     }
 

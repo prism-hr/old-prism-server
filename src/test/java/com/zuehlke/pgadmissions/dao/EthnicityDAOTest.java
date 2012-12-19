@@ -46,7 +46,7 @@ public class EthnicityDAOTest extends AutomaticRollbackTestCase {
         Integer id = ethnicity1.getId();
         EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
         Ethnicity reloadedEthnicity = ethnicityDAO.getEthnicityById(id);
-        assertEquals(ethnicity1, reloadedEthnicity);
+        assertEquals(ethnicity1.getId(), reloadedEthnicity.getId());
     }
 
     @Test

@@ -92,13 +92,13 @@ public class MoveToInterviewController {
 		List<RegisteredUser> previousInterviewersOfProgram = userService.getAllPreviousInterviewersOfProgram(applicationForm.getProgram());
 		
 		for (RegisteredUser registeredUser : previousInterviewersOfProgram) {
-			if (!applicationForm.getProgram().getInterviewers().contains(registeredUser)) {
+			if (!listContainsId(registeredUser, applicationForm.getProgram().getInterviewers())) {
 				availablePreviousInterviewers.add(registeredUser);
 			}
 		}
 		List<RegisteredUser> reviewersWillingToInterview = applicationForm.getReviewersWillingToInterview();
 		for (RegisteredUser registeredUser : reviewersWillingToInterview) {
-			if (!applicationForm.getProgram().getInterviewers().contains(registeredUser) && !availablePreviousInterviewers.contains(registeredUser)) {
+			if (!listContainsId(registeredUser, applicationForm.getProgram().getInterviewers()) && !listContainsId(registeredUser, availablePreviousInterviewers)) {
 				availablePreviousInterviewers.add(registeredUser);
 			}
 		}
@@ -151,4 +151,13 @@ public class MoveToInterviewController {
 		interviewService.moveApplicationToInterview(interview, applicationForm);
 		return "/private/common/ajax_OK";
 	}
+	
+	private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }   
 }

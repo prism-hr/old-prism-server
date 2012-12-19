@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class InterviewerMappingTest extends AutomaticRollbackTestCase{
@@ -43,9 +42,9 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 		reloadedInterviewer = (Interviewer) sessionFactory.getCurrentSession().get(Interviewer.class,interviewer.getId());
 		
 		assertNotSame(interviewer, reloadedInterviewer);
-		assertEquals(interviewer, reloadedInterviewer);
+		assertEquals(interviewer.getId(), reloadedInterviewer.getId());
 
-		assertEquals(interviewerUser, reloadedInterviewer.getUser());
+		assertEquals(interviewerUser.getId(), reloadedInterviewer.getUser().getId());
 		assertEquals(lastNotified, reloadedInterviewer.getLastNotified());
 		assertEquals(lastNotified, reloadedInterviewer.getDateAdminsNotified());
 		assertEquals(true, reloadedInterviewer.isRequiresAdminNotification());
@@ -61,11 +60,8 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		
 		Interviewer reloadedInterviewer = (Interviewer) sessionFactory.getCurrentSession().get(Interviewer.class,interviewer.getId());	
-		assertEquals(interviewComment, reloadedInterviewer.getInterviewComment());
-		
+		assertEquals(interviewComment.getId(), reloadedInterviewer.getInterviewComment().getId());
 	}
-	
-
 	
 	@Before
 	public void setUp() {

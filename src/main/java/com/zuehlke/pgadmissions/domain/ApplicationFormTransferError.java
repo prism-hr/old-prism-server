@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,10 +21,13 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
  * Remark: This enties actually constitute a log that can be accessed by application administrator on UCL side.
  */
 @Entity(name = "APPLICATION_FORM_TRANSFER_ERROR")
-@Access(AccessType.FIELD)
-public class ApplicationFormTransferError extends DomainObject<Long> {
+public class ApplicationFormTransferError implements Serializable {
 
     private static final long serialVersionUID = -8609731063290824582L;
+    
+    @Id
+    @GeneratedValue
+    private Long id;
 
     /** The transfer that I am documenting. */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,15 +60,10 @@ public class ApplicationFormTransferError extends DomainObject<Long> {
     @Column(name = "error_handling_strategy")
     private ApplicationFormTransferErrorHandlingDecision errorHandlingStrategy;
 
-    @Override
-    @Id
-    @GeneratedValue
-    @Access(AccessType.PROPERTY)
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }

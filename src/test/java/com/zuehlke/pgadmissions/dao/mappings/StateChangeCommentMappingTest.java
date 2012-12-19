@@ -59,9 +59,9 @@ public class StateChangeCommentMappingTest extends AutomaticRollbackTestCase {
 
 		reloadedComment = (StateChangeComment) sessionFactory.getCurrentSession().get(StateChangeComment.class, id);
 		assertNotSame(stateChangeComment, reloadedComment);
-		assertEquals(stateChangeComment, reloadedComment);
+		assertEquals(stateChangeComment.getId(), reloadedComment.getId());
 
-		assertEquals(reviewer, reloadedComment.getUser());
+		assertEquals(reviewer.getId(), reloadedComment.getUser().getId());
 		assertEquals("This is a validationComment", reloadedComment.getComment());
 		assertEquals(CommentType.REVIEW_EVALUATION, reloadedComment.getType());
 		assertEquals(ApplicationFormStatus.INTERVIEW, reloadedComment.getNextStatus());

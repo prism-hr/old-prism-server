@@ -8,18 +8,12 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class AddressDAOTest extends AutomaticRollbackTestCase {
-
-	
 	private RegisteredUser user;
-	
-	
 
 	@Test
 	public void shouldDeleteAddress(){
@@ -48,11 +42,7 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-			
 		save(user);
-
 		flushAndClearSession();
 	}
-	
-	
 }

@@ -128,44 +128,44 @@ public class UserService {
 	}
 
 	private void addOrRemoveFromProgramsOfWhichSupervisorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-		if (newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR) && !selectedUser.getProgramsOfWhichSupervisor().contains(selectedProgram)) {
+		if (newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichSupervisor())) {
 			selectedUser.getProgramsOfWhichSupervisor().add(selectedProgram);			
-		} else if (!newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR) && selectedUser.getProgramsOfWhichSupervisor().contains(selectedProgram)) {
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichSupervisor())) {
 			selectedUser.getProgramsOfWhichSupervisor().remove(selectedProgram);
 		}
 	}
 
 
 	private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-		if (newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && !selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
+		if (newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
 			selectedUser.getProgramsOfWhichAdministrator().add(selectedProgram);			
-		} else if (!newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
 			selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
 		}
 
 	}
 
 	private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-		if (newAuthoritiesContains(newAuthorities, Authority.APPROVER) && !selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
+		if (newAuthoritiesContains(newAuthorities, Authority.APPROVER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichApprover())) {
 			selectedUser.getProgramsOfWhichApprover().add(selectedProgram);			
-		} else if (!newAuthoritiesContains(newAuthorities, Authority.APPROVER) && selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.APPROVER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichApprover())) {
 			selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
 		}
 	}
 
 	private void addOrRemoveFromProgramsOfWhichReviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-		if (newAuthoritiesContains(newAuthorities, Authority.REVIEWER) && !selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
+		if (newAuthoritiesContains(newAuthorities, Authority.REVIEWER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichReviewer())) {
 			selectedUser.getProgramsOfWhichReviewer().add(selectedProgram);			
-		} else if (!newAuthoritiesContains(newAuthorities, Authority.REVIEWER) && selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.REVIEWER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichReviewer())) {
 			selectedUser.getProgramsOfWhichReviewer().remove(selectedProgram);
 		}
 	}
 
 	private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
 
-		if (newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && !selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
+		if (newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichInterviewer())) {
 			selectedUser.getProgramsOfWhichInterviewer().add(selectedProgram);			
-		} else if (!newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichInterviewer())) {
 			selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
 		}
 	}
@@ -313,4 +313,13 @@ public class UserService {
 	public RegisteredUser getUserByActivationCode(String activationCode) {
 		return userDAO.getUserByActivationCode(activationCode);
 	}
+	
+    private boolean listContainsId(Program program, List<Program> programs) {
+        for (Program entry : programs) {
+            if (entry.getId().equals(program.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

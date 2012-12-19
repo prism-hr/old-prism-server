@@ -46,7 +46,7 @@ public class LanguageDAOTest extends AutomaticRollbackTestCase{
 		Integer id = language1.getId();
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		Language reloadedLanguage = languageDAO.getLanguageById(id);
-		assertEquals(language1, reloadedLanguage);
+		assertEquals(language1.getId(), reloadedLanguage.getId());
 	}
 	
     @Test

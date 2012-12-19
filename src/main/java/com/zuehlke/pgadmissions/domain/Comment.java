@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,13 +24,15 @@ import org.hibernate.annotations.GenerationTime;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-
 @Entity(name="COMMENT")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Access(AccessType.FIELD) 
-public class Comment extends DomainObject<Integer> implements Comparable<Comment> {
+public class Comment implements Comparable<Comment>, Serializable {
 
 	private static final long serialVersionUID = 2861325991249900547L;
+
+	@Id
+	@GeneratedValue
+	private Integer id;
 
 	@Column(name = "created_timestamp", insertable = false)
 	@Generated(GenerationTime.INSERT)
@@ -44,6 +45,14 @@ public class Comment extends DomainObject<Integer> implements Comparable<Comment
 	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
 	private String comment;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private RegisteredUser user = null;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="application_form_id")
+    private ApplicationForm application = null;
 	
 	public String getComment() {
 		return comment;
@@ -68,25 +77,11 @@ public class Comment extends DomainObject<Integer> implements Comparable<Comment
 	public void setApplication(ApplicationForm application) {
 		this.application = application;
 	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="user_id")
-	private RegisteredUser user = null;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="application_form_id")
-	private ApplicationForm application = null;
-	
-	
-	@Override
 	public void setId(Integer id) {
 		this.id = id;		
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

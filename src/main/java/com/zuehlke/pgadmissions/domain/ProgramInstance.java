@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,11 +15,14 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 @Entity(name = "PROGRAM_INSTANCE")
-@Access(AccessType.FIELD)
-public class ProgramInstance extends DomainObject<Integer> implements ProgramInstanceInterface, ImportedObject {
+public class ProgramInstance implements ProgramInstanceInterface, ImportedObject, Serializable {
 
 	private static final long serialVersionUID = -5414750352686318033L;
 
+    @Id
+    @GeneratedValue
+    private Integer id;
+	
 	@Column(name="deadline")
 	@Temporal(value = TemporalType.DATE)
 	private Date applicationDeadline;
@@ -51,15 +53,10 @@ public class ProgramInstance extends DomainObject<Integer> implements ProgramIns
 	@JoinColumn(name = "program_id")
 	private Program program;
 	
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

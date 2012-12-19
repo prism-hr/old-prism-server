@@ -25,10 +25,7 @@ public class LanguageMappingTest extends AutomaticRollbackTestCase {
 		
 		reloadedLanguage = (Language) sessionFactory.getCurrentSession().get(Language.class, id);
 		assertNotSame(language, reloadedLanguage);
-		assertEquals(language, reloadedLanguage);
-			
-
+		assertEquals(language.getId(), reloadedLanguage.getId());
 		assertEquals("ZZZZZZ", reloadedLanguage.getName());
-		
 	}
 }

@@ -49,13 +49,11 @@ public class ApprovalStateChangeEventMappingTest extends AutomaticRollbackTestCa
 		flushAndClearSession();
 		reloadedEvent = (ApprovalStateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, event.getId());
 		assertNotSame(event, reloadedEvent);
-		assertEquals(event, reloadedEvent);
-
+		assertEquals(event.getId(), reloadedEvent.getId());
 		assertEquals(eventDate, reloadedEvent.getDate());
 		assertEquals(newStatus, reloadedEvent.getNewStatus());
-		assertEquals(user, reloadedEvent.getUser());
-		assertEquals(approvalRound, reloadedEvent.getApprovalRound());
-
+		assertEquals(user.getId(), reloadedEvent.getUser().getId());
+		assertEquals(approvalRound.getId(), reloadedEvent.getApprovalRound().getId());
 	}
 	@Before
 	public void setup() {

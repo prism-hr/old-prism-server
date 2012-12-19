@@ -58,7 +58,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		
 		
 		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
-		assertEquals(personalDetails, personalDetailDAO.getPersonalDetailsById(personalDetails.getId()));
+		assertEquals(personalDetails.getId(), personalDetailDAO.getPersonalDetailsById(personalDetails.getId()).getId());
 	}
 	
 	@Test
@@ -74,7 +74,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		PersonalDetails savedDetails = personalDetailDAO.getPersonalDetailsById(personalDetails.getId());
-		assertEquals(personalDetails, savedDetails);
+		assertEquals(personalDetails.getId(), savedDetails.getId());
 
 		Ethnicity savedEth = savedDetails.getEthnicity();
 		Assert.assertNotNull(savedEth);

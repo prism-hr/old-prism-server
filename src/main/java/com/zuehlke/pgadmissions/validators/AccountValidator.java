@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.validators;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -43,38 +42,43 @@ public class AccountValidator extends AbstractValidator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
 		
-		if(StringUtils.isBlank(updatedUser.getPassword()) && ( StringUtils.isNotBlank(updatedUser.getNewPassword()) || StringUtils.isNotBlank(updatedUser.getConfirmPassword()))){
-			errors.rejectValue("password", "text.field.empty");
-		}
-		if(StringUtils.isBlank(updatedUser.getConfirmPassword()) && ( StringUtils.isNotBlank(updatedUser.getNewPassword()) || StringUtils.isNotBlank(updatedUser.getPassword()))){
-			errors.rejectValue("confirmPassword", "text.field.empty");
-		}
-		if(StringUtils.isBlank(updatedUser.getNewPassword()) && ( StringUtils.isNotBlank(updatedUser.getConfirmPassword()) || StringUtils.isNotBlank(updatedUser.getPassword()))){
-			errors.rejectValue("newPassword", "text.field.empty");
-		}
-		boolean passwordFieldsFilled = StringUtils.isNotBlank(updatedUser.getConfirmPassword()) && StringUtils.isNotBlank(updatedUser.getNewPassword()) && StringUtils.isNotBlank(updatedUser.getPassword());
-		if(passwordFieldsFilled && !encryptionUtils.getMD5Hash(updatedUser.getPassword()).equals(existingUser.getPassword())){
-		
-			errors.rejectValue("password", "account.currentpassword.notmatch");
-		}
-		
-		if(passwordFieldsFilled && !updatedUser.getConfirmPassword().equals(updatedUser.getNewPassword())){
-			errors.rejectValue("newPassword", "user.passwords.notmatch");
-			errors.rejectValue("confirmPassword", "user.passwords.notmatch");
-		}
+        if (StringUtils.isBlank(updatedUser.getPassword()) && (StringUtils.isNotBlank(updatedUser.getNewPassword()) || StringUtils.isNotBlank(updatedUser.getConfirmPassword()))) {
+            errors.rejectValue("password", "text.field.empty");
+        }
 
-		if(passwordFieldsFilled && updatedUser.getNewPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
-			errors.rejectValue("newPassword", "user.password.small");
-		}
+        if (StringUtils.isBlank(updatedUser.getConfirmPassword()) && (StringUtils.isNotBlank(updatedUser.getNewPassword()) || StringUtils.isNotBlank(updatedUser.getPassword()))) {
+            errors.rejectValue("confirmPassword", "text.field.empty");
+        }
+
+        if (StringUtils.isBlank(updatedUser.getNewPassword()) && (StringUtils.isNotBlank(updatedUser.getConfirmPassword()) || StringUtils.isNotBlank(updatedUser.getPassword()))) {
+            errors.rejectValue("newPassword", "text.field.empty");
+        }
+
+        boolean passwordFieldsFilled = StringUtils.isNotBlank(updatedUser.getConfirmPassword())
+                && StringUtils.isNotBlank(updatedUser.getNewPassword())
+                && StringUtils.isNotBlank(updatedUser.getPassword());
+
+        if (passwordFieldsFilled && !encryptionUtils.getMD5Hash(updatedUser.getPassword()).equals(existingUser.getPassword())) {
+            errors.rejectValue("password", "account.currentpassword.notmatch");
+        }
 		
-		if(passwordFieldsFilled && updatedUser.getNewPassword().length() > MAXIMUM_PASSWORD_CHARACTERS){
-			errors.rejectValue("newPassword", "user.password.large");
-		}
-				
-		RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
-		if(userWithSameEmail != null && !userWithSameEmail.equals(existingUser)){
-				errors.rejectValue("email", "user.email.alreadyexists");
-		}
+        if (passwordFieldsFilled && !updatedUser.getConfirmPassword().equals(updatedUser.getNewPassword())) {
+            errors.rejectValue("newPassword", "user.passwords.notmatch");
+            errors.rejectValue("confirmPassword", "user.passwords.notmatch");
+        }
+
+        if (passwordFieldsFilled && updatedUser.getNewPassword().length() < MINIMUM_PASSWORD_CHARACTERS) {
+            errors.rejectValue("newPassword", "user.password.small");
+        }
+
+        if (passwordFieldsFilled && updatedUser.getNewPassword().length() > MAXIMUM_PASSWORD_CHARACTERS) {
+            errors.rejectValue("newPassword", "user.password.large");
+        }
+
+        RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
+        if (userWithSameEmail != null && !userWithSameEmail.getId().equals(existingUser.getId())) {
+            errors.rejectValue("email", "user.email.alreadyexists");
+        }
 	}  
 
 	public RegisteredUser getCurrentUser() {

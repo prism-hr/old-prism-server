@@ -7,8 +7,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -39,16 +39,13 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
 		reloadedProgram = (Program) sessionFactory.getCurrentSession().get(Program.class, id);
 		assertNotSame(program, reloadedProgram);
-		assertEquals(program, reloadedProgram);
-
+		assertEquals(program.getId(), reloadedProgram.getId());
 		assertEquals("abcD", reloadedProgram.getCode());
-		
 		assertEquals("Program's title", reloadedProgram.getTitle());
-
 	}
+
 	@Test
 	public void shouldSaveAndLoadProgramWithInstances() {
-
 		Program program = new Program();
 		program.setCode("abcD");		
 		program.setTitle("Program's title");
@@ -63,9 +60,11 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
 		Program reloadedProgram = (Program) sessionFactory.getCurrentSession().get(Program.class, id);
 		assertEquals(2, reloadedProgram.getInstances().size());
-		assertTrue(reloadedProgram.getInstances().containsAll(Arrays.asList(instanceOne, instanceTwo)));
-
+		
+		assertTrue(listContainsId(instanceOne, reloadedProgram.getInstances()));
+		assertTrue(listContainsId(instanceTwo, reloadedProgram.getInstances()));
 	}
+	
 	@Test
 	public void shouldLoadProgramsWithApprovers() {
 		Program program = new Program();
@@ -86,9 +85,10 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
+		
 		assertEquals(2, reloadedProgramOne.getApprovers().size());
-		assertTrue(reloadedProgramOne.getApprovers().containsAll(Arrays.asList(approverOne, approverTwo)));
-
+		assertTrue(listContainsId(approverOne, reloadedProgramOne.getApprovers()));
+		assertTrue(listContainsId(approverTwo, reloadedProgramOne.getApprovers()));
 	}
 	
 	@Test
@@ -111,9 +111,10 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
-		assertEquals(2, reloadedProgramOne.getAdministrators().size());
-		assertTrue(reloadedProgramOne.getAdministrators().containsAll(Arrays.asList(adminOne, adminTwo)));
 
+		assertEquals(2, reloadedProgramOne.getAdministrators().size());
+		assertTrue(listContainsId(adminOne, reloadedProgramOne.getAdministrators()));
+		assertTrue(listContainsId(adminTwo, reloadedProgramOne.getAdministrators()));
 	}
 	
 	@Test
@@ -136,9 +137,10 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
+		
 		assertEquals(2, reloadedProgramOne.getProgramReviewers().size());
-		assertTrue(reloadedProgramOne.getProgramReviewers().containsAll(Arrays.asList(reviewerOne, reviewerTwo)));
-
+		assertTrue(listContainsId(reviewerOne, reloadedProgramOne.getProgramReviewers()));
+		assertTrue(listContainsId(reviewerTwo, reloadedProgramOne.getProgramReviewers()));
 	}
 	
 	@Test
@@ -161,9 +163,10 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
-		assertEquals(2, reloadedProgramOne.getInterviewers().size());
-		assertTrue(reloadedProgramOne.getInterviewers().containsAll(Arrays.asList(interviewerOne, interviewerTwo)));
 		
+		assertEquals(2, reloadedProgramOne.getInterviewers().size());		
+		assertTrue(listContainsId(interviewerOne, reloadedProgramOne.getInterviewers()));
+		assertTrue(listContainsId(interviewerTwo, reloadedProgramOne.getInterviewers()));
 	}
 	
 	@Test
@@ -186,8 +189,27 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
-		assertEquals(2, reloadedProgramOne.getSupervisors().size());
-		assertTrue(reloadedProgramOne.getSupervisors().containsAll(Arrays.asList(interviewerOne, interviewerTwo)));
 		
+		assertEquals(2, reloadedProgramOne.getSupervisors().size());
+		assertTrue(listContainsId(interviewerOne, reloadedProgramOne.getSupervisors()));
+		assertTrue(listContainsId(interviewerOne, reloadedProgramOne.getSupervisors()));
 	}
+	
+	private boolean listContainsId(ProgramInstance instance, List<ProgramInstance> instances) {
+	    for (ProgramInstance entry : instances) {
+	        if (entry.getId().equals(instance.getId())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
+	private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

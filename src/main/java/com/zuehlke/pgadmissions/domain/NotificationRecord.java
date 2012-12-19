@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,11 +18,14 @@ import org.hibernate.annotations.Type;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Entity(name = "NOTIFICATION_RECORD")
-@Access(AccessType.FIELD)
-public class NotificationRecord extends DomainObject<Integer> {
+public class NotificationRecord implements Serializable {
 
 	private static final long serialVersionUID = 8927883549224930562L;
 
+    @Id
+    @GeneratedValue
+    private Integer id;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
@@ -47,15 +49,10 @@ public class NotificationRecord extends DomainObject<Integer> {
 		this.notificationType = notificationType;
 	}
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

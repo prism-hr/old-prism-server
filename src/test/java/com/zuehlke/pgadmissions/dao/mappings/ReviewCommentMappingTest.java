@@ -60,10 +60,10 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 
 		reloadedComment = (ReviewComment) sessionFactory.getCurrentSession().get(ReviewComment.class, id);
 		assertNotSame(reviewComment, reloadedComment);
-		assertEquals(reviewComment, reloadedComment);
+		assertEquals(reviewComment.getId(), reloadedComment.getId());
 
-		assertEquals(reviewerUser, reloadedComment.getUser());
-		assertEquals(reviewer, reloadedComment.getReviewer());
+		assertEquals(reviewerUser.getId(), reloadedComment.getUser().getId());
+		assertEquals(reviewer.getId(), reloadedComment.getReviewer().getId());
 		assertEquals("This is a review comment", reloadedComment.getComment());
 		assertFalse(reloadedComment.getSuitableCandidateForUcl());
 		assertFalse(reloadedComment.isAdminsNotified());

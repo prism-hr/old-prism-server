@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,10 +26,13 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
  * an ApplicationFormTransfer instance with status set to QUEUED_FOR_WEBSERVICE_CALL.
  */
 @Entity(name = "APPLICATION_FORM_TRANSFER")
-@Access(AccessType.FIELD)
-public class ApplicationFormTransfer extends DomainObject<Long> {
+public class ApplicationFormTransfer implements Serializable {
 
     private static final long serialVersionUID = 9133196638104217546L;
+    
+    @Id
+    @GeneratedValue
+    private Long id;
 
     /** The application form that constitutes my payload (a payload of the transfer I am representing). */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,15 +57,10 @@ public class ApplicationFormTransfer extends DomainObject<Long> {
     @Column(name = "ucl_booking_ref_number_received")
     private String uclBookingReferenceReceived;
 
-    @Override
-    @Id
-    @GeneratedValue
-    @Access(AccessType.PROPERTY)
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }

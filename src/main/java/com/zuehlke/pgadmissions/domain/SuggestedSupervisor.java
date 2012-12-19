@@ -1,18 +1,14 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 @Entity(name = "SUGGESTED_SUPERVISOR")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Access(AccessType.FIELD)
 public class SuggestedSupervisor extends Person {
 
-
-	private static final long serialVersionUID = -4309091276524405556L;
+    private static final long serialVersionUID = -4309091276524405556L;
 	
 	private boolean aware;
 

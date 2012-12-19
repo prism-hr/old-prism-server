@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,11 +19,14 @@ import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL_LANGUAGE_QUALIFICATIONS")
-@Access(AccessType.FIELD)
-public class LanguageQualification extends DomainObject<Integer> {
+public class LanguageQualification implements Serializable {
 
     private static final long serialVersionUID = -4188769453233574918L;
 
+    @Id
+    @GeneratedValue
+    private Integer id;
+    
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "language_qualification_document_id")
     private Document languageQualificationDocument;
@@ -64,19 +66,14 @@ public class LanguageQualification extends DomainObject<Integer> {
     
 	@Column(name="send_to_ucl")
 	private Boolean sendToUCL;
-    
-    public LanguageQualification() {
+
+	public LanguageQualification() {
     }
     
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
-    @Override
-    @Id
-    @GeneratedValue
-    @Access(AccessType.PROPERTY)
     public Integer getId() {
         return id;
     }

@@ -13,6 +13,10 @@ $(document).ready(function() {
             return;
         }
         
+        if (userEmail === "Logout") {
+            return;
+        }
+        
         var postData = { email : userEmail };
         $.ajax({
             type: 'POST',

@@ -42,7 +42,7 @@ public class StateTransitionViewResolver {
 		ApprovalEvaluationComment evaluationCommentForLatestApprovalRound = null;
 		List<Comment> applicationComments = applicationForm.getApplicationComments();
 		for (Comment comment : applicationComments) {
-			if (comment instanceof ApprovalEvaluationComment && applicationForm.getLatestApprovalRound().equals(((ApprovalEvaluationComment) comment).getApprovalRound())) {				
+			if (comment instanceof ApprovalEvaluationComment && applicationForm.getLatestApprovalRound().getId().equals(((ApprovalEvaluationComment) comment).getApprovalRound().getId())) {				
 				evaluationCommentForLatestApprovalRound = (ApprovalEvaluationComment) comment;
 				break;
 			}
@@ -60,7 +60,7 @@ public class StateTransitionViewResolver {
 		InterviewEvaluationComment evaluationCommentForLatestInterview = null;
 		List<Comment> applicationComments = applicationForm.getApplicationComments();
 		for (Comment comment : applicationComments) {
-			if (comment instanceof InterviewEvaluationComment && applicationForm.getLatestInterview().equals(((InterviewEvaluationComment) comment).getInterview())) {				
+			if (comment instanceof InterviewEvaluationComment && applicationForm.getLatestInterview().getId().equals(((InterviewEvaluationComment) comment).getInterview().getId())) {				
 				evaluationCommentForLatestInterview = (InterviewEvaluationComment) comment;
 				break;
 			}
@@ -81,7 +81,7 @@ public class StateTransitionViewResolver {
 		ReviewEvaluationComment evaluationCommentForLatestRoundOfReview = null;
 		List<Comment> applicationComments = applicationForm.getApplicationComments();
 		for (Comment comment : applicationComments) {
-			if (comment instanceof ReviewEvaluationComment && applicationForm.getLatestReviewRound().equals(((ReviewEvaluationComment) comment).getReviewRound())) {				
+			if (comment instanceof ReviewEvaluationComment && applicationForm.getLatestReviewRound().getId().equals(((ReviewEvaluationComment) comment).getReviewRound().getId())) {				
 				evaluationCommentForLatestRoundOfReview = (ReviewEvaluationComment) comment;
 				break;
 			}

@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.domain.Address;
 
 public class AddressUtils {
 	public static boolean addressesEqual(Address contactAddress, Address currentAddress) {
-		return contactAddress != null && currentAddress != null && contactAddress.getCountry().equals(currentAddress.getCountry())
+		return contactAddress != null && currentAddress != null && contactAddress.getCountry().getId().equals(currentAddress.getCountry().getId())
 				&& StringUtils.equals(contactAddress.getAddress1(), currentAddress.getAddress1())
 				&& StringUtils.equals(contactAddress.getAddress2(), currentAddress.getAddress2())
 				&& StringUtils.equals(contactAddress.getAddress3(), currentAddress.getAddress3())

@@ -25,12 +25,9 @@ public class SuggestedSupervisorMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		reloadedSuggestedSupervisor = (SuggestedSupervisor) sessionFactory.getCurrentSession().get(SuggestedSupervisor.class, person.getId());
 		assertNotSame(person, reloadedSuggestedSupervisor);
-		assertEquals(person, reloadedSuggestedSupervisor);
-		
 		assertEquals("bob", reloadedSuggestedSupervisor.getFirstname());
 		assertEquals("smith", reloadedSuggestedSupervisor.getLastname());
 		assertEquals("email@Test.com", reloadedSuggestedSupervisor.getEmail());
 		assertTrue(reloadedSuggestedSupervisor.isAware());
-		
 	}
 }

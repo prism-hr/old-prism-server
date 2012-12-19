@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class RegisteredUserTest {
@@ -788,7 +787,7 @@ public class RegisteredUserTest {
 		Interviewer interviewer1 = new InterviewerBuilder().id(1).user(interviewerUser1).toInterviewer();
 		Interviewer interviewer2 = new InterviewerBuilder().interview(new InterviewBuilder().id(2).toInterview()).id(1).user(interviewerUser1).toInterviewer();
 		Interview reviewRound1 = new InterviewBuilder().id(1).interviewers(interviewer1).toInterview();
-		Interview reviewRound2 = new InterviewBuilder().id(1).interviewers(interviewer2).toInterview();
+		Interview reviewRound2 = new InterviewBuilder().id(2).interviewers(interviewer2).toInterview();
 		interviewer1.setInterview(reviewRound1);
 
 		interviewer2.setInterview(reviewRound2);

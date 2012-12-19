@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,26 +19,16 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 
 @Entity(name = "APPLICATION_FORM_PROGRAMME_DETAIL")
-@Access(AccessType.FIELD)
-public class ProgrammeDetails extends DomainObject<Integer> implements FormSectionObject {
+public class ProgrammeDetails implements FormSectionObject, Serializable {
 
     private static final long serialVersionUID = -5997103825068065955L;
 
+    @Id
+    @GeneratedValue
+    protected Integer id;
+    
 	@Transient
 	private boolean acceptedTerms;
-
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
-	public Integer getId() {
-		return id;
-	}
 
 	@Column(name = "programme_name")
 	private String programmeName;
@@ -165,5 +154,13 @@ public class ProgrammeDetails extends DomainObject<Integer> implements FormSecti
 
     public void setSourcesOfInterestText(String sourcesOfInterestText) {
         this.sourcesOfInterestText = sourcesOfInterestText;
+    }
+    
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
@@ -11,9 +9,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Entity(name="STATECHANGE_COMMENT")
-@Access(AccessType.FIELD) 
 public class StateChangeComment extends Comment {
-
 
 	private static final long serialVersionUID = 7106729861627717600L;
 
@@ -40,6 +36,4 @@ public class StateChangeComment extends Comment {
 	public void setNextStatus(ApplicationFormStatus nextStatus) {
 		this.nextStatus = nextStatus;
 	}
-	
-
 }

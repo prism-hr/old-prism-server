@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
@@ -59,15 +60,23 @@ public class CommentMappingTest extends AutomaticRollbackTestCase{
 
 		reloadedComment  =(Comment) sessionFactory.getCurrentSession().get(Comment.class, id);
 		assertNotSame(comment, reloadedComment);
-		assertEquals(comment, reloadedComment);
+		assertEquals(comment.getId(), reloadedComment.getId());
 
-		assertEquals(reviewer, reloadedComment.getUser());
+		assertEquals(reviewer.getId(), reloadedComment.getUser().getId());
 		assertEquals("comment", reloadedComment.getComment());
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(reloadedComment.getDate(), Calendar.DATE));
 		assertEquals(2, reloadedComment.getDocuments().size());
-		assertTrue(reloadedComment.getDocuments().containsAll(Arrays.asList(documentOne, documentTwo)));
-		
+		assertTrue(listContainsId(documentOne, reloadedComment.getDocuments()));
+		assertTrue(listContainsId(documentTwo, reloadedComment.getDocuments()));
+	}
 	
+	private boolean listContainsId(Document document, List<Document> documents) {
+	    for (Document entry : documents) {
+	        if (entry.getId().equals(document.getId())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 }

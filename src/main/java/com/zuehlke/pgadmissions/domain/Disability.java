@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity(name = "DISABILITY")
-@Access(AccessType.FIELD)
-public class Disability extends DomainObject<Integer> implements ImportedObject {
+public class Disability implements ImportedObject, Serializable {
+    
 	private static final long serialVersionUID = 6141410638125684970L;
 
     @Column(name = "enabled")
@@ -21,15 +21,14 @@ public class Disability extends DomainObject<Integer> implements ImportedObject 
     @Column(name = "name")
     private String name;
 
-	@Override
+    @Id
+    @GeneratedValue
+    private Integer id;
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

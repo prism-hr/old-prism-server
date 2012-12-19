@@ -46,7 +46,7 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
         Integer id = country1.getId();
         CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
         Country reloadedCountry = countriesDAO.getCountryById(id);
-        assertEquals(country1, reloadedCountry);
+        assertEquals(country1.getCode(), reloadedCountry.getCode());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
         String code = "AA";
         CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
         Country reloadedCountry = countriesDAO.getEnabledCountryByCode(code);
-        assertEquals(country2, reloadedCountry);
+        assertEquals(country2.getCode(), reloadedCountry.getCode());
     }
     
     @Test

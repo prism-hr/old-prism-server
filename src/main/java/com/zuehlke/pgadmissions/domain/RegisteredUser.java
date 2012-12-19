@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,10 +26,13 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
-@Access(AccessType.FIELD)
-public class RegisteredUser extends DomainObject<Integer> implements UserDetails, Comparable<RegisteredUser> {
+public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, Serializable {
 
 	private static final long serialVersionUID = 7913035836949510857L;
+	
+    @Id
+    @GeneratedValue
+    private Integer id;
 	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
 	private String firstName;
@@ -125,19 +127,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
     @Column(name = "ucl_user_id")
     private String uclUserId;
 
-	public List<Role> getRoles() {
+    public List<Role> getRoles() {
 		return roles;
 	}
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}
@@ -271,18 +268,18 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return true;
 		}
 
-		if (this.equals(applicationForm.getApplicationAdministrator())) {
+		if (applicationForm.getApplicationAdministrator() != null && this.getId().equals(applicationForm.getApplicationAdministrator().getId())) {
 			return true;
 		}
 		if (isInRole(Authority.ADMINISTRATOR)) {
-			if (applicationForm.getProgram().getAdministrators().contains(this)) {
+			if (listContainsId(this, applicationForm.getProgram().getAdministrators())) {
 				return true;
 			}
 		}
 
 		if (applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
 			for (Reviewer reviewer : applicationForm.getLatestReviewRound().getReviewers()) {
-				if (this.equals(reviewer.getUser())) {
+				if (this.getId().equals(reviewer.getUser().getId())) {
 					return true;
 				}
 			}
@@ -291,7 +288,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		Interview latestInterview = applicationForm.getLatestInterview();
 		if (latestInterview != null && applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW) {
 			for (Interviewer interviewer : latestInterview.getInterviewers()) {
-				if (this.equals(interviewer.getUser())) {
+				if (this.getId().equals(interviewer.getUser().getId())) {
 					return true;
 				}
 			}
@@ -300,7 +297,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
 		if (latestApprovalRound != null && (applicationForm.getStatus() == ApplicationFormStatus.APPROVAL  ||applicationForm.getStatus() == ApplicationFormStatus.APPROVED )  ) {
 			for (Supervisor surevisor : latestApprovalRound.getSupervisors()) {
-				if (this.equals(surevisor.getUser())) {
+				if (this.getId().equals(surevisor.getUser().getId())) {
 					return true;
 				}
 			}
@@ -315,14 +312,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			List<Referee> referees = applicationForm.getReferees();
 			for (Referee referee : referees) {
 				if (!referee.isDeclined() && referee.getUser() != null) {
-					if (referee.getUser().equals(this) || (this.getReferees().contains(referee))) {
+					if (referee.getUser().getId().equals(this.getId()) || (listContainsId(referee, this.getReferees()))) {
 						return true;
 					}
 				}
 			}
 		}
 
-		if (this.equals(applicationForm.getApplicant())) {
+		if (applicationForm.getApplicant() != null && this.getId().equals(applicationForm.getApplicant().getId())) {
 			return true;
 		}
 
@@ -363,19 +360,19 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public List<Authority> getAuthoritiesForProgram(Program program) {
 		List<Authority> authorities = new ArrayList<Authority>();
-		if (getProgramsOfWhichAdministrator().contains(program)) {
+		if (listContainsId(program, getProgramsOfWhichAdministrator())) {
 			authorities.add(Authority.ADMINISTRATOR);
 		}
-		if (getProgramsOfWhichReviewer().contains(program)) {
+		if (listContainsId(program, getProgramsOfWhichReviewer())) {
 			authorities.add(Authority.REVIEWER);
 		}
-		if (getProgramsOfWhichInterviewer().contains(program)) {
+		if (listContainsId(program, getProgramsOfWhichInterviewer())) {
 			authorities.add(Authority.INTERVIEWER);
 		}
-		if (getProgramsOfWhichApprover().contains(program)) {
+		if (listContainsId(program, getProgramsOfWhichApprover())) {
 			authorities.add(Authority.APPROVER);
 		}
-		if (getProgramsOfWhichSupervisor().contains(program)) {
+		if (listContainsId(program, getProgramsOfWhichSupervisor())) {
 			authorities.add(Authority.SUPERVISOR);
 		}
 		return authorities;
@@ -403,7 +400,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return true;
 		}
 		return getAuthoritiesForProgram(program).contains(authority);
-
 	}
 
 	public Role getRoleByAuthority(Authority authority) {
@@ -424,21 +420,21 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	}
 
 	public boolean isReviewerInProgramme(Program program) {
-		if (program.getProgramReviewers().contains(this)) {
+		if (listContainsId(this, program.getProgramReviewers())) {
 			return true;
 		}
 		return false;
 	}
 
 	public boolean isAdminOrReviewerInProgramme(Program program) {
-		if (program.getAdministrators().contains(this) || program.getProgramReviewers().contains(this)) {
+		if (listContainsId(this, program.getAdministrators()) || listContainsId(this, program.getProgramReviewers())) {
 			return true;
 		}
 		return false;
 	}
 
 	public boolean isAdminInProgramme(Program program) {
-		if (program.getAdministrators().contains(this)) {
+		if (listContainsId(this, program.getAdministrators())) {
 			return true;
 		}
 		return false;
@@ -470,7 +466,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return false;
 		}
 		for (Reviewer reviewer : latestReviewRound.getReviewers()) {
-			if (reviewer != null && this.equals(reviewer.getUser())) {
+			if (reviewer != null && this.getId().equals(reviewer.getUser().getId())) {
 				return true;
 			}
 		}
@@ -481,7 +477,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public boolean isPastOrPresentReviewerOfApplicationForm(ApplicationForm applicationForm) {
 		for (ReviewRound reviewRound : applicationForm.getReviewRounds()) {
 			for (Reviewer reviewer : reviewRound.getReviewers()) {
-				if (reviewer != null && this.equals(reviewer.getUser())) {
+				if (reviewer != null && this.getId().equals(reviewer.getUser().getId())) {
 					return true;
 				}
 			}
@@ -494,7 +490,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		Interview latestInterview = form.getLatestInterview();
 		if (latestInterview != null) {
 			for (Interviewer interviewer : latestInterview.getInterviewers()) {
-				if (interviewer != null && this.equals(interviewer.getUser())) {
+				if (interviewer != null && this.getId().equals(interviewer.getUser().getId())) {
 					return true;
 				}
 			}
@@ -505,7 +501,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public boolean isPastOrPresentInterviewerOfApplicationForm(ApplicationForm applicationForm) {
 		for (Interview interview : applicationForm.getInterviews()) {
 			for (Interviewer interviewer : interview.getInterviewers()) {
-				if (interviewer != null && this.equals(interviewer.getUser())) {
+				if (interviewer != null && this.getId().equals(interviewer.getUser().getId())) {
 					return true;
 				}
 			}
@@ -518,7 +514,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		ApprovalRound approvalRound = form.getLatestApprovalRound();
 		if (approvalRound != null) {
 			for (Supervisor supervisor : approvalRound.getSupervisors()) {
-				if (supervisor != null && this.equals(supervisor.getUser())) {
+				if (supervisor != null && this.getId().equals(supervisor.getUser().getId())) {
 					return true;
 				}
 			}
@@ -530,7 +526,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public boolean isPastOrPresentSupervisorOfApplicationForm(ApplicationForm applicationForm) {
 		for (ApprovalRound approvalRound : applicationForm.getApprovalRounds()) {
 			for (Supervisor supervisor : approvalRound.getSupervisors()) {
-				if (supervisor != null && this.equals(supervisor.getUser())) {
+				if (supervisor != null && this.getId().equals(supervisor.getUser().getId())) {
 					return true;
 				}
 			}
@@ -542,7 +538,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public boolean isInterviewerOfProgram(Program program) {
 		for (RegisteredUser interviewer : program.getInterviewers()) {
-			if (this.equals(interviewer)) {
+			if (this.getId().equals(interviewer.getId())) {
 				return true;
 			}
 		}
@@ -560,7 +556,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		if (!this.canSee(reference.getReferee().getApplication())) {
 			return false;
 		}
-		if (this.isRefereeOfApplicationForm(reference.getReferee().getApplication()) && !this.equals(reference.getReferee().getUser())) {
+		if (this.isRefereeOfApplicationForm(reference.getReferee().getApplication()) && !this.getId().equals(reference.getReferee().getUser().getId())) {
 			return false;
 		}
 		return true;
@@ -568,7 +564,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public Referee getRefereeForApplicationForm(ApplicationForm applicationForm) {
 		for (Referee referee : referees) {
-			if (referee.getApplication() != null && referee.getApplication().equals(applicationForm) && !referee.isDeclined()) {
+			if (referee.getApplication() != null && referee.getApplication().getId().equals(applicationForm.getId()) && !referee.isDeclined()) {
 				return referee;
 			}
 		}
@@ -597,7 +593,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public boolean hasRespondedToProvideReviewForApplication(ApplicationForm application) {	
 		
 		for (Comment comment : comments) {
-			if (comment.getApplication().equals(application) && comment.getType().equals(CommentType.REVIEW)) {
+			if (comment.getApplication().getId().equals(application.getId()) && comment.getType().equals(CommentType.REVIEW)) {
 				return true;
 			}
 		}
@@ -606,7 +602,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public boolean hasRespondedToProvideInterviewFeedbackForApplication(ApplicationForm application) {
 		for (Comment comment : comments) {
-			if (comment.getApplication().equals(application) && comment.getType().equals(CommentType.INTERVIEW)) {
+			if (comment.getApplication().getId().equals(application.getId()) && comment.getType().equals(CommentType.INTERVIEW)) {
 				return true;
 			}
 		}
@@ -616,7 +612,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public boolean hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(ApplicationForm application) {
 			List<Interviewer> interviewers = application.getLatestInterview().getInterviewers();
 			for (Interviewer interviewer : interviewers) {
-				if(interviewer.getInterview().equals(application.getLatestInterview()) && this.equals(interviewer.getUser()) && interviewer.getInterviewComment() != null){
+				if(interviewer.getInterview().getId().equals(application.getLatestInterview().getId()) && this.getId().equals(interviewer.getUser().getId()) && interviewer.getInterviewComment() != null){
 					return true;
 				}
 			}
@@ -626,7 +622,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public boolean hasRespondedToProvideReviewForApplicationLatestRound(ApplicationForm application) {
 			List<Reviewer> reviewers = application.getLatestReviewRound().getReviewers();
 			for (Reviewer reviewer : reviewers) {
-				if(reviewer.getReviewRound().equals(application.getLatestReviewRound()) && this.equals(reviewer.getUser()) && reviewer.getReview() != null){
+				if(reviewer.getReviewRound().getId().equals(application.getLatestReviewRound().getId()) && this.getId().equals(reviewer.getUser().getId()) && reviewer.getReview() != null){
 					return true;
 				}
 			}
@@ -636,7 +632,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public boolean hasDeclinedToProvideReviewForApplication(ApplicationForm application) {
 
 		for (Comment comment : comments) {
-			if (comment.getApplication().equals(application) && comment.getType().equals(CommentType.REVIEW)) {
+			if (comment.getApplication().getId().equals(application.getId()) && comment.getType().equals(CommentType.REVIEW)) {
 				ReviewComment reviewComment = (ReviewComment) comment;
 				if (reviewComment.isDecline()) {
 					return true;
@@ -664,7 +660,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		List<Reviewer> formReviewers = latestReviewRound.getReviewers();
 		for (Reviewer reviewer : formReviewers) {
-			if (this.equals(reviewer.getUser())) {
+			if (this.getId().equals(reviewer.getUser().getId())) {
 				reviewers.add(reviewer);
 			}
 		}
@@ -675,7 +671,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		List<Interviewer> interviewers = new ArrayList<Interviewer>();
 		List<Interviewer> formInterviewers = applicationForm.getLatestInterview().getInterviewers();
 		for (Interviewer interviewer : formInterviewers) {
-			if (this.equals(interviewer.getUser())) {
+			if (this.getId().equals(interviewer.getUser().getId())) {
 				interviewers.add(interviewer);
 			}
 		}
@@ -711,10 +707,10 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		if(this.isInRole(Authority.SUPERADMINISTRATOR)){
 			return true;
 		}
-		if (this.equals(applicationForm.getApplicationAdministrator())) {
+		if (applicationForm.getApplicationAdministrator() != null && this.getId().equals(applicationForm.getApplicationAdministrator().getId())) {
 			return true;
 		}
-		if(applicationForm.getProgram().getAdministrators().contains(this)){
+		if(listContainsId(this, applicationForm.getProgram().getAdministrators())) {
 			return true;
 		}
 		return false;
@@ -759,7 +755,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return false;
 		}
 		for (Reviewer reviewer : reviewRound.getReviewers()) {
-			if(this.equals(reviewer.getUser())){
+			if(this.getId().equals(reviewer.getUser().getId())){
 				return true;
 			}
 		}
@@ -771,7 +767,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return false;
 		}
 		for (Interviewer interviewer : interview.getInterviewers()) {
-			if(this.equals(interviewer.getUser())){
+			if(this.getId().equals(interviewer.getUser().getId())){
 				return true;
 			}
 		}
@@ -783,7 +779,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return false;
 		}
 		for (Supervisor supervisor : approvalRound.getSupervisors()) {
-			if(this.equals(supervisor.getUser())){
+			if(this.getId().equals(supervisor.getUser().getId())){
 				return true;
 			}
 		}
@@ -818,7 +814,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
     }
     
     public boolean addLinkedAccount(RegisteredUser user) {
-        if (!this.linkedAccounts.contains(user)) {
+        if (!listContainsId(user, this.linkedAccounts)) {
             return this.linkedAccounts.add(user);
         }
         return false;
@@ -826,5 +822,32 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
     
     public boolean removeLinkedAccount(RegisteredUser user) {
         return this.linkedAccounts.remove(user);
+    }
+    
+    private boolean listContainsId(Referee user, List<Referee> users) {
+        for (Referee entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    } 
+    
+    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean listContainsId(Program program, List<Program> programs) {
+        for (Program entry : programs) {
+            if (entry.getId().equals(program.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

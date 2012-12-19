@@ -13,13 +13,13 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Event;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class StateChangeEventMappingTest extends AutomaticRollbackTestCase {
@@ -42,12 +42,11 @@ public class StateChangeEventMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		reloadedEvent = (StateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, event.getId());
 		assertNotSame(event, reloadedEvent);
-		assertEquals(event, reloadedEvent);
+		assertEquals(event.getId(), reloadedEvent.getId());
 
 		assertEquals(eventDate, reloadedEvent.getDate());
 		assertEquals(newStatus, reloadedEvent.getNewStatus());
-		assertEquals(user, reloadedEvent.getUser());
-
+		assertEquals(user.getId(), reloadedEvent.getUser().getId());
 	}
 
 	@Test
@@ -67,7 +66,6 @@ public class StateChangeEventMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		StateChangeEvent reloadedEvent = (StateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, event.getId());
 
-		assertEquals(application, reloadedEvent.getApplication());
-
+		assertEquals(application.getId(), reloadedEvent.getApplication().getId());
 	}
 }

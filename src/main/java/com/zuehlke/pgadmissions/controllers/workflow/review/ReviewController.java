@@ -63,10 +63,19 @@ public abstract class ReviewController {
 		List<RegisteredUser> previousReviewersOfProgram = userService.getAllPreviousReviewersOfProgram(applicationForm.getProgram());
 
 		for (RegisteredUser registeredUser : previousReviewersOfProgram) {
-			if (!applicationForm.getProgram().getProgramReviewers().contains(registeredUser)) {
+			if (!listContainsId(registeredUser, applicationForm.getProgram().getProgramReviewers())) {
 				availablePreviousReviewers.add(registeredUser);
 			}
 		}
 		return availablePreviousReviewers;
 	}
+	
+    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

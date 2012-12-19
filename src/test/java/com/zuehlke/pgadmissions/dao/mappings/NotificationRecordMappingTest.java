@@ -37,11 +37,10 @@ public class NotificationRecordMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		reloadedNotificationRecord = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, notificationRecord.getId());
 		assertNotSame(notificationRecord, reloadedNotificationRecord);
-		assertEquals(notificationRecord, reloadedNotificationRecord);
+		assertEquals(notificationRecord.getId(), reloadedNotificationRecord.getId());
 		
 		assertEquals(notificationDate.getTime(), reloadedNotificationRecord.getDate().getTime());
 		assertEquals(validationReminder, reloadedNotificationRecord.getNotificationType());
-		
 	}
 	
 	@Test
@@ -60,8 +59,7 @@ public class NotificationRecordMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		NotificationRecord reloadedRecord = (NotificationRecord ) sessionFactory.getCurrentSession().get(NotificationRecord.class, notificationRecord.getId());
 		
-		assertEquals(application, reloadedRecord.getApplication());
-		
+		assertEquals(application.getId(), reloadedRecord.getApplication().getId());
 	}
 	
 	@Test
@@ -76,7 +74,6 @@ public class NotificationRecordMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		NotificationRecord reloadedRecord = (NotificationRecord ) sessionFactory.getCurrentSession().get(NotificationRecord.class, notificationRecord.getId());
 		
-		assertEquals(user, reloadedRecord.getUser());
-		
+		assertEquals(user.getId(), reloadedRecord.getUser().getId());
 	}
 }

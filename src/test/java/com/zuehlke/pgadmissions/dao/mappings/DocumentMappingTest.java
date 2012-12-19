@@ -44,7 +44,6 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
 		Document reloadedDoc = (Document) sessionFactory.getCurrentSession().get(Document.class, document.getId());
 
-		assertEquals(applicant, reloadedDoc.getUploadedBy());
 		assertArrayEquals("s".getBytes(), reloadedDoc.getContent());
 		assertEquals("name.txt", reloadedDoc.getFileName());
 		assertEquals("bob", reloadedDoc.getContentType());
@@ -76,7 +75,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
 		Document reloadedDoc = (Document) sessionFactory.getCurrentSession().get(Document.class, document.getId());
 
-		assertEquals(qualification, reloadedDoc.getQualification());
+		assertEquals(qualification.getId(), reloadedDoc.getQualification().getId());
 	}
 
 	@Before

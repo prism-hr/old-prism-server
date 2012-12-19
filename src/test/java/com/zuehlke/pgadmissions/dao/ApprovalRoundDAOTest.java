@@ -36,7 +36,7 @@ public class ApprovalRoundDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		ApprovalRound returnedApprovalRound = (ApprovalRound) sessionFactory.getCurrentSession().get(ApprovalRound.class,approvalRound.getId());
-		assertEquals(returnedApprovalRound, approvalRound);
+		assertEquals(returnedApprovalRound.getId(), approvalRound.getId());
 		
 	}
 	
@@ -50,7 +50,7 @@ public class ApprovalRoundDAOTest extends AutomaticRollbackTestCase {
 		dao.save(approvalRound);
 		assertNotNull(approvalRound.getId());
 		flushAndClearSession();
-		assertEquals(approvalRound, dao.getApprovalRoundById(approvalRound.getId()));
+		assertEquals(approvalRound.getId(), dao.getApprovalRoundById(approvalRound.getId()).getId());
 
 	}
 	

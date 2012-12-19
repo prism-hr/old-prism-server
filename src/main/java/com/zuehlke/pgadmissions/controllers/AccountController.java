@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.SwitchAndLinkUserAccountDTO;
@@ -119,7 +122,7 @@ public class AccountController {
         RegisteredUser secondAccount = userService.getUserByEmail(userDTO.getEmail());
         RegisteredUser currentAccount = userService.getCurrentUser();
         
-        if (currentAccount.getLinkedAccounts().contains(secondAccount)) {
+        if (listContainsId(secondAccount, currentAccount.getLinkedAccounts())) {
             return "/private/common/ajax_OK";
         }
 
@@ -155,6 +158,7 @@ public class AccountController {
     }
     
     @RequestMapping(value = "/switch", method = RequestMethod.POST)
+    @ResponseBody
     public String switchAccounts(@RequestParam String email, HttpServletRequest request) {
         try {
             RegisteredUser desiredAccount = userService.getUserByEmail(email);
@@ -172,12 +176,13 @@ public class AccountController {
     }
     
     @RequestMapping(value = "/deleteLinkedAccount", method = RequestMethod.POST)
+    @ResponseBody
     public String deleteLinkedAccount(@RequestParam String email) {
         try {
             RegisteredUser currentAccount = userService.getCurrentUser();
             RegisteredUser secondAccount = userService.getUserByEmail(email);
             
-            if (currentAccount.getLinkedAccounts().contains(secondAccount)) {
+            if (listContainsId(secondAccount, currentAccount.getLinkedAccounts())) {
                 currentAccount.removeLinkedAccount(secondAccount);
                 userService.save(currentAccount);
                 
@@ -190,4 +195,13 @@ public class AccountController {
         }
         return "NOK";
     }
+    
+    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }  
 }

@@ -14,15 +14,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 
 public class ReviewRoundMappingTest extends AutomaticRollbackTestCase {
 
@@ -42,12 +42,12 @@ public class ReviewRoundMappingTest extends AutomaticRollbackTestCase {
 		
 		ReviewRound reloadedReviewRound = (ReviewRound) sessionFactory.getCurrentSession().get(ReviewRound.class, reviewRound.getId());
 		assertNotSame(reviewRound, reloadedReviewRound);
-		assertEquals(reviewRound, reloadedReviewRound);
+		assertEquals(reviewRound.getId(), reloadedReviewRound.getId());
 		
 		Assert.assertEquals(1, reloadedReviewRound.getReviewers().size());
 		Reviewer reviewer = reloadedReviewRound.getReviewers().get(0);
-		assertEquals(reviewerUser, reviewer.getUser());
-		assertEquals(reloadedReviewRound, reviewer.getReviewRound());
+		assertEquals(reviewerUser.getId(), reviewer.getUser().getId());
+		assertEquals(reloadedReviewRound.getId(), reviewer.getReviewRound().getId());
 		assertNotNull(reloadedReviewRound.getCreatedDate());
 		
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),DateUtils.truncate(reloadedReviewRound.getCreatedDate(), Calendar.DATE));

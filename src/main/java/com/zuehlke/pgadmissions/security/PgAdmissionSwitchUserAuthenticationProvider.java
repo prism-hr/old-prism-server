@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.security;
 
+import java.util.List;
+
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,7 +33,7 @@ public class PgAdmissionSwitchUserAuthenticationProvider implements Authenticati
         RegisteredUser currentAccount = (RegisteredUser) preProcessToken.getPrincipal();
         RegisteredUser desiredAccount = (RegisteredUser) preProcessToken.getCredentials();
         
-        if (!currentAccount.getLinkedAccounts().contains(desiredAccount)) {
+        if (!listContainsId(desiredAccount, currentAccount.getLinkedAccounts())) {
             throw new BadCredentialsException("accounts not linked");
         }
         
@@ -61,4 +63,13 @@ public class PgAdmissionSwitchUserAuthenticationProvider implements Authenticati
     public boolean supports(Class<?> clazz) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz);
     }
+    
+    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }   
 }

@@ -2,22 +2,19 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.Type;
+
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 @Entity(name = "REMINDER_INTERVAL")
-@Access(AccessType.FIELD)
-public class ReminderInterval{
-	
-	private static final int LARGE_PRIME = 3257;
+public class ReminderInterval {
 	
 	@Id
-	@Access(AccessType.PROPERTY)
+	@GeneratedValue
 	private Integer id;
 	
 	private Integer duration;
@@ -38,33 +35,10 @@ public class ReminderInterval{
 		this.unit = unit;
 	}
 	
-	@Override
-	public boolean equals(Object other) {
-		if (other == null) {
-			return false;
-		}
-		if (id == null) {
-			return false;
-		}
-		if (((ReminderInterval) other).getId() == null) {
-			return false;
-		}
-		if (!this.getClass().equals(other.getClass())) {
-			return false;
-		}
-		return id.equals(((ReminderInterval) other).getId());
-	}
-
-	@Override
-	public int hashCode() {
-		if(id == null){
-			return LARGE_PRIME;
-		}
-		return LARGE_PRIME * id.hashCode();
-	}
 	public Integer getId() {
 		return id;
 	}
+	
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -82,7 +56,4 @@ public class ReminderInterval{
 		}
 		return (int)this.duration;
 	}
-	
-	
-	
 }

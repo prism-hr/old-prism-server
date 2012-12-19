@@ -65,7 +65,7 @@ public class FileUploadController {
 			return null;
 		}
 		ApplicationForm applicationform = applicationService.getApplicationByApplicationNumber(id);
-		if (applicationform == null || !userService.getCurrentUser().equals(applicationform.getApplicant())) {
+		if (applicationform == null || (applicationform.getApplicant() != null && !userService.getCurrentUser().getId().equals(applicationform.getApplicant().getId()))) {
 			throw new ResourceNotFoundException();
 		}
 		if (applicationform.isSubmitted()) {

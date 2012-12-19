@@ -46,7 +46,7 @@ public class SourcesOfInterestDAOTest extends AutomaticRollbackTestCase {
         Integer id = sourcesOfInterest1.getId();
         SourcesOfInterestDAO sourcesOfInterestDAO = new SourcesOfInterestDAO(sessionFactory);
         SourcesOfInterest reloadedSourcesOfInterest = sourcesOfInterestDAO.getSourcesOfInterestById(id);
-        assertEquals(sourcesOfInterest1, reloadedSourcesOfInterest);
+        assertEquals(sourcesOfInterest1.getId(), reloadedSourcesOfInterest.getId());
     }
     
     @Test

@@ -23,7 +23,7 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 	    SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest();
 		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().id(1).firstname("first").lastname("last").email("email").toSuggestedSupervisor();
 
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test").projectName("project")
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test1").projectName("project")
 				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption("1", "Full-time").sourcesOfInterest(interest)
 				.suggestedSupervisors(suggestedSupervisor).toProgrammeDetails();
 
@@ -36,10 +36,8 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 
 		reloadedDetails = (ProgrammeDetails) sessionFactory.getCurrentSession().get(ProgrammeDetails.class, id);
 
-		assertEquals(programmeDetails, reloadedDetails);
-
-		assertEquals(programmeDetails.getApplication(), reloadedDetails.getApplication());
-
+		assertEquals(programmeDetails.getId(), reloadedDetails.getId());
+		assertEquals(programmeDetails.getProgrammeName(), reloadedDetails.getProgrammeName());
 	}
 
 	@Test
@@ -50,7 +48,7 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		sessionFactory.getCurrentSession().saveOrUpdate(suggestedSupervisor);
 
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test").projectName("project")
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test2").projectName("project")
 				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption("1", "Full-time").sourcesOfInterest(interest)
 				.suggestedSupervisors(suggestedSupervisor).toProgrammeDetails();
 
@@ -61,11 +59,7 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 		ProgrammeDetails reloadedDetails = (ProgrammeDetails) sessionFactory.getCurrentSession().get(ProgrammeDetails.class, id);
 
 		reloadedDetails = (ProgrammeDetails) sessionFactory.getCurrentSession().get(ProgrammeDetails.class, id);
-
-		assertEquals(programmeDetails, reloadedDetails);
-
-		assertEquals(programmeDetails.getApplication(), reloadedDetails.getApplication());
-
+		assertEquals(programmeDetails.getId(), reloadedDetails.getId());
+		assertEquals(programmeDetails.getProgrammeName(), reloadedDetails.getProgrammeName());
 	}
-
 }

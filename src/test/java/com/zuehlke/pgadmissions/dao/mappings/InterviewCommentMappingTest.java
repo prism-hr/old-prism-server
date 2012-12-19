@@ -56,13 +56,11 @@ public class InterviewCommentMappingTest extends AutomaticRollbackTestCase {
 
 		reloadedInterviewComment = (InterviewComment) sessionFactory.getCurrentSession().get(InterviewComment.class, id);
 		assertNotSame(interviewComment, reloadedInterviewComment);
-		assertEquals(interviewComment, reloadedInterviewComment);
+		assertEquals(interviewComment.getId(), reloadedInterviewComment.getId());
 
-		assertEquals(interviewerUser, reloadedInterviewComment.getUser());
-		assertEquals(interviewer, reloadedInterviewComment.getInterviewer());
+		assertEquals(interviewerUser.getId(), reloadedInterviewComment.getUser().getId());
+		assertEquals(interviewer.getId(), reloadedInterviewComment.getInterviewer().getId());
 		assertEquals("This is an interview comment", reloadedInterviewComment.getComment());
-		assertFalse( reloadedInterviewComment.getSuitableCandidateForUcl());
-
+		assertFalse(reloadedInterviewComment.getSuitableCandidateForUcl());
 	}
-
 }

@@ -45,7 +45,7 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 		Integer id = disability1.getId();
 		DisabilityDAO disabilityDAO = new DisabilityDAO(sessionFactory);
 		Disability reloadedDisability = disabilityDAO.getDisabilityById(id);
-		assertEquals(disability1, reloadedDisability);
+		assertEquals(disability1.getId(), reloadedDisability.getId());
 	}
 	
 

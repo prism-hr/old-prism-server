@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
+
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
@@ -20,7 +22,7 @@ public class StageDurationDAOTest extends AutomaticRollbackTestCase{
 					
 		StageDurationDAO stageDurationDAO = new StageDurationDAO(sessionFactory);
 		StageDuration interviewStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.INTERVIEW);
-		assertEquals(stageDuration, interviewStageDuration);
+		assertEquals(stageDuration.getStage(), interviewStageDuration.getStage());
 		assertEquals(stageDuration.getDuration(), interviewStageDuration.getDuration());
 		assertEquals(stageDuration.getUnit(), interviewStageDuration.getUnit());
 	}	
@@ -41,7 +43,7 @@ public class StageDurationDAOTest extends AutomaticRollbackTestCase{
 		
 		StageDurationDAO stageDurationDAO = new StageDurationDAO(sessionFactory);
 		StageDuration interviewStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.INTERVIEW);
-		assertEquals(updatedStageDuration, interviewStageDuration);
+		assertEquals(updatedStageDuration.getStage(), interviewStageDuration.getStage());
 		assertEquals(updatedStageDuration.getDuration(), interviewStageDuration.getDuration());
 		assertEquals(updatedStageDuration.getUnit(), interviewStageDuration.getUnit());
 	}	

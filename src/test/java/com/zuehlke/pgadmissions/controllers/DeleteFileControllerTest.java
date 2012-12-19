@@ -78,8 +78,9 @@ public class DeleteFileControllerTest {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		Document document = new DocumentBuilder().uploadedBy(currentUser).content("aaaa".getBytes()).id(1).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
+		EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
 		documentServiceMock.delete(document);
-		EasyMock.replay(documentServiceMock,encryptionHelperMock);
+		EasyMock.replay(documentServiceMock, encryptionHelperMock, currentUser);
 		
 		ModelAndView modelAndView = controller.asyncdelete("encryptedId");
 		
@@ -91,9 +92,10 @@ public class DeleteFileControllerTest {
 	@Test
 	public void shouldNOTDeleteDocumentIfUserIsNotUploadingUser(){		
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
 		Document document = new DocumentBuilder().uploadedBy(new RegisteredUserBuilder().id(8).toUser()).content("aaaa".getBytes()).id(1).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);		
-		EasyMock.replay(documentServiceMock, encryptionHelperMock);
+		EasyMock.replay(documentServiceMock, encryptionHelperMock, currentUser);
 		ModelAndView modelAndView = controller.asyncdelete("encryptedId");
 		assertEquals("/private/common/simpleMessage", modelAndView.getViewName());
 		assertEquals("document.deleted", modelAndView.getModel().get("message"));
@@ -110,9 +112,9 @@ public class DeleteFileControllerTest {
 		assertEquals("document.deleted", modelAndView.getModel().get("message"));
 		EasyMock.verify(documentServiceMock);
 	}
+	
 	@Before
 	public void setup() {
-
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
@@ -122,9 +124,6 @@ public class DeleteFileControllerTest {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		
-
-		
 	}
 
 	@After

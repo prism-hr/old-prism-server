@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -24,11 +23,9 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
@@ -63,7 +60,7 @@ public class SubmitApplicationFormController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
-		if(!getCurrentUser().equals(applicationForm.getApplicant()) || applicationForm.isDecided()){
+		if ((applicationForm.getApplicant() != null && !getCurrentUser().getId().equals(applicationForm.getApplicant().getId())) || applicationForm.isDecided()){
 			throw new ResourceNotFoundException();
 		}
 			
@@ -104,7 +101,7 @@ public class SubmitApplicationFormController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
-		if(applicationForm != null && applicationForm.getApplicant() != null && applicationForm.getApplicant().equals(getCurrentUser()) && applicationForm.isModifiable()){
+		if(applicationForm != null && applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(getCurrentUser().getId()) && applicationForm.isModifiable()){
 			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
 		}
 		if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {

@@ -24,7 +24,6 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	private RegisteredUser user;
 	private Program program;	
 	private QualificationDAO qualificationDAO;
-	private CountriesDAO countriesDAO;
 
 	@Test
 	public void shouldGetQualificationById() throws ParseException{
@@ -37,10 +36,9 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		Integer id = qualification.getId();
 		flushAndClearSession();
 		
-		assertEquals(qualification, qualificationDAO.getQualificationById(id));
-		
-		
+		assertEquals(qualification.getId(), qualificationDAO.getQualificationById(id).getId());
 	}
+
 	@Test
 	public void shouldSaveQualification() throws ParseException{
 	    QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
@@ -51,11 +49,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		qualificationDAO.save(qualification);
 		flushAndClearSession();		
 		Integer id = qualification.getId();
-		
-		
-		assertEquals(qualification, sessionFactory.getCurrentSession().get(Qualification.class, id));
-		
-		
+		assertEquals(qualification.getId(), ((Qualification) sessionFactory.getCurrentSession().get(Qualification.class, id)).getId());
 	}
 	
 	@Test
@@ -83,11 +77,8 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		qualificationDAO = new QualificationDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
-		
 		save(user, program);
-		countriesDAO = new CountriesDAO(sessionFactory);
 		flushAndClearSession();
 	}
 }

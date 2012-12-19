@@ -1,17 +1,20 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity(name = "SOURCES_OF_INTEREST")
-@Access(AccessType.FIELD)
-public class SourcesOfInterest extends DomainObject<Integer> implements ImportedObject {
+public class SourcesOfInterest implements ImportedObject, Serializable {
 
     private static final long serialVersionUID = -3309557608853073374L;
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @Column(name = "enabled")
     private Boolean enabled;
@@ -22,16 +25,11 @@ public class SourcesOfInterest extends DomainObject<Integer> implements Imported
     @Column(name = "name")
     private String name;
     
-    @Override
-    public final void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Override
-    @Id
-    @GeneratedValue
-    @Access(AccessType.PROPERTY)
-    public final Integer getId() {
+    public Integer getId() {
         return id;
     }
 

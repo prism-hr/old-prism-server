@@ -47,15 +47,12 @@ public class ReviewEvaluationCommentMappingTest extends AutomaticRollbackTestCas
 		flushAndClearSession();
 		reloadedComment = (ReviewEvaluationComment) sessionFactory.getCurrentSession().get(ReviewEvaluationComment.class, reviewEveluationComment.getId());
 		assertNotSame(reviewEveluationComment, reloadedComment);
-		assertEquals(reviewEveluationComment, reloadedComment);
+		assertEquals(reviewEveluationComment.getId(), reloadedComment.getId());
 		
-		assertEquals(applicationForm, reloadedComment.getApplication());
+		assertEquals(applicationForm.getId(), reloadedComment.getApplication().getId());
 		assertEquals("hi", reloadedComment.getComment());
-		assertEquals(reviewRound, reloadedComment.getReviewRound());
+		assertEquals(reviewRound.getId(), reloadedComment.getReviewRound().getId());
 		assertEquals(CommentType.REVIEW_EVALUATION, reloadedComment.getType());
-		assertEquals(user, reloadedComment.getUser());
-		
-		
+		assertEquals(user.getId(), reloadedComment.getUser().getId());
 	}
-
 }

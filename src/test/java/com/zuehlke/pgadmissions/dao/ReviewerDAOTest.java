@@ -50,8 +50,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<Reviewer> reviewers = dao.getReviewersDueNotification();
-		assertTrue(reviewers.contains(reviewer));
-
+		assertTrue(listContainsId(reviewer, reviewers));
 	}
 	
 	@Test
@@ -113,10 +112,8 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		assertNotNull(reviewer.getId());
 		flushAndClearSession();
 		Reviewer returnedReviewer = (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class, reviewer.getId());
-		assertEquals(returnedReviewer, reviewer);
-
+		assertEquals(returnedReviewer.getId(), reviewer.getId());
 	}
-
 
 	@Test
 	public void shouldReturnReviewerOfLatestRoundReminded7Minus5minDaysAgoForASixDaysReminderInterval() {
@@ -139,7 +136,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<Reviewer> reviewers = dao.getReviewersDueReminder();
-		assertTrue(reviewers.contains(reviewer));
+		assertTrue(listContainsId(reviewer, reviewers));
 	}
 
 	@Test
@@ -177,7 +174,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<Reviewer> reviewers = dao.getReviewersDueReminder();
-		assertTrue(reviewers.contains(reviewer));
+		assertTrue(listContainsId(reviewer, reviewers));
 	}
 
 	@Test
@@ -237,11 +234,11 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
+	@SuppressWarnings("deprecation")
 	public void shouldReturnReviewersRequireAdminNotification() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
-				.toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		
-		Reviewer reviewer1 = new ReviewerBuilder().user(user).id(1).requiresAdminNotification(CheckedStatus.YES).dateAdminsNotified(null).toReviewer();
+        Reviewer reviewer1 = new ReviewerBuilder().user(user).id(1).requiresAdminNotification(CheckedStatus.YES).dateAdminsNotified(null).toReviewer();
 		Reviewer reviewer2 = new ReviewerBuilder().user(user).id(2).requiresAdminNotification(CheckedStatus.NO).dateAdminsNotified(null).toReviewer();
 		Reviewer reviewer3 = new ReviewerBuilder().user(user).id(1).requiresAdminNotification(CheckedStatus.YES).dateAdminsNotified(new Date()).toReviewer();
 		Reviewer reviewer4 = new ReviewerBuilder().user(user).id(2).requiresAdminNotification(CheckedStatus.NO).dateAdminsNotified(new Date()).toReviewer();
@@ -252,16 +249,15 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<Reviewer> reviewers = dao.getReviewersRequireAdminNotification();
-		assertFalse(reviewers.contains(reviewer3));
-		assertFalse(reviewers.contains(reviewer4));
-		assertFalse(reviewers.contains(reviewer2));
-		assertTrue(reviewers.contains(reviewer1));
+		
+		assertFalse(listContainsId(reviewer3, reviewers));
+		assertFalse(listContainsId(reviewer4, reviewers));
+		assertFalse(listContainsId(reviewer2, reviewers));
+		assertTrue(listContainsId(reviewer1, reviewers));
 	}
 	
-	
 	@Before
-	public void setUp() {
-		super.setUp();
+	public void initialise() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
@@ -277,4 +273,13 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 
 		dao = new ReviewerDAO(sessionFactory);
 	}
+	
+    private boolean listContainsId(Reviewer reviewer, List<Reviewer> reviewers) {
+        for (Reviewer entry : reviewers) {
+            if (entry.getId().equals(reviewer.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -49,13 +49,13 @@ public class InterviewEvaluationCommentMappingTest extends AutomaticRollbackTest
 		reloadedComment = (InterviewEvaluationComment) sessionFactory.getCurrentSession()
 				.get(InterviewEvaluationComment.class, interviewEvaluationComment.getId());
 		assertNotSame(interviewEvaluationComment, reloadedComment);
-		assertEquals(interviewEvaluationComment, reloadedComment);
+		assertEquals(interviewEvaluationComment.getId(), reloadedComment.getId());
 
-		assertEquals(applicationForm, reloadedComment.getApplication());
+		assertEquals(applicationForm.getId(), reloadedComment.getApplication().getId());
 		assertEquals("hi", reloadedComment.getComment());
-		assertEquals(interview, reloadedComment.getInterview());
+		assertEquals(interview.getId(), reloadedComment.getInterview().getId());
 		assertEquals(CommentType.INTERVIEW_EVALUATION, reloadedComment.getType());
-		assertEquals(user, reloadedComment.getUser());
+		assertEquals(user.getId(), reloadedComment.getUser().getId());
 
 	}
 

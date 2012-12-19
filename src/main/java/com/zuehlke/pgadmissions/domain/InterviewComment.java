@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,8 +11,7 @@ import org.hibernate.annotations.Type;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Entity(name="INTERVIEW_COMMENT")
-@Access(AccessType.FIELD)
-public class InterviewComment extends Comment{
+public class InterviewComment extends Comment {
 	
 	private static final long serialVersionUID = 9120577563568889651L;
 

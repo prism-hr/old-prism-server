@@ -44,11 +44,11 @@ public class ReferenceEventMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		reloadedEvent = (ReferenceEvent) sessionFactory.getCurrentSession().get(ReferenceEvent.class, event.getId());
 		assertNotSame(event, reloadedEvent);
-		assertEquals(event, reloadedEvent);
+		assertEquals(event.getId(), reloadedEvent.getId());
 
 		assertEquals(eventDate, reloadedEvent.getDate());		
-		assertEquals(user, reloadedEvent.getUser());
-		assertEquals(referee, reloadedEvent.getReferee());
+		assertEquals(user.getId(), reloadedEvent.getUser().getId());
+		assertEquals(referee.getId(), reloadedEvent.getReferee().getId());
 
 	}
 	@Before

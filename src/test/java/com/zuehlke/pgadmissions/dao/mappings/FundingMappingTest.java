@@ -53,17 +53,12 @@ public class FundingMappingTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		reloadedFunding = (Funding) sessionFactory.getCurrentSession().get(Funding.class, id);
 		assertNotSame(funding, reloadedFunding);
-		assertEquals(funding, reloadedFunding);
 		assertEquals(applicationForm,funding.getApplication());
 		assertEquals(awardDate,funding.getAwardDate());
 		assertEquals("hello",funding.getDescription());
 		assertEquals(FundingType.EMPLOYER,funding.getType());
 		assertEquals("alot",funding.getValue());
 		assertEquals(document,funding.getDocument());
-		
-		
-		
-		
 	}
 
 	

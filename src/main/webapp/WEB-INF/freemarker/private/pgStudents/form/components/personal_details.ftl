@@ -601,7 +601,7 @@
                     <div class="field">                             
                         <label>
                             <input type="radio" name="passportAvailable" id="passportAvailableYes" value="true"
-                            <#if  personalDetails.isPassportAvailableSet() && personalDetails.getPassportAvailable() >
+                            <#if personalDetails.isPassportAvailableSet() && personalDetails.getPassportAvailable() >
                                       checked="checked"
                             </#if>
                             <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>

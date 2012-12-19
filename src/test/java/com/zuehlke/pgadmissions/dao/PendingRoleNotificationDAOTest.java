@@ -40,8 +40,10 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 		
 		BigInteger numberOfPendingRoleNotifications = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from  PENDING_ROLE_NOTIFICATION").uniqueResult();
 		List<PendingRoleNotification> pendingNotifications = pendingRoleNotificationDAO.getAllPendingRoleNotifications();
+		
 		assertEquals(numberOfPendingRoleNotifications.intValue(), pendingNotifications.size());
-		assertTrue(pendingNotifications.containsAll(Arrays.asList(pendingNotificationOne, pendingNotificationTwo)));
+		assertTrue(listContainsId(pendingNotificationOne, pendingNotifications));
+		assertTrue(listContainsId(pendingNotificationTwo, pendingNotifications));
 	}
 
 	@Test
@@ -59,8 +61,7 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Before
-	public void setUp(){
-		super.setUp();
+	public void initialise() {
 		pendingRoleNotificationDAO = new PendingRoleNotificationDAO(sessionFactory);
 		roleDAO = new RoleDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
@@ -71,4 +72,13 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 		save(program);
 		flushAndClearSession();
 	}
+	
+    private boolean listContainsId(PendingRoleNotification notification, List<PendingRoleNotification> notifications) {
+        for (PendingRoleNotification entry : notifications) {
+            if (entry.getId().equals(notification.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }   
 }

@@ -31,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 public class RefereeDAOTest extends AutomaticRollbackTestCase {
@@ -79,12 +78,9 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetRefereeById() {
 		Referee referee = new RefereeBuilder().email("email").firstname("name").lastname("last").address1("UK").phoneNumber("hallihallo").toReferee();
-
 		sessionFactory.getCurrentSession().save(referee);
 		flushAndClearSession();
-
-		assertEquals(referee, refereeDAO.getRefereeById(referee.getId()));
-
+		assertEquals(referee.getId(), refereeDAO.getRefereeById(referee.getId()).getId());
 	}
 
 
@@ -192,11 +188,10 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		save(referee);
 		
 		flushAndClearSession();
-		assertEquals(referee, refereeDAO.getRefereeById(referee.getId()));
+		assertEquals(referee.getId(), refereeDAO.getRefereeById(referee.getId()).getId());
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
-		assertTrue(referees.contains(referee));		
-
+		assertTrue(listContainsId(referee.getId(), referees));		
 	}
 	
 	@Test
@@ -240,9 +235,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
-		assertTrue(referees.contains(referee));			
+		assertTrue(listContainsId(referee.getId(), referees));			
 	}
-	
 	
 	@Test
 	public void shouldNotReturnRefereeReminded6MinutesAgoForOneMinuteReminderInterval() {
@@ -293,11 +287,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
-		assertTrue(referees.contains(referee));			
+		assertTrue(listContainsId(referee.getId(), referees));	
 	}
-	
-	
-	
 	
 	@Test
 	public void shouldReturnRefereeForWhichReminderWasSendOne6DaysAnd5minAgo() {
@@ -319,7 +310,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
 	}
 	
-	
 	@Test
 	public void shouldReturnRefereeForWhichReminderWasSendOneWeekPlus5minAgo() {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
@@ -336,9 +326,9 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
-		assertTrue(referees.contains(referee));		
-
+		assertTrue(listContainsId(referee.getId(), referees));
 	}
+	
 	@Test
 	public void shouldNotReturnRefereesForWhichThereIsNoRegisteredUserMapped() {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
@@ -406,13 +396,12 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		List<Referee> referees = refereeDAO.getRefereesWhoDidntProvideReferenceYet(application);
 		assertNotNull(referees);
 		assertEquals(2, referees.size());
-		assertFalse(referees.contains(hasRefInApp));		
-		assertTrue(referees.contains(noRefInApp));		
-		assertTrue(referees.contains(noRefInApp2));		
-		assertFalse(referees.contains(noRefNoApp));		
-		assertFalse(referees.contains(hasRefButNotInApp));		
-		assertFalse(referees.contains(hasRefInApp1));		
-		
+		assertFalse(listContainsId(hasRefInApp.getId(), referees));
+		assertTrue(listContainsId(noRefInApp.getId(), referees));		
+		assertTrue(listContainsId(noRefInApp2.getId(), referees));		
+		assertFalse(listContainsId(noRefNoApp.getId(), referees));		
+		assertFalse(listContainsId(hasRefButNotInApp.getId(), referees));		
+		assertFalse(listContainsId(hasRefInApp1.getId(), referees));		
 	}
 	
 	@Test
@@ -429,11 +418,9 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesDueNotification();
 		assertNotNull(referees);
-		assertTrue(referees.contains(referee));		
-
+		assertTrue(listContainsId(referee.getId(), referees));		
 	}
 	
-
 	@Test
 	public void shouldReturnRefereesForNotifiationIfAlreadyNotified() {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
@@ -585,6 +572,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(referees.contains(referee));		
 
 	}
+	
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
@@ -604,4 +592,13 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		refereeDAO = new RefereeDAO(sessionFactory);
 	}
+	
+	private boolean listContainsId(Integer id, List<Referee> referees) {
+        for (Referee ref : referees) {
+            if (ref.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

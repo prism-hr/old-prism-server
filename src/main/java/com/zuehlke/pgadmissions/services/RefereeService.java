@@ -212,7 +212,7 @@ public class RefereeService {
 		Referee matchedReferee = null;
 		List<Referee> referees = user.getReferees();
 		for (Referee referee : referees) {
-			if (referee.getApplication() != null && referee.getApplication().equals(form)) {
+			if (referee.getApplication() != null && referee.getApplication().getId().equals(form.getId())) {
 				matchedReferee = referee;
 			}
 		}

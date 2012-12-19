@@ -39,7 +39,7 @@ public class RejectReasonDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		RejectReasonDAO rejectDAO = new RejectReasonDAO(sessionFactory);
-		assertEquals(reason, rejectDAO.getRejectReasonById(reason.getId()));
+		assertEquals(reason.getId(), rejectDAO.getRejectReasonById(reason.getId()).getId());
 	}
 }
 

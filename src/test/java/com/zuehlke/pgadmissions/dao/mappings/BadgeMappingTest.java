@@ -38,11 +38,8 @@ public class BadgeMappingTest extends AutomaticRollbackTestCase {
         badgeDetails = (Badge) sessionFactory.getCurrentSession().get(Badge.class, id);
 
         assertNotSame(badge, badgeDetails);
-        assertEquals(badge, badgeDetails);
-        
+        assertEquals(badge.getId(), badgeDetails.getId());
         assertEquals("title", badgeDetails.getProjectTitle());
-        assertEquals(program, badgeDetails.getProgram());
-
+        assertEquals(program.getId(), badgeDetails.getProgram().getId());
     }
-    
 }

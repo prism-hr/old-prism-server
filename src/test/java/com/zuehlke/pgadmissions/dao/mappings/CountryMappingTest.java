@@ -25,8 +25,7 @@ public class CountryMappingTest extends AutomaticRollbackTestCase {
 		
 		reloadedCountry = (Country) sessionFactory.getCurrentSession().get(Country.class, id);
 		assertNotSame(country, reloadedCountry);
-		assertEquals(country, reloadedCountry);
-		
+		assertEquals(country.getId(), reloadedCountry.getId());
 		assertEquals("ZZZZZZ", reloadedCountry.getName());
 	}
 }

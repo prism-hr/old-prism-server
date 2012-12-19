@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,10 +20,13 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="APPLICATION_FORM_QUALIFICATION")
-@Access(AccessType.FIELD) 
-public class Qualification extends DomainObject<Integer> implements FormSectionObject {
+public class Qualification implements FormSectionObject, Serializable {
 
 	private static final long serialVersionUID = -8949535622435302565L;
+	
+	@Id
+    @GeneratedValue
+	private Integer id;
 	
 	@Transient
 	private boolean acceptedTerms;
@@ -80,6 +82,11 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 	@Column(name="send_to_ucl")
 	private Boolean sendToUCL;
 	
+	@ManyToOne
+	@JoinColumn(name="application_form_id")
+	private ApplicationForm application = null;
+
+	
 	public String getQualificationSubject() {
 		return qualificationSubject;
 	}
@@ -128,11 +135,6 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 		this.qualificationAwardDate = q_award_date;
 	}
 
-	@ManyToOne
-	@JoinColumn(name="application_form_id")
-	private ApplicationForm application = null;
-	
-
 	public ApplicationForm getApplication() {
 		return application;
 	}
@@ -141,17 +143,10 @@ public class Qualification extends DomainObject<Integer> implements FormSectionO
 		this.application = application;
 	}
 
-	
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
-		
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

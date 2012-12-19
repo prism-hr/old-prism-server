@@ -1,10 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
-
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,8 +17,7 @@ import javax.persistence.Transient;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="BADGE")
-@Access(AccessType.FIELD) 
-public class Badge extends DomainObject<Integer>{
+public class Badge implements Serializable {
 
     private static final long serialVersionUID = -2878739613823320257L;
     
@@ -40,15 +37,14 @@ public class Badge extends DomainObject<Integer>{
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
     private String programmeHomepage;
 
-    @Override
+    @Id
+    @GeneratedValue
+    private Integer id;
+
     public void setId(Integer id) {
         this.id = id;
     }
 
-    @Override
-    @Id
-    @GeneratedValue
-    @Access(AccessType.PROPERTY)
     public Integer getId() {
         return id;
     }

@@ -66,7 +66,8 @@ public class TimelineService {
 			phase.setRejectedByApprover(true);
 		}
 		if(((StateChangeEvent) event).getNewStatus().equals(ApplicationFormStatus.APPROVAL)){
-			if(!event.equals(getFirstApprovalEvent(applicationForm))){
+		    Event firstApprovalEvent = getFirstApprovalEvent(applicationForm);
+			if(firstApprovalEvent != null && !event.getId().equals(firstApprovalEvent.getId())) {
 				phase.setMessageCode("timeline.phase.approval.restart");
 			}
 		}
@@ -98,7 +99,7 @@ public class TimelineService {
 	public List<TimelineObject> getTimelineObjects(ApplicationForm applicationForm) {
 		List<TimelineObject> timelineObjects = new ArrayList<TimelineObject>();
 		List<TimelinePhase> phases = new ArrayList<TimelinePhase>();
-		if (userService.getCurrentUser().equals(applicationForm.getApplicant())) {
+		if (applicationForm.getApplicant() != null && userService.getCurrentUser().getId().equals(applicationForm.getApplicant().getId())) {
 			phases.add(createUnsubmittedPhase(applicationForm));
 		}
 		List<Event> events = applicationForm.getEvents();

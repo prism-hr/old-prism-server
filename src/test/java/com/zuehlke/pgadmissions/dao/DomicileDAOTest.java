@@ -28,7 +28,7 @@ public class DomicileDAOTest extends AutomaticRollbackTestCase{
 		DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		Domicile domicileById = domicileDAO.getDomicileById(id);
 		
-		assertEquals(dom1, domicileById);
+		assertEquals(dom1.getId(), domicileById.getId());
 	}
 	
 	@Test

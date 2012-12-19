@@ -97,18 +97,17 @@ public class ApprovalController {
 		List<RegisteredUser> previousSupervisorsOfProgram = userService.getAllPreviousSupervisorsOfProgram(applicationForm.getProgram());
 		
 		for (RegisteredUser registeredUser : previousSupervisorsOfProgram) {
-			if (!applicationForm.getProgram().getSupervisors().contains(registeredUser)) {
+			if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors())) {
 				availablePreviousSupervisors.add(registeredUser);
 			}
 		}
 		List<RegisteredUser> interviewersWillingToSupervise = applicationForm.getUsersWillingToSupervise();
 		for (RegisteredUser registeredUser : interviewersWillingToSupervise) {
-			if (!applicationForm.getProgram().getSupervisors().contains(registeredUser) && !availablePreviousSupervisors.contains(registeredUser)) {
+			if (!listContainsId(registeredUser, applicationForm.getProgram().getSupervisors()) && !listContainsId(registeredUser, availablePreviousSupervisors)) {
 				availablePreviousSupervisors.add(registeredUser);
 			}
 		}
 		return availablePreviousSupervisors;
-
 	}
 
 	@ModelAttribute("approvalRound")
@@ -179,4 +178,13 @@ public class ApprovalController {
 		approvalService.requestApprovalRestart(applicationForm, getUser(), comment);
 		return "redirect:/applications?messageCode=request.approval.restart&application=" + applicationForm.getApplicationNumber();
 	}
+	
+	private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+	    for (RegisteredUser entry : users) {
+	        if (entry.getId().equals(user.getId())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}   
 }

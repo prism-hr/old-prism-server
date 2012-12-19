@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,10 +23,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
 @Entity(name = "DOCUMENT")
-@Access(AccessType.FIELD)
-public class Document extends DomainObject<Integer> {
+public class Document implements Serializable {
 
 	private static final long serialVersionUID = -6396463075916267580L;
+
+	@Id
+	@GeneratedValue
+	private Integer id;
 	
 	@Transient
 	private MultipartFile fileData;
@@ -58,15 +60,10 @@ public class Document extends DomainObject<Integer> {
 	@Type(type ="binary")
 	private byte[] content;
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

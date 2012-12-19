@@ -35,10 +35,10 @@ public class ProgramInstanceMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		reloadedProgramInstance = (ProgramInstance) sessionFactory.getCurrentSession().get(ProgramInstance.class, programInstance.getId());
 		assertNotSame(programInstance, reloadedProgramInstance);
-		assertEquals(programInstance, reloadedProgramInstance);
+		assertEquals(programInstance.getId(), reloadedProgramInstance.getId());
 		
 		assertEquals(DateUtils.truncate(applicationDeadline, Calendar.DATE), reloadedProgramInstance.getApplicationDeadline());
 		assertEquals("Full-time", reloadedProgramInstance.getStudyOption());
-		assertEquals(program, reloadedProgramInstance.getProgram());
+		assertEquals(program.getId(), reloadedProgramInstance.getProgram().getId());
 	}
 }

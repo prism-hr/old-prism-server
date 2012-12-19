@@ -75,8 +75,8 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
                 new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin, null, null,
                 SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, 25);
-        assertTrue(applications.contains(applicationFormOne));
-        assertFalse(applications.contains(applicationFormTwo));
+        assertTrue(listContainsId(applicationFormOne, applications));
+        assertFalse(listContainsId(applicationFormTwo, applications));
     }
 
     @Test
@@ -118,9 +118,9 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicant);
 
         assertTrue("The application form for which the user is an applicant could not be found.",
-                applications.contains(applicationFormOne));
+                listContainsId(applicationFormOne, applications));
         assertTrue("The application form for which the user is a referee could not be found.",
-                applications.contains(applicationFormTwo));
+                listContainsId(applicationFormTwo, applications));
     }
 
     @Test
@@ -166,7 +166,7 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         save(applicationFormOne);
         flushAndClearSession();
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(refereeUser);
-        assertTrue(applications.contains(applicationFormOne));
+        assertTrue(listContainsId(applicationFormOne, applications));
 
     }
 
@@ -195,7 +195,7 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         save(applicationFormOne);
         flushAndClearSession();
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(refereeUser);
-        assertTrue(applications.contains(applicationFormOne));
+        assertTrue(listContainsId(applicationFormOne, applications));
 
     }
 
@@ -244,8 +244,8 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(admin);
-        assertTrue(applications.contains(applicationFormOne));
-        assertFalse(applications.contains(applicationFormTwo));
+        assertTrue(listContainsId(applicationFormOne, applications));
+        assertFalse(listContainsId(applicationFormTwo, applications));
 
     }
 
@@ -289,7 +289,7 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicationAdministrator);
-        assertTrue(applications.contains(applicationForm));
+        assertTrue(listContainsId(applicationForm, applications));
 
     }
 
@@ -339,7 +339,7 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(reviewerUser);
-        assertTrue(applications.contains(applicationForm));
+        assertTrue(listContainsId(applicationForm, applications));
 
     }
 
@@ -425,9 +425,8 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(reviewerAndAdminUser);
 
-        assertTrue(applications.contains(applicationFormOne));
-        assertTrue(applications.contains(applicationFormTwo));
-
+        assertTrue(listContainsId(applicationFormOne, applications));
+        assertTrue(listContainsId(applicationFormTwo, applications));
     }
 
     @Test
@@ -454,8 +453,7 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerUser);
-        assertTrue(applications.contains(applicationForm));
-
+        assertTrue(listContainsId(applicationForm, applications));
     }
 
     @Test
@@ -543,8 +541,8 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(supervisorUser);
-        assertTrue(applications.contains(applicationFormOne));
-        assertTrue(applications.contains(applicationFormTwo));
+        assertTrue(listContainsId(applicationFormOne, applications));
+        assertTrue(listContainsId(applicationFormTwo, applications));
 
     }
 
@@ -600,9 +598,8 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerAndAdminUser);
 
-        assertTrue(applications.contains(applicationFormOne));
-        assertTrue(applications.contains(applicationFormTwo));
-
+        assertTrue(listContainsId(applicationFormOne, applications));
+        assertTrue(listContainsId(applicationFormTwo, applications));
     }
 
     @Test
@@ -619,7 +616,7 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approver);
-        assertTrue(applications.contains(applicationForm));
+        assertTrue(listContainsId(applicationForm, applications));
     }
 
     @Test
@@ -660,8 +657,16 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approverAndAdminUser);
 
-        assertTrue(applications.contains(applicationFormOne));
-        assertTrue(applications.contains(applicationFormTwo));
-
+        assertTrue(listContainsId(applicationFormOne, applications));
+        assertTrue(listContainsId(applicationFormTwo, applications));
+    }
+    
+    private boolean listContainsId(ApplicationForm form, List<ApplicationForm> aplicationForms) {
+        for (ApplicationForm entry : aplicationForms) {
+            if (form.getId().equals(entry.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

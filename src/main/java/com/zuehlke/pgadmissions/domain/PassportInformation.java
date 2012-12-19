@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,10 +16,13 @@ import javax.persistence.TemporalType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL_PASSPORT")
-@Access(AccessType.FIELD)
-public class PassportInformation extends DomainObject<Integer> {
+public class PassportInformation implements Serializable {
 
     private static final long serialVersionUID = -1147171760649226325L;
+    
+    @Id
+    @GeneratedValue
+    private Integer id;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_form_personal_detail_id")
@@ -45,15 +47,10 @@ public class PassportInformation extends DomainObject<Integer> {
     public PassportInformation() {
     }
 
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
-    @Override
-    @Id
-    @GeneratedValue
-    @Access(AccessType.PROPERTY)
     public Integer getId() {
         return id;
     }

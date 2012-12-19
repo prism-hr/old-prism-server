@@ -37,12 +37,10 @@ public class RejectionMappingTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		 reloadedRejection = (Rejection) sessionFactory.getCurrentSession().get(Rejection.class, rejection.getId());
-		assertEquals(rejection, reloadedRejection);
+		assertEquals(rejection.getId(), reloadedRejection.getId());
 		assertNotSame(rejection, reloadedRejection);
-		
-		assertEquals(rejectReason, reloadedRejection.getRejectionReason());
+		assertEquals(rejectReason.getId(), reloadedRejection.getRejectionReason().getId());
 		assertTrue(reloadedRejection.isIncludeProspectusLink());		
-		
 	}
 	
 	@Test
@@ -66,8 +64,6 @@ public class RejectionMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		Rejection reloadedRejection = (Rejection) sessionFactory.getCurrentSession().get(Rejection.class, rejection.getId());
-		assertEquals(application, reloadedRejection.getApplicationForm());
-		
-		
+		assertEquals(application.getId(), reloadedRejection.getApplicationForm().getId());
 	}
 }

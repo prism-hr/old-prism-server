@@ -90,7 +90,7 @@ public class MimeMessagePreparatorFactory {
 		}
 
 		@Override
-		public final void prepare(MimeMessage mimeMessage) throws Exception {
+		public void prepare(MimeMessage mimeMessage) throws Exception {
 			MimeMessageHelper messageHelper = getMessageHelper(mimeMessage, true);
 			StringBuilder logStringBuilder = new StringBuilder();
 			for (InternetAddress address : toAddresses) {

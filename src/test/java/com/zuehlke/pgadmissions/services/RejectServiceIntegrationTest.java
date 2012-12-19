@@ -97,11 +97,9 @@ public class RejectServiceIntegrationTest {
 		ApplicationForm storedAppl = applicationDAO.get(application.getId());
 
 		Assert.assertEquals(ApplicationFormStatus.REJECTED, storedAppl.getStatus());
-		Assert.assertEquals(reason1, storedAppl.getRejection().getRejectionReason());
+		Assert.assertEquals(reason1.getId(), storedAppl.getRejection().getRejectionReason().getId());
 			
-		Assert.assertEquals(approver, application.getApprover());
-		
-
+		Assert.assertEquals(approver.getId(), application.getApprover().getId());
 	}
 
 	private void flushNClear() {

@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Date;
 
 import org.junit.Before;
@@ -35,7 +37,7 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		Interview returnedInterview = (Interview) sessionFactory.getCurrentSession().get(Interview.class,interview.getId());
-		assertEquals(returnedInterview, interview);
+		assertEquals(returnedInterview.getId(), interview.getId());
 		
 	}
 	
@@ -49,10 +51,8 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 		dao.save(interview);
 		assertNotNull(interview.getId());
 		flushAndClearSession();
-		assertEquals(interview, dao.getInterviewById(interview.getId()));
-
+		assertEquals(interview.getId(), dao.getInterviewById(interview.getId()).getId());
 	}
-	
 	
 	@Before
 	public void setUp() {
@@ -65,6 +65,4 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 		
 		dao = new InterviewDAO(sessionFactory);
 	}
-	
-	
 }

@@ -35,17 +35,15 @@ public class DeleteFileController {
 
 	}
 
-	
 	@RequestMapping(value="asyncdelete", method = RequestMethod.POST)
 	public ModelAndView asyncdelete(@RequestParam("documentId") String encryptedDocumentId) {
 		Document document = documentService.getDocumentById(encryptionHelper.decryptToInteger(encryptedDocumentId));	
-		if(document != null && userService.getCurrentUser().equals(document.getUploadedBy()) ){
+		if(document != null && document.getUploadedBy() != null && userService.getCurrentUser().getId().equals(document.getUploadedBy().getId())) {
 			documentService.delete(document);
 		}
 		return new ModelAndView("/private/common/simpleMessage", "message", "document.deleted");
-
-
 	}
+	
 	@RequestMapping(value="deletePersonalStatement", method = RequestMethod.POST)
 	public String deletePersonalStatement(@RequestParam("application") String applicationNumber) {
 		documentService.deletePersonalStatement(applicationsService.getApplicationByApplicationNumber(applicationNumber));

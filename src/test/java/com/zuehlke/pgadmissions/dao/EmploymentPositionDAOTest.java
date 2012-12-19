@@ -62,7 +62,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 		dao.save(employmentPosition);
 		flushAndClearSession();
 
-		assertEquals(employmentPosition, sessionFactory.getCurrentSession().get(EmploymentPosition.class, employmentPosition.getId()));
+		assertEquals(employmentPosition.getId(), ((EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, employmentPosition.getId())).getId());
 	}
 
 	@Test
@@ -78,7 +78,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 
 		EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
 		EmploymentPosition reloadedPosistion = dao.getEmploymentPositionById(employmentPosition.getId());
-		assertEquals(employmentPosition, reloadedPosistion);
+		assertEquals(employmentPosition.getId(), reloadedPosistion.getId());
 
 	}
 

@@ -36,7 +36,7 @@ public class ApplicantTimelineController {
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null || !currentUser.equals(applicationForm.getApplicant())) {
+		if (applicationForm == null || (applicationForm.getApplicant() != null && !currentUser.getId().equals(applicationForm.getApplicant().getId()))) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;

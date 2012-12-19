@@ -50,7 +50,7 @@ public class RegisterFormValidator extends AbstractValidator {
 		}
 		
 		RegisteredUser userWithSameEmail = userService.getUserByEmail(record.getEmail());
-		if (userWithSameEmail != null && !record.equals(userWithSameEmail)) {
+		if (userWithSameEmail != null && !userWithSameEmail.getId().equals(record.getId())) {
 		    errors.rejectValue("email", "user.email.alreadyexists");
 		}
 	}

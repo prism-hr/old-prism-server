@@ -136,8 +136,6 @@ public class UserRoleControllerTest {
 		assertTrue(programs.containsAll(Arrays.asList(program1, program2)));
 	}
 
-
-
 	@Test
 	public void shouldReturnCorrectPossibleRoles() {
 		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();

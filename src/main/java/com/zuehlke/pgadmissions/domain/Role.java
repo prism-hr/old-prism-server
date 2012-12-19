@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,10 +14,13 @@ import org.springframework.security.core.GrantedAuthority;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Entity(name = "APPLICATION_ROLE")
-@Access(AccessType.FIELD)
-public class Role extends DomainObject<Integer> implements GrantedAuthority {
+public class Role implements GrantedAuthority, Serializable {
 
 	private static final long serialVersionUID = 4265990408553249748L;
+
+	@Id
+	@GeneratedValue
+	private Integer id;
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AuthorityEnumUserType")
 	@Column(name = "authority")
@@ -40,17 +43,11 @@ public class Role extends DomainObject<Integer> implements GrantedAuthority {
 		return null;
 	}
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}
-
 }

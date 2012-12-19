@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -96,11 +98,11 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 		assertNotSame(application, reloadedApplication);
-		assertEquals(application, reloadedApplication);
+		assertEquals(application.getId(), reloadedApplication.getId());
 
-		assertEquals(user, reloadedApplication.getApplicant());
+		assertEquals(user.getId(), reloadedApplication.getApplicant().getId());
 
-		assertEquals(program, reloadedApplication.getProgram());
+		assertEquals(program.getId(), reloadedApplication.getProgram().getId());
 		
 		assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
 		assertEquals("bob", reloadedApplication.getProjectTitle());
@@ -132,10 +134,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertEquals(personalDetails, reloadedApplication.getPersonalDetails());
-
+		assertEquals(personalDetails.getId(), reloadedApplication.getPersonalDetails().getId());
 	}
-
 	
 	@Test
 	public void shouldLoadApplicationFormWithInterview() throws ParseException {
@@ -150,8 +150,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertEquals(interview, reloadedApplication.getInterviews().get(0));
-		
+		assertEquals(interview.getId(), reloadedApplication.getInterviews().get(0).getId());
 	}
 	
 	@Test
@@ -174,8 +173,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertEquals(addressOne, reloadedApplication.getCurrentAddress());
-		assertEquals(addressTwo, reloadedApplication.getContactAddress());
+		assertEquals(addressOne.getId(), reloadedApplication.getCurrentAddress().getId());
+		assertEquals(addressTwo.getId(), reloadedApplication.getContactAddress().getId());
 	}
 
 	@Test
@@ -196,10 +195,10 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 
-		assertEquals(cv, reloadedApplication.getCv());
-		assertEquals(personalStatement, application.getPersonalStatement());
+		assertEquals(cv.getId(), reloadedApplication.getCv().getId());
+		assertEquals(personalStatement.getId(), application.getPersonalStatement().getId());
 	}
-
+	
 	@Test
 	public void shouldLoadApplicationFormWithComments() {
 
@@ -219,7 +218,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 		assertEquals(2, reloadedApplication.getApplicationComments().size());
-		assertTrue(reloadedApplication.getApplicationComments().containsAll(Arrays.asList(commentOne, commentTwo)));
+		
+		assertTrue(listContainsId(commentOne, reloadedApplication.getApplicationComments()));
+		assertTrue(listContainsId(commentTwo, reloadedApplication.getApplicationComments()));
 	}
 
 	@Test
@@ -251,7 +252,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		Integer id = application.getId();
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 		assertEquals(2, reloadedApplication.getQualifications().size());
-
 	}
 	
 	@Test
@@ -269,7 +269,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		assertEquals(2, reloadedApplication.getNotificationRecords().size());
-		assertTrue(reloadedApplication.getNotificationRecords().containsAll(Arrays.asList(recordOne, recordTwo)));
+		
+		assertTrue(listContainsId(recordOne, reloadedApplication.getNotificationRecords()));
+		assertTrue(listContainsId(recordTwo, reloadedApplication.getNotificationRecords()));
 		
 		recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
 		reloadedApplication.removeNotificationRecord(recordOne);
@@ -278,10 +280,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		assertEquals(1, reloadedApplication.getNotificationRecords().size());
-		assertTrue(reloadedApplication.getNotificationRecords().containsAll(Arrays.asList(recordTwo)));
+		assertTrue(listContainsId(recordTwo, reloadedApplication.getNotificationRecords()));
 		
 		assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
-
 	}
 	
 	@Test
@@ -299,7 +300,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		assertEquals(2, reloadedApplication.getEvents().size());
-		assertTrue(reloadedApplication.getEvents().containsAll(Arrays.asList(eventOne, eventTwo)));
+		
+		assertTrue(listContainsId(eventOne, reloadedApplication.getEvents()));
+		assertTrue(listContainsId(eventTwo, reloadedApplication.getEvents()));
 		
 		eventOne = (StateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId);
 		reloadedApplication.getEvents().remove(eventOne);
@@ -308,12 +311,10 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		assertEquals(1, reloadedApplication.getEvents().size());
-		assertTrue(reloadedApplication.getEvents().containsAll(Arrays.asList(eventTwo)));
+		assertTrue(listContainsId(eventTwo, reloadedApplication.getEvents()));
 		
 		assertNull(sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId));
-
 	}
-	
 	
 	@Test
 	public void shouldLoadInterviewsForApplicationForm() throws ParseException, InterruptedException {
@@ -336,10 +337,10 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		assertEquals(3, reloadedApplication.getInterviews().size());
-		assertTrue(reloadedApplication.getInterviews().containsAll(Arrays.asList(interviewOne, interviewTwo, interviewTrhee)));
-		
+		assertTrue(listContainsId(interviewOne, reloadedApplication.getInterviews()));
+		assertTrue(listContainsId(interviewTwo, reloadedApplication.getInterviews()));
+		assertTrue(listContainsId(interviewTrhee, reloadedApplication.getInterviews()));
 	}
-	
 	
 	@Test
 	public void shouldSaveAndLoadLatestInterview() throws ParseException, InterruptedException {
@@ -356,13 +357,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		
-		assertEquals(interview, reloadedApplication.getLatestInterview());
-		
+		assertEquals(interview.getId(), reloadedApplication.getLatestInterview().getId());
 	}
 	
-	
-
 	@Test
 	public void shouldLoadReveiwRoundForApplicationForm() throws ParseException, InterruptedException {
 		
@@ -384,8 +381,10 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		assertEquals(3, reloadedApplication.getReviewRounds().size());
-		assertTrue(reloadedApplication.getReviewRounds().containsAll(Arrays.asList(reviewRoundOne, reviewRoundTwo, reviewRoundTrhee)));
 		
+		assertTrue(listContainsId(reviewRoundOne, reloadedApplication.getReviewRounds()));
+		assertTrue(listContainsId(reviewRoundTwo, reloadedApplication.getReviewRounds()));
+		assertTrue(listContainsId(reviewRoundTrhee, reloadedApplication.getReviewRounds()));
 	}
 	
 	@Test
@@ -404,8 +403,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		
-		assertEquals(reviewRound, reloadedApplication.getLatestReviewRound());
-		
+		assertEquals(reviewRound.getId(), reloadedApplication.getLatestReviewRound().getId());
 	}
 	
 	@Test
@@ -425,10 +423,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		
-		assertEquals(rejection, reloadedApplication.getRejection());
-		
-		
+		assertEquals(rejection.getId(), reloadedApplication.getRejection().getId());
 	}
+	
 	@Test
 	public void shouldSaveAndLoadApplicationFormWithApproverRequestingRestart() {
 		ApplicationForm application = new ApplicationForm();
@@ -436,16 +433,10 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setApplicant(user);
 		application.setApproverRequestedRestart(approver);
 		
-	
 		save(application);
-		
 		flushAndClearSession();
-		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		
-		assertEquals(approver, reloadedApplication.getApproverRequestedRestart());
-		
-		
+		assertEquals(approver.getId(), reloadedApplication.getApproverRequestedRestart().getId());
 	}
 	
 	@Before
@@ -472,5 +463,50 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 	}
+	
+	private boolean listContainsId(Comment comment, List<Comment> comments) {
+	    for (Comment entry : comments) {
+	        if (entry.getId().equals(comment.getId())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
+	private boolean listContainsId(NotificationRecord record, List<NotificationRecord> notificationRecords) {
+        for (NotificationRecord entry : notificationRecords) {
+            if (entry.getId().equals(record.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+	
+	private boolean listContainsId(StateChangeEvent event, List<Event> events) {
+        for (Event entry : events) {
+            if (entry.getId().equals(event.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+	
+	private boolean listContainsId(Interview interview, List<Interview> interviews) {
+	    for (Interview entry : interviews) {
+	        if (entry.getId().equals(interview.getId())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
+	private boolean listContainsId(ReviewRound review, List<ReviewRound> reviewRounds) {
+        for (ReviewRound entry : reviewRounds) {
+            if (entry.getId().equals(review.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }	
 
 }

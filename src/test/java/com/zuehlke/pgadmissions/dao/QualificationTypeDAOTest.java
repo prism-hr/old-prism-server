@@ -28,7 +28,7 @@ public class QualificationTypeDAOTest extends AutomaticRollbackTestCase {
         QualificationTypeDAO qualificationTitleDAO = new QualificationTypeDAO(sessionFactory);
         QualificationType title = qualificationTitleDAO.getQualificationTypeById(id);
 
-        assertEquals(dom1, title);
+        assertEquals(dom1.getId(), title.getId());
     }
 
     @Test

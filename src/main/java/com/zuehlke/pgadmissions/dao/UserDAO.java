@@ -72,35 +72,35 @@ public class UserDAO {
 		List<RegisteredUser> administrators = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
 				.createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		for (RegisteredUser admin : administrators) {
-			if (!users.contains(admin)) {
+			if (!listContainsId(admin, users)) {
 				users.add(admin);
 			}
 		}
 		List<RegisteredUser> approvers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichApprover")
 				.add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		for (RegisteredUser approver : approvers) {
-			if (!users.contains(approver)) {
+			if (!listContainsId(approver, users)) {
 				users.add(approver);
 			}
 		}
 		List<RegisteredUser> reviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichReviewer")
 				.add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		for (RegisteredUser reviewer : reviewers) {
-			if (!users.contains(reviewer)) {
+			if (!listContainsId(reviewer, users)) {
 				users.add(reviewer);
 			}
 		}
 		List<RegisteredUser> interviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
 				.createCriteria("programsOfWhichInterviewer").add(Restrictions.eq("id", program.getId())).list();
 		for (RegisteredUser interviewer : interviewers) {
-			if (!users.contains(interviewer)) {
+			if (!listContainsId(interviewer, users)) {
 				users.add(interviewer);
 			}
 		}
 		List<RegisteredUser> supervisors = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
 				.createCriteria("programsOfWhichSupervisor").add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		for (RegisteredUser supervisor : supervisors) {
-			if (!users.contains(supervisor)) {
+			if (!listContainsId(supervisor, users)) {
 				users.add(supervisor);
 			}
 		}
@@ -148,7 +148,7 @@ public class UserDAO {
 				.add(Restrictions.eq("application.program", program)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 		for (Interviewer interviewer : interviewers) {
-			if(!users.contains(interviewer.getUser())){
+			if(!listContainsId(interviewer.getUser(), users)) {
 				users.add(interviewer.getUser());
 			}
 		}
@@ -161,7 +161,7 @@ public class UserDAO {
 				.add(Restrictions.eq("application.program", program)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 		for (Reviewer reviewer : reviewers) {
-			if(!users.contains(reviewer.getUser())){
+			if(!listContainsId(reviewer.getUser(), users)) {
 				users.add(reviewer.getUser());
 			}
 		}
@@ -177,7 +177,7 @@ public class UserDAO {
 				.list();
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 		for (ReviewComment reviewComment : reviews) {
-			if(!users.contains(reviewComment.getUser())){
+			if(!listContainsId(reviewComment.getUser(), users)) {
 				users.add(reviewComment.getUser());
 			}
 		}
@@ -190,11 +190,19 @@ public class UserDAO {
 				.add(Restrictions.eq("application.program", program)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 		for (Supervisor supervisor : supervisors) {
-			if(!users.contains(supervisor.getUser())){
+			if(!listContainsId(supervisor.getUser(), users)) {
 				users.add(supervisor.getUser());
 			}
 		}
 		return users;
 	}
-
+	
+    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }   
 }

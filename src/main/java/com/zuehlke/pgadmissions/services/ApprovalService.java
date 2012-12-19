@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -90,7 +89,7 @@ public class ApprovalService {
 			for (Supervisor supervisor : supervisors) {
 				List<Supervisor> newSupervisors = approvalRound.getSupervisors();
 				for (Supervisor newSupervisor : newSupervisors) {
-					if(supervisor.getUser().equals(newSupervisor.getUser())){
+					if(supervisor.getUser().getId().equals(newSupervisor.getUser().getId())){
 						newSupervisor.setLastNotified(supervisor.getLastNotified());
 					}
 				}

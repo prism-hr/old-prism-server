@@ -562,7 +562,7 @@ public class PdfDocumentBuilder {
         
         if (SecurityContextHolder.getContext().getAuthentication() != null && ( 
                 ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).isInRole(Authority.SUPERADMINISTRATOR) ||
-                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).equals(application.getApplicant()))) {
+                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).getId().equals(application.getApplicant().getId()))) {
             table.addCell(newTableCell("Ethnicity", smallBoldFont));
             if (application.getPersonalDetails().getEthnicity() == null) {
                 table.addCell(newTableCell("Not Provided", smallGrayFont));
@@ -924,7 +924,7 @@ public class PdfDocumentBuilder {
         
         if (SecurityContextHolder.getContext().getAuthentication() != null && ( 
                 ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).isInRole(Authority.SUPERADMINISTRATOR) ||
-                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).equals(application.getApplicant()))) {
+                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).getId().equals(application.getApplicant().getId()))) {
             table.addCell(newTableCell("Description", smallBoldFont));
             table.addCell(newTableCell(application.getAdditionalInformation().getConvictionsText(), smallFont));
         }

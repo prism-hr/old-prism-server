@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,10 +19,13 @@ import javax.validation.Valid;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="APPLICATION_FORM_EMPLOYMENT_POSITION")
-@Access(AccessType.FIELD) 
-public class EmploymentPosition extends DomainObject<Integer> implements FormSectionObject{
+public class EmploymentPosition implements FormSectionObject, Serializable {
 
 	private static final long serialVersionUID = 4492119755495402951L;
+
+	@Id
+	@GeneratedValue
+	private Integer id;
 
 	@Transient
 	private boolean acceptedTerms;
@@ -58,15 +60,10 @@ public class EmploymentPosition extends DomainObject<Integer> implements FormSec
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

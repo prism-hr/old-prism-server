@@ -44,8 +44,8 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 		reloadedReviewer = (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class,reviewer.getId());
 		
 		assertNotSame(reviewer, reloadedReviewer);
-		assertEquals(reviewer, reloadedReviewer);
-		assertEquals(rewiewerUser, reloadedReviewer.getUser());
+		assertEquals(reviewer.getId(), reloadedReviewer.getId());
+		assertEquals(rewiewerUser.getId(), reloadedReviewer.getUser().getId());
 		assertEquals(lastNotified, reloadedReviewer.getLastNotified());
 	}
 	
@@ -61,7 +61,7 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		
 		Reviewer reloadedReviewer = (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class,reviewer.getId());
-		assertEquals(reviewRound, reloadedReviewer.getReviewRound());
+		assertEquals(reviewRound.getId(), reloadedReviewer.getReviewRound().getId());
 	}
 	@Test
 	public void shoulLoadReviewWithReviewer() throws ParseException{
@@ -74,7 +74,7 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		
 		Reviewer reloadedReviewer = (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class,reviewer.getId());	
-		assertEquals(review, reloadedReviewer.getReview());
+		assertEquals(review.getId(), reloadedReviewer.getReview().getId());
 		
 	}
 	

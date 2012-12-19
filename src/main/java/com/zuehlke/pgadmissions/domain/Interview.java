@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,11 +21,14 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 @Entity(name = "INTERVIEW")
-@Access(AccessType.FIELD)
-public class Interview extends DomainObject<Integer> {
+public class Interview implements Serializable {
 
 	private static final long serialVersionUID = -730673777949846236L;
 
+	@Id
+	@GeneratedValue
+	private Integer id;
+	
 	@Column(name = "last_notified")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastNotified;
@@ -104,15 +106,10 @@ public class Interview extends DomainObject<Integer> {
 		this.interviewDueDate = dueDate;
 	}
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

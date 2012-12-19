@@ -49,14 +49,13 @@ public class ReviewStateChangeEventMappingTest extends AutomaticRollbackTestCase
 		flushAndClearSession();
 		reloadedEvent = (ReviewStateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, event.getId());
 		assertNotSame(event, reloadedEvent);
-		assertEquals(event, reloadedEvent);
-
+		assertEquals(event.getId(), reloadedEvent.getId());
 		assertEquals(eventDate, reloadedEvent.getDate());
 		assertEquals(newStatus, reloadedEvent.getNewStatus());
-		assertEquals(user, reloadedEvent.getUser());
-		assertEquals(reviewRound, reloadedEvent.getReviewRound());
-
+		assertEquals(user.getId(), reloadedEvent.getUser().getId());
+		assertEquals(reviewRound.getId(), reloadedEvent.getReviewRound().getId());
 	}
+	
 	@Before
 	public void setup() {
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

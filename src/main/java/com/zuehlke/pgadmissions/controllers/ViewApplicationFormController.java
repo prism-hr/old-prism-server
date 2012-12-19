@@ -47,15 +47,12 @@ public class ViewApplicationFormController {
 			throw new ResourceNotFoundException();
 		}
 
-		if (applicationForm.getApplicant().equals(currentuser) && applicationForm.isModifiable()) {
-		
+		if (applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(currentuser.getId()) && applicationForm.isModifiable()) {
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
 					uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
 		}
 		
 		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
 				uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
-
 	}
-
 }

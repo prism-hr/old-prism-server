@@ -36,8 +36,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 		
 		List<ProgramInstance> activeInstances = dao.getActiveProgramInstances(progOne);
-		assertTrue(activeInstances.contains(programInstanceOne));
-		assertFalse(activeInstances.contains(programInstanceTwo));
+		assertTrue(listContainsId(programInstanceOne, activeInstances));
+		assertFalse(listContainsId(programInstanceTwo, activeInstances));
 	}
 	
 	@Test
@@ -55,7 +55,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 		
 		List<ProgramInstance> activeInstances = dao.getActiveProgramInstances(program);
-		assertTrue(activeInstances.contains(programInstance));
+		assertTrue(listContainsId(programInstance, activeInstances));
 	}
 	@Test
 	public void shouldReturnProgramInstanceWithDeadlineToday(){
@@ -70,7 +70,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 		
 		List<ProgramInstance> activeInstances = dao.getActiveProgramInstances(program);
-		assertTrue(activeInstances.contains(programInstance));
+		assertTrue(listContainsId(programInstance, activeInstances));
 	}
 	@Test
 	public void shouldNotReturnProgramInstanceWithDeadlineInThePast(){
@@ -103,9 +103,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 		
 		List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(progOne, "Full-time");
-		assertTrue(matchedInstances.contains(programInstanceOne));
-		assertFalse(matchedInstances.contains(programInstanceTwo));
-
+		assertTrue(listContainsId(programInstanceOne, matchedInstances));
+		assertFalse(listContainsId(programInstanceTwo, matchedInstances));
 	}
 	
 	@Test
@@ -121,7 +120,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 		
 		List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, "Full-time");
-		assertTrue(matchedInstances.contains(programInstance));
+		assertTrue(listContainsId(programInstance, matchedInstances));
 	}
 	
 	@Test
@@ -174,7 +173,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 		
 		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 		ProgramInstance programInstance = dao.getCurrentProgramInstanceForStudyOption(program, "Modular/flexible study");
-		assertEquals(programInstanceTwo, programInstance);
+		assertEquals(programInstanceTwo.getId(), programInstance.getId());
 	}
 	
 	@Test
@@ -202,4 +201,13 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         
         assertEquals(1, activeProgramInstancesOrderedByApplicationStartDate.size());
 	}
+	
+    private boolean listContainsId(ProgramInstance instance, List<ProgramInstance> instances) {
+        for (ProgramInstance entry : instances) {
+            if (entry.getId().equals(instance.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }	
 }

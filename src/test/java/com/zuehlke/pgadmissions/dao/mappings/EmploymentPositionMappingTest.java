@@ -52,16 +52,16 @@ public class EmploymentPositionMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		reloadedEmployment = (EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, id);
 		assertNotSame(employment, reloadedEmployment);
-		assertEquals(employment, reloadedEmployment);
+		assertEquals(employment.getId(), reloadedEmployment.getId());
 
-		assertEquals(applicationForm, reloadedEmployment.getApplication());
+		assertEquals(applicationForm.getId(), reloadedEmployment.getApplication().getId());
 		assertEquals("employer", reloadedEmployment.getEmployerName());
 		assertEquals(endDate, reloadedEmployment.getEndDate());
 		assertEquals(startDate, reloadedEmployment.getStartDate());
 		assertEquals("remit", reloadedEmployment.getRemit());
 		assertEquals("position", reloadedEmployment.getPosition());
 		assertEquals("address", reloadedEmployment.getEmployerAddress().getLocationString());
-		assertEquals(country, reloadedEmployment.getEmployerAddress().getCountry());
+		assertEquals(country.getId(), reloadedEmployment.getEmployerAddress().getCountry().getId());
 		assertTrue(reloadedEmployment.isCurrent());
 	}
 

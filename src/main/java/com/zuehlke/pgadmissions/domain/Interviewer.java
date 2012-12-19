@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,15 +14,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity(name = "INTERVIEWER")
-@Access(AccessType.FIELD)
-public class Interviewer extends DomainObject<Integer> {
+public class Interviewer implements Serializable {
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1676615842814210633L;
 
+	@Id
+	@GeneratedValue
+	private Integer id;
 
 	@Column(name = "requires_admin_notification")
 	private boolean requiresAdminNotification;
@@ -47,20 +44,14 @@ public class Interviewer extends DomainObject<Integer> {
 	@JoinColumn(name = "registered_user_id")
 	private RegisteredUser user;
 
-
 	@ManyToOne
 	@JoinColumn(name = "interview_id")
 	private Interview interview;
 	
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

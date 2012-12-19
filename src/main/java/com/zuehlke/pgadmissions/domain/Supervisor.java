@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,23 +14,13 @@ import javax.persistence.TemporalType;
 import javax.validation.Valid;
 
 @Entity(name = "SUPERVISOR")
-@Access(AccessType.FIELD)
-public class Supervisor extends DomainObject<Integer> {
+public class Supervisor implements Serializable {
 
 	private static final long serialVersionUID = -189828903532203309L;
 
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	@Override
 	@Id
 	@GeneratedValue
-	@Access(AccessType.PROPERTY)
-	public Integer getId() {
-		return id;
-	}
+    private Integer id;
 
 	@ManyToOne
 	@JoinColumn(name = "registered_user_id")
@@ -45,6 +34,14 @@ public class Supervisor extends DomainObject<Integer> {
 	@ManyToOne
 	@JoinColumn(name = "approval_round_id")
 	private ApprovalRound approvalRound;
+
+	public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
 
 	public RegisteredUser getUser() {
 		return user;
@@ -69,5 +66,4 @@ public class Supervisor extends DomainObject<Integer> {
 	public void setApprovalRound(ApprovalRound approvalRound) {
 		this.approvalRound = approvalRound;
 	}
-
 }

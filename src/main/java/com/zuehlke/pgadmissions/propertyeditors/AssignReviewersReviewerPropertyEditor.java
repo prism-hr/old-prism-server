@@ -64,7 +64,7 @@ public class AssignReviewersReviewerPropertyEditor extends PropertyEditorSupport
 	private Reviewer findExistingOrCreateNewReviewer(RegisteredUser user, ApplicationForm applicationForm) {
 		if (applicationForm.getLatestReviewRound() != null) {
 			for (Reviewer existingReviewer : applicationForm.getLatestReviewRound().getReviewers()) {
-				if (user.equals(existingReviewer.getUser())) {
+				if (user.getId().equals(existingReviewer.getUser().getId())) {
 					return existingReviewer;
 				}
 			}

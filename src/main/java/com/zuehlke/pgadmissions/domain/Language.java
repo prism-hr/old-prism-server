@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,10 +10,13 @@ import javax.persistence.Id;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="LANGUAGE")
-@Access(AccessType.FIELD) 
-public class Language extends DomainObject<Integer> implements ImportedObject {
+public class Language implements ImportedObject, Serializable {
 	
 	private static final long serialVersionUID = -4719304115154138995L;
+
+	@Id
+	@GeneratedValue
+	private Integer id;
 	
 	@Column(name = "enabled")
 	private Boolean enabled;
@@ -25,15 +28,10 @@ public class Language extends DomainObject<Integer> implements ImportedObject {
 	@Column(name = "name")
 	private String name;
 	
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

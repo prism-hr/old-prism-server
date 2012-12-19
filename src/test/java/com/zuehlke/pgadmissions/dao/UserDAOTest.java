@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
 		reloadedUser = userDAO.get(id);
 		assertNotSame(user, reloadedUser);
-		assertEquals(user, reloadedUser);
+		assertEquals(user.getId(), reloadedUser.getId());
 
 	}
 
@@ -81,7 +80,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		RegisteredUser foundUser = userDAO.getUserByUsername("username");
-		assertEquals(userOne, foundUser);
+		assertEquals(userOne.getId(), foundUser.getId());
 
 	}
 
@@ -100,7 +99,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		RegisteredUser foundUser = userDAO.getUserByActivationCode("xyz");
-		assertEquals(userOne, foundUser);
+		assertEquals(userOne.getId(), foundUser.getId());
 
 	}
 	
@@ -137,7 +136,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         RegisteredUser foundUser = userDAO.getDisabledUserByEmail("email1@test.com");
-        assertEquals(userOne, foundUser);
+        assertEquals(userOne.getId(), foundUser.getId());
     }	
 
 	@Test
@@ -165,12 +164,12 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
 		List<RegisteredUser> usersInRole = userDAO.getUsersInRole(roleTwo);
 		assertEquals(1, usersInRole.size());
-		assertEquals(userTwo, usersInRole.get(0));
+		assertEquals(userTwo.getId(), usersInRole.get(0).getId());
 
 		usersInRole = userDAO.getUsersInRole(roleOne);
 		assertEquals(2, usersInRole.size());
-		assertTrue(usersInRole.containsAll(Arrays.asList(userOne, userTwo)));
-
+		assertTrue(listContainsId(userOne, usersInRole));
+		assertTrue(listContainsId(userTwo, usersInRole));
 	}
 
 	@Test
@@ -258,9 +257,20 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
 		List<RegisteredUser> usersInProgram = userDAO.getUsersForProgram(programOne);
 		assertEquals(numberOfExistingSuperAdminUsers + 14, usersInProgram.size());
-		assertTrue(usersInProgram.containsAll(Arrays.asList(reviewerAndApprover, superAdminOne, superAdminThree, superAdminTwo, reviewerOne, reviewerThree,interviewerOne, interviewerThree,
-				approverOne, approverThree, administratorOne, administratorThree, supervisorOne, supervisorThree)));
-
+		assertTrue(listContainsId(reviewerAndApprover, usersInProgram));
+		assertTrue(listContainsId(superAdminOne, usersInProgram));
+		assertTrue(listContainsId(superAdminThree, usersInProgram));
+		assertTrue(listContainsId(superAdminTwo, usersInProgram));
+		assertTrue(listContainsId(reviewerOne, usersInProgram));
+		assertTrue(listContainsId(reviewerThree, usersInProgram));
+		assertTrue(listContainsId(interviewerOne, usersInProgram));
+		assertTrue(listContainsId(interviewerThree, usersInProgram));
+		assertTrue(listContainsId(approverOne, usersInProgram));
+		assertTrue(listContainsId(approverThree, usersInProgram));
+		assertTrue(listContainsId(administratorOne, usersInProgram));
+		assertTrue(listContainsId(administratorThree, usersInProgram));
+		assertTrue(listContainsId(supervisorOne, usersInProgram));
+		assertTrue(listContainsId(supervisorThree, usersInProgram));
 	}
 	
 	@Test
@@ -273,7 +283,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		save(superAdmin);
 		flushAndClearSession();
 		List<RegisteredUser> users = userDAO.getInternalUsers();
-		assertTrue(users.contains(superAdmin));
+		assertTrue(listContainsId(superAdmin, users));
 	}
 
 	@Test
@@ -286,7 +296,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		save(user);
 		flushAndClearSession();
 		List<RegisteredUser> users = userDAO.getInternalUsers();
-		assertTrue(users.contains(user));
+		assertTrue(listContainsId(user, users));
 	}
 	
 	@Test
@@ -299,7 +309,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		save(user);
 		flushAndClearSession();
 		List<RegisteredUser> users = userDAO.getInternalUsers();
-		assertTrue(users.contains(user));
+		assertTrue(listContainsId(user, users));
 	}
 	
 	@Test
@@ -312,7 +322,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		save(user);
 		flushAndClearSession();
 		List<RegisteredUser> users = userDAO.getInternalUsers();
-		assertTrue(users.contains(user));
+		assertTrue(listContainsId(user, users));
 	}
 	
 	@Test
@@ -325,7 +335,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		save(user);
 		flushAndClearSession();
 		List<RegisteredUser> users = userDAO.getInternalUsers();
-		assertTrue(users.contains(user));
+		assertTrue(listContainsId(user, users));
 	}
 	
 	@Test
@@ -384,8 +394,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
-		assertTrue(users.contains(user));
-		
+		assertTrue(listContainsId(user, users));
 	}
 	
 	@Test
@@ -490,7 +499,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		
 		List<RegisteredUser> users = userDAO.getAllPreviousInterviewersOfProgram(program);
 		assertEquals(1, users.size());
-		assertTrue(users.contains(user));		
+		assertEquals(user.getId(), users.get(0).getId());		
 	}
 	
 
@@ -511,8 +520,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		
 		List<RegisteredUser> users = userDAO.getAllPreviousReviewersOfProgram(program);
 		assertEquals(1, users.size());
-		assertTrue(users.contains(user));
-				
+		assertEquals(user.getId(), users.get(0).getId());
 	}
 	
 	@Test
@@ -535,7 +543,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		
 		List<RegisteredUser> users = userDAO.getReviewersWillingToInterview(applicationForm);
 		
-		assertTrue(users.contains(user));
+		assertTrue(listContainsId(user, users));
 	}
 	
 	@Test
@@ -623,7 +631,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		
 		List<RegisteredUser> users = userDAO.getAllPreviousSupervisorsOfProgram(program);
 		assertEquals(1, users.size());
-		assertTrue(users.contains(user));
+		assertEquals(user.getId(), users.get(0).getId());
 	}
 	
 	@Test
@@ -702,6 +710,14 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	@Before
 	public void setup() {
 		userDAO = new UserDAO(sessionFactory);
-
+	}
+	
+	private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+	    for (RegisteredUser entry : users) {
+	        if (user.getId().equals(entry.getId())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 }

@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class CommentDAOTest extends AutomaticRollbackTestCase {
@@ -82,8 +81,8 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
 		reloadedReview = commentDAO.get(id);
 		assertNotSame(review, reloadedReview);
-		assertEquals(review, reloadedReview);
-		assertEquals(review.getUser(), user);
+		assertEquals(review.getId(), reloadedReview.getId());
+		assertEquals(review.getUser().getId(), user.getId());
 		assertEquals(review.getComment(), reloadedReview.getComment());
 	}
 	
@@ -113,12 +112,10 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		reloadedComment = commentDAO.get(id);
 	
 		assertNotSame(validationComment, reloadedComment);
-		assertEquals(validationComment, reloadedComment);
-		assertEquals(user, reloadedComment.getUser());
+		assertEquals(validationComment.getId(), reloadedComment.getId());
+		assertEquals(user.getId(), reloadedComment.getUser().getId());
 		assertEquals(CommentType.REVIEW_EVALUATION, reloadedComment.getType());
 		assertEquals(validationComment.getComment(), reloadedComment.getComment());
-		
-		
 		assertTrue(reloadedComment instanceof StateChangeComment);
 	}
 	
@@ -145,8 +142,8 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		reloadedComment = commentDAO.get(id);
 		
 		assertNotSame(reviewComment, reloadedComment);
-		assertEquals(reviewComment, reloadedComment);
-		assertEquals(user, reloadedComment.getUser());
+		assertEquals(reviewComment.getId(), reloadedComment.getId());
+		assertEquals(user.getId(), reloadedComment.getUser().getId());
 		assertEquals(CommentType.REVIEW, reloadedComment.getType());
 		assertEquals(reviewComment.getComment(), reloadedComment.getComment());
 		
@@ -156,9 +153,6 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldGetAllReviewCommentsDueAdminEmailNotification() {
-		
-		
-		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
 		save(application);
 		flushAndClearSession();
@@ -167,26 +161,21 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
 		ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).adminsNotified(true).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
 		ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.GENERIC).toReviewComment();
-		
-		
+
 		save(comment, reviewComment, reviewComment1,reviewComment2);
 				
 		flushAndClearSession();
 		
 		List<ReviewComment> reloadedComments = commentDAO.getReviewCommentsDueNotification();
 		
-		assertFalse(reloadedComments.contains(comment));
-		assertFalse(reloadedComments.contains(reviewComment2));
-		assertFalse(reloadedComments.contains(reviewComment1));
-		assertTrue(reloadedComments.contains(reviewComment));
-		
+		assertFalse(listContainsId(comment, reloadedComments));
+		assertFalse(listContainsId(reviewComment2, reloadedComments));
+		assertFalse(listContainsId(reviewComment1, reloadedComments));
+		assertTrue(listContainsId(reviewComment, reloadedComments));
 	}
 
 	@Test
 	public void shouldGetAllInterviewCommentsDueAdminEmailNotification() {
-		
-		
-		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
 		save(application);
 		flushAndClearSession();
@@ -203,12 +192,19 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		
 		List<InterviewComment> reloadedComments = commentDAO.getInterviewCommentsDueNotification();
 		
-		assertFalse(reloadedComments.contains(comment));
-		assertTrue(reloadedComments.contains(interviewComment1));
-		assertFalse(reloadedComments.contains(interviewComment2));
-		assertTrue(reloadedComments.contains(interviewComment3));
-		assertFalse(reloadedComments.contains(interviewComment4));
+		assertFalse(listContainsId(comment, reloadedComments));
+		assertTrue(listContainsId(interviewComment1, reloadedComments));
+		assertFalse(listContainsId(interviewComment2, reloadedComments));
+		assertTrue(listContainsId(interviewComment3, reloadedComments));
+		assertFalse(listContainsId(interviewComment4, reloadedComments));
 	}
 	
-
+    private boolean listContainsId(Comment comment, List<? extends Comment> reloadedComments) {
+        for (Comment entry : reloadedComments) {
+            if (entry.getId().equals(comment.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

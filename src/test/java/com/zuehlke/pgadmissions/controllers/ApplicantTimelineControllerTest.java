@@ -22,10 +22,10 @@ public class ApplicantTimelineControllerTest {
 	
 	@Test
 	public void shouldGetApplicationFormFromId() {
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(99).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicant(currentUser).toApplicationForm();		
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);		
-		EasyMock.replay(currentUser, userServiceMock);
+		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
@@ -45,6 +45,7 @@ public class ApplicantTimelineControllerTest {
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicant(new RegisteredUserBuilder().id(4).toUser()).toApplicationForm();		
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);		
+		EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
 		EasyMock.replay(currentUser, userServiceMock);
 		
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);

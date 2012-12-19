@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +62,7 @@ public class GenericCommentController {
 		
 		if (currentUser.isInRole(Authority.APPLICANT) || currentUser.isRefereeOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
 			// overwrite the decision if the currentUser is in fact the ADMINISTRATOR or SUPERADMINISTRATOR
-		    if (!(applicationForm.getProgram().getAdministrators().contains(currentUser) || currentUser.isInRole(Authority.SUPERADMINISTRATOR))) {
+		    if (!(listContainsId(currentUser, applicationForm.getProgram().getAdministrators()) || currentUser.isInRole(Authority.SUPERADMINISTRATOR))) {
 		        throw new ResourceNotFoundException();
 		    }
 		}
@@ -102,4 +104,13 @@ public class GenericCommentController {
 		commentService.save(comment);
 		return "redirect:/comment?applicationId=" + comment.getApplication().getApplicationNumber();
 	}
+	
+    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }   	
 }

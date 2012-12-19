@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,10 +12,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity(name = "PENDING_ROLE_NOTIFICATION")
-@Access(AccessType.FIELD)
-public class PendingRoleNotification extends DomainObject<Integer> {
+public class PendingRoleNotification implements Serializable {
 
 	private static final long serialVersionUID = -2489009906410335249L;
+	
+    @Id
+    @GeneratedValue
+    private Integer id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "added_by_user_id")
@@ -37,15 +39,10 @@ public class PendingRoleNotification extends DomainObject<Integer> {
 	@Column(name = "notification_date")
 	private Date notificationDate;
 
-    @Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

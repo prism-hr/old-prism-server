@@ -49,7 +49,7 @@ public class BadgeDAOTest extends AutomaticRollbackTestCase {
 
         badgesByProgram = badgeDAO.getBadgesByProgram(program);
         assertNotSame(badge, badgesByProgram.get(0));
-        assertEquals(badge, badgesByProgram.get(0));
+        assertEquals(badge.getId(), badgesByProgram.get(0).getId());
     }
     
     @Test

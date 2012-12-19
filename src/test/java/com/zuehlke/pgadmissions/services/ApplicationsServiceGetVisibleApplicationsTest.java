@@ -146,10 +146,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1);
         
-        assertEquals(applicationFormOne, applications.get(0));
-        assertEquals(applicationFormTwo, applications.get(1));
-        assertEquals(applicationFormFour, applications.get(2));
-        assertEquals(applicationFormThree, applications.get(3));
+        assertEquals(applicationFormOne.getId(), applications.get(0).getId());
+        assertEquals(applicationFormTwo.getId(), applications.get(1).getId());
+        assertEquals(applicationFormFour.getId(), applications.get(2).getId());
+        assertEquals(applicationFormThree.getId(), applications.get(3).getId());
     }
     
     @Test
@@ -193,8 +193,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_NUMBER, "BiOlOgY", null, null, 1);
 
         assertEquals(2, applications.size());
-        assertTrue(applications.contains(applicationFormFour));
-        assertTrue(applications.contains(applicationFormTwo));
+        assertTrue(listContainsId(applicationFormFour, applications));
+        assertTrue(listContainsId(applicationFormTwo, applications));
     }
     
     @Test
@@ -223,7 +223,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.PROGRAMME_NAME, "zzZZz", null, null, 1);
 
         assertEquals(1, applications.size());
-        assertTrue(applications.contains(applicationFormOne));
+        assertEquals(applicationFormOne.getId(), applications.get(0).getId());
     }
     
     @Test
@@ -251,7 +251,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.PROGRAMME_NAME, "zzZZz", null, null, 1);
 
         assertEquals(1, applications.size());
-        assertTrue(applications.contains(applicationFormOne));
+        assertEquals(applicationFormOne.getId(), applications.get(0).getId());
     }
     
     @Test
@@ -303,7 +303,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, SearchCategory.APPLICANT_NAME, "zzZZz", null, null, 1);
 
         assertEquals(1, applications.size());
-        assertTrue(applications.contains(applicationFormOne));
+        assertEquals(applicationFormOne.getId(), applications.get(0).getId());
     }
     
     @Test
@@ -336,7 +336,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, SearchCategory.APPLICANT_NAME, "zzZZz", null, null, 1);
 
         assertEquals(1, applications.size());
-        assertTrue(applications.contains(applicationFormOne));
+        assertEquals(applicationFormOne.getId(), applications.get(0).getId());
     }
     
     @Test
@@ -412,8 +412,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "validati", null, null, 1);
         
         assertEquals(2, applications.size());
-        assertTrue(applications.contains(applicationFormOne));
-        assertTrue(applications.contains(applicationFormThree));
+        assertTrue(listContainsId(applicationFormOne, applications));
+        assertTrue(listContainsId(applicationFormThree, applications));
     }
     
     @Test
@@ -457,7 +457,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "approv", null, null, 1);
         
         assertEquals(1, applications.size());
-        assertTrue(applications.contains(applicationFormOne));
+        assertEquals(applicationFormOne.getId(), applications.get(0).getId());
     }
     
     @Test
@@ -501,7 +501,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "approved", null, null, 1);
         
         assertEquals(1, applications.size());
-        assertTrue(applications.contains(applicationFormOne));
+        assertEquals(applicationFormOne.getId(), applications.get(0).getId());
     }
     
     @Test
@@ -591,8 +591,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 1);
         
         assertEquals(2, applications.size());
-        assertEquals(applicationFormOne, applications.get(0));
-        assertEquals(applicationFormThree, applications.get(1));
+        assertEquals(applicationFormOne.getId(), applications.get(0).getId());
+        assertEquals(applicationFormThree.getId(), applications.get(1).getId());
     }
     
     @Test
@@ -633,10 +633,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null, 1);
 
-        Assert.assertEquals(applicationFormOne, applications.get(0));
-        Assert.assertEquals(applicationFormTwo, applications.get(1));
-        Assert.assertEquals(applicationFormThree, applications.get(2));
-        Assert.assertEquals(applicationFormFour, applications.get(3));
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getId());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getId());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getId());
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getId());
     }
     
     @Test
@@ -686,10 +686,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, SearchCategory.APPLICATION_NUMBER, "ABCD", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1);
         
         Assert.assertEquals(4, applications.size());
-        Assert.assertEquals(applicationFormOne, applications.get(0));
-        Assert.assertEquals(applicationFormTwo, applications.get(1));
-        Assert.assertEquals(applicationFormThree, applications.get(2));
-        Assert.assertEquals(applicationFormFour, applications.get(3));
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getId());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getId());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getId());
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getId());
     }
     
     @Test
@@ -739,10 +739,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, SearchCategory.APPLICATION_NUMBER, "ABCD", SortCategory.APPLICATION_STATUS, SortOrder.ASCENDING, 1);
         
         Assert.assertEquals(4, applications.size());
-        Assert.assertEquals(applicationFormOne, applications.get(0));
-        Assert.assertEquals(applicationFormTwo, applications.get(1));
-        Assert.assertEquals(applicationFormThree, applications.get(2));
-        Assert.assertEquals(applicationFormFour, applications.get(3));
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getId());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getId());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getId());
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getId());
     }    
 
     @Test
@@ -795,10 +795,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, SearchCategory.APPLICATION_NUMBER, "ABCD", SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1);
 
-        Assert.assertEquals(applicationFormFour, applications.get(0));
-        Assert.assertEquals(applicationFormTwo, applications.get(1));
-        Assert.assertEquals(applicationFormThree, applications.get(2));
-        Assert.assertEquals(applicationFormOne, applications.get(3));
+        Assert.assertEquals(applicationFormFour.getId(), applications.get(0).getId());
+        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getId());
+        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getId());
+        Assert.assertEquals(applicationFormOne.getId(), applications.get(3).getId());
     }
     
     @Test
@@ -820,5 +820,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, SearchCategory.APPLICATION_NUMBER, "ABCDEFG", SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1);
 
         Assert.assertEquals(APPLICATION_BLOCK_SIZE, applications.size());
+    }
+    
+    private boolean listContainsId(ApplicationForm form, List<ApplicationForm> aplicationForms) {
+        for (ApplicationForm entry : aplicationForms) {
+            if (form.getId().equals(entry.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

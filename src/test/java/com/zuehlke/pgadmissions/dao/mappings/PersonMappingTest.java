@@ -24,11 +24,8 @@ public class PersonMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		reloadedPerson = (Person) sessionFactory.getCurrentSession().get(Person.class, person.getId());
 		assertNotSame(person, reloadedPerson);
-		assertEquals(person, reloadedPerson);
-		
 		assertEquals("bob", reloadedPerson.getFirstname());
 		assertEquals("smith", reloadedPerson.getLastname());
 		assertEquals("email@Test.com", reloadedPerson.getEmail());
-		
 	}
 }

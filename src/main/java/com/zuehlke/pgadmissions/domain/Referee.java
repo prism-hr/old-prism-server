@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,11 +21,14 @@ import org.apache.commons.lang.StringUtils;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_REFEREE")
-@Access(AccessType.FIELD)
-public class Referee extends DomainObject<Integer> implements FormSectionObject{
+public class Referee implements FormSectionObject, Serializable {
 
 	private static final long serialVersionUID = 4591043630090924738L;
 
+	@Id
+	@GeneratedValue
+	private Integer id;
+	
 	@Transient
 	private boolean acceptedTerms;
 	
@@ -140,20 +142,13 @@ public class Referee extends DomainObject<Integer> implements FormSectionObject{
 		this.email = email;
 	}
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
-
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}
-
 
 	public boolean hasProvidedReference() {
 		return reference != null;

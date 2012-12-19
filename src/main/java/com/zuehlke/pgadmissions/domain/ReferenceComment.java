@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,7 +17,6 @@ import org.hibernate.annotations.Type;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Entity(name = "REFERENCE_COMMENT")
-@Access(AccessType.FIELD)
 public class ReferenceComment extends Comment {
 
 	private static final long serialVersionUID = 5269362387094590530L;

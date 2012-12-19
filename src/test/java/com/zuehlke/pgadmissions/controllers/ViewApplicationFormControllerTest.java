@@ -3,12 +3,8 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -54,6 +50,7 @@ public class ViewApplicationFormControllerTest {
 		String view = "def";
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(userMock.getId()).andReturn(99).anyTimes();
 		ApplicationPageModel model = new ApplicationPageModel();
 		
 		EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
@@ -73,6 +70,7 @@ public class ViewApplicationFormControllerTest {
 		String view = "def";
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(userMock.getId()).andReturn(99).anyTimes();
 		ApplicationPageModel model = new ApplicationPageModel();
 		
 		EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
@@ -87,11 +85,12 @@ public class ViewApplicationFormControllerTest {
 
 	@Test
 	public void shouldGetApplicationFormViewWithApplicationPageModelForStaff() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().id(100).toUser()).toApplicationForm();
 		String uploadErrorCode = "abc";
 		String view = "def";
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(userMock.getId()).andReturn(99).anyTimes();
 
 		ApplicationPageModel model = new ApplicationPageModel();
 		EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
@@ -106,10 +105,7 @@ public class ViewApplicationFormControllerTest {
 
 	@Before
 	public void setUp() {
-	
 		userMock = EasyMock.createMock(RegisteredUser.class);
-
-		
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationPageModelBuilderMock = EasyMock.createMock(ApplicationPageModelBuilder.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
@@ -117,7 +113,4 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
 		EasyMock.replay(userServiceMock);
 	}
-
-	
-
 }

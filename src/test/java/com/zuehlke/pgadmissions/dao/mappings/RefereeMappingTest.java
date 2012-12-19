@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao.mappings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -37,28 +36,31 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadReferee() throws Exception {
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy").parse("01 05 2012");
-		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).address1("loc")
-				.email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").phoneNumber("phoneNumber").declined(true).lastNotified(lastNotified)
-				.toReferee();
+		
+		Country country = new CountryBuilder().code("FF").enabled(true).name("FF").toCountry();
+		
+		save(country);
+		flushAndClearSession();
+		
+        Referee referee = new RefereeBuilder().application(applicationForm)
+                .addressCountry(country).address1("loc").email("email").firstname("name")
+                .jobEmployer("emplo").jobTitle("titl").lastname("lastname").phoneNumber("phoneNumber").declined(true)
+                .lastNotified(lastNotified).toReferee();
 
-		sessionFactory.getCurrentSession().save(referee);
+		save(referee);
+		flushAndClearSession();
+		
 		assertNotNull(referee.getId());
 		Integer id = referee.getId();
 		Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, id);
 
-		assertSame(referee, reloadedReferee);
-
-		flushAndClearSession();
-		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, id);
-
 		assertNotSame(referee, reloadedReferee);
-		assertEquals(referee, reloadedReferee);
+		assertEquals(referee.getId(), reloadedReferee.getId());
 
-		assertEquals(referee.getAddressLocation().getCountry(), reloadedReferee.getAddressLocation().getCountry());
-		assertEquals(referee.getAddressLocation(), reloadedReferee.getAddressLocation());
+		assertEquals(referee.getAddressLocation().getCountry().getId(), reloadedReferee.getAddressLocation().getCountry().getId());
+		assertEquals(referee.getAddressLocation().getId(), reloadedReferee.getAddressLocation().getId());
 
-		assertEquals(referee.getApplication(), reloadedReferee.getApplication());
+		assertEquals(referee.getApplication().getId(), reloadedReferee.getApplication().getId());
 		assertEquals(referee.getEmail(), reloadedReferee.getEmail());
 		assertEquals(referee.getFirstname(), reloadedReferee.getFirstname());
 		assertEquals(referee.getJobEmployer(), reloadedReferee.getJobEmployer());
@@ -68,7 +70,6 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(referee.getPhoneNumber(), reloadedReferee.getPhoneNumber());
 		assertTrue(reloadedReferee.isDeclined());
 		assertEquals(lastNotified, reloadedReferee.getLastNotified());
-
 	}
 
 	@Test
@@ -116,7 +117,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class,referee.getId());	
-		assertEquals(referenceComment, reloadedReferee.getReference());
+		assertEquals(referenceComment.getId(), reloadedReferee.getReference().getId());
 		
 	}
 

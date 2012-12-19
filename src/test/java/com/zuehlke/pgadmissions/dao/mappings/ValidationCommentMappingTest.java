@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.dao.mappings;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 
@@ -41,17 +44,14 @@ public class ValidationCommentMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		reloadedComment = (ValidationComment) sessionFactory.getCurrentSession().get(ValidationComment.class, validationComment.getId());
 		assertNotSame(validationComment, reloadedComment);
-		assertEquals(validationComment, reloadedComment);
+		assertEquals(validationComment.getId(), reloadedComment.getId());
 		
-		assertEquals(applicationForm, reloadedComment.getApplication());
+		assertEquals(applicationForm.getId(), reloadedComment.getApplication().getId());
 		assertEquals("hi", reloadedComment.getComment());
 		assertEquals(ValidationQuestionOptions.UNSURE, reloadedComment.getEnglishCompentencyOk());
 		assertEquals(HomeOrOverseas.HOME, reloadedComment.getHomeOrOverseas());
 		assertEquals(ValidationQuestionOptions.NO, reloadedComment.getQualifiedForPhd());
 		assertEquals(CommentType.VALIDATION, reloadedComment.getType());
-		assertEquals(user, reloadedComment.getUser());
-		
-		
+		assertEquals(user.getId(), reloadedComment.getUser().getId());
 	}
-
 }

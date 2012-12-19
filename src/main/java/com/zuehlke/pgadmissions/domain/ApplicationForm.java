@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -8,8 +9,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,12 +38,15 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Entity(name = "APPLICATION_FORM")
-@Access(AccessType.FIELD)
-public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm>, FormSectionObject {
+public class ApplicationForm implements Comparable<ApplicationForm>, FormSectionObject, Serializable {
 
     private static final int CONSIDERATION_PERIOD_MONTHS = 1;
 
     private static final long serialVersionUID = -7671357234815343496L;
+    
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @Column(name = "pending_approval_restart")
     private boolean pendingApprovalRestart;
@@ -235,15 +237,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
         this.qualifications.addAll(qualifications);
     }
 
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
-    @Override
-    @Id
-    @GeneratedValue
-    @Access(AccessType.PROPERTY)
     public Integer getId() {
         return id;
     }
@@ -408,11 +405,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
     }
 
     public List<Comment> getVisibleComments(RegisteredUser user) {
-
         if (user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)) {
             List<Comment> comments = new ArrayList<Comment>();
             for (Comment comment : applicationComments) {
-                if (comment instanceof ReferenceComment && ((ReferenceComment) comment).getReferee().getUser().equals(user)) {
+                if (comment instanceof ReferenceComment && ((ReferenceComment) comment).getReferee().getUser().getId().equals(user.getId())) {
                     comments.add(comment);
                 }
             }

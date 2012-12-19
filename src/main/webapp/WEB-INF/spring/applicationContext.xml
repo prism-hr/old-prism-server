@@ -97,8 +97,8 @@
 
 <!--     Mail configuration -->
 <!-- Use this bean if you want to debug outgoing email messages locally on your development machine. -->
-<!--     <bean id="mailSender"  class="com.zuehlke.pgadmissions.mail.FakeLoggingMailSender"> -->
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    <bean id="mailSender"  class="com.zuehlke.pgadmissions.mail.FakeLoggingMailSender">
+<!--     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"> -->
         <property name="host">
             <value>${email.server}</value>
         </property>

@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -19,8 +19,8 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -28,8 +28,8 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
@@ -62,7 +61,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
 		assertNotSame(user, reloadedUser);
-		assertEquals(user, reloadedUser);
+		assertEquals(user.getId(), reloadedUser.getId());
 		assertEquals(user.getPassword(), reloadedUser.getPassword());
 		assertEquals(user.getUsername(), reloadedUser.getUsername());
 		assertEquals(user.getFirstName(), reloadedUser.getFirstName());
@@ -73,9 +72,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		assertFalse(reloadedUser.isAccountNonLocked());
 		assertFalse(reloadedUser.isCredentialsNonExpired());
 		assertFalse(reloadedUser.isEnabled());
-
 	}
-	
 
 	@Test
 	public void shouldLoadRegisteredUserWithReferees() {
@@ -103,8 +100,6 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadRegisteredUserWithReferee() {
-
-
 		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
 
 		flushAndClearSession();
@@ -125,17 +120,11 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		
 		reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id));
 		
-		assertNotSame(admin1, reloadedUser);
-		assertEquals(admin1, reloadedUser);
-
+		assertEquals(admin1.getId(), reloadedUser.getId());
 		assertEquals("email", reloadedUser.getUsername());
 		Assert.assertNotNull(reloadedUser.getReferees());
-		Assert.assertTrue(reloadedUser.getReferees().contains(referee));
+		Assert.assertTrue(listContainsId(referee, reloadedUser.getReferees()));
 	}
-	
-	
-
-
 
 	@Test
 	public void shouldSaveAndLoadUserWithRoles() throws Exception {
@@ -161,9 +150,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
 
 		assertEquals(2, reloadedUser.getRoles().size());
-
-		assertTrue(reloadedUser.getRoles().containsAll(Arrays.asList(roleOne, roleTwo)));
-
+		assertTrue(listContainsId(roleOne, reloadedUser.getRoles()));
+		assertTrue(listContainsId(roleTwo, reloadedUser.getRoles()));
 	}
 
 	@Test
@@ -194,7 +182,6 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 		assertEquals(BigInteger.valueOf(0),
 				sessionFactory.getCurrentSession().createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = " + roleId).uniqueResult());
-
 	}
 	
 	@Test
@@ -214,8 +201,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin.getId());
 		assertEquals(1, reloadedUser.getProgramsOfWhichAdministrator().size());
-		assertTrue(reloadedUser.getProgramsOfWhichAdministrator().containsAll(Arrays.asList(program)));
-
+		assertEquals(program.getId(), reloadedUser.getProgramsOfWhichAdministrator().get(0).getId());
 	}
 
 	@Test
@@ -235,8 +221,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, approver.getId());
 		assertEquals(1, reloadedUser.getProgramsOfWhichApprover().size());
-		assertTrue(reloadedUser.getProgramsOfWhichApprover().containsAll(Arrays.asList(program)));
-
+		assertEquals(program.getId(), reloadedUser.getProgramsOfWhichApprover().get(0).getId());
 	}
 
 	@Test
@@ -256,8 +241,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, reviewer.getId());
 		assertEquals(1, reloadedUser.getProgramsOfWhichReviewer().size());
-		assertTrue(reloadedUser.getProgramsOfWhichReviewer().containsAll(Arrays.asList(program)));
-		
+		assertEquals(program.getId(), reloadedUser.getProgramsOfWhichReviewer().get(0).getId());
+
 		Program reloadedProgram = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
 		assertTrue(reloadedProgram.getProgramReviewers().contains(reloadedUser));
 	}
@@ -280,8 +265,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, interviewer.getId());
 		assertEquals(1, reloadedUser.getProgramsOfWhichInterviewer().size());
-		assertTrue(reloadedUser.getProgramsOfWhichInterviewer().containsAll(Arrays.asList(program)));
-		
+		assertEquals(program.getId(), reloadedUser.getProgramsOfWhichInterviewer().get(0).getId());
 	}
 	
 	
@@ -337,7 +321,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
 		assertEquals(2, reloadedUser.getNotificationRecords().size());
-		assertTrue(reloadedUser.getNotificationRecords().containsAll(Arrays.asList(recordOne, recordTwo)));
+		assertTrue(listContainsId(recordOne, reloadedUser.getNotificationRecords()));
+        assertTrue(listContainsId(recordTwo, reloadedUser.getNotificationRecords()));
 		
 		recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
 		reloadedUser.getNotificationRecords().remove(recordOne);
@@ -346,10 +331,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		
 		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
 		assertEquals(1, reloadedUser.getNotificationRecords().size());
-		assertTrue(reloadedUser.getNotificationRecords().containsAll(Arrays.asList(recordTwo)));
-		
+		assertEquals(recordTwo.getId(), reloadedUser.getNotificationRecords().get(0).getId());
 		assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
-
 	}
 	
 	@Test
@@ -376,7 +359,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
 		assertEquals(2, reloadedUser.getPendingRoleNotifications().size());
-		assertTrue(reloadedUser.getPendingRoleNotifications().containsAll(Arrays.asList(pendingOne, pendingTwo)));
+		assertTrue(listContainsId(pendingOne, reloadedUser.getPendingRoleNotifications()));
+        assertTrue(listContainsId(pendingTwo, reloadedUser.getPendingRoleNotifications()));
 		
 		pendingOne = (PendingRoleNotification) sessionFactory.getCurrentSession().get(PendingRoleNotification.class, recordOneId);
 		reloadedUser.getPendingRoleNotifications().remove(pendingOne);
@@ -385,10 +369,43 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		
 		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
 		assertEquals(1, reloadedUser.getPendingRoleNotifications().size());
-		assertTrue(reloadedUser.getPendingRoleNotifications().containsAll(Arrays.asList(pendingTwo)));
-		
+		assertEquals(pendingTwo.getId(), reloadedUser.getPendingRoleNotifications().get(0).getId());
 		assertNull(sessionFactory.getCurrentSession().get(PendingRoleNotification.class, recordOneId));
-
-
 	}
+	
+	private boolean listContainsId(Referee referee, List<Referee> referees) {
+        for (Referee entry : referees) {
+            if (entry.getId().equals(referee.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+	
+    private boolean listContainsId(Role role, List<Role> roles) {
+        for (Role entry : roles) {
+            if (entry.getId().equals(role.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean listContainsId(NotificationRecord record, List<NotificationRecord> notificationRecords) {
+        for (NotificationRecord entry : notificationRecords) {
+            if (entry.getId().equals(record.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean listContainsId(PendingRoleNotification record, List<PendingRoleNotification> notificationRecords) {
+        for (PendingRoleNotification entry : notificationRecords) {
+            if (entry.getId().equals(record.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

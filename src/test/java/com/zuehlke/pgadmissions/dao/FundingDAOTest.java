@@ -79,19 +79,15 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 		Funding returnedFunding = (Funding) sessionFactory.getCurrentSession().get(Funding.class, funding.getId());
-		assertEquals(funding, returnedFunding);
-
+		assertEquals(funding.getId(), returnedFunding.getId());
 	}
 
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
-
 		save(user, program);
-
 		flushAndClearSession();
 	}
 }

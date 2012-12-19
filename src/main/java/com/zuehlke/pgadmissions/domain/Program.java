@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,10 +16,13 @@ import javax.persistence.OneToMany;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Entity(name = "PROGRAM")
-@Access(AccessType.FIELD)
-public class Program extends DomainObject<Integer> {
+public class Program implements Serializable {
 
 	private static final long serialVersionUID = -9073611033741317582L;
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 	
 	private String code;
 
@@ -50,15 +52,10 @@ public class Program extends DomainObject<Integer> {
     @JoinTable(name = "BADGE", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
     private List<Badge> badges = new ArrayList<Badge>();
 	
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -128,7 +125,7 @@ public class Program extends DomainObject<Integer> {
 			return false;
 		}
 		for (RegisteredUser lookupUser : lookup) {
-			if (lookupUser.equals(user)) {
+			if (lookupUser.getId().equals(user.getId())) {
 				return true;
 			}
 		}
@@ -136,7 +133,7 @@ public class Program extends DomainObject<Integer> {
 	}
 	
 	public boolean isInterviewerOfProgram(RegisteredUser interviewer) {
-		return interviewers.contains(interviewer);
+		return listContainsId(interviewer, interviewers);
 	}
 
 	public List<ProgramInstance> getInstances() {
@@ -170,4 +167,13 @@ public class Program extends DomainObject<Integer> {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+    
+    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }   
 }

@@ -28,7 +28,7 @@ public class RoleMappingTest extends AutomaticRollbackTestCase {
 		Integer id = role.getId();
 
 		Role reloadedFile = (Role) sessionFactory.getCurrentSession().get(Role.class, id);
-		assertEquals(role, reloadedFile);
+		assertEquals(role.getId(), reloadedFile.getId());
 		assertNotSame(role, reloadedFile);
 		assertEquals(Authority.APPLICANT, role.getAuthorityEnum());
 

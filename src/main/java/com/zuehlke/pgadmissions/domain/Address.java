@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,10 +14,13 @@ import org.apache.commons.lang.StringUtils;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="ADDRESS")
-@Access(AccessType.FIELD) 
-public class Address extends DomainObject<Integer>{
+public class Address implements Serializable {
 
 	private static final long serialVersionUID = 2746228908173552617L;
+	
+	@Id
+	@GeneratedValue
+	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "country_id")
@@ -37,20 +40,15 @@ public class Address extends DomainObject<Integer>{
 	
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 12)
 	private String address5;
-	
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}
-
+	
+	public void setId(Integer id) {
+        this.id = id;
+    }
+    
 	public Country getCountry() {
 		return country;
 	}

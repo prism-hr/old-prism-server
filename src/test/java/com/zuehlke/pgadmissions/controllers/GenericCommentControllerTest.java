@@ -99,6 +99,7 @@ public class GenericCommentControllerTest {
         Program program = new ProgramBuilder().id(7).toProgram();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
         applicationForm.getProgram().getAdministrators().add(currentUser);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -124,6 +125,7 @@ public class GenericCommentControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
         EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+        EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
 
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);

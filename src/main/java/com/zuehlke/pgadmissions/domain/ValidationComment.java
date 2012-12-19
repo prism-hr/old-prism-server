@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
@@ -11,7 +9,6 @@ import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
 @Entity(name="VALIDATION_COMMENT")
-@Access(AccessType.FIELD)
 public class ValidationComment extends StateChangeComment {
 	
 	private static final long serialVersionUID = 1545465975465291005L;

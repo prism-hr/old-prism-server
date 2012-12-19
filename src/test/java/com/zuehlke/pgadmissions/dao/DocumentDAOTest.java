@@ -51,7 +51,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		Document reloadDocument = (Document) sessionFactory.getCurrentSession().get(Document.class, document.getId());
-		assertEquals(document, reloadDocument);
+		assertEquals(document.getId(), reloadDocument.getId());
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		Document reloadDocument = dao.getDocumentbyId(document.getId());
-		assertEquals(document, reloadDocument);
+		assertEquals(document.getId(), reloadDocument.getId());
 	}
 
 	@Test

@@ -49,14 +49,13 @@ public class ApprovalEvaluationCommentMappingTest extends AutomaticRollbackTestC
 		reloadedComment = (ApprovalEvaluationComment) sessionFactory.getCurrentSession()
 				.get(ApprovalEvaluationComment.class, approvalEvaluationComment.getId());
 		assertNotSame(approvalEvaluationComment, reloadedComment);
-		assertEquals(approvalEvaluationComment, reloadedComment);
+		assertEquals(approvalEvaluationComment.getId(), reloadedComment.getId());
 
-		assertEquals(applicationForm, reloadedComment.getApplication());
+		assertEquals(applicationForm.getId(), reloadedComment.getApplication().getId());
 		assertEquals("hi", reloadedComment.getComment());
-		assertEquals(approvalRound, reloadedComment.getApprovalRound());
+		assertEquals(approvalRound.getId(), reloadedComment.getApprovalRound().getId());
 		assertEquals(CommentType.APPROVAL_EVALUATION, reloadedComment.getType());
-		assertEquals(user, reloadedComment.getUser());
-
+		assertEquals(user.getId(), reloadedComment.getUser().getId());
 	}
 
 }

@@ -89,8 +89,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		reloadedApplication = applicationDAO.get(id);
 		assertNotSame(inApplication, reloadedApplication);
-		assertEquals(inApplication, reloadedApplication);
-		assertEquals(inApplication.getApplicant(), user);
+		assertEquals(inApplication.getId(), reloadedApplication.getId());
+		assertEquals(inApplication.getApplicant().getId(), user.getId());
 	}
 
 	@Test
@@ -143,7 +143,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER,
 				ApplicationFormStatus.VALIDATION);
-		assertTrue(applicationsDueReminder.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applicationsDueReminder));
 	}
 
 	@Test
@@ -166,7 +166,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER,
 				ApplicationFormStatus.VALIDATION);
-		assertTrue(applicationsDueReminder.contains(applicationForm));
+
+		assertTrue(listContainsId(applicationForm, applicationsDueReminder));
 	}
 
 	@Test
@@ -189,7 +190,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.APPROVAL_REMINDER,
 				ApplicationFormStatus.APPROVAL);
-		assertTrue(applicationsDueReminder.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applicationsDueReminder));
 	}
 
 	@Test
@@ -429,7 +430,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER,
 				ApplicationFormStatus.VALIDATION);
-		assertTrue(applicationsDueReminder.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applicationsDueReminder));
 	}
 
 	@Test
@@ -459,7 +460,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER,
 				ApplicationFormStatus.VALIDATION);
-		assertTrue(applicationsDueReminder.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applicationsDueReminder));
 	}
 
 	@Test
@@ -578,7 +579,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER,
 				ApplicationFormStatus.VALIDATION);
-		assertTrue(applicationsDueReminder.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applicationsDueReminder));
 	}
 
 	@Test
@@ -607,7 +608,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER,
 				ApplicationFormStatus.VALIDATION);
-		assertTrue(applicationsDueReminder.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applicationsDueReminder));
 	}
 
 	@Test
@@ -637,7 +638,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueUserReminder(NotificationType.VALIDATION_REMINDER,
 				ApplicationFormStatus.VALIDATION);
-		assertTrue(applicationsDueReminder.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applicationsDueReminder));
 	}
 
 	@Test
@@ -661,8 +662,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<ApplicationForm> applicationsDueUpdateNotification = applicationDAO.getApplicationsDueUpdateNotification();
-		assertTrue(applicationsDueUpdateNotification.contains(applicationForm));
-
+		assertTrue(listContainsId(applicationForm, applicationsDueUpdateNotification));
 	}
 
 	@Test
@@ -749,8 +749,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueNotificationForStateChangeEvent(
 				NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION, ApplicationFormStatus.REVIEW);
-		assertTrue(applicationsDueApplicantReviewNotification.contains(applicationForm));
-
+	      assertTrue(listContainsId(applicationForm, applicationsDueApplicantReviewNotification));
 	}
 
 	@Test
@@ -797,8 +796,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueNotificationForStateChangeEvent(
 				NotificationType.APPLICATION_MOVED_TO_REJECT_NOTIFICATION, ApplicationFormStatus.REJECTED);
-		assertTrue(applicationsDueApplicantReviewNotification.contains(applicationForm));
-
+        assertTrue(listContainsId(applicationForm, applicationsDueApplicantReviewNotification));
 	}
 
 	@Test
@@ -813,8 +811,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueApplicantApprovedNotification = applicationDAO.getApplicationsDueNotificationForStateChangeEvent(
 				NotificationType.APPLICATION_MOVED_TO_APPROVED_NOTIFICATION, ApplicationFormStatus.APPROVED);
-		assertTrue(applicationsDueApplicantApprovedNotification.contains(applicationForm));
-
+        assertTrue(listContainsId(applicationForm, applicationsDueApplicantApprovedNotification));
 	}
 
 	@Test
@@ -895,8 +892,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueNotificationForStateChangeEvent(
 				NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION, ApplicationFormStatus.REVIEW);
-		assertTrue(applicationsDueApplicantReviewNotification.contains(applicationForm));
-
+		assertTrue(listContainsId(applicationForm, applicationsDueApplicantReviewNotification));
 	}
 
 	@Test
@@ -911,8 +907,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applications = applicationDAO.getApplicationsDueNotificationForStateChangeEvent(
 				NotificationType.APPLICANT_SUBMISSION_NOTIFICATION, ApplicationFormStatus.VALIDATION);
-		assertTrue(applications.contains(applicationForm));
-
+		assertTrue(listContainsId(applicationForm, applications));
 	}
 
 	@Test
@@ -936,7 +931,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		List<ApplicationForm> applications = applicationDAO.getApplicationsDueRejectNotifications();
 		Assert.assertNotNull(applications);
 		Assert.assertEquals(numOfRejecteAppl + 1, applications.size());
-		assertTrue(applications.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applications));
 	}
 
 	@Test
@@ -983,7 +978,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		List<ApplicationForm> applications = applicationDAO.getApplicationsDueApprovedNotifications();
 		Assert.assertNotNull(applications);
 		Assert.assertEquals(noOfAppsBefore + 1, applications.size());
-		assertTrue(applications.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applications));
 	}
 
 	@Test
@@ -1060,7 +1055,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		ApplicationForm returnedForm = applicationDAO.getApplicationByApplicationNumber("ABC");
-		assertEquals(applicationFormOne, returnedForm);
+		assertEquals(applicationFormOne.getId(), returnedForm.getId());
 	}
 
 	private List<Qualification> getQualificationsBelongingToSameApplication() throws ParseException {
@@ -1154,8 +1149,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalNotifications();
-		assertTrue(applicationsDueApprovalNotification.contains(applicationForm));
-
+		assertTrue(listContainsId(applicationForm, applicationsDueApprovalNotification));
 	}
 
 	@Test
@@ -1183,7 +1177,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalNotifications();
-		assertTrue(applicationsDueApprovalNotification.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applicationsDueApprovalNotification));
 	}
 
 	@Test
@@ -1198,8 +1192,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueRegistryNotification();
-		assertTrue(applicationsDueApplicantReviewNotification.contains(applicationForm));
-
+		assertTrue(listContainsId(applicationForm, applicationsDueApplicantReviewNotification));
 	}
 
 	@Test
@@ -1228,8 +1221,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<ApplicationForm> applicationsDoApprovalRequestNotification = applicationDAO.getApplicationsDueApprovalRequestNotification();
-		assertTrue(applicationsDoApprovalRequestNotification.contains(applicationForm));
-
+		assertTrue(listContainsId(applicationForm, applicationsDoApprovalRequestNotification));
 	}
 
 	@Test
@@ -1297,8 +1289,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<ApplicationForm> applicationsDoApprovalRequestNotification = applicationDAO.getApplicationDueApprovalRestartRequestReminder();
-		assertTrue(applicationsDoApprovalRequestNotification.contains(applicationForm));
-
+		assertTrue(listContainsId(applicationForm, applicationsDoApprovalRequestNotification));
 	}
 	@Test
 	public void shouldNotReturnApplicationFormPendingApprovalRestartForReminderIfNoNotification() {
@@ -1340,7 +1331,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<ApplicationForm> applicationsDoApprovalRequestNotification = applicationDAO.getApplicationDueApprovalRestartRequestReminder();
-		assertTrue(applicationsDoApprovalRequestNotification.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applicationsDoApprovalRequestNotification));
 	}
 
 	@Test
@@ -1452,7 +1443,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		List<ApplicationForm> applications = applicationDAO.getApplicationsDueMovedToApprovalNotifications();
 		Assert.assertNotNull(applications);
 		Assert.assertEquals(noOfAppsBefore + 1, applications.size());
-		assertTrue(applications.contains(applicationForm));
+		assertTrue(listContainsId(applicationForm, applications));
 	}
 
 	@Test
@@ -1477,4 +1468,13 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Assert.assertEquals(noOfAppsBefore, applications.size());
 	}
 
+	private boolean listContainsId(ApplicationForm form, List<ApplicationForm> aplicationForms) {
+	    for (ApplicationForm entry : aplicationForms) {
+	        if (form.getId().equals(entry.getId())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
 }

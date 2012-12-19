@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class PersonDAOTest extends AutomaticRollbackTestCase {
 		
 		PersonDAO registryUserDAO = new PersonDAO(sessionFactory);
 		Person returnedRegistryUser = registryUserDAO.getPersonWithId(registryUser.getId());
-		assertEquals(registryUser, returnedRegistryUser);
+		assertEquals(registryUser.getId(), returnedRegistryUser.getId());
 	}
 	
 	@Test

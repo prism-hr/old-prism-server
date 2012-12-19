@@ -42,9 +42,8 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();		
 
 		Supervisor returnedSupervisor = dao.getSupervisorWithId(supervisor.getId());
-		assertEquals(supervisor, returnedSupervisor);
+		assertEquals(supervisor.getId(), returnedSupervisor.getId());
 	}
-	
 	
 	@Test
 	public void shouldReturnSupervisorIfLastNotifiedIsNull() {
@@ -57,8 +56,7 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		List<Supervisor> supervisors = dao.getSupervisorsDueNotification();
-		assertTrue(supervisors.contains(supervisor));
-
+		assertTrue(listContainsId(supervisor, supervisors));
 	}
 
 	@Test
@@ -106,13 +104,21 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Before
-	public void setUp(){
-		super.setUp();
+	public void initialise() {
 		dao = new SupervisorDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 		save(user, program);
 		flushAndClearSession();
+	}
+	
+	private boolean listContainsId(Supervisor supervisor, List<Supervisor> supervisors) {
+	    for (Supervisor entry : supervisors) {
+	        if (supervisor.getId().equals(entry.getId())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 }

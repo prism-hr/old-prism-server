@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao.mappings;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 import java.util.Calendar;
@@ -42,12 +42,12 @@ public class InterviewMappingTest extends AutomaticRollbackTestCase{
 		
 		Interview reloadedInterview = (Interview) sessionFactory.getCurrentSession().get(Interview.class, interview.getId());
 		assertNotSame(interview, reloadedInterview);
-		assertEquals(interview, reloadedInterview);
+		assertEquals(interview.getId(), reloadedInterview.getId());
 		
 		Assert.assertEquals(1, reloadedInterview.getInterviewers().size());
 		Interviewer interviewer = reloadedInterview.getInterviewers().get(0);
-		assertEquals(interviewerUser, interviewer.getUser());
-		assertEquals(reloadedInterview, interviewer.getInterview());
+		assertEquals(interviewerUser.getId(), interviewer.getUser().getId());
+		assertEquals(reloadedInterview.getId(), interviewer.getInterview().getId());
 		assertNotNull(reloadedInterview.getCreatedDate());
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),DateUtils.truncate(reloadedInterview.getCreatedDate(), Calendar.DATE));
 	}

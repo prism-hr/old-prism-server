@@ -1,9 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,10 +18,13 @@ import org.hibernate.annotations.Type;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Entity(name = "REVIEWER")
-@Access(AccessType.FIELD)
-public class Reviewer extends DomainObject<Integer> {
+public class Reviewer implements Serializable {
 
 	private static final long serialVersionUID = 7813331086711135352L;
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
 	@OneToOne(mappedBy = "reviewer")
 	private ReviewComment review;
@@ -30,7 +32,6 @@ public class Reviewer extends DomainObject<Integer> {
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
 	@Column(name = "requires_admin_notification")
 	private CheckedStatus requiresAdminNotification;
-	
 	
 	@Column(name = "admins_notified_on")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -43,21 +44,15 @@ public class Reviewer extends DomainObject<Integer> {
 	@ManyToOne
 	@JoinColumn(name = "review_round_id")
 	private ReviewRound reviewRound;
-
 	
 	@ManyToOne
 	@JoinColumn(name = "registered_user_id")
 	private RegisteredUser user;
 
-	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
 	}

@@ -8,8 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -73,16 +73,15 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, id);
 
 		assertNotSame(personalDetails, reloadedDetails);
-		assertEquals(personalDetails, reloadedDetails);
-
+		assertEquals(personalDetails.getId(), reloadedDetails.getId());
 		assertEquals(personalDetails.getApplication(), reloadedDetails.getApplication());
-		assertEquals(personalDetails.getCountry(), reloadedDetails.getCountry());
+		assertEquals(personalDetails.getCountry().getId(), reloadedDetails.getCountry().getId());
 		assertEquals(personalDetails.getDateOfBirth(), reloadedDetails.getDateOfBirth());
 		assertEquals(personalDetails.getEmail(), reloadedDetails.getEmail());
 		assertEquals(personalDetails.getFirstName(), reloadedDetails.getFirstName());
 		assertEquals(personalDetails.getGender(), reloadedDetails.getGender());
 		assertEquals(personalDetails.getLastName(), reloadedDetails.getLastName());
-		assertEquals(personalDetails.getResidenceCountry(), reloadedDetails.getResidenceCountry());
+		assertEquals(personalDetails.getResidenceCountry().getId(), reloadedDetails.getResidenceCountry().getId());
 		assertTrue(reloadedDetails.getRequiresVisa());
 		assertTrue(reloadedDetails.getEnglishFirstLanguage());
 		assertEquals(personalDetails.getPhoneNumber(), reloadedDetails.getPhoneNumber());
@@ -119,8 +118,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
         PersonalDetails reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
         
         assertNotSame(personalDetails, reloadedDetails);
-        
-        assertEquals(personalDetails.getPassportInformation(), reloadedDetails.getPassportInformation());
+        assertEquals(personalDetails.getPassportInformation().getId(), reloadedDetails.getPassportInformation().getId());
 	}
 	
 	@Test
@@ -195,14 +193,15 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		PersonalDetails reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
 		assertEquals(2, reloadedDetails.getCandidateNationalities().size());
-		assertTrue(reloadedDetails.getCandidateNationalities().containsAll(Arrays.asList(nationality1,nationality2)));
+		assertTrue(listContainsId(nationality1, reloadedDetails.getCandidateNationalities()));
+		assertTrue(listContainsId(nationality2, reloadedDetails.getCandidateNationalities()));
 		reloadedDetails.getCandidateNationalities().remove(1);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
 
 		flushAndClearSession();
 		reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
 		assertEquals(1, reloadedDetails.getCandidateNationalities().size());
-		assertTrue(reloadedDetails.getCandidateNationalities().containsAll(Arrays.asList(nationality1)));
+		assertEquals(nationality1.getId(), reloadedDetails.getCandidateNationalities().get(0).getId());
 
 		reloadedDetails.getCandidateNationalities().add(nationality3);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
@@ -210,7 +209,8 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
 		assertEquals(2, reloadedDetails.getCandidateNationalities().size());
-		assertTrue(reloadedDetails.getCandidateNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
+		assertTrue(listContainsId(nationality1, reloadedDetails.getCandidateNationalities()));
+		assertTrue(listContainsId(nationality3, reloadedDetails.getCandidateNationalities()));
 	}
 	
 	@Before
@@ -233,5 +233,14 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
 		save(applicationForm);
 		flushAndClearSession();
+	}
+	
+	private boolean listContainsId(Language language, List<Language> languages) {
+	    for (Language entry : languages) {
+	        if (entry.getId().equals(language.getId())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 }

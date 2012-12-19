@@ -31,7 +31,7 @@ abstract class ApplicationComparator implements Comparator<ApplicationForm> {
 	}
 
 	@Override
-	public final int compare(ApplicationForm app1, ApplicationForm app2) {
+	public int compare(ApplicationForm app1, ApplicationForm app2) {
 		return sortAscending(app1, app2) * flipper;
 	}
 

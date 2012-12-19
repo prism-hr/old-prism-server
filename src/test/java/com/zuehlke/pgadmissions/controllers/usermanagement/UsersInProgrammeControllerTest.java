@@ -33,29 +33,32 @@ public class UsersInProgrammeControllerTest {
 	}
 	
 	@Test
-	public void shouldReturnUsersForProgramOrderedByLastnaeFirstname() {
-		
+	public void shouldReturnUsersForProgramOrderedByLastnameFirstname() {
 		Program program = new ProgramBuilder().id(5).toProgram();
 		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userOne.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
+		EasyMock.expect(userOne.getId()).andReturn(1).anyTimes();
 		EasyMock.expect(userOne.getLastName()).andReturn("ZZZ").anyTimes();
 		EasyMock.expect(userOne.getFirstName()).andReturn("BBB").anyTimes();
 		
 		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userTwo.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
+		EasyMock.expect(userTwo.getId()).andReturn(2).anyTimes();
 		EasyMock.expect(userTwo.getLastName()).andReturn("ZZZ").anyTimes();
 		EasyMock.expect(userTwo.getFirstName()).andReturn("AAA").anyTimes();
 		
-		
 		RegisteredUser userThree = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userThree.getId()).andReturn(3).anyTimes();
 		EasyMock.expect(userThree.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
 		EasyMock.expect(userThree.getLastName()).andReturn("AAA").anyTimes();
 		EasyMock.expect(userThree.getFirstName()).andReturn("GGG").anyTimes();
 		
 		EasyMock.expect(programsServiceMock.getProgramByCode("enc")).andReturn(program);
 		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo, userThree));
-		EasyMock.replay(userOne, userTwo,userThree, programsServiceMock, userServiceMock);
+		EasyMock.replay(userOne, userTwo, userThree, programsServiceMock, userServiceMock);
+		
 		List<RegisteredUser> users = controller.getUsersInProgram("enc");		
+		
 		assertEquals(3, users.size());
 		assertEquals(userThree, users.get(0));
 		assertEquals(userTwo, users.get(1));

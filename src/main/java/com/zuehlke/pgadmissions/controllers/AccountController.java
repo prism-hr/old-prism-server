@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -119,41 +117,13 @@ public class AccountController {
             return ACCOUNT_SECTION;
         }
         
-        RegisteredUser secondAccount = userService.getUserByEmail(userDTO.getEmail());
-        RegisteredUser currentAccount = userService.getCurrentUser();
-        
-        if (listContainsId(secondAccount, currentAccount.getLinkedAccounts())) {
-            return "/private/common/ajax_OK";
-        }
-
-        if (!currentAccount.isEnabled() || !secondAccount.isEnabled()) {
+        try {
+            userService.linkAccounts(userDTO.getEmail());
+        } catch (LinkAccountsException e) {
             result.rejectValue("email", "account.not.enabled");
             return ACCOUNT_SECTION;
         }
-        
-        if (!currentAccount.isAccountNonExpired() || !secondAccount.isAccountNonExpired()) {
-            result.rejectValue("email", "account.not.enabled");
-            return ACCOUNT_SECTION;
-        }
-        
-        if (!currentAccount.isAccountNonLocked() || !secondAccount.isAccountNonLocked()) {
-            result.rejectValue("email", "account.not.enabled");
-            return ACCOUNT_SECTION;
-        }
-        
-        if (!currentAccount.isCredentialsNonExpired() || !secondAccount.isCredentialsNonExpired()) {
-            result.rejectValue("email", "account.not.enabled");
-            return ACCOUNT_SECTION;
-        }       
-        
-        currentAccount.addLinkedAccount(secondAccount);
-        userService.save(currentAccount);
-            
-        secondAccount.addLinkedAccount(currentAccount);
-        userService.save(secondAccount);
-            
-        logger.info(String.format("Linked user account [%s] with [%s]", currentAccount.getEmail(), secondAccount.getEmail()));
-            
+             
         return "/private/common/ajax_OK";
     }
     
@@ -168,7 +138,7 @@ public class AccountController {
             Authentication authentication = authenticationProvider.authenticate(token);
             logger.info(String.format("User [%s] is switching to [%s]", currentAccount.getEmail(), desiredAccount.getEmail()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return "/private/common/ajax_OK";
+            return "OK";
         } catch (Exception e) {
             logger.error(e);
         }
@@ -179,29 +149,11 @@ public class AccountController {
     @ResponseBody
     public String deleteLinkedAccount(@RequestParam String email) {
         try {
-            RegisteredUser currentAccount = userService.getCurrentUser();
-            RegisteredUser secondAccount = userService.getUserByEmail(email);
-            
-            if (listContainsId(secondAccount, currentAccount.getLinkedAccounts())) {
-                currentAccount.removeLinkedAccount(secondAccount);
-                userService.save(currentAccount);
-                
-                secondAccount.removeLinkedAccount(currentAccount);
-                userService.save(secondAccount);
-            }
-            return "/private/common/ajax_OK";
+            userService.deleteLinkedAccount(email);
+            return "OK";
         } catch (Exception e) {
             logger.error(e);
         }
         return "NOK";
     }
-    
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
-            if (entry.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }  
 }

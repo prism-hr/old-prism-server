@@ -5,13 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import javax.mail.internet.InternetAddress;
 
 import junit.framework.Assert;
 
@@ -21,11 +19,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import com.zuehlke.pgadmissions.controllers.LinkAccountsException;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -88,8 +86,6 @@ public class UserServiceTest {
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
 	}
 
-	
-
 	@Test
 	public void shouldGetAllUsersForProgram() {
 		RegisteredUser userOne = new RegisteredUserBuilder().id(2).toUser();
@@ -145,9 +141,6 @@ public class UserServiceTest {
 		Assert.assertEquals(user, userService.getUserByUsername("mike"));
 	}
 
-
-
-
 	@Test
 	public void shouldGetUserFromSecurityContextAndRefresh() {
 		RegisteredUser refreshedUser = new RegisteredUser();
@@ -157,7 +150,6 @@ public class UserServiceTest {
 		assertSame(refreshedUser, user);
 		EasyMock.verify(userDAOMock);
 	}
-
 	
 	@Test
 	public void shouldAddRoleToUser() {
@@ -167,9 +159,7 @@ public class UserServiceTest {
 		userService.addRoleToUser(user, Authority.ADMINISTRATOR);
 		assertEquals(1, user.getRoles().size());
 		assertEquals(Authority.ADMINISTRATOR, user.getRoles().get(0).getAuthorityEnum());
-		
 	}
-	
 	
 	@Test
 	public void shouldSaveSelectedUser() {
@@ -230,6 +220,7 @@ public class UserServiceTest {
 		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.SUPERVISOR);
 		assertTrue(selectedUser.isInRole(Authority.SUPERVISOR));
 	}
+	
 	@Test
 	public void shouldAddUserRoleSuperAdmimnIfNotAlreadySuperadminAndSuperadminInNewRoles() {
 		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();
@@ -240,10 +231,7 @@ public class UserServiceTest {
 		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.SUPERADMINISTRATOR);
 		assertTrue(selectedUser.isInRole(Authority.SUPERADMINISTRATOR));
 		EasyMock.verify(roleDAOMock);
-		
 	}
-	
-	
 	
 	@Test
 	public void shouldNotRemoveSuperadminRoleIfNotInNewListAndUserIsNotSuperadmin() {
@@ -268,8 +256,6 @@ public class UserServiceTest {
 		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
 		assertTrue(selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram));
 		EasyMock.verify(roleDAOMock);
-
-		
 	}
 	
 	@Test
@@ -282,9 +268,7 @@ public class UserServiceTest {
 		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.APPROVER);
 		assertTrue(selectedUser.getProgramsOfWhichApprover().contains(selectedProgram));
 		EasyMock.verify(roleDAOMock);
-
 	}
-	
 	
 	@Test
 	public void shouldAddProgramToReviewerListIfNew(){
@@ -296,7 +280,6 @@ public class UserServiceTest {
 		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.REVIEWER);
 		assertTrue(selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram));
 		EasyMock.verify(roleDAOMock);
-
 	}
 	
 	@Test
@@ -311,9 +294,7 @@ public class UserServiceTest {
 		
 		assertTrue(selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram));		
 		EasyMock.verify(roleDAOMock);
-		
 	}
-	
 	
 	@Test
 	public void shouldAddProgramToSupervisorListIfNew(){
@@ -327,7 +308,6 @@ public class UserServiceTest {
 		
 		assertTrue(selectedUser.getProgramsOfWhichSupervisor().contains(selectedProgram));		
 		EasyMock.verify(roleDAOMock);
-		
 	}
 	
 	@Test
@@ -353,7 +333,6 @@ public class UserServiceTest {
 		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
 		assertFalse(selectedUser.getProgramsOfWhichApprover().contains(selectedProgram));
 	}
-	
 	
 	@Test
 	public void shouldRemoveFromProgramsOfWhichReviewerIfNoLongerInList(){
@@ -449,7 +428,6 @@ public class UserServiceTest {
 		userService.createNewUserInRole( "la", "le", "some@email.com", Authority.APPROVER, null, null);
 	}
 	
-	
 	@Test
 	public void shouldCreateUserAndWithRolesNotInAnyProgramme() {
 
@@ -471,9 +449,7 @@ public class UserServiceTest {
 		assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
 		
 		assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
-		
 	}
-	
 	
 	@Test
 	public void shouldCreateUserWithDirectToLinkToAddReview() {
@@ -497,7 +473,6 @@ public class UserServiceTest {
 		assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
 		
 		assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
-		
 	}
 	
 	@Test
@@ -522,7 +497,6 @@ public class UserServiceTest {
 		assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
 		
 		assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
-		
 	}
 	
 	@Test
@@ -550,7 +524,6 @@ public class UserServiceTest {
 		assertEquals(2, users.size());
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));		
 	}
-
 	
 	@Test
 	public void shouldGetAllReviewersWillingToItnerview(){
@@ -603,7 +576,6 @@ public class UserServiceTest {
 		assertEquals("a", currentUser.getFirstName());
 		assertEquals("o", currentUser.getLastName());
 		assertEquals("encryptednewpass", currentUser.getPassword());
-		
 	}
 	
 	@Test
@@ -624,9 +596,90 @@ public class UserServiceTest {
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
 		assertEquals("12", currentUser.getPassword());
-		
 	}
 	
+	@Test
+    public void shouldReturnIfAccountsHaveAlreadyBeenLinked() {
+        final RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).accountNonExpired(true)
+                .accountNonLocked(true).enabled(true).activationCode("abc").email("B@A.com").password("password").toUser();
+
+        final RegisteredUser secondAccount = new RegisteredUserBuilder().id(2).accountNonExpired(true)
+                .accountNonLocked(true).enabled(true).activationCode("abcd").email("A@B.com").password("password").toUser();
+        
+        secondAccount.setPrimaryAccount(currentAccount);
+        
+        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+                mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
+            
+            @Override
+            public RegisteredUser getCurrentUser() {
+                return currentAccount;
+            }
+            
+            @Override
+            public RegisteredUser getUserByEmail(String email) {
+                return secondAccount;
+            }
+        };
+        
+        try {
+            userServiceWithCurrentUserOverride.linkAccounts(secondAccount.getEmail());
+        } catch (LinkAccountsException e) {
+            fail();
+        }
+    }
+    
+	@Test(expected = LinkAccountsException.class)
+    public void shouldReturnFalseIfAccountsDisabled() throws LinkAccountsException {
+        final RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).accountNonExpired(true)
+                .accountNonLocked(true).enabled(true).activationCode("abc").email("B@A.com").password("password")
+                .toUser();
+
+        final RegisteredUser secondAccount = new RegisteredUserBuilder().id(2).accountNonExpired(true).accountNonLocked(true)
+                .enabled(false).activationCode("abcd").email("A@B.com").password("password").toUser();
+
+        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+                mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
+            
+            @Override
+            public RegisteredUser getCurrentUser() {
+                return currentAccount;
+            }
+            
+            @Override
+            public RegisteredUser getUserByEmail(String email) {
+                return secondAccount;
+            }
+        };
+        
+        userServiceWithCurrentUserOverride.linkAccounts(secondAccount.getEmail());
+    }
+    
+    @Test(expected = LinkAccountsException.class)
+    public void shouldReturnFalseIfAccountsIsExpired() throws LinkAccountsException {
+        final RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).accountNonExpired(true)
+                .accountNonLocked(true).enabled(true).activationCode("abc").email("B@A.com").password("password")
+                .toUser();
+
+        final RegisteredUser secondAccount = new RegisteredUserBuilder().id(2).accountNonExpired(false).accountNonLocked(true)
+                .enabled(true).activationCode("abcd").email("A@B.com").password("password").toUser();
+
+        userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+                mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
+            
+            @Override
+            public RegisteredUser getCurrentUser() {
+                return currentAccount;
+            }
+            
+            @Override
+            public RegisteredUser getUserByEmail(String email) {
+                return secondAccount;
+            }
+        };
+        
+        userServiceWithCurrentUserOverride.linkAccounts(secondAccount.getEmail());
+    }
 	
 	@Before
 	public void setUp() {
@@ -654,13 +707,8 @@ public class UserServiceTest {
 			public RegisteredUser getCurrentUser() {
 				return currentUserMock;
 			}
-			
 		};
-
 	}
-	
-	
-	
 
 	@After
 	public void tearDown() {

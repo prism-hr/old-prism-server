@@ -122,14 +122,14 @@
                 <div class="row">
                     <span class="group-heading-label">Account to be Linked</span>
                     <div class="field">
-                        <#if user.linkedAccounts?has_content>
+                        <#if user.allLinkedAccounts?has_content>
                             <table id="linkedAccountsTable" class="data-table">
                                 <colgroup>
                                     <col />
                                     <col style="width: 60px;" />
                                 </colgroup>
                                 <tbody>
-                                    <#list user.linkedAccounts as linkedAccount>
+                                    <#list user.allLinkedAccounts as linkedAccount>
                                     <tr>
                                         <td>${linkedAccount.email?html}</td>
                                         <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>

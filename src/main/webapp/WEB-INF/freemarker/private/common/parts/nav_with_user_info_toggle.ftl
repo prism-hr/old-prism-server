@@ -25,10 +25,10 @@
                 <span class="dropdown">
                     <button class="btn btn-small dropdown-toggle" data-toggle="dropdown">${model.user.email?html}<span class="caret"></span></button>
                     <ul id="switchUserList" class="dropdown-menu">
-                        <#list model.user.linkedAccounts as linkedAccount>
+                        <#list model.user.allLinkedAccounts as linkedAccount>
                             <li><a href="javascript:void(0)">${linkedAccount.email?html}</a></li>
                         </#list>
-                        <#if model.user.linkedAccounts?has_content>
+                        <#if model.user.allLinkedAccounts?has_content>
                             <li class="divider"></li>
                         </#if>
                         <li><a href="javascript:void(0)">Link Accounts...</a></li>
@@ -40,10 +40,10 @@
                 <span class="dropdown">
                     <button class="btn btn-small dropdown-toggle" data-toggle="dropdown">${user.email?html}<span class="caret"></span></button>
                     <ul id="switchUserList" class="dropdown-menu">
-                        <#list user.linkedAccounts as linkedAccount>
+                        <#list user.allLinkedAccounts as linkedAccount>
                             <li><a href="javascript:void(0)">${linkedAccount.email?html}</a></li>
                         </#list>
-                        <#if user.linkedAccounts?has_content>
+                        <#if user.allLinkedAccounts?has_content>
                             <li class="divider"></li>
                         </#if>
                         <li><a href="javascript:void(0)">Link Accounts...</a></li>

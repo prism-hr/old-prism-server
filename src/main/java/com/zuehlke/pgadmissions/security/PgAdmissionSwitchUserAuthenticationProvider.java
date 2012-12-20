@@ -33,7 +33,12 @@ public class PgAdmissionSwitchUserAuthenticationProvider implements Authenticati
         RegisteredUser currentAccount = (RegisteredUser) preProcessToken.getPrincipal();
         RegisteredUser desiredAccount = (RegisteredUser) preProcessToken.getCredentials();
         
-        if (!listContainsId(desiredAccount, currentAccount.getLinkedAccounts())) {
+        RegisteredUser primary = currentAccount.getPrimaryAccount();
+        if (primary == null) {
+            primary = currentAccount;
+        }
+        
+        if (!desiredAccount.getId().equals(primary.getId()) && !listContainsId(desiredAccount, primary.getLinkedAccounts())) {
             throw new BadCredentialsException("accounts not linked");
         }
         

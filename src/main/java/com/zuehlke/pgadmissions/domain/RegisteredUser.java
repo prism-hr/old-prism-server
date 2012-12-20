@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.Valid;
@@ -91,14 +92,15 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
 	private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "registered_user_id")
 	private List<Referee> referees = new ArrayList<Referee>();
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinTable(name = "USER_ACCOUNT_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "REGISTERED_USER_LINK_ID") })
+	@OneToMany(mappedBy = "primaryAccount", fetch = FetchType.LAZY)
 	private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
+	
+	@ManyToOne 
+	@JoinColumn(name = "primary_account_id", nullable = true)
+	private RegisteredUser primaryAccount;
 	
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
@@ -808,20 +810,25 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     public List<RegisteredUser> getLinkedAccounts() {
         return linkedAccounts;
     }
+    
+    public List<RegisteredUser> getAllLinkedAccounts() {
+        List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
+        
+        if (this.primaryAccount == null) {
+            linkedAccounts.addAll(getLinkedAccounts());
+        } else {
+            linkedAccounts.add(getPrimaryAccount());
+            for (RegisteredUser u : getPrimaryAccount().getLinkedAccounts()) {
+                if (!u.getId().equals(this.id)) {
+                    linkedAccounts.add(u);
+                }
+            }
+        }
+        return linkedAccounts;
+    }
 
     public void setLinkedAccounts(List<RegisteredUser> linkedAccounts) {
         this.linkedAccounts = linkedAccounts;
-    }
-    
-    public boolean addLinkedAccount(RegisteredUser user) {
-        if (!listContainsId(user, this.linkedAccounts)) {
-            return this.linkedAccounts.add(user);
-        }
-        return false;
-    }
-    
-    public boolean removeLinkedAccount(RegisteredUser user) {
-        return this.linkedAccounts.remove(user);
     }
     
     private boolean listContainsId(Referee user, List<Referee> users) {
@@ -849,5 +856,13 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
             }
         }
         return false;
+    }
+
+    public RegisteredUser getPrimaryAccount() {
+        return primaryAccount;
+    }
+
+    public void setPrimaryAccount(RegisteredUser primary) {
+        this.primaryAccount = primary;
     }
 }

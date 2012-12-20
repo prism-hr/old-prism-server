@@ -47,8 +47,8 @@ public class PgAdmissionSwitchUserAuthenticationProviderTest {
         user2 = new RegisteredUserBuilder().id(6).firstName("John").lastName("Doe").email("john@doe.com")
                 .username("johnUsername").password("password").enabled(true).roles(role1, role2).toUser();
         
-        user1.addLinkedAccount(user2);
-        user2.addLinkedAccount(user1);
+        user2.setPrimaryAccount(user1);
+        user1.getLinkedAccounts().add(user2);
     }
     
     @Test

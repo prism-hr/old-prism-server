@@ -5864,17 +5864,17 @@ SET a.institution_code = b.code
 WHERE a.institution_code = ''
 ;
 
-UPDATE application_form_qualification 
+UPDATE APPLICATION_FORM_QUALIFICATION 
 SET other_institution_name = institution_name 
 WHERE institution_code = ''
 ;
 
-UPDATE application_form_qualification 
+UPDATE APPLICATION_FORM_QUALIFICATION 
 SET institution_name = "Other..." 
 WHERE institution_code = ''
 ;
 
-UPDATE application_form_qualification 
+UPDATE APPLICATION_FORM_QUALIFICATION 
 SET institution_code = "OTHER" 
 WHERE institution_code = ''
 ;

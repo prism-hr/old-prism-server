@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.controllers.LinkAccountsException;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -89,7 +90,6 @@ public class UserService {
 
 	public RegisteredUser getUserByEmail(String email) {
 		return userDAO.getUserByEmail(email);
-
 	}
 
 	public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
@@ -301,7 +301,76 @@ public class UserService {
 			log.warn("error while sending email", e);
 		}
 	}
+	
+    @Transactional
+    public void linkAccounts(String secondAccountEmail) throws LinkAccountsException {
+        RegisteredUser secondAccount = getUserByEmail(secondAccountEmail);
+        RegisteredUser currentAccount = getCurrentUser();
+        
+        if (listContainsId(secondAccount, currentAccount.getLinkedAccounts())) {
+            return;
+        }
 
+        if (!currentAccount.isEnabled() || !secondAccount.isEnabled()) {
+            throw new LinkAccountsException("account.not.enabled");
+        }
+        
+        if (!currentAccount.isAccountNonExpired() || !secondAccount.isAccountNonExpired()) {
+            throw new LinkAccountsException("account.not.enabled");
+        }
+        
+        if (!currentAccount.isAccountNonLocked() || !secondAccount.isAccountNonLocked()) {
+            throw new LinkAccountsException("account.not.enabled");
+        }
+        
+        if (!currentAccount.isCredentialsNonExpired() || !secondAccount.isCredentialsNonExpired()) {
+            throw new LinkAccountsException("account.not.enabled");
+        } 
+        
+        RegisteredUser primary = currentAccount.getPrimaryAccount();
+        if (primary == null) {
+            primary = currentAccount;
+        }
+
+        RegisteredUser secondPrimary = secondAccount.getPrimaryAccount();
+        if (secondPrimary != null) {
+            for (RegisteredUser u : secondPrimary.getLinkedAccounts()) {
+                u.setPrimaryAccount(primary);
+            }
+            secondPrimary.setPrimaryAccount(primary);
+        } else {
+            secondAccount.setPrimaryAccount(primary);
+            for (RegisteredUser u : secondAccount.getLinkedAccounts()) {
+                u.setPrimaryAccount(primary);
+            }
+        }
+    }
+    
+    @Transactional
+    public void deleteLinkedAccount(String accountToDeleteEmail) {
+        RegisteredUser currentAccount = getCurrentUser();
+        RegisteredUser accountToDelete = getUserByEmail(accountToDeleteEmail);
+
+        RegisteredUser primary = accountToDelete.getPrimaryAccount(); 
+        if (primary == null) {
+            for (RegisteredUser u : accountToDelete.getLinkedAccounts()) {
+                u.setPrimaryAccount(currentAccount);
+            }
+            currentAccount.setPrimaryAccount(null);
+        } else {
+            accountToDelete.setPrimaryAccount(null);
+        }
+    }
+    
+    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+        for (RegisteredUser entry : users) {
+            if (entry.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }  
+ 
 	private InternetAddress createUserAddress(RegisteredUser user) {
 		try {
 			return new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());

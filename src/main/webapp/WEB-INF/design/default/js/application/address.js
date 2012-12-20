@@ -64,7 +64,7 @@ $(document).ready(function(){
 		if (isSame()){
 			disableContactAddress();
 		} else {		
-			enableContactAddress();
+			enableContactAddress(true);
 		}
 	});
 	
@@ -108,7 +108,7 @@ $(document).ready(function(){
 	if (isSame()){
 		disableContactAddress();
 	} else {		
-		enableContactAddress();
+		enableContactAddress(false);
 	}
 });
 
@@ -215,9 +215,18 @@ function disableContactAddress() {
 	$("#country-two-em").addClass("grey-label");
 }
 
-function enableContactAddress() {
-	$("#contactAddressLocation").val("");
+function enableContactAddress(clear) {
+    $("#contactAddressLocation").val("");
 	$("#contactAddressCountry").val("");
+
+	if (clear === true) {
+	    $("#contactAddress1").val("");
+	    $("#contactAddress2").val("");
+	    $("#contactAddress3").val("");
+	    $("#contactAddress4").val("");
+	    $("#contactAddress5").val("");
+	}
+    
 	$("#contactAddressLocation").removeAttr('disabled');
 	$("#contactAddressCountry").removeAttr('disabled');
 	$("#add-two-lb-1").removeClass("grey-label");

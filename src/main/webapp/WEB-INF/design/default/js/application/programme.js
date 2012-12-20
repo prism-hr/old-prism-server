@@ -196,6 +196,13 @@ $(document).ready(function()
 			var isAware = $("input[name='awareSupervisor']:checked").val(); 
 			var awareState = (isAware == "YES" ? "aware" : "unaware");
 
+			var jsonString = JSON.stringify({
+			    id: $('#supervisorId').val(),
+			    firstname: $('#supervisorFirstname').val(),
+			    email: $('#supervisorEmail').val(),
+			    awareSupervisor: isAware
+			  });
+			
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
 				'<tr class="' + awareState + '" rel="'+ unsavedSupervisors +'">' +
@@ -208,7 +215,8 @@ $(document).ready(function()
 				'<input type="hidden" name="sLN" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 				'<input type="hidden" name="sEM" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
 				'<input type="hidden" name="sAS" id="us_'+unsavedSupervisors+'aware" value="' + isAware+'"/>'	+								
-				'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + isAware + '"} ' + "'" + "/>" +
+//				'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' + "'" + jsonString + "'" +'"/>' +
+                '<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val().replace("'", "\\u0027") +  '", "awareSupervisor":"' + isAware + '"} ' + "'" + "/>" +
 				'</td>' +
 				'</tr>');
 			addToolTips();
@@ -325,7 +333,8 @@ $(document).ready(function()
 					'<input name="sLN" type="hidden" id="us_'+currentRel+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 					'<input name="sEM" type="hidden" id="us_'+currentRel+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
 					'<input name="sAS" type="hidden" id="us_'+currentRel+'aware" value="' + isAware +'"/>'	+								
-					'<input type="hidden" name="suggestedSupervisors" id="'+currentRel+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + isAware + '"} ' + "'" + "/>" +
+					//'<input type="hidden" name="suggestedSupervisors" id="'+currentRel+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + isAware + '"} ' + "'" + "/>" +
+					'<input type="hidden" name="suggestedSupervisors" id="'+currentRel+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val().replace("'", "\\u0027") +  '", "awareSupervisor":"' + isAware + '"} ' + "'" + "/>" +
 					'</td>' +
 					'</tr>'
 			);

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.assertEquals;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 
@@ -11,8 +9,6 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 
 public class PersonalDetailsServiceTest {
 
-
-	
 	@Test
 	public void shouldUserDAOToSavePersonalDetails(){
 		PersonalDetailDAO personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
@@ -24,6 +20,24 @@ public class PersonalDetailsServiceTest {
 		
 		detailsService.save(personalDetails);
 		EasyMock.verify(personalDetailDAOMock);
-		
+	}
+	
+	@Test
+	public void shouldSetPassportInformationToNullIfNotAvailable() {
+	    PersonalDetailDAO personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
+	    PersonalDetails personalDetailsMock = EasyMock.createMock(PersonalDetails.class);
+	    
+        PersonalDetailsService detailsService = new PersonalDetailsService(personalDetailDAOMock);
+        
+        EasyMock.expect(personalDetailsMock.getPassportAvailable()).andReturn(false);
+        EasyMock.expect(personalDetailsMock.getRequiresVisa()).andReturn(true);
+        personalDetailsMock.setPassportInformation(null);
+        personalDetailDAOMock.save(personalDetailsMock);
+
+        EasyMock.replay(personalDetailDAOMock, personalDetailsMock);
+        
+        detailsService.save(personalDetailsMock);
+        
+        EasyMock.verify(personalDetailDAOMock, personalDetailsMock);
 	}
 }

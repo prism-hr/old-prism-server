@@ -30,7 +30,6 @@ public class PersonalDetailsServiceTest {
         PersonalDetailsService detailsService = new PersonalDetailsService(personalDetailDAOMock);
         
         EasyMock.expect(personalDetailsMock.getPassportAvailable()).andReturn(false);
-        EasyMock.expect(personalDetailsMock.getRequiresVisa()).andReturn(true);
         personalDetailsMock.setPassportInformation(null);
         personalDetailDAOMock.save(personalDetailsMock);
 

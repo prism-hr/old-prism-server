@@ -170,22 +170,22 @@
       
       <div class="admin_row">
         <span class="admin_row_label">Passport Number</span>
-        <div class="field">${(applicationForm.personalDetails.passportNumber?html)!"Not Provided"}</div>                     
+        <div class="field">${(applicationForm.personalDetails.passportInformation.passportNumber?html)!"Not Provided"}</div>                     
       </div>
       
       <div class="admin_row">
         <span class="admin_row_label">Name on Passport</span>
-        <div class="field">${(applicationForm.personalDetails.nameOnPassport?html)!"Not Provided"}</div>                     
+        <div class="field">${(applicationForm.personalDetails.passportInformation.nameOnPassport?html)!"Not Provided"}</div>                     
       </div>
       
       <div class="admin_row">
         <span class="admin_row_label">Passport Issue Date</span>
-        <div class="field">${(applicationForm.personalDetails.passportIssueDate?string('dd MMM yyyy'))!"Not Provided"}</div>                     
+        <div class="field">${(applicationForm.personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!"Not Provided"}</div>                     
       </div>
       
       <div class="admin_row">
         <span class="admin_row_label">Passport Expiry Date</span>
-        <div class="field">${(applicationForm.personalDetails.passportExpiryDate?string('dd MMM yyyy'))!"Not Provided"}</div>                     
+        <div class="field">${(applicationForm.personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!"Not Provided"}</div>                     
       </div>
       
       <!-- Contact Details -->

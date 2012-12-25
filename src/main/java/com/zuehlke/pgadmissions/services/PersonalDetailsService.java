@@ -26,6 +26,7 @@ public class PersonalDetailsService {
     @Transactional
     public void save(PersonalDetails personalDetails) {
         if (BooleanUtils.isFalse(personalDetails.getPassportAvailable()) || BooleanUtils.isFalse(personalDetails.getRequiresVisa())) {
+            personalDetails.setPassportAvailable(false);
             personalDetails.setPassportInformation(null);
         }
         personalDetailDAO.save(personalDetails);

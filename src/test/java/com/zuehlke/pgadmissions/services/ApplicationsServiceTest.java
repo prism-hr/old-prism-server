@@ -130,7 +130,7 @@ public class ApplicationsServiceTest {
 		assertSame(newApplicationForm, returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(program, returnedForm.getProgram());
-		assertEquals("KLOP-2012-000024", returnedForm.getApplicationNumber());
+		assertEquals("KLOP-" + thisYear + "-000024", returnedForm.getApplicationNumber());
 		assertNull(returnedForm.getBatchDeadline());
 	}
 	
@@ -158,7 +158,7 @@ public class ApplicationsServiceTest {
 		assertSame(newApplicationForm, returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(program, returnedForm.getProgram());
-		assertEquals("KLOP-2012-000024", returnedForm.getApplicationNumber());
+		assertEquals("KLOP-" + thisYear + "-000024", returnedForm.getApplicationNumber());
 		assertEquals(batchDeadline, returnedForm.getBatchDeadline());
 		assertEquals(projectTitle, returnedForm.getProjectTitle());
 		assertEquals("http://" + researchHomePage, returnedForm.getResearchHomePage());

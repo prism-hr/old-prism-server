@@ -25,6 +25,10 @@ $(document).ready(function() {
 		disableOtherLanguageQualification();
 	}
     
+    if ($('#languageQualificationsTable tr').length > 0) {
+        disableLanguageQualifications();
+    }
+    
     isEnglishFirstLanguage();
     
     $("#acceptTermsPEDValue").val("NO");
@@ -234,7 +238,7 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
 	// Language Qualification Type Change
 	// -------------------------------------------------------------------------------
-	$('#qualificationType').on('change', function() {
+	$('#qualificationType').live('change', function() {
 		var selectedType = $('#qualificationType').val();
 		if (selectedType === "IELTS_ACADEMIC") {
 			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
@@ -265,8 +269,8 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
 	// Add Language Qualification
 	// -------------------------------------------------------------------------------
-	$('#addLanguageQualificationButton').on('click', function() {
-		$('#personalDetailsSection > div').append('<div class="ajax" />');
+	$('#addLanguageQualificationButton').live('click', function() {
+		//$('#personalDetailsSection > div').append('<div class="ajax" />');
         $.ajax({
         	type : 'POST',
             statusCode : {
@@ -292,7 +296,11 @@ $(document).ready(function() {
             	cacheBreaker: new Date().getTime()
             },
             success : function(data) {
-            	$('#personalDetailsSection').html(data);
+            	$('#languageQualification_div').html(data);
+            	bindDatePicker('#dateOfExamination');
+                addToolTips();
+                watchUpload($('#languageQualificationDocument'), ajaxLanguageQualificationDocumentDelete);
+                
             	var selectedType = $('#qualificationType').val();
         		if (selectedType === "IELTS_ACADEMIC") {
         			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').hide();
@@ -306,7 +314,9 @@ $(document).ready(function() {
         		
         		if ($('#languageQualification_div span.invalid').length <= 0) {
         		    disableLanguageQualifications();
-        		}        		
+        		} else {
+        		    enableLanguageQualifications();
+        		} 
             },
             complete : function() {
             }
@@ -320,7 +330,7 @@ $(document).ready(function() {
 		var $edit_row = $(this).parent().parent('tr');
 		currentRel = $edit_row.attr('rel');
 		
-		$('#personalDetailsSection > div').append('<div class="ajax" />');
+		//$('#personalDetailsSection > div').append('<div class="ajax" />');
 		$.ajax({
         	type : 'POST',
             statusCode : {
@@ -332,12 +342,16 @@ $(document).ready(function() {
             },
             url : "/pgadmissions/update/deleteLanguageQualifications",
             data : {
-            	languageQualificationId: $('input[name="lq_listId"]', $edit_row).val(),
+            	languageQualificationId: $('input[name="lq_listId"]',  $edit_row).val(),
             	applicationId: $('#applicationId').val(),
             	cacheBreaker: new Date().getTime()
             },
             success : function(data) {
-            	$('#personalDetailsSection').html(data);
+            	$('#languageQualification_div').html(data);
+            	bindDatePicker('#dateOfExamination');
+                addToolTips();
+                watchUpload($('#languageQualificationDocument'), ajaxLanguageQualificationDocumentDelete);
+                enableLanguageQualifications();
             },
             complete : function() {
             }
@@ -347,11 +361,10 @@ $(document).ready(function() {
 	// -------------------------------------------------------------------------------
 	// Edit Language Qualification
 	// -------------------------------------------------------------------------------
-	$("table#languageQualificationsTable").on("click", ".button-edit", function() {
+	$("#languageQualification_div").on("click", "a[name=\"editLanguageQualificationLink\"]", function() {
 		var $edit_row = $(this).parent().parent('tr');
 		currentRel = $edit_row.attr('rel');
-		
-		$('#personalDetailsSection > div').append('<div class="ajax" />');
+	
 		$.ajax({
         	type : 'POST',
             statusCode : {
@@ -368,7 +381,11 @@ $(document).ready(function() {
             	cacheBreaker: new Date().getTime()
             },
             success : function(data) {
-            	$('#personalDetailsSection').html(data);
+            	$('#languageQualification_div').html(data);
+            	bindDatePicker('#dateOfExamination');
+                addToolTips();
+                watchUpload($('#languageQualificationDocument'), ajaxLanguageQualificationDocumentDelete);
+                
             	var selectedType = $('#qualificationType').val();
                 if (selectedType === "IELTS_ACADEMIC") {
                     $('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
@@ -381,9 +398,12 @@ $(document).ready(function() {
                     $('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').val("");
                 }
                 
+                enableLanguageQualifications();
+                
             	$('table#languageQualificationsTable .button-edit').show();
         		$("#addLanguageQualificationButton").hide();
         		$("#updateLanguageQualificationButton").show();
+        		
             },
             complete : function() {
             }
@@ -399,8 +419,8 @@ $(document).ready(function() {
 	// -------------------------------------------------------------------------------
 	// Update Language Qualification
 	// -------------------------------------------------------------------------------
-	$('#updateLanguageQualificationButton').on('click', function() {
-		$('#personalDetailsSection > div').append('<div class="ajax" />');
+	$('#updateLanguageQualificationButton').live('click', function() {
+		//$('#personalDetailsSection > div').append('<div class="ajax" />');
         $.ajax({
         	type : 'POST',
             statusCode : {
@@ -427,7 +447,11 @@ $(document).ready(function() {
             	cacheBreaker: new Date().getTime()
             },
             success : function(data) {
-            	$('#personalDetailsSection').html(data);
+            	$('#languageQualification_div').html(data);
+            	bindDatePicker('#dateOfExamination');
+                addToolTips();
+                watchUpload($('#languageQualificationDocument'), ajaxLanguageQualificationDocumentDelete);
+                
             	var selectedType = $('#qualificationType').val();
         		if (selectedType === "IELTS_ACADEMIC") {
         			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
@@ -442,6 +466,7 @@ $(document).ready(function() {
         		if ($('#languageQualification_div span.invalid').length <= 0) {
         		    disableLanguageQualifications();
                 } else {
+                    enableLanguageQualifications();
                 	$("#updateLanguageQualificationButton").show();
                 }
             },
@@ -453,7 +478,7 @@ $(document).ready(function() {
 
 function ajaxLanguageQualificationDocumentDelete() {
 	if ($('#document_LANGUAGE_QUALIFICATION') && $('#document_LANGUAGE_QUALIFICATION').val() && $('#document_LANGUAGE_QUALIFICATION').val() != '') {
-		$('#personalDetailsSection > div').append('<div class="ajax" />');
+		//$('#personalDetailsSection > div').append('<div class="ajax" />');
 		$.ajax({
 			type : 'POST',
 			statusCode : {
@@ -470,7 +495,10 @@ function ajaxLanguageQualificationDocumentDelete() {
 				cacheBreaker: new Date().getTime()
 			},
 			success : function(data) {
-				$('#personalDetailsSection').html(data);				
+				$('#languageQualification_div').html(data);
+				bindDatePicker('#dateOfExamination');
+                addToolTips();
+                watchUpload($('#languageQualificationDocument'), ajaxLanguageQualificationDocumentDelete);
 			},
 			complete : function() {
 			}
@@ -504,7 +532,10 @@ function ajaxDeleteAllLanguageQualifications() {
         url : "/pgadmissions/update/deleteAllLanguageQualifications",
         data : postData,
         success : function(data) {
-            $('#personalDetailsSection').html(data);
+            $('#languageQualification_div').html(data);
+            bindDatePicker('#dateOfExamination');
+            addToolTips();
+            watchUpload($('#languageQualificationDocument'), ajaxLanguageQualificationDocumentDelete);
         },
         complete : function() {
         }
@@ -752,25 +783,3 @@ function postPersonalDetailsData(message) {
         }
     });
 }
-
-/*
-Element.addMethods({
-    redraw: function(element) {
-        element = $(element);
-        var n = document.createTextNode(' ');
-        element.appendChild(n);
-        (function(){n.parentNode.removeChild(n)}).defer();
-        return element;
-    }
-});
-*/
-
-(function($){
-    $.fn.redraw = function(){
-        return $(this).each(function(){
-            var n = document.createTextNode(' ');
-            $(this).append(n);
-            setTimeout(function(){n.parentNode.removeChild(n)}, 0);
-        });
-    }
-})(jQuery)

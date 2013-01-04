@@ -61,6 +61,8 @@ import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 public class PersonalDetailsController {
 
     private static final String STUDENTS_FORM_PERSONAL_DETAILS_VIEW = "/private/pgStudents/form/components/personal_details";
+    private static final String STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW = "/private/pgStudents/form/components/personal_details_language_qualifications";
+    
     private final ApplicationsService applicationsService;
     private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
     private final DatePropertyEditor datePropertyEditor;
@@ -204,12 +206,12 @@ public class PersonalDetailsController {
         }
         
         if (result.hasErrors()) {
-            return PersonalDetailsController.STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+            return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
         }
         
         personalDetails.addLanguageQualification(languageQualification);
         model.addAttribute("languageQualification", new LanguageQualification());
-        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+        return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
     }
 
     @RequestMapping(value = "/getLanguageQualifications", method = RequestMethod.POST)
@@ -225,7 +227,7 @@ public class PersonalDetailsController {
             model.addAttribute("languageQualificationId", languageQualificationId);
             model.addAttribute("languageQualification", qualification);
         }
-        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+        return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
     }
     
     @RequestMapping(value = "/deleteLanguageQualifications", method = RequestMethod.POST)
@@ -241,7 +243,7 @@ public class PersonalDetailsController {
             qualification.setLanguageQualificationDocument(null);
         }
         model.addAttribute("languageQualification", new LanguageQualification());
-        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+        return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
     }
     
     @RequestMapping(value = "/updateLanguageQualifications", method = RequestMethod.POST)
@@ -255,7 +257,7 @@ public class PersonalDetailsController {
         if (result.hasErrors()) {
             model.addAttribute("languageQualificationId", languageQualificationId);
             model.addAttribute("languageQualification", languageQualification);
-            return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+            return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
         }
         
         if (StringUtils.isNotBlank(languageQualificationId)) {
@@ -265,7 +267,7 @@ public class PersonalDetailsController {
             personalDetails.addLanguageQualification(languageQualification);
             model.addAttribute("languageQualification", new LanguageQualification());
         }
-        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+        return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
     }
     
     @RequestMapping(value = "/deleteLanguageQualificationsDocument", method = RequestMethod.POST)
@@ -281,7 +283,7 @@ public class PersonalDetailsController {
             languageQualification.setLanguageQualificationDocument(null);
         }
         model.addAttribute("languageQualification", new LanguageQualification());
-        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+        return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
     }
     
     @RequestMapping(value = "/deleteAllLanguageQualifications", method = RequestMethod.POST)
@@ -302,7 +304,7 @@ public class PersonalDetailsController {
         personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
         personalDetails.getLanguageQualifications().clear();
         model.addAttribute("languageQualification", new LanguageQualification());
-        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+        return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
     }
     
     private RegisteredUser getCurrentUser() {

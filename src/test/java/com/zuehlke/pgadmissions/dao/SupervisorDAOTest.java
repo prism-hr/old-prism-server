@@ -37,7 +37,7 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldGetSupervisorWithId(){
-		Supervisor supervisor = new SupervisorBuilder().id(1).toSupervisor();
+		Supervisor supervisor = new SupervisorBuilder().id(1).build();
 		sessionFactory.getCurrentSession().save(supervisor);
 		flushAndClearSession();		
 
@@ -48,9 +48,9 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnSupervisorIfLastNotifiedIsNull() {
 		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
-		Supervisor supervisor = new SupervisorBuilder().user(user).toSupervisor();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).toApprovalRound();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+		Supervisor supervisor = new SupervisorBuilder().user(user).build();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
 		application.setLatestApprovalRound(approvalRound);
 		save(application, supervisor, approvalRound);
 		flushAndClearSession();
@@ -62,9 +62,9 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnSupervisorInLastNotifiedIsNotNull() {
 		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
-		Supervisor supervisor = new SupervisorBuilder().user(user).lastNotified(new Date()).toSupervisor();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).toApprovalRound();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+		Supervisor supervisor = new SupervisorBuilder().user(user).lastNotified(new Date()).build();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
 		application.setLatestApprovalRound(approvalRound);
 		save(application, supervisor, approvalRound);
 		flushAndClearSession();
@@ -76,9 +76,9 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldNotReturnSupervisorIfApplicationNotInApproved() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
-		Supervisor supervisor = new SupervisorBuilder().user(user).toSupervisor();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).toApprovalRound();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).build();
+		Supervisor supervisor = new SupervisorBuilder().user(user).build();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
 		application.setLatestApprovalRound(approvalRound);
 		save(application, supervisor, approvalRound);
 		flushAndClearSession();
@@ -91,9 +91,9 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnSupervisorifNotSupervisorOfLatestApprovalRound() {
 		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
-		Supervisor supervisor = new SupervisorBuilder().user(user).toSupervisor();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).toApprovalRound();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+		Supervisor supervisor = new SupervisorBuilder().user(user).build();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
 		application.getApprovalRounds().add(approvalRound);
 		save(application, supervisor, approvalRound);
 		flushAndClearSession();
@@ -107,8 +107,8 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 	public void initialise() {
 		dao = new SupervisorDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		save(user, program);
 		flushAndClearSession();
 	}

@@ -47,10 +47,10 @@ public class RegistryMailSenderTest {
 
 	@Test
 	public void shouldReturnModelWithApplicationFormAndSingleRecipient() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").build();
 		List<Person> registryContacts = new ArrayList<Person>();
-		registryContacts.add(new PersonBuilder().firstname("FirstName").toPerson());
+		registryContacts.add(new PersonBuilder().firstname("FirstName").build());
 
 		Map<String, Object> model = registryMailSender.createModel(applicationForm, currentAdminUser, registryContacts );
 		assertEquals(applicationForm, model.get("application"));
@@ -62,11 +62,11 @@ public class RegistryMailSenderTest {
 
 	@Test
 	public void shouldReturnModelWithApplicationFormAndMultipleRecipient() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").build();
 		List<Person> registryContacts = new ArrayList<Person>();
-		registryContacts.add(new PersonBuilder().firstname("FirstName").toPerson());
-		registryContacts.add(new PersonBuilder().firstname("Hui").toPerson());
+		registryContacts.add(new PersonBuilder().firstname("FirstName").build());
+		registryContacts.add(new PersonBuilder().firstname("Hui").build());
 
 		Map<String, Object> model = registryMailSender.createModel(applicationForm, currentAdminUser, registryContacts );
 
@@ -89,13 +89,13 @@ public class RegistryMailSenderTest {
 
 		};
 
-		Person registryUser1 = new PersonBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").toPerson();
-		Person registryUser2 = new PersonBuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").toPerson();
+		Person registryUser1 = new PersonBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").build();
+		Person registryUser2 = new PersonBuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").build();
 		List<Person> registryContacts = Arrays.asList(registryUser1, registryUser2);	
 
-		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().adminRequestedRegistry(currentAdminUser).id(1).program(new ProgramBuilder().title("program name").toProgram()).applicationNumber("application number")
-				.toApplicationForm();
+		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().adminRequestedRegistry(currentAdminUser).id(1).program(new ProgramBuilder().title("program name").build()).applicationNumber("application number")
+				.build();
 
 		InternetAddress toAddress1 = new InternetAddress("jones@test.com", "Bob Jones");
 		InternetAddress toAddress2 = new InternetAddress("peters@test.com", "Karla Peters");

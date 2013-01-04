@@ -19,7 +19,7 @@ public class ProgramPropertyEditorTest {
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
-		Program program = new ProgramBuilder().id(1).toProgram();
+		Program program = new ProgramBuilder().id(1).build();
 		EasyMock.expect(programServiceMock.getProgramByCode("ABC")).andReturn(program);
 		EasyMock.replay(programServiceMock);
 		
@@ -56,13 +56,13 @@ public class ProgramPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnNullIfCodeValueIsNull(){			
-		editor.setValue(new ProgramBuilder().toProgram());
+		editor.setValue(new ProgramBuilder().build());
 		assertNull(editor.getAsText());
 	}
 	
 	@Test	
 	public void shouldReturnIdAsString(){			
-		editor.setValue(new ProgramBuilder().id(5).code("ABC").toProgram());
+		editor.setValue(new ProgramBuilder().id(5).code("ABC").build());
 		EasyMock.replay(programServiceMock);
 		
 		assertEquals("ABC", editor.getAsText());

@@ -22,19 +22,19 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 public class ValidationCommentMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadValidationComment() {
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).build();
 		save(program,  user, applicationForm);
 
 		flushAndClearSession();
 
 		ValidationComment validationComment = new ValidationCommentBuilder().application(applicationForm).comment("hi")
 				.englishCompentencyOk(ValidationQuestionOptions.UNSURE).homeOrOverseas(HomeOrOverseas.HOME).qualifiedForPhd(ValidationQuestionOptions.NO)
-				.type(CommentType.VALIDATION).user(user).toValidationComment();
+				.type(CommentType.VALIDATION).user(user).build();
 		save(validationComment);
 		assertNotNull(validationComment.getId());
 		

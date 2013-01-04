@@ -18,7 +18,7 @@ public class ComingSoonControllerTest {
 	
 	@Test
 	public void shoulReturnCurrentUserAsUser(){
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 		

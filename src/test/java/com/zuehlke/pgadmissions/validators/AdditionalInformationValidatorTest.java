@@ -29,7 +29,7 @@ public class AdditionalInformationValidatorTest {
 
 	@Before
 	public void setup() {
-		info = new AdditionalInformationBuilder().convictionsText("blabla").setConvictions(true).applicationForm(new ApplicationFormBuilder().id(8).toApplicationForm()).toAdditionalInformation();
+		info = new AdditionalInformationBuilder().convictionsText("blabla").setConvictions(true).applicationForm(new ApplicationFormBuilder().id(8).build()).build();
 		infoValidator = new AdditionalInformationValidator();
 		infoValidator.setValidator((javax.validation.Validator) validator);
 	}

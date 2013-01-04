@@ -23,7 +23,7 @@ public class RejectReasonPropertyEditorTest {
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-		RejectReason rejectReason = new RejectReasonBuilder().id(1).toRejectReason();
+		RejectReason rejectReason = new RejectReasonBuilder().id(1).build();
 		EasyMock.expect(rejectServiceMock.getRejectReasonById(1)).andReturn(rejectReason);
 		EasyMock.replay(rejectServiceMock,encryptionHelperMock);
 		
@@ -58,7 +58,7 @@ public class RejectReasonPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnNullIfValueIdIsNull(){			
-		editor.setValue(new RejectReasonBuilder().toRejectReason());
+		editor.setValue(new RejectReasonBuilder().build());
 		assertNull(editor.getAsText());
 	}
 	
@@ -66,7 +66,7 @@ public class RejectReasonPropertyEditorTest {
 	public void shouldReturnEncryptedIdAsString(){
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.replay(encryptionHelperMock);
-		editor.setValue(new RejectReasonBuilder().id(5).toRejectReason());
+		editor.setValue(new RejectReasonBuilder().id(5).build());
 		assertEquals("bob", editor.getAsText());
 	}
 	

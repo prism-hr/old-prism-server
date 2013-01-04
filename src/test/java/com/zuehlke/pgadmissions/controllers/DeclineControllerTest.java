@@ -32,7 +32,7 @@ public class DeclineControllerTest {
 
 	@Test
 	public void shouldGetReviewerFromId() {
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(5).toUser();
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(5).build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(reviewer);
 		EasyMock.replay(userServiceMock);
 		RegisteredUser returnedReviewer = controller.getReviewer("5");
@@ -41,7 +41,7 @@ public class DeclineControllerTest {
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUsernotFound() {
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(5).toUser();
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(5).build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(null);
 		EasyMock.replay(userServiceMock);
 		RegisteredUser returnedReviewer = controller.getReviewer("5");
@@ -50,7 +50,7 @@ public class DeclineControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromId() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock);
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -59,7 +59,7 @@ public class DeclineControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationNotExists() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -69,7 +69,7 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldGetRefereeFromActivationCodeAndApplicationForm() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
 		Referee referee = new RefereeBuilder().id(5).toReferee();
 		EasyMock.expect(userMock.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
@@ -80,7 +80,7 @@ public class DeclineControllerTest {
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserDoesNotExists() {		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(null);
 		EasyMock.replay(userServiceMock);
 		controller.getReferee("5", applicationForm);
@@ -90,7 +90,7 @@ public class DeclineControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfRefereeNotExists() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
 		EasyMock.expect(userMock.getRefereeForApplicationForm(applicationForm)).andReturn(null);
 		EasyMock.replay(userServiceMock, userMock);
@@ -100,7 +100,7 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldDeclineReviewAndReturnMessageView() {
 		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public RegisteredUser getReviewer(String activationCode){
@@ -129,7 +129,7 @@ public class DeclineControllerTest {
 	@Test
     public void shouldReturnConfirmationDialogForReview() {
         final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
         controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
             @Override
             public RegisteredUser getReviewer(String activationCode){
@@ -153,7 +153,7 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldNotDeclineReviewButStillReturnMessageViewIfUserNotReviewerInLatestRoundOfReviews() {
 		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public RegisteredUser getReviewer(String activationCode){
@@ -182,7 +182,7 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldNotDeclineReviewButStillReturnMessageViewIfUserApplicationNotInReview() {
 		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public RegisteredUser getReviewer(String activationCode){
@@ -210,7 +210,7 @@ public class DeclineControllerTest {
 
 	@Test
 	public void shouldReturnConfirmationDialogForReference() {
-	    final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).toApplicationForm();
+	    final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).build();
         final Referee referee = new RefereeBuilder().application(applicationForm).id(5).toReferee();
         controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
             @Override
@@ -236,7 +236,7 @@ public class DeclineControllerTest {
 	
 	@Test
 	public void shouldDeclineReferenceAndReturnMessageView() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).build();
 		final RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		final Referee referee = new RefereeBuilder().application(applicationForm).id(5).toReferee();
 		

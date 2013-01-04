@@ -136,7 +136,7 @@ public class RefereeBuilder {
 
 	public Referee toReferee() {
 		Referee referee = new Referee();
-		Address address = new AddressBuilder().address1(address1).address2(address2).address3(address3).address4(address4).country(addressCountry).toAddress();
+		Address address = new AddressBuilder().address1(address1).address2(address2).address3(address3).address4(address4).country(addressCountry).build();
 		referee.setAddressLocation(address);
 		referee.setApplication(application);
 		referee.setEmail(email);

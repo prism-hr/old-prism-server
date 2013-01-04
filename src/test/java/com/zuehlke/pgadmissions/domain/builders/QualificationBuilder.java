@@ -27,6 +27,11 @@ public class QualificationBuilder {
     private String otherQualificationInstitution;
     private String qualificationInstitutionCode;
     
+    public QualificationBuilder id(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
     public QualificationBuilder otherInstitution(String name) {
         this.otherQualificationInstitution = name;
         return this;
@@ -78,7 +83,6 @@ public class QualificationBuilder {
 		return this;
 	}
 	
-
 	public QualificationBuilder languageOfStudy(String q_language_of_study) {
 		this.q_language_of_study = q_language_of_study;
 		return this;
@@ -88,6 +92,7 @@ public class QualificationBuilder {
 		this.q_type = q_type;
 		return this;
 	}
+	
 	public QualificationBuilder grade(String q_grade) {
 		this.q_grade = q_grade;
 		return this;
@@ -98,7 +103,7 @@ public class QualificationBuilder {
 		return this;
 	}
 
-	public Qualification toQualification() {
+	public Qualification build() {
 		Qualification qualification = new Qualification();
 		qualification.setApplication(application);
 		qualification.setQualificationAwardDate(q_award_date);
@@ -117,10 +122,4 @@ public class QualificationBuilder {
 		qualification.setQualificationInstitutionCode(qualificationInstitutionCode);
 		return qualification;
 	}
-
-	public QualificationBuilder id(Integer id) {
-		this.id = id;
-		return this;
-	}
-
 }

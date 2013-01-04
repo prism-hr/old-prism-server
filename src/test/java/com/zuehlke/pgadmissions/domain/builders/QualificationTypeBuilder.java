@@ -32,7 +32,7 @@ public class QualificationTypeBuilder {
 	    return this;
 	}
 	
-	public QualificationType toQualificationTitle(){
+	public QualificationType build() {
 	    QualificationType title = new QualificationType();
 	    title.setId(id);
 	    title.setName(name);

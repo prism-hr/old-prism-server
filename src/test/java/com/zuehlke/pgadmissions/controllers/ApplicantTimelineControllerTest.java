@@ -22,8 +22,8 @@ public class ApplicantTimelineControllerTest {
 	
 	@Test
 	public void shouldGetApplicationFormFromId() {
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(99).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicant(currentUser).toApplicationForm();		
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(99).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicant(currentUser).build();		
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);		
 		EasyMock.replay(userServiceMock);
 
@@ -43,7 +43,7 @@ public class ApplicantTimelineControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfCurrentUserIsNotApplicantOfForm() {
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicant(new RegisteredUserBuilder().id(4).toUser()).toApplicationForm();		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicant(new RegisteredUserBuilder().id(4).build()).build();		
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);		
 		EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
 		EasyMock.replay(currentUser, userServiceMock);

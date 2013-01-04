@@ -38,9 +38,9 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test
 	public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
-		Role roleOne = new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).toRole();
-		Role roleTwo = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).toRole();
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").roles(roleOne, roleTwo).id(1).toUser();
+		Role roleOne = new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).build();
+		Role roleTwo = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).build();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").roles(roleOne, roleTwo).id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
@@ -61,7 +61,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = BadCredentialsException.class)
 	public void shouldThrowBadCredentialsExceptionForMismatchingPassword() throws NoSuchAlgorithmException {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.replay(userDetailsServiceMock);
 
@@ -91,7 +91,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = DisabledException.class)
 	public void shouldThrowDisabledExceptionForDisabledAccount() {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").enabled(false).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").enabled(false).id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
@@ -101,7 +101,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = AccountExpiredException.class)
 	public void shouldThrowAccountExpiredExceptionForExpiredAccount() {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").accountNonExpired(false).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").accountNonExpired(false).id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
@@ -111,7 +111,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = CredentialsExpiredException.class)
 	public void shouldThrowCredentialsExpiredExceptionForExpiredCredentials() throws NoSuchAlgorithmException {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").credentialsNonExpired(false).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").credentialsNonExpired(false).id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
 		EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
@@ -121,7 +121,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = LockedException.class)
 	public void shouldThrowLockedExceptionForLockedAccount() throws NoSuchAlgorithmException {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").accountNonLocked(false).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").accountNonLocked(false).id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);

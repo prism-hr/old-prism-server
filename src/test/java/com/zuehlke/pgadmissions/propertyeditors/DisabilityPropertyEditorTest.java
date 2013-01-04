@@ -28,7 +28,7 @@ public class DisabilityPropertyEditorTest {
 	@Test
 	public void shouldLoadByIdAndSetAsValue() {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-		Disability disability = new DisabilityBuilder().id(1).toDisability();
+		Disability disability = new DisabilityBuilder().id(1).build();
 		EasyMock.expect(disabilityServiceMock.getDisabilityById(1)).andReturn(disability);
 		EasyMock.replay(disabilityServiceMock, encryptionHelperMock);
 
@@ -63,7 +63,7 @@ public class DisabilityPropertyEditorTest {
 
 	@Test
 	public void shouldReturnNullIfValueIdIsNull() {
-		editor.setValue(new DisabilityBuilder().toDisability());
+		editor.setValue(new DisabilityBuilder().build());
 		assertNull(editor.getAsText());
 	}
 
@@ -71,7 +71,7 @@ public class DisabilityPropertyEditorTest {
 	public void shouldReturnEncryptedIdAsString() {
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.replay(encryptionHelperMock);
-		editor.setValue(new DisabilityBuilder().id(5).toDisability());
+		editor.setValue(new DisabilityBuilder().id(5).build());
 		assertEquals("bob", editor.getAsText());
 	}
 }

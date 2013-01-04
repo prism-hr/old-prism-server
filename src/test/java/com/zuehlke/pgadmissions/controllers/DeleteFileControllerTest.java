@@ -35,7 +35,7 @@ public class DeleteFileControllerTest {
 	@Test
 	public void shouldGetDocumentAnapplicationAndDeletePersonalStatement(){			
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("applicationNumber")).andReturn(applicationForm);
 	
 		documentServiceMock.deletePersonalStatement(applicationForm);
@@ -49,7 +49,7 @@ public class DeleteFileControllerTest {
 	@Test
 	public void shouldGetDocumentAndapplicationAndDeleteCv(){			
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("applicationNumber")).andReturn(applicationForm);
 	
 		documentServiceMock.deleteCV(applicationForm);
@@ -62,7 +62,7 @@ public class DeleteFileControllerTest {
 	@Test
 	public void shouldGetQualificationAndDelteProofOfAward(){			
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("applicationNumber")).andReturn(applicationForm);
 	
 		documentServiceMock.deleteCV(applicationForm);
@@ -76,7 +76,7 @@ public class DeleteFileControllerTest {
 	@Test
 	public void shouldGetDocumentFromServiceAndDeleteInAsyncDelete(){		
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-		Document document = new DocumentBuilder().uploadedBy(currentUser).content("aaaa".getBytes()).id(1).toDocument();
+		Document document = new DocumentBuilder().uploadedBy(currentUser).content("aaaa".getBytes()).id(1).build();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
 		EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
 		documentServiceMock.delete(document);
@@ -93,7 +93,7 @@ public class DeleteFileControllerTest {
 	public void shouldNOTDeleteDocumentIfUserIsNotUploadingUser(){		
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
-		Document document = new DocumentBuilder().uploadedBy(new RegisteredUserBuilder().id(8).toUser()).content("aaaa".getBytes()).id(1).toDocument();
+		Document document = new DocumentBuilder().uploadedBy(new RegisteredUserBuilder().id(8).build()).content("aaaa".getBytes()).id(1).build();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);		
 		EasyMock.replay(documentServiceMock, encryptionHelperMock, currentUser);
 		ModelAndView modelAndView = controller.asyncdelete("encryptedId");

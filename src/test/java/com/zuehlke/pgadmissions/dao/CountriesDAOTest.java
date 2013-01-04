@@ -16,7 +16,7 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerException() {
         CountriesDAO countriesDAO = new CountriesDAO();
-        Country country = new CountryBuilder().id(1).name("ZZZZZZ").enabled(true).toCountry();
+        Country country = new CountryBuilder().id(1).name("ZZZZZZ").enabled(true).build();
         countriesDAO.getCountryById(country.getId());
     }
 
@@ -24,8 +24,8 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetAllCountriesInAlhphabeticalOrder() {
         BigInteger numberOfCoutnries = (BigInteger) sessionFactory.getCurrentSession()
                 .createSQLQuery("select count(*) from COUNTRIES").uniqueResult();
-        Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).code("AA").name("AAAAAAAA").toCountry();
+        Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").build();
+        Country country2 = new CountryBuilder().enabled(true).code("AA").name("AAAAAAAA").build();
         save(country1, country2);
         flushAndClearSession();
         CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
@@ -38,8 +38,8 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetCountryById() {
-        Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).code("AA").name("mmmmmm").toCountry();
+        Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").build();
+        Country country2 = new CountryBuilder().enabled(true).code("AA").name("mmmmmm").build();
 
         save(country1, country2);
         flushAndClearSession();
@@ -51,9 +51,9 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetCountryByCode() {
-        Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).code("AA").name("mmmmmm").toCountry();
-        Country country3 = new CountryBuilder().enabled(false).code("AA").name("MMMMMM").toCountry();
+        Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").build();
+        Country country2 = new CountryBuilder().enabled(true).code("AA").name("mmmmmm").build();
+        Country country3 = new CountryBuilder().enabled(false).code("AA").name("MMMMMM").build();
 
         save(country1, country2, country3);
         flushAndClearSession();
@@ -67,9 +67,9 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetAllEnabledCountries() {
         BigInteger numberOfCoutnries = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from COUNTRIES WHERE enabled = true").uniqueResult();
         
-        Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).code("AA").name("mmmmmm").toCountry();
-        Country country3 = new CountryBuilder().enabled(false).code("AA").name("MMMMMM").toCountry();
+        Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").build();
+        Country country2 = new CountryBuilder().enabled(true).code("AA").name("mmmmmm").build();
+        Country country3 = new CountryBuilder().enabled(false).code("AA").name("MMMMMM").build();
 
         save(country1, country2, country3);
         flushAndClearSession();

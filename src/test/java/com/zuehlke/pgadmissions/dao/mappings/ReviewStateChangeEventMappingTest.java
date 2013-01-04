@@ -34,13 +34,13 @@ public class ReviewStateChangeEventMappingTest extends AutomaticRollbackTestCase
 	@Test
 	public void shouldSaveAndLoadReviewStateChangeEvent() throws ParseException {
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("otheremail@test.com").username("username1")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(user);
 		flushAndClearSession();
 		
 		ApplicationFormStatus newStatus = ApplicationFormStatus.APPROVAL;
 		Date eventDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
-		Event event = new ReviewStateChangeEventBuilder().newStatus(newStatus).date(eventDate).user(user).reviewRound(reviewRound).toReviewStateChangeEvent();
+		Event event = new ReviewStateChangeEventBuilder().newStatus(newStatus).date(eventDate).user(user).reviewRound(reviewRound).build();
 		sessionFactory.getCurrentSession().saveOrUpdate(event);
 		assertNotNull(event.getId());
 		ReviewStateChangeEvent reloadedEvent = (ReviewStateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, event.getId());
@@ -59,13 +59,13 @@ public class ReviewStateChangeEventMappingTest extends AutomaticRollbackTestCase
 	@Before
 	public void setup() {
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();		
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();		
 		
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();
-		reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(user).toReviewer()).application(application).toReviewRound();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+		reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(user).build()).application(application).build();
 		
 		
 		save(user, program,  application, reviewRound);

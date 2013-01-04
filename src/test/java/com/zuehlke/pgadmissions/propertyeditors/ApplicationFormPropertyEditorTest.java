@@ -19,7 +19,7 @@ public class ApplicationFormPropertyEditorTest {
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		
@@ -44,7 +44,7 @@ public class ApplicationFormPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnApplicationNumbersAsString(){			
-		editor.setValue(new ApplicationFormBuilder().applicationNumber("5").toApplicationForm());
+		editor.setValue(new ApplicationFormBuilder().applicationNumber("5").build());
 		assertEquals("5", editor.getAsText());
 	}
 	

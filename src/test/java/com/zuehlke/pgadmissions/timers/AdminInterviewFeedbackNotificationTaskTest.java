@@ -40,14 +40,14 @@ public class AdminInterviewFeedbackNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(8).toUser();
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(8).build();
 		
-		Program program = new ProgramBuilder().administrators(admin1).id(1).toProgram();
-		ApplicationForm form = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		Program program = new ProgramBuilder().administrators(admin1).id(1).build();
+		ApplicationForm form = new ApplicationFormBuilder().program(program).id(1).build();
 		
-		RegisteredUser interviewer = new RegisteredUserBuilder().id(9).toUser();
-		InterviewComment interviewComment1 = new InterviewCommentBuilder().user(interviewer).application(form).id(1).toInterviewComment();
-		InterviewComment interviewComment2 = new InterviewCommentBuilder().user(interviewer).application(form).id(2).toInterviewComment();
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(9).build();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().user(interviewer).application(form).id(1).build();
+		InterviewComment interviewComment2 = new InterviewCommentBuilder().user(interviewer).application(form).id(2).build();
 		sessionMock.refresh(interviewComment1);
 		sessionMock.refresh(interviewComment2);
 		EasyMock.expect(commentServiceMock.getInterviewCommentsDueNotification()).andReturn(Arrays.asList(interviewComment1, interviewComment2));

@@ -17,7 +17,7 @@ public class ReferenceServiceTest {
 
 	@Test
 	public void shouldGetReferenceFromDAO() {
-		ReferenceComment reference = new ReferenceCommentBuilder().id(1).toReferenceComment();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).build();
 		EasyMock.expect(referenceDAOMock.getReferenceById(1)).andReturn(reference);
 		EasyMock.replay(referenceDAOMock);
 		ReferenceComment returnedReference = referenceService.getReferenceById(1);

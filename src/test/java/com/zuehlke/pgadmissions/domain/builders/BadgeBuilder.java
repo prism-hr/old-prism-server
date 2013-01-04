@@ -7,11 +7,11 @@ import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
 
 public class BadgeBuilder {
+
     private Integer id;
     private Program program;
     private String projectTitle;
     private Date closingDate;
-    
     
     public BadgeBuilder id(Integer id){
         this.id = id;
@@ -34,7 +34,7 @@ public class BadgeBuilder {
         return this;
     }
     
-    public Badge toBadge(){
+    public Badge build(){
         Badge badge = new Badge();
         badge.setId(id);
         badge.setProgram(program);

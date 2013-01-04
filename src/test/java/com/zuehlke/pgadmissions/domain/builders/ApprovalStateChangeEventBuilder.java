@@ -4,8 +4,8 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ApprovalStateChangeEventBuilder {
@@ -15,7 +15,6 @@ public class ApprovalStateChangeEventBuilder {
 	private ApplicationFormStatus newStatus;
 	private RegisteredUser user;
 	private ApprovalRound approvalRound;
-	
 	
 	public ApprovalStateChangeEventBuilder approvalRound(ApprovalRound approvalRound){
 		this.approvalRound = approvalRound;
@@ -42,7 +41,7 @@ public class ApprovalStateChangeEventBuilder {
 		return this;
 	}
 	
-	public StateChangeEvent toApprovalStateChangeEvent(){
+	public StateChangeEvent build(){
 		ApprovalStateChangeEvent event = new ApprovalStateChangeEvent();
 		event.setId(id);
 		event.setDate(eventDate);

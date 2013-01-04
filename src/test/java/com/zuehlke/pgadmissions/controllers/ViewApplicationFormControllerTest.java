@@ -35,7 +35,7 @@ public class ViewApplicationFormControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowExceptionIfCurrentCannotSeeApplicatioForm() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, userMock);
@@ -45,7 +45,7 @@ public class ViewApplicationFormControllerTest {
 
 	@Test
 	public void shouldGetApplicationFormViewWithApplicationPageModelForApplicationApplicant() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).build();
 		String uploadErrorCode = "abc";
 		String view = "def";
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
@@ -65,7 +65,7 @@ public class ViewApplicationFormControllerTest {
 
 	@Test
 	public void shouldGetAdminApplicationFormViewWithApplicationPageModelForApplicationApplicantOfEndStateApplicationFOrm() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).status(ApplicationFormStatus.REJECTED).build();
 		String uploadErrorCode = "abc";
 		String view = "def";
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
@@ -85,7 +85,7 @@ public class ViewApplicationFormControllerTest {
 
 	@Test
 	public void shouldGetApplicationFormViewWithApplicationPageModelForStaff() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().id(100).toUser()).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().id(100).build()).build();
 		String uploadErrorCode = "abc";
 		String view = "def";
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);

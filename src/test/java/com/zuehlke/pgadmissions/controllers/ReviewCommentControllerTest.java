@@ -42,8 +42,8 @@ public class ReviewCommentControllerTest {
 	
 	@Test
 	public void shouldGetApplicationFormFromId() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(7).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -66,8 +66,8 @@ public class ReviewCommentControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotReviewerOfForm() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(7).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -85,8 +85,8 @@ public class ReviewCommentControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(7).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -107,7 +107,7 @@ public class ReviewCommentControllerTest {
 	
 	@Test
 	public void shouldReturnCurrentUser(){
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(8).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 		assertEquals(currentUser, controller.getUser());
@@ -115,10 +115,10 @@ public class ReviewCommentControllerTest {
 	
 	@Test
 	public void shouldCreateNewReviewCommentForApplicationForm(){
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		final RegisteredUser currentUser =EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		Reviewer reviewer = new ReviewerBuilder().id(5).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().id(5).build();
 		EasyMock.expect(currentUser.getReviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(reviewer));
 		EasyMock.replay(userServiceMock, currentUser);
 		controller = new  ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock, documentPropertyEditorMock){
@@ -159,7 +159,7 @@ public class ReviewCommentControllerTest {
 	@Test
 	public void shouldReturnToCommentsPageIfErrors(){
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ReviewComment comment = new ReviewCommentBuilder().application(new ApplicationForm()).toReviewComment();
+		ReviewComment comment = new ReviewCommentBuilder().application(new ApplicationForm()).build();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock);
 		assertEquals("private/staff/reviewer/feedback/reviewcomment", controller.addComment(comment,errorsMock));
@@ -168,7 +168,7 @@ public class ReviewCommentControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowResourceNotFoundIfApplicationAlreadyDecided(){
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ReviewComment comment = new ReviewCommentBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm()).toReviewComment();
+		ReviewComment comment = new ReviewCommentBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build()).build();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock);
 		controller.addComment(comment,errorsMock);
@@ -176,8 +176,8 @@ public class ReviewCommentControllerTest {
 	
 	@Test
 	public void shouldSaveCommentAndRedirectApplicationsPagefNoErrors(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).toApplicationForm();
-		ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).toReviewComment();		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).build();
+		ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).build();		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(comment);

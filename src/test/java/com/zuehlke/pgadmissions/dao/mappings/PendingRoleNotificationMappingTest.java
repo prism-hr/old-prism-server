@@ -29,7 +29,7 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 	@Test
 	public void shouldSaveAndLoadPendingRoleNotification() throws ParseException {
 
-		PendingRoleNotification notificationRecord = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).addedByUser(creatingUser).toPendingRoleNotification();
+		PendingRoleNotification notificationRecord = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).addedByUser(creatingUser).build();
 		sessionFactory.getCurrentSession().saveOrUpdate(notificationRecord);
 		assertNotNull(notificationRecord.getId());
 		PendingRoleNotification reloadedPendingRoleNotification = (PendingRoleNotification) sessionFactory.getCurrentSession().get(
@@ -51,11 +51,11 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 	@Test
 	public void shouldLoadUserForPendingRoleNotification() throws ParseException {
 
-		PendingRoleNotification pendingNotification = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).toPendingRoleNotification();
+		PendingRoleNotification pendingNotification = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
 		sessionFactory.getCurrentSession().saveOrUpdate(pendingNotification);
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingNotification).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingNotification).build();
 		save(user);
 		flushAndClearSession();
 		PendingRoleNotification reloadedRecord = (PendingRoleNotification) sessionFactory.getCurrentSession().get(PendingRoleNotification.class,
@@ -71,11 +71,11 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
 		reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
 
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		save(program);
 		
 		creatingUser = new RegisteredUserBuilder().firstName("Hanna").lastName("Doe").email("email@test.com").username("username2").password("password2")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(creatingUser);
 		flushAndClearSession();
 	}

@@ -2,10 +2,10 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ReviewStateChangeEventBuilder {
@@ -15,7 +15,6 @@ public class ReviewStateChangeEventBuilder {
 	private ApplicationFormStatus newStatus;
 	private RegisteredUser user;
 	private ReviewRound reviewRound;
-	
 	
 	public ReviewStateChangeEventBuilder reviewRound(ReviewRound reviewRound){
 		this.reviewRound = reviewRound;
@@ -42,7 +41,7 @@ public class ReviewStateChangeEventBuilder {
 		return this;
 	}
 	
-	public StateChangeEvent toReviewStateChangeEvent(){
+	public StateChangeEvent build(){
 		ReviewStateChangeEvent event = new ReviewStateChangeEvent();
 		event.setId(id);
 		event.setDate(eventDate);

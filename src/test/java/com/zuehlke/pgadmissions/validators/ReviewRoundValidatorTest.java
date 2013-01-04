@@ -48,7 +48,7 @@ public class ReviewRoundValidatorTest {
 	public void setup(){
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
-		reviewRound = new ReviewRoundBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).reviewers(new ReviewerBuilder().id(4).toReviewer()).toReviewRound();
+		reviewRound = new ReviewRoundBuilder().application(new ApplicationFormBuilder().id(2).build()).reviewers(new ReviewerBuilder().id(4).build()).build();
 		reviewRoundValidator = new ReviewRoundValidator();
 		reviewRoundValidator.setValidator((javax.validation.Validator) validator);
 	}

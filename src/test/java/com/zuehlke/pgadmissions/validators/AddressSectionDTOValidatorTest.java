@@ -30,7 +30,7 @@ public class AddressSectionDTOValidatorTest {
 	@Before
 	public void setup() {
 	    address = new AddressSectionDTO();
-	    address.setApplication(new ApplicationFormBuilder().id(8).toApplicationForm());
+	    address.setApplication(new ApplicationFormBuilder().id(8).build());
 	    address.setContactAddress1("London");
 	    address.setContactAddress3("Londo3n");
 	    address.setContactAddressCountry(new Country());

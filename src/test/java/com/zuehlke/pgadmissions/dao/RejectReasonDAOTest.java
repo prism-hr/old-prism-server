@@ -19,8 +19,8 @@ public class RejectReasonDAOTest extends AutomaticRollbackTestCase {
 	public void shouldReturnRejectReasonsInIDOrder() {
 		BigInteger numberOfReasons = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from REJECT_REASON").uniqueResult();
 		int reasonCount = numberOfReasons.intValue();
-		RejectReason reason1 = new RejectReasonBuilder().text("reason1").toRejectReason();
-		RejectReason reason2 = new RejectReasonBuilder().text("reason2").toRejectReason();
+		RejectReason reason1 = new RejectReasonBuilder().text("reason1").build();
+		RejectReason reason2 = new RejectReasonBuilder().text("reason2").build();
 		save(reason1, reason2);
 		flushAndClearSession();
 
@@ -34,7 +34,7 @@ public class RejectReasonDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldGetRejectReasonById(){
-		RejectReason reason = new RejectReasonBuilder().text("reason1").toRejectReason();		
+		RejectReason reason = new RejectReasonBuilder().text("reason1").build();		
 		save(reason);
 		flushAndClearSession();
 

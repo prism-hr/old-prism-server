@@ -28,7 +28,7 @@ public class EthnicityBuilder {
         return this;
     }
 
-	public Ethnicity toEthnicity() {
+	public Ethnicity build() {
 		Ethnicity eth = new Ethnicity();
 		eth.setId(id);
 		eth.setName(name);

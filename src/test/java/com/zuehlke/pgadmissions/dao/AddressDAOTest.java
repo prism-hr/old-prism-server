@@ -20,7 +20,7 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 	
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Country countryById = countriesDAO.getCountryById(1);
-		Address address = new AddressBuilder().country(countryById).address1("1 Main Street").toAddress();
+		Address address = new AddressBuilder().country(countryById).address1("1 Main Street").build();
 		save( address);
 		flushAndClearSession();
 		
@@ -34,14 +34,14 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 	@Test(expected=NullPointerException.class)
 	public void shouldSendNullPointerException(){
 		AddressDAO addressDAO = new AddressDAO();
-		Address address = new AddressBuilder().id(1).toAddress();
+		Address address = new AddressBuilder().id(1).build();
 		addressDAO.delete(address);
 	}
 	
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(user);
 		flushAndClearSession();
 	}

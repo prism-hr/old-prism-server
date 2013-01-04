@@ -12,12 +12,13 @@ public class RoleBuilder {
 		this.id =id;
 		return this;
 	}
+	
 	public RoleBuilder authorityEnum(Authority authorityEnum){
 		this.authorityEnum =authorityEnum;
 		return this;
 	}
 	
-	public Role toRole(){
+	public Role build() {
 		Role role = new Role();
 		role.setId(id);
 		role.setAuthorityEnum(authorityEnum);

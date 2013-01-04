@@ -55,9 +55,9 @@ public class CommentServiceTest {
 
 	@Test
 	public void shouldGetAllReviewCommentsDueNotificationToAdmin() {
-		ReviewComment reviewComment = new ReviewCommentBuilder().id(1).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().id(1).build();
 		ReviewComment reviewComment2 = new ReviewCommentBuilder().id(2)
-				.commentType(CommentType.REVIEW).adminsNotified(true).toReviewComment();
+				.commentType(CommentType.REVIEW).adminsNotified(true).build();
 		EasyMock.expect(commentDAOMock.getReviewCommentsDueNotification()).andReturn(Arrays.asList(reviewComment2));
 		EasyMock.replay(commentDAOMock);
 		List<ReviewComment> commentsDueNotification = service.getReviewCommentsDueNotification();
@@ -67,9 +67,9 @@ public class CommentServiceTest {
 	
 	@Test
 	public void shouldGetAllInterviewCommentsDueNotificationToAdmin() {
-		InterviewComment interviewComment = new InterviewCommentBuilder().id(1).toInterviewComment();
+		InterviewComment interviewComment = new InterviewCommentBuilder().id(1).build();
 		InterviewComment interviewComment2 = new InterviewCommentBuilder().id(2)
-				.commentType(CommentType.INTERVIEW).adminsNotified(true).toInterviewComment();
+				.commentType(CommentType.INTERVIEW).adminsNotified(true).build();
 		EasyMock.expect(commentDAOMock.getInterviewCommentsDueNotification()).andReturn(Arrays.asList(interviewComment2));
 		EasyMock.replay(commentDAOMock);
 		List<InterviewComment> commentsDueNotification = service.getInterviewCommentsDueNotification();
@@ -79,17 +79,17 @@ public class CommentServiceTest {
 	
 	@Test
 	public void shouldDeclineReview(){
-		final ReviewComment reviewComment = new ReviewCommentBuilder().id(1).toReviewComment();
+		final ReviewComment reviewComment = new ReviewCommentBuilder().id(1).build();
 		service = new CommentService(commentDAOMock){
 			@Override
 			public ReviewComment getNewReviewComment(){
 				return reviewComment;
 			}
 		};
-		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).toUser();
-		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).toReviewRound();
-		ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).toApplicationForm();
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).build();
+		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
+		ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).build();
 		service.save(reviewComment);
 		service.declineReview(reviewerUser, application);
 		Assert.assertTrue(reviewComment.isDecline());
@@ -99,17 +99,17 @@ public class CommentServiceTest {
 	
 	@Test
 	public void shouldcreateDelegateComment(){
-		final Comment comment = new CommentBuilder().id(1).toComment();
+		final Comment comment = new CommentBuilder().id(1).build();
 		service = new CommentService(commentDAOMock){
 			@Override
 			public Comment getNewGenericComment(){
 				return comment;
 			}
 		};
-		RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("joan").lastName("kyp").id(1).toUser();
-		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).toReviewRound();
-		ApplicationForm application = new ApplicationFormBuilder().applicationAdministrator(reviewerUser).latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).toApplicationForm();
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("joan").lastName("kyp").id(1).build();
+		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
+		ApplicationForm application = new ApplicationFormBuilder().applicationAdministrator(reviewerUser).latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).build();
 		service.save(comment);
 		service.createDelegateComment(reviewerUser, application);
 		Assert.assertEquals("Delegated Application for processing to joan kyp", comment.getComment());

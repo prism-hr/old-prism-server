@@ -41,9 +41,9 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnReviewerOfLatestReviewRoundIfLastModifiedIsNull() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();		
-		Reviewer reviewer = new ReviewerBuilder().user(user).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+				.build();		
+		Reviewer reviewer = new ReviewerBuilder().user(user).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.setLatestReviewRound(reviewRound);
 		
 		save(application, reviewer, reviewRound);
@@ -56,9 +56,9 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnReviewerOfPreviursReviewRoundIfLastModifiedIsNull() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();		
-		Reviewer reviewer = new ReviewerBuilder().user(user).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+				.build();		
+		Reviewer reviewer = new ReviewerBuilder().user(user).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.getReviewRounds().add(reviewRound);
 		
 		save(application, reviewer, reviewRound);
@@ -71,9 +71,9 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnReviwerInLastNotifiedIsNotNull() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();		
-		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(new Date()).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+				.build();		
+		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(new Date()).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.setLatestReviewRound(reviewRound);
 		
 		save(application, reviewer, reviewRound);
@@ -87,9 +87,9 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnReviewerIfApplicationNotInReview() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-				.toApplicationForm();		
-		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(new Date()).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+				.build();		
+		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(new Date()).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.setLatestReviewRound(reviewRound);
 		
 		save(application, reviewer, reviewRound);
@@ -102,11 +102,11 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveReviewer() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-				.toApplicationForm();
+				.build();
 		save(application);
 		flushAndClearSession();
 
-		Reviewer reviewer = new ReviewerBuilder().user(user).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(user).build();
 
 		dao.save(reviewer);
 		assertNotNull(reviewer.getId());
@@ -124,13 +124,13 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();
+				.build();
 
 		Date now = new Date();
 		Date sevenDaysAgo = DateUtils.addDays(now, -7);
 		Date sevenDaysMinus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, 5);
-		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.setLatestReviewRound(reviewRound);
 		save(application,reviewer, reviewRound);
 		flushAndClearSession();
@@ -142,13 +142,13 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnReviewerOfPreviousRound() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();	
+				.build();	
 
 		Date now = new Date();
 		Date sevenDaysAgo = DateUtils.addDays(now, -7);
 		Date sevenDaysMinus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, 5);
-		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.getReviewRounds().add(reviewRound);
 		save(application,reviewer, reviewRound);
 		flushAndClearSession();
@@ -160,14 +160,14 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnReviewerReminded7Plus5minDaysAgo() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();
+				.build();
 		
 
 		Date now = new Date();
 		Date sevenDaysAgo = DateUtils.addDays(now, -7);
 		Date sevenDaysPlus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, -5);
-		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysPlus5MinutesAgo).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysPlus5MinutesAgo).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.setLatestReviewRound(reviewRound);
 		save(application,reviewer, reviewRound);
 		
@@ -180,13 +180,13 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnReviewerLastNotified6DaysAgo() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();
+				.build();
 		
 		Date now = new Date();
 		Date sixDaysAgo = DateUtils.addDays(now, -6);
 
-		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sixDaysAgo).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sixDaysAgo).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.setLatestReviewRound(reviewRound);
 		save(application,reviewer, reviewRound);
 		flushAndClearSession();
@@ -198,17 +198,17 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldReturnNotReviewerWithReview() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();
+				.build();
 	
 		Date now = new Date();
 		Date sevenDaysAgo = DateUtils.addDays(now, -7);
-		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysAgo).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysAgo).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.setLatestReviewRound(reviewRound);
 		
 		ReviewComment reviewComment = new ReviewCommentBuilder().reviewer(reviewer).adminsNotified(false).commentType(CommentType.REVIEW)
 				.comment("This is a review comment").suitableCandidateForUCL(false).user(user).application(application).decline(true)
-				.willingToInterview(false).toReviewComment();
+				.willingToInterview(false).build();
 		save(application,reviewer, reviewRound, reviewComment);
 
 		flushAndClearSession();
@@ -219,12 +219,12 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnReviewerIfApplicationFormNotInReview() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
-				.toApplicationForm();
+				.build();
 
 		Date now = new Date();
 		Date sevenDaysAgo = DateUtils.addDays(now, -7);		
-		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysAgo).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
+		Reviewer reviewer = new ReviewerBuilder().user(user).lastNotified(sevenDaysAgo).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).build();
 		application.setLatestReviewRound(reviewRound);
 		save(application,reviewer, reviewRound);
 		flushAndClearSession();
@@ -236,14 +236,14 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void shouldReturnReviewersRequireAdminNotification() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
 		
-        Reviewer reviewer1 = new ReviewerBuilder().user(user).id(1).requiresAdminNotification(CheckedStatus.YES).dateAdminsNotified(null).toReviewer();
-		Reviewer reviewer2 = new ReviewerBuilder().user(user).id(2).requiresAdminNotification(CheckedStatus.NO).dateAdminsNotified(null).toReviewer();
-		Reviewer reviewer3 = new ReviewerBuilder().user(user).id(1).requiresAdminNotification(CheckedStatus.YES).dateAdminsNotified(new Date()).toReviewer();
-		Reviewer reviewer4 = new ReviewerBuilder().user(user).id(2).requiresAdminNotification(CheckedStatus.NO).dateAdminsNotified(new Date()).toReviewer();
+        Reviewer reviewer1 = new ReviewerBuilder().user(user).id(1).requiresAdminNotification(CheckedStatus.YES).dateAdminsNotified(null).build();
+		Reviewer reviewer2 = new ReviewerBuilder().user(user).id(2).requiresAdminNotification(CheckedStatus.NO).dateAdminsNotified(null).build();
+		Reviewer reviewer3 = new ReviewerBuilder().user(user).id(1).requiresAdminNotification(CheckedStatus.YES).dateAdminsNotified(new Date()).build();
+		Reviewer reviewer4 = new ReviewerBuilder().user(user).id(2).requiresAdminNotification(CheckedStatus.NO).dateAdminsNotified(new Date()).build();
 		
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer1, reviewer2, reviewer3, reviewer4).toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer1, reviewer2, reviewer3, reviewer4).build();
 		application.setLatestReviewRound(reviewRound);
 		save(application,reviewer1, reviewer2, reviewer3, reviewer4, reviewRound);
 		flushAndClearSession();
@@ -259,8 +259,8 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	@Before
 	public void initialise() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		reminderInterval = new ReminderInterval();
 		reminderInterval.setId(1);

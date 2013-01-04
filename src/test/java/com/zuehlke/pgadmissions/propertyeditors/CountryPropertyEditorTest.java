@@ -22,7 +22,7 @@ public class CountryPropertyEditorTest {
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-		Country country = new CountryBuilder().id(1).toCountry();
+		Country country = new CountryBuilder().id(1).build();
 		EasyMock.expect(countryServiceMock.getCountryById(1)).andReturn(country);
 		EasyMock.replay(countryServiceMock,encryptionHelperMock);
 		
@@ -57,13 +57,13 @@ public class CountryPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnNullIfValueIdIsNull(){			
-		editor.setValue(new CountryBuilder().toCountry());
+		editor.setValue(new CountryBuilder().build());
 		assertNull(editor.getAsText());
 	}
 	
 	@Test	
 	public void shouldReturnEncryptedIdAsString(){			
-		editor.setValue(new CountryBuilder().id(5).toCountry());
+		editor.setValue(new CountryBuilder().id(5).build());
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.replay(encryptionHelperMock);
 		assertEquals("bob", editor.getAsText());

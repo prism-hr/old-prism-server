@@ -35,7 +35,7 @@ public class ReferenceEventMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadReferenceEvent() throws ParseException {	
 		
 		Date eventDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
-		Event event = new ReferenceEventBuilder().date(eventDate).user(user).referee(referee).toEvent();
+		Event event = new ReferenceEventBuilder().date(eventDate).user(user).referee(referee).build();
 		sessionFactory.getCurrentSession().saveOrUpdate(event);
 		assertNotNull(event.getId());
 		ReferenceEvent reloadedEvent = (ReferenceEvent) sessionFactory.getCurrentSession().get(ReferenceEvent.class, event.getId());
@@ -54,12 +54,12 @@ public class ReferenceEventMappingTest extends AutomaticRollbackTestCase {
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();		
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();		
 		
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		 referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1))
 				.address1("loc").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")

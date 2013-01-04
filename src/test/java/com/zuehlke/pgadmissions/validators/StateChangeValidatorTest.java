@@ -103,7 +103,7 @@ public class StateChangeValidatorTest {
 	
 	@Before
 	public void setup() {
-		validationComment = new ValidationCommentBuilder().comment("validation comment").nextStatus(ApplicationFormStatus.APPROVAL).englishCompentencyOk(ValidationQuestionOptions.YES).qualifiedForPhd(ValidationQuestionOptions.YES).homeOrOverseas(HomeOrOverseas.HOME).toValidationComment();
+		validationComment = new ValidationCommentBuilder().comment("validation comment").nextStatus(ApplicationFormStatus.APPROVAL).englishCompentencyOk(ValidationQuestionOptions.YES).qualifiedForPhd(ValidationQuestionOptions.YES).homeOrOverseas(HomeOrOverseas.HOME).build();
 		stateChangeComment = new StateChangeComment();
 		stateChangeComment.setComment("comment");
 		stateChangeComment.setNextStatus(ApplicationFormStatus.APPROVAL);

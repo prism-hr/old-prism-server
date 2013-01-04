@@ -28,26 +28,26 @@ public class RequestRestartCommentMappingTest extends AutomaticRollbackTestCase{
 
 	@Test
 	public void shouldSaveAndLoadRequestRestartComment(){
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();		
 		save( program);
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
 		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
-		Document documentOne = new DocumentBuilder().content("hi".getBytes()).fileName("bob").toDocument();
-		Document documentTwo = new DocumentBuilder().content("hello".getBytes()).fileName("fre").toDocument();
+		Document documentOne = new DocumentBuilder().content("hi".getBytes()).fileName("bob").build();
+		Document documentTwo = new DocumentBuilder().content("hello".getBytes()).fileName("fre").build();
 		save(applicant, approver, documentOne, documentTwo);
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();		
 		save(applicationForm);
 		
 		flushAndClearSession();
 		
 		
-		RequestRestartComment comment = new RequestRestartCommentBuilder().application(applicationForm).comment("comment").user(approver).toComment();
+		RequestRestartComment comment = new RequestRestartCommentBuilder().application(applicationForm).comment("comment").user(approver).build();
 		comment.getDocuments().addAll(Arrays.asList(documentOne, documentTwo));
 		save(comment);
 		

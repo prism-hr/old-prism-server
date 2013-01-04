@@ -131,7 +131,7 @@ public class DocumentValidatorTest {
 		    .fileName("valid.pdf")
 		    .type(DocumentType.CV)
 		    .content(FileUtils.readFileToByteArray(new File("src/test/resources/pdf/valid.pdf")))
-		    .toDocument();
+		    .build();
 		
 		documentValidator = new DocumentValidator();
 		documentValidator.setValidator((javax.validation.Validator) validator);

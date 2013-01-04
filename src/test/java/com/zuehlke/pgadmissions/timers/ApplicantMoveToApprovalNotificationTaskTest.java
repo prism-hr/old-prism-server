@@ -47,12 +47,12 @@ public class ApplicantMoveToApprovalNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().id(1).email("lllll@test.com").toUser())
-				.toApplicationForm();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().id(1).email("lllll@test.com").build())
+				.build();
 		ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
 				.id(2)
-				.applicant(new RegisteredUserBuilder().id(2).email("jjjjjj@test.com").toUser())
-				.toApplicationForm();
+				.applicant(new RegisteredUserBuilder().id(2).email("jjjjjj@test.com").build())
+				.build();
 		sessionMock.refresh(applicationFormOne);
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);
@@ -88,10 +88,10 @@ public class ApplicantMoveToApprovalNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().id(1).email("lllll@test.com").toUser())
-				.toApplicationForm();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicant(new RegisteredUserBuilder().id(2).email("jjjjjj@test.com").toUser())
-				.toApplicationForm();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().id(1).email("lllll@test.com").build())
+				.build();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicant(new RegisteredUserBuilder().id(2).email("jjjjjj@test.com").build())
+				.build();
 		sessionMock.refresh(applicationFormOne);
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);

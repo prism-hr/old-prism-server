@@ -57,8 +57,8 @@ public class FundingControllerTest {
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm())
-				.toFunding();
+		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build())
+				.build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(fundingServiceMock, errors);
 		controller.editFunding(funding, errors);
@@ -97,7 +97,7 @@ public class FundingControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 	
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -120,7 +120,7 @@ public class FundingControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 	
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -145,7 +145,7 @@ public class FundingControllerTest {
 	public void shouldGetFundingFromServiceIfIdProvided() {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		
-		Funding funding = new FundingBuilder().id(1).toFunding();
+		Funding funding = new FundingBuilder().id(1).build();
 		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(funding);
 		EasyMock.replay(fundingServiceMock, encryptionHelperMock);
 		Funding returnedFunding = controller.getFunding("encryptedId");
@@ -181,8 +181,8 @@ public class FundingControllerTest {
 
 	@Test
 	public void shouldSaveQulificationAndRedirectIfNoErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").toApplicationForm();
-		Funding funding = new FundingBuilder().id(1).application(applicationForm).toFunding();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
+		Funding funding = new FundingBuilder().id(1).application(applicationForm).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		fundingServiceMock.save(funding);
@@ -196,7 +196,7 @@ public class FundingControllerTest {
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {
-		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toFunding();
+		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().id(5).build()).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 
@@ -223,7 +223,7 @@ public class FundingControllerTest {
 		controller = new FundingController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, fundingValidatorMock,
 				fundingServiceMock, documentPropertyEditorMock, userServiceMock, encryptionHelperMock);
 
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 

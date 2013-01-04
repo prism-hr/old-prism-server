@@ -47,12 +47,12 @@ public class AdminApprovedNotificationTaskTest {
 		Transaction tx1 = EasyMock.createMock(Transaction.class);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx1);
 
-		RegisteredUser admin = new RegisteredUserBuilder().id(18).toUser();
-		Program program = new ProgramBuilder().id(1023).administrators(admin).toProgram();
-		RegisteredUser approver = new RegisteredUserBuilder().id(123).toUser();
+		RegisteredUser admin = new RegisteredUserBuilder().id(18).build();
+		Program program = new ProgramBuilder().id(1023).administrators(admin).build();
+		RegisteredUser approver = new RegisteredUserBuilder().id(123).build();
 		ApplicationForm application = new ApplicationFormBuilder().id(10)//
 				.program(program).approver(approver)//
-				.toApplicationForm();
+				.build();
 		List<ApplicationForm> applList = new ArrayList<ApplicationForm>();
 		applList.add(application);
 		EasyMock.expect(applicationDaoMock.getApplicationsDueApprovedNotifications()).andReturn(applList);
@@ -81,11 +81,11 @@ public class AdminApprovedNotificationTaskTest {
 		Transaction tx1 = EasyMock.createMock(Transaction.class);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx1);
 
-		RegisteredUser admin = new RegisteredUserBuilder().id(18).toUser();
-		Program program = new ProgramBuilder().id(1023).administrators(admin).toProgram();
+		RegisteredUser admin = new RegisteredUserBuilder().id(18).build();
+		Program program = new ProgramBuilder().id(1023).administrators(admin).build();
 		ApplicationForm application = new ApplicationFormBuilder().id(10)//
 				.program(program).approver(admin)//
-				.toApplicationForm();
+				.build();
 		List<ApplicationForm> applList = new ArrayList<ApplicationForm>();
 		applList.add(application);
 		EasyMock.expect(applicationDaoMock.getApplicationsDueApprovedNotifications()).andReturn(applList);
@@ -114,12 +114,12 @@ public class AdminApprovedNotificationTaskTest {
 		Transaction tx1 = EasyMock.createMock(Transaction.class);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx1);
 
-		RegisteredUser admin = new RegisteredUserBuilder().id(18).toUser();
-		Program program = new ProgramBuilder().id(1023).administrators(admin).toProgram();
-		RegisteredUser approver = new RegisteredUserBuilder().id(123).toUser();
+		RegisteredUser admin = new RegisteredUserBuilder().id(18).build();
+		Program program = new ProgramBuilder().id(1023).administrators(admin).build();
+		RegisteredUser approver = new RegisteredUserBuilder().id(123).build();
 		ApplicationForm application = new ApplicationFormBuilder().id(10)//
 				.program(program).approver(approver)//
-				.toApplicationForm();
+				.build();
 		List<ApplicationForm> applList = new ArrayList<ApplicationForm>();
 		applList.add(application);
 		EasyMock.expect(applicationDaoMock.getApplicationsDueApprovedNotifications()).andReturn(applList);

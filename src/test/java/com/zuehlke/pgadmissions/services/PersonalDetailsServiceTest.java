@@ -14,7 +14,7 @@ public class PersonalDetailsServiceTest {
 		PersonalDetailDAO personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
 		PersonalDetailsService detailsService = new PersonalDetailsService(personalDetailDAOMock);
 		
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).toPersonalDetails();
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).build();
 		personalDetailDAOMock.save(personalDetails);
 		EasyMock.replay(personalDetailDAOMock);
 		

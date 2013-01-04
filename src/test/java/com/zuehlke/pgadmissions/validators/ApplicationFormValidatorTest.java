@@ -73,7 +73,7 @@ public class ApplicationFormValidatorTest {
 
 	@Test
 	public void shouldRejectIfProgrammeDetailsSectionNotSaved() {
-		ProgrammeDetails unsavedProgramDetails = new ProgrammeDetailsBuilder().studyOption("1", "Full-time").toProgrammeDetails();
+		ProgrammeDetails unsavedProgramDetails = new ProgrammeDetailsBuilder().studyOption("1", "Full-time").build();
 		applicationForm.setProgrammeDetails(unsavedProgramDetails);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, unsavedProgramDetails.getStudyOption())).andReturn(Arrays.asList(programInstance));
@@ -212,17 +212,17 @@ public class ApplicationFormValidatorTest {
 	
 	@Before
 	public void setup() throws ParseException {
-		program = new ProgramBuilder().id(1).title("Program 1").toProgram();
+		program = new ProgramBuilder().id(1).title("Program 1").build();
 		programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
-				.applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();
+				.applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).build();
 		program.setInstances(Arrays.asList(programInstance));
-		programmeDetails = new ProgrammeDetailsBuilder().studyOption("1", "Full-time").id(2).toProgrammeDetails();
+		programmeDetails = new ProgrammeDetailsBuilder().studyOption("1", "Full-time").id(2).build();
 		applicationForm = new ApplicationFormBuilder().program(program).programmeDetails(programmeDetails)
-				.acceptedTerms(CheckedStatus.YES).personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails())
-				.additionalInformation(new AdditionalInformationBuilder().id(3).toAdditionalInformation())//
-				.currentAddress(new AddressBuilder().address1("address").toAddress()).contactAddress(new AddressBuilder().address1("address").toAddress())//
+				.acceptedTerms(CheckedStatus.YES).personalDetails(new PersonalDetailsBuilder().id(1).build())
+				.additionalInformation(new AdditionalInformationBuilder().id(3).build())//
+				.currentAddress(new AddressBuilder().address1("address").build()).contactAddress(new AddressBuilder().address1("address").build())//
 				.referees(new Referee(), new Referee(), new Referee())//
-				.personalStatement(new Document()).toApplicationForm();
+				.personalStatement(new Document()).build();
 		
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
 		

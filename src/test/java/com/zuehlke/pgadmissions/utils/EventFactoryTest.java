@@ -37,7 +37,7 @@ public class EventFactoryTest {
 
 	@Test
 	public void shouldReturnStateChangeEvent() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		ApplicationFormStatus status = ApplicationFormStatus.VALIDATION;
@@ -52,10 +52,10 @@ public class EventFactoryTest {
 	
 	@Test
 	public void shouldReturnReviewStateChabgeEvent() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 		EasyMock.replay(userServiceMock);
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
 		Event event = eventFactory.createEvent( reviewRound);
 		
 		assertTrue(event instanceof ReviewStateChangeEvent);
@@ -68,10 +68,10 @@ public class EventFactoryTest {
 	
 	@Test
 	public void shouldReturnInterviewStateChangeEvent() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 		EasyMock.replay(userServiceMock);
-		Interview interview = new InterviewBuilder().id(1).toInterview();
+		Interview interview = new InterviewBuilder().id(1).build();
 		Event event = eventFactory.createEvent( interview);
 		
 		assertTrue(event instanceof InterviewStateChangeEvent);
@@ -85,10 +85,10 @@ public class EventFactoryTest {
 	
 	@Test
 	public void shouldReturnApprovalStateChangeEvent() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 		EasyMock.replay(userServiceMock);
-		ApprovalRound approval = new ApprovalRoundBuilder().id(1).toApprovalRound();
+		ApprovalRound approval = new ApprovalRoundBuilder().id(1).build();
 		Event event = eventFactory.createEvent( approval);
 		
 		assertTrue(event instanceof ApprovalStateChangeEvent);
@@ -101,8 +101,8 @@ public class EventFactoryTest {
 	
 	@Test
 	public void shouldReturnReferencEvent() {
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
-		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).toUser();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).build();
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 	

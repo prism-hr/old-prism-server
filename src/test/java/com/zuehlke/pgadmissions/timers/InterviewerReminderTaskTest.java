@@ -43,8 +43,8 @@ public class InterviewerReminderTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		Interviewer interviewerOne = new InterviewerBuilder().id(1).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).firstAdminNotification(true).toInterviewer();
-		Interviewer interviewerTwo = new InterviewerBuilder().id(2).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).firstAdminNotification(true).toInterviewer();
+		Interviewer interviewerOne = new InterviewerBuilder().id(1).user(new RegisteredUserBuilder().email("hello@test.com").build()).firstAdminNotification(true).build();
+		Interviewer interviewerTwo = new InterviewerBuilder().id(2).user(new RegisteredUserBuilder().email("hello@test.com").build()).firstAdminNotification(true).build();
 		sessionMock.refresh(interviewerOne);
 		sessionMock.refresh(interviewerTwo);
 		List<Interviewer> interviewerList = Arrays.asList(interviewerOne, interviewerTwo);
@@ -80,8 +80,8 @@ public class InterviewerReminderTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		Interviewer interviewerOne = new InterviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(1).firstAdminNotification(true).toInterviewer();
-		Interviewer interviewerTwo = new InterviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(2).firstAdminNotification(false).toInterviewer();
+		Interviewer interviewerOne = new InterviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(1).firstAdminNotification(true).build();
+		Interviewer interviewerTwo = new InterviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(2).firstAdminNotification(false).build();
 		sessionMock.refresh(interviewerOne);
 		sessionMock.refresh(interviewerTwo);
 		EasyMock.expect(interviewerDAOMock.getInterviewersDueReminder()).andReturn(Arrays.asList(interviewerOne, interviewerTwo));

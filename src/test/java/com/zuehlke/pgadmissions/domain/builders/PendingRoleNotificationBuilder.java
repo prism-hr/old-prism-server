@@ -47,7 +47,7 @@ public class PendingRoleNotificationBuilder {
 		return this;
 	}
 	
-	public PendingRoleNotification toPendingRoleNotification(){
+	public PendingRoleNotification build() {
 		PendingRoleNotification pendingRoleNotification = new PendingRoleNotification();
 		pendingRoleNotification.setId(id);
 		pendingRoleNotification.setProgram(program);

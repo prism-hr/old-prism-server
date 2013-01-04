@@ -103,7 +103,7 @@ public class LanguageQualificationBuilder {
         return this;
     }
     
-    public LanguageQualification toLanguageQualification() {
+    public LanguageQualification build() {
         LanguageQualification qualification = new LanguageQualification();
         qualification.setDateOfExamination(dateOfExamination);
         qualification.setExamTakenOnline(examTakenOnline);

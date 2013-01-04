@@ -44,16 +44,16 @@ public class AdminReviewerAssignedNotificationTaskTest {
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-			RegisteredUser admin1 = new RegisteredUserBuilder().id(8).toUser();
+			RegisteredUser admin1 = new RegisteredUserBuilder().id(8).build();
 			
-			Program program = new ProgramBuilder().administrators(admin1).id(1).toProgram();
-			ApplicationForm form = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+			Program program = new ProgramBuilder().administrators(admin1).id(1).build();
+			ApplicationForm form = new ApplicationFormBuilder().program(program).id(1).build();
 			
-			RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(9).toUser();
-			RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(9).toUser();
-			ReviewRound reviewRound = new ReviewRoundBuilder().application(form).id(1).toReviewRound();
-			Reviewer reviewer1 = new ReviewerBuilder().reviewRound(reviewRound).id(1).user(reviewerUser1).toReviewer();
-			Reviewer reviewer2 = new ReviewerBuilder().reviewRound(reviewRound).id(2).user(reviewerUser2).toReviewer();
+			RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(9).build();
+			RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(9).build();
+			ReviewRound reviewRound = new ReviewRoundBuilder().application(form).id(1).build();
+			Reviewer reviewer1 = new ReviewerBuilder().reviewRound(reviewRound).id(1).user(reviewerUser1).build();
+			Reviewer reviewer2 = new ReviewerBuilder().reviewRound(reviewRound).id(2).user(reviewerUser2).build();
 			
 			sessionMock.refresh(reviewer1);
 			sessionMock.refresh(reviewer2);
@@ -89,16 +89,16 @@ public class AdminReviewerAssignedNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(8).toUser();
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(8).build();
 		
-		Program program = new ProgramBuilder().administrators(admin1).id(1).toProgram();
-		ApplicationForm form = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		Program program = new ProgramBuilder().administrators(admin1).id(1).build();
+		ApplicationForm form = new ApplicationFormBuilder().program(program).id(1).build();
 		
-		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(9).toUser();
-		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(9).toUser();
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(form).id(1).toReviewRound();
-		Reviewer reviewer1 = new ReviewerBuilder().reviewRound(reviewRound).id(1).user(reviewerUser1).toReviewer();
-		Reviewer reviewer2 = new ReviewerBuilder().reviewRound(reviewRound).id(2).user(reviewerUser2).toReviewer();	
+		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(9).build();
+		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(9).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(form).id(1).build();
+		Reviewer reviewer1 = new ReviewerBuilder().reviewRound(reviewRound).id(1).user(reviewerUser1).build();
+		Reviewer reviewer2 = new ReviewerBuilder().reviewRound(reviewRound).id(2).user(reviewerUser2).build();	
 		
 		sessionMock.refresh(reviewer1);
 		sessionMock.refresh(reviewer2);

@@ -28,18 +28,18 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadReferenceComment(){
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();		
 		save(program);
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
-		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).build();
 		
-		Country country = new CountryBuilder().name("nae").code("aa").enabled(true).toCountry(); 
+		Country country = new CountryBuilder().name("nae").code("aa").enabled(true).build(); 
 		save(applicant, application, country);
 		
 		Referee referee = new RefereeBuilder().application(application).email("email@test.com").firstname("bob")
@@ -47,14 +47,14 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 				.messenger("skypeAddress").phoneNumber("hallihallo").user(refereeUser).toReferee();
 		save(refereeUser, referee);
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();		
 		save(applicationForm);
 		
 		flushAndClearSession();
 		
 		ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee)
 				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(applicationForm)
-				.toReferenceComment();
+				.build();
 		referee.setReference(referenceComment);
 		save(referenceComment, referee);
 		

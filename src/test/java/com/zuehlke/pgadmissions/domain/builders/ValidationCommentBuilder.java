@@ -43,7 +43,6 @@ public class ValidationCommentBuilder {
 		return this;
 	}
 	
-	
 	public ValidationCommentBuilder application(ApplicationForm application){
 		this.application = application;
 		return this;
@@ -53,7 +52,6 @@ public class ValidationCommentBuilder {
 		this.qualifiedForPhd = qualifiedForPhd;
 		return this;
 	}
-	
 	
 	public ValidationCommentBuilder englishCompentencyOk(ValidationQuestionOptions englishCompentencyOk){
 		this.englishCompentencyOk = englishCompentencyOk;
@@ -85,7 +83,7 @@ public class ValidationCommentBuilder {
 		return this;
 	}
 	
-	public ValidationComment toValidationComment(){
+	public ValidationComment build() {
 		ValidationComment validationComment = new ValidationComment();
 		validationComment.setApplication(application);
 		validationComment.setComment(comment);

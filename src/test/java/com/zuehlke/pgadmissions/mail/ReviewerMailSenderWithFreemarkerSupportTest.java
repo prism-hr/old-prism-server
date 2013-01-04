@@ -27,13 +27,13 @@ public class ReviewerMailSenderWithFreemarkerSupportTest extends BaseEmailTestWi
     
     @Test
     public void shouldSendCorrectLinks() {
-        RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).toUser();
-        RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).toUser();
-        RegisteredUser applicant = new RegisteredUserBuilder().id(10).firstName("Kevin").lastName("Denver").activationCode("123").toUser();
-        RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").activationCode("1234").toUser();
+        RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).build();
+        RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).build();
+        RegisteredUser applicant = new RegisteredUserBuilder().id(10).firstName("Kevin").lastName("Denver").activationCode("123").build();
+        RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").activationCode("1234").build();
         
-        ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().title("prgTitle").administrators(adminOne, adminTwo).code("123").toProgram()).applicant(applicant).applicationNumber("123").toApplicationForm();
-        Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).toReviewRound()).toReviewer();
+        ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().title("prgTitle").administrators(adminOne, adminTwo).code("123").build()).applicant(applicant).applicationNumber("123").build();
+        Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).build()).build();
         
         fakeLoggingMailSender.registerListeners(new FakeLoggingMailSenderListener() {
             

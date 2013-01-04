@@ -21,7 +21,7 @@ public class InterviewerPropertyEditorTest {
 
 	@Test
 	public void shouldCreateNewInterviewerWithUserAndSetAsValue() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.replay(userServiceMock, encryptionHelper);

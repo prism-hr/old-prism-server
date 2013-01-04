@@ -43,7 +43,7 @@ public class UserRoleControllerTest {
 	
 	@Test
 	public void shouldGetSelectedProgramfIdProvided() {
-		Program program = new ProgramBuilder().id(5).code("ABC").toProgram();
+		Program program = new ProgramBuilder().id(5).code("ABC").build();
 
 		EasyMock.expect(programServiceMock.getProgramByCode("ABC")).andReturn(program);
 		EasyMock.replay(programServiceMock);
@@ -71,7 +71,7 @@ public class UserRoleControllerTest {
 	@Test
 	public void shouldReturnNewUserDTO() {
 		String programCode="DEF";
-		Program program = new ProgramBuilder().id(1).toProgram();
+		Program program = new ProgramBuilder().id(1).build();
 		EasyMock.expect(programServiceMock.getProgramByCode(programCode)).andReturn(program);
 		EasyMock.replay(programServiceMock);
 		UserDTO userDTO = controller.getNewUserDTO(null, programCode);
@@ -87,7 +87,7 @@ public class UserRoleControllerTest {
 	@Test
 	public void shouldPopulateUserDTOWithUserDetails() {
 		String programCode="DEF";
-		Program program = new ProgramBuilder().id(1).toProgram();
+		Program program = new ProgramBuilder().id(1).build();
 		EasyMock.reset(userServiceMock);
 		String encryptedUserId = "abc";
 		RegisteredUser userMock =EasyMock.createMock(RegisteredUser.class);
@@ -115,8 +115,8 @@ public class UserRoleControllerTest {
 	@Test
 	public void shouldReturnAllProgramsForSuperAdminUser() {
 		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-		Program program1 = new ProgramBuilder().id(1).toProgram();
-		Program program2 = new ProgramBuilder().id(2).toProgram();
+		Program program1 = new ProgramBuilder().id(1).build();
+		Program program2 = new ProgramBuilder().id(2).build();
 		EasyMock.expect(programServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
 		EasyMock.replay(programServiceMock, currentUserMock);
 		List<Program> programs = controller.getPrograms();
@@ -127,8 +127,8 @@ public class UserRoleControllerTest {
 	@Test
 	public void shouldReturnProgramsOfWhichAdministratorForAdmins() {
 		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-		Program program1 = new ProgramBuilder().id(1).toProgram();
-		Program program2 = new ProgramBuilder().id(2).toProgram();
+		Program program1 = new ProgramBuilder().id(1).build();
+		Program program2 = new ProgramBuilder().id(2).build();
 		EasyMock.expect(currentUserMock.getProgramsOfWhichAdministrator()).andReturn(Arrays.asList(program1, program2));
 		EasyMock.replay(programServiceMock, currentUserMock);
 		List<Program> programs = controller.getPrograms();
@@ -185,12 +185,12 @@ public class UserRoleControllerTest {
 		newUserDTO.setFirstName("Jane");
 		newUserDTO.setLastName("Doe");
 		newUserDTO.setEmail("jane.doe@test.com");
-		Program program = new ProgramBuilder().id(5).code("ABC").toProgram();
+		Program program = new ProgramBuilder().id(5).code("ABC").build();
 		newUserDTO.setSelectedProgram(program);
 		newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserForProgramme("Jane", "Doe", "jane.doe@test.com", program, Authority.REVIEWER, Authority.ADMINISTRATOR))
-				.andReturn(new RegisteredUserBuilder().id(4).toUser());
+				.andReturn(new RegisteredUserBuilder().id(4).build());
 
 		EasyMock.replay(currentUserMock, userServiceMock);
 
@@ -214,11 +214,11 @@ public class UserRoleControllerTest {
 		newUserDTO.setFirstName("Jane");
 		newUserDTO.setLastName("Doe");
 		newUserDTO.setEmail("jane.doe@test.com");
-		Program program = new ProgramBuilder().id(5).code("ABC").toProgram();
+		Program program = new ProgramBuilder().id(5).code("ABC").build();
 		newUserDTO.setSelectedProgram(program);
 		newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 
-		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).toUser();
+		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
 		userServiceMock.updateUserWithNewRoles(existingUser, program, Authority.REVIEWER, Authority.ADMINISTRATOR);
 	
@@ -247,7 +247,7 @@ public class UserRoleControllerTest {
 
 		newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 
-		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).toUser();
+		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
 		userServiceMock.updateUserWithNewRoles(existingUser, null, Authority.REVIEWER, Authority.ADMINISTRATOR);
 		
@@ -297,10 +297,10 @@ public class UserRoleControllerTest {
 		newUserDTO.setFirstName("Jane");
 		newUserDTO.setLastName("Doe");
 		newUserDTO.setEmail("jane.doe@test.com");
-		Program program = new ProgramBuilder().id(5).code("ABC").toProgram();
+		Program program = new ProgramBuilder().id(5).code("ABC").build();
 		newUserDTO.setSelectedProgram(program);		
 
-		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).toUser();
+		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
 		userServiceMock.updateUserWithNewRoles(existingUser, program);
 		

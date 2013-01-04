@@ -66,8 +66,8 @@ public class MoveToReviewControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromId() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
@@ -81,9 +81,9 @@ public class MoveToReviewControllerTest {
 
 	@Test
 	public void shouldReturnNewReviewRoundWithExistingRoundsReviewersIfAny() {
-		Reviewer reviewerOne = new ReviewerBuilder().id(1).toReviewer();
-		Reviewer reviewerTwo = new ReviewerBuilder().id(2).toReviewer();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").latestReviewRound(new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo).toReviewRound()).toApplicationForm();
+		Reviewer reviewerOne = new ReviewerBuilder().id(1).build();
+		Reviewer reviewerTwo = new ReviewerBuilder().id(2).build();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").latestReviewRound(new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo).build()).build();
 		
 		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock){
 			@Override
@@ -103,7 +103,7 @@ public class MoveToReviewControllerTest {
 	@Test
 	public void shouldReturnNewReviewRoundWithEmtpyReviewersIfNoLatestReviewRound() {
 	
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 		
 		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock){
 			@Override
@@ -122,8 +122,8 @@ public class MoveToReviewControllerTest {
 	}
 	@Test
 	public void shouldMoveApplicationToReview() {
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).toReviewRound();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).build();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 		
 		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock) {
 			@Override
@@ -145,7 +145,7 @@ public class MoveToReviewControllerTest {
 	@Test
 	public void shouldNotSaveReviewRoundAndReturnToReviewRoundPageIfHasErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		controller = new MoveToReviewController(applicationServiceMock, userServiceMock,reviewServiceMock, reviewRoundValidatorMock,  reviewerPropertyEditorMock){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -153,7 +153,7 @@ public class MoveToReviewControllerTest {
 			}
 
 		};
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);

@@ -36,7 +36,7 @@ public class QualificationInstitutionBuilder {
         return this;
     }
 
-    public QualificationInstitution toQualificationInstitution() {
+    public QualificationInstitution build() {
         QualificationInstitution institution = new QualificationInstitution();
         institution.setId(id);
         institution.setDomicileCode(countryCode);
@@ -46,7 +46,7 @@ public class QualificationInstitutionBuilder {
         return institution;
     }
     
-    public QualificationInstitutionReference toQualificationInstitutionReference() {
+    public QualificationInstitutionReference buildAsReference() {
         QualificationInstitutionReference institution = new QualificationInstitutionReference();
         institution.setId(id);
         institution.setDomicileCode(countryCode);

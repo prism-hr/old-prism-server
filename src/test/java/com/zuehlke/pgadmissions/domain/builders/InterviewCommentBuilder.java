@@ -2,12 +2,10 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class InterviewCommentBuilder {
@@ -78,7 +76,7 @@ public class InterviewCommentBuilder {
 		return this;
 	}
 	
-	public InterviewComment toInterviewComment() {
+	public InterviewComment build() {
 		InterviewComment interviewComment = new InterviewComment();
 		interviewComment.setApplication(applicationForm);
 		interviewComment.setComment(comment);
@@ -93,7 +91,5 @@ public class InterviewCommentBuilder {
 		interviewComment.setInterviewer(interviewer);
 		interviewComment.setSuitableCandidateForProgramme(suitableCandidateForProgramme);
 		return interviewComment;
-		
 	}
-	
 }

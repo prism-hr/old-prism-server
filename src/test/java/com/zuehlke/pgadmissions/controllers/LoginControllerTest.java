@@ -87,7 +87,7 @@ public class LoginControllerTest {
             .email("ked@zuhlke.com")
             .enabled(true)
             .activationCode("13ca4700-1393-11e2-892e-0800200c9a66")
-            .toUser();
+            .build();
 	    
         UserService userServiceMock = EasyMock.createMock(UserService.class);
         

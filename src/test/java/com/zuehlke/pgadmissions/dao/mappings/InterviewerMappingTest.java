@@ -32,7 +32,7 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveAndLoadInterviewer() throws ParseException{
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
-		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).lastNotified(lastNotified).requiresAdminNotification(true).dateAdminsNotified(lastNotified).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).lastNotified(lastNotified).requiresAdminNotification(true).dateAdminsNotified(lastNotified).build();
 		save(interviewer);
 		assertNotNull(interviewer.getId());
 		Interviewer reloadedInterviewer = (Interviewer) sessionFactory.getCurrentSession().get(Interviewer.class,interviewer.getId());
@@ -52,8 +52,8 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 	
 	@Test
 	public void shoulLoadInterviewCommentWithInterviewer() throws ParseException{
-		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).toInterviewer();
-		InterviewComment interviewComment = new InterviewCommentBuilder().application(applicationForm).user(interviewerUser).comment("comment").interviewer(interviewer).commentType(CommentType.INTERVIEW).toInterviewComment();
+		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).build();
+		InterviewComment interviewComment = new InterviewCommentBuilder().application(applicationForm).user(interviewerUser).comment("comment").interviewer(interviewer).commentType(CommentType.INTERVIEW).build();
 		
 		save(interviewer, interviewComment);		
 		assertNotNull(interviewComment.getId());
@@ -67,19 +67,19 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 	public void setUp() {
 		super.setUp();
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		
 		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
 		
 		interviewerUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com").username("username1")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(applicant, interviewerUser);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}

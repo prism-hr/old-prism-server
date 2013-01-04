@@ -62,7 +62,7 @@ public class ApprovalEvaluationCommentBuilder {
 		return this;
 	}
 	
-	public ApprovalEvaluationComment toApprovalEvaluationComment(){
+	public ApprovalEvaluationComment build(){
 		ApprovalEvaluationComment approvalEaluationComment = new ApprovalEvaluationComment();
 		approvalEaluationComment.setApplication(application);
 		approvalEaluationComment.setComment(comment);

@@ -22,7 +22,7 @@ public class SuggestedSupervisorJSONPropertyEditorTest {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.replay(encryptionHelperMock);
 		editor.setAsText("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"awareSupervisor\": \"YES\"}");
-		SuggestedSupervisor expected = new SuggestedSupervisorBuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").aware(true).toSuggestedSupervisor();
+		SuggestedSupervisor expected = new SuggestedSupervisorBuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").aware(true).build();
 		SuggestedSupervisor suggestedSupervisor =   (SuggestedSupervisor) editor.getValue();
 		assertEquals(expected.getFirstname(), suggestedSupervisor.getFirstname());
 		assertEquals(expected.getLastname(), suggestedSupervisor.getLastname());
@@ -63,7 +63,7 @@ public class SuggestedSupervisorJSONPropertyEditorTest {
 	public void shouldReturnCorrectjsonString(){			
 		EasyMock.expect(encryptionHelperMock.encrypt(1)).andReturn("bob");
 		EasyMock.replay(encryptionHelperMock);
-		editor.setValue(new SuggestedSupervisorBuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").aware(false).toSuggestedSupervisor());
+		editor.setValue(new SuggestedSupervisorBuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").aware(false).build());
 		assertEquals("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"awareSupervisor\": \"NO\"}", editor.getAsText());
 	}
 	

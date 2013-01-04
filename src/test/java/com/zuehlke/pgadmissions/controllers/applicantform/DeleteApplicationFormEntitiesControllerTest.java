@@ -36,7 +36,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	@Test
 	public void shoulGetQualificationFromServiceAndDelete(){
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-		Qualification qual = new QualificationBuilder().application(applicationForm).id(1).toQualification();
+		Qualification qual = new QualificationBuilder().application(applicationForm).id(1).build();
 		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qual);
 		qualificationServiceMock.delete(qual);
 		EasyMock.replay(qualificationServiceMock, encryptionHelperMock);
@@ -48,7 +48,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	@Test
 	public void shoulGetFundingFromServiceAndDelete(){
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-		Funding funding = new FundingBuilder().id(1).application(applicationForm).toFunding();
+		Funding funding = new FundingBuilder().id(1).application(applicationForm).build();
 		
 		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(funding);
 		fundingServiceMock.delete(funding);
@@ -93,7 +93,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	}
 	@Before
 	public void setup(){
-		applicationForm = new ApplicationFormBuilder().id(2).applicationNumber("2").toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().id(2).applicationNumber("2").build();
 		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
 		employmentServiceMock = EasyMock.createMock(EmploymentPositionService.class);
 		fundingServiceMock = EasyMock.createMock(FundingService.class);

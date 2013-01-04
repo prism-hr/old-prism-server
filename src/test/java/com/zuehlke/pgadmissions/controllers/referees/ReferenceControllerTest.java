@@ -44,7 +44,7 @@ public class ReferenceControllerTest {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
@@ -69,7 +69,7 @@ public class ReferenceControllerTest {
 	public void shouldThrowResourceNoFoundExceptionIfUserNotRefereeForForm() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
@@ -86,7 +86,7 @@ public class ReferenceControllerTest {
 
 	@Test
 	public void shouldReturnUploadReferencePage() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
 
 			@Override
@@ -107,7 +107,7 @@ public class ReferenceControllerTest {
 
 	@Test
 	public void shouldReturnExpiredViewIfApplicationAlreadyDecided() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).build();
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
 
 			@Override
@@ -128,7 +128,7 @@ public class ReferenceControllerTest {
 
 	@Test(expected=ResourceNotFoundException.class)
 	public void shoulThrowResourceNotFoundExceptionIfRefereeHasAlreadyProvidedReferecne() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
 
 			@Override
@@ -153,7 +153,7 @@ public class ReferenceControllerTest {
 	public void shouldReturnReferenceIfFAlreadyExists() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
 
 			@Override
@@ -165,7 +165,7 @@ public class ReferenceControllerTest {
 				return currentUser;
 			}
 		};
-		ReferenceComment reference = new ReferenceCommentBuilder().id(2).toReferenceComment();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(2).build();
 		Referee referee = new RefereeBuilder().id(8).reference(reference).toReferee();
 		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
 		EasyMock.replay(currentUser, userServiceMock);
@@ -177,7 +177,7 @@ public class ReferenceControllerTest {
 	public void shouldReturnNewReferenceIfNotAlredyExists() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {
 
 			@Override
@@ -221,8 +221,8 @@ public class ReferenceControllerTest {
 	@Test
 	public void shouldSaveReferenceAndRedirectToSaveViewIfNoErrors() {
 		Referee referee = new RefereeBuilder().id(1).toReferee();
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").toApplicationForm();
-		ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).toReferenceComment();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").build();
+		ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).build();
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(reference);
@@ -234,7 +234,7 @@ public class ReferenceControllerTest {
 	
 	@Test
 	public void shouldCreateNewReferenceCommentForApplicationForm(){
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		final RegisteredUser currentUser =EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		Referee referee = new RefereeBuilder().id(5).toReferee();

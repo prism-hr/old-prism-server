@@ -50,7 +50,7 @@ public class ApprovalRoundValidatorTest {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		
-		approvalRound = new ApprovalRoundBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).supervisors(new SupervisorBuilder().id(4).toSupervisor()).toApprovalRound();
+		approvalRound = new ApprovalRoundBuilder().application(new ApplicationFormBuilder().id(2).build()).supervisors(new SupervisorBuilder().id(4).build()).build();
 		
 		approvalRoundValidator = new ApprovalRoundValidator();
 		approvalRoundValidator.setValidator((javax.validation.Validator) validator);

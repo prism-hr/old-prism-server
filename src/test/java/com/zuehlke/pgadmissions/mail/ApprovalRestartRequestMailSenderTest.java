@@ -39,17 +39,17 @@ public class ApprovalRestartRequestMailSenderTest {
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
 
-		RegisteredUser approverRequestingRestart = new RegisteredUserBuilder().email("alice@test.com").id(9).toUser();
-		RegisteredUser admin = new RegisteredUserBuilder().email("t@test.com").id(10).toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().id(10).toUser();
+		RegisteredUser approverRequestingRestart = new RegisteredUserBuilder().email("alice@test.com").id(9).build();
+		RegisteredUser admin = new RegisteredUserBuilder().email("t@test.com").id(10).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(10).build();
 	
 		Date yesterDay = DateUtils.addDays(new Date(), -1);
 		Date twoDaysAgo = DateUtils.addDays(new Date(), -2);
 
-		RequestRestartComment commentOne = new RequestRestartCommentBuilder().id(1).date(twoDaysAgo).toComment();
-		RequestRestartComment commentTwo = new RequestRestartCommentBuilder().id(3).date(yesterDay).toComment();
+		RequestRestartComment commentOne = new RequestRestartCommentBuilder().id(1).date(twoDaysAgo).build();
+		RequestRestartComment commentTwo = new RequestRestartCommentBuilder().id(3).date(yesterDay).build();
 		
-		ApplicationForm form = new ApplicationFormBuilder().id(4).comments(commentOne, commentTwo).program(new ProgramBuilder().administrators(admin).toProgram()).applicant(applicant).approverRequestedRestart(approverRequestingRestart).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).comments(commentOne, commentTwo).program(new ProgramBuilder().administrators(admin).build()).applicant(applicant).approverRequestedRestart(approverRequestingRestart).build();
 
 		Map<String, Object> model = mailSender.createModel(form);
 		assertEquals(form, model.get("application"));
@@ -62,12 +62,12 @@ public class ApprovalRestartRequestMailSenderTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSendRequestRestartApprovalMailToProgramAdmins() throws UnsupportedEncodingException {
-		RegisteredUser programAdmin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser programAdmin2 = new RegisteredUserBuilder().id(2).firstName("cindy").lastName("cider").email("cc@test.com").toUser();
+		RegisteredUser programAdmin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		RegisteredUser programAdmin2 = new RegisteredUserBuilder().id(2).firstName("cindy").lastName("cider").email("cc@test.com").build();
 
 
-		Program program = new ProgramBuilder().administrators(programAdmin1, programAdmin2).title("title").toProgram();
-		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).toApplicationForm();
+		Program program = new ProgramBuilder().administrators(programAdmin1, programAdmin2).title("title").build();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).build();
 		
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		
@@ -106,13 +106,13 @@ public class ApprovalRestartRequestMailSenderTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSendRequestRestartApprovalMailToApplicationAdmin() throws UnsupportedEncodingException {
-		RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(54).firstName("arnie").lastName("adams").email("aa@test.com").toUser();
-		RegisteredUser programAdmin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser programAdmin2 = new RegisteredUserBuilder().id(2).firstName("cindy").lastName("cider").email("cc@test.com").toUser();
+		RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(54).firstName("arnie").lastName("adams").email("aa@test.com").build();
+		RegisteredUser programAdmin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		RegisteredUser programAdmin2 = new RegisteredUserBuilder().id(2).firstName("cindy").lastName("cider").email("cc@test.com").build();
 		
 		
-		Program program = new ProgramBuilder().administrators(programAdmin1, programAdmin2).title("title").toProgram();
-		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).applicationAdministrator(applicationAdmin).toApplicationForm();
+		Program program = new ProgramBuilder().administrators(programAdmin1, programAdmin2).title("title").build();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).applicationAdministrator(applicationAdmin).build();
 		
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		
@@ -149,12 +149,12 @@ public class ApprovalRestartRequestMailSenderTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSendRequestRestartApprovalreminderMailToProgramAdmins() throws UnsupportedEncodingException {
-		RegisteredUser programAdmin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser programAdmin2 = new RegisteredUserBuilder().id(2).firstName("cindy").lastName("cider").email("cc@test.com").toUser();
+		RegisteredUser programAdmin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		RegisteredUser programAdmin2 = new RegisteredUserBuilder().id(2).firstName("cindy").lastName("cider").email("cc@test.com").build();
 
 
-		Program program = new ProgramBuilder().administrators(programAdmin1, programAdmin2).title("title").toProgram();
-		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).toApplicationForm();
+		Program program = new ProgramBuilder().administrators(programAdmin1, programAdmin2).title("title").build();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).build();
 		
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		
@@ -193,13 +193,13 @@ public class ApprovalRestartRequestMailSenderTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSendRequestRestartApprovalMailReminderToApplicationAdmin() throws UnsupportedEncodingException {
-		RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(54).firstName("arnie").lastName("adams").email("aa@test.com").toUser();
-		RegisteredUser programAdmin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser programAdmin2 = new RegisteredUserBuilder().id(2).firstName("cindy").lastName("cider").email("cc@test.com").toUser();
+		RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(54).firstName("arnie").lastName("adams").email("aa@test.com").build();
+		RegisteredUser programAdmin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		RegisteredUser programAdmin2 = new RegisteredUserBuilder().id(2).firstName("cindy").lastName("cider").email("cc@test.com").build();
 		
 		
-		Program program = new ProgramBuilder().administrators(programAdmin1, programAdmin2).title("title").toProgram();
-		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).applicationAdministrator(applicationAdmin).toApplicationForm();
+		Program program = new ProgramBuilder().administrators(programAdmin1, programAdmin2).title("title").build();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("xyz").program(program).applicationAdministrator(applicationAdmin).build();
 		
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		

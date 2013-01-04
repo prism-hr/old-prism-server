@@ -30,13 +30,12 @@ public class SuggestedSupervisorBuilder {
 		return this;
 	}
 	
-	
 	public SuggestedSupervisorBuilder lastname(String lastname) {
 		this.lastname = lastname;
 		return this;
 	}
 	
-	public SuggestedSupervisor toSuggestedSupervisor() {
+	public SuggestedSupervisor build() {
 		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisor();
 		suggestedSupervisor.setEmail(email);
 		suggestedSupervisor.setId(id);

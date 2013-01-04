@@ -69,11 +69,11 @@ public class ApprovalControllerTest {
 
 	@Test
 	public void shouldGetProgrammeSupervisors() {
-		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
-		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
+		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
+		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
 
-		final Program program = new ProgramBuilder().supervisors(interUser1, interUser2).id(6).toProgram();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		final Program program = new ProgramBuilder().supervisors(interUser1, interUser2).id(6).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
 			@Override
@@ -94,20 +94,20 @@ public class ApprovalControllerTest {
 	@Test
 	public void shouldGetListOfPreviousSupervisorsAndAddReviewersWillingToApprovalRoundWitDefaultSupervisorsRemoved() {
 		EasyMock.reset(userServiceMock);
-		final RegisteredUser defaultSupervisor = new RegisteredUserBuilder().id(9).toUser();
-		final RegisteredUser interviewerWillingToSuperviseOne = new RegisteredUserBuilder().id(8).toUser();
-		final RegisteredUser interviewerWillingToSuperviseTwo = new RegisteredUserBuilder().id(7).toUser();
-		final RegisteredUser previousSupervisor = new RegisteredUserBuilder().id(6).toUser();
+		final RegisteredUser defaultSupervisor = new RegisteredUserBuilder().id(9).build();
+		final RegisteredUser interviewerWillingToSuperviseOne = new RegisteredUserBuilder().id(8).build();
+		final RegisteredUser interviewerWillingToSuperviseTwo = new RegisteredUserBuilder().id(7).build();
+		final RegisteredUser previousSupervisor = new RegisteredUserBuilder().id(6).build();
 		InterviewComment interviewOne = new InterviewCommentBuilder().id(1).user(interviewerWillingToSuperviseOne).willingToSupervise(true)
-				.toInterviewComment();
-		InterviewComment interviewTwo = new InterviewCommentBuilder().id(1).user(defaultSupervisor).willingToSupervise(true).toInterviewComment();
+				.build();
+		InterviewComment interviewTwo = new InterviewCommentBuilder().id(1).user(defaultSupervisor).willingToSupervise(true).build();
 		InterviewComment interviewThree = new InterviewCommentBuilder().id(1).user(interviewerWillingToSuperviseTwo).willingToSupervise(true)
-				.toInterviewComment();
+				.build();
 
-		final Program program = new ProgramBuilder().id(6).supervisors(defaultSupervisor).toProgram();
+		final Program program = new ProgramBuilder().id(6).supervisors(defaultSupervisor).build();
 
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).comments(interviewOne, interviewTwo, interviewThree)
-				.toApplicationForm();
+				.build();
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
 			@Override
@@ -130,10 +130,10 @@ public class ApprovalControllerTest {
 
 	@Test
 	public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfAny() {
-		Supervisor supervisorOne = new SupervisorBuilder().id(1).toSupervisor();
-		Supervisor suprvisorTwo = new SupervisorBuilder().id(2).toSupervisor();
+		Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
+		Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
 		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
-				.latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, suprvisorTwo).toApprovalRound()).toApplicationForm();
+				.latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, suprvisorTwo).build()).build();
 
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
@@ -154,16 +154,16 @@ public class ApprovalControllerTest {
 
 	@Test
 	public void shouldReturnApprovalRoundWithWillingToApprovalRoundWithSupervisorsOfPreviousApprovalRoundRemoved() {
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();
-		InterviewComment interviewOne = new InterviewCommentBuilder().id(1).user(userOne).willingToSupervise(true).toInterviewComment();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(2).toUser();
-		InterviewComment interviewTwo = new InterviewCommentBuilder().id(2).user(userTwo).willingToSupervise(true).toInterviewComment();
-		RegisteredUser userThree = new RegisteredUserBuilder().id(3).toUser();
-		InterviewComment interviewThree = new InterviewCommentBuilder().id(3).user(userThree).willingToSupervise(true).toInterviewComment();
-		Supervisor interviewerOne = new SupervisorBuilder().id(1).user(userOne).toSupervisor();
-		Supervisor interviewerTwo = new SupervisorBuilder().id(2).user(userTwo).toSupervisor();
+		RegisteredUser userOne = new RegisteredUserBuilder().id(1).build();
+		InterviewComment interviewOne = new InterviewCommentBuilder().id(1).user(userOne).willingToSupervise(true).build();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(2).build();
+		InterviewComment interviewTwo = new InterviewCommentBuilder().id(2).user(userTwo).willingToSupervise(true).build();
+		RegisteredUser userThree = new RegisteredUserBuilder().id(3).build();
+		InterviewComment interviewThree = new InterviewCommentBuilder().id(3).user(userThree).willingToSupervise(true).build();
+		Supervisor interviewerOne = new SupervisorBuilder().id(1).user(userOne).build();
+		Supervisor interviewerTwo = new SupervisorBuilder().id(2).user(userTwo).build();
 		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(interviewOne, interviewTwo, interviewThree)
-				.latestApprovalRound(new ApprovalRoundBuilder().supervisors(interviewerOne, interviewerTwo).toApprovalRound()).toApplicationForm();
+				.latestApprovalRound(new ApprovalRoundBuilder().supervisors(interviewerOne, interviewerTwo).build()).build();
 
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
@@ -187,7 +187,7 @@ public class ApprovalControllerTest {
 	@Test
 	public void shouldReturnNewApprovalRoundWithEmtpySupervisorsIfNoLatestApprovalRound() {
 
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
@@ -208,8 +208,8 @@ public class ApprovalControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromIdForAdmin() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
@@ -223,8 +223,8 @@ public class ApprovalControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromIdForApprover() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
@@ -247,8 +247,8 @@ public class ApprovalControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrApproverOfApplicationProgram() {
 
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
@@ -266,8 +266,8 @@ public class ApprovalControllerTest {
 
 	@Test
 	public void shouldMoveApplicationToApprovalRound() {
-		ApprovalRound interview = new ApprovalRoundBuilder().id(4).toApprovalRound();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
+		ApprovalRound interview = new ApprovalRoundBuilder().id(4).build();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
@@ -290,7 +290,7 @@ public class ApprovalControllerTest {
 	@Test
 	public void shouldNotSaveApprovalRoundAndReturnToApprovalPageIfHasErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
 			@Override
@@ -299,7 +299,7 @@ public class ApprovalControllerTest {
 			}
 
 		};
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).toApprovalRound();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);
@@ -321,7 +321,7 @@ public class ApprovalControllerTest {
 
 	@Test
 	public void shouldGetRequestRequestRestartCommentWithApplicationAndCurrentUser() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
 				supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock) {
 			@Override
@@ -351,9 +351,9 @@ public class ApprovalControllerTest {
 	
 	@Test
 	public void shouldRequestRestartOfApproval() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();
 		
-		RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").toComment();
+		RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").build();
 
 
 		approvalServiceMock.requestApprovalRestart(applicationForm, currentUserMock, comment);
@@ -368,8 +368,8 @@ public class ApprovalControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
 		EasyMock.replay(bindingResultMock);
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").toApplicationForm();		
-		RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").toComment();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();		
+		RequestRestartComment comment = new RequestRestartCommentBuilder().id(9).comment("request restart").build();
 
 		EasyMock.replay(approvalServiceMock);
 		assertEquals("/private/staff/approver/request_restart_approve_page", controller.requestRestart(applicationForm, comment, bindingResultMock));

@@ -88,7 +88,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
             .enabled(true)
             .identifier("0009")
             .studyOption("F+++++", "Full-time")
-            .toProgramInstance();
+            .build();
         
         EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);       
         EasyMock.replay(programInstanceDAOMock);
@@ -115,7 +115,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
             .enabled(true)
             .identifier("0009")
             .studyOption("F+++++", "Full-time")
-            .toProgramInstance();
+            .build();
         
         applicationForm.getPersonalDetails().setPhoneNumber("+44 7500-934 2");
         
@@ -137,7 +137,7 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
             .enabled(true)
             .identifier("0009")
             .studyOption("F+++++", "Full-time")
-            .toProgramInstance();
+            .build();
         
         applicationForm.getQualifications().get(0).setQualificationAwardDate(null);
         

@@ -27,7 +27,7 @@ public class AcceptTermsControllerTest {
 	@Test
 	public void shouldUpdateApplicationWithAcceptedTermsAndReturnApplicationPage() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).applicationNumber("ABC")
-				.applicant(student).id(2).toApplicationForm();
+				.applicant(student).id(2).build();
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		String view = acceptTermsController.acceptTermsAndGetApplicationPage(applicationForm);
@@ -38,7 +38,7 @@ public class AcceptTermsControllerTest {
 	@Test
 	public void shouldGetApplicationForm() {
 		String applicationNumber = "abc";
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.reset(userServiceMock);
@@ -61,7 +61,7 @@ public class AcceptTermsControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserCannotSeeApplicationForm() {
 		String applicationNumber = "abc";
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.reset(userServiceMock);
@@ -80,7 +80,7 @@ public class AcceptTermsControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResournceNotFoundExceptionIfNotApplicant() {
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
+				.role(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
@@ -96,7 +96,7 @@ public class AcceptTermsControllerTest {
 		acceptTermsController = new AcceptTermsController(applicationsServiceMock, userServiceMock);
 
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student).anyTimes();
 		EasyMock.replay(userServiceMock);

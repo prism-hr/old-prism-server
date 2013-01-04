@@ -22,10 +22,10 @@ public class QualificationInstitutionsControllerTest {
     public void shouldReturnInstitutionsAsJson() throws IOException {
         DomicileDAO domicileDAO = EasyMock.createMock(DomicileDAO.class);
         QualificationInstitutionDAO qualificationInstitutionDAO = EasyMock.createMock(QualificationInstitutionDAO.class);
-        Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").toDomicile();
+        Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
         EncryptionHelper encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().id(2).enabled(true).name("University of London").countryCode("UK").code("ABC").toQualificationInstitution();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").countryCode("UK").code("ABCD").toQualificationInstitution();
+        QualificationInstitution institution1 = new QualificationInstitutionBuilder().id(2).enabled(true).name("University of London").countryCode("UK").code("ABC").build();
+        QualificationInstitution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").countryCode("UK").code("ABCD").build();
         
         EasyMock.expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
         EasyMock.expect(domicileDAO.getDomicileById(0)).andReturn(domicile);

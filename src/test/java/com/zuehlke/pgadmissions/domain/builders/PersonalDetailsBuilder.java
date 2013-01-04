@@ -154,7 +154,7 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 
-	public PersonalDetails toPersonalDetails() {
+	public PersonalDetails build() {
 		PersonalDetails personalDetails = new PersonalDetails();
 		personalDetails.setId(id);
 		personalDetails.setTitle(title);

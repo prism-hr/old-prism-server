@@ -23,8 +23,8 @@ public class LanguageDAOTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldGetAllLanguagesInAlhphabeticalOrder() {
 		BigInteger numberOfLanguages = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from LANGUAGE").uniqueResult();
-		Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toLanguage();
-		Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(true).toLanguage();
+		Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).build();
+		Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(true).build();
 		save(language1,  language2);
 		flushAndClearSession();
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
@@ -38,8 +38,8 @@ public class LanguageDAOTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldGetLanguageById(){
 
-		Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toLanguage();
-		Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(true).toLanguage();
+		Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).build();
+		Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(true).build();
 		
 		save(language1, language2);
 		flushAndClearSession();
@@ -52,8 +52,8 @@ public class LanguageDAOTest extends AutomaticRollbackTestCase{
     @Test
     public void shouldGetAllEnabledLanguages() {
         BigInteger numberOfLanguages = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from LANGUAGE WHERE enabled = true").uniqueResult();
-        Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toLanguage();
-        Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(false).toLanguage();
+        Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).build();
+        Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(false).build();
         save(language1,  language2);
         flushAndClearSession();
         LanguageDAO languageDAO = new LanguageDAO(sessionFactory);

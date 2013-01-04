@@ -51,7 +51,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceDomicile(domicile)
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
-				.applicationForm(applicationForm).toPersonalDetails();
+				.applicationForm(applicationForm).build();
 		sessionFactory.getCurrentSession().save(personalDetails);
 		
 		flushAndClearSession();
@@ -68,7 +68,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
 				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceDomicile(domicile)
 				.applicationForm(applicationForm)
-				.ethnicity(ethnicity).disability(disability).toPersonalDetails();
+				.ethnicity(ethnicity).disability(disability).build();
 		personalDetailDAO.save(personalDetails);
 		assertNotNull(personalDetails.getId());		
 		flushAndClearSession();
@@ -88,17 +88,17 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveEthnicityDisability() throws ParseException {
 		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
-		Ethnicity eth = new EthnicityBuilder().name("AAAA").enabled(true).toEthnicity();
+		Ethnicity eth = new EthnicityBuilder().name("AAAA").enabled(true).build();
 		save(eth);
 
-		Disability dis = new DisabilityBuilder().name("BBBB").code(2).enabled(true).toDisability();
+		Disability dis = new DisabilityBuilder().name("BBBB").code(2).enabled(true).build();
 		save(dis);
 
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country)//
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))//
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").email("email")//
 				.firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname")//
-				.residenceDomicile(domicile).ethnicity(eth).disability(dis).applicationForm(applicationForm).toPersonalDetails();
+				.residenceDomicile(domicile).ethnicity(eth).disability(dis).applicationForm(applicationForm).build();
 
 		personalDetailDAO.save(personalDetails);
 		flushAndClearSession();
@@ -117,25 +117,25 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	@Override
 	public void setUp() {
 		super.setUp();
-		country = new CountryBuilder().name("AA").code("AA").enabled(true).toCountry();
-		domicile = new DomicileBuilder().name("BB").code("BB").enabled(true).toDomicile();
-		ethnicity = new EthnicityBuilder().name("AAAA").code(1).enabled(true).toEthnicity();
-		disability = new DisabilityBuilder().name("BBBB").code(2).enabled(true).toDisability();
+		country = new CountryBuilder().name("AA").code("AA").enabled(true).build();
+		domicile = new DomicileBuilder().name("BB").code("BB").enabled(true).build();
+		ethnicity = new EthnicityBuilder().name("AAAA").code(1).enabled(true).build();
+		disability = new DisabilityBuilder().name("BBBB").code(2).enabled(true).build();
 
 		save(country);
 		save(ethnicity);
 		save(disability);
 		save(domicile);
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();		
 		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
 		save(applicant);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}

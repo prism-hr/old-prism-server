@@ -39,10 +39,10 @@ public class RefereeValidatorTest {
 	@Before
     public void setup() {
 	    userServiceMock = EasyMock.createMock(UserService.class);
-        currentUser = new RegisteredUserBuilder().id(9).email("me@test.com").toUser();
+        currentUser = new RegisteredUserBuilder().id(9).email("me@test.com").build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
-        referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm())
+        referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).build())
                 .email("email@test.com").firstname("bob").lastname("smith").addressCountry(new Country())
                 .address1("london").address3("london3").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress")
                 .phoneNumber("+44 (0) 20 7911 5000").toReferee();        

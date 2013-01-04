@@ -16,7 +16,7 @@ public class RejectReasonBuilder {
 		return this;
 	}
 
-	public RejectReason toRejectReason() {
+	public RejectReason build() {
 		RejectReason reason = new RejectReason();
 		reason.setId(id);
 		reason.setText(text);

@@ -23,12 +23,12 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 	@Override
 	public void setUp() {
 		super.setUp();
-		Program program = new ProgramBuilder().code("newproject").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("newproject").title("another title").build();
 		save(program);
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(applicant);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}
@@ -38,7 +38,7 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 		AdditionalInfoDAO infoDAO = new AdditionalInfoDAO();
 		AdditionalInformation info = new AdditionalInformationBuilder()//
 				.setConvictions(false)//
-				.applicationForm(applicationForm).toAdditionalInformation();
+				.applicationForm(applicationForm).build();
 		infoDAO.save(info);
 	}
 
@@ -49,7 +49,7 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 		String conText = "streaking in public";
 		AdditionalInformation info = new AdditionalInformationBuilder()//
 				.setConvictions(true).convictionsText(conText)//
-				.applicationForm(applicationForm).toAdditionalInformation();
+				.applicationForm(applicationForm).build();
 
 		infoDAO.save(info);
 		Integer persistentID = info.getId();
@@ -70,7 +70,7 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 		AdditionalInfoDAO infoDAO = new AdditionalInfoDAO(sessionFactory);
 		AdditionalInformation info = new AdditionalInformationBuilder()//
 				.setConvictions(false)//
-				.applicationForm(applicationForm).toAdditionalInformation();
+				.applicationForm(applicationForm).build();
 
 		infoDAO.save(info);
 		Integer persistentID = info.getId();

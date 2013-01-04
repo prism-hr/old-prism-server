@@ -181,7 +181,7 @@ public class RegisteredUserBuilder {
 		return this;
 	}
 	
-	public RegisteredUser toUser() {
+	public RegisteredUser build() {
 		RegisteredUser user = new RegisteredUser();
 		user.setId(id);
 		user.setFirstName(firstName);

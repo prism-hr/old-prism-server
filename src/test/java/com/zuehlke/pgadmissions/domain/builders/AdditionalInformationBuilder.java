@@ -10,7 +10,7 @@ public class AdditionalInformationBuilder {
 	private String convictionsText;
 	private Boolean hasConvictions;
 
-	public AdditionalInformation toAdditionalInformation() {
+	public AdditionalInformation build() {
 		AdditionalInformation info = new AdditionalInformation();
 		info.setId(infoId);
 		info.setApplication(applicationForm);

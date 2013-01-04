@@ -35,7 +35,7 @@ public class UserDTOValidatorTest {
 		user.setFirstName("bob");
 		user.setLastName("Smith");
 		user.setEmail("email@test.com");
-		user.setSelectedProgram(new ProgramBuilder().id(4).toProgram());
+		user.setSelectedProgram(new ProgramBuilder().id(4).build());
 		user.setSelectedAuthorities(Authority.REVIEWER);
 		
 		userDTOValidator = new UserDTOValidator();

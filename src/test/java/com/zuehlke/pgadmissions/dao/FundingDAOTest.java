@@ -26,7 +26,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
 		FundingDAO fundingDAO = new FundingDAO();
-		Funding funding = new FundingBuilder().id(1).toFunding();
+		Funding funding = new FundingBuilder().id(1).build();
 		fundingDAO.delete(funding);
 	}
 
@@ -37,7 +37,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 		application.setApplicant(user);
 		
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")
-				.toFunding();
+				.build();
 		save(application, funding);
 		flushAndClearSession();
 
@@ -55,7 +55,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 		application.setApplicant(user);
 		
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")
-				.toFunding();
+				.build();
 		save(application, funding);
 
 		Integer id = funding.getId();
@@ -73,7 +73,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 		save(application);
 		flushAndClearSession();
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")
-				.toFunding();
+				.build();
 		FundingDAO fundingDAO = new FundingDAO(sessionFactory);
 		fundingDAO.save(funding);
 
@@ -85,8 +85,8 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		save(user, program);
 		flushAndClearSession();
 	}

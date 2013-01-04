@@ -18,7 +18,6 @@ public class SupervisorBuilder {
 		return this;
 	}
 
-	
 	public SupervisorBuilder user(RegisteredUser user) {
 		this.user = user;
 		return this;
@@ -34,9 +33,8 @@ public class SupervisorBuilder {
 		this.lastNotified = lastNotified;
 		return this;
 	}
-		
 	
-	public Supervisor toSupervisor() {
+	public Supervisor build() {
 		Supervisor supervisor = new Supervisor();
 		supervisor.setId(id);		
 		supervisor.setUser(user);

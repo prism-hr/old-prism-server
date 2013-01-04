@@ -15,7 +15,6 @@ public class InterviewStateChangeEventBuilder {
 	private RegisteredUser user;
 	private Interview interview;
 	
-	
 	public InterviewStateChangeEventBuilder interview(Interview interview){
 		this.interview = interview;
 		return this;
@@ -41,7 +40,7 @@ public class InterviewStateChangeEventBuilder {
 		return this;
 	}
 	
-	public InterviewStateChangeEvent toInterviewStateChangeEvent(){
+	public InterviewStateChangeEvent build() {
 		InterviewStateChangeEvent event = new InterviewStateChangeEvent();
 		event.setId(id);
 		event.setDate(eventDate);

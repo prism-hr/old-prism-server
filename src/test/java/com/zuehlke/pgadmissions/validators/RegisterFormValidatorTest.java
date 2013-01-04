@@ -38,7 +38,7 @@ public class RegisterFormValidatorTest {
 
 	@Before
 	public void setup() {
-		user = new RegisteredUserBuilder().id(4).username("email").firstName("Hans-Peter").lastName("Mueller").email("meuston@gmail.com").confirmPassword("12345678").password("12345678").toUser();
+		user = new RegisteredUserBuilder().id(4).username("email").firstName("Hans-Peter").lastName("Mueller").email("meuston@gmail.com").confirmPassword("12345678").password("12345678").build();
 		userServiceMock = EasyMock.createMock(UserService.class);
 		recordValidator = new RegisterFormValidator(userServiceMock);
 		recordValidator.setValidator((javax.validation.Validator) validator);
@@ -196,7 +196,7 @@ public class RegisterFormValidatorTest {
 		user.setEmail("meuston@gmail.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		
-		EasyMock.expect(userServiceMock.getUserByEmail("meuston@gmail.com")).andReturn(new RegisteredUserBuilder().id(5).toUser());
+		EasyMock.expect(userServiceMock.getUserByEmail("meuston@gmail.com")).andReturn(new RegisteredUserBuilder().id(5).build());
 		EasyMock.replay(userServiceMock);		
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -210,7 +210,7 @@ public class RegisterFormValidatorTest {
 		user.setEmail("meuston@gmail.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		
-		EasyMock.expect(userServiceMock.getUserByEmail("meuston@gmail.com")).andReturn(new RegisteredUserBuilder().id(5).toUser());
+		EasyMock.expect(userServiceMock.getUserByEmail("meuston@gmail.com")).andReturn(new RegisteredUserBuilder().id(5).build());
 		EasyMock.replay(userServiceMock);		
 		recordValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());

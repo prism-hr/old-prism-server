@@ -103,10 +103,10 @@ public class AccountControllerTest {
         PowerMock.mockStatic(SecurityContextHolder.class);
         
         RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).accountNonExpired(true)
-                .accountNonLocked(true).enabled(true).activationCode("abc").email("B@A.com").password("password").toUser();
+                .accountNonLocked(true).enabled(true).activationCode("abc").email("B@A.com").password("password").build();
 
         RegisteredUser desiredAccount = new RegisteredUserBuilder().id(2).accountNonExpired(true)
-                .accountNonLocked(true).enabled(true).activationCode("abcd").email("A@B.com").password("password").toUser();
+                .accountNonLocked(true).enabled(true).activationCode("abcd").email("A@B.com").password("password").build();
         
         desiredAccount.setPrimaryAccount(currentAccount);
         
@@ -142,6 +142,6 @@ public class AccountControllerTest {
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").password("password").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 	}
 }

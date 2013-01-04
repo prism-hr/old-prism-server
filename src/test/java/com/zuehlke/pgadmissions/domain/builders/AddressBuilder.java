@@ -14,7 +14,6 @@ public class AddressBuilder {
 	private String address5;
 	private Country country;
 
-
 	public AddressBuilder id(Integer id) {
 		this.id = id;
 		return this;
@@ -50,7 +49,7 @@ public class AddressBuilder {
 		return this;
 	}
 
-	public Address toAddress() {
+	public Address build() {
 		Address address = new Address();
 		address.setId(id);
 		address.setAddress1(address1);

@@ -29,8 +29,8 @@ public class AssignReviewersReviewerPropertyEditorTest {
 
 	@Test	
 	public void shouldCreateNewReviewerWithUserAndSetAsValueIfUserNotReviewerInLatestRoundOfApplication(){
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
@@ -45,10 +45,10 @@ public class AssignReviewersReviewerPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnExistingReviewerIfUserReviewerInLatestRoundOfApplication(){
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		Reviewer reviewer = new ReviewerBuilder().id(3).user(user).toReviewer();
-		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).toReviewRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).latestReviewRound(reviewRound).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
+		Reviewer reviewer = new ReviewerBuilder().id(3).user(user).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).latestReviewRound(reviewRound).build();
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);

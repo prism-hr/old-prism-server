@@ -17,8 +17,8 @@ public class LanguageServiceTest {
 	public void shouldGetAllLanguagesFromDAO() {
 		LanguageDAO languageDAOMock = EasyMock.createMock(LanguageDAO.class);
 		LanguageService service = new LanguageService(languageDAOMock);
-		Language country1 = new LanguageBuilder().id(1).toLanguage();
-		Language country2 = new LanguageBuilder().id(2).toLanguage();
+		Language country1 = new LanguageBuilder().id(1).build();
+		Language country2 = new LanguageBuilder().id(2).build();
 		EasyMock.expect(languageDAOMock.getAllLanguages()).andReturn(Arrays.asList(country1, country2));
 		EasyMock.replay(languageDAOMock);
 
@@ -33,7 +33,7 @@ public class LanguageServiceTest {
 	public void shouldGetLanguageFromDAO() {
 		LanguageDAO languageDAOMock = EasyMock.createMock(LanguageDAO.class);
 		LanguageService service = new LanguageService(languageDAOMock);
-		Language langugage = new LanguageBuilder().id(1).toLanguage();
+		Language langugage = new LanguageBuilder().id(1).build();
 		EasyMock.expect(languageDAOMock.getLanguageById(1)).andReturn(langugage);
 		EasyMock.replay(languageDAOMock);
 

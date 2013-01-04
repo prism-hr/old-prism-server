@@ -96,7 +96,7 @@ public class EmploymentPositionBuilder {
 		EmploymentPosition employment = new EmploymentPosition();
 		employment.setApplication(application);
 		employment.setEmployerName(employerName);
-		Address employerAdress = new AddressBuilder().address1(employerAdress1).address2(employerAdress2).address3(employerAdress3).address4(employerAdress4).country(employerCountry).toAddress();
+		Address employerAdress = new AddressBuilder().address1(employerAdress1).address2(employerAdress2).address3(employerAdress3).address4(employerAdress4).country(employerCountry).build();
 		employment.setEmployerAddress(employerAdress);
 		employment.setEndDate(endDate);
 		employment.setRemit(remit);

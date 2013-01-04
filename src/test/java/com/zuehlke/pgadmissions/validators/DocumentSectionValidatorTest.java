@@ -45,8 +45,8 @@ public class DocumentSectionValidatorTest {
 	
 	@Before
 	public void setup() {
-		applicationForm = new ApplicationFormBuilder().cv(new DocumentBuilder().type(DocumentType.CV).toDocument())
-				.personalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).toDocument()).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().cv(new DocumentBuilder().type(DocumentType.CV).build())
+				.personalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build()).build();
 		
 		documentSectionValidator = new DocumentSectionValidator();
 		documentSectionValidator.setValidator((javax.validation.Validator) validator);

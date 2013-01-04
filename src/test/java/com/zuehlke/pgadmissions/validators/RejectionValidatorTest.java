@@ -43,7 +43,7 @@ public class RejectionValidatorTest {
 	
 	@Before
 	public void setup(){
-		rejection = new RejectionBuilder().rejectionReason(new RejectReasonBuilder().id(1).toRejectReason()).toRejection();
+		rejection = new RejectionBuilder().rejectionReason(new RejectReasonBuilder().id(1).build()).build();
 		rejectionValidator = new RejectionValidator();
 		rejectionValidator.setValidator((javax.validation.Validator) validator);
 	}

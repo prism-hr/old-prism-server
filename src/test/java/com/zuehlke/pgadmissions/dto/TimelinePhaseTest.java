@@ -67,7 +67,7 @@ public class TimelinePhaseTest {
 
 		TimelinePhase phase = new TimelinePhase();
 		phase.setEventDate(eventDate);
-		phase.getComments().addAll(Arrays.asList(new CommentBuilder().date(commetnDateTwo).toComment(), new CommentBuilder().date(commetnDateOne).toComment()));
+		phase.getComments().addAll(Arrays.asList(new CommentBuilder().date(commetnDateTwo).build(), new CommentBuilder().date(commetnDateOne).build()));
 		assertEquals(commetnDateTwo, phase.getMostRecentActivityDate());
 	}
 

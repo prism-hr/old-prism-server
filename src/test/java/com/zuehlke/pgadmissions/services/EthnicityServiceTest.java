@@ -18,8 +18,8 @@ public class EthnicityServiceTest {
 	public void shouldGetAllEthnicityFromDAO(){
 		EthnicityDAO ethnicityDAOMock = EasyMock.createMock(EthnicityDAO.class);
 		EthnicityService service = new EthnicityService(ethnicityDAOMock);
-		Ethnicity country1 = new EthnicityBuilder().id(1).toEthnicity();
-		Ethnicity country2 = new EthnicityBuilder().id(2).toEthnicity();
+		Ethnicity country1 = new EthnicityBuilder().id(1).build();
+		Ethnicity country2 = new EthnicityBuilder().id(2).build();
 		EasyMock.expect(ethnicityDAOMock.getAllEthnicities()).andReturn(Arrays.asList(country1, country2));
 		EasyMock.replay(ethnicityDAOMock);
 		
@@ -34,7 +34,7 @@ public class EthnicityServiceTest {
 	public void shouldGetEthnicityFromDAO(){
 		EthnicityDAO ethnicityDAOMock = EasyMock.createMock(EthnicityDAO.class);
 		EthnicityService service = new EthnicityService(ethnicityDAOMock);
-		Ethnicity country = new EthnicityBuilder().id(1).toEthnicity();
+		Ethnicity country = new EthnicityBuilder().id(1).build();
 		EasyMock.expect(ethnicityDAOMock.getEthnicityById(1)).andReturn(country);
 		EasyMock.replay(ethnicityDAOMock);
 		

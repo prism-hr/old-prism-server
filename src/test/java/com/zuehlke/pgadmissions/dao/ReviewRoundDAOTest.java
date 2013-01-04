@@ -26,11 +26,11 @@ public class ReviewRoundDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveReviewRound() {
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		flushAndClearSession();
 		
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).build();
 		dao.save(reviewRound);
 		assertNotNull(reviewRound.getId());
 		flushAndClearSession();
@@ -42,11 +42,11 @@ public class ReviewRoundDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldGetReviewRounderById() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		flushAndClearSession();
 		
-		ReviewRound reviewRound = new ReviewRoundBuilder().toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().build();
 		dao.save(reviewRound);
 		assertNotNull(reviewRound.getId());
 		flushAndClearSession();
@@ -59,8 +59,8 @@ public class ReviewRoundDAOTest extends AutomaticRollbackTestCase {
 	public void setUp() {
 		super.setUp();
 		applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		
 		save(applicant, program, applicant);
 		

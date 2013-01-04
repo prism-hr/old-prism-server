@@ -24,20 +24,20 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 public class InterviewEvaluationCommentMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadInterviewEvaluationComment() {
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).build();
 
-		Interview interview = new InterviewBuilder().application(applicationForm).dueDate(new Date()).toInterview();
+		Interview interview = new InterviewBuilder().application(applicationForm).dueDate(new Date()).build();
 		save(program, user, applicationForm, interview);
 
 		flushAndClearSession();
 
 		InterviewEvaluationComment interviewEvaluationComment = new InterviewEvaluationCommentBuilder().application(applicationForm).comment("hi")
-				.type(CommentType.INTERVIEW_EVALUATION).user(user).interview(interview).toInterviewEvaluationComment();
+				.type(CommentType.INTERVIEW_EVALUATION).user(user).interview(interview).build();
 		save(interviewEvaluationComment);
 		assertNotNull(interviewEvaluationComment.getId());
 

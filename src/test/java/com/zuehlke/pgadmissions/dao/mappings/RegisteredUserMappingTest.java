@@ -46,7 +46,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadUserWithSimpleValues() throws Exception {
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).originalApplicationQueryString("?hi&hello").toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).originalApplicationQueryString("?hi&hello").build();
 
 		assertNull(user.getId());
 
@@ -81,7 +81,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		Referee referee2 = new RefereeBuilder().id(5).firstname("ref1").lastname("erre1").email("ref1@test.com").phoneNumber("hallihallo").toReferee();
 		
 
-		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
 		
 		sessionFactory.getCurrentSession().save(admin1);
 		flushAndClearSession();
@@ -100,7 +100,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadRegisteredUserWithReferee() {
-		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
 
 		flushAndClearSession();
 		assertNull(admin1.getId());
@@ -135,13 +135,13 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 
-		Role roleOne = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
-		Role roleTwo = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
+		Role roleOne = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
+		Role roleTwo = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
 		save(roleOne, roleTwo);
 		flushAndClearSession();
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleOne).role(roleTwo).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleOne).role(roleTwo).build();
 
 		sessionFactory.getCurrentSession().save(user);
 
@@ -161,13 +161,13 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
-		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
+		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
 		save(role);
 		Integer roleId = role.getId();
 		flushAndClearSession();
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(role).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(role).build();
 
 		sessionFactory.getCurrentSession().save(user);
 
@@ -187,13 +187,13 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadProgramsOfWhichAdministrator() throws Exception {
 
-		Program program = new ProgramBuilder().code("111111").title("hello").toProgram();
+		Program program = new ProgramBuilder().code("111111").title("hello").build();
 		save(program);
 		flushAndClearSession();
 
 		RegisteredUser admin = new RegisteredUserBuilder().programsOfWhichAdministrator(program).firstName("Jane").lastName("Doe")
 				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).toUser();
+				.credentialsNonExpired(false).enabled(false).build();
 
 		save(admin);
 
@@ -207,13 +207,13 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldLoadProgramsOfWhichApprover() throws Exception {
 
-		Program program = new ProgramBuilder().code("111111").title("hello").toProgram();
+		Program program = new ProgramBuilder().code("111111").title("hello").build();
 		save(program);
 		flushAndClearSession();
 
 		RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program).firstName("Jane").lastName("Doe")
 				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).toUser();
+				.credentialsNonExpired(false).enabled(false).build();
 
 		save(approver);
 
@@ -227,13 +227,13 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadProgramsOfWhichReviewer() throws Exception {
 
-		Program program = new ProgramBuilder().code("111111").title("hello").toProgram();
+		Program program = new ProgramBuilder().code("111111").title("hello").build();
 		save(program);
 		flushAndClearSession();
 
 		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).firstName("Jane").lastName("Doe")
 				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).toUser();
+				.credentialsNonExpired(false).enabled(false).build();
 
 		save(reviewer);
 
@@ -251,13 +251,13 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadProgramsOfWhichInterviewer() throws Exception {
 		
-		Program program = new ProgramBuilder().code("111111").title("hello").toProgram();
+		Program program = new ProgramBuilder().code("111111").title("hello").build();
 		save(program);
 		flushAndClearSession();
 		
 		RegisteredUser interviewer = new RegisteredUserBuilder().programsOfWhichInterviewer(program).firstName("Jane").lastName("Doe")
 				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).toUser();
+				.credentialsNonExpired(false).enabled(false).build();
 		
 		save(interviewer);
 		
@@ -271,19 +271,19 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldLoadRegisteredUserWithComments() {
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").build();
 		
 		sessionFactory.getCurrentSession().save(applicant);
 		
-		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(1).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(1).build();
 		
 		sessionFactory.getCurrentSession().save(application);
 		
-		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).adminsNotified(false).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
-		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
+		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").build();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).adminsNotified(false).comment("This is a review comment").commentType(CommentType.REVIEW).build();
+		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").build();
 		
-		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").build();
 		
 		sessionFactory.getCurrentSession().save(admin1);
 		flushAndClearSession();
@@ -308,10 +308,10 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadNotificationRecordsWithUser() throws ParseException {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-		NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.APPLICANT_SUBMISSION_NOTIFICATION).toNotificationRecord();
-		NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26")).notificationType(NotificationType.REFEREE_RESPONDED_NOTIFICATION).toNotificationRecord();
+		NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.APPLICANT_SUBMISSION_NOTIFICATION).build();
+		NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26")).notificationType(NotificationType.REFEREE_RESPONDED_NOTIFICATION).build();
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(recordOne, recordTwo).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(recordOne, recordTwo).build();
 		
 		save(user);
 		Integer recordOneId = recordOne.getId();
@@ -341,15 +341,15 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
 		Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		save(program);
 		
-		PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).toPendingRoleNotification();
-		PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).toPendingRoleNotification();
+		PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
+		PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 		
 		
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).build();
 		
 		save(user);
 		Integer recordOneId = pendingOne.getId();

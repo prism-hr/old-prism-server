@@ -17,7 +17,7 @@ public class QualificationServiceTest {
 
 	@Test			
 	public void shouldDelegateGetQualificationToDAO(){
-		Qualification qualification = new QualificationBuilder().id(2).toQualification();
+		Qualification qualification = new QualificationBuilder().id(2).build();
 		EasyMock.expect(qualificationDAOMock.getQualificationById(2)).andReturn(qualification);
 		EasyMock.replay(qualificationDAOMock);
 		Qualification returnedQualification = qualificationService.getQualificationById(2);
@@ -26,7 +26,7 @@ public class QualificationServiceTest {
 	
 	@Test			
 	public void shouldDelegateDeleteToDAO(){
-		Qualification qualification = new QualificationBuilder().id(2).toQualification();
+		Qualification qualification = new QualificationBuilder().id(2).build();
 		qualificationDAOMock.delete(qualification);
 		EasyMock.replay(qualificationDAOMock);
 		qualificationService.delete(qualification);
@@ -36,7 +36,7 @@ public class QualificationServiceTest {
 	
 	@Test			
 	public void shouldDelegateSaveToDAO(){
-		Qualification qualification = new QualificationBuilder().id(2).toQualification();
+		Qualification qualification = new QualificationBuilder().id(2).build();
 		qualificationDAOMock.save(qualification);
 		EasyMock.replay(qualificationDAOMock);
 		qualificationService.save(qualification);

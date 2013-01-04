@@ -63,8 +63,8 @@ public class RegistryNotificationTimerTaskTest {
 			Transaction tx1 = EasyMock.createMock(Transaction.class);
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx1);
 		
-			RegisteredUser adminRequestingNotification = new RegisteredUserBuilder().id(5).toUser();
-			ApplicationForm application = new ApplicationFormBuilder().id(10).adminRequestedRegistry(adminRequestingNotification).toApplicationForm();
+			RegisteredUser adminRequestingNotification = new RegisteredUserBuilder().id(5).build();
+			ApplicationForm application = new ApplicationFormBuilder().id(10).adminRequestedRegistry(adminRequestingNotification).build();
 			List<ApplicationForm> applList = new ArrayList<ApplicationForm>();
 			applList.add(application);
 			EasyMock.expect(applicationServiceMock.getApplicationsDueRegistryNotification()).andReturn(applList);
@@ -74,14 +74,14 @@ public class RegistryNotificationTimerTaskTest {
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx2);
 			
 			sessionMock.refresh(application);
-			Person registryUser1 = new PersonBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").toPerson();
-			Person registryUser2 = new PersonBuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").toPerson();
-			Person registryUser3 = new PersonBuilder().id(5).firstname("Hanna").lastname("Hobnob").email("hanna@test.com").toPerson();
+			Person registryUser1 = new PersonBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").build();
+			Person registryUser2 = new PersonBuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").build();
+			Person registryUser3 = new PersonBuilder().id(5).firstname("Hanna").lastname("Hobnob").email("hanna@test.com").build();
 			List<Person> registryContacts = Arrays.asList(registryUser1, registryUser2, registryUser3);
 			EasyMock.expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
 			
 			mailSenderMock.sendApplicationToRegistryContacts(application, registryContacts);
-			Comment comment = new CommentBuilder().id(5).toComment();
+			Comment comment = new CommentBuilder().id(5).build();
 			EasyMock.expect(commentFactoryMock.createComment(application, adminRequestingNotification, "Referred to UCL Admissions for advice on eligibility and fees status. Referral send to Bob Jones (jones@test.com), Karla Peters (peters@test.com) and Hanna Hobnob (hanna@test.com).", CommentType.GENERIC,null)).andReturn(comment);
 			commentServiceMock.save(comment);
 			applicationServiceMock.save(application);
@@ -103,12 +103,12 @@ public class RegistryNotificationTimerTaskTest {
 			Transaction tx1 = EasyMock.createMock(Transaction.class);
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx1);
 
-			RegisteredUser admin = new RegisteredUserBuilder().id(18).toUser();
-			Program program = new ProgramBuilder().id(1023).administrators(admin).toProgram();
-			RegisteredUser approver = new RegisteredUserBuilder().id(123).toUser();
+			RegisteredUser admin = new RegisteredUserBuilder().id(18).build();
+			Program program = new ProgramBuilder().id(1023).administrators(admin).build();
+			RegisteredUser approver = new RegisteredUserBuilder().id(123).build();
 			ApplicationForm application = new ApplicationFormBuilder().id(10)//
 					.program(program).approver(approver)//
-					.toApplicationForm();
+					.build();
 			List<ApplicationForm> applList = new ArrayList<ApplicationForm>();
 			applList.add(application);
 			EasyMock.expect(applicationServiceMock.getApplicationsDueRegistryNotification()).andReturn(applList);
@@ -118,8 +118,8 @@ public class RegistryNotificationTimerTaskTest {
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx2);
 			
 			sessionMock.refresh(application);
-			Person registryUser1 = new PersonBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").toPerson();
-			Person registryUser2 = new PersonBuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").toPerson();
+			Person registryUser1 = new PersonBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").build();
+			Person registryUser2 = new PersonBuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").build();
 			List<Person> registryContacts = Arrays.asList(registryUser1, registryUser2);
 			EasyMock.expect(configurationServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
 			mailSenderMock.sendApplicationToRegistryContacts(application, registryContacts);

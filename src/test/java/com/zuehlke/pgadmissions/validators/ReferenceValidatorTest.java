@@ -81,7 +81,7 @@ public class ReferenceValidatorTest {
 	@Before
 	public void setup() throws ParseException{
 		reference = new ReferenceComment();
-		reference.getDocuments().add(new DocumentBuilder().id(1).toDocument());
+		reference.getDocuments().add(new DocumentBuilder().id(1).build());
 		reference.setComment("comment");
 		reference.setSuitableForProgramme(false);
 		reference.setSuitableForUCL(false);

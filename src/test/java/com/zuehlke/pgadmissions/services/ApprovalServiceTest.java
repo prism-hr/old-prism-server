@@ -72,8 +72,8 @@ public class ApprovalServiceTest {
 
 	@Before
 	public void setUp() {
-		supervisor = new SupervisorBuilder().id(1).toSupervisor();
-		approvalRound = new ApprovalRoundBuilder().id(1).toApprovalRound();
+		supervisor = new SupervisorBuilder().id(1).build();
+		approvalRound = new ApprovalRoundBuilder().id(1).build();
 		supervisorDAOMock = EasyMock.createMock(SupervisorDAO.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		approvalRoundDAOMock = EasyMock.createMock(ApprovalRoundDAO.class);
@@ -101,10 +101,10 @@ public class ApprovalServiceTest {
 	@Test
 	public void shouldCreateNewSupervisorInNeApprovalRoundIfLatestRoundIsNull() {
 		RegisteredUser supervisorUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).toProgram())
-				.applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build())
+				.applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
 
 		supervisorDAOMock.save(supervisor);
 		EasyMock.replay(supervisorDAOMock);
@@ -119,12 +119,12 @@ public class ApprovalServiceTest {
 	@Test
 	public void shouldCreateNewSueprvisorInLatestAppprovalRoundIfLatestRoundIsNotNull() {
 		RegisteredUser supervisorUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().toApprovalRound();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().build();
 
 		ApplicationForm application = new ApplicationFormBuilder().latestApprovalRound(latestApprovalRound).id(1)
-				.program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION)
-				.toApplicationForm();
+				.program(new ProgramBuilder().id(1).build()).applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION)
+				.build();
 
 		supervisorDAOMock.save(supervisor);
 		EasyMock.replay(supervisorDAOMock);
@@ -137,21 +137,21 @@ public class ApprovalServiceTest {
 	@Test
 	public void shouldSetDueDateOnApplicationUpdateFormAndSaveBoth() {
 
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).toApprovalRound();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).pendingApprovalRestart(true)
-				.toApplicationForm();
+				.build();
 		applicationForm.addNotificationRecord(
-				new NotificationRecordBuilder().id(2).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION).toNotificationRecord());
+				new NotificationRecordBuilder().id(2).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION).build());
 		applicationForm.addNotificationRecord(
-				new NotificationRecordBuilder().id(5).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER).toNotificationRecord());
+				new NotificationRecordBuilder().id(5).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER).build());
 		applicationForm.addNotificationRecord(
-				new NotificationRecordBuilder().id(4).notificationType(NotificationType.APPROVAL_NOTIFICATION).toNotificationRecord());
+				new NotificationRecordBuilder().id(4).notificationType(NotificationType.APPROVAL_NOTIFICATION).build());
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
-				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
+				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
 		approvalRoundDAOMock.save(approvalRound);
 		applicationFormDAOMock.save(applicationForm);
 
-		StateChangeEvent event = new ApprovalStateChangeEventBuilder().id(1).toApprovalStateChangeEvent();
+		StateChangeEvent event = new ApprovalStateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(approvalRound)).andReturn(event);
 
 		EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
@@ -177,23 +177,23 @@ public class ApprovalServiceTest {
 	@Test
 	public void shouldCopyLastNotifiedForSupervisorsWhoWereAlsoInPreviousRound() throws ParseException {
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy").parse("05 06 2012");
-		RegisteredUser repeatUser = new RegisteredUserBuilder().id(1).toUser();
-		Supervisor repeatSupervisorOld = new SupervisorBuilder().id(1).user(repeatUser).lastNotified(lastNotified).toSupervisor();
-		Supervisor repeatSupervisorNew = new SupervisorBuilder().id(2).user(repeatUser).toSupervisor();
+		RegisteredUser repeatUser = new RegisteredUserBuilder().id(1).build();
+		Supervisor repeatSupervisorOld = new SupervisorBuilder().id(1).user(repeatUser).lastNotified(lastNotified).build();
+		Supervisor repeatSupervisorNew = new SupervisorBuilder().id(2).user(repeatUser).build();
 		
-		RegisteredUser nonRepeatUser = new RegisteredUserBuilder().id(2).toUser();
-		Supervisor nonRepeatUserSupervisor = new SupervisorBuilder().id(3).user(nonRepeatUser).toSupervisor();
-		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(repeatSupervisorOld).toApprovalRound();
+		RegisteredUser nonRepeatUser = new RegisteredUserBuilder().id(2).build();
+		Supervisor nonRepeatUserSupervisor = new SupervisorBuilder().id(3).user(nonRepeatUser).build();
+		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(repeatSupervisorOld).build();
 		
-		ApprovalRound newApprovalRound = new ApprovalRoundBuilder().id(2).supervisors(repeatSupervisorNew, nonRepeatUserSupervisor).toApprovalRound();
+		ApprovalRound newApprovalRound = new ApprovalRoundBuilder().id(2).supervisors(repeatSupervisorNew, nonRepeatUserSupervisor).build();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(previousApprovalRound).status(ApplicationFormStatus.APPROVAL).id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(previousApprovalRound).status(ApplicationFormStatus.APPROVAL).id(1).build();
 		
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
-				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
+				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
 		approvalRoundDAOMock.save(newApprovalRound);
 		applicationFormDAOMock.save(applicationForm);
-		StateChangeEvent event = new ApprovalStateChangeEventBuilder().id(1).toApprovalStateChangeEvent();
+		StateChangeEvent event = new ApprovalStateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(newApprovalRound)).andReturn(event);
 		EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
 
@@ -207,10 +207,10 @@ public class ApprovalServiceTest {
 	@Test
 	public void shouldMoveToApprovalIfInApproval() {
 
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).toApprovalRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).id(1).toApplicationForm();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).id(1).build();
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
-				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
+				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
 		approvalRoundDAOMock.save(approvalRound);
 		applicationFormDAOMock.save(applicationForm);
 		EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock);
@@ -225,10 +225,10 @@ public class ApprovalServiceTest {
 		for (ApplicationFormStatus status : values) {
 			if (status != ApplicationFormStatus.VALIDATION && status != ApplicationFormStatus.APPROVAL && status != ApplicationFormStatus.REVIEW
 					&& status != ApplicationFormStatus.INTERVIEW) {
-				ApplicationForm application = new ApplicationFormBuilder().id(3).status(status).toApplicationForm();
+				ApplicationForm application = new ApplicationFormBuilder().id(3).status(status).build();
 				boolean threwException = false;
 				try {
-					approvalService.moveApplicationToApproval(application, new ApprovalRoundBuilder().id(1).toApprovalRound());
+					approvalService.moveApplicationToApproval(application, new ApprovalRoundBuilder().id(1).build());
 				} catch (IllegalStateException ise) {
 					if (ise.getMessage().equals("Application in invalid status: '" + status + "'!")) {
 						threwException = true;
@@ -241,7 +241,7 @@ public class ApprovalServiceTest {
 
 	@Test
 	public void shouldSaveReviewRound() {
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).toApprovalRound();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).build();
 		approvalRoundDAOMock.save(approvalRound);
 		EasyMock.replay(approvalRoundDAOMock);
 		approvalService.save(approvalRound);
@@ -250,13 +250,13 @@ public class ApprovalServiceTest {
 
 	@Test
 	public void shouldSaveRequestRestardComment() {
-		Program program = new ProgramBuilder().id(321).title("lala").toProgram();
+		Program program = new ProgramBuilder().id(321).title("lala").build();
 		RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
-				.role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).toRole())//
-				.programsOfWhichApprover(program).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.APPROVAL).id(1).toApplicationForm();
+				.role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).build())//
+				.programsOfWhichApprover(program).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.APPROVAL).id(1).build();
 
-		Comment comment = new CommentBuilder().id(1).toComment();
+		Comment comment = new CommentBuilder().id(1).build();
 		commentDAOMock.save(comment);
 		applicationFormDAOMock.save(applicationForm);
 		EasyMock.replay(commentDAOMock, applicationFormDAOMock);
@@ -268,13 +268,13 @@ public class ApprovalServiceTest {
 
 	@Test
 	public void throwExceptionWhenApplicationNotInApprovalWhenRequestRestartOfApprovalMail() {
-		Program program = new ProgramBuilder().id(321).title("lala").toProgram();
+		Program program = new ProgramBuilder().id(321).title("lala").build();
 		RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
-				.role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).toRole())//
-				.programsOfWhichApprover(program).toUser();
+				.role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).build())//
+				.programsOfWhichApprover(program).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW)//
-				.program(program).id(1).applicationNumber("DUDU").toApplicationForm();
-		Comment comment = new CommentBuilder().id(1).toComment();
+				.program(program).id(1).applicationNumber("DUDU").build();
+		Comment comment = new CommentBuilder().id(1).build();
 
 		try {
 			approvalService.requestApprovalRestart(applicationForm, approver, comment);
@@ -287,13 +287,13 @@ public class ApprovalServiceTest {
 
 	@Test
 	public void throwExceptionWhenUserIsNotApprover() {
-		Program program = new ProgramBuilder().id(321).title("lala").toProgram();
+		Program program = new ProgramBuilder().id(321).title("lala").build();
 		RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
-				.role(new RoleBuilder().id(2).authorityEnum(Authority.REVIEWER).toRole())//
-				.programsOfWhichApprover(program).toUser();
+				.role(new RoleBuilder().id(2).authorityEnum(Authority.REVIEWER).build())//
+				.programsOfWhichApprover(program).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW)//
-				.program(program).id(1).applicationNumber("DUDU").toApplicationForm();
-		Comment comment = new CommentBuilder().id(1).toComment();
+				.program(program).id(1).applicationNumber("DUDU").build();
+		Comment comment = new CommentBuilder().id(1).build();
 
 		try {
 			approvalService.requestApprovalRestart(applicationForm, approver, comment);
@@ -306,13 +306,13 @@ public class ApprovalServiceTest {
 
 	@Test
 	public void throwExceptionWhenApproverIsNotInProgram() {
-		Program program = new ProgramBuilder().id(321).title("lala").toProgram();
+		Program program = new ProgramBuilder().id(321).title("lala").build();
 		RegisteredUser approver = new RegisteredUserBuilder().id(2234).firstName("dada").lastName("dudu").username("dd@test.com")//
-				.role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).toRole())//
-				.toUser();
+				.role(new RoleBuilder().id(2).authorityEnum(Authority.APPROVER).build())//
+				.build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW)//
-				.program(program).id(1).applicationNumber("DUDU").toApplicationForm();
-		Comment comment = new CommentBuilder().id(1).toComment();
+				.program(program).id(1).applicationNumber("DUDU").build();
+		Comment comment = new CommentBuilder().id(1).build();
 
 		try {
 			approvalService.requestApprovalRestart(applicationForm, approver, comment);
@@ -325,19 +325,19 @@ public class ApprovalServiceTest {
 
 	@Test
 	public void shouldMoveApplicationToApprovedWithComment() {
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 
 		Date startDate = new Date();
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").toProgrammeDetails();
-		ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate,1)).enabled(true).studyOption("1", "full").toProgramInstance();
-		Program program = new ProgramBuilder().id(1).instances(instance).toProgram();
-		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).toApplicationForm();
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+		ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate,1)).enabled(true).studyOption("1", "full").build();
+		Program program = new ProgramBuilder().id(1).instances(instance).build();
+		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).build();
 
 		applicationFormDAOMock.save(application);
 
-		StateChangeEvent event = new StateChangeEventBuilder().id(1).toEvent();
+		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
 
 		EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock);
@@ -355,21 +355,21 @@ public class ApprovalServiceTest {
 	
 	@Test
 	public void shouldChangeStartDate() {
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 
 		Date startDate = DateUtils.addDays(new Date(), 1);
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").toProgrammeDetails();
-		ProgramInstance instanceDisabled = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(false).studyOption("1", "full").toProgramInstance();
-		ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3)).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption("1", "full").toProgramInstance();
-		Program program = new ProgramBuilder().id(1).instances(instanceDisabled, instanceEnabled).toProgram();
-		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).toApplicationForm();
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+		ProgramInstance instanceDisabled = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(false).studyOption("1", "full").build();
+		ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3)).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption("1", "full").build();
+		Program program = new ProgramBuilder().id(1).instances(instanceDisabled, instanceEnabled).build();
+		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).build();
 
 		programmeDetailDAOMock.save(EasyMock.same(programmeDetails));
 		applicationFormDAOMock.save(application);
 
-		StateChangeEvent event = new StateChangeEventBuilder().id(1).toEvent();
+		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
 
 		EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock, programmeDetailDAOMock);
@@ -389,7 +389,7 @@ public class ApprovalServiceTest {
 	@Test(expected = IllegalStateException.class)
 	public void shouldFailOmMoveToApprovedIfApplicationNotInApproval() {
 
-		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(2).build();
 
 		EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock);
 

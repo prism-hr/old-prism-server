@@ -71,7 +71,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .role(roleDAO.getRoleByAuthority(Authority.APPLICANT))
             .accountNonExpired(false)
             .accountNonLocked(false)
-            .credentialsNonExpired(false).enabled(true).toUser();
+            .credentialsNonExpired(false).enabled(true).build();
         
         superUser = new RegisteredUserBuilder()
             .firstName("John")
@@ -82,9 +82,9 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .role(roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR))
             .accountNonExpired(false)
             .accountNonLocked(false)
-            .credentialsNonExpired(false).enabled(true).toUser();
+            .credentialsNonExpired(false).enabled(true).build();
 
-        program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+        program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
         save(user, superUser, program);
 
@@ -93,10 +93,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldGetListOfVisibleApplicationsFromDAOAndSetDefaultValues() {
-        ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
+        ApplicationForm form = new ApplicationFormBuilder().id(1).build();
         ApplicationFormListDAO applicationFormDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
         ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock);
-        RegisteredUser user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+        RegisteredUser user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
         EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user, null, null, SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, APPLICATION_BLOCK_SIZE)).andReturn(Arrays.asList(form));
         EasyMock.replay(applicationFormDAOMock);
         List<ApplicationForm> visibleApplications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null, 1);
@@ -115,7 +115,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .status(ApplicationFormStatus.VALIDATION)
             .submittedDate(new Date())
             .appDate(format.parse("01 01 2012"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .program(program)
@@ -123,14 +123,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .status(ApplicationFormStatus.UNSUBMITTED)
             .appDate(format.parse("01 01 2012"))
             .submittedDate(format.parse("01 04 2012"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .program(program)
             .applicant(user)
             .status(ApplicationFormStatus.UNSUBMITTED)
             .appDate(format.parse("01 02 2012"))    // this is insertable=false. We can not properly test this?
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .program(program)
@@ -138,7 +138,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .status(ApplicationFormStatus.UNSUBMITTED)
             .appDate(format.parse("01 02 2012"))    // this is insertable=false. We can not properly test this?
             .submittedDate(format.parse("01 03 2012"))
-            .toApplicationForm();
+            .build();
                 
         save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -160,7 +160,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicationNumber("App_Biology")
@@ -168,7 +168,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .applicationNumber("ABCD")
@@ -176,7 +176,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicationNumber("BIOLOGY1")
@@ -184,7 +184,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
         
         save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -199,14 +199,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldGetApplicationBelongingToProgramWithCodeScienceAndOtherTitle() throws ParseException {
-        Program programOne = new ProgramBuilder().code("Program_ZZZZZ_1").title("empty").toProgram();
+        Program programOne = new ProgramBuilder().code("Program_ZZZZZ_1").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .applicationNumber("ABC1")
             .program(programOne)
             .applicant(user)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicationNumber("ABC2")
@@ -214,7 +214,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
 
         save(programOne, applicationFormOne, applicationFormTwo);
         
@@ -228,13 +228,13 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode() throws ParseException {
-        Program programOne = new ProgramBuilder().code("empty").title("Program_ZZZZZ_1").toProgram();
+        Program programOne = new ProgramBuilder().code("empty").title("Program_ZZZZZ_1").build();
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .applicationNumber("ABC")
             .program(programOne)
             .applicant(user)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicationNumber("ABC2")
@@ -242,7 +242,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
  
         save(programOne, applicationFormOne, applicationFormTwo);
         
@@ -256,14 +256,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldNotReturnAppIfTermNotInProgrameCodeOrTitle() {
-        Program programOne = new ProgramBuilder().code("empty").title("empty").toProgram();
+        Program programOne = new ProgramBuilder().code("empty").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .applicationNumber("ABC")
             .program(programOne)
             .applicant(user)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
 
         save(programOne, applicationFormOne);
         flushAndClearSession();
@@ -275,7 +275,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred() {
-        Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
+        Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").build();
         
         RegisteredUser applicant = new RegisteredUserBuilder()
             .firstName("FredzzZZZZZerick")
@@ -287,14 +287,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .accountNonLocked(false)
             .credentialsNonExpired(false)
             .enabled(true)
-            .toUser();
+            .build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .applicationNumber("ABC")
             .program(programOne)
             .applicant(applicant)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
 
         save(programOne, applicant, applicationFormOne);
         
@@ -308,7 +308,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingLastName() {
-        Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
+        Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").build();
         
         RegisteredUser applicant = new RegisteredUserBuilder()
             .firstName("Frederick")
@@ -320,14 +320,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .accountNonLocked(false)
             .credentialsNonExpired(false)
             .enabled(true)
-            .toUser();
+            .build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .applicationNumber("ABC")
             .program(programOne)
             .applicant(applicant)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
         
         save(programOne, applicant, applicationFormOne);
         
@@ -341,7 +341,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName() {
-        Program programOne = new ProgramBuilder().code("empty").title("empty").toProgram();
+        Program programOne = new ProgramBuilder().code("empty").title("empty").build();
         
         RegisteredUser applicant = new RegisteredUserBuilder()
             .firstName("Frederick")
@@ -353,14 +353,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .accountNonLocked(false)
             .credentialsNonExpired(false)
             .enabled(true)
-            .toUser();
+            .build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .applicationNumber("ABC")
             .program(programOne)
             .applicant(applicant)
             .status(ApplicationFormStatus.APPROVAL)
-            .toApplicationForm();
+            .build();
 
         save(programOne, applicant, applicationFormOne);
         
@@ -373,7 +373,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldGetAllApplicationsInValidationStage() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+        Program program = new ProgramBuilder().code("empty").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.VALIDATION)
@@ -381,14 +381,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicationNumber("App_Biology")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.VALIDATION)
@@ -396,14 +396,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicationNumber("BIOLOGY1")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
 
         save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -418,7 +418,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldGetAllApplicationsInApprovalStage() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+        Program program = new ProgramBuilder().code("empty").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.APPROVAL)
@@ -426,14 +426,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicationNumber("App_Biology")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.VALIDATION)
@@ -441,14 +441,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicationNumber("BIOLOGY1")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
 
         save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -462,7 +462,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldGetAllApplicationsInApprovedStage() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+        Program program = new ProgramBuilder().code("empty").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.APPROVED)
@@ -470,14 +470,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicationNumber("App_Biology")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.VALIDATION)
@@ -485,14 +485,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicationNumber("BIOLOGY1")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
 
         save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -506,7 +506,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldNotReturnAppIfNoStatusMatching() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+        Program program = new ProgramBuilder().code("empty").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.APPROVED)
@@ -514,14 +514,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicationNumber("App_Biology")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.VALIDATION)
@@ -529,14 +529,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicationNumber("BIOLOGY1")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
 
         save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -549,7 +549,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldSearchAndSort() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+        Program program = new ProgramBuilder().code("empty").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.INTERVIEW)
@@ -557,14 +557,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicationNumber("App_Biology")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.VALIDATION)
@@ -572,13 +572,13 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/05"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicationNumber("BIOLOGY1")
             .program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/06"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
 
         save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -597,35 +597,35 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldSortApplicationInNaturalSortOrder() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+        Program program = new ProgramBuilder().code("empty").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.APPROVED)
             .applicationNumber("ABC")
             .program(program)
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicationNumber("App_Biology")
             .program(program)
             .submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .status(ApplicationFormStatus.APPROVED)
             .applicationNumber("ABCD")
             .program(program).submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicationNumber("BIOLOGY1")
             .program(program)
             .submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03"))
             .applicant(user)
-            .toApplicationForm();
+            .build();
 
         save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -641,11 +641,11 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldSortApplicationWithApplName() throws ParseException {
-        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("AAAA").lastName("CCCC").username("2").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        RegisteredUser applicant3 = new RegisteredUserBuilder().firstName("BBBB").lastName("AAAA").username("3").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("AAAA").lastName("CCCC").username("2").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser applicant3 = new RegisteredUserBuilder().firstName("BBBB").lastName("AAAA").username("3").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        Program program = new ProgramBuilder().code("empty").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .applicant(applicant1)
@@ -653,7 +653,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .applicationNumber("ABCDE1")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicant(applicant2)
@@ -661,7 +661,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .applicationNumber("ABCDE2")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .applicant(applicant3)
@@ -669,7 +669,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .applicationNumber("ABCDE3")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicant(applicant4)
@@ -677,7 +677,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .status(ApplicationFormStatus.APPROVED)
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03"))
-            .toApplicationForm();
+            .build();
 
         save(applicant1, applicant2, applicant3, applicant4, program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -694,11 +694,11 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     
     @Test
     public void shouldSortApplicationWithApplStatus() throws ParseException {
-        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("AAAA").lastName("CCCC").username("2").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        RegisteredUser applicant3 = new RegisteredUserBuilder().firstName("BBBB").lastName("AAAA").username("3").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("AAAA").lastName("CCCC").username("2").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser applicant3 = new RegisteredUserBuilder().firstName("BBBB").lastName("AAAA").username("3").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        Program program = new ProgramBuilder().code("empty").title("empty").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .applicant(applicant1)
@@ -706,7 +706,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .applicationNumber("ABCDE1")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicant(applicant2)
@@ -714,7 +714,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .applicationNumber("ABCDE2")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .applicant(applicant3)
@@ -722,7 +722,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .applicationNumber("ABCDE3")
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicant(applicant4)
@@ -730,7 +730,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .status(ApplicationFormStatus.WITHDRAWN)
             .program(program)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03"))
-            .toApplicationForm();
+            .build();
 
         save(applicant1, applicant2, applicant3, applicant4, program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         
@@ -747,15 +747,15 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSortApplicationWithProgramName() throws ParseException {
-        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("AAAA").lastName("CCCC").username("2").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        RegisteredUser applicant3 = new RegisteredUserBuilder().firstName("BBBB").lastName("AAAA").username("3").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
-        RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
+        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("AAAA").lastName("CCCC").username("2").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser applicant3 = new RegisteredUserBuilder().firstName("BBBB").lastName("AAAA").username("3").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
+        RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4").role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
       
-        Program program1 = new ProgramBuilder().code("empty1").title("AAA").toProgram();
-        Program program2 = new ProgramBuilder().code("empty2").title("CCC").toProgram();
-        Program program3 = new ProgramBuilder().code("empty3").title("BBB").toProgram();
-        Program program4 = new ProgramBuilder().code("empty4").title("DDD").toProgram();
+        Program program1 = new ProgramBuilder().code("empty1").title("AAA").build();
+        Program program2 = new ProgramBuilder().code("empty2").title("CCC").build();
+        Program program3 = new ProgramBuilder().code("empty3").title("BBB").build();
+        Program program4 = new ProgramBuilder().code("empty4").title("DDD").build();
         
         ApplicationForm applicationFormOne = new ApplicationFormBuilder()
             .applicant(applicant1)
@@ -763,7 +763,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .applicationNumber("ABCDE1")
             .program(program1)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
-            .toApplicationForm();
+            .build();
     
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
             .applicant(applicant2)
@@ -771,7 +771,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .applicationNumber("ABCDE2")
             .program(program2)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormThree = new ApplicationFormBuilder()
             .applicant(applicant3)
@@ -779,7 +779,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .applicationNumber("ABCDE3")
             .program(program3)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04"))
-            .toApplicationForm();
+            .build();
         
         ApplicationForm applicationFormFour = new ApplicationFormBuilder()
             .applicant(applicant4)
@@ -787,7 +787,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
             .status(ApplicationFormStatus.WITHDRAWN)
             .program(program4)
             .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03"))
-            .toApplicationForm();
+            .build();
         
         save(applicant1, applicant2, applicant3, applicant4, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
         save(program1, program2, program3, program4);
@@ -810,7 +810,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .applicationNumber("ABCDEFG" + i)
                 .program(program)
                 .applicant(user)
-                .toApplicationForm();
+                .build();
             returnedAppls.add(form);
         }
         Collections.shuffle(returnedAppls);

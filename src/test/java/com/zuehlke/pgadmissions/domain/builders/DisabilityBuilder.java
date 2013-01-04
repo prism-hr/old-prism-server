@@ -32,7 +32,7 @@ public class DisabilityBuilder {
         return this;
     }
 
-	public Disability toDisability() {
+	public Disability build() {
 		Disability disability = new Disability();
 		disability.setId(id);
 		disability.setName(name);

@@ -23,7 +23,7 @@ public class LanguagePropertyEditorTest {
 	public void shouldLoadByIdAndSetAsValue(){
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		
-		Language language = new LanguageBuilder().id(1).toLanguage();
+		Language language = new LanguageBuilder().id(1).build();
 		EasyMock.expect(languageServiceMock.getLanguageById(1)).andReturn(language);
 		EasyMock.replay(languageServiceMock, encryptionHelperMock);
 		
@@ -58,13 +58,13 @@ public class LanguagePropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnNullIfValueIdIsNull(){			
-		editor.setValue(new LanguageBuilder().toLanguage());
+		editor.setValue(new LanguageBuilder().build());
 		assertNull(editor.getAsText());
 	}
 	
 	@Test	
 	public void shouldReturnEnctyptedIdAsString(){			
-		editor.setValue(new LanguageBuilder().id(5).toLanguage());
+		editor.setValue(new LanguageBuilder().id(5).build());
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.replay(encryptionHelperMock);
 		assertEquals("bob", editor.getAsText());

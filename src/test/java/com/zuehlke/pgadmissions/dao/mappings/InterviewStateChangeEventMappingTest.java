@@ -34,13 +34,13 @@ public class InterviewStateChangeEventMappingTest extends AutomaticRollbackTestC
 	@Test
 	public void shouldSaveAndLoadInterviewStateChangeEvent() throws ParseException {
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("otheremail@test.com").username("username1")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(user);
 		flushAndClearSession();
 		
 		ApplicationFormStatus newStatus = ApplicationFormStatus.APPROVAL;
 		Date eventDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
-		Event event = new InterviewStateChangeEventBuilder().newStatus(newStatus).date(eventDate).user(user).interview(interview).toInterviewStateChangeEvent();
+		Event event = new InterviewStateChangeEventBuilder().newStatus(newStatus).date(eventDate).user(user).interview(interview).build();
 		sessionFactory.getCurrentSession().saveOrUpdate(event);
 		assertNotNull(event.getId());
 		InterviewStateChangeEvent reloadedEvent = (InterviewStateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, event.getId());
@@ -61,13 +61,13 @@ public class InterviewStateChangeEventMappingTest extends AutomaticRollbackTestC
 	@Before
 	public void setup() {
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();		
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();		
 		
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();
-		 interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(user).toInterviewer()).application(application).toInterview();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+		 interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(user).build()).application(application).build();
 		
 		
 		save(user, program,  application, interview);

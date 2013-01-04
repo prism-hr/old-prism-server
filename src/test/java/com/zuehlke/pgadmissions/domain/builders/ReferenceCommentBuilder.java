@@ -69,7 +69,7 @@ public class ReferenceCommentBuilder {
 		return this;
 	}
 	
-	public ReferenceComment toReferenceComment(){
+	public ReferenceComment build() {
 		ReferenceComment reference = new ReferenceComment();
 		reference.setId(id);
 		reference.setReferee(referee);

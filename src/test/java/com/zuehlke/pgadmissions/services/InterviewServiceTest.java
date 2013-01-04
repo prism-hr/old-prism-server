@@ -63,13 +63,13 @@ public class InterviewServiceTest {
 	@Test
 	public void shouldSetDueDateOnInterviewUpdateFormAndSaveBoth() throws ParseException{
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
-		Interview interview = new InterviewBuilder().dueDate(dateFormat.parse("01 04 2012")).id(1).toInterview();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).toApplicationForm();
-		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_REMINDER).toNotificationRecord());
+		Interview interview = new InterviewBuilder().dueDate(dateFormat.parse("01 04 2012")).id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).build();
+		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_REMINDER).build());
 	
 		interviewDAOMock.save(interview);
 		applicationFormDAOMock.save(applicationForm);
-		InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).toInterviewStateChangeEvent();
+		InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
 		EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock);
 		
@@ -88,8 +88,8 @@ public class InterviewServiceTest {
 	
 	@Test
 	public void shouldMoveToItnerviewIfInReview() throws ParseException{
-		Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).toInterview();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).toApplicationForm();
+		Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
 		interviewDAOMock.save(interview);
 		applicationFormDAOMock.save(applicationForm);
 		EasyMock.replay(interviewDAOMock, applicationFormDAOMock);		
@@ -100,8 +100,8 @@ public class InterviewServiceTest {
 	
 	@Test
 	public void shouldMoveToItnerviewIfInInterview() throws ParseException{
-		Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).toInterview();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).toApplicationForm();
+		Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
 		interviewDAOMock.save(interview);
 		applicationFormDAOMock.save(applicationForm);
 		EasyMock.replay(interviewDAOMock, applicationFormDAOMock);		
@@ -113,8 +113,8 @@ public class InterviewServiceTest {
 	
 	@Test(expected=IllegalStateException.class)
 	public void shouldThrowIllegalStateExceptionIfApplicatioNotInReviewInterviewOrValidation() {		
-		Interview interview = new InterviewBuilder().id(1).toInterview();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();		
+		Interview interview = new InterviewBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).build();		
 		
 		interviewService.moveApplicationToInterview(interview, applicationForm);
 	}
@@ -122,8 +122,8 @@ public class InterviewServiceTest {
 	@Test
 	public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull(){
 		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build()).applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
 		interviewerDAO.save(interviewer);
 		EasyMock.replay(interviewerDAO);
 		interviewService.addInterviewerInPreviousInterview(application, interviewerUser);
@@ -135,9 +135,9 @@ public class InterviewServiceTest {
 	@Test
 	public void shouldCreateNewInterviewerInLatestInterviewRoundIfLatestRoundIsNotNull(){
 		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		Interview latestInterview = new InterviewBuilder().toInterview();
-		ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		Interview latestInterview = new InterviewBuilder().build();
+		ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).program(new ProgramBuilder().id(1).build()).applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
 		interviewerDAO.save(interviewer);
 		EasyMock.replay(interviewerDAO);
 		interviewService.addInterviewerInPreviousInterview(application, interviewerUser);
@@ -148,8 +148,8 @@ public class InterviewServiceTest {
 	
 	@Before
 	public void setUp() {
-		interviewer = new InterviewerBuilder().id(1).toInterviewer();
-		interview = new InterviewBuilder().id(1).toInterview();
+		interviewer = new InterviewerBuilder().id(1).build();
+		interview = new InterviewBuilder().id(1).build();
 		interviewerDAO = EasyMock.createMock(InterviewerDAO.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		interviewDAOMock = EasyMock.createMock(InterviewDAO.class);

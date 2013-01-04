@@ -58,14 +58,14 @@ public class ApplicantMailSenderTest {
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
 
-		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).toUser();
-		RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram())//
-				.applicant(applicant).toApplicationForm();
+		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).build();
+		RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).build())//
+				.applicant(applicant).build();
 
 		List<Person> registryContacts = new ArrayList<Person>();
-		registryContacts.add(new PersonBuilder().id(123).toPerson());
+		registryContacts.add(new PersonBuilder().id(123).build());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
 		EasyMock.replay(applicationServiceMock, personServiceMock);
 
@@ -85,20 +85,20 @@ public class ApplicantMailSenderTest {
 	@Test
 	public void shouldReturnCorrectlyPopulatedModelForRejectedApplications() {
 
-		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).toUser();
-		RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram())//
-				.applicant(applicant).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).build();
+		RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).build())//
+				.applicant(applicant).status(ApplicationFormStatus.REJECTED).build();
 
-		RejectReason reason = new RejectReasonBuilder().id(30).text("lalalala").toRejectReason();
-		Rejection rejection = new RejectionBuilder().id(1).rejectionReason(reason).toRejection();
+		RejectReason reason = new RejectReasonBuilder().id(30).text("lalalala").build();
+		Rejection rejection = new RejectionBuilder().id(1).rejectionReason(reason).build();
 		rejection.setIncludeProspectusLink(true);
 		form.setRejection(rejection);
 
 		
 		List<Person> registryContacts = new ArrayList<Person>();
-		registryContacts.add(new PersonBuilder().id(123).toPerson());
+		registryContacts.add(new PersonBuilder().id(123).build());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
 		EasyMock.replay(applicationServiceMock, personServiceMock);
 		
@@ -127,9 +127,9 @@ public class ApplicantMailSenderTest {
 
 		};
 
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("Some Program").toProgram())
-				.toApplicationForm();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("Some Program").build())
+				.build();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("jane.smith@test.com", "Jane Smith");

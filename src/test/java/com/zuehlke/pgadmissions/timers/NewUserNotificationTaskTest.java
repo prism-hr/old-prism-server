@@ -40,8 +40,8 @@ public class NewUserNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).pendingRoleNotifications(new PendingRoleNotificationBuilder().id(1).toPendingRoleNotification(),new PendingRoleNotificationBuilder().id(2).toPendingRoleNotification()).toUser();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(3).pendingRoleNotifications(new PendingRoleNotificationBuilder().id(3).toPendingRoleNotification()).toUser();
+		RegisteredUser userOne = new RegisteredUserBuilder().id(1).pendingRoleNotifications(new PendingRoleNotificationBuilder().id(1).build(),new PendingRoleNotificationBuilder().id(2).build()).build();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(3).pendingRoleNotifications(new PendingRoleNotificationBuilder().id(3).build()).build();
 		
 		
 		sessionMock.refresh(userOne);
@@ -87,8 +87,8 @@ public class NewUserNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).pendingRoleNotifications(new PendingRoleNotificationBuilder().id(1).toPendingRoleNotification(),new PendingRoleNotificationBuilder().id(2).toPendingRoleNotification()).toUser();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(3).pendingRoleNotifications(new PendingRoleNotificationBuilder().id(3).toPendingRoleNotification()).toUser();
+		RegisteredUser userOne = new RegisteredUserBuilder().id(1).pendingRoleNotifications(new PendingRoleNotificationBuilder().id(1).build(),new PendingRoleNotificationBuilder().id(2).build()).build();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(3).pendingRoleNotifications(new PendingRoleNotificationBuilder().id(3).build()).build();
 		
 		
 		sessionMock.refresh(userOne);

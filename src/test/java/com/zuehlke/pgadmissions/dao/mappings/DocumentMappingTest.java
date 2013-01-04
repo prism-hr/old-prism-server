@@ -68,7 +68,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		Qualification qualification = new QualificationBuilder().id(3).awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("")
 				.institution("").institutionCode("ABC").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0))
-				.toQualification();
+				.build();
 
 		sessionFactory.getCurrentSession().save(qualification);
 		flushAndClearSession();
@@ -82,15 +82,15 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 	public void setUp() {
 		super.setUp();
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		save(program);
 
 		applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
 		save(applicant);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}

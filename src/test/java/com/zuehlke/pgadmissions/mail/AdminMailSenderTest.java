@@ -58,11 +58,11 @@ public class AdminMailSenderTest {
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
 
-		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").toUser();
-		RegisteredUser adminTwo = new RegisteredUserBuilder().id(8).email("alice@test.com").toUser();
+		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").build();
+		RegisteredUser adminTwo = new RegisteredUserBuilder().id(8).email("alice@test.com").build();
 
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram())
-				.toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).build())
+				.build();
 
 		Map<String, Object> model = adminMailSender.createModel(form);
 		assertEquals(form, model.get("application"));
@@ -81,11 +81,11 @@ public class AdminMailSenderTest {
 				return model;
 			}
 		};
-		RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").toUser();
-		Program program = new ProgramBuilder().title("a program").administrators(administratorOne, administratorTwo).toProgram();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("abc").id(2).program(program).applicant(applicant).toApplicationForm();
+		RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").build();
+		Program program = new ProgramBuilder().title("a program").administrators(administratorOne, administratorTwo).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
+		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("abc").id(2).program(program).applicant(applicant).build();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
@@ -119,10 +119,10 @@ public class AdminMailSenderTest {
 			}
 
 		};
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).build();
 		ApplicationForm form = new ApplicationFormBuilder().id(3234).applicant(new RegisteredUser()).applicationNumber("abc")
-				.program(new ProgramBuilder().id(23).title("laal").administrators(admin).toProgram()).toApplicationForm();
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(11).toUser();
+				.program(new ProgramBuilder().id(23).title("laal").administrators(admin).build()).build();
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(11).build();
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
 
@@ -153,10 +153,10 @@ public class AdminMailSenderTest {
 			}
 
 		};
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).build();
 		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicant(new RegisteredUser()).applicationNumber("abc")
-				.program(new ProgramBuilder().id(234).title("prg").administrators(admin).toProgram()).toApplicationForm();
-		RegisteredUser interviewer = new RegisteredUserBuilder().id(11).toUser();
+				.program(new ProgramBuilder().id(234).title("prg").administrators(admin).build()).build();
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(11).build();
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
 
@@ -179,14 +179,14 @@ public class AdminMailSenderTest {
 	@Test
 	public void shouldSendReminderEmailToEachAdmin() throws Exception {
 
-		final RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		final RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
 		InternetAddress adminOneAdr = new InternetAddress("bb@test.com");
 
-		final RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").toUser();
+		final RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").build();
 		InternetAddress adminTwoAdr = new InternetAddress("cc@test.com");
-		Program program = new ProgramBuilder().title("prg").administrators(administratorOne, administratorTwo).toProgram();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		final ApplicationForm form = new ApplicationFormBuilder().applicationNumber("abc").id(22).program(program).applicant(applicant).toApplicationForm();
+		Program program = new ProgramBuilder().title("prg").administrators(administratorOne, administratorTwo).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
+		final ApplicationForm form = new ApplicationFormBuilder().applicationNumber("abc").id(22).program(program).applicant(applicant).build();
 
 		final String templatename = "private/staff/admin/mail/application_validation_reminder.ftl";
 
@@ -221,14 +221,14 @@ public class AdminMailSenderTest {
 	@Test
 	public void shouldSendApproveReminderEmailToEachApprover() throws Exception {
 
-		final RegisteredUser approverOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		final RegisteredUser approverOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
 		InternetAddress adminOneAdr = new InternetAddress("bb@test.com");
 
-		final RegisteredUser approverTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").toUser();
+		final RegisteredUser approverTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").build();
 		InternetAddress adminTwoAdr = new InternetAddress("cc@test.com");
-		Program program = new ProgramBuilder().title("prg").approver(approverOne, approverTwo).toProgram();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		final ApplicationForm form = new ApplicationFormBuilder().applicationNumber("abc").id(22).program(program).applicant(applicant).toApplicationForm();
+		Program program = new ProgramBuilder().title("prg").approver(approverOne, approverTwo).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
+		final ApplicationForm form = new ApplicationFormBuilder().applicationNumber("abc").id(22).program(program).applicant(applicant).build();
 
 		final String templatename = "private/approvers/mail/application_approval_reminder.ftl";
 
@@ -263,13 +263,13 @@ public class AdminMailSenderTest {
 
 	@Test
 	public void shouldStopIfOneReminderEmailFails() throws Exception {
-		final RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		final RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
 		InternetAddress adminOneAdr = new InternetAddress("bb@test.com");
-		final RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").toUser();
+		final RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").build();
 
-		Program program = new ProgramBuilder().title("prg").administrators(administratorOne, administratorTwo).toProgram();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		final ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).applicant(applicant).toApplicationForm();
+		Program program = new ProgramBuilder().title("prg").administrators(administratorOne, administratorTwo).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
+		final ApplicationForm form = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).applicant(applicant).build();
 
 		final String templatename = "private/staff/admin/mail/application_validation_reminder.ftl";
 
@@ -305,26 +305,26 @@ public class AdminMailSenderTest {
 
 	@Test
 	public void sendingRejectNotificationsToAdminsApproversAndSupervisors() throws Exception {
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		RegisteredUser approver = new RegisteredUserBuilder().firstName("George").lastName("Smith").email("george.smith@test.com").id(90).toUser();
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
+		RegisteredUser approver = new RegisteredUserBuilder().firstName("George").lastName("Smith").email("george.smith@test.com").id(90).build();
 
-		RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).toSupervisor();
-		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).toApprovalRound();
+		RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).build();
+		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).build();
 
-		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
-		Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).toSupervisor();
+		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").build();
+		Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).build();
 
-		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor3).toApprovalRound();
+		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor3).build();
 
-		Program program = new ProgramBuilder().title("prg").administrators(admin).approver(approver).toProgram();
+		Program program = new ProgramBuilder().title("prg").administrators(admin).approver(approver).build();
 		ApplicationForm application = new ApplicationFormBuilder().id(4).approvalRounds(previousApprovalRound, latestApprovalRound)
 				.latestApprovalRound(latestApprovalRound).applicationNumber("bob").applicant(applicant)
-				.program(program).toApplicationForm();
+				.program(program).build();
 
-		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
-		Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).toRejection();
+		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").build();
+		Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).build();
 		application.setRejection(rejection);
 
 		
@@ -372,26 +372,26 @@ public class AdminMailSenderTest {
 	
 	@Test
     public void sendingRejectNotificationsToAdminsApproversAndSupervisorsNoDuplicates() throws Exception {
-        RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-        RegisteredUser approver = new RegisteredUserBuilder().firstName("George").lastName("Smith").email("george.smith@test.com").id(90).toUser();
+        RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").build();
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
+        RegisteredUser approver = new RegisteredUserBuilder().firstName("George").lastName("Smith").email("george.smith@test.com").id(90).build();
 
-        RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-        Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).toSupervisor();
-        ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).toApprovalRound();
+        RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+        Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).build();
+        ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).build();
 
-        RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
-        Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).toSupervisor();
+        RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").build();
+        Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).build();
 
-        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor3).toApprovalRound();
+        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor3).build();
 
-        Program program = new ProgramBuilder().title("prg").administrators(admin).approver(approver, admin).toProgram();
+        Program program = new ProgramBuilder().title("prg").administrators(admin).approver(approver, admin).build();
         ApplicationForm application = new ApplicationFormBuilder().id(4).approvalRounds(previousApprovalRound, latestApprovalRound)
                 .latestApprovalRound(latestApprovalRound).applicationNumber("bob").applicant(applicant)
-                .program(program).toApplicationForm();
+                .program(program).build();
 
-        RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
-        Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).toRejection();
+        RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").build();
+        Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).build();
         application.setRejection(rejection);
 
         
@@ -455,11 +455,11 @@ public class AdminMailSenderTest {
 			}
 
 		};
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).build();
 		ApplicationForm form = new ApplicationFormBuilder().id(213).applicationNumber("abc")
-				.program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).applicant(new RegisteredUser()).toApplicationForm();
-		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(11).toUser();
-		Reviewer reviewer = new ReviewerBuilder().id(1).user(reviewerUser).toReviewer();
+				.program(new ProgramBuilder().title("prg").administrators(admin).build()).applicant(new RegisteredUser()).build();
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(11).build();
+		Reviewer reviewer = new ReviewerBuilder().id(1).user(reviewerUser).build();
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
 
@@ -481,21 +481,21 @@ public class AdminMailSenderTest {
 
 	@Test
 	public void shouldSendRejectionNotificationToApplicationAdminAndCCProgramAdmin() throws Exception {
-		RegisteredUser programAdminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
-		RegisteredUser programAdminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").toUser();
+		RegisteredUser programAdminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").build();
+		RegisteredUser programAdminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").build();
 
-		Program program = new ProgramBuilder().title("prg").administrators(programAdminOne, programAdminTwo).toProgram();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
+		Program program = new ProgramBuilder().title("prg").administrators(programAdminOne, programAdminTwo).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
 
 		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(program)
-				.interviews(new InterviewBuilder().id(4).toInterview()).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+				.interviews(new InterviewBuilder().id(4).build()).status(ApplicationFormStatus.REJECTED).build();
 
-		RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(32).email("dd@test.com").firstName("doris").lastName("day").toUser();
+		RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(32).email("dd@test.com").firstName("doris").lastName("day").build();
 		application.setApplicationAdministrator(applicationAdmin);
 
-		RegisteredUser approver = new RegisteredUserBuilder().id(11).toUser();
-		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
-		Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).toRejection();
+		RegisteredUser approver = new RegisteredUserBuilder().id(11).build();
+		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").build();
+		Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).build();
 		application.setRejection(rejection);
 
 		InternetAddress expAddr = new InternetAddress("dd@test.com", "doris day");
@@ -541,21 +541,21 @@ public class AdminMailSenderTest {
 	
 	@Test
     public void shouldSendRejectionNotificationToApplicationAdminAndCCProgramAdminNoDuplicates() throws Exception {
-        RegisteredUser programAdminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
-        RegisteredUser programAdminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").toUser();
+        RegisteredUser programAdminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").build();
+        RegisteredUser programAdminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").build();
 
-        Program program = new ProgramBuilder().title("prg").administrators(programAdminOne, programAdminTwo).supervisors(programAdminOne).approver(programAdminOne).toProgram();
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
+        Program program = new ProgramBuilder().title("prg").administrators(programAdminOne, programAdminTwo).supervisors(programAdminOne).approver(programAdminOne).build();
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
 
         ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(program)
-                .interviews(new InterviewBuilder().id(4).toInterview()).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+                .interviews(new InterviewBuilder().id(4).build()).status(ApplicationFormStatus.REJECTED).build();
 
-        RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(32).email("dd@test.com").firstName("doris").lastName("day").toUser();
+        RegisteredUser applicationAdmin = new RegisteredUserBuilder().id(32).email("dd@test.com").firstName("doris").lastName("day").build();
         application.setApplicationAdministrator(applicationAdmin);
 
-        RegisteredUser approver = new RegisteredUserBuilder().id(11).toUser();
-        RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
-        Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).toRejection();
+        RegisteredUser approver = new RegisteredUserBuilder().id(11).build();
+        RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").build();
+        Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).build();
         application.setRejection(rejection);
 
         InternetAddress expAddr = new InternetAddress("dd@test.com", "doris day");
@@ -603,13 +603,13 @@ public class AdminMailSenderTest {
 
 	@Test
 	public void sendingApprovedNotificationsOnlyToNotApproverAdmins() throws Exception {
-		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
-		RegisteredUser adminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
+		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").build();
+		RegisteredUser adminTwo = new RegisteredUserBuilder().id(2).email("cc@test.com").firstName("charlie").lastName("crock").build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
 
-		ApplicationForm application = new ApplicationFormBuilder().id(4).interviews(new InterviewBuilder().id(4).toInterview())
+		ApplicationForm application = new ApplicationFormBuilder().id(4).interviews(new InterviewBuilder().id(4).build())
 				.status(ApplicationFormStatus.APPROVED).applicationNumber("bob").applicant(applicant)
-				.program(new ProgramBuilder().title("prg").administrators(adminOne, adminTwo).toProgram()).toApplicationForm();
+				.program(new ProgramBuilder().title("prg").administrators(adminOne, adminTwo).build()).build();
 
 		InternetAddress expAddr = new InternetAddress("bob@test.com", "bob the builder");
 		String expTemplate = "private/staff/admin/mailBeta/approved_notification.ftl";
@@ -632,7 +632,7 @@ public class AdminMailSenderTest {
 		EasyMock.expectLastCall();
 
 		List<Person> registryContacts = new ArrayList<Person>();
-		registryContacts.add(new PersonBuilder().id(123).toPerson());
+		registryContacts.add(new PersonBuilder().id(123).build());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
 
 		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);
@@ -647,23 +647,23 @@ public class AdminMailSenderTest {
 
 	@Test
 	public void sendingApprovedNotificationsToAdminsAndSupervisorrs() throws Exception {
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
-		RegisteredUser supervisor1 = new RegisteredUserBuilder().email("bob1@test.com").firstName("bob1").lastName("the builder").id(12).toUser();
-		Supervisor sup1 = new SupervisorBuilder().id(1).user(supervisor1).toSupervisor();
-		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(sup1).toApprovalRound();
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").build();
+		RegisteredUser supervisor1 = new RegisteredUserBuilder().email("bob1@test.com").firstName("bob1").lastName("the builder").id(12).build();
+		Supervisor sup1 = new SupervisorBuilder().id(1).user(supervisor1).build();
+		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(sup1).build();
 
-		RegisteredUser supervisor2 = new RegisteredUserBuilder().email("bob2@test.com").firstName("bob2").lastName("the builder").id(13).toUser();
-		Supervisor sup2 = new SupervisorBuilder().id(2).user(supervisor2).toSupervisor();
-		RegisteredUser supervisor3 = new RegisteredUserBuilder().email("bob3@test.com").firstName("bob3").lastName("the builder").id(14).toUser();
-		Supervisor sup3 = new SupervisorBuilder().id(3).user(supervisor3).toSupervisor();
-		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(sup2, sup3).toApprovalRound();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
+		RegisteredUser supervisor2 = new RegisteredUserBuilder().email("bob2@test.com").firstName("bob2").lastName("the builder").id(13).build();
+		Supervisor sup2 = new SupervisorBuilder().id(2).user(supervisor2).build();
+		RegisteredUser supervisor3 = new RegisteredUserBuilder().email("bob3@test.com").firstName("bob3").lastName("the builder").id(14).build();
+		Supervisor sup3 = new SupervisorBuilder().id(3).user(supervisor3).build();
+		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(sup2, sup3).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
 
 		ApplicationForm application = new ApplicationFormBuilder().approvalRounds(previousApprovalRound, latestApprovalRound)
 				.latestApprovalRound(latestApprovalRound).id(4).applicationNumber("bob").applicant(applicant)
-				.program(new ProgramBuilder().title("prg").administrators(admin).toProgram()).toApplicationForm();
+				.program(new ProgramBuilder().title("prg").administrators(admin).build()).build();
 
-		RegisteredUser approver = new RegisteredUserBuilder().id(11).toUser();
+		RegisteredUser approver = new RegisteredUserBuilder().id(11).build();
 
 		InternetAddress expAddr = new InternetAddress("bob@test.com", "bob the builder");
 		InternetAddress supAddr1 = new InternetAddress("bob2@test.com", "bob2 the builder");
@@ -699,7 +699,7 @@ public class AdminMailSenderTest {
 		javaMailSenderMock.send(mimePrepMock3);
 
 		List<Person> registryContacts = new ArrayList<Person>();
-		registryContacts.add(new PersonBuilder().id(123).toPerson());
+		registryContacts.add(new PersonBuilder().id(123).build());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
 
 		EasyMock.replay(mimePrepMock1, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, applicationServiceMock, personServiceMock);

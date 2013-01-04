@@ -29,7 +29,7 @@ public class RegistryControllerTest {
 
 	@Test
 	public void shouldReturnEmailSentMessageAndSetRegistryNotificationToTrue() throws MalformedURLException, DocumentException, IOException {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		applicationServiceMock.save(applicationForm);
 		EasyMock.replay(applicationServiceMock);
 		ModelAndView modelAndView = controller.sendHelpRequestToRegistryContacts(applicationForm);
@@ -40,7 +40,7 @@ public class RegistryControllerTest {
 
 	@Test
 	public void shouldReturnCurrentUser() {
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(4).toUser();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(4).build();
 
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
@@ -49,8 +49,8 @@ public class RegistryControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromId() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
@@ -73,8 +73,8 @@ public class RegistryControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserDoesNotHaveAdminRights() {
 
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);

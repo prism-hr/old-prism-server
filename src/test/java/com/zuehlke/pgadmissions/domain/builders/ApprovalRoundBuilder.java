@@ -24,7 +24,6 @@ public class ApprovalRoundBuilder {
 		return this;
 	}
 	
-	
 	public ApprovalRoundBuilder createdDate(Date createdDate){
 		this.createdDate = createdDate;
 		return this;
@@ -40,7 +39,7 @@ public class ApprovalRoundBuilder {
 		return this;
 	}
 	
-	public ApprovalRound toApprovalRound(){
+	public ApprovalRound build(){
 		ApprovalRound approvalRound = new ApprovalRound();
 		approvalRound.setApplication(application);
 		approvalRound.setCreatedDate(createdDate);

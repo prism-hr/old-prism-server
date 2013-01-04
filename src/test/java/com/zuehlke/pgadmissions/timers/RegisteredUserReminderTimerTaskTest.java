@@ -49,12 +49,12 @@ public class RegisteredUserReminderTimerTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).build();
 		ApplicationForm applicationFormTwo = new ApplicationFormBuilder()//
 				.id(2)//
 				.notificationRecords(//
 						new NotificationRecordBuilder().id(1).notificationType(NotificationType.VALIDATION_REMINDER)//
-								.notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 02 2011")).toNotificationRecord()).toApplicationForm();
+								.notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 02 2011")).build()).build();
 		sessionMock.refresh(applicationFormOne);
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);
@@ -88,8 +88,8 @@ public class RegisteredUserReminderTimerTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).toApplicationForm();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).build();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).build();
 		sessionMock.refresh(applicationFormOne);
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);

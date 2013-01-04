@@ -35,34 +35,34 @@ public class WithdrawControllerTest {
 
 	@Test(expected = CannotWithdrawApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInApprovedStage() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicant(student).id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicant(student).id(2).build();
 		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
 	@Test(expected = CannotWithdrawApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInRejectStage() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).applicant(student).id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).applicant(student).id(2).build();
 		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
 	@Test(expected = CannotWithdrawApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInUnsubmittedStage() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).applicant(student).id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).applicant(student).id(2).build();
 		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
 	@Test(expected = CannotWithdrawApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfAlreadyWithdrawn() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).applicant(student).id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).applicant(student).id(2).build();
 		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
 	@Test
 	public void shouldChangeStatusToWithdrawnAndSaveAndSendEmailsNotifications() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicant(student).id(2).applicationNumber("abc").toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicant(student).id(2).applicationNumber("abc").build();
 		withdrawServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
 		
-		StateChangeEvent event = new StateChangeEventBuilder().id(1).toEvent();
+		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
 		
 		EasyMock.replay(withdrawServiceMock, eventFactoryMock);
@@ -80,7 +80,7 @@ public class WithdrawControllerTest {
 	@Test
 	public void shouldGetApplicationForm() {
 		String applicationNumber = "abc";
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.reset(userServiceMock);
@@ -103,7 +103,7 @@ public class WithdrawControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserCannotSeeApplicationForm() {
 		String applicationNumber = "abc";
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.reset(userServiceMock);
@@ -126,7 +126,7 @@ public class WithdrawControllerTest {
 
 		
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student).anyTimes();
 		EasyMock.replay(userServiceMock);
 

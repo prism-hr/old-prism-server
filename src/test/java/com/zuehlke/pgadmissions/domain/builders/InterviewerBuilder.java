@@ -22,7 +22,6 @@ public class InterviewerBuilder {
 		return this;
 	}
 
-
 	public InterviewerBuilder dateAdminsNotified(Date dateAdminsNotified) {
 		this.dateAdminsNotified = dateAdminsNotified;
 		return this;
@@ -58,7 +57,7 @@ public class InterviewerBuilder {
 		return this;
 	}
 
-	public Interviewer toInterviewer() {
+	public Interviewer build() {
 		Interviewer interviewer = new Interviewer();
 		interviewer.setId(id);
 		interviewer.setRequiresAdminNotification(requiresAdminNotification);

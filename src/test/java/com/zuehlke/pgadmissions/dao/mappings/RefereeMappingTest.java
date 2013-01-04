@@ -37,7 +37,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadReferee() throws Exception {
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy").parse("01 05 2012");
 		
-		Country country = new CountryBuilder().code("FF").enabled(true).name("FF").toCountry();
+		Country country = new CountryBuilder().code("FF").enabled(true).name("FF").build();
 		
 		save(country);
 		flushAndClearSession();
@@ -74,7 +74,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadRefereeWithUser() throws Exception {
-		RegisteredUser user = new RegisteredUserBuilder().email("testnewemail@onetwo.com").username("testnewemail@onetwo.com").firstName("jane").lastName("u").password("123").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().email("testnewemail@onetwo.com").username("testnewemail@onetwo.com").firstName("jane").lastName("u").password("123").build();
 		
 		sessionFactory.getCurrentSession().save(user);
 		
@@ -99,10 +99,10 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 	public void shoulLoadReferenceWithReferee() throws ParseException{
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("user").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).toApplicationForm();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).build();
 		
-		Country country = new CountryBuilder().name("nae").code("NA").enabled(true).toCountry(); 
+		Country country = new CountryBuilder().name("nae").code("NA").enabled(true).build(); 
 		save(applicant, application, country);
 		
 		Referee referee = new RefereeBuilder().application(application).email("email@test.com").firstname("bob")
@@ -111,7 +111,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		
 		ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee)
 				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(applicationForm)
-				.toReferenceComment();
+				.build();
 		save(referee, referenceComment);		
 		assertNotNull(referenceComment.getId());
 		flushAndClearSession();
@@ -125,18 +125,18 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 	public void setUp() {
 		super.setUp();
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		
 		save(program);
 
 		applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		refereeUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com").username("username1")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(applicant, refereeUser);
 		save(applicant);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}

@@ -39,7 +39,7 @@ public class DataImportMailSenderTest {
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
 
-		RegisteredUser user = new RegisteredUserBuilder().email("alice@test.com").id(9).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().email("alice@test.com").id(9).build();
 		String message = "Error message";
 
 		Map<String, Object> model = dataImporterMailSender.createModel(user, message);
@@ -51,8 +51,8 @@ public class DataImportMailSenderTest {
 
 	@Test
 	public void sendErrorMessageTest() throws Exception {
-		RegisteredUser user1 = new RegisteredUserBuilder().id(2).email("admin@test.com").firstName("bob").lastName("the builder").toUser();
-		RegisteredUser user2 = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
+		RegisteredUser user1 = new RegisteredUserBuilder().id(2).email("admin@test.com").firstName("bob").lastName("the builder").build();
+		RegisteredUser user2 = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").build();
 		List<RegisteredUser> users = Arrays.asList(user1, user2);
 		
 

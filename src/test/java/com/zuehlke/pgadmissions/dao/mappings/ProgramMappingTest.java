@@ -51,8 +51,8 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		program.setTitle("Program's title");
 		
 		save(program);
-		ProgramInstance instanceOne = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption("1", "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").enabled(true).toProgramInstance();
-		ProgramInstance instanceTwo = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption("1", "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").enabled(true).toProgramInstance();
+		ProgramInstance instanceOne = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption("1", "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").enabled(true).build();
+		ProgramInstance instanceTwo = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption("1", "Full-time").program(program).applicationStartDate(new Date()).academicYear("2013").enabled(true).build();
 		save(instanceOne, instanceTwo);
 		flushAndClearSession();
 		
@@ -75,11 +75,11 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
 		RegisteredUser approverOne = new RegisteredUserBuilder().programsOfWhichApprover(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 
 		RegisteredUser approverTwo = new RegisteredUserBuilder().programsOfWhichApprover(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 
 		save(approverOne, approverTwo);
 		flushAndClearSession();
@@ -101,11 +101,11 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
 		RegisteredUser adminOne = new RegisteredUserBuilder().programsOfWhichAdministrator(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 
 		RegisteredUser adminTwo = new RegisteredUserBuilder().programsOfWhichAdministrator(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 
 		save(adminOne, adminTwo);
 		flushAndClearSession();
@@ -127,11 +127,11 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
 		RegisteredUser reviewerOne = new RegisteredUserBuilder().programsOfWhichReviewer(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 
 		RegisteredUser reviewerTwo = new RegisteredUserBuilder().programsOfWhichReviewer(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 
 		save(reviewerOne, reviewerTwo);
 		flushAndClearSession();
@@ -153,11 +153,11 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		
 		RegisteredUser interviewerOne = new RegisteredUserBuilder().programsOfWhichInterviewer(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 		
 		RegisteredUser interviewerTwo = new RegisteredUserBuilder().programsOfWhichInterviewer(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 		
 		save(interviewerOne, interviewerTwo);
 		flushAndClearSession();
@@ -179,11 +179,11 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		
 		RegisteredUser interviewerOne = new RegisteredUserBuilder().programsOfWhichSupervisor(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 		
 		RegisteredUser interviewerTwo = new RegisteredUserBuilder().programsOfWhichSupervisor(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
+				.build();
 		
 		save(interviewerOne, interviewerTwo);
 		flushAndClearSession();

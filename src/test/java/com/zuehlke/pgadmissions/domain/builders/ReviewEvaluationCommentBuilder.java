@@ -19,12 +19,12 @@ public class ReviewEvaluationCommentBuilder {
 	private Integer id;
 	private ApplicationFormStatus nextStatus;
 	private ReviewRound reviewRound;
-	
 
 	public ReviewEvaluationCommentBuilder reviewRound(ReviewRound reviewRound){
 		this.reviewRound = reviewRound;
 		return this;
 	}
+	
 	public ReviewEvaluationCommentBuilder nextStatus(ApplicationFormStatus nextStatus){
 		this.nextStatus = nextStatus;
 		return this;
@@ -40,7 +40,6 @@ public class ReviewEvaluationCommentBuilder {
 		this.application = application;
 		return this;
 	}
-	
 		
 	public ReviewEvaluationCommentBuilder type(CommentType type){
 		this.type = type;
@@ -62,7 +61,7 @@ public class ReviewEvaluationCommentBuilder {
 		return this;
 	}
 	
-	public ReviewEvaluationComment toReviewEvaluationComment(){
+	public ReviewEvaluationComment build(){
 		ReviewEvaluationComment reviewEaluationComment = new ReviewEvaluationComment();
 		reviewEaluationComment.setApplication(application);
 		reviewEaluationComment.setComment(comment);

@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 
 public class ProgramInstanceBuilder {
+    
 	private Date applicationDeadline;
 	private Date applicationStartDate;
 	private String academicYear;
@@ -13,7 +14,6 @@ public class ProgramInstanceBuilder {
 	private String studyOptionCode;
 	private Integer id;
 	private int sequence;
-	
 	private Program program;
 	private Boolean enabled;
 	private String identifier;
@@ -74,7 +74,7 @@ public class ProgramInstanceBuilder {
 		return this;
 	}
 	
-	public ProgramInstance toProgramInstance(){
+	public ProgramInstance build() {
 		ProgramInstance programInstance = new ProgramInstance();
 		programInstance.setApplicationDeadline(applicationDeadline);
 		programInstance.setStudyOption(studyOption);

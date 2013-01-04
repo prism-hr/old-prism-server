@@ -67,8 +67,8 @@ public class StateTransitionControllerTest {
 	
 	@Test
 	public void shouldGetApplicationFromIdForAdminUser() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
@@ -83,8 +83,8 @@ public class StateTransitionControllerTest {
 	
 	@Test
 	public void shouldGetApplicationFromIdForApproverUser() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
@@ -108,8 +108,8 @@ public class StateTransitionControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrApproverInApplicationProgram() {
 
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
@@ -123,7 +123,7 @@ public class StateTransitionControllerTest {
 
 	@Test
 	public void shouldReturnCurrentUser() {
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(4).toUser();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(4).build();
 
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
@@ -134,7 +134,7 @@ public class StateTransitionControllerTest {
 	public void shouldReturnReviewersWillingToInterviewIfAppliationInReview() {
 		final String applicationNumber = "5";
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicationNumber(applicationNumber).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();
+				.build();
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock) {
 
@@ -148,8 +148,8 @@ public class StateTransitionControllerTest {
 			}
 
 		};
-		RegisteredUser userOne = new RegisteredUserBuilder().id(5).toUser();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(6).toUser();
+		RegisteredUser userOne = new RegisteredUserBuilder().id(5).build();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(6).build();
 
 		EasyMock.expect(userServiceMock.getReviewersWillingToInterview(applicationForm)).andReturn(Arrays.asList(userOne, userTwo));
 		EasyMock.replay(userServiceMock);
@@ -162,7 +162,7 @@ public class StateTransitionControllerTest {
 	public void shouldReturnNullIfppliationNotInReview() {
 		final String applicationNumber = "5";
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber(applicationNumber).id(5)
-				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+				.status(ApplicationFormStatus.VALIDATION).build();
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock) {
 
@@ -184,7 +184,7 @@ public class StateTransitionControllerTest {
 
 	@Test
 	public void shouldReturnAvaialableNextStati() {
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).build();
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock) {
 

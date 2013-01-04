@@ -18,8 +18,8 @@ public class CountryServiceTest {
 	public void shouldGetAllCountriesFromDAO(){
 		CountriesDAO countriesDAOMock = EasyMock.createMock(CountriesDAO.class);
 		CountryService service = new CountryService(countriesDAOMock);
-		Country country1 = new CountryBuilder().id(1).toCountry();
-		Country country2 = new CountryBuilder().id(2).toCountry();
+		Country country1 = new CountryBuilder().id(1).build();
+		Country country2 = new CountryBuilder().id(2).build();
 		EasyMock.expect(countriesDAOMock.getAllCountries()).andReturn(Arrays.asList(country1, country2));
 		EasyMock.replay(countriesDAOMock);
 		
@@ -35,7 +35,7 @@ public class CountryServiceTest {
 	public void shouldGetCountryFromDAO(){
 		CountriesDAO countriesDAOMock = EasyMock.createMock(CountriesDAO.class);
 		CountryService service = new CountryService(countriesDAOMock);
-		Country country = new CountryBuilder().id(1).toCountry();
+		Country country = new CountryBuilder().id(1).build();
 		EasyMock.expect(countriesDAOMock.getCountryById(1)).andReturn(country);
 		EasyMock.replay(countriesDAOMock);
 		

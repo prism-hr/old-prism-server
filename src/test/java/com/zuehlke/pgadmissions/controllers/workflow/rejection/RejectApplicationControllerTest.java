@@ -62,15 +62,15 @@ public class RejectApplicationControllerTest {
 
 	@Before
 	public void setUp() {
-		admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
 		
-		reason1 = new RejectReasonBuilder().id(10).text("idk").toRejectReason();
-		reason2 = new RejectReasonBuilder().id(20).text("idc").toRejectReason();
-		approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		program = new ProgramBuilder().id(100).administrators(admin).approver(approver).toProgram();
+		reason1 = new RejectReasonBuilder().id(10).text("idk").build();
+		reason2 = new RejectReasonBuilder().id(20).text("idc").build();
+		approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+		program = new ProgramBuilder().id(100).administrators(admin).approver(approver).build();
 		application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION).applicationNumber("abc")
 				.program(program)//
-				.toApplicationForm();
+				.build();
 
 		rejectServiceMock = EasyMock.createMock(RejectService.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -178,7 +178,7 @@ public class RejectApplicationControllerTest {
 	public void throwRNFEIfUserIsApplicant() {
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
-		RegisteredUser applicant = new RegisteredUserBuilder().id(2023).username("applicant").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(2023).username("applicant").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
 		EasyMock.replay(userServiceMock);
@@ -189,7 +189,7 @@ public class RejectApplicationControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void throwRNFEIfUserIsNotApproverOfApplication() {
-		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(656).username("wrongApprover").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(656).username("wrongApprover").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(wrongApprover).anyTimes();
 		EasyMock.replay(userServiceMock);
@@ -252,7 +252,7 @@ public class RejectApplicationControllerTest {
 	@Test
 	public void shouldGetCurrentUserAsUser(){
 		EasyMock.reset(userServiceMock);
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
 		EasyMock.replay(userServiceMock);
 		assertEquals(user,controllerUT.getUser());
@@ -265,7 +265,7 @@ public class RejectApplicationControllerTest {
 	@Test
 	public void moveToRejectWithValidRejection() {		
 		
-		Rejection rejection = new RejectionBuilder().id(3).toRejection();
+		Rejection rejection = new RejectionBuilder().id(3).build();
 		rejectServiceMock.moveApplicationToReject(application, admin, rejection);
 		EasyMock.expectLastCall();
 		EasyMock.replay(rejectServiceMock);
@@ -281,7 +281,7 @@ public class RejectApplicationControllerTest {
 		EasyMock.reset(errorsMock);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock);
-		Rejection rejection = new RejectionBuilder().id(3).toRejection();
+		Rejection rejection = new RejectionBuilder().id(3).build();
 
 		EasyMock.replay(rejectServiceMock);
 
@@ -294,12 +294,12 @@ public class RejectApplicationControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void moveToReviewThrowRNFEWhenInvalidUser() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(156).username("appl")//
-				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole())//
-				.toUser();
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build())//
+				.build();
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
 		EasyMock.replay(userServiceMock);
-		Rejection rejection = new RejectionBuilder().id(3).toRejection();
+		Rejection rejection = new RejectionBuilder().id(3).build();
 		controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
 	}
 

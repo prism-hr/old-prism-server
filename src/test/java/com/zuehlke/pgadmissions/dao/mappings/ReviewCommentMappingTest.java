@@ -28,26 +28,26 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 
 	@Test
 	public void shouldSaveAndLoadReviewComment(){
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();		
 		save( program);
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
-		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
 		save(applicant, reviewerUser, reviewer);
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();		
 		save(applicationForm);
 		
 		flushAndClearSession();
 		
 		ReviewComment reviewComment = new ReviewCommentBuilder().reviewer(reviewer).adminsNotified(false).commentType(CommentType.REVIEW)
 				.comment("This is a review comment").suitableCandidateForUCL(false).user(reviewerUser).application(applicationForm).decline(true)
-				.willingToInterview(false).toReviewComment();
+				.willingToInterview(false).build();
 		save(reviewComment);
 		
 		assertNotNull(reviewComment.getId());

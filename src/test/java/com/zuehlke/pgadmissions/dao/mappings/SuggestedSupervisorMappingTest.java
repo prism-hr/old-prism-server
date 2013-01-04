@@ -15,7 +15,7 @@ public class SuggestedSupervisorMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadSuggestedSupervisor(){
-		SuggestedSupervisor person = new SuggestedSupervisorBuilder().firstname("bob").lastname("smith").email("email@Test.com").aware(true).toSuggestedSupervisor();
+		SuggestedSupervisor person = new SuggestedSupervisorBuilder().firstname("bob").lastname("smith").email("email@Test.com").aware(true).build();
 		sessionFactory.getCurrentSession().save(person);
 		assertNotNull(person.getId());
 		

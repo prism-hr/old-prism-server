@@ -44,7 +44,7 @@ public class UclXferPrismUclAcUkConnectionTest  {
     @Before
     public void setup() throws IOException {
         Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
-        document = new DocumentBuilder().content(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).toDocument();
+        document = new DocumentBuilder().content(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).build();
     }
     
     /**

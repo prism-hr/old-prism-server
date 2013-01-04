@@ -18,8 +18,8 @@ public class DisabilityServiceTest {
 	public void getAllDisabilitiesFromDAO() {
 		DisabilityDAO disabilityDAOMock = EasyMock.createMock(DisabilityDAO.class);
 		DisabilityService service = new DisabilityService(disabilityDAOMock);
-		Disability disability1 = new DisabilityBuilder().id(1).toDisability();
-		Disability disability2 = new DisabilityBuilder().id(2).toDisability();
+		Disability disability1 = new DisabilityBuilder().id(1).build();
+		Disability disability2 = new DisabilityBuilder().id(2).build();
 		EasyMock.expect(disabilityDAOMock.getAllDisabilities()).andReturn(Arrays.asList(disability1, disability2));
 		EasyMock.replay(disabilityDAOMock);
 
@@ -34,7 +34,7 @@ public class DisabilityServiceTest {
 	public void getDisabilityFromDAO() {
 		DisabilityDAO disabilityDAOMock = EasyMock.createMock(DisabilityDAO.class);
 		DisabilityService service = new DisabilityService(disabilityDAOMock);
-		Disability disability = new DisabilityBuilder().id(1).toDisability();
+		Disability disability = new DisabilityBuilder().id(1).build();
 		EasyMock.expect(disabilityDAOMock.getDisabilityById(1)).andReturn(disability);
 		EasyMock.replay(disabilityDAOMock);
 

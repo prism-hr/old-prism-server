@@ -27,11 +27,11 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveInterview() {
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		flushAndClearSession();
 		
-		Interview interview = new InterviewBuilder().application(application).furtherDetails("at 9pm").lastNotified(new Date()).locationURL("pgadmissions.com").toInterview();
+		Interview interview = new InterviewBuilder().application(application).furtherDetails("at 9pm").lastNotified(new Date()).locationURL("pgadmissions.com").build();
 		dao.save(interview);
 		assertNotNull(interview.getId());
 		flushAndClearSession();
@@ -43,11 +43,11 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldGetInterviewerById() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		flushAndClearSession();
 		
-		Interview interview = new InterviewBuilder().toInterview();
+		Interview interview = new InterviewBuilder().build();
 		dao.save(interview);
 		assertNotNull(interview.getId());
 		flushAndClearSession();
@@ -58,8 +58,8 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 	public void setUp() {
 		super.setUp();
 		applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		
 		save(applicant, program, applicant);
 		

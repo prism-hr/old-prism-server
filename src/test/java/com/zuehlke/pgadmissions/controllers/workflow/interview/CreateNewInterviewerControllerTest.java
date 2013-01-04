@@ -39,9 +39,9 @@ public class CreateNewInterviewerControllerTest {
 	@Test
 	public void shouldCreateNewUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
-		RegisteredUser suggestedUser = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
-		RegisteredUser user = new RegisteredUserBuilder().id(6).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").build();
+		RegisteredUser suggestedUser = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
+		RegisteredUser user = new RegisteredUserBuilder().id(6).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, application)).andReturn(user);
 		EasyMock.replay(userServiceMock);
@@ -55,9 +55,9 @@ public class CreateNewInterviewerControllerTest {
 	@Test	
 	public void shouldReturnExistingUserIfUserAlreadyExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
-		RegisteredUser suggestedUser = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
-		RegisteredUser existingUser = new RegisteredUserBuilder().id(6).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").build();
+		RegisteredUser suggestedUser = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
+		RegisteredUser existingUser = new RegisteredUserBuilder().id(6).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
 	
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingUser);
 		EasyMock.replay(userServiceMock);
@@ -75,7 +75,7 @@ public class CreateNewInterviewerControllerTest {
 	@Test
 	public void shouldReturnToViewIfValidationErrors() {
 		EasyMock.reset(bindingResultMock);
-		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
 		EasyMock.replay(bindingResultMock);
 		ModelAndView modelAndView = controller.createNewInterviewerUser(user, bindingResultMock, null);
@@ -106,8 +106,8 @@ public class CreateNewInterviewerControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromIdForAdmin() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
@@ -121,8 +121,8 @@ public class CreateNewInterviewerControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromIdForInterviewer() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
@@ -145,8 +145,8 @@ public class CreateNewInterviewerControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrInterviewerOfApplicationProgram() {
 
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);

@@ -34,11 +34,11 @@ public class ReviewControllerTest {
 
 	@Test
 	public void shouldGetProgrammeReviewers() {
-		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
-		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
+		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
+		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
 
-		final Program program = new ProgramBuilder().reviewers(interUser1, interUser2).id(6).toProgram();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		final Program program = new ProgramBuilder().reviewers(interUser1, interUser2).id(6).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -63,8 +63,8 @@ public class ReviewControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromIdForAdmin() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
@@ -89,8 +89,8 @@ public class ReviewControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrReviewerOfApplicationProgram() {
 
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(false);
@@ -104,12 +104,12 @@ public class ReviewControllerTest {
 	@Test
 	public void shouldGetListOfPreviousReviewersAndRemoveDefaultReviewers() {
 		EasyMock.reset(userServiceMock);
-		final RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(7).toUser();
-		final RegisteredUser reviewer = new RegisteredUserBuilder().id(6).toUser();
+		final RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(7).build();
+		final RegisteredUser reviewer = new RegisteredUserBuilder().id(6).build();
 
-		final Program program = new ProgramBuilder().reviewers(defaultReviewer).id(6).toProgram();
+		final Program program = new ProgramBuilder().reviewers(defaultReviewer).id(6).build();
 
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		controller = new ReviewController(applicationServiceMock, userServiceMock, reviewServiceMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {

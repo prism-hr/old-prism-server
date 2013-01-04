@@ -28,14 +28,14 @@ public class BadgeDAOTest extends AutomaticRollbackTestCase {
     public void setup() {
         badgeDAO = new BadgeDAO(sessionFactory);
         programDAO = new ProgramDAO(sessionFactory); 
-        program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+        program = new ProgramBuilder().code("doesntexist").title("another title").build();
         save(program);
         flushAndClearSession();
     }
 
     @Test
     public void shouldSaveAndLoadBadgeByProgram() {
-        Badge badge = new BadgeBuilder().closingDate(new Date()).program(program).projectTitle("title").toBadge();
+        Badge badge = new BadgeBuilder().closingDate(new Date()).program(program).projectTitle("title").build();
 
         assertNull(badge.getId());
 
@@ -54,7 +54,7 @@ public class BadgeDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldReturnBadges() {
-        Badge badge = new BadgeBuilder().closingDate(new Date()).program(program).projectTitle("title").toBadge();
+        Badge badge = new BadgeBuilder().closingDate(new Date()).program(program).projectTitle("title").build();
         save(badge);
         flushAndClearSession();
         

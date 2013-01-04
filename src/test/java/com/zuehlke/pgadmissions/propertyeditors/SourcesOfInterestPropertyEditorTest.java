@@ -21,7 +21,7 @@ public class SourcesOfInterestPropertyEditorTest {
     
     @Test   
     public void shouldLoadByIdAndSetAsValue() {
-        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).toSourcesOfInterest();
+        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).build();
         EasyMock.expect(encryptionHelperMock.decryptToInteger("1")).andReturn(1);
         EasyMock.expect(sourcesOfInterestDAOMock.getSourcesOfInterestById(1)).andReturn(interest);
         EasyMock.replay(sourcesOfInterestDAOMock, encryptionHelperMock);
@@ -37,14 +37,14 @@ public class SourcesOfInterestPropertyEditorTest {
     
     @Test   
     public void shouldReturnNullIfValueIdIsNull(){
-        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(null).code("OTHER").name("Other").enabled(true).toSourcesOfInterest();
+        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(null).code("OTHER").name("Other").enabled(true).build();
         editor.setValue(interest);
         assertNull(editor.getAsText());
     }
     
     @Test   
     public void shouldReturnAuthorityAsEnum() {
-        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).toSourcesOfInterest();
+        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).build();
         editor.setValue(interest);
         assertEquals("1", editor.getAsText());
     }

@@ -28,8 +28,8 @@ public class SupervisorPropertyEditorTest {
 
 	@Test
 	public void shouldCreateNewSupervisorWithUserAndSetAsValue() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
@@ -70,7 +70,7 @@ public class SupervisorPropertyEditorTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfNoApplicationForm() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);

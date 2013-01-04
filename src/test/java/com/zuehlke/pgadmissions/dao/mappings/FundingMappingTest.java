@@ -42,7 +42,7 @@ public class FundingMappingTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		Date awardDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/12/2011");
 		
-		Funding funding = new FundingBuilder().application(applicationForm).awardDate(awardDate).description("hello").type(FundingType.EMPLOYER).value("alot").document(document).toFunding();
+		Funding funding = new FundingBuilder().application(applicationForm).awardDate(awardDate).description("hello").type(FundingType.EMPLOYER).value("alot").document(document).build();
 		save(funding);
 		Integer id = funding.getId();
 
@@ -67,16 +67,16 @@ public class FundingMappingTest extends AutomaticRollbackTestCase{
 		super.setUp();
 		
 		
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		
 		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
 		save(applicant);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}

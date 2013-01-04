@@ -27,8 +27,8 @@ public class CountriesOfBirthImporterTest {
 	@Test
     public void testImportData() throws XMLDataImportException {
 		List<Country> countries = new ArrayList<Country>();
-		countries.add(new CountryBuilder().code("UK").enabled(true).name("United Kingdom").toCountry());
-		countries.add(new CountryBuilder().code("PL").enabled(true).name("Poland").toCountry());
+		countries.add(new CountryBuilder().code("UK").enabled(true).name("United Kingdom").build());
+		countries.add(new CountryBuilder().code("PL").enabled(true).name("Poland").build());
 		EasyMock.expect(countriesDAO.getAllCountries()).andReturn(countries);
 		List<Country> changes = countries.subList(0, 1);
 		EasyMock.expect(importService.merge(EasyMock.same(countries), EasyMock.anyObject(List.class))).andReturn(changes);

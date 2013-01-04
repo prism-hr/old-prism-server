@@ -69,7 +69,7 @@ public class GenericCommentValidatorTest {
 
 	@Before
 	public void setup() {
-		comment = new CommentBuilder().comment("hi").toComment();
+		comment = new CommentBuilder().comment("hi").build();
 		genericCommentValidator = new GenericCommentValidator();
 		genericCommentValidator.setValidator((javax.validation.Validator) validator);
 	}

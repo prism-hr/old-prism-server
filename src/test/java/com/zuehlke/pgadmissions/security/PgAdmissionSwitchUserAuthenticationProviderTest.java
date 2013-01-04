@@ -37,15 +37,15 @@ public class PgAdmissionSwitchUserAuthenticationProviderTest {
     public void setup() {
         authenticationProvider = new PgAdmissionSwitchUserAuthenticationProvider();
         
-        role1 = new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).toRole();
+        role1 = new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).build();
         
-        role2 = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).toRole();
+        role2 = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).build();
         
         user1 = new RegisteredUserBuilder().id(5).firstName("Jane").lastName("Doe").email("jane@doe.com")
-                .username("janeUsername").password("password").enabled(true).roles(role1).toUser();
+                .username("janeUsername").password("password").enabled(true).roles(role1).build();
         
         user2 = new RegisteredUserBuilder().id(6).firstName("John").lastName("Doe").email("john@doe.com")
-                .username("johnUsername").password("password").enabled(true).roles(role1, role2).toUser();
+                .username("johnUsername").password("password").enabled(true).roles(role1, role2).build();
         
         user2.setPrimaryAccount(user1);
         user1.getLinkedAccounts().add(user2);

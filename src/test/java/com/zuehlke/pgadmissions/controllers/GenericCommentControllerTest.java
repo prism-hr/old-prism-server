@@ -36,8 +36,8 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldGetApplicationFormFromId() {
-        Program program = new ProgramBuilder().id(7).toProgram();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -61,8 +61,8 @@ public class GenericCommentControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfCurrentUserApplicant() {
-        Program program = new ProgramBuilder().id(7).toProgram();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -78,8 +78,8 @@ public class GenericCommentControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfCurrentUserReferee() {
-        Program program = new ProgramBuilder().id(7).toProgram();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -96,8 +96,8 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldNotThrowResourceNotFoundExceptionIfCurrentUserIsRefereeAndAdministrator() {
-        Program program = new ProgramBuilder().id(7).toProgram();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(currentUser.getId()).andReturn(99).anyTimes();
         applicationForm.getProgram().getAdministrators().add(currentUser);
@@ -117,8 +117,8 @@ public class GenericCommentControllerTest {
     
     @Test
     public void shouldNotThrowResourceNotFoundExceptionIfCurrentUserIsRefereeAndSuperAdministrator() {
-        Program program = new ProgramBuilder().id(7).toProgram();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         applicationForm.getProgram().getAdministrators().add(currentUser);
 
@@ -138,8 +138,8 @@ public class GenericCommentControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication() {
-        Program program = new ProgramBuilder().id(7).toProgram();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -162,7 +162,7 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldReturnCurrentUser() {
-        RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(8).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         assertEquals(currentUser, controller.getUser());
@@ -170,8 +170,8 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldCreateNewCommentForApplicationForm() {
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-        RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(8).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock,
@@ -211,8 +211,8 @@ public class GenericCommentControllerTest {
     @Test
     public void shouldSaveCommentAndRedirectBackToPageIfNoErrors() {
         Comment comment = new CommentBuilder().id(1)
-                .application(new ApplicationFormBuilder().id(6).applicationNumber("ABC").toApplicationForm())
-                .toComment();
+                .application(new ApplicationFormBuilder().id(6).applicationNumber("ABC").build())
+                .build();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
         commentServiceMock.save(comment);

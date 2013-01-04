@@ -33,11 +33,11 @@ public class ApproverAdminMailSenderTest {
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
 
-		RegisteredUser approverOne = new RegisteredUserBuilder().email("alice@test.com").id(9).toUser();
-		RegisteredUser admin = new RegisteredUserBuilder().email("t@test.com").id(10).toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().id(10).toUser();
+		RegisteredUser approverOne = new RegisteredUserBuilder().email("alice@test.com").id(9).build();
+		RegisteredUser admin = new RegisteredUserBuilder().email("t@test.com").id(10).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(10).build();
 
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(admin).approver(approverOne).toProgram()).applicant(applicant).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(admin).approver(approverOne).build()).applicant(applicant).build();
 
 		Map<String, Object> model = approverMailSender.createModel(approverOne, form);
 		assertEquals(form, model.get("application"));
@@ -49,11 +49,11 @@ public class ApproverAdminMailSenderTest {
 
 	@Test
 	public void sendingApprovalNotificationsToApproverAndAdmin() throws Exception {
-		RegisteredUser admin = new RegisteredUserBuilder().id(2).email("admin@test.com").firstName("bob").lastName("the builder").toUser();
-		RegisteredUser approver = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
+		RegisteredUser admin = new RegisteredUserBuilder().id(2).email("admin@test.com").firstName("bob").lastName("the builder").build();
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").build();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).build();
 		
-		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().approver(approver, admin).title("prg").administrators(admin).toProgram()).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().approver(approver, admin).title("prg").administrators(admin).build()).build();
 
 		InternetAddress expAddr1 = new InternetAddress("bob@test.com", "bob the builder");
 		InternetAddress expAddr2 = new InternetAddress("admin@test.com", "bob the builder");

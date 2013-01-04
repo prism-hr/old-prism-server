@@ -34,7 +34,7 @@ public class UsersInProgrammeControllerTest {
 	
 	@Test
 	public void shouldReturnUsersForProgramOrderedByLastnameFirstname() {
-		Program program = new ProgramBuilder().id(5).toProgram();
+		Program program = new ProgramBuilder().id(5).build();
 		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userOne.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
 		EasyMock.expect(userOne.getId()).andReturn(1).anyTimes();
@@ -69,7 +69,7 @@ public class UsersInProgrammeControllerTest {
 	@Test
 	public void shouldExcludeUsersWhoAreSuperadminsOnly() {
 		
-		Program program = new ProgramBuilder().id(5).toProgram();
+		Program program = new ProgramBuilder().id(5).build();
 		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userOne.getAuthoritiesForProgram(program)).andReturn(Collections.EMPTY_LIST).anyTimes();
 		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
@@ -113,7 +113,7 @@ public class UsersInProgrammeControllerTest {
 	
 	@Test
 	public void shouldGetSelectedProgramfIdProvided() {
-		Program program = new ProgramBuilder().id(5).toProgram();
+		Program program = new ProgramBuilder().id(5).build();
 	
 		EasyMock.expect(programsServiceMock.getProgramByCode("enc")).andReturn(program);
 		EasyMock.replay(programsServiceMock);

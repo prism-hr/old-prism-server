@@ -73,20 +73,20 @@ public class RefereeServiceTest {
 	@Test
 	public void shouldSaveReferenceAndSendEmailsAdminsAndApplicant() throws UnsupportedEncodingException {
 
-		Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
-		Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
-		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).role(adminRole).firstName("anna").lastName("allen").email("email2@test.com").toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+		Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).role(adminRole).firstName("anna").lastName("allen").email("email2@test.com").build();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").build();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).toProgram();
+		Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).build();
 
-		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).build();
 		referee.setApplication(form);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
-		ReferenceEvent event = new ReferenceEventBuilder().id(4).toEvent();
+		ReferenceEvent event = new ReferenceEventBuilder().id(4).build();
 		EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
 		applicationFormDAOMock.save(form);
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -133,15 +133,15 @@ public class RefereeServiceTest {
 	@Test
 	public void shouldSaveAndSendEmailToReferee() throws UnsupportedEncodingException {
 
-		Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
-		Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
-		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).role(adminRole).firstName("anna").lastName("allen").email("email2@test.com").toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+		Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).role(adminRole).firstName("anna").lastName("allen").email("email2@test.com").build();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").build();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).toProgram();
+		Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).build();
 
-		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).build();
 		referee.setApplication(form);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
@@ -168,15 +168,15 @@ public class RefereeServiceTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
-		Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
-		Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+		Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").build();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
 
-		Program program = new ProgramBuilder().title("some title").administrators(admin1).toProgram();
+		Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
 
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).applicationNumber("xyz").referees(referee).id(2).program(program).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).applicationNumber("xyz").referees(referee).id(2).program(program).build();
 		referee.setApplication(form);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
@@ -213,8 +213,8 @@ public class RefereeServiceTest {
 
 	@Test
 	public void shouldReturnUserIfRefereeAlreadyExists() {
-		Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
 		userServiceMock.save(reviewer);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(reviewer);
@@ -225,8 +225,8 @@ public class RefereeServiceTest {
 
 	@Test
 	public void shouldReturnNullIfRefereeNotExists() {
-		Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
 		userServiceMock.save(reviewer);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("otherrefemail@test.com").toReferee();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("otherrefemail@test.com")).andReturn(null);
@@ -237,8 +237,8 @@ public class RefereeServiceTest {
 
 	@Test
 	public void shouldAddRefereeRoleIfUserExistsAndIsNotAReferee() {
-		Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
-		RegisteredUser user = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).build();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").build();
 		userServiceMock.save(user);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
@@ -251,10 +251,10 @@ public class RefereeServiceTest {
 
 	@Test
 	public void shouldAddRefereeRoleIfUserExistsAndIsApproverReviewerAdmin() {
-		Role reviewerRole = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).toRole();
-		Role adminRole = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).toRole();
-		Role approverRole = new RoleBuilder().id(3).authorityEnum(Authority.APPROVER).toRole();
-		RegisteredUser user = new RegisteredUserBuilder().id(1).roles(reviewerRole, adminRole, approverRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		Role reviewerRole = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).build();
+		Role adminRole = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).build();
+		Role approverRole = new RoleBuilder().id(3).authorityEnum(Authority.APPROVER).build();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).roles(reviewerRole, adminRole, approverRole).firstName("bob").lastName("bobson").email("email@test.com").build();
 		userServiceMock.save(user);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
@@ -267,8 +267,8 @@ public class RefereeServiceTest {
 
 	@Test
 	public void shouldNotAddRefereeRoleIfUserExistsAndIsAlreadyAReferee() {
-		Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();
-		RegisteredUser user = new RegisteredUserBuilder().id(3).role(refereeRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).build();
+		RegisteredUser user = new RegisteredUserBuilder().id(3).role(refereeRole).firstName("bob").lastName("bobson").email("email@test.com").build();
 		userServiceMock.save(user);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
@@ -281,15 +281,15 @@ public class RefereeServiceTest {
 
 	@Test
 	public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist() {
-		final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").application(new ApplicationFormBuilder().id(1).applicationNumber("abc").toApplicationForm()).toReferee();
+		final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+		Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).toReferee();
 		refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock, eventFactoryMock,applicationFormDAOMock) {
 			@Override
 			RegisteredUser newRegisteredUser() {
 				return user;
 			}
 		};
-		Role role = new RoleBuilder().id(1).toRole();
+		Role role = new RoleBuilder().id(1).build();
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REFEREE)).andReturn(role);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("emailemail@test.com")).andReturn(null);
 		userServiceMock.save(user);
@@ -326,12 +326,12 @@ public class RefereeServiceTest {
 
 	@Test
 	public void shouldGetRefereeByUserAndApplication() {
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(1).build();
 		Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").application(form).toReferee();
 		Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").toReferee();
 		Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").toReferee();
 
-		RegisteredUser user = new RegisteredUserBuilder().referees(referee1, referee2, referee3).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().referees(referee1, referee2, referee3).id(1).build();
 
 		Referee referee = refereeService.getRefereeByUserAndApplication(user, form);
 
@@ -341,7 +341,7 @@ public class RefereeServiceTest {
 	@Test
 	public void shouldDelegateDeleteToDAO() {
 		Referee referee = new RefereeBuilder().id(2).toReferee();
-		RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee).build();
 		referee.setUser(user);
 		refereeDAOMock.delete(referee);
 		EasyMock.replay(refereeDAOMock);
@@ -362,15 +362,15 @@ public class RefereeServiceTest {
 	@Test
 	public void shouldSetDeclineAndSendDeclineNotificationToApplicant() throws UnsupportedEncodingException {
 
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").build();
 	
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").build()).build();
 		referee.setApplication(form);
 
 		refereeDAOMock.save(referee);
 
-		ReferenceEvent event = new ReferenceEventBuilder().id(4).toEvent();
+		ReferenceEvent event = new ReferenceEventBuilder().id(4).build();
 		EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
 		applicationFormDAOMock.save(form);
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
@@ -402,15 +402,15 @@ public class RefereeServiceTest {
 	@Test
 	public void shouldSetDeclineAndSendDeclineNotificationToAdmin() throws UnsupportedEncodingException {
 
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
-		RegisteredUser addmin = new RegisteredUserBuilder().id(43).firstName("bob").lastName("blogs").email("blogs@test.com").toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").build();
+		RegisteredUser addmin = new RegisteredUserBuilder().id(43).firstName("bob").lastName("blogs").email("blogs@test.com").build();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").administrators(addmin).toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").administrators(addmin).build()).build();
 		referee.setApplication(form);
 
 		refereeDAOMock.save(referee);
 
-		ReferenceEvent event = new ReferenceEventBuilder().id(4).toEvent();
+		ReferenceEvent event = new ReferenceEventBuilder().id(4).build();
 		EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
 		applicationFormDAOMock.save(form);
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
@@ -441,9 +441,9 @@ public class RefereeServiceTest {
 	@Test
 	public void shouldNotSendDeclineNotificationIfSaveFails()  {
 
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").build();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).program(new Program()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).program(new Program()).build();
 		referee.setApplication(form);
 
 		refereeDAOMock.save(referee);
@@ -465,9 +465,9 @@ public class RefereeServiceTest {
 	@Test
 	public void shouldTNotFailEmailNotificationFails() throws UnsupportedEncodingException {
 
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").build();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").build()).build();
 		referee.setApplication(form);
 
 		refereeDAOMock.save(referee);

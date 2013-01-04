@@ -66,7 +66,7 @@ public class EmploymentControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 		EmploymentPosition employment = new EmploymentPositionBuilder().id(1)
-				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm()).toEmploymentPosition();
+				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build()).toEmploymentPosition();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(employmentServiceMock, errors);
 		controller.editEmployment(employment, errors);
@@ -93,7 +93,7 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldReturnAllEnabledLanguages() {
-		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).toLanguage(), new LanguageBuilder().id(2).enabled(false).toLanguage());
+		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).build(), new LanguageBuilder().id(2).enabled(false).build());
 		EasyMock.expect(languageServiceMock.getAllEnabledLanguages()).andReturn(Collections.singletonList(languageList.get(0)));
 		EasyMock.replay(languageServiceMock);
 		List<Language> allLanguages = controller.getAllEnabledLanguages();
@@ -103,7 +103,7 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldReturnAllEnabledCountries() {
-	    List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).enabled(true).toCountry(), new CountryBuilder().id(2).enabled(false).toCountry());
+	    List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).enabled(true).build(), new CountryBuilder().id(2).enabled(false).build());
 	    EasyMock.expect(countriesServiceMock.getAllEnabledCountries()).andReturn(Collections.singletonList(countryList.get(0)));
 	    EasyMock.replay(countriesServiceMock);
 	    List<Country> allCountries = controller.getAllEnabledCountries();
@@ -117,7 +117,7 @@ public class EmploymentControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -138,7 +138,7 @@ public class EmploymentControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -200,7 +200,7 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldSaveEmploymentAndRedirectIfNoErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
 		EmploymentPosition employment = new EmploymentPositionBuilder().id(1).application(applicationForm).toEmploymentPosition();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -215,7 +215,7 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {
-		EmploymentPosition employment = new EmploymentPositionBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toEmploymentPosition();
+		EmploymentPosition employment = new EmploymentPositionBuilder().id(1).application(new ApplicationFormBuilder().id(5).build()).toEmploymentPosition();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 	
@@ -246,7 +246,7 @@ public class EmploymentControllerTest {
 				languagePropertyEditorMock, datePropertyEditorMock, countryPropertyEditor, applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock);
 
 
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 

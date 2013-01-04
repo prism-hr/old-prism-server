@@ -40,14 +40,14 @@ public class AdminReviewFeedbackNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(8).toUser();
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(8).build();
 		
-		Program program = new ProgramBuilder().administrators(admin1).id(1).toProgram();
-		ApplicationForm form = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		Program program = new ProgramBuilder().administrators(admin1).id(1).build();
+		ApplicationForm form = new ApplicationFormBuilder().program(program).id(1).build();
 		
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(9).toUser();
-		ReviewComment reviewComment1 = new ReviewCommentBuilder().user(reviewer).application(form).id(1).toReviewComment();
-		ReviewComment reviewComment2 = new ReviewCommentBuilder().user(reviewer).application(form).id(2).toReviewComment();
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(9).build();
+		ReviewComment reviewComment1 = new ReviewCommentBuilder().user(reviewer).application(form).id(1).build();
+		ReviewComment reviewComment2 = new ReviewCommentBuilder().user(reviewer).application(form).id(2).build();
 		sessionMock.refresh(reviewComment1);
 		sessionMock.refresh(reviewComment2);
 		EasyMock.expect(commentServiceMock.getReviewCommentsDueNotification()).andReturn(Arrays.asList(reviewComment1, reviewComment2));

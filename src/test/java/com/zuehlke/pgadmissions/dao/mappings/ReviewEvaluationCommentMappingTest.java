@@ -24,20 +24,20 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 public class ReviewEvaluationCommentMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadReviewEvaluationComment() {
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).build();
 		
-		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).createdDate(new Date()).toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).createdDate(new Date()).build();
 		save(program,  user, applicationForm,reviewRound);
 
 		flushAndClearSession();
 
 		ReviewEvaluationComment reviewEveluationComment = new ReviewEvaluationCommentBuilder().application(applicationForm).comment("hi")				
-				.type(CommentType.REVIEW_EVALUATION).user(user).reviewRound(reviewRound).toReviewEvaluationComment();
+				.type(CommentType.REVIEW_EVALUATION).user(user).reviewRound(reviewRound).build();
 		save(reviewEveluationComment);
 		assertNotNull(reviewEveluationComment.getId());
 		

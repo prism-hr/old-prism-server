@@ -122,13 +122,13 @@ public class FundingValidatorTest {
 	@Before
     public void setup() throws ParseException{
 		funding = new Funding();
-		funding.setApplication(new ApplicationFormBuilder().id(3).toApplicationForm());
+		funding.setApplication(new ApplicationFormBuilder().id(3).build());
 		funding.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
 		funding.setDescription("Description");
 		funding.setId(2);
 		funding.setType(FundingType.EMPLOYER);
 		funding.setValue("2000");
-		funding.setDocument( new DocumentBuilder().id(1).toDocument());
+		funding.setDocument( new DocumentBuilder().id(1).build());
 		
 		fundingValidator = new FundingValidator();
 		fundingValidator.setValidator((javax.validation.Validator) validator);

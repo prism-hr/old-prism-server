@@ -136,7 +136,7 @@ public class ProgrammeDetailsValidatorTest {
 	
 	@Test
 	public void shouldRejectIfSourcesOfInterestFreeTextIsEmpty() {
-	    SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).toSourcesOfInterest();
+	    SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).build();
 	    programmeDetail.setSourcesOfInterest(sourcesOfInterest);
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "sourcesOfInterest");
 	    EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
@@ -348,37 +348,37 @@ public class ProgrammeDetailsValidatorTest {
 
 	@Before
 	public void setup() throws ParseException {
-	    SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest();
-		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).role(role).toUser();
+	    SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").build();
+		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).build();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).role(role).build();
 		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder()
 		    .firstname("Mark")
 		    .lastname("Johnson")
 		    .email("mark@gmail.com")
 		    .aware(true)
-		    .toSuggestedSupervisor();
-        program = new ProgramBuilder().id(1).title("Program 1").enabled(true).toProgram();
+		    .build();
+        program = new ProgramBuilder().id(1).title("Program 1").enabled(true).build();
 		programInstance = new ProgramInstanceBuilder()
 		    .id(1)
 		    .studyOption("1", "Full-time")
 		    .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
 		    .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06"))
 		    .enabled(true)
-		    .toProgramInstance();
+		    .build();
 		program.setInstances(Arrays.asList(programInstance));
 		form = new ApplicationFormBuilder()
 		    .id(2)
 		    .program(program)
 		    .applicant(currentUser)
 		    .status(ApplicationFormStatus.UNSUBMITTED)
-		    .toApplicationForm();
+		    .build();
 		programmeDetail = new ProgrammeDetailsBuilder()
 		    .id(5)
 		    .suggestedSupervisors(suggestedSupervisor)
 		    .programmeName("programmeName")
 		    .sourcesOfInterest(interest)
 		    .startDate(DateUtils.addDays(new Date(),10)).applicationForm(form)
-		    .studyOption("1", "Full-time").toProgrammeDetails();
+		    .studyOption("1", "Full-time").build();
 		
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
 		

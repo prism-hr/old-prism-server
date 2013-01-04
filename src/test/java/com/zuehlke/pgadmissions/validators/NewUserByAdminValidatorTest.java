@@ -38,7 +38,7 @@ public class NewUserByAdminValidatorTest {
 	    userServiceMock = EasyMock.createMock(UserService.class);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@bla.com")).andReturn(null).anyTimes();
 		EasyMock.replay(userServiceMock);
-		user = new RegisteredUserBuilder().firstName("first").lastName("last").email("email@bla.com").toUser();
+		user = new RegisteredUserBuilder().firstName("first").lastName("last").email("email@bla.com").build();
 		
 		newUserByAdminValidator = new NewUserByAdminValidator();
 		newUserByAdminValidator.setValidator((javax.validation.Validator) validator);
@@ -90,7 +90,7 @@ public class NewUserByAdminValidatorTest {
 		user.setEmail("applicant@test.com");
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("applicant@test.com"))
-				.andReturn(new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).toRole()).toUser()).anyTimes();
+				.andReturn(new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).build()).build()).anyTimes();
 		EasyMock.replay(userServiceMock);
 		newUserByAdminValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());

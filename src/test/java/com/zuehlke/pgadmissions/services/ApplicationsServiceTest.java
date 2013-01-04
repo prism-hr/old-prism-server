@@ -39,7 +39,7 @@ public class ApplicationsServiceTest {
 	@Before
 	public void setup() {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		authenticationToken.setDetails(user);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
@@ -51,7 +51,7 @@ public class ApplicationsServiceTest {
 
 	@Test
 	public void shouldGetAllApplicationsDueAndUpdatedNotificationToAdmin() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2).toApplicationForm());
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> appsDueUpdateNotification = applicationsService.getApplicationsDueUpdateNotification();
@@ -61,7 +61,7 @@ public class ApplicationsServiceTest {
 	
 	@Test
 	public void shouldGetAllApplicationsDueRegistryNotification() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2).toApplicationForm());
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueRegistryNotification()).andReturn(applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> appsDueRegistryNotification = applicationsService.getApplicationsDueRegistryNotification();
@@ -71,7 +71,7 @@ public class ApplicationsServiceTest {
 	
 	@Test
 	public void shouldGetAllApplicationsDueApprovalRestartRequestNotification() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2).toApplicationForm());
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueApprovalRequestNotification()).andReturn(applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> appsDueNotification = applicationsService.getApplicationsDueApprovalRestartRequestNotification();
@@ -81,7 +81,7 @@ public class ApplicationsServiceTest {
 	
 	@Test
 	public void shouldGetAllApplicationsDueApprovalRestartRequestReminder() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2).toApplicationForm());
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationDueApprovalRestartRequestReminder()).andReturn(applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> appsDueNotification = applicationsService.getApplicationsDueApprovalRestartRequestReminder();
@@ -111,9 +111,9 @@ public class ApplicationsServiceTest {
 
 	@Test
 	public void shouldCreateAndSaveNewApplicationFormWithoutBatchDeadlineProjectOrResearchHomePage() throws ParseException {
-		Program program = new ProgramBuilder().code("KLOP").id(1).toProgram();
-		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
-		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		Program program = new ProgramBuilder().code("KLOP").id(1).build();
+		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
+		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).build();
 		applicationsService = new ApplicationsService(applicationFormDAOMock, null) {
 
 			@Override
@@ -136,9 +136,9 @@ public class ApplicationsServiceTest {
 	
 	@Test
 	public void shouldCreateAndSaveNewApplicationFormWithBatchDeadlineProjectAndResearchHomePage() throws ParseException {
-		Program program = new ProgramBuilder().code("KLOP").id(1).toProgram();
-		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
-		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		Program program = new ProgramBuilder().code("KLOP").id(1).build();
+		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
+		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).build();
 		applicationsService = new ApplicationsService(applicationFormDAOMock, null) {
 			
 			@Override

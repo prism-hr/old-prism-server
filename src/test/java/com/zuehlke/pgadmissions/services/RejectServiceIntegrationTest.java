@@ -63,7 +63,7 @@ public class RejectServiceIntegrationTest {
 		Role approverRole = roleDAO.getRoleByAuthority(Authority.APPROVER);
 		RegisteredUser approver = new RegisteredUserBuilder().firstName("Some").lastName("Aprove").email("sdfajklsdf@test.com").username("sdfakd")//
 				.role(approverRole)//
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		userDAO.save(approver);
 
 		
@@ -74,7 +74,7 @@ public class RejectServiceIntegrationTest {
 		programDao.save(program);
 		
 		ApplicationForm application = new ApplicationForm();
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		userDAO.save(user);
 		application.setApplicant(user);
 
@@ -90,7 +90,7 @@ public class RejectServiceIntegrationTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		Rejection rejection = new RejectionBuilder().rejectionReason(reason1).toRejection();
+		Rejection rejection = new RejectionBuilder().rejectionReason(reason1).build();
 		rejectsService.moveApplicationToReject(application, approver, rejection);
 		flushNClear();
 
@@ -108,6 +108,6 @@ public class RejectServiceIntegrationTest {
 	}
 
 	private RejectReason createReason(String text) {
-		return new RejectReasonBuilder().text(text).toRejectReason();
+		return new RejectReasonBuilder().text(text).build();
 	}
 }

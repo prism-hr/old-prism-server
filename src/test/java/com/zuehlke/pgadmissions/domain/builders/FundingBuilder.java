@@ -9,7 +9,6 @@ import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
 public class FundingBuilder {
 
-	
 	private ApplicationForm application;
 	private FundingType type;
 	private String description;
@@ -18,8 +17,6 @@ public class FundingBuilder {
 	private Integer id;
 	private Document document;
 	
-	
-
 	public FundingBuilder document(Document document) {
 		this.document = document;
 		return this;
@@ -55,7 +52,7 @@ public class FundingBuilder {
 		return this;
 	}
 	
-	public Funding toFunding() {
+	public Funding build() {
 		Funding funding = new Funding();
 		funding.setApplication(application);
 		funding.setId(id);
@@ -66,7 +63,5 @@ public class FundingBuilder {
 		funding.setDocument(document);
 		return funding;
 	}
-	
-	
 	
 }

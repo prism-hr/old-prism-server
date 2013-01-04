@@ -39,7 +39,7 @@ public class FileDownloadControllerTest {
 	@Test
 	public void shouldGetApplicationFormDocumentFromServiceAndWriteContentToResponse() throws IOException {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(1).toDocument();
+		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(1).build();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
 		EasyMock.replay(documentServiceMock, encryptionHelperMock);
 
@@ -72,7 +72,7 @@ public class FileDownloadControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfDocumentTypeIsReference() throws IOException {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-		Document document = new DocumentBuilder().type(DocumentType.REFERENCE).content("aaaa".getBytes()).id(1).toDocument();
+		Document document = new DocumentBuilder().type(DocumentType.REFERENCE).content("aaaa".getBytes()).id(1).build();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
 		EasyMock.replay(documentServiceMock, encryptionHelperMock);
 
@@ -83,7 +83,7 @@ public class FileDownloadControllerTest {
 	@Test
 	public void shouldNotThrowResourceNotFoundExceptionIfDocumentTypeIsProofOfAward() throws IOException {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
-		Document document = new DocumentBuilder().type(DocumentType.PROOF_OF_AWARD).content("aaaa".getBytes()).id(1).toDocument();
+		Document document = new DocumentBuilder().type(DocumentType.PROOF_OF_AWARD).content("aaaa".getBytes()).id(1).build();
 
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
 		EasyMock.replay(documentServiceMock, encryptionHelperMock);
@@ -95,8 +95,8 @@ public class FileDownloadControllerTest {
 	public void shouldGetReferenceDocumentFromServiceAndWriteContentToResponse() throws IOException {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		EasyMock.replay(encryptionHelperMock);
-		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();
-		ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).toReferenceComment();
+		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).build();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).build();
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 
 		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
@@ -134,7 +134,7 @@ public class FileDownloadControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfReferenceDoesNotHaveDocument() throws IOException {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		EasyMock.replay(encryptionHelperMock);
-		ReferenceComment reference = new ReferenceCommentBuilder().id(1).toReferenceComment();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).build();
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
 		EasyMock.replay(referenceServiceMock);
@@ -159,8 +159,8 @@ public class FileDownloadControllerTest {
 	public void shouldThrowResourceNotFoundExceptionUserCannotSeeReference() throws IOException {		
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		EasyMock.replay(encryptionHelperMock);
-		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();
-		ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).toReferenceComment();
+		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).build();
+		ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).build();
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
 		EasyMock.replay(referenceServiceMock);		

@@ -31,10 +31,8 @@ public class ReferenceEventBuilder {
 		this.eventDate = eventDate;
 		return this;
 	}
-	
 
-	
-	public ReferenceEvent toEvent(){
+	public ReferenceEvent build() {
 		ReferenceEvent event = new ReferenceEvent();
 		event.setId(id);
 		event.setDate(eventDate);

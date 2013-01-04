@@ -53,10 +53,10 @@ public class LinkUserAccountsAcceptanceTest extends AutomaticRollbackTestCase {
     public void shouldLinkTwoUnrelatedAccounts() {
         final RegisteredUser currentAccount = new RegisteredUserBuilder().accountNonExpired(true)
                 .accountNonLocked(true).enabled(true).activationCode("abc").email("sdsdkjds@A.com").username("sdsdkjds").password("password")
-                .toUser();
+                .build();
         
         final RegisteredUser secondAccount = new RegisteredUserBuilder().accountNonExpired(true).accountNonLocked(true)
-                .enabled(true).activationCode("abcd").email("3743784h@B.com").username("3743784h").password("password").toUser();
+                .enabled(true).activationCode("abcd").email("3743784h@B.com").username("3743784h").password("password").build();
         
         save(currentAccount, secondAccount);
         flushAndClearSession();
@@ -97,13 +97,13 @@ public class LinkUserAccountsAcceptanceTest extends AutomaticRollbackTestCase {
     public void shouldLinkAThirdAccountToAnExistingPrimaryAccount() {
         final RegisteredUser primaryAccount = new RegisteredUserBuilder().accountNonExpired(true)
                 .accountNonLocked(true).enabled(true).activationCode("abc").email("sdsdkjds@A.com").username("sdsdkjds").password("password")
-                .toUser();
+                .build();
         
         final RegisteredUser secondAccount = new RegisteredUserBuilder().accountNonExpired(true).accountNonLocked(true)
-                .enabled(true).activationCode("abcd").email("3743784h@B.com").username("3743784h").password("password").toUser();
+                .enabled(true).activationCode("abcd").email("3743784h@B.com").username("3743784h").password("password").build();
         
         final RegisteredUser thirdAccount = new RegisteredUserBuilder().accountNonExpired(true).accountNonLocked(true)
-                .enabled(true).activationCode("abcd").email("usd7384e73@B.com").username("usd7384e73").password("password").toUser();
+                .enabled(true).activationCode("abcd").email("usd7384e73@B.com").username("usd7384e73").password("password").build();
         
         primaryAccount.setPrimaryAccount(null);
         secondAccount.setPrimaryAccount(primaryAccount);
@@ -147,13 +147,13 @@ public class LinkUserAccountsAcceptanceTest extends AutomaticRollbackTestCase {
     public void shouldDeletePrimaryAccountAndReInitialiseTheLeafAccounts() {
         final RegisteredUser primaryAccount = new RegisteredUserBuilder().accountNonExpired(true)
                 .accountNonLocked(true).enabled(true).activationCode("abc").email("sdsdkjds@A.com").username("sdsdkjds").password("password")
-                .toUser();
+                .build();
         
         final RegisteredUser secondAccount = new RegisteredUserBuilder().accountNonExpired(true).accountNonLocked(true)
-                .enabled(true).activationCode("abcd").email("3743784h@B.com").username("3743784h").password("password").toUser();
+                .enabled(true).activationCode("abcd").email("3743784h@B.com").username("3743784h").password("password").build();
         
         final RegisteredUser thirdAccount = new RegisteredUserBuilder().accountNonExpired(true).accountNonLocked(true)
-                .enabled(true).activationCode("abcd").email("usd7384e73@B.com").username("usd7384e73").password("password").toUser();
+                .enabled(true).activationCode("abcd").email("usd7384e73@B.com").username("usd7384e73").password("password").build();
         
         primaryAccount.setPrimaryAccount(null);
         secondAccount.setPrimaryAccount(primaryAccount);
@@ -197,16 +197,16 @@ public class LinkUserAccountsAcceptanceTest extends AutomaticRollbackTestCase {
     public void shouldLinkTwoPrimaryGroups() {
         final RegisteredUser primaryAccount = new RegisteredUserBuilder().accountNonExpired(true)
                 .accountNonLocked(true).enabled(true).activationCode("abc").email("sdsdkjds@A.com").username("sdsdkjds").password("password")
-                .toUser();
+                .build();
         
         final RegisteredUser secondAccount = new RegisteredUserBuilder().accountNonExpired(true).accountNonLocked(true)
-                .enabled(true).activationCode("abcd").email("3743784h@B.com").username("3743784h").password("password").toUser();
+                .enabled(true).activationCode("abcd").email("3743784h@B.com").username("3743784h").password("password").build();
         
         final RegisteredUser secondPrimaryAccount = new RegisteredUserBuilder().accountNonExpired(true).accountNonLocked(true)
-                .enabled(true).activationCode("abcd").email("usd7384e73@B.com").username("usd7384e73").password("password").toUser();
+                .enabled(true).activationCode("abcd").email("usd7384e73@B.com").username("usd7384e73").password("password").build();
         
         final RegisteredUser thirdAccount = new RegisteredUserBuilder().accountNonExpired(true).accountNonLocked(true)
-                .enabled(true).activationCode("abcd").email("23uwhdb@B.com").username("23uwhdb").password("password").toUser();
+                .enabled(true).activationCode("abcd").email("23uwhdb@B.com").username("23uwhdb").password("password").build();
         
         primaryAccount.setPrimaryAccount(null);
         secondAccount.setPrimaryAccount(primaryAccount);

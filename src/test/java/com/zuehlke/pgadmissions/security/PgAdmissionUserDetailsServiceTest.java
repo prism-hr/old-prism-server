@@ -16,7 +16,7 @@ public class PgAdmissionUserDetailsServiceTest {
 	@Test
 	public void shouldFindUserByUsername(){
 		UserDAO userDAOMock = EasyMock.createMock(UserDAO.class);
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		
 		String username = "username";
 		EasyMock.expect(userDAOMock.getUserByUsername(username)).andReturn(user).anyTimes();

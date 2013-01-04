@@ -32,7 +32,7 @@ public class RejectionBuilder {
 		return this;		
 	}
 	
-	public Rejection toRejection(){
+	public Rejection build() {
 		Rejection rejection = new Rejection();
 		rejection.setApplicationForm(applicationForm);
 		rejection.setId(id);

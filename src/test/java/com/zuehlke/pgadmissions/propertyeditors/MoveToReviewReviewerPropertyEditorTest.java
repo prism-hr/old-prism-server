@@ -26,8 +26,8 @@ public class MoveToReviewReviewerPropertyEditorTest {
 
 	@Test	
 	public void shouldCreateNewReviewerWithUser(){
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);

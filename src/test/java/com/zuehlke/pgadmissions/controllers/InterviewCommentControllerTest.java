@@ -43,8 +43,8 @@ public class InterviewCommentControllerTest {
 	
 	@Test
 	public void shouldGetApplicationFormFromId() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(7).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -67,8 +67,8 @@ public class InterviewCommentControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotInterviewerOfForm() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(7).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -86,8 +86,8 @@ public class InterviewCommentControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication() {
-		Program program = new ProgramBuilder().id(7).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(7).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -108,7 +108,7 @@ public class InterviewCommentControllerTest {
 	
 	@Test
 	public void shouldReturnCurrentUser(){
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(8).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 		assertEquals(currentUser, controller.getUser());
@@ -116,10 +116,10 @@ public class InterviewCommentControllerTest {
 	
 	@Test
 	public void shouldCreateNewInterviewCommentForApplicationForm(){
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		final RegisteredUser currentUser =EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		Interviewer interviewer = new InterviewerBuilder().id(5).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().id(5).build();
 		EasyMock.expect(currentUser.getInterviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(interviewer));
 		EasyMock.replay(userServiceMock, currentUser);
 		controller = new  InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock, documentPropertyEditorMock){
@@ -160,7 +160,7 @@ public class InterviewCommentControllerTest {
 	@Test
 	public void shouldReturnToCommentsPageIfErrors(){
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationForm()).toInterviewComment();
+		InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationForm()).build();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock);
 		assertEquals("private/staff/interviewers/feedback/interview_feedback", controller.addComment(comment,errorsMock));
@@ -169,7 +169,7 @@ public class InterviewCommentControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowResourceNotFoundIfApplicationAlreadyDecided(){
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm()).toInterviewComment();
+		InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build()).build();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock);
 		controller.addComment(comment,errorsMock);
@@ -177,7 +177,7 @@ public class InterviewCommentControllerTest {
 	
 	@Test
 	public void shouldSaveCommentAndToApplicationListIfNoErrors(){
-		InterviewComment comment = new InterviewCommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).applicationNumber("abc").toApplicationForm()).toInterviewComment();		
+		InterviewComment comment = new InterviewCommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).applicationNumber("abc").build()).build();		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(comment);

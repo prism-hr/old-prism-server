@@ -17,8 +17,8 @@ public class DomicileDAOTest extends AutomaticRollbackTestCase{
 
 	@Test
 	public void shouldGetNationalityById() {
-		Domicile dom1 = new DomicileBuilder().enabled(true).name("AAAAA").code("AA").toDomicile();
-		Domicile dom2 = new DomicileBuilder().enabled(true).name("BBBBB").code("BB").toDomicile();
+		Domicile dom1 = new DomicileBuilder().enabled(true).name("AAAAA").code("AA").build();
+		Domicile dom2 = new DomicileBuilder().enabled(true).name("BBBBB").code("BB").build();
 		
 		save(dom1, dom2);
 		flushAndClearSession();
@@ -35,8 +35,8 @@ public class DomicileDAOTest extends AutomaticRollbackTestCase{
     public void shouldGetEnabledNationalities() {
 	    BigInteger numberOfDomiciles = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DOMICILE WHERE enabled = true").uniqueResult();
 	    
-        Domicile dom1 = new DomicileBuilder().enabled(true).name("AAAAA").code("AA").toDomicile();
-        Domicile dom2 = new DomicileBuilder().enabled(false).name("BBBBB").code("BB").toDomicile();
+        Domicile dom1 = new DomicileBuilder().enabled(true).name("AAAAA").code("AA").build();
+        Domicile dom2 = new DomicileBuilder().enabled(false).name("BBBBB").code("BB").build();
         
         save(dom1, dom2);
         

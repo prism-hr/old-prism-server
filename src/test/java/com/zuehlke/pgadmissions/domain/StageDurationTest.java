@@ -12,27 +12,27 @@ public class StageDurationTest {
 	
 	@Test
 	public void shouldGet1DayInMinutes() {
-		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.DAYS).duration(1).toStageDuration();
+		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.DAYS).duration(1).build();
 		Assert.assertEquals(1440, stageDuration.getDurationInMinutes());
 	}
 	
 	@Test
 	public void shouldGet1HourInMinutes() {
-		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.HOURS).duration(1).toStageDuration();
+		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.HOURS).duration(1).build();
 		Assert.assertEquals(60, stageDuration.getDurationInMinutes());
 		
 	}
 	
 	@Test
 	public void shouldGet1WeekInMinutes() {
-		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.WEEKS).duration(1).toStageDuration();
+		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.WEEKS).duration(1).build();
 		Assert.assertEquals(10080, stageDuration.getDurationInMinutes());
 	}
 
 	
 	@Test
 	public void shouldReturnMinutes() {
-		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.MINUTES).duration(17).toStageDuration();
+		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.MINUTES).duration(17).build();
 		Assert.assertEquals(17, stageDuration.getDurationInMinutes());
 		
 	}

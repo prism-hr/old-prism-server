@@ -32,7 +32,7 @@ public class CountryBuilder {
 	    return this;
 	}
 	
-	public Country toCountry(){
+	public Country build(){
 		Country country = new Country();
 		country.setId(id);
 		country.setName(name);

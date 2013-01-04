@@ -50,9 +50,9 @@ public class SuperadminControllerTest {
 
 	@Test
 	public void shouldReturnAllSuperadministratorsOrderbylastnameFirstname() {
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).lastName("ZZZZ").firstName("BBBB").toUser();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(4).lastName("ZZZZ").firstName("AAAA").toUser();
-		RegisteredUser userThree = new RegisteredUserBuilder().id(5).lastName("AA").firstName("GGG").toUser();
+		RegisteredUser userOne = new RegisteredUserBuilder().id(1).lastName("ZZZZ").firstName("BBBB").build();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(4).lastName("ZZZZ").firstName("AAAA").build();
+		RegisteredUser userThree = new RegisteredUserBuilder().id(5).lastName("AA").firstName("GGG").build();
 		EasyMock.expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
 		EasyMock.replay(userServiceMock);
 		List<RegisteredUser> superadmins = controller.getSuperadmins();
@@ -79,7 +79,7 @@ public class SuperadminControllerTest {
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserForProgramme("Jane", "Doe", "jane.doe@test.com", null, Authority.SUPERADMINISTRATOR)).andReturn(
-				new RegisteredUserBuilder().id(4).toUser());
+				new RegisteredUserBuilder().id(4).build());
 
 		EasyMock.replay(currentUserMock, userServiceMock);
 
@@ -104,7 +104,7 @@ public class SuperadminControllerTest {
 		userDTO.setLastName("Doe");
 		userDTO.setEmail("jane.doe@test.com");
 
-		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).toUser();
+		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
 		userServiceMock.updateUserWithNewRoles(existingUser, null, Authority.SUPERADMINISTRATOR);
 

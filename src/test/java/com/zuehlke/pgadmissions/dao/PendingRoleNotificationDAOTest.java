@@ -31,8 +31,8 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturAllPendingRoleNotifications(){
-		PendingRoleNotification pendingNotificationOne = new PendingRoleNotificationBuilder().role(roleDAO.getRoleByAuthority(Authority.ADMINISTRATOR)).program(program).toPendingRoleNotification();
-		PendingRoleNotification pendingNotificationTwo = new PendingRoleNotificationBuilder().role(roleDAO.getRoleByAuthority(Authority.REFEREE)).program(program).toPendingRoleNotification();
+		PendingRoleNotification pendingNotificationOne = new PendingRoleNotificationBuilder().role(roleDAO.getRoleByAuthority(Authority.ADMINISTRATOR)).program(program).build();
+		PendingRoleNotification pendingNotificationTwo = new PendingRoleNotificationBuilder().role(roleDAO.getRoleByAuthority(Authority.REFEREE)).program(program).build();
 		user.getPendingRoleNotifications().addAll(Arrays.asList(pendingNotificationOne, pendingNotificationTwo));
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
 		
@@ -48,7 +48,7 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldDeletePendingNotification(){
-		PendingRoleNotification pendingNotification = new PendingRoleNotificationBuilder().role(roleDAO.getRoleByAuthority(Authority.ADMINISTRATOR)).program(program).toPendingRoleNotification();
+		PendingRoleNotification pendingNotification = new PendingRoleNotificationBuilder().role(roleDAO.getRoleByAuthority(Authority.ADMINISTRATOR)).program(program).build();
 		
 		user.getPendingRoleNotifications().addAll(Arrays.asList(pendingNotification));
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
@@ -65,10 +65,10 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 		pendingRoleNotificationDAO = new PendingRoleNotificationDAO(sessionFactory);
 		roleDAO = new RoleDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(user);
 
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		save(program);
 		flushAndClearSession();
 	}

@@ -174,7 +174,7 @@ public class QualificationValidatorTest {
     @Before
     public void setup() throws ParseException {
         qualification = new Qualification();
-        qualification.setApplication(new ApplicationFormBuilder().id(9).toApplicationForm());
+        qualification.setApplication(new ApplicationFormBuilder().id(9).build());
         qualification.setId(3);
         qualification.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
         qualification.setQualificationGrade("first");
@@ -183,7 +183,7 @@ public class QualificationValidatorTest {
         qualification.setQualificationLanguage("Abkhazian");
         qualification.setQualificationSubject("CS");
         qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
-        qualification.setQualificationType(new QualificationTypeBuilder().name("degree").toQualificationTitle());
+        qualification.setQualificationType(new QualificationTypeBuilder().name("degree").build());
 
         qualificationValidator = new QualificationValidator();
         qualificationValidator.setValidator((javax.validation.Validator) validator);

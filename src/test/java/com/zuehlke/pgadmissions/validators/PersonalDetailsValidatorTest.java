@@ -731,17 +731,17 @@ public class PersonalDetailsValidatorTest {
 		Language nationality = new Language();
 		personalDetails = new PersonalDetailsBuilder()
 				.candiateNationalities(nationality)
-				.applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm())
-				.country(new CountryBuilder().toCountry())
+				.applicationForm(new ApplicationFormBuilder().id(2).build())
+				.country(new CountryBuilder().build())
 				.dateOfBirth(DateUtils.addYears(new Date(), -28))
 				.email("email@test.com")
 				.firstName("bob")
 				.gender(Gender.INDETERMINATE_GENDER).lastName("smith")
 				.title(Title.PROFESSOR)
-				.residenceDomicile(new DomicileBuilder().toDomicile())
+				.residenceDomicile(new DomicileBuilder().build())
 				.phoneNumber("+44 (0) 20 7911 5000")
-				.ethnicity(new EthnicityBuilder().id(23).toEthnicity())
-				.disability(new DisabilityBuilder().id(23213).toDisability())
+				.ethnicity(new EthnicityBuilder().id(23).build())
+				.disability(new DisabilityBuilder().id(23213).build())
 				.requiresVisa(true)
 				.passportAvailable(true)
 				.englishFirstLanguage(true)
@@ -750,13 +750,13 @@ public class PersonalDetailsValidatorTest {
                         new PassportInformationBuilder().nameOnPassport("Kevin Francis Denver").passportNumber("000")
                                 .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
                                 .passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10))
-                                .toPassportInformation())
+                                .build())
                 .languageQualifications(
                         new LanguageQualificationBuilder().id(1).dateOfExamination(new Date()).examTakenOnline(false)
                                 .languageQualification(LanguageQualificationEnum.OTHER)
                                 .otherQualificationTypeName("foobar").listeningScore("1").overallScore("1")
-                                .readingScore("1").writingScore("1").speakingScore("1").toLanguageQualification())
-				.toPersonalDetails();
+                                .readingScore("1").writingScore("1").speakingScore("1").build())
+				.build();
 		
 		passportInformationValidator = new PassportInformationValidator();
 		passportInformationValidator.setValidator((javax.validation.Validator) validator);

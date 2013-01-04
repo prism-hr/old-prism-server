@@ -19,8 +19,8 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetQualificationInstitutionById() {
-        QualificationInstitution qualificationInstitution1 = new QualificationInstitutionBuilder().enabled(true).name("ZZZZZZ").countryCode("XK").code("ZZ").toQualificationInstitution();
-        QualificationInstitution qualificationInstitution2 = new QualificationInstitutionBuilder().enabled(true).name("mmmmmm").countryCode("XK").code("mm").toQualificationInstitution();
+        QualificationInstitution qualificationInstitution1 = new QualificationInstitutionBuilder().enabled(true).name("ZZZZZZ").countryCode("XK").code("ZZ").build();
+        QualificationInstitution qualificationInstitution2 = new QualificationInstitutionBuilder().enabled(true).name("mmmmmm").countryCode("XK").code("mm").build();
 
         save(qualificationInstitution1, qualificationInstitution2);
         flushAndClearSession();
@@ -32,11 +32,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnInstitutionByCountryCodeAndNameStartMatching() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").toQualificationInstitution();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of Cambridge").countryCode("UK").code("ABCD").toQualificationInstitution();
-        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").toQualificationInstitution();
-        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").toCountry();
+        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").build();
+        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of Cambridge").countryCode("UK").code("ABCD").build();
+        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").build();
+        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").build();
+        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").build();
         save(institution1, country1, institution2, country2, institution3);
         flushAndClearSession();
         
@@ -49,10 +49,10 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldReturnInstitutionByCountryCodeAndNameMiddleMatching() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("AB").toQualificationInstitution();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("UK").code("BC").toQualificationInstitution();
-        Country country1 = new CountryBuilder().enabled(true).code("XK").name("United Kingdom").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).code("CH").name("Switzerland").toCountry();
+        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("AB").build();
+        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("UK").code("BC").build();
+        Country country1 = new CountryBuilder().enabled(true).code("XK").name("United Kingdom").build();
+        Country country2 = new CountryBuilder().enabled(true).code("CH").name("Switzerland").build();
         save(institution1, country1, institution2, country2);
         flushAndClearSession();
         
@@ -64,10 +64,10 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldReturnInstitutionByCountryCodeAndNameEndtMatching() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("AC").toQualificationInstitution();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("UK").code("DC").toQualificationInstitution();
-        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").toCountry();
+        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("AC").build();
+        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("UK").code("DC").build();
+        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").build();
+        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").build();
         save(institution1, country1, institution2, country2);
         flushAndClearSession();
         
@@ -79,11 +79,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldReturnInstitutionByCountryCodeAndNameStartMatchingButOnlyEnabledOnes() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").toQualificationInstitution();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").countryCode("UK").code("ABCD").toQualificationInstitution();
-        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").toQualificationInstitution();
-        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").toCountry();
+        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").build();
+        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").countryCode("UK").code("ABCD").build();
+        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").build();
+        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").build();
+        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").build();
         save(institution1, country1, institution2, country2, institution3);
         flushAndClearSession();
         
@@ -95,11 +95,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldReturnInstitutionByName() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").toQualificationInstitution();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").countryCode("UK").code("ABCD").toQualificationInstitution();
-        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").toQualificationInstitution();
-        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").toCountry();
+        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").build();
+        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").countryCode("UK").code("ABCD").build();
+        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").build();
+        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").build();
+        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").build();
         save(institution1, country1, institution2, country2, institution3);
         flushAndClearSession();
         
@@ -112,15 +112,15 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldReturnInstitutionsWhichMatchCodeAndTermAndAreInTheReferenceData() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").toQualificationInstitution();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of Cambridge").countryCode("UK").code("ABCD").toQualificationInstitution();
-        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").toQualificationInstitution();
+        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").build();
+        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of Cambridge").countryCode("UK").code("ABCD").build();
+        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").build();
         
-        QualificationInstitutionReference institution4 = new QualificationInstitutionBuilder().enabled(true).name("University of   Cambridge .").countryCode("UK").code("ABCD").toQualificationInstitutionReference();
-        QualificationInstitutionReference institution5 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").toQualificationInstitutionReference();
+        QualificationInstitutionReference institution4 = new QualificationInstitutionBuilder().enabled(true).name("University of   Cambridge .").countryCode("UK").code("ABCD").buildAsReference();
+        QualificationInstitutionReference institution5 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").buildAsReference();
         
-        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").toCountry();
+        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").build();
+        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").build();
         
         save(institution1, country1, institution2, country2, institution3, institution4, institution5);
         
@@ -137,15 +137,15 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldReturnInstitutionForDomicileCode() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").toQualificationInstitution();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").countryCode("UK").code("ABCD").toQualificationInstitution();
-        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").toQualificationInstitution();
+        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").countryCode("UK").code("ABC").build();
+        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").countryCode("UK").code("ABCD").build();
+        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").build();
         
-        QualificationInstitutionReference institution4 = new QualificationInstitutionBuilder().enabled(false).name("University of   Cambridge .").countryCode("UK").code("ABCD").toQualificationInstitutionReference();
-        QualificationInstitutionReference institution5 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").toQualificationInstitutionReference();
+        QualificationInstitutionReference institution4 = new QualificationInstitutionBuilder().enabled(false).name("University of   Cambridge .").countryCode("UK").code("ABCD").buildAsReference();
+        QualificationInstitutionReference institution5 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").countryCode("CH").code("ABCDE").buildAsReference();
         
-        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").toCountry();
-        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").toCountry();
+        Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").build();
+        Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").build();
         
         save(institution1, country1, institution2, country2, institution3, institution4, institution5);
         

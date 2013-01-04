@@ -37,7 +37,7 @@ public class RequestRestartCommentBuilder {
 		return this;
 	}
 	
-	public RequestRestartComment toComment() {
+	public RequestRestartComment build() {
 		RequestRestartComment comment = new RequestRestartComment();
 		comment.setApplication(application);
 		comment.setComment(strComment);

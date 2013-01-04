@@ -34,7 +34,7 @@ public class InterviewMappingTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveLoadInterviewWithInterviewer() {
 		
-		Interview interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).application(application).toInterview();
+		Interview interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).build()).application(application).build();
 		
 		sessionFactory.getCurrentSession().save(interview);
 		
@@ -55,14 +55,14 @@ public class InterviewMappingTest extends AutomaticRollbackTestCase{
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
 		interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com").username("brady").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
-		application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();
+		application = new ApplicationFormBuilder().program(program).applicant(user).build();
 		save(user, program, interviewerUser, application);
 
 		flushAndClearSession();

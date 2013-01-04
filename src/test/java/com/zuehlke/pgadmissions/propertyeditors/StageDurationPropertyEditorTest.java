@@ -19,7 +19,7 @@ public class StageDurationPropertyEditorTest {
 	public void shouldParseAndSetAsValue(){
 		Integer duration = 1;
 		editor.setAsText("{\"stage\": \"VALIDATION\",\"duration\": \""+ duration +"\",\"unit\": \"MINUTES\"}");
-		StageDuration expected = new StageDurationBuilder().duration(1).unit(DurationUnitEnum.MINUTES).stage(ApplicationFormStatus.VALIDATION).toStageDuration();
+		StageDuration expected = new StageDurationBuilder().duration(1).unit(DurationUnitEnum.MINUTES).stage(ApplicationFormStatus.VALIDATION).build();
 		StageDuration stageDuration = (StageDuration) editor.getValue();
 		assertEquals(expected.getStage(), stageDuration.getStage());
 		assertEquals(expected.getDuration(), stageDuration.getDuration());
@@ -50,7 +50,7 @@ public class StageDurationPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnCorrectjsonString(){			
-		editor.setValue(new StageDurationBuilder().duration(1).unit(DurationUnitEnum.MINUTES).stage(ApplicationFormStatus.VALIDATION).toStageDuration());
+		editor.setValue(new StageDurationBuilder().duration(1).unit(DurationUnitEnum.MINUTES).stage(ApplicationFormStatus.VALIDATION).build());
 		assertEquals("{\"stage\": \"VALIDATION\",\"duration\": \"1\",\"unit\": \"MINUTES\"}", editor.getAsText());
 	}
 	

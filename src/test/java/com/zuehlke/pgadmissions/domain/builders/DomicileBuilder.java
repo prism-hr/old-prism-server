@@ -32,7 +32,7 @@ public class DomicileBuilder {
         return this;
     }
     
-    public Domicile toDomicile() {
+    public Domicile build() {
         Domicile domicile = new Domicile();
         domicile.setId(id);
         domicile.setName(name);

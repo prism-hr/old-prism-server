@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class StateChangeEventBuilder {
@@ -40,7 +40,7 @@ public class StateChangeEventBuilder {
 		return this;
 	}
 	
-	public StateChangeEvent toEvent(){
+	public StateChangeEvent build() {
 		StateChangeEvent event = new StateChangeEvent();	
 		event.setId(id);
 		event.setDate(eventDate);

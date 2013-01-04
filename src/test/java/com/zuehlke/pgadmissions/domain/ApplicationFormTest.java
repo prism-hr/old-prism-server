@@ -45,62 +45,62 @@ public class ApplicationFormTest {
 		Date yesterDay = DateUtils.addDays(now, -1);
 		Date twoDaysAgo = DateUtils.addDays(now, -2);
 
-		RequestRestartComment commentOne = new RequestRestartCommentBuilder().id(1).date(twoDaysAgo).toComment();
-		RequestRestartComment commentTwo = new RequestRestartCommentBuilder().id(3).date(yesterDay).toComment();
-		Comment commentThree = new CommentBuilder().date(now).toComment();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().comments(commentOne, commentTwo, commentThree).toApplicationForm();
+		RequestRestartComment commentOne = new RequestRestartCommentBuilder().id(1).date(twoDaysAgo).build();
+		RequestRestartComment commentTwo = new RequestRestartCommentBuilder().id(3).date(yesterDay).build();
+		Comment commentThree = new CommentBuilder().date(now).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().comments(commentOne, commentTwo, commentThree).build();
 		assertEquals(commentTwo, applicationForm.getLatestsRequestRestartComment());
 	}
 	
 	@Test
 	public void shouldReturnReviewableFalseIfApplicationFormRejected() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).build();
 		assertFalse(applicationForm.isModifiable());
 	}
 
 	@Test
 	public void shouldReturnReviewableFalseIfApplicationFormAccepted() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build();
 		assertFalse(applicationForm.isModifiable());
 	}
 
 	@Test
 	public void shouldReturnReviewableFalseIfApplicationFormAcceptedRejecteOrwitdrawn() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).build();
 		assertTrue(applicationForm.isModifiable());
-		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build();
 		assertTrue(applicationForm.isModifiable());
-		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).build();
 		assertFalse(applicationForm.isModifiable());
-		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build();
 		assertFalse(applicationForm.isModifiable());
-		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).build();
 		assertFalse(applicationForm.isModifiable());
 	}
 
 	@Test
 	public void shouldReturnDecidedTrueIfRejectedOrApproved() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build();
 		assertTrue(applicationForm.isDecided());
-		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).build();
 		assertTrue(applicationForm.isDecided());
 	}
 
 	@Test
 	public void shouldReturnDecidedFalseIfNeitherUnsubmitterOrValidation() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).build();
 		assertFalse(applicationForm.isDecided());
-		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build();
 		assertFalse(applicationForm.isDecided());
 	}
 
 	@Test
 	public void shouldReturnNotificationOfCorrectType() {
 		NotificationRecord validationReminder = new NotificationRecordBuilder().id(1).notificationType(NotificationType.VALIDATION_REMINDER)
-				.toNotificationRecord();
+				.build();
 		NotificationRecord submissionUpdateNotification = new NotificationRecordBuilder().id(2).notificationType(NotificationType.UPDATED_NOTIFICATION)
-				.toNotificationRecord();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().notificationRecords(validationReminder).toApplicationForm();
+				.build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().notificationRecords(validationReminder).build();
 		assertEquals(validationReminder, applicationForm.getNotificationForType(NotificationType.VALIDATION_REMINDER));
 		assertNull(applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION));
 		applicationForm.addNotificationRecord(submissionUpdateNotification);
@@ -112,16 +112,16 @@ public class ApplicationFormTest {
 	    NotificationRecord updatedNotification = new NotificationRecordBuilder()
 	        .notificationType(NotificationType.UPDATED_NOTIFICATION)
 	        .notificationDate(DateUtils.parseDate("2012-09-09T00:03:00", new String[] {"yyyy-MM-dd'T'HH:mm:ss"}))
-	        .toNotificationRecord();
+	        .build();
 	    
         NotificationRecord duplicateNpdatedNotification = new NotificationRecordBuilder()
             .notificationType(NotificationType.UPDATED_NOTIFICATION)
             .notificationDate(new Date())
-            .toNotificationRecord();
+            .build();
         
         ApplicationForm applicationForm = new ApplicationFormBuilder()
             .notificationRecords(updatedNotification)
-            .toApplicationForm();
+            .build();
         
         applicationForm.addNotificationRecord(duplicateNpdatedNotification);
         
@@ -131,7 +131,7 @@ public class ApplicationFormTest {
 
 	@Test
 	public void shouldReturnTrueIfInStateByString() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).build();
 		assertTrue(applicationForm.isInState("UNSUBMITTED"));
 		assertFalse(applicationForm.isInState("VALIDATION"));
 		assertFalse(applicationForm.isInState("BOB"));
@@ -139,20 +139,20 @@ public class ApplicationFormTest {
 
 	@Test
 	public void shouldSeeNoCommentsApplicant() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(new CommentBuilder().id(4).toComment()).toApplicationForm();
-		RegisteredUser user = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(new CommentBuilder().id(4).build()).build();
+		RegisteredUser user = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		assertTrue(applicationForm.getVisibleComments(user).isEmpty());
 	}
 
 	@Test
 	public void shouldSeeOwnCommentOnlyfRefereeOnly() {
-		Comment comment = new CommentBuilder().id(4).toComment();
-		RegisteredUser user = new RegisteredUserBuilder().id(6).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
+		Comment comment = new CommentBuilder().id(4).build();
+		RegisteredUser user = new RegisteredUserBuilder().id(6).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 		Referee referee = new RefereeBuilder().user(user).toReferee();
 		user.getReferees().add(referee);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(comment).referees(referee).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(comment).referees(referee).build();
 		referee.setApplication(applicationForm);
-		ReferenceComment referenceComment = new ReferenceCommentBuilder().id(5).referee(referee).toReferenceComment();
+		ReferenceComment referenceComment = new ReferenceCommentBuilder().id(5).referee(referee).build();
 		applicationForm.getApplicationComments().add(referenceComment);
 
 		assertEquals(1, applicationForm.getVisibleComments(user).size());
@@ -162,20 +162,20 @@ public class ApplicationFormTest {
 	@Test
 	public void shouldSeeAllCommentsIfNotApplicantOrRefereeOnly() throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
+		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
 		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().referees()
-				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole(), new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).id(7)
-				.toUser();
+				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build()).id(7)
+				.build();
 
-		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
-		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
-		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerUserTwo).toComment();
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
+		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerUserTwo).build();
 
-		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUserOne).toReviewer(),
-				new ReviewerBuilder().user(reviewerUserTwo).toReviewer()).toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUserOne).build(),
+				new ReviewerBuilder().user(reviewerUserTwo).build()).build();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5).comments(commentOne, commentTwo, commentThree)
-				.toApplicationForm();
+				.build();
 		Referee referee = new RefereeBuilder().application(applicationForm).toReferee();
 		reviewerUserTwo.getReferees().add(referee);
 		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerUserTwo);
@@ -185,14 +185,14 @@ public class ApplicationFormTest {
 	@Test
 	public void shouldReturnStateChangeEventsEventsSortedByDate() throws ParseException {
 		Event validationEvent = new StateChangeEventBuilder().id(1).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/01/01"))
-				.newStatus(ApplicationFormStatus.VALIDATION).toEvent();
+				.newStatus(ApplicationFormStatus.VALIDATION).build();
 		Event reviewEvent = new StateChangeEventBuilder().id(2).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/02/02"))
-				.newStatus(ApplicationFormStatus.REVIEW).toEvent();
+				.newStatus(ApplicationFormStatus.REVIEW).build();
 		StateChangeEvent approvalEvent = new StateChangeEventBuilder().id(3).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04"))
-				.newStatus(ApplicationFormStatus.APPROVAL).toEvent();
+				.newStatus(ApplicationFormStatus.APPROVAL).build();
 		Event rejectedEvent = new StateChangeEventBuilder().id(40).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04"))
-				.newStatus(ApplicationFormStatus.REJECTED).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).events(approvalEvent, rejectedEvent, reviewEvent, validationEvent).toApplicationForm();
+				.newStatus(ApplicationFormStatus.REJECTED).build();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).events(approvalEvent, rejectedEvent, reviewEvent, validationEvent).build();
 		List<StateChangeEvent> eventsSortedByDate = application.getStateChangeEventsSortedByDate();
 		Assert.assertEquals(validationEvent, eventsSortedByDate.get(0));
 		Assert.assertEquals(reviewEvent, eventsSortedByDate.get(1));
@@ -204,20 +204,20 @@ public class ApplicationFormTest {
 	@Test
 	public void shouldReturnUsersWilingToSupervise() throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7)
-				.toUser();
+		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
+		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7)
+				.build();
 
-		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
-		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
-		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).toReviewComment();
-		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).toInterviewComment();
-		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).toInterviewComment();
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
+		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).build();
+		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
+		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).build();
+		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).build();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-				.comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).toApplicationForm();
+				.comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
 
 		List<RegisteredUser> users = applicationForm.getUsersWillingToSupervise();
 		assertEquals(1, users.size());
@@ -227,19 +227,19 @@ public class ApplicationFormTest {
 	@Test
 	public void shouldReturnEmptyListIfNoUsersWillingToSupervise() throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7)
-				.toUser();
+		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
+		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7)
+				.build();
 
-		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
-		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
-		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).toReviewComment();
-		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).toInterviewComment();
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
+		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).build();
+		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
+		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).build();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review1, review2, review3, interviewComment1)
-				.toApplicationForm();
+				.build();
 
 		List<RegisteredUser> users = applicationForm.getUsersWillingToSupervise();
 		assertEquals(Collections.EMPTY_LIST, users);
@@ -249,20 +249,20 @@ public class ApplicationFormTest {
 	@Test
 	public void shouldReturnUsersWilingTointerview() throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7)
-				.toUser();
+		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
+		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7)
+				.build();
 
-		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
-		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
-		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).toReviewComment();
-		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).toInterviewComment();
-		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).toInterviewComment();
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
+		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).build();
+		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
+		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).build();
+		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervise(true).id(12).user(reviewerUserTwo).build();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervise(false).id(12).user(reviewerUserOne).build();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5)
-				.comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).toApplicationForm();
+				.comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).build();
 
 		List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
 		assertEquals(2, users.size());
@@ -272,15 +272,15 @@ public class ApplicationFormTest {
 	@Test
 	public void shouldReturnEmptyListIfNoUsersWillingToInterview() throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7)
-				.toUser();
+		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
+		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(7)
+				.build();
 
-		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
-		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
-		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
+		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review2).build();
 
 		List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
 		assertEquals(Collections.EMPTY_LIST, users);
@@ -289,95 +289,95 @@ public class ApplicationFormTest {
 	
 	@Test
 	public void shouldReturnValidationifCurretnStateFirstReviewRound(){
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).toReviewRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).reviewRounds(reviewRound).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).reviewRounds(reviewRound).status(ApplicationFormStatus.REVIEW).build();
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getOutcomeOfStage());
 	}
 	
 	@Test
 	public void shouldReturnReviewifCurretnStateReviewButNotFfirstReviewRound(){
-		ReviewRound reviewRoundOne = new ReviewRoundBuilder().id(3).toReviewRound();
-		ReviewRound reviewRoundTwo = new ReviewRoundBuilder().id(4).toReviewRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).reviewRounds(reviewRoundOne, reviewRoundTwo).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ReviewRound reviewRoundOne = new ReviewRoundBuilder().id(3).build();
+		ReviewRound reviewRoundTwo = new ReviewRoundBuilder().id(4).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).reviewRounds(reviewRoundOne, reviewRoundTwo).status(ApplicationFormStatus.REVIEW).build();
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getOutcomeOfStage());
 	}
 
 	@Test
 	public void shouldReturValidationIfStateInterviewAndOneInteriewAndNoReviewRounds(){
-		Interview interviewOne = new InterviewBuilder().id(3).toInterview();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).interviews(interviewOne).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		Interview interviewOne = new InterviewBuilder().id(3).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).interviews(interviewOne).status(ApplicationFormStatus.INTERVIEW).build();
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getOutcomeOfStage());
 	}
 	
 	@Test
 	public void shouldReturReviewIfStateInterviewAndOneInteriewAndSomeeviewRounds(){
-		Interview interviewOne = new InterviewBuilder().id(3).toInterview();
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).toReviewRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).interviews(interviewOne).reviewRounds(reviewRound).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		Interview interviewOne = new InterviewBuilder().id(3).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).interviews(interviewOne).reviewRounds(reviewRound).status(ApplicationFormStatus.INTERVIEW).build();
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getOutcomeOfStage());
 	}
 	@Test
 	public void shouldReturnInterviewIfStateInterviewAndMoreThanOneInteriew(){
-		Interview interviewOne = new InterviewBuilder().id(3).toInterview();
-		Interview interviewTwo = new InterviewBuilder().id(5).toInterview();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).interviews(interviewOne, interviewTwo).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		Interview interviewOne = new InterviewBuilder().id(3).build();
+		Interview interviewTwo = new InterviewBuilder().id(5).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).interviews(interviewOne, interviewTwo).status(ApplicationFormStatus.INTERVIEW).build();
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getOutcomeOfStage());
 	}
 	
 	@Test
 	public void shouldReturnApprovalIfStatusApprovalAndMoreThanOneApprovalRound(){
-		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).toApprovalRound();
-		ApprovalRound approvalRoundTwo = new ApprovalRoundBuilder().id(5).toApprovalRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne, approvalRoundTwo).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).build();
+		ApprovalRound approvalRoundTwo = new ApprovalRoundBuilder().id(5).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne, approvalRoundTwo).status(ApplicationFormStatus.APPROVAL).build();
 		assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getOutcomeOfStage());
 	}
 	
 	@Test
 	public void shouldReturnValidationIfStatusApprovalAndoneApprovalRoundAndNoInterviewsOrReviews(){
-		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).toApprovalRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).status(ApplicationFormStatus.APPROVAL).build();
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getOutcomeOfStage());
 	}
 
 	@Test
 	public void shouldReturReviewIfStateApprovalAndOneApprovalRoundAndSomeeviewRoundsbutNoInterviews(){
-		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).toApprovalRound();
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).toReviewRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).reviewRounds(reviewRound).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).build();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).reviewRounds(reviewRound).status(ApplicationFormStatus.APPROVAL).build();
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getOutcomeOfStage());
 	}
 	
 	@Test
 	public void shouldReturInterviewIfStateApprovalAndOneApprovalRoundAndSomeInterviewRounds(){
-		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).toApprovalRound();
-		Interview interviewOne = new InterviewBuilder().id(3).toInterview();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).interviews(interviewOne).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).build();
+		Interview interviewOne = new InterviewBuilder().id(3).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).interviews(interviewOne).status(ApplicationFormStatus.APPROVAL).build();
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getOutcomeOfStage());
 	}
 	
 	@Test
 	public void shouldReturnValidationForStatusRejectedIfNoReviewRoundsItnerviewsOrApprovalRounds(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).status(ApplicationFormStatus.REJECTED).build();
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getOutcomeOfStage());
 	}
 	
 	@Test
 	public void shouldReturnInterviewForStatusRejectedIfNoApprovalRoundsButSomeInterviews(){
-		Interview interviewOne = new InterviewBuilder().id(3).toInterview();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).status(ApplicationFormStatus.REJECTED).interviews(interviewOne).toApplicationForm();
+		Interview interviewOne = new InterviewBuilder().id(3).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).status(ApplicationFormStatus.REJECTED).interviews(interviewOne).build();
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getOutcomeOfStage());
 	}
 	@Test
 	public void shouldReturnIReviewForStatusRejectedIfNoApprovalRoundsorinterviewButSomereviewRounds(){
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).toReviewRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).status(ApplicationFormStatus.REJECTED).reviewRounds(reviewRound).toApplicationForm();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).status(ApplicationFormStatus.REJECTED).reviewRounds(reviewRound).build();
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getOutcomeOfStage());
 	}
 	
 	@Test
 	public void shouldReturnApprovalForStatusRejectedIfSomApprovalRounds(){
-		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).toApprovalRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().id(3).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).status(ApplicationFormStatus.REJECTED).build();
 		assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getOutcomeOfStage());
 	}
 	

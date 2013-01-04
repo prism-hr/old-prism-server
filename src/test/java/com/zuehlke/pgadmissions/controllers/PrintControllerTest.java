@@ -40,7 +40,7 @@ public class PrintControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		response.setOutputStreamAccessAllowed(true);	
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser);
@@ -66,7 +66,7 @@ public class PrintControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		response.setOutputStreamAccessAllowed(true);		
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser);
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
@@ -96,8 +96,8 @@ public class PrintControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		response.setOutputStreamAccessAllowed(true);		
 
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).toApplicationForm();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).toApplicationForm();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).build();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).build();
 		EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
 		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
 		EasyMock.replay(currentUser);
@@ -129,7 +129,7 @@ public class PrintControllerTest {
 		response.setOutputStreamAccessAllowed(true);		
 
 		
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).build();
 		
 		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
 		EasyMock.replay(currentUser);
@@ -159,8 +159,8 @@ public class PrintControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		response.setOutputStreamAccessAllowed(true);		
 
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).toApplicationForm();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).toApplicationForm();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).build();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).build();
 		EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(false);
 		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
 		EasyMock.replay(currentUser);

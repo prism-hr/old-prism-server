@@ -26,7 +26,7 @@ public class RejectionMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadRejection(){
 		RejectReasonDAO rejectReasonDAO = new RejectReasonDAO(sessionFactory);
 		RejectReason rejectReason = rejectReasonDAO.getAllReasons().get(0);
-		Rejection rejection = new RejectionBuilder().includeProspectusLink(true).rejectionReason(rejectReason).toRejection();
+		Rejection rejection = new RejectionBuilder().includeProspectusLink(true).rejectionReason(rejectReason).build();
 		
 		sessionFactory.getCurrentSession().save(rejection);		
 		assertNotNull(rejection.getId());
@@ -46,17 +46,17 @@ public class RejectionMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldLoadApformWithRejection()  {
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 	
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		save(user,  program);
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();		
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();		
 		save(application);
 		
 		RejectReasonDAO rejectReasonDAO = new RejectReasonDAO(sessionFactory);
 		RejectReason rejectReason = rejectReasonDAO.getAllReasons().get(0);
-		Rejection rejection = new RejectionBuilder().includeProspectusLink(true).rejectionReason(rejectReason).toRejection();
+		Rejection rejection = new RejectionBuilder().includeProspectusLink(true).rejectionReason(rejectReason).build();
 		
 		application.setRejection(rejection);
 		save(application);

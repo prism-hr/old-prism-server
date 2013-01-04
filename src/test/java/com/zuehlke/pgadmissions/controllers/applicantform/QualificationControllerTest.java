@@ -79,7 +79,7 @@ public class QualificationControllerTest {
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toQualification();
+		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build()).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(qualificationServiceMock, errors);
 		controller.editQualification(qualification, errors, modelMock);
@@ -106,7 +106,7 @@ public class QualificationControllerTest {
 
 	@Test
 	public void shouldReturnAllLanguages() {
-		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).toLanguage(), new LanguageBuilder().id(2).enabled(false).toLanguage());
+		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).build(), new LanguageBuilder().id(2).enabled(false).build());
 		EasyMock.expect(languageServiceMock.getAllEnabledLanguages()).andReturn(Collections.singletonList(languageList.get(0)));
 		EasyMock.replay(languageServiceMock);
 		List<Language> allLanguages = controller.getAllEnabledLanguages();
@@ -116,7 +116,7 @@ public class QualificationControllerTest {
 
 	@Test
 	public void shouldReturnAllDomiciles() {
-		List<Domicile> domicileList = Arrays.asList(new DomicileBuilder().id(1).enabled(true).toDomicile(), new DomicileBuilder().id(2).enabled(false).toDomicile());
+		List<Domicile> domicileList = Arrays.asList(new DomicileBuilder().id(1).enabled(true).build(), new DomicileBuilder().id(2).enabled(false).build());
 		EasyMock.expect(domicileDAOMock.getAllEnabledDomicilesExceptAlternateValues()).andReturn(Collections.singletonList(domicileList.get(0)));
 		EasyMock.replay(domicileDAOMock);
 		List<Domicile> allDomiciles = controller.getAllEnabledDomiciles();
@@ -131,7 +131,7 @@ public class QualificationControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -153,7 +153,7 @@ public class QualificationControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -180,7 +180,7 @@ public class QualificationControllerTest {
 	@Test
 	public void shouldGetQualificationFromServiceIfIdProvided() {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-		Qualification qualification = new QualificationBuilder().id(1).institutionCountry(new DomicileBuilder().id(1).name("Foo").code("XL").toDomicile()).toQualification();
+		Qualification qualification = new QualificationBuilder().id(1).institutionCountry(new DomicileBuilder().id(1).name("Foo").code("XL").build()).build();
 		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qualification);
 		EasyMock.replay(qualificationServiceMock, encryptionHelperMock);
 		Qualification returnedQualification = controller.getQualification("bob", modelMock);
@@ -216,8 +216,8 @@ public class QualificationControllerTest {
 
 	@Test
 	public void shouldSaveQulificationAndRedirectIfNoErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").toApplicationForm();
-		Qualification qualification = new QualificationBuilder().id(1).application(applicationForm).toQualification();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
+		Qualification qualification = new QualificationBuilder().id(1).application(applicationForm).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		qualificationServiceMock.save(qualification);
@@ -231,7 +231,7 @@ public class QualificationControllerTest {
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {
-		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).institutionCountry(new DomicileBuilder().id(1).name("Foo").code("XL").toDomicile()).toQualification();
+		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().id(5).build()).institutionCountry(new DomicileBuilder().id(1).name("Foo").code("XL").build()).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 
@@ -274,7 +274,7 @@ public class QualificationControllerTest {
 				languageServiceMock, languagePropertyEditorMock, domicilePropertyEditor, qualificationValidatorMock, qualificationServiceMock,
 				documentPropertyEditorMock, userServiceMock, encryptionHelperMock, qualificationTypeDAOMock, qualificationTypePropertyEditorMock, institutionDAOMock);
 
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 

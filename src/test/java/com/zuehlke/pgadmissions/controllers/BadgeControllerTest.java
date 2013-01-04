@@ -48,8 +48,8 @@ public class BadgeControllerTest {
 		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
 		EasyMock.replay(currentUserMock);
 
-		Program programOne = new ProgramBuilder().id(1).toProgram();
-		Program programTwo = new ProgramBuilder().id(2).toProgram();
+		Program programOne = new ProgramBuilder().id(1).build();
+		Program programTwo = new ProgramBuilder().id(2).build();
 		EasyMock.expect(programServiceMock.getAllPrograms()).andReturn(Arrays.asList(programOne, programTwo));
 		EasyMock.replay(programServiceMock);
 
@@ -61,8 +61,8 @@ public class BadgeControllerTest {
 
 	@Test
 	public void shouldReturnProgramsOfWhichUserAdministratorForAdmin() {
-		Program programOne = new ProgramBuilder().id(1).toProgram();
-		Program programTwo = new ProgramBuilder().id(2).toProgram();
+		Program programOne = new ProgramBuilder().id(1).build();
+		Program programTwo = new ProgramBuilder().id(2).build();
 
 		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
 		EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
@@ -94,7 +94,7 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void shouldReturnProgramForCode(){
-		Program program = new ProgramBuilder().id(4).toProgram();
+		Program program = new ProgramBuilder().id(4).build();
 		EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
 		EasyMock.replay(programServiceMock);
 		assertEquals(program, controller.getProgram("code"));
@@ -107,7 +107,7 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void shouldSaveBadge() {
-	    Badge badge = new BadgeBuilder().id(1).closingDate(new Date()).projectTitle("pro").toBadge();
+	    Badge badge = new BadgeBuilder().id(1).closingDate(new Date()).projectTitle("pro").build();
 	    badgeServiceMock.save(badge);
 	    BindingResult errors = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errors.hasErrors()).andReturn(false);

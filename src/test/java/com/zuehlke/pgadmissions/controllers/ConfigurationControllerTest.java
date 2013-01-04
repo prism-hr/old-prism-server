@@ -53,7 +53,7 @@ public class ConfigurationControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).username("aa").email("aa@gmail.com").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
 		EasyMock.replay(userServiceMock);
@@ -110,9 +110,9 @@ public class ConfigurationControllerTest {
 	@Test
 	public void shouldGetStageDurationsConvertedToStringKeys() {
 		Map<ApplicationFormStatus, StageDuration> map = new HashMap<ApplicationFormStatus, StageDuration>();
-		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).toStageDuration();
+		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).build();
 		map.put(ApplicationFormStatus.VALIDATION,  validationDuration );
-		StageDuration approvalDuration = new StageDurationBuilder().stage(ApplicationFormStatus.APPROVAL).toStageDuration();
+		StageDuration approvalDuration = new StageDurationBuilder().stage(ApplicationFormStatus.APPROVAL).build();
 		map.put(ApplicationFormStatus.APPROVAL,  approvalDuration );
 		EasyMock.expect(configurationServiceMock.getStageDurations()).andReturn(map);
 		EasyMock.replay(configurationServiceMock);
@@ -134,8 +134,8 @@ public class ConfigurationControllerTest {
 
 	@Test
 	public void shouldGetAllRegistryUsers() {
-		Person personOne = new PersonBuilder().id(1).toPerson();
-		Person personTwo = new PersonBuilder().id(4).toPerson();
+		Person personOne = new PersonBuilder().id(1).build();
+		Person personTwo = new PersonBuilder().id(4).build();
 
 		EasyMock.expect(configurationServiceMock.getAllRegistryUsers()).andReturn(Arrays.asList(personOne, personTwo));
 		EasyMock.replay(configurationServiceMock);
@@ -153,16 +153,16 @@ public class ConfigurationControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(superAdmin).anyTimes();
 		EasyMock.replay(userServiceMock);
 		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS)
-				.toStageDuration();
+				.build();
 		StageDuration interviewDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(3).unit(DurationUnitEnum.WEEKS)
-				.toStageDuration();
+				.build();
 
 		StageDurationDTO stageDurationDto = new StageDurationDTO();
 		List<StageDuration> stageDurationList = Arrays.asList(validationDuration, interviewDuration);
 		stageDurationDto.setStagesDuration(stageDurationList);
 	
-		Person registryUserOne = new PersonBuilder().id(1).toPerson();
-		Person registryUserTwo = new PersonBuilder().id(2).toPerson();
+		Person registryUserOne = new PersonBuilder().id(1).build();
+		Person registryUserTwo = new PersonBuilder().id(2).build();
 
 		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
 		List<Person> registryContactList = Arrays.asList(registryUserOne, registryUserTwo);
@@ -188,16 +188,16 @@ public class ConfigurationControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
 		EasyMock.replay(userServiceMock);
 		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS)
-				.toStageDuration();
+				.build();
 		StageDuration interviewDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(3).unit(DurationUnitEnum.WEEKS)
-				.toStageDuration();
+				.build();
 
 		StageDurationDTO stageDurationDto = new StageDurationDTO();
 		List<StageDuration> stageDurationList = Arrays.asList(validationDuration, interviewDuration);
 		stageDurationDto.setStagesDuration(stageDurationList);
 	
-		Person registryUserOne = new PersonBuilder().id(1).toPerson();
-		Person registryUserTwo = new PersonBuilder().id(2).toPerson();
+		Person registryUserOne = new PersonBuilder().id(1).build();
+		Person registryUserTwo = new PersonBuilder().id(2).build();
 
 		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
 		List<Person> registryContactList = Arrays.asList(registryUserOne, registryUserTwo);
@@ -239,10 +239,10 @@ public class ConfigurationControllerTest {
 		controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock, userServiceMock, configurationServiceMock);
 
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
+				.role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
 		
 		admin = new RegisteredUserBuilder().id(3).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+				.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
 
 	}
 }

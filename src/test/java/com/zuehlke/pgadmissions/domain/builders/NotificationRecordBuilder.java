@@ -6,7 +6,8 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class NotificationRecordBuilder {
-	private Date notificationDate;
+
+    private Date notificationDate;
 	private NotificationType notificationType;
 	private Integer id;
 
@@ -25,7 +26,7 @@ public class NotificationRecordBuilder {
 		return this;
 	}
 
-	public NotificationRecord toNotificationRecord() {
+	public NotificationRecord build() {
 		NotificationRecord notifiationRecord = new NotificationRecord();
 		notifiationRecord.setDate(notificationDate);
 		notifiationRecord.setNotificationType(notificationType);

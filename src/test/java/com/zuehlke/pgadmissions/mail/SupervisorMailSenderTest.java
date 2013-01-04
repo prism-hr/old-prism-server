@@ -38,13 +38,13 @@ public class SupervisorMailSenderTest {
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
 
-		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).toUser();
-		RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().id(10).toUser();
-		RegisteredUser defaultSupervisor = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();
+		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).build();
+		RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(10).build();
+		RegisteredUser defaultSupervisor = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").build();
 		
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram()).applicant(applicant).toApplicationForm();
-		Supervisor supervisor = new SupervisorBuilder().id(4).user(defaultSupervisor).approvalRound(new ApprovalRoundBuilder().application(form).toApprovalRound()).toSupervisor();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).build()).applicant(applicant).build();
+		Supervisor supervisor = new SupervisorBuilder().id(4).user(defaultSupervisor).approvalRound(new ApprovalRoundBuilder().application(form).build()).build();
 		
 
 		Map<String, Object> model = supervisorMailSender.createModel(supervisor);		
@@ -67,9 +67,9 @@ public class SupervisorMailSenderTest {
 		};
 		
 		
-		RegisteredUser defaultSupervisor = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();		
-		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
-		Supervisor supervisor = new SupervisorBuilder().id(4).user(defaultSupervisor).approvalRound(new ApprovalRoundBuilder().application(form).toApprovalRound()).toSupervisor();
+		RegisteredUser defaultSupervisor = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").build();		
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").build()).build();
+		Supervisor supervisor = new SupervisorBuilder().id(4).user(defaultSupervisor).approvalRound(new ApprovalRoundBuilder().application(form).build()).build();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");

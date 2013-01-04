@@ -33,8 +33,8 @@ public class UpdateUserRolesDTOValidatorTest {
 	@Before
 	public void setup() {
 		user = new UpdateUserRolesDTO();
-		user.setSelectedUser(new RegisteredUserBuilder().id(5).toUser());
-		user.setSelectedProgram(new ProgramBuilder().id(4).toProgram());
+		user.setSelectedUser(new RegisteredUserBuilder().id(5).build());
+		user.setSelectedProgram(new ProgramBuilder().id(4).build());
 		user.setSelectedAuthorities(Authority.REVIEWER);
 		
 		updateUserRolesDTOValidator = new UpdateUserRolesDTOValidator();

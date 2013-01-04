@@ -32,7 +32,7 @@ public class SourcesOfInterestBuilder {
         return this;
     }
 
-    public SourcesOfInterest toSourcesOfInterest() {
+    public SourcesOfInterest build() {
         SourcesOfInterest soi = new SourcesOfInterest();
         soi.setId(id);
         soi.setName(name);

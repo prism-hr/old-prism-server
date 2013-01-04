@@ -37,14 +37,14 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
-		Document document = new DocumentBuilder().id(1).toDocument();
+		Document document = new DocumentBuilder().id(1).build();
 		DocumentDAO documentDAO = new DocumentDAO();
 		documentDAO.save(document);
 	}
 
 	@Test
 	public void shouldSaveDocument() {
-		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).toDocument();
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
 		dao.save(document);
 
@@ -56,7 +56,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldGetDocumentById() {
-		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).toDocument();
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
 		dao.save(document);
 
@@ -68,7 +68,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldDeleteDocument() {
-		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).toDocument();
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
 		dao.save(document);
 
@@ -81,7 +81,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldDeleteQualificationProofOfAward() throws ParseException {
-		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.PROOF_OF_AWARD).toDocument();
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.PROOF_OF_AWARD).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
 		//QualificationTypeDAO typeDao = new QualificationTypeDAO(sessionFactory);
 		// typeDao.getAllQualificationTypes().get(0)
@@ -92,7 +92,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		Qualification qualification = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
 				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0))
-				.proofOfAward(document).toQualification();
+				.proofOfAward(document).build();
 		sessionFactory.getCurrentSession().save(qualification);
 		flushAndClearSession();
 
@@ -104,7 +104,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 	}
 	@Test
 	public void shouldDeleteQualificationProofOfAwardNotYetSavedOnQUalification() throws ParseException {
-		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.PROOF_OF_AWARD).toDocument();
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.PROOF_OF_AWARD).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
 		dao.save(document);
 		flushAndClearSession();
@@ -118,7 +118,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldDeleteFundingProofOfAward() throws ParseException {
-		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.SUPPORTING_FUNDING).toDocument();
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.SUPPORTING_FUNDING).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
 		dao.save(document);
 		flushAndClearSession();
@@ -127,7 +127,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		application.setApplicant(user);
 
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")
-				.document(document).toFunding();
+				.document(document).build();
 		save(application, funding);
 		
 		flushAndClearSession();
@@ -140,7 +140,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 	}
 	@Test
 	public void shouldDeleteFundingProofOfAwardNotYetSetOnFunding() throws ParseException {
-		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.SUPPORTING_FUNDING).toDocument();
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.SUPPORTING_FUNDING).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
 		dao.save(document);
 		flushAndClearSession();
@@ -156,11 +156,11 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 	}
 	@Test
 	public void shouldDeleteCommentDocument() throws ParseException {
-		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.COMMENT).toDocument();
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.COMMENT).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
 		dao.save(document);
 		flushAndClearSession();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
 
@@ -184,9 +184,9 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 	public void setup() {
 
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		save(user, program);
 		languageDAO = new LanguageDAO(sessionFactory);

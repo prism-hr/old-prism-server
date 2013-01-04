@@ -38,7 +38,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
 		CommentDAO reviewDAO = new CommentDAO();
-		Comment review = new CommentBuilder().id(1).toComment();
+		Comment review = new CommentBuilder().id(1).build();
 		reviewDAO.save(review);
 	}
 
@@ -46,9 +46,9 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	public void setup() {
 		commentDAO = new CommentDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		save(user, program);
 
@@ -59,7 +59,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadGenericComment() {
 
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
 
@@ -89,7 +89,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadStateChangeComment() {
 
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
 
@@ -122,11 +122,11 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadReviewComment() {
 		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
 		
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.REVIEW).build();
 		
 		assertNull(reviewComment.getId());
 		
@@ -153,14 +153,14 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldGetAllReviewCommentsDueAdminEmailNotification() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
 		
-		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
-		ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).adminsNotified(true).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
-		ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.GENERIC).toReviewComment();
+		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).build();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.REVIEW).build();
+		ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).adminsNotified(true).comment("comment").user(user).commentType(CommentType.REVIEW).build();
+		ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.GENERIC).build();
 
 		save(comment, reviewComment, reviewComment1,reviewComment2);
 				
@@ -176,15 +176,15 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldGetAllInterviewCommentsDueAdminEmailNotification() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
 		
-		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).toComment();
-		InterviewComment interviewComment1 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
-		InterviewComment interviewComment2 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment").commentType(CommentType.REVIEW).toInterviewComment();
-		InterviewComment interviewComment3 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
-		InterviewComment interviewComment4 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(true).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
+		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).build();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment").commentType(CommentType.INTERVIEW).build();
+		InterviewComment interviewComment2 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment").commentType(CommentType.REVIEW).build();
+		InterviewComment interviewComment3 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment").commentType(CommentType.INTERVIEW).build();
+		InterviewComment interviewComment4 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(true).comment("comment").commentType(CommentType.INTERVIEW).build();
 		
 		save(comment, interviewComment1, interviewComment2, interviewComment3, interviewComment4);
 		

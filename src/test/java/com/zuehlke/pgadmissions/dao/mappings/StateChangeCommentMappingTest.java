@@ -24,18 +24,18 @@ public class StateChangeCommentMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadStateChangeComment() {
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
 		RegisteredUser reviewer = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
 		save(applicant, reviewer);
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 
 		flushAndClearSession();

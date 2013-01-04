@@ -91,7 +91,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .content(FileUtils.readFileToByteArray(testFileAsResurce.getFile()))
             .uploadedBy(user)
             .type(docType)
-            .toDocument();
+            .build();
             return document;
         } catch (IOException e) {
             e.printStackTrace();
@@ -102,17 +102,17 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
     public ApplicationForm getValidApplicationForm() {
         
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon W1T 4HD\nUnited Kingdom";
-        RegisteredUser user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).firstName("Kevin").lastName("Denver").username("denk@zhaw.ch").enabled(true).toUser();
+        RegisteredUser user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).firstName("Kevin").lastName("Denver").username("denk@zhaw.ch").enabled(true).build();
         Document cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
         Document referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
         Document personalStatement = getRandomDocument(DocumentType.PERSONAL_STATEMENT, "My Personal Statement (v1.0).pdf", user);
         Document proofOfAwardDocument = getRandomDocument(DocumentType.PROOF_OF_AWARD, "My Proof of Award.pdf", user);
         Document languageQualificationDocument = getRandomDocument(DocumentType.LANGUAGE_QUALIFICATION, "Language Qualification - My Name.pdf", user);
         Document fundingDocument = getRandomDocument(DocumentType.SUPPORTING_FUNDING, "Supporting Funding - My Name.pdf", user);
-        RegisteredUser approverUser = new RegisteredUserBuilder().id(Integer.MAX_VALUE-1).username("approver@zhaw.ch").enabled(true).toUser();
-        Country country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).toCountry();
-        Address address = new AddressBuilder().id(Integer.MAX_VALUE).country(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).toAddress();
-        ReferenceComment reference = new ReferenceCommentBuilder().comment("Hello World").document(referenceDocument).toReferenceComment();
+        RegisteredUser approverUser = new RegisteredUserBuilder().id(Integer.MAX_VALUE-1).username("approver@zhaw.ch").enabled(true).build();
+        Country country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
+        Address address = new AddressBuilder().id(Integer.MAX_VALUE).country(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).build();
+        ReferenceComment reference = new ReferenceCommentBuilder().comment("Hello World").document(referenceDocument).build();
         Referee refereeOne = new RefereeBuilder().user(approverUser).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(reference).toReferee();
         Referee refereeTwo = new RefereeBuilder().user(approverUser).email("ked2@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(reference).toReferee();
         EmploymentPosition employmentPosition = new EmploymentPositionBuilder()
@@ -125,10 +125,10 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .remit("Developer")
             .employerName("Zuhlke Ltd.")
             .toEmploymentPosition();
-        Language language = new LanguageBuilder().id(Integer.MAX_VALUE).code("GB").name("England").enabled(true).toLanguage();
-        Disability disability = new DisabilityBuilder().id(Integer.MAX_VALUE).code(0).name("No Disability").enabled(true).toDisability();
-        Ethnicity ethnicity = new EthnicityBuilder().id(Integer.MAX_VALUE).code(10).name("White").enabled(true).toEthnicity();
-        Domicile domicile = new DomicileBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).toDomicile();
+        Language language = new LanguageBuilder().id(Integer.MAX_VALUE).code("GB").name("England").enabled(true).build();
+        Disability disability = new DisabilityBuilder().id(Integer.MAX_VALUE).code(0).name("No Disability").enabled(true).build();
+        Ethnicity ethnicity = new EthnicityBuilder().id(Integer.MAX_VALUE).code(10).name("White").enabled(true).build();
+        Domicile domicile = new DomicileBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
         PersonalDetails personalDetails = new PersonalDetailsBuilder()
             .id(Integer.MAX_VALUE)
             .candiateNationalities(language)
@@ -142,17 +142,17 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .lastName("Denver")
             .gender(Gender.MALE)
             .requiresVisa(true)
-            .passportInformation(new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver").passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20)).passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).toPassportInformation())
+            .passportInformation(new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver").passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20)).passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
             .languageQualificationAvailable(true)
-            .languageQualifications(new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false).languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1").sendToUCL(true).languageQualificationDocument(languageQualificationDocument).sendToUCL(true).toLanguageQualification())
+            .languageQualifications(new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false).languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1").sendToUCL(true).languageQualificationDocument(languageQualificationDocument).sendToUCL(true).build())
             .phoneNumber("+44 (0) 123 123 1234")
             .residenceDomicile(domicile)
             .title(Title.MR)
-            .toPersonalDetails();
+            .build();
         AdditionalInformation additionalInformation = new AdditionalInformationBuilder()
             .id(Integer.MAX_VALUE)
             .setConvictions(false)
-            .toAdditionalInformation();
+            .build();
         ProgramInstance instance = new ProgramInstanceBuilder()
             .id(Integer.MAX_VALUE)
             .academicYear("2013")
@@ -161,7 +161,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .enabled(true)
             .studyOption("F+++++", "Full-time")
             .identifier("0009")
-            .toProgramInstance();
+            .build();
         Program program = new ProgramBuilder()
             .id(Integer.MAX_VALUE)
             .administrators(user)
@@ -173,8 +173,8 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .reviewers(user)
             .supervisors(user)
             .title("MRes Medical and Biomedical Imaging")
-            .toProgram();
-        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(Integer.MAX_VALUE).code("BRIT_COUN").name("British Council").toSourcesOfInterest();
+            .build();
+        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(Integer.MAX_VALUE).code("BRIT_COUN").name("British Council").build();
         ProgrammeDetails programDetails = new ProgrammeDetailsBuilder()
             .id(Integer.MAX_VALUE)
             .programmeName("MRes Medical and Biomedical Imaging")
@@ -182,8 +182,8 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .sourcesOfInterest(interest)
             .startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
             .studyOption("F+++++", "Full-time")
-            .toProgrammeDetails();
-        QualificationType qualificationType = new QualificationTypeBuilder().id(Integer.MAX_VALUE).code("DEGTRE").name("Bachelors Degree - France").enabled(true).toQualificationTitle();
+            .build();
+        QualificationType qualificationType = new QualificationTypeBuilder().id(Integer.MAX_VALUE).code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
         Qualification qualification = new QualificationBuilder()
             .id(Integer.MAX_VALUE)
             .awardDate(new Date())
@@ -198,8 +198,8 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .isCompleted(CheckedStatus.YES)
             .proofOfAward(proofOfAwardDocument)
             .sendToUCL(true)
-            .toQualification();
-        Funding funding = new FundingBuilder().id(Integer.MAX_VALUE).awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument).type(FundingType.SCHOLARSHIP).value("5").toFunding();
+            .build();
+        Funding funding = new FundingBuilder().id(Integer.MAX_VALUE).awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument).type(FundingType.SCHOLARSHIP).value("5").build();
         ApplicationForm applicationForm = new ApplicationFormBuilder()
             .id(Integer.MAX_VALUE)
             .applicant(user)
@@ -228,7 +228,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .personalStatement(personalStatement)
             .referees(refereeOne, refereeTwo)
             .ipAddress("127.0.0.1")
-            .toApplicationForm();
+            .build();
         
         save(user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser, language, country, domicile, address, program, employmentPosition, applicationForm);
         

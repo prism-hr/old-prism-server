@@ -14,7 +14,7 @@ public class PersonMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadPerson(){
-		Person person = new PersonBuilder().firstname("bob").lastname("smith").email("email@Test.com").toPerson();
+		Person person = new PersonBuilder().firstname("bob").lastname("smith").email("email@Test.com").build();
 		sessionFactory.getCurrentSession().save(person);
 		assertNotNull(person.getId());
 		

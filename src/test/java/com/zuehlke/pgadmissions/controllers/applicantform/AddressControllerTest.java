@@ -53,7 +53,7 @@ public class AddressControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).build();
 
 		AddressSectionDTO addressSectionDTO = new AddressSectionDTO();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -87,7 +87,7 @@ public class AddressControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -108,7 +108,7 @@ public class AddressControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -134,13 +134,13 @@ public class AddressControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
-		Country countryOne = new CountryBuilder().id(1).toCountry();
-		Address addressOne = new AddressBuilder().id(1).address1("location1").address2("location1-line2").country(countryOne).toAddress();
+		Country countryOne = new CountryBuilder().id(1).build();
+		Address addressOne = new AddressBuilder().id(1).address1("location1").address2("location1-line2").country(countryOne).build();
 
-		Country countryTwo = new CountryBuilder().id(2).toCountry();
-		Address addressTwo = new AddressBuilder().id(2).address1("location2").address2("location2-line2").country(countryTwo).toAddress();
+		Country countryTwo = new CountryBuilder().id(2).build();
+		Address addressTwo = new AddressBuilder().id(2).address1("location2").address2("location2-line2").country(countryTwo).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -161,12 +161,12 @@ public class AddressControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
-		Country countryOne = new CountryBuilder().id(1).toCountry();
-		Address addressOne = new AddressBuilder().id(1).address1("location1").country(countryOne).toAddress();
+		Country countryOne = new CountryBuilder().id(1).build();
+		Address addressOne = new AddressBuilder().id(1).address1("location1").country(countryOne).build();
 
-		Address addressTwo = new AddressBuilder().id(2).address1("location1").country(countryOne).toAddress();
+		Address addressTwo = new AddressBuilder().id(2).address1("location1").country(countryOne).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -188,7 +188,7 @@ public class AddressControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -211,8 +211,8 @@ public class AddressControllerTest {
 
 	@Test
 	public void shouldCreateAndSetNewAddressesAndSaveIfNoErrors() {
-		Country countryOne = new CountryBuilder().id(1).toCountry();
-		Country countryTwo = new CountryBuilder().id(2).toCountry();
+		Country countryOne = new CountryBuilder().id(1).build();
+		Country countryTwo = new CountryBuilder().id(2).build();
 
 		AddressSectionDTO addressSectionDTO = new AddressSectionDTO();
 		addressSectionDTO.setContactAddressCountry(countryOne);
@@ -224,7 +224,7 @@ public class AddressControllerTest {
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
 
 		applicationsServiceMock.save(applicationForm);
 
@@ -246,14 +246,14 @@ public class AddressControllerTest {
 
 	@Test
 	public void shouldUpdateExistingAddressesAndSaveIfNoErrors() {
-		Country countryOne = new CountryBuilder().id(1).toCountry();
-		Country countryTwo = new CountryBuilder().id(2).toCountry();
-		Country countryThree = new CountryBuilder().id(3).toCountry();
-		Country countryFour = new CountryBuilder().id(4).toCountry();
+		Country countryOne = new CountryBuilder().id(1).build();
+		Country countryTwo = new CountryBuilder().id(2).build();
+		Country countryThree = new CountryBuilder().id(3).build();
+		Country countryFour = new CountryBuilder().id(4).build();
 
-		Address addressOne = new AddressBuilder().id(1).address1("location3").country(countryThree).toAddress();
+		Address addressOne = new AddressBuilder().id(1).address1("location3").country(countryThree).build();
 
-		Address addressTwo = new AddressBuilder().id(2).address1("location4").country(countryFour).toAddress();
+		Address addressTwo = new AddressBuilder().id(2).address1("location4").country(countryFour).build();
 
 		AddressSectionDTO addressSectionDTO = new AddressSectionDTO();
 		addressSectionDTO.setContactAddressCountry(countryOne);
@@ -266,7 +266,7 @@ public class AddressControllerTest {
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").currentAddress(addressOne).contactAddress(addressTwo)
-				.toApplicationForm();
+				.build();
 
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock, errors);
@@ -293,14 +293,14 @@ public class AddressControllerTest {
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 		EasyMock.replay(applicationsServiceMock, errors);
-		String view = controller.editAddresses(addressSectionDTO, errors, new ApplicationFormBuilder().toApplicationForm());
+		String view = controller.editAddresses(addressSectionDTO, errors, new ApplicationFormBuilder().build());
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals("/private/pgStudents/form/components/address_details", view);
 	}
 
 	@Test
 	public void shouldReturnAllEnabledCountries() {
-		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).enabled(true).toCountry(), new CountryBuilder().id(2).enabled(false).toCountry());
+		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).enabled(true).build(), new CountryBuilder().id(2).enabled(false).build());
 		EasyMock.expect(countriesServiceMock.getAllEnabledCountries()).andReturn(Collections.singletonList(countryList.get(0)));
 		EasyMock.replay(countriesServiceMock);
 		List<Country> allCountries = controller.getAllEnabledCountries();
@@ -318,7 +318,7 @@ public class AddressControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		controller = new AddressController(applicationsServiceMock, userServiceMock, countriesServiceMock, countryPropertyEditor, addressSectionValidatorMock);
 
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 

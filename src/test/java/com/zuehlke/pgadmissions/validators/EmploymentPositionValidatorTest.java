@@ -136,14 +136,14 @@ public class EmploymentPositionValidatorTest {
 	@Before
 	public void setup() throws ParseException{
 		position = new EmploymentPosition();
-		position.setApplication(new ApplicationFormBuilder().id(4).toApplicationForm());
+		position.setApplication(new ApplicationFormBuilder().id(4).build());
 		position.setEmployerName("Mark");
 		position.setEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		position.setRemit("cashier");
 		position.setCurrent(false);
 		position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		position.setPosition("head of department");
-		position.setEmployerAddress(new AddressBuilder().address1("address").address3("address3").country(new CountryBuilder().id(1).toCountry()).toAddress());
+		position.setEmployerAddress(new AddressBuilder().address1("address").address3("address3").country(new CountryBuilder().id(1).build()).build());
 		
 		positionValidator = new EmploymentPositionValidator();
 		positionValidator.setValidator((javax.validation.Validator) validator);

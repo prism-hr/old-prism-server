@@ -323,7 +323,7 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-	public ApplicationForm toApplicationForm() {
+	public ApplicationForm build() {
 		ApplicationForm application = new ApplicationForm();
 		application.setId(id);
 		application.setApplicant(applicant);

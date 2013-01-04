@@ -59,7 +59,7 @@ public class AdditionalInformationControllerTest {
 		controller = new AdditionalInformationController(applicationServiceMock, userServiceMock, applFormPropertyEditorMock,// 
 				booleanPropertyEditorMock, addInfoServiceMock, validatorMock);		
 
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
 	}
@@ -85,16 +85,16 @@ public class AdditionalInformationControllerTest {
 	public void throwExceptionWhenApplicationFormAlreadySubmitted() {
 		ApplicationForm applForm = new ApplicationFormBuilder().id(1)//
 				.status(ApplicationFormStatus.APPROVED)//
-				.toApplicationForm();
+				.build();
 		AdditionalInformation info = new AdditionalInformationBuilder().id(1)//
-				.applicationForm(applForm).toAdditionalInformation();
+				.applicationForm(applForm).build();
 		controller.editAdditionalInformation(info, null);
 	}
 
 	@Test
 	public void shouldReturnApplicationFormViewWhenErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		AdditionalInformation info = new AdditionalInformationBuilder().id(1).applicationForm(applicationForm).toAdditionalInformation();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+		AdditionalInformation info = new AdditionalInformationBuilder().id(1).applicationForm(applicationForm).build();
 
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
@@ -122,8 +122,8 @@ public class AdditionalInformationControllerTest {
 
 	@Test
 	public void shouldSaveAdditionalInfoAndRedirect() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").toApplicationForm();
-		AdditionalInformation info = new AdditionalInformationBuilder().id(1).applicationForm(applicationForm).toAdditionalInformation();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
+		AdditionalInformation info = new AdditionalInformationBuilder().id(1).applicationForm(applicationForm).build();
 
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -145,8 +145,8 @@ public class AdditionalInformationControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
 		EasyMock.replay(userServiceMock);
-		AdditionalInformation additionalInfo = new AdditionalInformationBuilder().id(200).toAdditionalInformation();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(100).toApplicationForm();
+		AdditionalInformation additionalInfo = new AdditionalInformationBuilder().id(200).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(100).build();
 		applicationForm.setAdditionalInformation(additionalInfo);
 
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
@@ -172,8 +172,8 @@ public class AdditionalInformationControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
 		EasyMock.replay(userServiceMock);
-		AdditionalInformation additionalInfo = new AdditionalInformationBuilder().id(200).toAdditionalInformation();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(100).toApplicationForm();
+		AdditionalInformation additionalInfo = new AdditionalInformationBuilder().id(200).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(100).build();
 		applicationForm.setAdditionalInformation(additionalInfo);
 
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
@@ -203,7 +203,7 @@ public class AdditionalInformationControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUser);
@@ -225,7 +225,7 @@ public class AdditionalInformationControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationServiceMock, currentUser);

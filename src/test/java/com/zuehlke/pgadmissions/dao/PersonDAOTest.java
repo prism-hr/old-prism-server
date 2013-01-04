@@ -15,7 +15,7 @@ public class PersonDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldSaveAndGetRegistryUserWithId(){
-		Person registryUser = new PersonBuilder().id(1).firstname("john").lastname("mark").email("email").toPerson();
+		Person registryUser = new PersonBuilder().id(1).firstname("john").lastname("mark").email("email").build();
 		sessionFactory.getCurrentSession().save(registryUser);
 		flushAndClearSession();
 		
@@ -26,7 +26,7 @@ public class PersonDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldDeletePerson(){
-		Person registryUser = new PersonBuilder().id(1).firstname("john").lastname("mark").email("email").toPerson();
+		Person registryUser = new PersonBuilder().id(1).firstname("john").lastname("mark").email("email").build();
 		sessionFactory.getCurrentSession().save(registryUser);
 		flushAndClearSession();
 		

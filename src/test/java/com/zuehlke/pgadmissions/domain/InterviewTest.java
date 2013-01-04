@@ -11,7 +11,7 @@ public class InterviewTest {
 	@Test
 	public void shouldGetCorrectValuesForTimeParts() {
 		String time = "16:45";
-		Interview interview = new InterviewBuilder().interviewTime(time).toInterview();
+		Interview interview = new InterviewBuilder().interviewTime(time).build();
 		assertEquals("16", interview.getTimeHours());
 		assertEquals("45", interview.getTimeMinutes());
 
@@ -19,7 +19,7 @@ public class InterviewTest {
 
 	@Test
 	public void shouldReturnNullsIfTimeIsNull() {
-		Interview interview = new InterviewBuilder().toInterview();
+		Interview interview = new InterviewBuilder().build();
 		assertNull(interview.getTimeHours());
 		assertNull(interview.getTimeMinutes());
 	}

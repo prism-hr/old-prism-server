@@ -24,20 +24,20 @@ public class ApprovalEvaluationCommentMappingTest extends AutomaticRollbackTestC
 	
 	@Test
 	public void shouldSaveAndLoadInterviewEvaluationComment() {
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).build();
 
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).toApprovalRound();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).build();
 		save(program, user, applicationForm, approvalRound);
 
 		flushAndClearSession();
 
 		ApprovalEvaluationComment approvalEvaluationComment = new ApprovalEvaluationCommentBuilder().application(applicationForm).comment("hi")
-				.type(CommentType.APPROVAL_EVALUATION).user(user).approvalRound(approvalRound).toApprovalEvaluationComment();
+				.type(CommentType.APPROVAL_EVALUATION).user(user).approvalRound(approvalRound).build();
 		save(approvalEvaluationComment);
 		assertNotNull(approvalEvaluationComment.getId());
 

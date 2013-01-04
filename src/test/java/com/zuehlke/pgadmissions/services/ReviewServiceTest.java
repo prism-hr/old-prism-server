@@ -50,8 +50,8 @@ public class ReviewServiceTest {
 
 	@Before
 	public void setUp() {
-		reviewer = new ReviewerBuilder().id(1).toReviewer();
-		reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
+		reviewer = new ReviewerBuilder().id(1).build();
+		reviewRound = new ReviewRoundBuilder().id(1).build();
 		reviewerDAO = EasyMock.createMock(ReviewerDAO.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		reviewRoundDAOMock = EasyMock.createMock(ReviewRoundDAO.class);
@@ -73,8 +73,8 @@ public class ReviewServiceTest {
 	@Test
 	public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull(){
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build()).applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
 		reviewerDAO.save(reviewer);
 		EasyMock.replay(reviewerDAO);
 		reviewService.createReviewerInNewReviewRound(application, reviewerUser);
@@ -86,9 +86,9 @@ public class ReviewServiceTest {
 	@Test
 	public void shouldCreateNewInterviewerInLatestInterviewRoundIfLatestRoundIsNotNull(){
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		ReviewRound latestReviewRound = new ReviewRoundBuilder().toReviewRound();
-		ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(latestReviewRound).id(1).program(new ProgramBuilder().id(1).toProgram()).applicant(new RegisteredUserBuilder().id(1).toUser()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		ReviewRound latestReviewRound = new ReviewRoundBuilder().build();
+		ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(latestReviewRound).id(1).program(new ProgramBuilder().id(1).build()).applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
 		reviewerDAO.save(reviewer);
 		EasyMock.replay(reviewerDAO);
 		reviewService.createReviewerInNewReviewRound(application, reviewerUser);
@@ -100,16 +100,16 @@ public class ReviewServiceTest {
 	@Test
 	public void shouldSetDueDateOnApplicationUpdateFormAndSaveBoth() throws ParseException {
 
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).toApplicationForm();
-		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.REVIEW_REMINDER).toNotificationRecord());
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).build();
+		applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.REVIEW_REMINDER).build());
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
-				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
+				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
 		
 		reviewRoundDAOMock.save(reviewRound);
 		applicationFormDAOMock.save(applicationForm);
 		
-		StateChangeEvent event = new ReviewStateChangeEventBuilder().id(1).toReviewStateChangeEvent();		
+		StateChangeEvent event = new ReviewStateChangeEventBuilder().id(1).build();		
 		EasyMock.expect(eventFactoryMock.createEvent(reviewRound)).andReturn(event);
 		
 		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
@@ -130,10 +130,10 @@ public class ReviewServiceTest {
 
 	@Test
 	public void shouldMoveToReviewIfInReview() throws ParseException {
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).toApplicationForm();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
-				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
+				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
 		reviewRoundDAOMock.save(reviewRound);
 		applicationFormDAOMock.save(applicationForm);
 		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock);
@@ -147,10 +147,10 @@ public class ReviewServiceTest {
 		ApplicationFormStatus[] values = ApplicationFormStatus.values();
 		for (ApplicationFormStatus status : values) {
 			if (status != ApplicationFormStatus.VALIDATION && status != ApplicationFormStatus.REVIEW) {
-				ApplicationForm application = new ApplicationFormBuilder().id(3).status(status).toApplicationForm();
+				ApplicationForm application = new ApplicationFormBuilder().id(3).status(status).build();
 				boolean threwException = false;
 				try {
-					reviewService.moveApplicationToReview(application, new ReviewRoundBuilder().id(1).toReviewRound());
+					reviewService.moveApplicationToReview(application, new ReviewRoundBuilder().id(1).build());
 				} catch (IllegalStateException ise) {
 					if (ise.getMessage().equals("Application in invalid status: '" + status + "'!")) {
 						threwException = true;
@@ -163,7 +163,7 @@ public class ReviewServiceTest {
 	
 	@Test
 	public void shouldSaveReviewRound(){
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(5).toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(5).build();
 		reviewRoundDAOMock.save(reviewRound);
 		EasyMock.replay(reviewRoundDAOMock);
 		reviewService.save(reviewRound);

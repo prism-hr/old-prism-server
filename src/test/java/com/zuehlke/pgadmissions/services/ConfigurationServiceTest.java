@@ -57,9 +57,9 @@ public class ConfigurationServiceTest {
 	
 	@Test
 	public void shouldSaveConfigurationObjects(){
-		final Person registryUserOne = new PersonBuilder().id(1).toPerson();
-		final Person registryUserTwo = new PersonBuilder().id(2).toPerson();
-		final Person registryUserThree  = new PersonBuilder().id(3).toPerson();
+		final Person registryUserOne = new PersonBuilder().id(1).build();
+		final Person registryUserTwo = new PersonBuilder().id(2).build();
+		final Person registryUserThree  = new PersonBuilder().id(3).build();
 
 		service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, personDAOMock){
 
@@ -70,9 +70,9 @@ public class ConfigurationServiceTest {
 			}
 			
 		};
-		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS).toStageDuration();
-		StageDuration oldValidationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(5).unit(DurationUnitEnum.WEEKS).toStageDuration();
-		StageDuration interviewDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(3).unit(DurationUnitEnum.WEEKS).toStageDuration();
+		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS).build();
+		StageDuration oldValidationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(5).unit(DurationUnitEnum.WEEKS).build();
+		StageDuration interviewDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(3).unit(DurationUnitEnum.WEEKS).build();
 		
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(oldValidationDuration);
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(null);
@@ -102,10 +102,10 @@ public class ConfigurationServiceTest {
 
 	@Test
 	public void shouldReturnMapOfStageDurations(){
-		StageDuration stageDurationOne = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).toStageDuration();
-		StageDuration stageDurationTwo = new StageDurationBuilder().stage(ApplicationFormStatus.REVIEW).toStageDuration();
-		StageDuration stageDurationThree = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).toStageDuration();
-		StageDuration stageDurationFour = new StageDurationBuilder().stage(ApplicationFormStatus.APPROVAL).toStageDuration();
+		StageDuration stageDurationOne = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).build();
+		StageDuration stageDurationTwo = new StageDurationBuilder().stage(ApplicationFormStatus.REVIEW).build();
+		StageDuration stageDurationThree = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).build();
+		StageDuration stageDurationFour = new StageDurationBuilder().stage(ApplicationFormStatus.APPROVAL).build();
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationOne);
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(stageDurationTwo);
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(stageDurationThree);

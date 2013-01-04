@@ -38,11 +38,11 @@ public class ApproverAndAdminApprovalNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		RegisteredUser approver1 = new RegisteredUserBuilder().id(8).toUser();
+		RegisteredUser approver1 = new RegisteredUserBuilder().id(8).build();
 		
-		Program program = new ProgramBuilder().approver(approver1).id(1).toProgram();
-		ApplicationForm form1 = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
-		ApplicationForm form2 = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		Program program = new ProgramBuilder().approver(approver1).id(1).build();
+		ApplicationForm form1 = new ApplicationFormBuilder().program(program).id(1).build();
+		ApplicationForm form2 = new ApplicationFormBuilder().program(program).id(1).build();
 		
 		EasyMock.expect(applicationDAOMock.getApplicationsDueApprovalNotifications()).andReturn(Arrays.asList(form1, form2));
 		transactionOne.commit();

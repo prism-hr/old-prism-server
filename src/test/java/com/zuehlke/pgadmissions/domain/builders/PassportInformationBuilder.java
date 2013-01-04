@@ -49,7 +49,7 @@ public class PassportInformationBuilder {
         return this;
     }
     
-    public PassportInformation toPassportInformation() {
+    public PassportInformation build() {
         PassportInformation passportInformation = new PassportInformation();
         passportInformation.setId(id);
         passportInformation.setPassportExpiryDate(passportExpiryDate);

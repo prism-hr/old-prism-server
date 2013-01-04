@@ -87,13 +87,13 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnRefereesForInactiveApplicationForms() {
 		ApplicationForm unsubmittedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED)
-				.toApplicationForm();
+				.build();
 		ApplicationForm approvedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED)
-				.toApplicationForm();
+				.build();
 		ApplicationForm rejectedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REJECTED)
-				.toApplicationForm();
+				.build();
 		ApplicationForm withdrawnApplicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.WITHDRAWN)
-				.toApplicationForm();
+				.build();
 		save(unsubmittedApplication, approvedApplication, rejectedApplication,withdrawnApplicationForm);
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
@@ -122,7 +122,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldNotReturnRefereesWhoHaveDeclined() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
@@ -137,10 +137,10 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesWhoHaveProvidedReference() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
-		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").toDocument();
-		ReferenceComment reference = new ReferenceCommentBuilder().user(user).comment("comment").application(application).document(document).toReferenceComment();
+		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").build();
+		ReferenceComment reference = new ReferenceCommentBuilder().user(user).comment("comment").application(application).document(document).build();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").reference(reference).user(user).toReferee();			
@@ -158,7 +158,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesWhoHaveBeenRemindedInLastWeek() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date threeDaysAgo = DateUtils.addDays(now,-3);
@@ -177,7 +177,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereesDueReminders() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date eightDaysAgo = DateUtils.addDays(now,-8);
@@ -196,7 +196,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesWithNoReminders() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);		
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
@@ -221,7 +221,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 		
 		
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date oneWeekAgo = DateUtils.addDays(now,-7);
@@ -248,7 +248,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 		
 		
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date oneMinuteAgo = DateUtils.addMinutes(now,-1);
@@ -274,7 +274,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 		
 		
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date twoMinutesAgo = DateUtils.addMinutes(now,-2);
@@ -292,7 +292,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereeForWhichReminderWasSendOne6DaysAnd5minAgo() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date sixDaysAgo = DateUtils.addDays(now,-6);
@@ -312,7 +312,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereeForWhichReminderWasSendOneWeekPlus5minAgo() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date oneWeekAgo = DateUtils.addDays(now,-7);
@@ -331,7 +331,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesForWhichThereIsNoRegisteredUserMapped() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date oneWeekAgo = DateUtils.addDays(now,-7);
@@ -350,13 +350,13 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereesWhoHavenNotProvidedReference() {
-		ApplicationForm application = new ApplicationFormBuilder().id(20).program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		ApplicationForm application2 = new ApplicationFormBuilder().id(21).applicant(user).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(20).program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
+		ApplicationForm application2 = new ApplicationFormBuilder().id(21).applicant(user).status(ApplicationFormStatus.REJECTED).build();
 		save(application, application2);
 		
 		flushAndClearSession();
 		
-		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").toDocument();
+		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").build();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee hasRefInApp = new RefereeBuilder().id(1).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fs").firstname("sdsd").jobEmployer("sdfsdf").jobTitle("fssd").lastname("fsdsdf").phoneNumber("halliallo").toReferee();			
@@ -381,15 +381,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		
 		ReferenceComment reference = new ReferenceCommentBuilder().document(document)
 				.comment("This is a reference comment").suitableForProgramme(false).referee(hasRefInApp1).user(user).application(application)
-				.toReferenceComment();
+				.build();
 
 		ReferenceComment referenceOne = new ReferenceCommentBuilder().document(document)
 				.comment("This is a reference comment").suitableForProgramme(false).referee(hasRefInApp).user(user).application(application)
-				.toReferenceComment();
+				.build();
 		
 		ReferenceComment referenceTwo = new ReferenceCommentBuilder().document(document)
 				.comment("This is a reference comment").suitableForProgramme(false).referee(hasRefButNotInApp).user(user).application(application2)
-				.toReferenceComment();
+				.build();
 		save(document, reference, referenceOne, referenceTwo);
 		
 		flushAndClearSession();
@@ -406,7 +406,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereesDueNotifiation() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).build();
 		save(application);		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		
@@ -423,7 +423,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereesForNotifiationIfAlreadyNotified() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).build();
 		save(application);		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		
@@ -440,7 +440,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	}
 	@Test
 	public void shouldNotReturnRefereesForNotifiationIfDeclined() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).build();
 		save(application);		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		
@@ -458,12 +458,12 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesForNotifiationIfReferenceProvided() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).build();
 		save(application);		
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		
-		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").toDocument();
+		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").build();
 		save(document);
 		Referee referee = new RefereeBuilder().user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").declined(false).toReferee();			
@@ -471,7 +471,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		ReferenceComment reference = new ReferenceCommentBuilder().document(document)
 				.comment("This is a reference comment").suitableForProgramme(false).user(user).application(application)
 				.referee(referee)
-				.toReferenceComment();
+				.build();
 	
 		save(reference);
 		
@@ -485,7 +485,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesForNotifiationIfAPplicationNotSubmitted() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
 		save(application);		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		
@@ -504,7 +504,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesForNotifiationIfAPplicationInValidation() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		
@@ -522,7 +522,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesForNotifiationIfAPplicationInAccepted() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED).build();
 		save(application);		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		
@@ -540,7 +540,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesForNotifiationIfAPplicationRejected() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REJECTED).build();
 		save(application);		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		
@@ -558,7 +558,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesForNotifiationIfAPplicationWithdrawn() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.WITHDRAWN).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.WITHDRAWN).build();
 		save(application);		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf")
@@ -576,9 +576,9 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();	
+		program = new ProgramBuilder().code("doesntexist").title("another title").build();	
 		
 		reminderInterval = new ReminderInterval();
 		reminderInterval.setId(1);

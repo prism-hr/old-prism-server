@@ -58,13 +58,13 @@ public class EvaluationTransitionControllerTest {
 	
 	@Test
 	public void shouldCreateApprovalEvaluationCommentWithLatestReviewRound() {
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).toApprovalRound();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).toApplicationForm();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).build();
 		StateChangeComment stateComment = new StateChangeComment();
 		stateComment.setComment("comment");
 		stateComment.setNextStatus(ApplicationFormStatus.REJECTED);
 		stateComment.setType(CommentType.APPROVAL_EVALUATION);
-		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().id(6).toApprovalEvaluationComment();
+		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().id(6).build();
 		controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
 				uclExportServiceMock) {
@@ -88,13 +88,13 @@ public class EvaluationTransitionControllerTest {
 	
 	@Test
 	public void shouldCreateApprovalEvaluationCommentWithLatestReviewRoundAndMoveToApprovedIdNextStageIsApproved() {
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).toApprovalRound();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).applicationNumber("abc").toApplicationForm();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).applicationNumber("abc").build();
 		StateChangeComment stateComment = new StateChangeComment();
 		stateComment.setComment("comment");
 		stateComment.setNextStatus(ApplicationFormStatus.APPROVED);
 		stateComment.setType(CommentType.APPROVAL_EVALUATION);
-		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVED).id(6).toApprovalEvaluationComment();
+		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVED).id(6).build();
 		controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
 				documentPropertyEditorMock, uclExportServiceMock){
@@ -124,13 +124,13 @@ public class EvaluationTransitionControllerTest {
 
 	@Test
 	public void shouldCreateApprovalEvaluationCommentWithLatestReviewRoundAndNotMoveToApprovedIdNextStageIsRejected() {
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).toApprovalRound();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).toApplicationForm();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(5).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestApprovalRound(approvalRound).build();
 		StateChangeComment stateComment = new StateChangeComment();
 		stateComment.setComment("comment");
 		stateComment.setNextStatus(ApplicationFormStatus.REJECTED);
 		stateComment.setType(CommentType.APPROVAL_EVALUATION);
-		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).id(6).toApprovalEvaluationComment();
+		ApprovalEvaluationComment comment = new ApprovalEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).id(6).build();
 		controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock,
 				uclExportServiceMock){
@@ -154,8 +154,8 @@ public class EvaluationTransitionControllerTest {
 	
 	@Test
 	public void shouldCreateInterviewEvaluationCommentWithLatestInterview() {
-		Interview interview = new InterviewBuilder().id(5).toInterview();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestInterview(interview).toApplicationForm();
+		Interview interview = new InterviewBuilder().id(5).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestInterview(interview).build();
 		StateChangeComment stateComment = new StateChangeComment();
 		stateComment.setComment("comment");
 		stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
@@ -169,7 +169,7 @@ public class EvaluationTransitionControllerTest {
 			}
 				
 		};
-		InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).toInterviewEvaluationComment();
+		InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).build();
 		EasyMock.expect(commentFactoryMock.createComment(applicationForm, null, stateComment.getComment(), stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
 		commentServiceMock.save(comment);
 		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("bob");
@@ -184,8 +184,8 @@ public class EvaluationTransitionControllerTest {
 	
 	@Test
 	public void shouldReturnToApplicationsViewIdDelegated() {
-		Interview interview = new InterviewBuilder().id(5).toInterview();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("ABC").latestInterview(interview).toApplicationForm();
+		Interview interview = new InterviewBuilder().id(5).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("ABC").latestInterview(interview).build();
 		StateChangeComment stateComment = new StateChangeComment();
 		stateComment.setComment("comment");
 		stateComment.setNextStatus(ApplicationFormStatus.INTERVIEW);
@@ -199,7 +199,7 @@ public class EvaluationTransitionControllerTest {
 			}
 				
 		};
-		InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).toInterviewEvaluationComment();
+		InterviewEvaluationComment comment = new InterviewEvaluationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).id(6).build();
 		EasyMock.expect(commentFactoryMock.createComment(applicationForm, null, stateComment.getComment(), stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
 		commentServiceMock.save(comment);
 
@@ -214,8 +214,8 @@ public class EvaluationTransitionControllerTest {
 	
 	@Test
 	public void shouldCreateReviewEvaluationCommentWithLatestReviewRound() {
-		ReviewRound reviewRound = new ReviewRoundBuilder().id(5).toReviewRound();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestReviewRound(reviewRound).toApplicationForm();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(5).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).latestReviewRound(reviewRound).build();
 		
 		StateChangeComment stateComment = new StateChangeComment();
 		stateComment.setComment("comment");
@@ -230,7 +230,7 @@ public class EvaluationTransitionControllerTest {
 			}
 				
 		};
-		ReviewEvaluationComment comment = new ReviewEvaluationCommentBuilder().id(6).toReviewEvaluationComment();
+		ReviewEvaluationComment comment = new ReviewEvaluationCommentBuilder().id(6).build();
 		EasyMock.expect(commentFactoryMock.createComment(applicationForm, null, stateComment.getComment(), stateComment.getType(), stateComment.getNextStatus())).andReturn(comment);
 		commentServiceMock.save(comment);
 		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("bob");

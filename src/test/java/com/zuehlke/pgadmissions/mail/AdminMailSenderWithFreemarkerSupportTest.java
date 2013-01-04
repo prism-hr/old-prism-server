@@ -41,23 +41,23 @@ public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithF
 
     @Test
     public void shouldSendApproverEmailWithRegistrationLink() throws IOException {
-        RegisteredUser admin = new RegisteredUserBuilder().id(1).email("ked@zuhlke.com").firstName("Kevin").lastName("Denver").enabled(false).activationCode("1").toUser();
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").enabled(true).activationCode("2").id(10).toUser();
-        RegisteredUser approver = new RegisteredUserBuilder().firstName("George").lastName("Smith").email("george.smith@test.com").enabled(true).activationCode("3").id(90).toUser();
+        RegisteredUser admin = new RegisteredUserBuilder().id(1).email("ked@zuhlke.com").firstName("Kevin").lastName("Denver").enabled(false).activationCode("1").build();
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").enabled(true).activationCode("2").id(10).build();
+        RegisteredUser approver = new RegisteredUserBuilder().firstName("George").lastName("Smith").email("george.smith@test.com").enabled(true).activationCode("3").id(90).build();
 
-        RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").enabled(true).activationCode("4").toUser();
-        Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).toSupervisor();
-        ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).toApprovalRound();
+        RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").enabled(true).activationCode("4").build();
+        Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).build();
+        ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).build();
 
-        RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").enabled(true).activationCode("5").toUser();
-        Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).toSupervisor();
+        RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").enabled(true).activationCode("5").build();
+        Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).build();
 
-        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor3).toApprovalRound();
+        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor3).build();
 
-        Program program = new ProgramBuilder().title("prg").administrators(admin).approver(approver, admin).toProgram();
+        Program program = new ProgramBuilder().title("prg").administrators(admin).approver(approver, admin).build();
         ApplicationForm application = new ApplicationFormBuilder().id(4).approvalRounds(previousApprovalRound, latestApprovalRound)
                 .latestApprovalRound(latestApprovalRound).applicationNumber("007").applicant(applicant)
-                .program(program).toApplicationForm();
+                .program(program).build();
 
         String expTemplate = "private/approvers/mail/application_approval_reminder.ftl";
         

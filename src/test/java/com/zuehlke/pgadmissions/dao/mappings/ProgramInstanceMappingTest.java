@@ -20,13 +20,13 @@ public class ProgramInstanceMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadProgramInstance(){
-		Program program = new ProgramBuilder().code("xxxxxx").title("hi").toProgram();
+		Program program = new ProgramBuilder().code("xxxxxx").title("hi").build();
 		save(program);
 		flushAndClearSession();
 		Date applicationDeadline = new Date();
 		
 		
-		ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(applicationDeadline).studyOption("1", "Full-time").sequence(7).applicationStartDate(new Date()).academicYear("2013").enabled(true).toProgramInstance();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(applicationDeadline).studyOption("1", "Full-time").sequence(7).applicationStartDate(new Date()).academicYear("2013").enabled(true).build();
 		sessionFactory.getCurrentSession().saveOrUpdate(programInstance);
 		assertNotNull(programInstance.getId());
 		ProgramInstance reloadedProgramInstance = (ProgramInstance) sessionFactory.getCurrentSession().get(ProgramInstance.class, programInstance.getId());

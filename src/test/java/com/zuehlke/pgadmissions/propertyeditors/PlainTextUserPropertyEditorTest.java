@@ -21,7 +21,7 @@ public class PlainTextUserPropertyEditorTest {
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("encd")).andReturn(121);
 		EasyMock.expect(userServiceMock.getUser(121)).andReturn(user);
@@ -59,7 +59,7 @@ public class PlainTextUserPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnNullIfValueIdIsNull(){			
-		editor.setValue(new RegisteredUserBuilder().toUser());
+		editor.setValue(new RegisteredUserBuilder().build());
 		assertNull(editor.getAsText());
 	}
 	
@@ -68,7 +68,7 @@ public class PlainTextUserPropertyEditorTest {
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("encd");
 		EasyMock.replay(encryptionHelperMock);
 	
-		editor.setValue(new RegisteredUserBuilder().id(5).toUser());
+		editor.setValue(new RegisteredUserBuilder().id(5).build());
 		assertEquals("encd", editor.getAsText());
 		
 		EasyMock.verify(encryptionHelperMock);

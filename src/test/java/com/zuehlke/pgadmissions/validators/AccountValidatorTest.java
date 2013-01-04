@@ -40,8 +40,8 @@ public class AccountValidatorTest {
 	public void setup() {
 	    userServiceMock = EasyMock.createMock(UserService.class);
 	    encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
-		user = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
-		currentUser = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
+		user = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
+		currentUser = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		
 		accountValidator = new AccountValidator(userServiceMock, encryptionUtilsMock);
@@ -166,7 +166,7 @@ public class AccountValidatorTest {
 	@Test
 	public void shouldRejectIfNewEmailAlreadyExists() {
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(2).username("email2@test.com").firstName("bob").lastName("bobson").
-				email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").toUser();
+				email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
 		
 		user.setEmail("email2@test.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
@@ -184,7 +184,7 @@ public class AccountValidatorTest {
 	public void shouldNotRejectIfuserWithEmailExistsButIsCUrrentUser() {
         RegisteredUser existingUser = new RegisteredUserBuilder().id(1).username("email2@test.com").firstName("bob")
                 .lastName("bobson").email("email2@test.com").confirmPassword("12345678").newPassword("12345678")
-                .password("5f4dcc3b5aa").toUser();
+                .password("5f4dcc3b5aa").build();
 		user.setEmail("email2@test.com");
 		
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");

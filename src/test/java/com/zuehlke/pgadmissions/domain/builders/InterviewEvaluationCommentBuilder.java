@@ -19,12 +19,12 @@ public class InterviewEvaluationCommentBuilder {
 	private Integer id;
 	private ApplicationFormStatus nextStatus;
 	private Interview interview;
-	
 
 	public InterviewEvaluationCommentBuilder interview(Interview interview){
 		this.interview = interview;
 		return this;
 	}
+	
 	public InterviewEvaluationCommentBuilder nextStatus(ApplicationFormStatus nextStatus){
 		this.nextStatus = nextStatus;
 		return this;
@@ -35,12 +35,10 @@ public class InterviewEvaluationCommentBuilder {
 		return this;
 	}
 	
-	
 	public InterviewEvaluationCommentBuilder application(ApplicationForm application){
 		this.application = application;
 		return this;
 	}
-	
 		
 	public InterviewEvaluationCommentBuilder type(CommentType type){
 		this.type = type;
@@ -62,7 +60,7 @@ public class InterviewEvaluationCommentBuilder {
 		return this;
 	}
 	
-	public InterviewEvaluationComment toInterviewEvaluationComment(){
+	public InterviewEvaluationComment build() {
 		InterviewEvaluationComment reviewEaluationComment = new InterviewEvaluationComment();
 		reviewEaluationComment.setApplication(application);
 		reviewEaluationComment.setComment(comment);

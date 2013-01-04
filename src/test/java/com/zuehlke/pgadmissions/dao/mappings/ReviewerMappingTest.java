@@ -34,7 +34,7 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveAndLoadReviewer() throws ParseException{
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
-		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).lastNotified(lastNotified).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).lastNotified(lastNotified).build();
 		save(reviewer);
 		assertNotNull(reviewer.getId());
 		Reviewer reloadedReviewer = (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class,reviewer.getId());
@@ -52,10 +52,10 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 	@Test	
 	public void shouldLoadReviewerWithReviewRound() throws ParseException{
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
-		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).lastNotified(lastNotified).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).lastNotified(lastNotified).build();
 		save(reviewer);
 		
-		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).application(applicationForm).toReviewRound();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).application(applicationForm).build();
 		
 		sessionFactory.getCurrentSession().save(reviewRound);
 		flushAndClearSession();
@@ -65,8 +65,8 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 	}
 	@Test
 	public void shoulLoadReviewWithReviewer() throws ParseException{
-		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).toReviewer();
-		ReviewComment review = new ReviewCommentBuilder().application(applicationForm).user(rewiewerUser).comment("hi").reviewer(reviewer).commentType(CommentType.REVIEW).toReviewComment();
+		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).build();
+		ReviewComment review = new ReviewCommentBuilder().application(applicationForm).user(rewiewerUser).comment("hi").reviewer(reviewer).commentType(CommentType.REVIEW).build();
 		
 		
 		save(reviewer, review);		
@@ -82,19 +82,19 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 	public void setUp() {
 		super.setUp();
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 		
 		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
 		
 		rewiewerUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com").username("username1")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(applicant, rewiewerUser);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}

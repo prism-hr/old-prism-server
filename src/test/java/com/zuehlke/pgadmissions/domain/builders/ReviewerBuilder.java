@@ -17,18 +17,15 @@ public class ReviewerBuilder {
 	private CheckedStatus requiresAdminNotification;
 	private Date dateAdminsNotified;
 	
-	
 	public ReviewerBuilder requiresAdminNotification(CheckedStatus requiresAdminNotification){
 		this.requiresAdminNotification = requiresAdminNotification;
 		return this;
 	}
 	
-	
 	public ReviewerBuilder dateAdminsNotified(Date dateAdminsNotified){
 		this.dateAdminsNotified = dateAdminsNotified;
 		return this;
 	}
-	
 	
 	public ReviewerBuilder reviewRound(ReviewRound reviewRound){
 		this.reviewRound = reviewRound;
@@ -56,7 +53,7 @@ public class ReviewerBuilder {
 		return this;
 	}
 	
-	public  Reviewer toReviewer(){
+	public  Reviewer build() {
 		Reviewer reviewer = new Reviewer();
 		reviewer.setId(id);
 		reviewer.setReviewRound(reviewRound);

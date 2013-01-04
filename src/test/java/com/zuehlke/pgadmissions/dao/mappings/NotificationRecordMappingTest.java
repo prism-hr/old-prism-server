@@ -28,7 +28,7 @@ public class NotificationRecordMappingTest extends AutomaticRollbackTestCase {
 		
 		NotificationType validationReminder = NotificationType.VALIDATION_REMINDER;
 		Date notificationDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
-		NotificationRecord notificationRecord = new NotificationRecordBuilder().notificationType(validationReminder).notificationDate(notificationDate).toNotificationRecord();
+		NotificationRecord notificationRecord = new NotificationRecordBuilder().notificationType(validationReminder).notificationDate(notificationDate).build();
 		sessionFactory.getCurrentSession().saveOrUpdate(notificationRecord);
 		assertNotNull(notificationRecord.getId());
 		NotificationRecord reloadedNotificationRecord = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, notificationRecord.getId());
@@ -46,14 +46,14 @@ public class NotificationRecordMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldLoadApplicationFormForNotificationRecord() throws ParseException{	
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		save(applicant, program);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-		NotificationRecord notificationRecord = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.UPDATED_NOTIFICATION).toNotificationRecord();		
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).notificationRecords(notificationRecord).toApplicationForm();
+		NotificationRecord notificationRecord = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.UPDATED_NOTIFICATION).build();		
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).notificationRecords(notificationRecord).build();
 		
 		save(application);
 		flushAndClearSession();
@@ -66,10 +66,10 @@ public class NotificationRecordMappingTest extends AutomaticRollbackTestCase {
 	public void shouldLoadUserForNotificationRecord() throws ParseException{	
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-		NotificationRecord notificationRecord = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.UPDATED_NOTIFICATION).toNotificationRecord();		
+		NotificationRecord notificationRecord = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.UPDATED_NOTIFICATION).build();		
 		
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(notificationRecord).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(notificationRecord).build();
 		save(user);
 		flushAndClearSession();
 		NotificationRecord reloadedRecord = (NotificationRecord ) sessionFactory.getCurrentSession().get(NotificationRecord.class, notificationRecord.getId());

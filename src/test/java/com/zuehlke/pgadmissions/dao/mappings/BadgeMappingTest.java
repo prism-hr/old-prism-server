@@ -19,12 +19,12 @@ public class BadgeMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadBadgeWithProgram() throws Exception {
 
-        Program program = new ProgramBuilder().code("123").title("title").toProgram();
+        Program program = new ProgramBuilder().code("123").title("title").build();
         sessionFactory.getCurrentSession().save(program);
         flushAndClearSession();
         
         
-        Badge badge = new BadgeBuilder().closingDate(new Date()).program(program).projectTitle("title").toBadge();
+        Badge badge = new BadgeBuilder().closingDate(new Date()).program(program).projectTitle("title").build();
         
 
         sessionFactory.getCurrentSession().save(badge);

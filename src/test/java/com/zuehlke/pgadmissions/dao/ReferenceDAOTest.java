@@ -26,18 +26,18 @@ public class ReferenceDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetReferenceById(){
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
 		save(user);
 		
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();	
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();	
 		
 		save(program);
 		
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		
-		ReferenceComment reference = new ReferenceCommentBuilder().user(user).comment("comment").application(application).toReferenceComment();
+		ReferenceComment reference = new ReferenceCommentBuilder().user(user).comment("comment").application(application).build();
 		sessionFactory.getCurrentSession().save(reference);
 		flushAndClearSession();
 		

@@ -52,8 +52,8 @@ public class ApprovalRestartRequestReminderTimerTaskTest {
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-			ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).toApplicationForm();
-			ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
+			ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).build();
+			ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).build();
 			sessionMock.refresh(applicationFormOne);
 			sessionMock.refresh(applicationFormTwo);
 			List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);
@@ -88,8 +88,8 @@ public class ApprovalRestartRequestReminderTimerTaskTest {
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 			EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-			ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).toApplicationForm();
-			ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
+			ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).build();
+			ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).build();
 			sessionMock.refresh(applicationFormOne);
 			sessionMock.refresh(applicationFormTwo);
 			List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);

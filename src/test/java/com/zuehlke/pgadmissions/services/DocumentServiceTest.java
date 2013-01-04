@@ -27,8 +27,8 @@ public class DocumentServiceTest {
 
 	@Test
 	public void shouldRemovePersonalStatementFromApplicationAndDelete(){
-		Document document = new DocumentBuilder().id(1).toDocument();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).personalStatement(document).toApplicationForm();
+		Document document = new DocumentBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).personalStatement(document).build();
 		documentDAOMock.deleteDocument(document);
 		applicationDAOMock.save(applicationForm);
 		EasyMock.replay(documentDAOMock, applicationDAOMock);
@@ -40,7 +40,7 @@ public class DocumentServiceTest {
 	@Test
 	public void shouldNotFailIfPersonalStatementIsNull(){
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 
 		applicationDAOMock.save(applicationForm);
 		EasyMock.replay(documentDAOMock, applicationDAOMock);
@@ -50,8 +50,8 @@ public class DocumentServiceTest {
 	}
 	@Test
 	public void shouldRemoveCVFromApplicationAndDelete(){
-		Document document = new DocumentBuilder().id(1).toDocument();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).cv(document).toApplicationForm();
+		Document document = new DocumentBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).cv(document).build();
 		documentDAOMock.deleteDocument(document);
 		applicationDAOMock.save(applicationForm);
 		EasyMock.replay(documentDAOMock, applicationDAOMock);
@@ -62,7 +62,7 @@ public class DocumentServiceTest {
 	
 	@Test
 	public void shouldNotFailIfCVIsNull(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		applicationDAOMock.save(applicationForm);
 		EasyMock.replay(documentDAOMock, applicationDAOMock);
 		documentService.deleteCV(applicationForm);
@@ -72,8 +72,8 @@ public class DocumentServiceTest {
 	
 	@Test
 	public void shouldRemoveQualificationProtofOfAwardAndDelete(){
-		Document document = new DocumentBuilder().id(1).toDocument();
-		Qualification qualification = new QualificationBuilder().id(1).proofOfAward(document).toQualification();
+		Document document = new DocumentBuilder().id(1).build();
+		Qualification qualification = new QualificationBuilder().id(1).proofOfAward(document).build();
 		documentDAOMock.deleteDocument(document);
 		qualificationDAOMock.save(qualification);
 		EasyMock.replay(documentDAOMock, qualificationDAOMock);
@@ -85,7 +85,7 @@ public class DocumentServiceTest {
 	@Test
 	public void shouldNotFailIfQualificationProofOfAwardIsNull(){
 		
-		Qualification qualification = new QualificationBuilder().id(1).toQualification();
+		Qualification qualification = new QualificationBuilder().id(1).build();
 		qualificationDAOMock.save(qualification);
 		EasyMock.replay(documentDAOMock, qualificationDAOMock);
 		documentService.deleteQualificationProofOfAward(qualification);
@@ -96,7 +96,7 @@ public class DocumentServiceTest {
 	@Test
 	public void shouldDelegateSaveToDAO() {
 
-		Document document = new DocumentBuilder().id(1).toDocument();
+		Document document = new DocumentBuilder().id(1).build();
 		documentDAOMock.save(document);
 		EasyMock.replay(documentDAOMock);
 		documentService.save(document);
@@ -107,7 +107,7 @@ public class DocumentServiceTest {
 	@Test
 	public void shouldDelegateDeleteToDAO() {
 
-		Document document = new DocumentBuilder().id(1).toDocument();
+		Document document = new DocumentBuilder().id(1).build();
 		documentDAOMock.deleteDocument(document);
 		EasyMock.replay(documentDAOMock);
 		documentService.delete(document);
@@ -117,7 +117,7 @@ public class DocumentServiceTest {
 	@Test
 	public void shouldGetDocumentFroMDAO() {
 
-		Document document = new DocumentBuilder().id(1).toDocument();
+		Document document = new DocumentBuilder().id(1).build();
 		EasyMock.expect(documentDAOMock.getDocumentbyId(1)).andReturn(document);
 		EasyMock.replay(documentDAOMock);
 		Document loadedDocument = documentService.getDocumentById(1);

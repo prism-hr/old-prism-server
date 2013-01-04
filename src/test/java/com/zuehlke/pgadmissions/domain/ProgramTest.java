@@ -16,7 +16,7 @@ public class ProgramTest {
 	@Test
 	public void shouldCreateProgram() {
 		Program program = new ProgramBuilder().id(1).administrators(new RegisteredUser()).approver(new RegisteredUser()).code("code")
-				.reviewers(new RegisteredUser()).title("title").toProgram();
+				.reviewers(new RegisteredUser()).title("title").build();
 		Assert.assertNotNull(program.getCode());
 		Assert.assertNotNull(program.getTitle());
 		Assert.assertNotNull(program.getAdministrators());
@@ -27,57 +27,57 @@ public class ProgramTest {
 
 	@Test
 	public void shouldReturnTrueIfUserIsApproverOfProgram() {
-		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+		Program program = new ProgramBuilder().id(1).approver(approver).build();
 		assertTrue(program.isApprover(approver));
 	}
 
 	@Test
 	public void shouldReturnFalseIfUserIsNotApproverOfProgram() {
-		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+		Program program = new ProgramBuilder().id(1).build();
 		assertFalse(program.isApprover(approver));
 	}
 
 	@Test
 	public void shouldReturnFalseIfUserIsNotApprover() {
-		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+		Program program = new ProgramBuilder().id(1).approver(approver).build();
 		assertFalse(program.isApprover(approver));
 	}
 
 	@Test
 	public void shouldReturnTrueIfUserIsAdminOfProgram() {
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).administrators(admin).toProgram();
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
+		Program program = new ProgramBuilder().id(1).administrators(admin).build();
 		assertTrue(program.isAdministrator(admin));
 	}
 	
 	@Test
 	public void shouldReturnFalseIfUserIsNotAdminOfProgram() {
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
+		Program program = new ProgramBuilder().id(1).build();
 		assertFalse(program.isAdministrator(admin));
 	}
 	
 	@Test
 	public void shouldReturnFalseIfUserIsNotAdmin() {
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).administrators(admin).toProgram();
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+		Program program = new ProgramBuilder().id(1).administrators(admin).build();
 		assertFalse(program.isAdministrator(admin));
 	}
 	
 	@Test
 	public void shouldReturnTrueIfUserInterviewerOfProgram(){
-		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).interviewers(interviewer).toProgram();
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).build()).build();
+		Program program = new ProgramBuilder().id(1).interviewers(interviewer).build();
 		assertTrue(program.isInterviewerOfProgram(interviewer));
 	}
 	
 	@Test
 	public void shouldReturnFalseIfUserIsNotInterviewerOfProgram(){
-		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).build()).build();
+		Program program = new ProgramBuilder().id(1).build();
 		assertFalse(program.isInterviewerOfProgram(interviewer));
 	}
 }

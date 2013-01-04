@@ -14,7 +14,7 @@ public class DocumentTest {
 	@Test
 	public void shouldCreateDocument() throws ParseException {
 		Document document = new DocumentBuilder().id(1).fileName("file.txt").type(DocumentType.CV)
-				.dateUploaded(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).toDocument();
+				.dateUploaded(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).build();
 		Assert.assertNotNull(document.getFileName());
 		Assert.assertNotNull(document.getId());
 		Assert.assertNotNull(document.getType());

@@ -42,8 +42,8 @@ public class ReviewerReminderTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		Reviewer reviewerOne = new ReviewerBuilder().id(1).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).toReviewer();
-		Reviewer reviewerTwo = new ReviewerBuilder().id(2).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).toReviewer();
+		Reviewer reviewerOne = new ReviewerBuilder().id(1).user(new RegisteredUserBuilder().email("hello@test.com").build()).build();
+		Reviewer reviewerTwo = new ReviewerBuilder().id(2).user(new RegisteredUserBuilder().email("hello@test.com").build()).build();
 		sessionMock.refresh(reviewerOne);
 		sessionMock.refresh(reviewerTwo);
 		List<Reviewer> reviewerList = Arrays.asList(reviewerOne, reviewerTwo);
@@ -77,8 +77,8 @@ public class ReviewerReminderTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		Reviewer reviewerOne = new ReviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(1).toReviewer();
-		Reviewer reviewerTwo = new ReviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(2).toReviewer();
+		Reviewer reviewerOne = new ReviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(1).build();
+		Reviewer reviewerTwo = new ReviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(2).build();
 		sessionMock.refresh(reviewerOne);
 		sessionMock.refresh(reviewerTwo);
 		EasyMock.expect(reviewerDAOMock.getReviewersDueReminder()).andReturn(Arrays.asList(reviewerOne, reviewerTwo));

@@ -22,8 +22,8 @@ public class CommentFactoryTest {
 
 	@Test
 	public void shouldReturnCorrectCommentType(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+		RegisteredUser user = new RegisteredUserBuilder().id(8).build();	
 		String strComment ="bob";
 		CommentFactory commentFactory = new CommentFactory();
 		

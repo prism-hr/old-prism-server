@@ -76,7 +76,7 @@ public class ValidationTransitionControllerTest {
 	
 	@Test
 	public void shouldResolveViewForApplicationForm() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).build();
 		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("view");
 		EasyMock.replay(stateTransitionViewResolverMock);
 		assertEquals("view", controller.getStateTransitionView(applicationForm));
@@ -84,9 +84,9 @@ public class ValidationTransitionControllerTest {
 	
 	@Test
 	public void shouldRejectClosingDateIfDateIsInThePast() {
-	    Program program = new ProgramBuilder().id(1).toProgram();
-	    final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
-	    ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+	    Program program = new ProgramBuilder().id(1).build();
+	    final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+	    ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
 	    
 	    EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
 	    
@@ -111,9 +111,9 @@ public class ValidationTransitionControllerTest {
 	
 	@Test
     public void shouldRejectProjectTitleIfLongerThan500() {
-        Program program = new ProgramBuilder().id(1).toProgram();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
-        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+        Program program = new ProgramBuilder().id(1).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
         
         EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
         
@@ -142,9 +142,9 @@ public class ValidationTransitionControllerTest {
 	
 	@Test
     public void shouldAllowClosingDateInThePastWithin1MonthFromNow() {
-	    Program program = new ProgramBuilder().id(1).toProgram();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
-        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+	    Program program = new ProgramBuilder().id(1).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
         
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
         Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(Calendar.getInstance().getTime(), -1);
@@ -177,9 +177,9 @@ public class ValidationTransitionControllerTest {
 	
     @Test
     public void shouldAllowClosingDateInThePastIfDateExistsInBadgeClosingDate() throws ParseException {
-        Program program = new ProgramBuilder().id(1).toProgram();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
-        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+        Program program = new ProgramBuilder().id(1).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+        ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
         Date twoMontshAgo = org.apache.commons.lang.time.DateUtils.addMonths(Calendar.getInstance().getTime(), -1);
         
@@ -205,9 +205,9 @@ public class ValidationTransitionControllerTest {
 	
 	@Test
 	public void shouldCreateValidationCommentWithQUestionaluesIfNoValidationErrors() {
-	    Program program = new ProgramBuilder().id(1).toProgram();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).toApplicationForm();
-		ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).toValidationComment();
+	    Program program = new ProgramBuilder().id(1).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("1").id(1).program(program).build();
+		ValidationComment comment = new ValidationCommentBuilder().qualifiedForPhd(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.NO).englishCompentencyOk(ValidationQuestionOptions.UNSURE).nextStatus(ApplicationFormStatus.APPROVAL).comment("comment").type(CommentType.VALIDATION).id(6).build();
 		
 		EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
 		
@@ -240,11 +240,11 @@ public class ValidationTransitionControllerTest {
         
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("abc")).andReturn(1);
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("def")).andReturn(2);
-		Document documentOne = new DocumentBuilder().id(1).toDocument();
-		Document documentTwo = new DocumentBuilder().id(2).toDocument();
+		Document documentOne = new DocumentBuilder().id(1).build();
+		Document documentTwo = new DocumentBuilder().id(2).build();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(documentOne);
 		EasyMock.expect(documentServiceMock.getDocumentById(2)).andReturn(documentTwo);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
 				documentPropertyEditorMock, badgeServiceMock, messageSourceMock) {
@@ -256,7 +256,7 @@ public class ValidationTransitionControllerTest {
 		};
 		DateFormat format = new SimpleDateFormat("dd MMM yyyy");
 		
-		ValidationComment comment = new ValidationCommentBuilder().comment("comment").type(CommentType.VALIDATION).documents(documentOne, documentTwo).id(6).toValidationComment();
+		ValidationComment comment = new ValidationCommentBuilder().comment("comment").type(CommentType.VALIDATION).documents(documentOne, documentTwo).id(6).build();
 		badgeServiceMock.save(EasyMock.anyObject(Badge.class));
 		commentServiceMock.save(comment);
 		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("view");
@@ -272,7 +272,7 @@ public class ValidationTransitionControllerTest {
 	public void shouldAddAPplicationFormClosingDateIfExistInPast() throws ParseException {
 		Program program = new Program();
 		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().batchDeadline(pastDate).id(1).program(program).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().batchDeadline(pastDate).id(1).program(program).build();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
 				documentPropertyEditorMock, badgeServiceMock, messageSourceMock){
@@ -290,7 +290,7 @@ public class ValidationTransitionControllerTest {
 	public void shouldAddAPplicationFormProjectTitleIfExistAndClosingDateInPast() throws ParseException {
 		Program program = new Program();
 		Date pastDate = new SimpleDateFormat("yyyy/MM/dd").parse("2003/09/09");
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").batchDeadline(pastDate).id(1).program(program).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").batchDeadline(pastDate).id(1).program(program).build();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
 				documentPropertyEditorMock, badgeServiceMock, messageSourceMock){
@@ -307,7 +307,7 @@ public class ValidationTransitionControllerTest {
 	
 	public void shouldAddAPplicationFormProjectTitleIfExistAndClosingDateDontExist() throws ParseException {
 		Program program = new Program();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").id(1).program(program).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().projectTitle("title").id(1).program(program).build();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
 				documentPropertyEditorMock, badgeServiceMock, messageSourceMock) {

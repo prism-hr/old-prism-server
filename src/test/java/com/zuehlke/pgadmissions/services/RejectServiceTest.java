@@ -52,13 +52,13 @@ public class RejectServiceTest {
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
 		
 
-		admin = new RegisteredUserBuilder().id(324).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		approver = new RegisteredUserBuilder().id(22414).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		Program program = new ProgramBuilder().id(10023).administrators(admin).approver(approver).toProgram();
-		application = new ApplicationFormBuilder().id(200).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		admin = new RegisteredUserBuilder().id(324).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
+		approver = new RegisteredUserBuilder().id(22414).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+		Program program = new ProgramBuilder().id(10023).administrators(admin).approver(approver).build();
+		application = new ApplicationFormBuilder().id(200).program(program).status(ApplicationFormStatus.VALIDATION).build();
 
-		reason1 = new RejectReasonBuilder().id(1).text("idk").toRejectReason();
-		reason2 = new RejectReasonBuilder().id(2).text("idc").toRejectReason();
+		reason1 = new RejectReasonBuilder().id(1).text("idk").build();
+		reason2 = new RejectReasonBuilder().id(2).text("idc").build();
 		
 		
 		rejectService = new RejectService(applicationDaoMock, rejectDaoMock, eventFactoryMock);
@@ -77,18 +77,18 @@ public class RejectServiceTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowIAEIfWrongApprover() {
-		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(3423).username("wrong approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(3423).username("wrong approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
 		rejectService.moveApplicationToReject(application, wrongApprover, new Rejection());
 	}
 
 	@Test
 	public void shouldMoveToReject() {
-		Rejection rejection = new RejectionBuilder().id(1).toRejection();
+		Rejection rejection = new RejectionBuilder().id(1).build();
 		
 		applicationDaoMock.save(application);
 		EasyMock.expectLastCall();
 		
-		StateChangeEvent event = new StateChangeEventBuilder().id(1).toEvent();
+		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.REJECTED)).andReturn(event);
 		
 		EasyMock.replay(applicationDaoMock, eventFactoryMock);
@@ -107,7 +107,7 @@ public class RejectServiceTest {
 
 	@Test
 	public void shouldMoveToRejectAsAdministrator() {
-		Rejection rejection = new RejectionBuilder().id(1).toRejection();
+		Rejection rejection = new RejectionBuilder().id(1).build();
 		applicationDaoMock.save(application);
 		EasyMock.expectLastCall();
 		EasyMock.replay(applicationDaoMock);
@@ -138,7 +138,7 @@ public class RejectServiceTest {
 	
 	@Test
 	public void shouldGetRejectReasonById(){
-		RejectReason rejectReason = new RejectReasonBuilder().id(1).toRejectReason();
+		RejectReason rejectReason = new RejectReasonBuilder().id(1).build();
 		EasyMock.expect(rejectDaoMock.getRejectReasonById(1)).andReturn(rejectReason);
 		EasyMock.replay(rejectDaoMock);
 		

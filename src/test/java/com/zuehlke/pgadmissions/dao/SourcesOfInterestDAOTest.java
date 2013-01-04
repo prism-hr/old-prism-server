@@ -17,15 +17,15 @@ public class SourcesOfInterestDAOTest extends AutomaticRollbackTestCase {
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerException() {
         SourcesOfInterestDAO sourcesOfInterestDAO = new SourcesOfInterestDAO();
-        SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).name("ZZZZZZ").code("ZZ").enabled(true).toSourcesOfInterest();
+        SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).name("ZZZZZZ").code("ZZ").enabled(true).build();
         sourcesOfInterestDAO.getSourcesOfInterestById(sourcesOfInterest.getId());
     }
 
     @Test
     public void shouldGetAllSourcesOfInterestInNameOrder() {
         BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from SOURCES_OF_INTEREST").uniqueResult();
-        SourcesOfInterest sourcesOfInterest1 = new SourcesOfInterestBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toSourcesOfInterest();
-        SourcesOfInterest sourcesOfInterest2 = new SourcesOfInterestBuilder().name("AAAAAAAA").code("AA").enabled(true).toSourcesOfInterest();
+        SourcesOfInterest sourcesOfInterest1 = new SourcesOfInterestBuilder().name("ZZZZZZ").code("ZZ").enabled(true).build();
+        SourcesOfInterest sourcesOfInterest2 = new SourcesOfInterestBuilder().name("AAAAAAAA").code("AA").enabled(true).build();
         save(sourcesOfInterest1, sourcesOfInterest2);
         flushAndClearSession();
         SourcesOfInterestDAO sourcesOfInterestDAO = new SourcesOfInterestDAO(sessionFactory);
@@ -38,8 +38,8 @@ public class SourcesOfInterestDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetSourcesOfInterestById() {
-        SourcesOfInterest sourcesOfInterest1 = new SourcesOfInterestBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toSourcesOfInterest();
-        SourcesOfInterest sourcesOfInterest2 = new SourcesOfInterestBuilder().name("mmmmmm").code("mm").enabled(true).toSourcesOfInterest();
+        SourcesOfInterest sourcesOfInterest1 = new SourcesOfInterestBuilder().name("ZZZZZZ").code("ZZ").enabled(true).build();
+        SourcesOfInterest sourcesOfInterest2 = new SourcesOfInterestBuilder().name("mmmmmm").code("mm").enabled(true).build();
 
         save(sourcesOfInterest1, sourcesOfInterest2);
         flushAndClearSession();
@@ -52,8 +52,8 @@ public class SourcesOfInterestDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetAllEnabledSourcesOfInterest() {
         BigInteger numberOfSourcesOfInterest = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from SOURCES_OF_INTEREST WHERE enabled = true").uniqueResult();
-        SourcesOfInterest sourcesOfInterest1 = new SourcesOfInterestBuilder().name("ZZZZZZ").code("ZZ").enabled(false).toSourcesOfInterest();
-        SourcesOfInterest sourcesOfInterest2 = new SourcesOfInterestBuilder().name("AAAAAAAA").code("AA").enabled(true).toSourcesOfInterest();
+        SourcesOfInterest sourcesOfInterest1 = new SourcesOfInterestBuilder().name("ZZZZZZ").code("ZZ").enabled(false).build();
+        SourcesOfInterest sourcesOfInterest2 = new SourcesOfInterestBuilder().name("AAAAAAAA").code("AA").enabled(true).build();
         save(sourcesOfInterest1, sourcesOfInterest2);
         flushAndClearSession();
         SourcesOfInterestDAO sourcesOfInterestDAO = new SourcesOfInterestDAO(sessionFactory);

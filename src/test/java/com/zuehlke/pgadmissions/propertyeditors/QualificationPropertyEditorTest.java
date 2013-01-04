@@ -19,7 +19,7 @@ public class QualificationPropertyEditorTest {
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
-		Qualification qualification = new QualificationBuilder().id(1).toQualification();
+		Qualification qualification = new QualificationBuilder().id(1).build();
 		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qualification);
 		EasyMock.replay(qualificationServiceMock);
 		
@@ -52,13 +52,13 @@ public class QualificationPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnNullIfValueIdIsNull(){			
-		editor.setValue(new QualificationBuilder().toQualification());
+		editor.setValue(new QualificationBuilder().build());
 		assertNull(editor.getAsText());
 	}
 	
 	@Test	
 	public void shouldReturnIdAsString(){			
-		editor.setValue(new QualificationBuilder().id(5).toQualification());
+		editor.setValue(new QualificationBuilder().id(5).build());
 		assertEquals("5", editor.getAsText());
 	}
 	

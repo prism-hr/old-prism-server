@@ -18,9 +18,7 @@ public class ProgramBuilder {
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
 	private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
 	private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
-	
 	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
-	
 	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 	
 	public ProgramBuilder enabled(boolean enabled){
@@ -39,7 +37,6 @@ public class ProgramBuilder {
 		}
 		return this;
 	}
-	
 	
 	public ProgramBuilder approver(RegisteredUser... approvers){
 		for (RegisteredUser approver : approvers) {
@@ -86,15 +83,13 @@ public class ProgramBuilder {
 		this.title = title;
 		return this;
 	}
-
 	
-	public Program toProgram(){
+	public Program build() {
 		Program program = new Program();
 		program.setId(id);
 		program.setCode(code);
 		program.setTitle(title);
 		program.setEnabled(enabled);
-		
 		program.getApprovers().addAll(approvers);
 		program.getAdministrators().addAll(administrators);
 		program.getProgramReviewers().addAll(reviewers);

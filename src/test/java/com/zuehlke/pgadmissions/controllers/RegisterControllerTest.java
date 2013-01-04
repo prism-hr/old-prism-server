@@ -72,24 +72,24 @@ public class RegisterControllerTest {
 
 	@Test
 	public void shouldReturnRegisterPage() {
-		assertEquals("public/register/register_applicant", registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).toUser(), new MockHttpServletRequest()));
+		assertEquals("public/register/register_applicant", registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).build(), new MockHttpServletRequest()));
 	}
 
 	@Test
 	public void shouldRedirectToDirectURLIfUserExistsIsEnabledAndHasADirectURL() {
 		assertEquals("redirect:/directHere",
-				registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).directURL("/directHere").toUser(), new MockHttpServletRequest()));
+				registerController.getRegisterPage(new RegisteredUserBuilder().enabled(true).id(1).directURL("/directHere").build(), new MockHttpServletRequest()));
 	}
 
 	@Test
 	public void shouldReturnRegisterPageIfUserExistsIsNOTEnabledAndHasADirectURL() {
 		assertEquals("public/register/register_applicant",
-				registerController.getRegisterPage(new RegisteredUserBuilder().enabled(false).id(1).directURL("/directHere").toUser(), new MockHttpServletRequest()));
+				registerController.getRegisterPage(new RegisteredUserBuilder().enabled(false).id(1).directURL("/directHere").build(), new MockHttpServletRequest()));
 	}
 	
 	@Test
 	public void shouldSaveRedirectUrlInSessionIfUserExistsIsNOTEnabledAndHasADirectUrl() {
-	    RegisteredUser user = new RegisteredUserBuilder().enabled(false).directURL("/directHere").id(1).toUser();
+	    RegisteredUser user = new RegisteredUserBuilder().enabled(false).directURL("/directHere").id(1).build();
 	    MockHttpServletRequest requestMock = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         requestMock.setSession(session);
@@ -102,7 +102,7 @@ public class RegisterControllerTest {
 
 	@Test
 	public void shouldFindPendingUserByActivationCode() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("Abc")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		assertEquals(user, registerController.getPendingUser("Abc", null));
@@ -117,7 +117,7 @@ public class RegisterControllerTest {
 	
 	@Test
 	public void shouldSetDirectToUrlOnUserIfPRovided() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("Abc")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		assertEquals(user, registerController.getPendingUser("Abc", "direct/to/here"));
@@ -133,7 +133,7 @@ public class RegisterControllerTest {
 
 	@Test
 	public void shouldReturnToRegistrationPageIfErrors() {
-		RegisteredUser pendingUser = new RegisteredUserBuilder().id(4).toUser();
+		RegisteredUser pendingUser = new RegisteredUserBuilder().id(4).build();
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, registrationServiceMock);
@@ -146,8 +146,8 @@ public class RegisterControllerTest {
 	
 	@Test
 	public void shouldShowRegistrationNotCompleteViewIfUserRegistersWithoutRegistrationCode() {
-        RegisteredUser pendingUser = new RegisteredUserBuilder().email("test@test.com").toUser();
-        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("test@test.com").enabled(false).activationCode("abc").pendingRoleNotifications(new PendingRoleNotificationBuilder().id(1).notificationDate(new Date()).toPendingRoleNotification(),new PendingRoleNotificationBuilder().id(2).notificationDate(new Date()).toPendingRoleNotification()).toUser();
+        RegisteredUser pendingUser = new RegisteredUserBuilder().email("test@test.com").build();
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("test@test.com").enabled(false).activationCode("abc").pendingRoleNotifications(new PendingRoleNotificationBuilder().id(1).notificationDate(new Date()).build(),new PendingRoleNotificationBuilder().id(2).notificationDate(new Date()).build()).build();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
         EasyMock.expect(userServiceMock.getUserByEmailDisabledAccountsOnly(pendingUser.getEmail())).andReturn(databaseUser);
@@ -162,7 +162,7 @@ public class RegisterControllerTest {
 
 	@Test
 	public void shouldCreateAndSaveNewUserIfNoErrors() {
-		RegisteredUser pendingUser = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser pendingUser = new RegisteredUserBuilder().id(1).build();
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		registrationServiceMock.updateOrSaveUser(pendingUser, null);
@@ -178,7 +178,7 @@ public class RegisterControllerTest {
 	@Test
 	public void shouldGetQueryStringFromSessionAndSetOnUserIfAvailable() {
 		String queryString = "queryString";
-		RegisteredUser pendingUser = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser pendingUser = new RegisteredUserBuilder().id(1).build();
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 
@@ -197,7 +197,7 @@ public class RegisterControllerTest {
 
 	@Test
 	public void shouldResendConfirmationEmail() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 
 		EasyMock.expect(userServiceMock.getUserByActivationCode("abc")).andReturn(user);
 		registrationServiceMock.sendConfirmationEmail(user);
@@ -220,8 +220,8 @@ public class RegisterControllerTest {
 	@Test
 	public void shouldActivateAccountAndRedirectToApplicationListIfNoDirectURL() throws ParseException {
 		String activationCode = "ul5oaij68186jbcg";
-		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(1)
-				.activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).id(1)
+				.activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
 		userServiceMock.save(user);
 		EasyMock.replay(userServiceMock);
@@ -234,8 +234,8 @@ public class RegisterControllerTest {
 	@Test
 	public void shouldActivateAccountAndRedirectToDirectURLIfProvided() throws ParseException {
 		String activationCode = "ul5oaij68186jbcg";
-		RegisteredUser user = new RegisteredUserBuilder().directURL("/directLink").role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole())
-				.id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().directURL("/directLink").role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build())
+				.id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
 		userServiceMock.save(user);
 		EasyMock.replay(userServiceMock);
@@ -249,8 +249,8 @@ public class RegisterControllerTest {
     public void shouldActivateAccountAndRedirectToDirectURLIfProvidedAtRegistrationTime() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
         
-        RegisteredUser user = new RegisteredUserBuilder().directURL(null).role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole())
-                .id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
+        RegisteredUser user = new RegisteredUserBuilder().directURL(null).role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build())
+                .id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").build();
         
         MockHttpServletRequest requestMock = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
@@ -277,10 +277,10 @@ public class RegisterControllerTest {
 		String activationCode = "ul5oaij68186jbcg";
 		String queryString = "queryString";
 		Date batchDeadline = new SimpleDateFormat("dd-MMM-yyyy").parse("01-Mar-2012");
-		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").build();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).originalApplicationQueryString(queryString).activationCode(activationCode).enabled(false)
-				.username("email@email.com").email("email@email.com").password("1234").toUser();
+				.username("email@email.com").email("email@email.com").password("1234").build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
 		EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(new String[] { "code", "http://www.url.com", "01-Mar-2012", "project title" });
 		EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
@@ -299,10 +299,10 @@ public class RegisterControllerTest {
 		String activationCode = "ul5oaij68186jbcg";
 		String queryString = "queryString";
 
-		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").build();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).originalApplicationQueryString(queryString).activationCode(activationCode).enabled(false)
-				.username("email@email.com").email("email@email.com").password("1234").toUser();
+				.username("email@email.com").email("email@email.com").password("1234").build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
 		EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(new String[] { "code", "http://www.url.com", "bob", "project title" });
 		EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
@@ -321,10 +321,10 @@ public class RegisterControllerTest {
 		String activationCode = "ul5oaij68186jbcg";
 		String queryString = "queryString";
 
-		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").build();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).originalApplicationQueryString(queryString).activationCode(activationCode).enabled(false)
-				.username("email@email.com").email("email@email.com").password("1234").toUser();
+				.username("email@email.com").email("email@email.com").password("1234").build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
 		EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(new String[] { "code", "http://bob", null, "project title" });
 		EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
@@ -342,10 +342,10 @@ public class RegisterControllerTest {
 		String activationCode = "ul5oaij68186jbcg";
 		String queryString = "queryString";
 
-		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").toApplicationForm();
+		Program program = new ProgramBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").build();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).originalApplicationQueryString(queryString).activationCode(activationCode).enabled(false)
-				.username("email@email.com").email("email@email.com").password("1234").toUser();
+				.username("email@email.com").email("email@email.com").password("1234").build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
 		EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(new String[] { "code", null, null, null });
 		EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);

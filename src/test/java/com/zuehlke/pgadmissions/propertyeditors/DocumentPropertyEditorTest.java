@@ -21,7 +21,7 @@ public class DocumentPropertyEditorTest {
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-		Document document = new DocumentBuilder().id(1).toDocument();
+		Document document = new DocumentBuilder().id(1).build();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
 		EasyMock.replay(encryptionHelperMock, documentServiceMock);
 		
@@ -56,13 +56,13 @@ public class DocumentPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnNullIfValueIdIsNull(){			
-		editor.setValue(new DocumentBuilder().toDocument());
+		editor.setValue(new DocumentBuilder().build());
 		assertNull(editor.getAsText());
 	}
 	
 	@Test	
 	public void shouldReturnEncryptedIdAsString(){			
-		editor.setValue(new DocumentBuilder().id(5).toDocument());
+		editor.setValue(new DocumentBuilder().id(5).build());
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.replay(encryptionHelperMock);
 		assertEquals("bob", editor.getAsText());

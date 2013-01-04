@@ -29,7 +29,7 @@ public class EthnicityPropertyEditorTest {
 	public void shouldLoadByIdAndSetAsValue() {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		
-		Ethnicity ethnicity = new EthnicityBuilder().id(1).toEthnicity();
+		Ethnicity ethnicity = new EthnicityBuilder().id(1).build();
 		EasyMock.expect(ethnicityServiceMock.getEthnicityById(1)).andReturn(ethnicity);
 		EasyMock.replay(ethnicityServiceMock,encryptionHelperMock);
 
@@ -66,7 +66,7 @@ public class EthnicityPropertyEditorTest {
 
 	@Test
 	public void shouldReturnNullIfValueIdIsNull() {
-		editor.setValue(new EthnicityBuilder().toEthnicity());
+		editor.setValue(new EthnicityBuilder().build());
 		assertNull(editor.getAsText());
 	}
 
@@ -74,7 +74,7 @@ public class EthnicityPropertyEditorTest {
 	public void shouldReturnEncryptedIdAsString() {
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.replay(encryptionHelperMock);
-		editor.setValue(new EthnicityBuilder().id(5).toEthnicity());
+		editor.setValue(new EthnicityBuilder().id(5).build());
 		assertEquals("bob", editor.getAsText());
 	}
 }

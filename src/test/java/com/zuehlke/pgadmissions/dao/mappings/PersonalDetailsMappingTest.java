@@ -57,7 +57,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
                 .residenceDomicile(country3)
                 .requiresVisa(true)
                 .englishFirstLanguage(true)
-                .phoneNumber("abc").toPersonalDetails();
+                .phoneNumber("abc").build();
         
 		sessionFactory.getCurrentSession().save(personalDetails);
 		
@@ -92,7 +92,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 	    PassportInformation passportInformation = new PassportInformationBuilder().passportNumber("000")
 	            .nameOnPassport("Kevin Francis Denver")
 	            .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
-	            .toPassportInformation();
+	            .build();
 	    
 	    PersonalDetails personalDetails = new PersonalDetailsBuilder()
                 .country(country1)
@@ -107,7 +107,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
                 .englishFirstLanguage(true)
                 .phoneNumber("abc")
                 .applicationForm(applicationForm)
-                .toPersonalDetails();
+                .build();
 	    
 	    personalDetails.setPassportInformation(passportInformation);
 	    
@@ -126,18 +126,18 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
         LanguageQualification languageQualification1 = new LanguageQualificationBuilder().dateOfExamination(new Date())
                 .examTakenOnline(false).languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1")
                 .otherQualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
-                .toLanguageQualification();
+                .build();
         
         LanguageQualification languageQualification2 = new LanguageQualificationBuilder().dateOfExamination(new Date())
                 .examTakenOnline(false).languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1")
                 .otherQualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
-                .toLanguageQualification();
+                .build();
 
         PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1)
                 .dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email")
                 .firstName("firstName").title(Title.BROTHER).gender(Gender.MALE).lastName("lastname")
                 .residenceDomicile(country3).requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
-                .applicationForm(applicationForm).toPersonalDetails();
+                .applicationForm(applicationForm).build();
         
         personalDetails.addLanguageQualification(languageQualification1);
         personalDetails.addLanguageQualification(languageQualification2);
@@ -169,10 +169,10 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldSaveAndLoadPersonalDetailsWithCandiateNationalities() throws Exception {
-		Language nationality1 = new LanguageBuilder().name("aaaaa").code("aa").enabled(true).toLanguage();
-		Language nationality2 = new LanguageBuilder().name("bbbbb").code("bb").enabled(true).toLanguage();
-		Language nationality3 = new LanguageBuilder().name("ccccc").code("cc").enabled(true).toLanguage();
-		Language nationality4 = new LanguageBuilder().name("ddddd").code("dd").enabled(true).toLanguage();
+		Language nationality1 = new LanguageBuilder().name("aaaaa").code("aa").enabled(true).build();
+		Language nationality2 = new LanguageBuilder().name("bbbbb").code("bb").enabled(true).build();
+		Language nationality3 = new LanguageBuilder().name("ccccc").code("cc").enabled(true).build();
+		Language nationality4 = new LanguageBuilder().name("ddddd").code("dd").enabled(true).build();
 		
 		sessionFactory.getCurrentSession().save(nationality1);
 		sessionFactory.getCurrentSession().save(nationality2);
@@ -186,7 +186,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE)
 				.englishFirstLanguage(false).requiresVisa(false).phoneNumber("abc")
 				.lastName("lastname").residenceDomicile(country3).applicationForm(applicationForm)
-				.toPersonalDetails();
+				.build();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
 		
@@ -217,20 +217,20 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 	public void setUp() {
 		super.setUp();
 
-		country1 = new CountryBuilder().name("AA").code("AA").enabled(true).toCountry();
-		country2 = new CountryBuilder().name("CC").code("CC").enabled(true).toCountry();
-		country3 = new DomicileBuilder().name("DD").code("DD").enabled(true).toDomicile();
+		country1 = new CountryBuilder().name("AA").code("AA").enabled(true).build();
+		country2 = new CountryBuilder().name("CC").code("CC").enabled(true).build();
+		country3 = new DomicileBuilder().name("DD").code("DD").enabled(true).build();
 		save(country1, country2, country3);
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();		
 		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
 		save(applicant);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}

@@ -18,7 +18,7 @@ public class ErrorControllerTest {
 	@Test
 	public void shouldSetCurrentUserOnModelAndReturnErrorView(){
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).build();
 		authenticationToken.setDetails(currentUser);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);

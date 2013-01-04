@@ -22,13 +22,13 @@ public class PersonPropertyEditorTest {
 	public void shouldParseAndSetAsValue() {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(234);
 		EasyMock.replay(encryptionHelperMock);
-		Person existingPerson = new PersonBuilder().id(234).toPerson();
+		Person existingPerson = new PersonBuilder().id(234).build();
 		EasyMock.expect(personDAOMock.getPersonWithId(234)).andReturn(existingPerson);
 		EasyMock.replay(personDAOMock);
 		editor.setAsText("{\"id\": \"enc\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" }");
 		
 		EasyMock.verify(encryptionHelperMock);
-		Person expected = new PersonBuilder().id(234).firstname("Mark").lastname("Johnson").email("test@gmail.com").toPerson();
+		Person expected = new PersonBuilder().id(234).firstname("Mark").lastname("Johnson").email("test@gmail.com").build();
 		Person registryUser = (Person) editor.getValue();
 		assertSame(existingPerson, registryUser);
 		assertEquals(expected.getFirstname(), registryUser.getFirstname());
@@ -71,7 +71,7 @@ public class PersonPropertyEditorTest {
 		EasyMock.expect(encryptionHelperMock.encrypt(121)).andReturn("encrypted");
 		EasyMock.replay(encryptionHelperMock);
 
-		editor.setValue(new PersonBuilder().firstname("Mark").id(121).lastname("Johnson").email("test@gmail.com").toPerson());
+		editor.setValue(new PersonBuilder().firstname("Mark").id(121).lastname("Johnson").email("test@gmail.com").build());
 
 		assertEquals("{\"id\": \"encrypted\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\"}", editor.getAsText());
 		EasyMock.verify(encryptionHelperMock);

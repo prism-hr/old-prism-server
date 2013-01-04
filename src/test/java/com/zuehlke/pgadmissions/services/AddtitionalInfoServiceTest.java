@@ -14,7 +14,7 @@ public class AddtitionalInfoServiceTest {
 		AdditionalInfoDAO daoMock = EasyMock.createMock(AdditionalInfoDAO.class);
 		AdditionalInfoService service = new AdditionalInfoService(daoMock);
 		
-		AdditionalInformation info = new AdditionalInformationBuilder().id(3).toAdditionalInformation();
+		AdditionalInformation info = new AdditionalInformationBuilder().id(3).build();
 		daoMock.save(EasyMock.eq( info));
 		EasyMock.replay(daoMock);
 		

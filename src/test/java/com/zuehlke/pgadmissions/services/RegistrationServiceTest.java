@@ -64,7 +64,7 @@ public class RegistrationServiceTest {
 	@Test
 	public void shouldHashPasswordsAndSetAccountDataAndAndQueryString() {
 		String queryString = "queryString";
-		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).id(1).toRole();
+		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).id(1).build();
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(role);
 		EasyMock.replay(roleDAOMock);
 
@@ -124,9 +124,9 @@ public class RegistrationServiceTest {
                 .activationCode("abc")
                 .pendingRoleNotifications(
                         new PendingRoleNotificationBuilder().id(1).notificationDate(new Date())
-                                .toPendingRoleNotification(),
+                                .build(),
                         new PendingRoleNotificationBuilder().id(2).notificationDate(new Date())
-                                .toPendingRoleNotification()).toUser();
+                                .build()).build();
         registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
                 mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, interviewerDAOMock,
                 reviewerDAOMock, supervisorDAOMock, refereeDAOMock);
@@ -139,8 +139,8 @@ public class RegistrationServiceTest {
 	
 	@Test
 	public void shouldClearNotificationDatesFromSupervisor() {
-        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").toUser();
-	    Supervisor supervisor = new SupervisorBuilder().id(1).lastNotified(new Date()).user(databaseUser).toSupervisor();
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
+	    Supervisor supervisor = new SupervisorBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
 	    EasyMock.expect(supervisorDAOMock.getSupervisorByUser(databaseUser)).andReturn(supervisor);
 	    supervisorDAOMock.save(supervisor);
 	    EasyMock.replay(supervisorDAOMock);
@@ -151,8 +151,8 @@ public class RegistrationServiceTest {
 	
     @Test
     public void shouldClearNotificationDatesFromInterviewer() {
-        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").toUser();
-        Interviewer interviewer = new InterviewerBuilder().id(1).lastNotified(new Date()).user(databaseUser).toInterviewer();
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
+        Interviewer interviewer = new InterviewerBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
         EasyMock.expect(interviewerDAOMock.getInterviewerByUser(databaseUser)).andReturn(interviewer);
         interviewerDAOMock.save(interviewer);
         EasyMock.replay(interviewerDAOMock);
@@ -163,7 +163,7 @@ public class RegistrationServiceTest {
     
     @Test
     public void shouldClearNotificationDatesFromReferee() {
-        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").toUser();
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
         Referee referee = new RefereeBuilder().id(1).lastNotified(new Date()).user(databaseUser).toReferee();
         EasyMock.expect(refereeDAOMock.getRefereeByUser(databaseUser)).andReturn(referee);
         refereeDAOMock.save(referee);
@@ -175,8 +175,8 @@ public class RegistrationServiceTest {
     
     @Test
     public void shouldClearNotificationDatesFromReviewer() {
-        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").toUser();
-        Reviewer reviewer = new ReviewerBuilder().id(1).lastNotified(new Date()).user(databaseUser).toReviewer();
+        RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
+        Reviewer reviewer = new ReviewerBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
         EasyMock.expect(reviewerDAOMock.getReviewerByUser(databaseUser)).andReturn(reviewer);
         reviewerDAOMock.save(reviewer);
         EasyMock.replay(reviewerDAOMock);
@@ -191,7 +191,7 @@ public class RegistrationServiceTest {
 		final Map<String, Object> modelMap = new HashMap<String, Object>();
 
 
-		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
+		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").build();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
 
@@ -235,11 +235,11 @@ public class RegistrationServiceTest {
 
 	@Test
 	public void shouldSavePendingSuggestedUserAndSendEmail() throws UnsupportedEncodingException {
-		final RegisteredUser expectedRecord = new RegisteredUserBuilder().id(1).toUser();
+		final RegisteredUser expectedRecord = new RegisteredUserBuilder().id(1).build();
 		final Map<String, Object> modelMap = new HashMap<String, Object>();
 
 
-		final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
 
@@ -284,7 +284,7 @@ public class RegistrationServiceTest {
 	public void shouldNotSendEmailIdSaveFails() {
 		final RegisteredUser expectedRecord = new RegisteredUser();
 		expectedRecord.setEmail("email@test.com");
-		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
+		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).build();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
 
@@ -317,7 +317,7 @@ public class RegistrationServiceTest {
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
 		final RegisteredUser expectedRecord = new RegisteredUser();
 
-		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
+		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").build();
 
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
@@ -353,7 +353,7 @@ public class RegistrationServiceTest {
 
 	@Test
 	public void shouldDelegateFindUserToDAO() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userDAOMock.getUserByActivationCode("code")).andReturn(user);
 		EasyMock.replay(userDAOMock);
 		RegisteredUser foundUser = registrationService.findUserForActivationCode("code");
@@ -363,17 +363,17 @@ public class RegistrationServiceTest {
 
 	@Test
 	public void shouldGenerateCorrectAtionContext(){
-		RegisteredUser user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.ADD_REFERENCE.displayValue() + "hi").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.ADD_REFERENCE.displayValue() + "hi").build();
 		assertEquals("complete your reference", registrationService.getRegistrationConfirmationAction(user));
-		user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.ADD_REVIEW.displayValue() + "hi").toUser();
+		user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.ADD_REVIEW.displayValue() + "hi").build();
 		assertEquals("complete your review", registrationService.getRegistrationConfirmationAction(user));
-		user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW.displayValue() + "hi").toUser();
+		user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW.displayValue() + "hi").build();
 		assertEquals("view the application", registrationService.getRegistrationConfirmationAction(user));
-		user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR.displayValue() + "hi").toUser();
+		user = new RegisteredUserBuilder().id(1).directURL(DirectURLsEnum.VIEW_APPLIATION_AS_SUPERVISOR.displayValue() + "hi").build();
 		assertEquals("view the application", registrationService.getRegistrationConfirmationAction(user));
-		user = new RegisteredUserBuilder().id(1).toUser();
+		user = new RegisteredUserBuilder().id(1).build();
 		assertEquals("continue", registrationService.getRegistrationConfirmationAction(user));
-		user = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		user = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		assertEquals("complete your application", registrationService.getRegistrationConfirmationAction(user));
 	}
 	

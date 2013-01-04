@@ -117,8 +117,8 @@ public class InterviewValidatorTest {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		
-		interview = new InterviewBuilder().interviewTime("09:00").application(new ApplicationFormBuilder().id(2).toApplicationForm()).dueDate(calendar.getTime())
-				.furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).toInterviewer()).toInterview();
+		interview = new InterviewBuilder().interviewTime("09:00").application(new ApplicationFormBuilder().id(2).build()).dueDate(calendar.getTime())
+				.furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).build()).build();
 		
 		interviewValidator = new InterviewValidator();
 		interviewValidator.setValidator((javax.validation.Validator) validator);

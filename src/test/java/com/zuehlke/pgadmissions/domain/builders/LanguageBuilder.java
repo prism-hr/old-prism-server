@@ -28,7 +28,7 @@ public class LanguageBuilder {
         return this;
     }
 
-    public Language toLanguage() {
+    public Language build() {
         Language language = new Language();
         language.setId(id);
         language.setName(name);

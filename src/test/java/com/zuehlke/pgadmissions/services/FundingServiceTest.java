@@ -16,7 +16,7 @@ public class FundingServiceTest {
 
 	@Test			
 	public void shouldDelegateGetFundingToDAO(){
-		Funding funding = new FundingBuilder().id(2).toFunding();
+		Funding funding = new FundingBuilder().id(2).build();
 		EasyMock.expect(fundingDAOMock.getFundingById(2)).andReturn(funding);
 		EasyMock.replay(fundingDAOMock);
 		Funding returnedFunding = fundingService.getFundingById(2);
@@ -25,7 +25,7 @@ public class FundingServiceTest {
 	
 	@Test			
 	public void shouldDelegateDeleteToDAO(){
-		Funding funding = new FundingBuilder().id(2).toFunding();
+		Funding funding = new FundingBuilder().id(2).build();
 		fundingDAOMock.delete(funding);
 		EasyMock.replay(fundingDAOMock);
 		fundingService.delete(funding);
@@ -35,7 +35,7 @@ public class FundingServiceTest {
 	
 	@Test			
 	public void shouldDelegateSaveToDAO(){
-		Funding funding = new FundingBuilder().id(2).toFunding();
+		Funding funding = new FundingBuilder().id(2).build();
 		fundingDAOMock.save(funding);
 		EasyMock.replay(fundingDAOMock);
 		fundingService.save(funding);

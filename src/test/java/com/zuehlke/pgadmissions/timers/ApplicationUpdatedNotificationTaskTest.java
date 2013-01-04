@@ -41,8 +41,8 @@ public class ApplicationUpdatedNotificationTaskTest {
 		NotificationRecord record = new NotificationRecord(NotificationType.UPDATED_NOTIFICATION);
 		record.setDate(DateUtils.addDays(new Date(), -12));
 		
-		ApplicationForm appOne = new ApplicationFormBuilder().id(1).notificationRecords(record).toApplicationForm();
-		ApplicationForm appTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm appOne = new ApplicationFormBuilder().id(1).notificationRecords(record).build();
+		ApplicationForm appTwo = new ApplicationFormBuilder().id(2).build();
 		sessionMock.refresh(appOne);
 		sessionMock.refresh(appTwo);
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(Arrays.asList(appOne, appTwo));
@@ -73,8 +73,8 @@ public class ApplicationUpdatedNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		ApplicationForm appOne = new ApplicationFormBuilder().id(1).toApplicationForm();
-		ApplicationForm appTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm appOne = new ApplicationFormBuilder().id(1).build();
+		ApplicationForm appTwo = new ApplicationFormBuilder().id(2).build();
 		sessionMock.refresh(appOne);
 		sessionMock.refresh(appTwo);
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(Arrays.asList(appOne, appTwo));

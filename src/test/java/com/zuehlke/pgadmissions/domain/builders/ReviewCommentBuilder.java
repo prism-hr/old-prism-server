@@ -76,7 +76,7 @@ public class ReviewCommentBuilder {
 		return this;
 	}
 	
-	public ReviewComment toReviewComment() {
+	public ReviewComment build() {
 		ReviewComment reviewComment = new ReviewComment();
 		reviewComment.setApplication(applicationForm);
 		reviewComment.setComment(comment);

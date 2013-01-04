@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
-
 
 public class DocumentBuilder {
 	
@@ -27,13 +25,10 @@ public class DocumentBuilder {
 		return this;
 	}
 	
-	
 	public DocumentBuilder uploadedBy(RegisteredUser uploadedBy){
 		this.uploadedBy = uploadedBy;
 		return this;
 	}
-	
-	
 	
 	public DocumentBuilder contentType(String contentType){
 		this.contentType = contentType;
@@ -44,7 +39,6 @@ public class DocumentBuilder {
 		this.type = type;
 		return this;
 	}
-	
 	
 	public DocumentBuilder id(Integer id){
 		this.id = id;
@@ -66,7 +60,7 @@ public class DocumentBuilder {
 		return this;
 	}
 
-	public Document toDocument(){
+	public Document build() {
 		Document document = new Document();
 		document.setId(id);
 		document.setFileName(fileName);

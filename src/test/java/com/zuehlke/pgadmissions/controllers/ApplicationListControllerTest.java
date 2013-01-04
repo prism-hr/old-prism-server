@@ -49,7 +49,7 @@ public class ApplicationListControllerTest {
 	@Test
 	public void shouldGetApplicationFormByNumber(){
 		String appNumber = "abc";
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber(appNumber)).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		assertEquals(applicationForm, controller.getApplicationForm(appNumber));
@@ -72,8 +72,8 @@ public class ApplicationListControllerTest {
 	
 	@Test
 	public void shouldAddAllApplications() {
-		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).toApplicationForm();
-		ApplicationForm applicationTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).build();
+		ApplicationForm applicationTwo = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user,// 
 				SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 4))//
 				.andReturn(Arrays.asList(applicationOne, applicationTwo));
@@ -95,8 +95,8 @@ public class ApplicationListControllerTest {
 
 	@Test
 	public void shouldReturnFirstBlockOfApplications() {
-		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).toApplicationForm();
-		ApplicationForm applicationTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).build();
+		ApplicationForm applicationTwo = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user,// 
 				SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1))//
 				.andReturn(Arrays.asList(applicationOne, applicationTwo));
@@ -119,7 +119,7 @@ public class ApplicationListControllerTest {
 
 	@Before
 	public void setUp() {
-		user = new RegisteredUserBuilder().id(1).toUser();
+		user = new RegisteredUserBuilder().id(1).build();
 		userServiceMock = EasyMock.createMock(UserService.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		controller = new ApplicationListController(applicationsServiceMock, userServiceMock);

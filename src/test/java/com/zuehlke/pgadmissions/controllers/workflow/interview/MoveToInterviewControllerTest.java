@@ -59,11 +59,11 @@ public class MoveToInterviewControllerTest {
 	
 	@Test
 	public void shouldGetProgrammeInterviewers() {
-		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
-		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
+		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).build();
+		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).build();
 
-		final Program program = new ProgramBuilder().interviewers(interUser1, interUser2).id(6).toProgram();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		final Program program = new ProgramBuilder().interviewers(interUser1, interUser2).id(6).build();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock, interviewerPropertyEditorMock,datePropertyEditorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -84,19 +84,19 @@ public class MoveToInterviewControllerTest {
 	@Test
 	public void shouldGetListOfPreviousInterviewersAndAddReviewersWillingToInterviewWitDefaultInterviewersRemoved() {
 		EasyMock.reset(userServiceMock);
-		final RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(9).toUser();
-		final RegisteredUser reviewerWillingToIntergviewOne = new RegisteredUserBuilder().id(8).toUser();
-		final RegisteredUser reviewerWillingToIntergviewTwo = new RegisteredUserBuilder().id(7).toUser();
-		final RegisteredUser previousInterviewer = new RegisteredUserBuilder().id(6).toUser();
-		ReviewComment reviewOne = new ReviewCommentBuilder().id(1).user(reviewerWillingToIntergviewOne).willingToInterview(true).toReviewComment();
-		ReviewComment reviewTwo = new ReviewCommentBuilder().id(1).user(defaultInterviewer).willingToInterview(true).toReviewComment();
-		ReviewComment reviewThree = new ReviewCommentBuilder().id(1).user(reviewerWillingToIntergviewTwo).willingToInterview(true).toReviewComment();
+		final RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(9).build();
+		final RegisteredUser reviewerWillingToIntergviewOne = new RegisteredUserBuilder().id(8).build();
+		final RegisteredUser reviewerWillingToIntergviewTwo = new RegisteredUserBuilder().id(7).build();
+		final RegisteredUser previousInterviewer = new RegisteredUserBuilder().id(6).build();
+		ReviewComment reviewOne = new ReviewCommentBuilder().id(1).user(reviewerWillingToIntergviewOne).willingToInterview(true).build();
+		ReviewComment reviewTwo = new ReviewCommentBuilder().id(1).user(defaultInterviewer).willingToInterview(true).build();
+		ReviewComment reviewThree = new ReviewCommentBuilder().id(1).user(reviewerWillingToIntergviewTwo).willingToInterview(true).build();
 		
 		
 
-		final Program program = new ProgramBuilder().id(6).interviewers(defaultInterviewer).toProgram();
+		final Program program = new ProgramBuilder().id(6).interviewers(defaultInterviewer).build();
 
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).comments(reviewOne, reviewTwo, reviewThree).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).comments(reviewOne, reviewTwo, reviewThree).build();
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock, interviewerPropertyEditorMock,datePropertyEditorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -116,9 +116,9 @@ public class MoveToInterviewControllerTest {
 	}
 	@Test
 	public void shouldReturnNewInterviewWithExistingRoundsInterviewersIfAny() {
-		Interviewer interviewerOne = new InterviewerBuilder().id(1).toInterviewer();
-		Interviewer interviewerTwo = new InterviewerBuilder().id(2).toInterviewer();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).toInterview()).toApplicationForm();
+		Interviewer interviewerOne = new InterviewerBuilder().id(1).build();
+		Interviewer interviewerTwo = new InterviewerBuilder().id(2).build();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
 		
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock,interviewServiceMock,  interviewValidatorMock, interviewerPropertyEditorMock,datePropertyEditorMock){
 			@Override
@@ -138,15 +138,15 @@ public class MoveToInterviewControllerTest {
 	
 	@Test
 	public void shouldReturnInterviewWithWillingToInterviewWithInterviewersOfPreviousInterviewRemoved() {
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();
-		ReviewComment reviewOne = new ReviewCommentBuilder().id(1).user(userOne).willingToInterview(true).toReviewComment();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(2).toUser();
-		ReviewComment reviewTwo = new ReviewCommentBuilder().id(2).user(userTwo).willingToInterview(true).toReviewComment();
-		RegisteredUser userThree = new RegisteredUserBuilder().id(3).toUser();
-		ReviewComment reviewThree = new ReviewCommentBuilder().id(3).user(userThree).willingToInterview(true).toReviewComment();
-		Interviewer interviewerOne = new InterviewerBuilder().id(1).user(userOne).toInterviewer();
-		Interviewer interviewerTwo = new InterviewerBuilder().id(2).user(userTwo).toInterviewer();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(reviewOne, reviewTwo, reviewThree).latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).toInterview()).toApplicationForm();
+		RegisteredUser userOne = new RegisteredUserBuilder().id(1).build();
+		ReviewComment reviewOne = new ReviewCommentBuilder().id(1).user(userOne).willingToInterview(true).build();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(2).build();
+		ReviewComment reviewTwo = new ReviewCommentBuilder().id(2).user(userTwo).willingToInterview(true).build();
+		RegisteredUser userThree = new RegisteredUserBuilder().id(3).build();
+		ReviewComment reviewThree = new ReviewCommentBuilder().id(3).user(userThree).willingToInterview(true).build();
+		Interviewer interviewerOne = new InterviewerBuilder().id(1).user(userOne).build();
+		Interviewer interviewerTwo = new InterviewerBuilder().id(2).user(userTwo).build();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(reviewOne, reviewTwo, reviewThree).latestInterview(new InterviewBuilder().interviewers(interviewerOne, interviewerTwo).build()).build();
 		
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock,interviewServiceMock,  interviewValidatorMock, interviewerPropertyEditorMock,datePropertyEditorMock){
 			@Override
@@ -168,7 +168,7 @@ public class MoveToInterviewControllerTest {
 	@Test
 	public void shouldReturnNewInterviewWithEmtpyInterviewersIfNoLatestInterview() {
 	
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 		
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock, interviewerPropertyEditorMock,datePropertyEditorMock){
 			@Override
@@ -188,8 +188,8 @@ public class MoveToInterviewControllerTest {
 	
 	@Test
 	public void shouldGetApplicationFromIdForAdmin() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
@@ -203,8 +203,8 @@ public class MoveToInterviewControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromIdForInterviewer() {
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
@@ -227,8 +227,8 @@ public class MoveToInterviewControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrInterviewerOfApplicationProgram() {
 
-		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		Program program = new ProgramBuilder().id(6).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
@@ -248,8 +248,8 @@ public class MoveToInterviewControllerTest {
 	
 	@Test
 	public void shouldMoveApplicationToInterview() {
-		Interview interview = new InterviewBuilder().id(4).toInterview();
-		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").toApplicationForm();
+		Interview interview = new InterviewBuilder().id(4).build();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
 		
 		controller =new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock, interviewerPropertyEditorMock,datePropertyEditorMock){
 			@Override
@@ -271,7 +271,7 @@ public class MoveToInterviewControllerTest {
 	@Test
 	public void shouldNotSaveInterviewAndReturnToInterviewPageIfHasErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		controller =new MoveToInterviewController(applicationServiceMock, userServiceMock, interviewServiceMock, interviewValidatorMock, interviewerPropertyEditorMock, datePropertyEditorMock){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
@@ -279,7 +279,7 @@ public class MoveToInterviewControllerTest {
 			}
 
 		};
-		Interview interview = new InterviewBuilder().application(applicationForm).toInterview();
+		Interview interview = new InterviewBuilder().application(applicationForm).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);

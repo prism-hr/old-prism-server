@@ -81,7 +81,7 @@ public class ProgrammeDetailsBuilder {
 		return this;
 	}
 	
-	public ProgrammeDetails toProgrammeDetails(){
+	public ProgrammeDetails build() {
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(id);
 		programmeDetails.setApplication(applicationForm);

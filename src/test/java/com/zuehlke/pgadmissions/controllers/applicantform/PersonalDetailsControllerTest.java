@@ -94,7 +94,7 @@ public class PersonalDetailsControllerTest {
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toPersonalDetails();
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build()).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(personalDetailsServiceMock, errors);
 		controller.editPersonalDetails(personalDetails, errors, modelMock, sessionStatusMock);
@@ -123,7 +123,7 @@ public class PersonalDetailsControllerTest {
         EasyMock.replay(userServiceMock);
         
         
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
@@ -139,7 +139,7 @@ public class PersonalDetailsControllerTest {
 
 	@Test
 	public void shouldReturnAllEnabledLanguages() {
-		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).toLanguage(), new LanguageBuilder().id(2).enabled(false).toLanguage());
+		List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).build(), new LanguageBuilder().id(2).enabled(false).build());
 		EasyMock.expect(languageServiceMok.getAllEnabledLanguages()).andReturn(Collections.singletonList(languageList.get(0)));
 		EasyMock.replay(languageServiceMok);
 		List<Language> allLanguages = controller.getAllEnabledLanguages();
@@ -149,7 +149,7 @@ public class PersonalDetailsControllerTest {
 
 	@Test
 	public void shouldReturnAllEnabledCountries() {
-		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).enabled(true).toCountry(), new CountryBuilder().id(2).enabled(false).toCountry());
+		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).enabled(true).build(), new CountryBuilder().id(2).enabled(false).build());
 		EasyMock.expect(countryServiceMock.getAllEnabledCountries()).andReturn(Collections.singletonList(countryList.get(0)));
 		EasyMock.replay(countryServiceMock);
 		List<Country> allCountries = controller.getAllEnabledCountries();
@@ -159,7 +159,7 @@ public class PersonalDetailsControllerTest {
 
 	@Test
 	public void returnAllEnabledEthnicities() {
-		List<Ethnicity> ethnicityList = Arrays.asList(new EthnicityBuilder().id(1).enabled(true).toEthnicity(), new EthnicityBuilder().id(2).enabled(false).toEthnicity());
+		List<Ethnicity> ethnicityList = Arrays.asList(new EthnicityBuilder().id(1).enabled(true).build(), new EthnicityBuilder().id(2).enabled(false).build());
 		EasyMock.expect(ethnicityServiceMock.getAllEnabledEthnicities()).andReturn(Collections.singletonList(ethnicityList.get(0)));
 		EasyMock.replay(ethnicityServiceMock);
 		List<Ethnicity> allEthnicities = controller.getAllEnabledEthnicities();
@@ -169,7 +169,7 @@ public class PersonalDetailsControllerTest {
 
 	@Test
 	public void returnAllEnabledDisabilities() {
-		List<Disability> disabilityList = Arrays.asList(new DisabilityBuilder().id(1).enabled(true).toDisability(), new DisabilityBuilder().id(2).enabled(false).toDisability());
+		List<Disability> disabilityList = Arrays.asList(new DisabilityBuilder().id(1).enabled(true).build(), new DisabilityBuilder().id(2).enabled(false).build());
 		EasyMock.expect(disabilityServiceMock.getAllEnabledDisabilities()).andReturn(Collections.singletonList(disabilityList.get(0)));
 		EasyMock.replay(disabilityServiceMock);
 		List<Disability> allDisabilities = controller.getAllEnabledDisabilities();
@@ -194,7 +194,7 @@ public class PersonalDetailsControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -215,7 +215,7 @@ public class PersonalDetailsControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -243,8 +243,8 @@ public class PersonalDetailsControllerTest {
 	@Test
 	public void shouldGetPersonalDetailsFromApplicationForm() {
 
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).toPersonalDetails();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		applicationForm.setPersonalDetails(personalDetails);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		currentUser = EasyMock.createMock(RegisteredUser.class);
@@ -260,7 +260,7 @@ public class PersonalDetailsControllerTest {
 
 	@Test
 	public void shouldReturnNewPersonalDetailsIfApplicationFormHasNoPersonalDetails() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.reset(userServiceMock);
@@ -284,8 +284,8 @@ public class PersonalDetailsControllerTest {
 
 	@Test
 	public void shouldSavePersonalDetailsAndRedirectIfNoErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").toApplicationForm();
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(applicationForm).toPersonalDetails();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(applicationForm).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		personalDetailsServiceMock.save(personalDetails);
@@ -299,7 +299,7 @@ public class PersonalDetailsControllerTest {
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).toApplicationForm()).toPersonalDetails();
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).build()).build();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 
@@ -318,7 +318,7 @@ public class PersonalDetailsControllerTest {
         LanguageQualification qualification = new LanguageQualificationBuilder().id(1).dateOfExamination(new Date())
                 .examTakenOnline(false).languageQualification(LanguageQualificationEnum.IELTS_ACADEMIC)
                 .listeningScore("1").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
-                .toLanguageQualification();
+                .build();
         
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
@@ -345,7 +345,7 @@ public class PersonalDetailsControllerTest {
 	    LanguageQualification qualification = new LanguageQualificationBuilder().id(1).dateOfExamination(new Date())
                 .examTakenOnline(false).languageQualification(LanguageQualificationEnum.IELTS_ACADEMIC)
                 .listeningScore("1").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
-                .toLanguageQualification();
+                .build();
 	    
 	    EasyMock.expect(personalDetailsMock.getLanguageQualifications()).andReturn(Arrays.asList(qualification));
 	    EasyMock.expect(modelMock.addAttribute("languageQualificationId", "0")).andReturn(modelMock);
@@ -368,7 +368,7 @@ public class PersonalDetailsControllerTest {
         LanguageQualification qualification = new LanguageQualificationBuilder().id(1).dateOfExamination(new Date())
                 .examTakenOnline(false).languageQualification(LanguageQualificationEnum.IELTS_ACADEMIC)
                 .listeningScore("1").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
-                .toLanguageQualification();
+                .build();
         
         ArrayList<LanguageQualification> listMock = EasyMock.createMock(ArrayList.class);
         
@@ -398,7 +398,7 @@ public class PersonalDetailsControllerTest {
         LanguageQualification qualification = new LanguageQualificationBuilder().id(1).dateOfExamination(new Date())
                 .examTakenOnline(false).languageQualification(LanguageQualificationEnum.IELTS_ACADEMIC)
                 .listeningScore("1").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
-                .toLanguageQualification();
+                .build();
         
         LanguageQualification qualificationMock = EasyMock.createMock(LanguageQualification.class);
         
@@ -489,7 +489,7 @@ public class PersonalDetailsControllerTest {
 				languageQualificationValidatorMock,
 				documentPropertyEditorMock);
 
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 	}

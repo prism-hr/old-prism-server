@@ -27,13 +27,13 @@ public class StateChangeEventMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadStateChangeEvent() throws ParseException {
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(user);
 		flushAndClearSession();
 		
 		ApplicationFormStatus newStatus = ApplicationFormStatus.APPROVAL;
 		Date eventDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
-		Event event = new StateChangeEventBuilder().newStatus(newStatus).date(eventDate).user(user).toEvent();
+		Event event = new StateChangeEventBuilder().newStatus(newStatus).date(eventDate).user(user).build();
 		sessionFactory.getCurrentSession().saveOrUpdate(event);
 		assertNotNull(event.getId());
 		StateChangeEvent reloadedEvent = (StateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, event.getId());
@@ -52,15 +52,15 @@ public class StateChangeEventMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldLoadApplicationFormForStateChangeEvent() throws ParseException {
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		save(applicant, program);
 		ApplicationFormStatus newStatus = ApplicationFormStatus.APPROVAL;
 		Date eventDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
-		StateChangeEvent event = new StateChangeEventBuilder().newStatus(newStatus).date(eventDate).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).events(event).toApplicationForm();
+		StateChangeEvent event = new StateChangeEventBuilder().newStatus(newStatus).date(eventDate).build();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).events(event).build();
 
 		save(application);
 		flushAndClearSession();

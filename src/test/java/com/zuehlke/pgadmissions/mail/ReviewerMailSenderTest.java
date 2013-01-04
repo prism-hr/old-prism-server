@@ -35,13 +35,13 @@ public class ReviewerMailSenderTest {
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
 
-		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).toUser();
-		RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().id(10).toUser();
-		RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();
+		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).build();
+		RegisteredUser adminTwo = new RegisteredUserBuilder().email("alice@test.com").id(9).build();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(10).build();
+		RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").build();
 		
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram()).applicant(applicant).toApplicationForm();
-		Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).toReviewRound()).toReviewer();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).build()).applicant(applicant).build();
+		Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).build()).build();
 		
 
 		Map<String, Object> model = reviewerMailSender.createModel(reviewer);
@@ -65,9 +65,9 @@ public class ReviewerMailSenderTest {
 		};
 		
 		
-		RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();		
-		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
-		Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).toReviewRound()).toReviewer();
+		RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").build();		
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").build()).build();
+		Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).build()).build();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
@@ -101,9 +101,9 @@ public class ReviewerMailSenderTest {
 		};
 		
 		
-		RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();		
-		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
-		Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).toReviewRound()).toReviewer();
+		RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").build();		
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").build()).build();
+		Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).build()).build();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");

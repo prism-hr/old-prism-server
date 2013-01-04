@@ -57,7 +57,7 @@ public class RefereeControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 		Referee referee = new RefereeBuilder().id(1)
-				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toReferee();
+				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build()).toReferee();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(refereeServiceMock, errors);
 		controller.editReferee(referee, errors);
@@ -85,7 +85,7 @@ public class RefereeControllerTest {
 
 	@Test
 	public void shouldReturnAllCountries() {
-		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).toCountry(), new CountryBuilder().id(2).toCountry());
+		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).build(), new CountryBuilder().id(2).build());
 		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(countryList);
 		EasyMock.replay(countriesServiceMock);
 		List<Country> allCountries = controller.getAllCountries();
@@ -98,7 +98,7 @@ public class RefereeControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -119,7 +119,7 @@ public class RefereeControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
@@ -175,7 +175,7 @@ public class RefereeControllerTest {
 
 	@Test
 	public void shouldSaveRefereeAndRedirectIfNoErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").id(5).build();
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -189,7 +189,7 @@ public class RefereeControllerTest {
 	}
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInApprovalStageAndIfNoErrors() {
-		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.APPROVAL).build();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -204,7 +204,7 @@ public class RefereeControllerTest {
 	
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInReviewStageAndIfNoErrors() {
-		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.REVIEW).build();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -219,7 +219,7 @@ public class RefereeControllerTest {
 	
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInInterviewStageAndIfNoErrors() {
-		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.INTERVIEW).build();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -234,7 +234,7 @@ public class RefereeControllerTest {
 	
 	@Test
 	public void shouldNotSendEmailIfApplicationIsInValidationdAndIfNoErrors() {
-		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.VALIDATION).build();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -248,7 +248,7 @@ public class RefereeControllerTest {
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {
-		Referee referee = new RefereeBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(new ApplicationFormBuilder().id(5).build()).toReferee();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 	
@@ -274,7 +274,7 @@ public class RefereeControllerTest {
 		controller = new RefereeController(refereeServiceMock, userServiceMock,countriesServiceMock, applicationsServiceMock,// 
 				countryPropertyEditor, applicationFormPropertyEditorMock, refereeValidatorMock, encryptionHelperMock);
 
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);

@@ -42,8 +42,8 @@ public class SupervisorNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		Supervisor supervisorOne = new SupervisorBuilder().id(1).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).toSupervisor();
-		Supervisor supervisorTwo = new SupervisorBuilder().id(2).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).toSupervisor();
+		Supervisor supervisorOne = new SupervisorBuilder().id(1).user(new RegisteredUserBuilder().email("hello@test.com").build()).build();
+		Supervisor supervisorTwo = new SupervisorBuilder().id(2).user(new RegisteredUserBuilder().email("hello@test.com").build()).build();
 		sessionMock.refresh(supervisorOne);
 		sessionMock.refresh(supervisorTwo);
 		List<Supervisor> supervisorList = Arrays.asList(supervisorOne, supervisorTwo);
@@ -77,8 +77,8 @@ public class SupervisorNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		Supervisor supervisorOne = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(1).toSupervisor();
-		Supervisor supervisorTwo = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(2).toSupervisor();
+		Supervisor supervisorOne = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(1).build();
+		Supervisor supervisorTwo = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(2).build();
 		sessionMock.refresh(supervisorOne);
 		sessionMock.refresh(supervisorTwo);
 		EasyMock.expect(supervisorDAOMock.getSupervisorsDueNotification()).andReturn(Arrays.asList(supervisorOne, supervisorTwo));

@@ -69,7 +69,7 @@ public class UserServiceResetPasswordTest {
 	@Test
 	public void generateNewPasswordAndSendMail() throws AddressException {
 		String oldPassword = "i forget this every time";
-		RegisteredUser storedUser = new RegisteredUserBuilder().id(23).firstName("first").lastName("last").email("first@last.com").password(oldPassword).toUser();
+		RegisteredUser storedUser = new RegisteredUserBuilder().id(23).firstName("first").lastName("last").email("first@last.com").password(oldPassword).build();
 		EasyMock.expect(userDAOMock.getUserByEmail("aaaa")).andReturn(storedUser);
 
 		String newPassword = "this is better";
@@ -108,7 +108,7 @@ public class UserServiceResetPasswordTest {
 	public void keepOldPasswordIfMailSendFails() throws AddressException {
 		String oldPassword = "i forget this every time";
 		RegisteredUser storedUser = new RegisteredUserBuilder().id(23).firstName("first").lastName("last")//
-				.username("firstlast").email("first@last.com").password(oldPassword).toUser();
+				.username("firstlast").email("first@last.com").password(oldPassword).build();
 		EasyMock.expect(userDAOMock.getUserByEmail("aaaa")).andReturn(storedUser);
 
 		String newPassword = "this is better";

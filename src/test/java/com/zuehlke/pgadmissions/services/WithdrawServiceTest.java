@@ -21,7 +21,7 @@ public class WithdrawServiceTest {
 	
 	@Test
 	public void shouldSaveFormAndSendEmails() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		applicationServiceMock.save(applicationForm);
 		Referee referee1 = new RefereeBuilder().id(1).toReferee();
 		Referee referee2 = new RefereeBuilder().id(2).toReferee();

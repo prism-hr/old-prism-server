@@ -14,7 +14,7 @@ public class CountryMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadCountry(){
-		Country country = new CountryBuilder().name("ZZZZZZ").code("ZZ").enabled(true).toCountry();
+		Country country = new CountryBuilder().name("ZZZZZZ").code("ZZ").enabled(true).build();
 		sessionFactory.getCurrentSession().save(country);
 		assertNotNull(country.getId());
 		Integer id = country.getId();

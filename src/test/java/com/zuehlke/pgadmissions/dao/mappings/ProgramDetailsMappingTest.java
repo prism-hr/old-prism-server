@@ -20,12 +20,12 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadProgrammeDetails() throws Exception {
 
-	    SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest();
-		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().id(1).firstname("first").lastname("last").email("email").toSuggestedSupervisor();
+	    SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").build();
+		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().id(1).firstname("first").lastname("last").email("email").build();
 
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test1").projectName("project")
 				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption("1", "Full-time").sourcesOfInterest(interest)
-				.suggestedSupervisors(suggestedSupervisor).toProgrammeDetails();
+				.suggestedSupervisors(suggestedSupervisor).build();
 
 		sessionFactory.getCurrentSession().save(programmeDetails);
 		assertNotNull(programmeDetails.getId());
@@ -43,14 +43,14 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadProgrammeDetailsWithSuggestedSupervisor() throws Exception {
 
-		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().firstname("first").lastname("last").email("email").toSuggestedSupervisor();
-		SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").toSourcesOfInterest();
+		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().firstname("first").lastname("last").email("email").build();
+		SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").build();
 		
 		sessionFactory.getCurrentSession().saveOrUpdate(suggestedSupervisor);
 
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test2").projectName("project")
 				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption("1", "Full-time").sourcesOfInterest(interest)
-				.suggestedSupervisors(suggestedSupervisor).toProgrammeDetails();
+				.suggestedSupervisors(suggestedSupervisor).build();
 
 		sessionFactory.getCurrentSession().save(programmeDetails);
 		flushAndClearSession();

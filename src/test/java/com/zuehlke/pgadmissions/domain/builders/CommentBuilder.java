@@ -37,7 +37,7 @@ public class CommentBuilder {
 		return this;
 	}
 	
-	public Comment toComment() {
+	public Comment build() {
 		Comment comment = new Comment();
 		comment.setApplication(application);
 		comment.setComment(strComment);

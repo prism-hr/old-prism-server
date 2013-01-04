@@ -66,21 +66,21 @@ public class MailServiceTest {
 	@Test
 	public void shouldSendUpdatedEmailToAdminsAndInterviewersIfInInterview() throws UnsupportedEncodingException, ParseException {
 
-		RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+		RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").build();
 		
-		RegisteredUser interviewerUserOne = new RegisteredUserBuilder().id(3).firstName("julia").lastName("jumper").email("jj@test.com").toUser();
-		Interviewer interviewerOne = new InterviewerBuilder().id(2).user(interviewerUserOne).toInterviewer();
-		RegisteredUser interviewerUserTwo = new RegisteredUserBuilder().id(4).firstName("kate").lastName("kook").email("kk@test.com").toUser();
-		Interviewer interviewerTwo = new InterviewerBuilder().id(4).user(interviewerUserTwo).interviewComment(new InterviewCommentBuilder().id(4).toInterviewComment()).toInterviewer();
-		Interview interview = new InterviewBuilder().id(2).interviewers(interviewerOne, interviewerTwo).toInterview();
+		RegisteredUser interviewerUserOne = new RegisteredUserBuilder().id(3).firstName("julia").lastName("jumper").email("jj@test.com").build();
+		Interviewer interviewerOne = new InterviewerBuilder().id(2).user(interviewerUserOne).build();
+		RegisteredUser interviewerUserTwo = new RegisteredUserBuilder().id(4).firstName("kate").lastName("kook").email("kk@test.com").build();
+		Interviewer interviewerTwo = new InterviewerBuilder().id(4).user(interviewerUserTwo).interviewComment(new InterviewCommentBuilder().id(4).build()).build();
+		Interview interview = new InterviewBuilder().id(2).interviewers(interviewerOne, interviewerTwo).build();
 		
-		RegisteredUser approver = new RegisteredUserBuilder().id(78).firstName("aaa").lastName("aaa").email("aa@test.com").toUser();
+		RegisteredUser approver = new RegisteredUserBuilder().id(78).firstName("aaa").lastName("aaa").email("aa@test.com").build();
 		
-		Program program = new ProgramBuilder().administrators(administratorOne, administratorTwo).title("program title").approver(approver).toProgram();
+		Program program = new ProgramBuilder().administrators(administratorOne, administratorTwo).title("program title").approver(approver).build();
 	
-		NotificationRecord notificationRecord = new NotificationRecordBuilder().id(1).notificationType(NotificationType.UPDATED_NOTIFICATION).notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 06 2011")).toNotificationRecord();
-		ApplicationForm form = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(2).latestInterview(interview).applicationNumber("xyz").program(program).notificationRecords(notificationRecord).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		NotificationRecord notificationRecord = new NotificationRecordBuilder().id(1).notificationType(NotificationType.UPDATED_NOTIFICATION).notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 06 2011")).build();
+		ApplicationForm form = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(2).latestInterview(interview).applicationNumber("xyz").program(program).notificationRecords(notificationRecord).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").build()).build();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -115,21 +115,21 @@ public class MailServiceTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotSendEmailToItnerviewersIfInApproval() throws UnsupportedEncodingException, ParseException{
-		RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+		RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").build();
 		
-		RegisteredUser interviewerUserOne = new RegisteredUserBuilder().id(3).firstName("julia").lastName("jumper").email("jj@test.com").toUser();
-		Interviewer interviewerOne = new InterviewerBuilder().id(2).user(interviewerUserOne).toInterviewer();
-		RegisteredUser interviewerUserTwo = new RegisteredUserBuilder().id(4).firstName("kate").lastName("kook").email("kk@test.com").toUser();
-		Interviewer interviewerTwo = new InterviewerBuilder().id(4).user(interviewerUserTwo).interviewComment(new InterviewCommentBuilder().id(4).toInterviewComment()).toInterviewer();
-		Interview interview = new InterviewBuilder().id(2).interviewers(interviewerOne, interviewerTwo).toInterview();
+		RegisteredUser interviewerUserOne = new RegisteredUserBuilder().id(3).firstName("julia").lastName("jumper").email("jj@test.com").build();
+		Interviewer interviewerOne = new InterviewerBuilder().id(2).user(interviewerUserOne).build();
+		RegisteredUser interviewerUserTwo = new RegisteredUserBuilder().id(4).firstName("kate").lastName("kook").email("kk@test.com").build();
+		Interviewer interviewerTwo = new InterviewerBuilder().id(4).user(interviewerUserTwo).interviewComment(new InterviewCommentBuilder().id(4).build()).build();
+		Interview interview = new InterviewBuilder().id(2).interviewers(interviewerOne, interviewerTwo).build();
 		
-		RegisteredUser approver = new RegisteredUserBuilder().id(78).firstName("aaa").lastName("aaa").email("aa@test.com").toUser();
+		RegisteredUser approver = new RegisteredUserBuilder().id(78).firstName("aaa").lastName("aaa").email("aa@test.com").build();
 		
-		Program program = new ProgramBuilder().administrators(administratorOne, administratorTwo).title("program title").approver(approver).toProgram();
+		Program program = new ProgramBuilder().administrators(administratorOne, administratorTwo).title("program title").approver(approver).build();
 	
-		NotificationRecord notificationRecord = new NotificationRecordBuilder().id(1).notificationType(NotificationType.UPDATED_NOTIFICATION).notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 06 2011")).toNotificationRecord();
-		ApplicationForm form = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).id(2).latestInterview(interview).applicationNumber("xyz").program(program).notificationRecords(notificationRecord).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		NotificationRecord notificationRecord = new NotificationRecordBuilder().id(1).notificationType(NotificationType.UPDATED_NOTIFICATION).notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 06 2011")).build();
+		ApplicationForm form = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).id(2).latestInterview(interview).applicationNumber("xyz").program(program).notificationRecords(notificationRecord).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").build()).build();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -164,11 +164,11 @@ public class MailServiceTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSendWithdrawnNotificationToReferees() throws UnsupportedEncodingException {
-		Program program = new ProgramBuilder().title("title").toProgram();
-		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicationNumber("xyz").applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		Program program = new ProgramBuilder().title("title").build();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicationNumber("xyz").applicant(new RegisteredUserBuilder().firstName("a").lastName("b").build()).build();
 		
-		RegisteredUser refereeOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser refereeTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+		RegisteredUser refereeOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		RegisteredUser refereeTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").build();
 		Referee referee1 = new RefereeBuilder().application(form).id(2).user(refereeTwo).toReferee();
 		Referee referee2 = new RefereeBuilder().application(form).id(1).user(refereeOne).toReferee();
 		
@@ -199,12 +199,12 @@ public class MailServiceTest {
 	@Test
 	public void shouldSendWithdrawnNotificationToAdmins() throws UnsupportedEncodingException {
 		
-		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
-		RegisteredUser formAdmin = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
-		Program program = new ProgramBuilder().administrators(admin1, admin2).title("title").toProgram();
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").build();
+		RegisteredUser formAdmin = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").build();
+		Program program = new ProgramBuilder().administrators(admin1, admin2).title("title").build();
 		
-		ApplicationForm form = new ApplicationFormBuilder().applicationAdministrator(formAdmin).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicationAdministrator(formAdmin).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").build()).build();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -240,20 +240,20 @@ public class MailServiceTest {
 	@Test
 	public void shouldSendWithdrawnNotificationToReviewers() throws UnsupportedEncodingException {
 		
-		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).toReviewer();
-		ReviewRound previousReviewRound = new ReviewRoundBuilder().id(1).reviewers(reviewer1).toReviewRound();
+		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).build();
+		ReviewRound previousReviewRound = new ReviewRoundBuilder().id(1).reviewers(reviewer1).build();
 		
-		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
-		Reviewer reviewer2 = new ReviewerBuilder().id(2).user(reviewerUser2).review(new ReviewCommentBuilder().id(4).toReviewComment()).toReviewer();
-		RegisteredUser reviewerUser3 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
-		Reviewer reviewer3 = new ReviewerBuilder().id(3).user(reviewerUser3).toReviewer();
-		ReviewRound latestReviewRound = new ReviewRoundBuilder().id(1).reviewers(reviewer2, reviewer3).toReviewRound();
-		Program program = new ProgramBuilder().reviewers(reviewerUser1, reviewerUser2).title("title").toProgram();
+		RegisteredUser reviewerUser2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").build();
+		Reviewer reviewer2 = new ReviewerBuilder().id(2).user(reviewerUser2).review(new ReviewCommentBuilder().id(4).build()).build();
+		RegisteredUser reviewerUser3 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").build();
+		Reviewer reviewer3 = new ReviewerBuilder().id(3).user(reviewerUser3).build();
+		ReviewRound latestReviewRound = new ReviewRoundBuilder().id(1).reviewers(reviewer2, reviewer3).build();
+		Program program = new ProgramBuilder().reviewers(reviewerUser1, reviewerUser2).title("title").build();
 		
 		
 		
-		ApplicationForm form = new ApplicationFormBuilder().reviewRounds(previousReviewRound, latestReviewRound).latestReviewRound(latestReviewRound).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().reviewRounds(previousReviewRound, latestReviewRound).latestReviewRound(latestReviewRound).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").build()).build();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		
@@ -278,21 +278,21 @@ public class MailServiceTest {
 	@Test
 	public void shouldSendWithdrawnNotificationToInterviewers() throws UnsupportedEncodingException {
 		
-		RegisteredUser inrerviewerUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Interviewer interviewer1 = new InterviewerBuilder().id(1).user(inrerviewerUser1).toInterviewer();
-		Interview previousItnerview = new InterviewBuilder().id(1).interviewers(interviewer1).toInterview();
+		RegisteredUser inrerviewerUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		Interviewer interviewer1 = new InterviewerBuilder().id(1).user(inrerviewerUser1).build();
+		Interview previousItnerview = new InterviewBuilder().id(1).interviewers(interviewer1).build();
 		
-		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
-		Interviewer interviewer2 = new InterviewerBuilder().id(2).user(interviewerUser2).interviewComment(new InterviewCommentBuilder().id(1).toInterviewComment()).toInterviewer();
-		RegisteredUser interviewerUser3 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
-		Interviewer itnerviewer3 = new InterviewerBuilder().id(3).user(interviewerUser3).toInterviewer();
+		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").build();
+		Interviewer interviewer2 = new InterviewerBuilder().id(2).user(interviewerUser2).interviewComment(new InterviewCommentBuilder().id(1).build()).build();
+		RegisteredUser interviewerUser3 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").build();
+		Interviewer itnerviewer3 = new InterviewerBuilder().id(3).user(interviewerUser3).build();
 		
-		Interview latestInterview = new InterviewBuilder().id(1).interviewers(interviewer2, itnerviewer3).toInterview();
-		Program program = new ProgramBuilder().reviewers(inrerviewerUser1, interviewerUser2).title("title").toProgram();
+		Interview latestInterview = new InterviewBuilder().id(1).interviewers(interviewer2, itnerviewer3).build();
+		Program program = new ProgramBuilder().reviewers(inrerviewerUser1, interviewerUser2).title("title").build();
 		
 		
 		
-		ApplicationForm form = new ApplicationFormBuilder().interviews(previousItnerview, latestInterview).latestInterview(latestInterview).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().interviews(previousItnerview, latestInterview).latestInterview(latestInterview).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").build()).build();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		
@@ -317,19 +317,19 @@ public class MailServiceTest {
 	@Test
 	public void shouldSendWithdrawnNotificationToSupervisors() throws UnsupportedEncodingException {
 		
-		RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).toSupervisor();
-		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).toApprovalRound();
+		RegisteredUser supervisorUser1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+		Supervisor supervisor1 = new SupervisorBuilder().id(1).user(supervisorUser1).build();
+		ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(supervisor1).build();
 
-		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").toUser();
-		Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).toSupervisor();
+		RegisteredUser interviewerUser2 = new RegisteredUserBuilder().id(3).firstName("Fred").lastName("Forse").email("Forse@test.com").build();
+		Supervisor supervisor3 = new SupervisorBuilder().id(3).user(interviewerUser2).build();
 		
-		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors( supervisor3).toApprovalRound();
-		Program program = new ProgramBuilder().title("title").toProgram();
+		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(1).supervisors( supervisor3).build();
+		Program program = new ProgramBuilder().title("title").build();
 		
 		
 		
-		ApplicationForm form = new ApplicationFormBuilder().approvalRounds(previousApprovalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().approvalRounds(previousApprovalRound, latestApprovalRound).latestApprovalRound(latestApprovalRound).id(2).applicationNumber("xyz").program(program).applicant(new RegisteredUserBuilder().firstName("a").lastName("b").build()).build();
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		
@@ -353,12 +353,12 @@ public class MailServiceTest {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSendWithdrawnNotificationToAllUsers() throws UnsupportedEncodingException {
-        RegisteredUser refereeOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-        RegisteredUser refereeTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+        RegisteredUser refereeOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").build();
+        RegisteredUser refereeTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").build();
         
-        Program program = new ProgramBuilder().title("title").administrators(refereeOne).toProgram();
+        Program program = new ProgramBuilder().title("title").administrators(refereeOne).build();
 
-        ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicationNumber("xyz").applicant(new RegisteredUserBuilder().firstName("a").lastName("b").toUser()).toApplicationForm();
+        ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicationNumber("xyz").applicant(new RegisteredUserBuilder().firstName("a").lastName("b").build()).build();
 
         Referee referee1 = new RefereeBuilder().application(form).id(2).user(refereeTwo).toReferee();
         Referee referee2 = new RefereeBuilder().application(form).id(1).user(refereeOne).toReferee();

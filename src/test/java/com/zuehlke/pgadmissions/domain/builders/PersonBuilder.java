@@ -30,7 +30,7 @@ public class PersonBuilder {
 		return this;
 	}
 	
-	public Person toPerson() {
+	public Person build() {
 		Person registryUser = new Person();
 		registryUser.setEmail(email);
 		registryUser.setId(id);

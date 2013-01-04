@@ -726,6 +726,15 @@ public class PersonalDetailsValidatorTest {
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
     
+    @Test
+    public void shouldNotThrowNullPointerExceptionForPassportInformationValidator() {
+        personalDetails.setPassportAvailable(null);
+        personalDetails.setRequiresVisa(null);
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+    }
+    
 	@Before
 	public void setup() {
 		Language nationality = new Language();

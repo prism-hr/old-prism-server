@@ -333,7 +333,7 @@ public class PersonalDetailsControllerTest {
         EasyMock.replay(userServiceMock, currentUser, resultMock, modelMock, personalDetailsMock);
         
 	    String resultView = controller.addLanguageQualification(qualification, resultMock, personalDetailsMock, modelMock);
-	    assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+	    assertEquals("/private/pgStudents/form/components/personal_details_language_qualifications", resultView);
 	    
 	    EasyMock.verify(userServiceMock, currentUser, resultMock, modelMock, personalDetailsMock);
 	}
@@ -354,7 +354,7 @@ public class PersonalDetailsControllerTest {
 	    EasyMock.replay(personalDetailsMock, modelMock);
 	    
 	    String resultView = controller.getLanguageQualification("0", personalDetailsMock, modelMock);
-	    assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+	    assertEquals("/private/pgStudents/form/components/personal_details_language_qualifications", resultView);
 	    
 	    EasyMock.verify(personalDetailsMock, modelMock);
 	}
@@ -383,7 +383,7 @@ public class PersonalDetailsControllerTest {
         EasyMock.replay(userServiceMock, currentUser, personalDetailsMock, modelMock, listMock);
         
         String resultView = controller.deleteLanguageQualification("0", personalDetailsMock, modelMock);
-        assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+        assertEquals("/private/pgStudents/form/components/personal_details_language_qualifications", resultView);
         
         EasyMock.verify(userServiceMock, currentUser, personalDetailsMock, modelMock, listMock);
     }
@@ -421,7 +421,7 @@ public class PersonalDetailsControllerTest {
         EasyMock.replay(userServiceMock, currentUser, personalDetailsMock, modelMock, listMock, resultMock, qualificationMock);
         
         String resultView = controller.updateLanguageQualification(qualification, resultMock, "0", personalDetailsMock, modelMock);
-        assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+        assertEquals("/private/pgStudents/form/components/personal_details_language_qualifications", resultView);
         
         EasyMock.verify(userServiceMock, currentUser, personalDetailsMock, modelMock, listMock, resultMock, qualificationMock);
 	}
@@ -447,7 +447,7 @@ public class PersonalDetailsControllerTest {
         EasyMock.replay(userServiceMock, currentUser, personalDetailsMock, modelMock, resultMock, qualificationMock);
         
         String resultView = controller.deleteLanguageQualificationsDocument(personalDetailsMock, "0", modelMock);
-        assertEquals("/private/pgStudents/form/components/personal_details", resultView);
+        assertEquals("/private/pgStudents/form/components/personal_details_language_qualifications", resultView);
         
         EasyMock.verify(userServiceMock, currentUser, personalDetailsMock, modelMock, resultMock, qualificationMock);
 	}

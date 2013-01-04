@@ -31,6 +31,7 @@ public class PersonalDetailsServiceTest {
         
         EasyMock.expect(personalDetailsMock.getPassportAvailable()).andReturn(false);
         personalDetailsMock.setPassportInformation(null);
+        personalDetailsMock.setPassportAvailable(false);
         personalDetailDAOMock.save(personalDetailsMock);
 
         EasyMock.replay(personalDetailDAOMock, personalDetailsMock);

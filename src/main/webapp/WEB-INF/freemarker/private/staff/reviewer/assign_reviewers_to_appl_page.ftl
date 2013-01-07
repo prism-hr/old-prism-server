@@ -14,11 +14,11 @@
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/application.css'/>" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />" />
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
-<script type="text/javascript"  src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script src="http://malsup.github.com/jquery.form.js"></script> 
-<script type="text/javascript"  src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.form.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-<script type="text/javascript"  src="<@spring.url '/design/default/js/reviewer/review.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/reviewer/review.js'/>"></script>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 <!--[if lt IE 9]>

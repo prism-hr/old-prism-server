@@ -412,7 +412,7 @@ public class PersonalDetailsControllerTest {
         
         EasyMock.expect(personalDetailsMock.getLanguageQualifications()).andReturn(listMock);
         EasyMock.expect(listMock.remove(0)).andReturn(qualificationMock);
-        qualificationMock.setLanguageQualificationDocument(null);
+        EasyMock.expect(qualificationMock.getId()).andReturn(1);
         
         personalDetailsMock.addLanguageQualification(qualification);
         

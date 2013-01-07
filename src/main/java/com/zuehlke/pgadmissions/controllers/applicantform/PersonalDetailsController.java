@@ -261,8 +261,8 @@ public class PersonalDetailsController {
         
         if (StringUtils.isNotBlank(languageQualificationId)) {
             int listIndex = Integer.valueOf(languageQualificationId);
-            LanguageQualification removedQualification = personalDetails.getLanguageQualifications().remove(listIndex);
-            removedQualification.setLanguageQualificationDocument(null);
+            LanguageQualification oldLanguageQualification = personalDetails.getLanguageQualifications().remove(listIndex);
+            languageQualification.setId(oldLanguageQualification.getId());
             personalDetails.addLanguageQualification(languageQualification);
             model.addAttribute("languageQualification", new LanguageQualification());
         }

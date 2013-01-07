@@ -49,7 +49,8 @@
 	
 		</div>
 		<!-- Scripts -->
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 		

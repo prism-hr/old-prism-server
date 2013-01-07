@@ -76,12 +76,12 @@
       
       <div class="admin_row">
         <span class="admin_row_label">Is English your first language?</span>
-        <div class="field"><#if applicationForm.personalDetails.englishFirstLanguage>Yes<#else>No</#if></div>
+        <div class="field"><#if applicationForm.personalDetails.isEnglishFirstLanguageSet() && applicationForm.personalDetails.englishFirstLanguage>Yes<#else>No</#if></div>
       </div>                              
       
       <div class="admin_row">
         <span class="admin_row_label">Do you have an English language qualification?</span>
-        <div class="field"><#if applicationForm.personalDetails.languageQualificationAvailable>Yes<#else>No</#if></div>
+        <div class="field"><#if applicationForm.personalDetails.isLanguageQualificationAvailableSet() && applicationForm.personalDetails.languageQualificationAvailable>Yes<#else>No</#if></div>
       </div>                              
     </div>
       
@@ -160,7 +160,7 @@
       <!-- VISA - Passport -->
       <div class="admin_row">
         <span class="admin_row_label">Do you require a visa to study in the UK?</span>
-        <div class="field"><#if applicationForm.personalDetails.requiresVisa>Yes<#else>No</#if></div>
+        <div class="field"><#if applicationForm.personalDetails.isRequiresVisaSet() && applicationForm.personalDetails.requiresVisa>Yes<#else>No</#if></div>
       </div>
       
       <div class="admin_row">

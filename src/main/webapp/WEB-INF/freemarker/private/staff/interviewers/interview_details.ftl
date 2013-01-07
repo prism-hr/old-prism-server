@@ -18,11 +18,9 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/interview.js'/>"></script>
-
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/interviewer/interview.js'/>"></script>
 
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -98,9 +96,6 @@
 								</div>
 								
 								<div class="buttons">
-<#--
-									<button value="cancel" type="button" class="clear">Clear</button>
--->
 									<button class="blue" type="button" id="moveToInterviewBtn">Submit</button>
 								</div>								
 								

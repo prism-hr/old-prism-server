@@ -20,7 +20,6 @@ public class PersonalDetailsService {
     @Autowired
     public PersonalDetailsService(PersonalDetailDAO personalDetailDAO) {
         this.personalDetailDAO = personalDetailDAO;
-
     }
 
     @Transactional
@@ -28,6 +27,10 @@ public class PersonalDetailsService {
         if (BooleanUtils.isFalse(personalDetails.getPassportAvailable()) || BooleanUtils.isFalse(personalDetails.getRequiresVisa())) {
             personalDetails.setPassportAvailable(false);
             personalDetails.setPassportInformation(null);
+        }
+        
+        if (BooleanUtils.isTrue(personalDetails.getEnglishFirstLanguage()) || BooleanUtils.isFalse(personalDetails.getLanguageQualificationAvailable())) {
+            personalDetails.getLanguageQualifications().clear();
         }
         personalDetailDAO.save(personalDetails);
     }

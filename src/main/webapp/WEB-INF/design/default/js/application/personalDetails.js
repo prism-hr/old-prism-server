@@ -269,58 +269,61 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
 	// Add Language Qualification
 	// -------------------------------------------------------------------------------
-	$('#addLanguageQualificationButton').live('click', function() {
-		//$('#personalDetailsSection > div').append('<div class="ajax" />');
-        $.ajax({
-        	type : 'POST',
-            statusCode : {
-                401 : function() { window.location.reload(); },
-                500 : function() { window.location.href = "/pgadmissions/error"; },
-                404 : function() { window.location.href = "/pgadmissions/404"; },
-                400 : function() { window.location.href = "/pgadmissions/400"; },
-                403 : function() { window.location.href = "/pgadmissions/404"; }
-            },
-            url : "/pgadmissions/update/addLanguageQualifications",
-            data : {
-            	'qualificationType': $('#qualificationType').val(),
-            	'otherQualificationTypeName' : $('#otherQualificationTypeName').val(),
-            	'dateOfExamination' : $('#dateOfExamination').val(),
-            	'overallScore' : selectValue('overallScore'),
-            	'readingScore' : selectValue('readingScore'),
-            	'writingScore' : selectValue('writingScore'),
-            	'speakingScore' : selectValue('speakingScore'),
-            	'listeningScore' : selectValue('listeningScore'),
-            	'examTakenOnline' : $("input[name='examTakenOnline']:checked").val(),
-            	'languageQualificationDocument' : $('#document_LANGUAGE_QUALIFICATION').val(),
-            	applicationId: $('#applicationId').val(),
-            	cacheBreaker: new Date().getTime()
-            },
-            success : function(data) {
-            	$('#languageQualification_div').html(data);
-            	bindDatePicker('#dateOfExamination');
-                addToolTips();
-                watchUpload($('#languageQualificationDocument'), ajaxLanguageQualificationDocumentDelete);
-                
-            	var selectedType = $('#qualificationType').val();
-        		if (selectedType === "IELTS_ACADEMIC") {
-        			$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').hide();
-        			$('#overallScoreSelect').val(selectValue('overallScore'));
-        			$('#readingScoreSelect').val(selectValue('readingScore'));
-        			$('#writingScoreSelect').val(selectValue('writingScore'));
-        			$('#speakingScoreSelect').val(selectValue('speakingScore'));
-        			$('#listeningScoreSelect').val(selectValue('listeningScore'));
-        			$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
-        		}
-        		
-        		if ($('#languageQualification_div span.invalid').length <= 0) {
-        		    disableLanguageQualifications();
-        		} else {
-        		    enableLanguageQualifications();
-        		} 
-            },
-            complete : function() {
-            }
-        });				
+	$('#addLanguageQualificationButton').live('click', function(event) {
+	    if (event.handled !== true) {
+	        event.handled = true;
+	        $.ajax({
+	            type : 'POST',
+	            statusCode : {
+	                401 : function() { window.location.reload(); },
+	                500 : function() { window.location.href = "/pgadmissions/error"; },
+	                404 : function() { window.location.href = "/pgadmissions/404"; },
+	                400 : function() { window.location.href = "/pgadmissions/400"; },
+	                403 : function() { window.location.href = "/pgadmissions/404"; }
+	            },
+	            url : "/pgadmissions/update/addLanguageQualifications",
+	            data : {
+	                'qualificationType': $('#qualificationType').val(),
+	                'otherQualificationTypeName' : $('#otherQualificationTypeName').val(),
+	                'dateOfExamination' : $('#dateOfExamination').val(),
+	                'overallScore' : selectValue('overallScore'),
+	                'readingScore' : selectValue('readingScore'),
+	                'writingScore' : selectValue('writingScore'),
+	                'speakingScore' : selectValue('speakingScore'),
+	                'listeningScore' : selectValue('listeningScore'),
+	                'examTakenOnline' : $("input[name='examTakenOnline']:checked").val(),
+	                'languageQualificationDocument' : $('#document_LANGUAGE_QUALIFICATION').val(),
+	                applicationId: $('#applicationId').val(),
+	                cacheBreaker: new Date().getTime()
+	            },
+	            success : function(data) {
+	                $('#languageQualification_div').html(data);
+	                bindDatePicker('#dateOfExamination');
+	                addToolTips();
+	                watchUpload($('#languageQualificationDocument'), ajaxLanguageQualificationDocumentDelete);
+	                
+	                var selectedType = $('#qualificationType').val();
+	                if (selectedType === "IELTS_ACADEMIC") {
+	                    $('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').hide();
+	                    $('#overallScoreSelect').val(selectValue('overallScore'));
+	                    $('#readingScoreSelect').val(selectValue('readingScore'));
+	                    $('#writingScoreSelect').val(selectValue('writingScore'));
+	                    $('#speakingScoreSelect').val(selectValue('speakingScore'));
+	                    $('#listeningScoreSelect').val(selectValue('listeningScore'));
+	                    $('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').show();
+	                }
+	                
+	                if ($('#languageQualification_div span.invalid').length <= 0) {
+	                    disableLanguageQualifications();
+	                } else {
+	                    enableLanguageQualifications();
+	                } 
+	            },
+	            complete : function() {
+	            }
+	        });
+	    }
+	    return false;
 	});
 	
 	// -------------------------------------------------------------------------------

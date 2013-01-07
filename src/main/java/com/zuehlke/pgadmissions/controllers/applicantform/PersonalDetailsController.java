@@ -195,8 +195,7 @@ public class PersonalDetailsController {
     
     @RequestMapping(value = "/addLanguageQualifications", method = RequestMethod.POST)
     public String addLanguageQualification(@Valid LanguageQualification languageQualification, BindingResult result, 
-            @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
-
+            @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {      
         personalDetails.setEnglishFirstLanguage(false);
         personalDetails.setLanguageQualificationAvailable(true);
         model.addAttribute("languageQualification", languageQualification);

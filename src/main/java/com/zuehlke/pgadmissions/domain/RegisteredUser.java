@@ -851,7 +851,7 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     
     private boolean listContainsId(Program program, List<Program> programs) {
         for (Program entry : programs) {
-            if (entry.getId().equals(program.getId())) {
+            if (program != null && entry.getId().equals(program.getId())) {
                 return true;
             }
         }

@@ -456,8 +456,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnListOfAuthoritiesForProgram() {
 		Program program = new ProgramBuilder().id(1).build();
-		RegisteredUser user = new RegisteredUserBuilder().programsOfWhichAdministrator(program).programsOfWhichApprover(program)
-				.programsOfWhichReviewer(program).programsOfWhichSupervisor(program).build();
+		RegisteredUser user = new RegisteredUserBuilder().programsOfWhichAdministrator(program).programsOfWhichApprover(program).programsOfWhichReviewer(program).programsOfWhichSupervisor(program).build();
 		List<Authority> authorities = user.getAuthoritiesForProgram(program);
 		assertEquals(4, authorities.size());
 		assertEquals(Authority.ADMINISTRATOR, authorities.get(0));
@@ -465,6 +464,14 @@ public class RegisteredUserTest {
 		assertEquals(Authority.APPROVER, authorities.get(2));
 		assertEquals(Authority.SUPERVISOR, authorities.get(3));
 	}
+	
+	@Test
+    public void shouldReturnListOfAuthoritiesForProgramWithoutNullPointerException() {
+        Program program = new ProgramBuilder().id(1).build();
+        RegisteredUser user = new RegisteredUserBuilder().programsOfWhichAdministrator(program).programsOfWhichApprover(program).programsOfWhichReviewer(program).programsOfWhichSupervisor(program).build();
+        List<Authority> authorities = user.getAuthoritiesForProgram(null);
+        assertEquals(0, authorities.size());
+    }	
 
 	@Test
 	public void shouldReturnCommaSeparatedListOfAuthoritiesForProgram() {

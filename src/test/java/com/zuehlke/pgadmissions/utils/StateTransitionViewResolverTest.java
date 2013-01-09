@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -23,29 +22,45 @@ public class StateTransitionViewResolverTest {
 
 	@Test
 	public void shouldReturnRedirectToReviewIfValidationAndReviewNextStatus() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
-				.comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.REVIEW).build()).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		    .applicationNumber("ABC")
+		    .id(1)
+		    .status(ApplicationFormStatus.VALIDATION)
+		    .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.REVIEW).build())
+		    .build();
 		assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 
 	@Test
 	public void shouldReturnRedirectToIntervewIfValidationAndInterviewNextStatus() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
-				.comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).build()).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		    .applicationNumber("ABC")
+		    .id(1)
+		    .status(ApplicationFormStatus.VALIDATION)
+		    .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.INTERVIEW).build())
+		    .build();
 		assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 
 	@Test
 	public void shouldReturnRedirectToApprovalIfValidationAndAppovalNextStatus() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
-				.comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVAL).build()).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		    .applicationNumber("ABC")
+		    .id(1)
+		    .status(ApplicationFormStatus.VALIDATION)
+		    .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.APPROVAL).build())
+		    .build();
 		assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 
 	@Test
 	public void shouldReturnRedirectToRejectionIfValidationAndRejectedNextStatus() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").id(1).status(ApplicationFormStatus.VALIDATION)
-				.comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).build()).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		    .applicationNumber("ABC")
+		    .id(1)
+		    .status(ApplicationFormStatus.VALIDATION)
+		    .comments(new ValidationCommentBuilder().nextStatus(ApplicationFormStatus.REJECTED).build())
+		    .build();
 		assertEquals("redirect:/rejectApplication?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 
@@ -57,11 +72,12 @@ public class StateTransitionViewResolverTest {
 				.applicationNumber("ABC")
 				.id(1)
 				.comments(
-						new ReviewEvaluationCommentBuilder().id(1).reviewRound(previousReviewRound).nextStatus(ApplicationFormStatus.INTERVIEW)
-								.build(),
-						new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REVIEW).reviewRound(latestReviewRound)
-								.build()).status(ApplicationFormStatus.REVIEW).reviewRounds(previousReviewRound, latestReviewRound)
-				.latestReviewRound(latestReviewRound).build();
+						new ReviewEvaluationCommentBuilder().id(1).reviewRound(previousReviewRound).nextStatus(ApplicationFormStatus.INTERVIEW).build(),
+						new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REVIEW).reviewRound(latestReviewRound).build())
+				.status(ApplicationFormStatus.REVIEW)
+				.reviewRounds(previousReviewRound, latestReviewRound)
+				.latestReviewRound(latestReviewRound)
+				.build();
 		assertEquals("redirect:/review/moveToReview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 
@@ -73,11 +89,12 @@ public class StateTransitionViewResolverTest {
 				.applicationNumber("ABC")
 				.id(1)
 				.comments(
-						new ReviewEvaluationCommentBuilder().id(1).reviewRound(previousReviewRound).nextStatus(ApplicationFormStatus.REVIEW)
-								.build(),
-						new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.INTERVIEW).reviewRound(latestReviewRound)
-								.build()).status(ApplicationFormStatus.REVIEW).reviewRounds(previousReviewRound, latestReviewRound)
-				.latestReviewRound(latestReviewRound).build();
+						new ReviewEvaluationCommentBuilder().id(1).reviewRound(previousReviewRound).nextStatus(ApplicationFormStatus.REVIEW).build(),
+						new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.INTERVIEW).reviewRound(latestReviewRound).build())
+				.status(ApplicationFormStatus.REVIEW)
+				.reviewRounds(previousReviewRound, latestReviewRound)
+				.latestReviewRound(latestReviewRound)
+				.build();
 		assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 
@@ -89,11 +106,12 @@ public class StateTransitionViewResolverTest {
 				.applicationNumber("ABC")
 				.id(1)
 				.comments(
-						new ReviewEvaluationCommentBuilder().id(1).reviewRound(previousReviewRound).nextStatus(ApplicationFormStatus.REVIEW)
-								.build(),
-						new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVAL).reviewRound(latestReviewRound)
-								.build()).status(ApplicationFormStatus.REVIEW).reviewRounds(previousReviewRound, latestReviewRound)
-				.latestReviewRound(latestReviewRound).build();
+						new ReviewEvaluationCommentBuilder().id(1).reviewRound(previousReviewRound).nextStatus(ApplicationFormStatus.REVIEW).build(),
+						new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVAL).reviewRound(latestReviewRound).build())
+				.status(ApplicationFormStatus.REVIEW)
+				.reviewRounds(previousReviewRound, latestReviewRound)
+				.latestReviewRound(latestReviewRound)
+				.build();
 		assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 
@@ -105,11 +123,12 @@ public class StateTransitionViewResolverTest {
 				.applicationNumber("ABC")
 				.id(1)
 				.comments(
-						new ReviewEvaluationCommentBuilder().id(1).reviewRound(previousReviewRound).nextStatus(ApplicationFormStatus.REVIEW)
-								.build(),
-						new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REJECTED).reviewRound(latestReviewRound)
-								.build()).status(ApplicationFormStatus.REVIEW).reviewRounds(previousReviewRound, latestReviewRound)
-				.latestReviewRound(latestReviewRound).build();
+						new ReviewEvaluationCommentBuilder().id(1).reviewRound(previousReviewRound).nextStatus(ApplicationFormStatus.REVIEW).build(),
+						new ReviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REJECTED).reviewRound(latestReviewRound).build())
+				.status(ApplicationFormStatus.REVIEW)
+				.reviewRounds(previousReviewRound, latestReviewRound)
+				.latestReviewRound(latestReviewRound)
+				.build();
 		assertEquals("redirect:/rejectApplication?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 	
@@ -121,11 +140,12 @@ public class StateTransitionViewResolverTest {
 				.applicationNumber("ABC")
 				.id(1)
 				.comments(
-						new InterviewEvaluationCommentBuilder().id(1).interview(previousInterview).nextStatus(ApplicationFormStatus.REVIEW)
-								.build(),
-						new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.INTERVIEW).interview(latestInterview)
-								.build()).status(ApplicationFormStatus.INTERVIEW).interviews(previousInterview, latestInterview)
-				.latestInterview(latestInterview).build();
+						new InterviewEvaluationCommentBuilder().id(1).interview(previousInterview).nextStatus(ApplicationFormStatus.REVIEW).build(),
+						new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.INTERVIEW).interview(latestInterview).build())
+				.status(ApplicationFormStatus.INTERVIEW)
+				.interviews(previousInterview, latestInterview)
+				.latestInterview(latestInterview)
+				.build();
 		assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 
@@ -137,11 +157,12 @@ public class StateTransitionViewResolverTest {
 				.applicationNumber("ABC")
 				.id(1)
 				.comments(
-						new InterviewEvaluationCommentBuilder().id(1).interview(previousInterview).nextStatus(ApplicationFormStatus.REVIEW)
-								.build(),
-						new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVAL).interview(latestInterview)
-								.build()).status(ApplicationFormStatus.INTERVIEW).interviews(previousInterview, latestInterview)
-				.latestInterview(latestInterview).build();
+						new InterviewEvaluationCommentBuilder().id(1).interview(previousInterview).nextStatus(ApplicationFormStatus.REVIEW).build(),
+						new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVAL).interview(latestInterview).build())
+				.status(ApplicationFormStatus.INTERVIEW)
+				.interviews(previousInterview, latestInterview)
+				.latestInterview(latestInterview)
+				.build();
 		assertEquals("redirect:/approval/moveToApproval?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 
@@ -153,10 +174,10 @@ public class StateTransitionViewResolverTest {
 				.applicationNumber("ABC")
 				.id(1)
 				.comments(
-						new InterviewEvaluationCommentBuilder().id(1).interview(previousInterview).nextStatus(ApplicationFormStatus.REVIEW)
-								.build(),
-						new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REJECTED).interview(latestInterview)
-								.build()).status(ApplicationFormStatus.INTERVIEW).interviews(previousInterview, latestInterview)
+						new InterviewEvaluationCommentBuilder().id(1).interview(previousInterview).nextStatus(ApplicationFormStatus.REVIEW).build(),
+						new InterviewEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REJECTED).interview(latestInterview).build())
+				.status(ApplicationFormStatus.INTERVIEW)
+				.interviews(previousInterview, latestInterview)
 				.latestInterview(latestInterview).build();
 		assertEquals("redirect:/rejectApplication?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
@@ -169,27 +190,45 @@ public class StateTransitionViewResolverTest {
 		.applicationNumber("ABC")
 		.id(1)
 		.comments(
-				new ApprovalEvaluationCommentBuilder().id(1).approvalRound(latestApprovalRound).nextStatus(ApplicationFormStatus.REJECTED)
-				.build(),
-				new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REJECTED).approvalRound(latestApprovalRound)
-				.build()).status(ApplicationFormStatus.APPROVAL).approvalRounds(approvalRound, latestApprovalRound)
-				.latestApprovalRound(latestApprovalRound).build();
+				new ApprovalEvaluationCommentBuilder().id(1).approvalRound(latestApprovalRound).nextStatus(ApplicationFormStatus.REJECTED).build(),
+				new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.REJECTED).approvalRound(latestApprovalRound).build())
+				.status(ApplicationFormStatus.APPROVAL).approvalRounds(approvalRound, latestApprovalRound)
+				.latestApprovalRound(latestApprovalRound)
+				.build();
 		assertEquals("redirect:/rejectApplication?applicationId=ABC", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
 	
 	@Test
-	public void shouldReturnToApplicationsListIfApprovalAndApprovedNextStatus() {
+	public void shouldReturnToApplicationsListIfApprovedNextStatus() {
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(3).build();
 		ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder()
 		.applicationNumber("ABC")
 		.id(1)
+		.status(ApplicationFormStatus.APPROVED)
 		.comments(
-				new ApprovalEvaluationCommentBuilder().id(1).approvalRound(latestApprovalRound).nextStatus(ApplicationFormStatus.APPROVED)
-				.build(),
-				new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVED).approvalRound(latestApprovalRound)
-				.build()).status(ApplicationFormStatus.APPROVAL).approvalRounds(approvalRound, latestApprovalRound)
-				.latestApprovalRound(latestApprovalRound).build();
+				new ApprovalEvaluationCommentBuilder().id(1).approvalRound(latestApprovalRound).nextStatus(ApplicationFormStatus.APPROVED).build(),
+				new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVED).approvalRound(latestApprovalRound).build())
+		.approvalRounds(approvalRound, latestApprovalRound)
+		.latestApprovalRound(latestApprovalRound)
+		.build();
 		assertEquals("redirect:/applications", new StateTransitionViewResolver().resolveView(applicationForm));
 	}
+	
+	@Test
+    public void shouldReturnToStateTransitionViewIfApprovalAndApprovedNextStatus() {
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(3).build();
+        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().id(4).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder()
+        .applicationNumber("ABC")
+        .id(1)
+        .status(ApplicationFormStatus.APPROVAL)
+        .comments(
+                new ApprovalEvaluationCommentBuilder().id(1).approvalRound(latestApprovalRound).nextStatus(ApplicationFormStatus.APPROVED).build(),
+                new ApprovalEvaluationCommentBuilder().id(2).nextStatus(ApplicationFormStatus.APPROVED).approvalRound(latestApprovalRound).build())
+        .approvalRounds(approvalRound, latestApprovalRound)
+        .latestApprovalRound(latestApprovalRound)
+        .build();
+        assertEquals("private/staff/admin/state_transition", new StateTransitionViewResolver().resolveView(applicationForm));
+    }	
 }

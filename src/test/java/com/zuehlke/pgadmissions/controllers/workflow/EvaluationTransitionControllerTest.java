@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
@@ -252,6 +253,35 @@ public class EvaluationTransitionControllerTest {
 		
 		EasyMock.verify(commentServiceMock);
 		assertEquals("private/staff/admin/state_transition", view);	
+	}
+	
+	@Test
+	public void shouldCreateGenericCommentIfPreferredStartDateIsNotInBoundsForApproval() {
+	    StateChangeComment stateChangeComment = new StateChangeComment();
+	    stateChangeComment.setComment("comment");
+	    stateChangeComment.setNextStatus(ApplicationFormStatus.APPROVED);
+	    stateChangeComment.setType(CommentType.APPROVAL_EVALUATION);
+	    final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("ABCD-EFG").build();
+	    
+	    controller = new EvaluationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, new CommentFactory(),
+                stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
+                documentPropertyEditorMock, uclExportServiceMock) {
+            @Override
+            public ApplicationForm getApplicationForm( String applicationId) {
+                return applicationForm;
+            }
+        };
+        
+        EasyMock.expect(approvalServiceMock.moveToApproved(applicationForm)).andReturn(false);
+	    
+        commentServiceMock.save(EasyMock.isA(Comment.class));
+        
+        EasyMock.replay(approvalServiceMock, commentServiceMock);
+	    
+	    String resultView = controller.addComment(applicationForm.getApplicationNumber(), stateChangeComment, bindingResultMock, new ModelMap(), null);
+	    
+	    assertEquals("redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7", resultView);
+	    EasyMock.verify(approvalServiceMock, commentServiceMock);
 	}
 	
 	@Before

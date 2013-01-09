@@ -150,21 +150,22 @@ public class ApprovalService {
 
 	@Transactional		
 	public boolean moveToApproved(ApplicationForm application) {
-		if(ApplicationFormStatus.APPROVAL != application.getStatus()){
-			throw new IllegalStateException();
-		}
-		if(!application.isPrefferedStartDateWithinBounds()) {		
-			Date earliestPossibleStartDate = application.getEarliestPossibleStartDate();
-			if(earliestPossibleStartDate == null)
-				return false;
-			application.getProgrammeDetails().setStartDate(earliestPossibleStartDate);
-			programmeDetailDAO.save(application.getProgrammeDetails());
-		}
-		application.setStatus(ApplicationFormStatus.APPROVED);
-		application.setApprover(userService.getCurrentUser());
-		application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
-		applicationDAO.save(application);
-		return true;
+        if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
+            throw new IllegalStateException();
+        }
+        if (!application.isPrefferedStartDateWithinBounds()) {
+            Date earliestPossibleStartDate = application.getEarliestPossibleStartDate();
+            if (earliestPossibleStartDate == null) {
+                return false;
+            }
+            application.getProgrammeDetails().setStartDate(earliestPossibleStartDate);
+            programmeDetailDAO.save(application.getProgrammeDetails());
+        }
+        application.setStatus(ApplicationFormStatus.APPROVED);
+        application.setApprover(userService.getCurrentUser());
+        application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
+        applicationDAO.save(application);
+        return true;
 	}
 
 	@Transactional

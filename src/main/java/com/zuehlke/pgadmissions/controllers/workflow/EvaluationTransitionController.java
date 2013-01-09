@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -83,27 +84,29 @@ public class EvaluationTransitionController extends StateTransitionController {
 		
 		newComment.setDocuments(stateChangeComment.getDocuments());
 		
-		commentService.save(newComment);
-		
 		if (newComment instanceof ApprovalEvaluationComment) {
 			ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
-
-			if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
-				if(approvalService.moveToApproved(applicationForm)) {					
-					modelMap.put("messageCode", "move.approved");
-					modelMap.put("application", applicationForm.getApplicationNumber());
-					// TODO: Enable when ready for production
-					//uclExportService.sendToUCL(applicationForm);
-				} else {
-					return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber()+"&rejectionId=7";
-				}
-			}
+            if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
+                if (approvalService.moveToApproved(applicationForm)) {
+                    modelMap.put("messageCode", "move.approved");
+                    modelMap.put("application", applicationForm.getApplicationNumber());
+                    // TODO: Enable when ready for production
+                    // uclExportService.sendToUCL(applicationForm);
+                } else {
+                    Comment genericComment = commentFactory.createComment(applicationForm, user, newComment.getComment(), CommentType.GENERIC, null);
+                    genericComment.setDocuments(newComment.getDocuments());
+                    commentService.save(genericComment);
+                    return "redirect:/rejectApplication?applicationId=" + applicationForm.getApplicationNumber() + "&rejectionId=7";
+                }
+            }
 		}
 		
-		if(delegate != null && delegate){
-			return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
-		}
+		commentService.save(newComment);
 		
+        if (delegate != null && delegate) {
+            return "redirect:/applications?messageCode=delegate.success&application="+ applicationForm.getApplicationNumber();
+        }
+        
 		return stateTransitionViewResolver.resolveView(applicationForm);
 	}
 }

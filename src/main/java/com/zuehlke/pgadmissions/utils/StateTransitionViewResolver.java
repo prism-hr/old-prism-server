@@ -50,9 +50,12 @@ public class StateTransitionViewResolver {
 		if (evaluationCommentForLatestApprovalRound == null) {
 			return STATE_TRANSITION_VIEW;
 		}
-		if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus()) {
+		if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
 			return MY_APPLICATIONS_VIEW;
 		}
+		if (ApplicationFormStatus.APPROVED == evaluationCommentForLatestApprovalRound.getNextStatus() && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
+		    return STATE_TRANSITION_VIEW;
+        }
 		return REJECTION_VIEW + applicationForm.getApplicationNumber();
 	}
 

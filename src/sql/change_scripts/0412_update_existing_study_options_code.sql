@@ -1,4 +1,4 @@
-UPDATE pgadmissions.application_form_programme_detail SET STUDY_CODE = 'F+++++' WHERE STUDY_CODE = "1"
+UPDATE APPLICATION_FORM_PROGRAMME_DETAIL SET STUDY_CODE = 'F+++++' WHERE STUDY_CODE = "1"
 ;
-UPDATE pgadmissions.application_form_programme_detail SET STUDY_CODE = 'P+++++' WHERE STUDY_CODE = "31"
+UPDATE APPLICATION_FORM_PROGRAMME_DETAIL SET STUDY_CODE = 'P+++++' WHERE STUDY_CODE = "31"
 ;

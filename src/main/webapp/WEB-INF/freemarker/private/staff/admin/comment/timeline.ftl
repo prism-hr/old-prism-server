@@ -13,7 +13,7 @@
       <ul id="timeline-statuses">
       
         <#list timelineObjects as timelineObject>  
-	        <#if timelineObject.type != 'reference' ||  user.hasStaffRightsOnApplicationForm(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
+	        <#if timelineObject.type != 'reference' || user.hasStaffRightsOnApplicationForm(applicationForm) || user == applicationForm.applicant || (timelineObject.referee?? && timelineObject.referee.user == user)>      
 		        <li class="${timelineObject.type}">
 		          <div class="box">
 		            <div class="title">
@@ -25,7 +25,7 @@
 		            <p class="highlight"><@spring.message '${timelineObject.messageCode}'/>.</p>  
 							</div>
 		        
-							<#if timelineObject.reviewRound?? && user != applicationForm.applicant  && user.hasStaffRightsOnApplicationForm(applicationForm)>
+							<#if timelineObject.reviewRound?? && user.hasStaffRightsOnApplicationForm(applicationForm)>
 							<#if timelineObject.reviewRound.reviewers?? && timelineObject.reviewRound.reviewers?size &gt; 0>
 							<ul class="status-info">
 								<li class="${timelineObject.type}">
@@ -158,9 +158,8 @@
 			            </li>
 		            </#list>                       
 		          </ul>
-		          <#elseif timelineObject.referee?? && user != applicationForm.applicant && ( user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)> 
-		            	<#include "timeline_snippets/reference_comment.ftl"/>	         
-		            	
+		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)> 
+		            	<#include "timeline_snippets/reference_comment.ftl"/>
 		          </#if> 
 		        </li>
 	        </#if>

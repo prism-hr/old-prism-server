@@ -164,7 +164,9 @@ public class ApplicationFormTest {
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
 		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
 		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().referees()
-				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), new RoleBuilder().authorityEnum(Authority.REFEREE).build()).id(7)
+				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), 
+				        new RoleBuilder().authorityEnum(Authority.REFEREE).build())
+				.id(7)
 				.build();
 
 		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
@@ -180,6 +182,32 @@ public class ApplicationFormTest {
 		reviewerUserTwo.getReferees().add(referee);
 		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerUserTwo);
 		assertEquals(3, visibleComments.size());
+	}
+	
+	@Test
+	public void shouldSeeAllCommentsIfApplicantAndAdministrator() throws ParseException {
+	    SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+        RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).build();
+        RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().referees()
+                .roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).build(), 
+                        new RoleBuilder().authorityEnum(Authority.REFEREE).build(),
+                        new RoleBuilder().authorityEnum(Authority.APPLICANT).build())
+                .id(7)
+                .build();
+
+        Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).build();
+        Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).build();
+        Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerUserTwo).build();
+
+        ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUserOne).build(),
+                new ReviewerBuilder().user(reviewerUserTwo).build()).build();
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5).comments(commentOne, commentTwo, commentThree)
+                .build();
+        Referee referee = new RefereeBuilder().application(applicationForm).toReferee();
+        reviewerUserTwo.getReferees().add(referee);
+        List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerUserTwo);
+        assertEquals(3, visibleComments.size());
 	}
 
 	@Test

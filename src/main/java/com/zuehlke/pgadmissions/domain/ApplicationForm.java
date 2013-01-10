@@ -33,7 +33,6 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
@@ -415,7 +414,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             Collections.sort(comments);
             return comments;
         }
-        if (user.isInRole(Authority.APPLICANT) || !user.hasStaffRightsOnApplicationForm(this)) {
+        if (!user.hasStaffRightsOnApplicationForm(this)) {
             return new ArrayList<Comment>();
         }
 

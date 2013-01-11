@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -69,28 +70,31 @@ public class RefereeController {
 	@RequestMapping(value = "/editReferee", method = RequestMethod.POST)
 	public String editReferee(@Valid Referee referee, BindingResult result) {
 
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
-		ApplicationForm application = referee.getApplication();
-		if(application.isDecided()){
-			throw new CannotUpdateApplicationException();
-		}
-		if(result.hasErrors()){
-			return STUDENTS_FORM_REFEREES_VIEW;
-		}
-		
-		if(!application.isSubmitted()){
-			refereeService.save(referee);
-		}
-		else if(application.isModifiable()){ 
-			refereeService.processRefereesRoles(Arrays.asList(referee));
-			refereeService.sendRefereeMailNotification(referee);
-		}
-		application.setLastUpdated(new Date());
-		applicationsService.save(application);
-		return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
-			
+        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+            throw new ResourceNotFoundException();
+        }
+
+        ApplicationForm application = referee.getApplication();
+        if (application.isDecided()) {
+            throw new CannotUpdateApplicationException();
+        }
+
+        if (result.hasErrors()) {
+            return STUDENTS_FORM_REFEREES_VIEW;
+        }
+
+        if (!application.isSubmitted()) {
+            refereeService.save(referee);
+        } else if (application.isModifiable()) {
+            refereeService.processRefereesRoles(Arrays.asList(referee));
+            if (application.getStatus() != ApplicationFormStatus.VALIDATION) {
+                refereeService.sendRefereeMailNotification(referee);
+            }
+        }
+
+        application.setLastUpdated(new Date());
+        applicationsService.save(application);
+        return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
 	}
 
 	@ModelAttribute("countries")

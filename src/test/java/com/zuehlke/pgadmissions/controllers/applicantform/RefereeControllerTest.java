@@ -82,7 +82,6 @@ public class RefereeControllerTest {
 		assertEquals("/private/pgStudents/form/components/references_details", controller.getRefereeView());
 	}
 
-
 	@Test
 	public void shouldReturnAllCountries() {
 		List<Country> countryList = Arrays.asList(new CountryBuilder().id(1).build(), new CountryBuilder().id(2).build());
@@ -124,7 +123,6 @@ public class RefereeControllerTest {
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
 		controller.getApplicationForm("1");
-
 	}
 
 	@Test
@@ -187,6 +185,7 @@ public class RefereeControllerTest {
 		assertEquals( "redirect:/update/getReferee?applicationId=ABC", view);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
+	
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInApprovalStageAndIfNoErrors() {
 		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.APPROVAL).build();
@@ -201,6 +200,21 @@ public class RefereeControllerTest {
 		EasyMock.verify(refereeServiceMock);
 		assertEquals( "redirect:/update/getReferee?applicationId=ABC", view);
 	}
+	
+    @Test
+    public void shouldNotSendEmailIfApplicationInValidationStageAndIfNoErrors() {
+        ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.VALIDATION).build();
+        Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
+        application.setReferees(Arrays.asList(referee));
+        BindingResult errors = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(errors.hasErrors()).andReturn(false);
+        refereeServiceMock.processRefereesRoles(application.getReferees());
+        //refereeServiceMock.sendRefereeMailNotification(referee);
+        EasyMock.replay(refereeServiceMock, errors);
+        String view = controller.editReferee(referee, errors);
+        EasyMock.verify(refereeServiceMock);
+        assertEquals( "redirect:/update/getReferee?applicationId=ABC", view);
+    }	
 	
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInReviewStageAndIfNoErrors() {
@@ -239,10 +253,11 @@ public class RefereeControllerTest {
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		refereeServiceMock.processRefereesRoles(application.getReferees());
 		applicationsServiceMock.save(application);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.replay(applicationsServiceMock, refereeServiceMock);
 		String view = controller.editReferee(referee, errors);
-		EasyMock.verify(applicationsServiceMock);
+		EasyMock.verify(applicationsServiceMock, refereeServiceMock);
 		assertEquals( "redirect:/update/getReferee?applicationId=ABC", view);
 	}
 

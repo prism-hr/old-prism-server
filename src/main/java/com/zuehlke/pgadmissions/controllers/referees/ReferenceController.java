@@ -117,8 +117,11 @@ public class ReferenceController {
 		if(bindingResult.hasErrors()){
 			return ADD_REFERENCES_VIEW_NAME;
 		}
-		commentService.save(comment);		
-		refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
+		
+		if(comment.getReferee().getReference() == null) { // check if the reference isn't already submitted
+			commentService.save(comment);		
+			refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
+		}
 		return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
 	}
 

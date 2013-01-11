@@ -227,10 +227,23 @@ public class ReferenceControllerTest {
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(reference);
 		refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
-		EasyMock.replay(errorsMock, refereeServiceMock);
+		EasyMock.replay(errorsMock, commentServiceMock, refereeServiceMock);
 		assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errorsMock));
-		EasyMock.verify(refereeServiceMock);
+		EasyMock.verify(commentServiceMock, refereeServiceMock);
 	}
+	
+	@Test
+	public void shouldPreventFromSavingDuplicateReferences() {
+		Referee referee = new RefereeBuilder().id(1).toReferee();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").build();
+		ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).build();
+		referee.setReference(reference);
+		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+		EasyMock.replay(errorsMock, commentServiceMock, refereeServiceMock);
+		assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errorsMock));
+		EasyMock.verify(commentServiceMock, refereeServiceMock);
+	}	
 	
 	@Test
 	public void shouldCreateNewReferenceCommentForApplicationForm(){

@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 public class ApprovalServiceTest {
@@ -56,8 +57,11 @@ public class ApprovalServiceTest {
 	private ApprovalService approvalService;
 
 	private ApplicationFormDAO applicationFormDAOMock;
+
 	private ApprovalRoundDAO approvalRoundDAOMock;
+	
 	private StageDurationDAO stageDurationDAOMock;
+	
 	private ProgrammeDetailDAO programmeDetailDAOMock;
 
 	private EventFactory eventFactoryMock;
@@ -65,10 +69,14 @@ public class ApprovalServiceTest {
 	private CommentDAO commentDAOMock;
 
 	private UserService userServiceMock;
+	
 	private SupervisorDAO supervisorDAOMock;
+	
 	private ApprovalRound approvalRound;
+	
 	private Supervisor supervisor;
 
+	private UclExportService uclExportServiceMock;
 
 	@Before
 	public void setUp() {
@@ -79,14 +87,15 @@ public class ApprovalServiceTest {
 		approvalRoundDAOMock = EasyMock.createMock(ApprovalRoundDAO.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
-
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-
+		uclExportServiceMock = EasyMock.createMock(UclExportService.class);
 		commentDAOMock = EasyMock.createMock(CommentDAO.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		approvalService = new ApprovalService(userServiceMock, applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, eventFactoryMock,
-				commentDAOMock, supervisorDAOMock, programmeDetailDAOMock) {
-			@Override
+        
+		approvalService = new ApprovalService(userServiceMock, applicationFormDAOMock, approvalRoundDAOMock,
+                stageDurationDAOMock, eventFactoryMock, commentDAOMock, supervisorDAOMock, programmeDetailDAOMock,
+                uclExportServiceMock) {
+            @Override
 			public ApprovalRound newApprovalRound() {
 				return approvalRound;
 			}

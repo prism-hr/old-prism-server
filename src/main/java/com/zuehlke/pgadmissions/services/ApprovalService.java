@@ -24,42 +24,48 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class ApprovalService {
 
 	private final ApplicationFormDAO applicationDAO;
+	
 	private final ApprovalRoundDAO approvalRoundDAO;
+	
 	private final StageDurationDAO stageDurationDAO;
 	
 	private final EventFactory eventFactory;
+	
 	private final CommentDAO commentDAO;
+
 	private final ProgrammeDetailDAO programmeDetailDAO;
 	
-	
 	private final UserService userService;
+	
+	private final UclExportService uclExportService;
 	
 	private final SupervisorDAO supervisorDAO;
 
 	ApprovalService() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO,
-			EventFactory eventFactory, CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO) {
-
+    public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO,
+            ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO, EventFactory eventFactory,
+            CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO,
+            UclExportService uclExportService) {
 		this.userService = userService;
 		this.applicationDAO = applicationDAO;
 		this.approvalRoundDAO = approvalRoundDAO;
 		this.stageDurationDAO = stageDurationDAO;
-	
 		this.eventFactory = eventFactory;
 		this.commentDAO = commentDAO;
 		this.supervisorDAO = supervisorDAO;
 		this.programmeDetailDAO = programmeDetailDAO;
-
+		this.uclExportService = uclExportService;
 	}
 
 	@Transactional
@@ -165,6 +171,10 @@ public class ApprovalService {
         application.setApprover(userService.getCurrentUser());
         application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
         applicationDAO.save(application);
+        
+        // TODO: Enable when ready for production
+        //uclExportService.sendToUCL(application);
+        
         return true;
 	}
 

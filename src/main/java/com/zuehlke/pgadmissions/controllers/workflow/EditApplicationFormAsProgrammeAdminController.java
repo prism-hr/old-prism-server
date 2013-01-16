@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 
-//TODO: Kevin: Finish implementation of this controller by creating a referre comment on behalf of the referre and 
+//TODO: Kevin: Finish implementation of this controller by creating a referee comment on behalf of the referee and 
 // write the unit tests for this controller.
 
 @Controller

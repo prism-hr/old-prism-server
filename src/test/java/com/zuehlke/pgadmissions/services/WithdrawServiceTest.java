@@ -11,13 +11,19 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 
 public class WithdrawServiceTest {
 
 	private ApplicationsService applicationServiceMock;
+	
 	private MailService mailServiceMock;
+	
 	private RefereeService refereeServiceMock;
+	
 	private WithdrawService service;
+	
+	private UclExportService uclExportServiceMock;
 	
 	@Test
 	public void shouldSaveFormAndSendEmails() {
@@ -39,6 +45,7 @@ public class WithdrawServiceTest {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		mailServiceMock = EasyMock.createMock(MailService.class);
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
-		service = new WithdrawService(applicationServiceMock, mailServiceMock, refereeServiceMock);
+		uclExportServiceMock = EasyMock.createMock(UclExportService.class);
+		service = new WithdrawService(applicationServiceMock, mailServiceMock, refereeServiceMock, uclExportServiceMock);
 	}
 }

@@ -36,21 +36,29 @@ public class SubmitApplicationFormController {
 	private static final Logger log = Logger.getLogger(SubmitApplicationFormController.class);
 
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "/private/pgStudents/form/main_application_page";
+	
 	private static final String VIEW_APPLICATION_STAFF_VIEW_NAME = "/private/staff/application/main_application_page";
-	private final ApplicationFormValidator applicationFormValidator;
-	private final StageDurationDAO stageDurationDAO;
+
 	private static final String VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME = "/private/staff/application/main_application_page_without_headers";
+	
+	private final ApplicationFormValidator applicationFormValidator;
+	
+	private final StageDurationDAO stageDurationDAO;
+	
 	private final ApplicationsService applicationService;
+	
 	private final EventFactory eventFactory;
+	
 	private final UserService userService;
 
-	SubmitApplicationFormController() {
-		this(null, null,  null, null, null);
+	public SubmitApplicationFormController() {
+        this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,  StageDurationDAO stageDurationDAO, EventFactory eventFactory) {
-			
+	public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, 
+	        ApplicationFormValidator applicationFormValidator, StageDurationDAO stageDurationDAO, 
+	        EventFactory eventFactory) {
 		this.applicationService = applicationService;
 		this.userService = userService;
 		this.applicationFormValidator = applicationFormValidator;
@@ -60,74 +68,89 @@ public class SubmitApplicationFormController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
-		if ((applicationForm.getApplicant() != null && !getCurrentUser().getId().equals(applicationForm.getApplicant().getId())) || applicationForm.isDecided()){
-			throw new ResourceNotFoundException();
-		}
-			
-		if(result.hasErrors()){
-			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;			
-		}
-		
-		try {
-			applicationForm.setIpAddressAsString(request.getRemoteAddr());
-		} catch (UnknownHostException e) {
-			log.error("Error while setting ip address of: "+request.getRemoteAddr(), e);
-		}
-		
-		applicationForm.setStatus(ApplicationFormStatus.VALIDATION);		
-		calculateAndSetValidationDueDate(applicationForm);
-		applicationForm.setSubmittedDate(new Date());
-		applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
-		applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
-		applicationService.save(applicationForm);
-		return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
+        if ((applicationForm.getApplicant() != null && !getCurrentUser().getId().equals(
+                applicationForm.getApplicant().getId()))
+                || applicationForm.isDecided()) {
+            throw new ResourceNotFoundException();
+        }
+
+        if (result.hasErrors()) {
+            return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
+        }
+
+        try {
+            applicationForm.setIpAddressAsString(request.getRemoteAddr());
+        } catch (UnknownHostException e) {
+            log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
+        }
+
+        applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
+        calculateAndSetValidationDueDate(applicationForm);
+        applicationForm.setSubmittedDate(new Date());
+        applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
+        applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
+        applicationService.save(applicationForm);
+        return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
 	}
 
 	public void calculateAndSetValidationDueDate(ApplicationForm applicationForm) {
-		Calendar dueDate = Calendar.getInstance();
-		if (applicationForm.getBatchDeadline() != null){
-			dueDate.setTime(applicationForm.getBatchDeadline());
-		}
-		StageDuration validationDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.VALIDATION);
-		dueDate.add(Calendar.MINUTE, validationDuration.getDurationInMinutes());
-		applicationForm.setDueDate(dueDate.getTime());
+        Calendar dueDate = Calendar.getInstance();
+        if (applicationForm.getBatchDeadline() != null) {
+            dueDate.setTime(applicationForm.getBatchDeadline());
+        }
+        StageDuration validationDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.VALIDATION);
+        dueDate.add(Calendar.MINUTE, validationDuration.getDurationInMinutes());
+        applicationForm.setDueDate(dueDate.getTime());
 	}
 
 	@InitBinder("applicationForm")
-	public void registerValidator(WebDataBinder webDataBinder) {
-		webDataBinder.setValidator(applicationFormValidator);
-		
+	public void registerValidator(WebDataBinder binder) {
+		binder.setValidator(applicationFormValidator);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
-		if(applicationForm != null && applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(getCurrentUser().getId()) && applicationForm.isModifiable()){
-			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
-		}
-		if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {
-			return VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME;
-		}
-		return VIEW_APPLICATION_STAFF_VIEW_NAME;
+        if (applicationForm != null && applicationForm.getApplicant() != null
+                && applicationForm.getApplicant().getId().equals(getCurrentUser().getId())
+                && applicationForm.isModifiable()) {
+            return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
+        }
+
+        if (request != null && request.getParameter("embeddedApplication") != null
+                && request.getParameter("embeddedApplication").equals("true")) {
+            return VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME;
+        }
+
+        if (isUserAllowedToSeeAndEditApplicationFormAsAdministrator(applicationForm)) {
+            return "redirect:/editApplicationFormAsProgrammeAdmin?applicationId=" + applicationForm.getApplicationNumber();
+        }
+
+        return VIEW_APPLICATION_STAFF_VIEW_NAME;
 	}
 	
 	protected RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();
 	}
 	
+	private boolean isUserAllowedToSeeAndEditApplicationFormAsAdministrator(final ApplicationForm applicationForm) {
+	    return getCurrentUser().isAdminInProgramme(applicationForm.getProgram()) 
+	                && applicationForm.isSubmitted()
+	                && !applicationForm.isInValidationStage()
+	                && !applicationForm.isDecided() 
+	                && !applicationForm.isWithdrawn();
+	    }
+	
 	@ModelAttribute
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
-		if(applicationForm == null || !getCurrentUser().canSee(applicationForm) ){
-			throw new ResourceNotFoundException();
-		}
-		return applicationForm;
-		
+        ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
+        if (applicationForm == null || !getCurrentUser().canSee(applicationForm)) {
+            throw new ResourceNotFoundException();
+        }
+        return applicationForm;
 	}
-
 
 	@ModelAttribute("user")
 	public RegisteredUser getUser() {		
 		return getCurrentUser();
 	}
-
 }

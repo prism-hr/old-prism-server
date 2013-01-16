@@ -140,6 +140,7 @@ span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical
 .button-edit { background-image: url(../../images/button_row_edit.png); }
 .button-delete { background-image: url(../../images/button_row_close.png); }
 .button-question { background-image: url(../../images/button_question.png); margin-top: 0; width: 20px; height: 20px; }
+.button-show { background-image: url(../../images/icon_round_show.png); }
 
 /* Row arrows */
 .row-arrow { background: url(../../images/button_arrow.png) no-repeat; width: 20px; height: 21px; display: inline-block; text-indent: 99px; overflow: hidden; vertical-align: middle; /*margin-top: -4px;*/ }

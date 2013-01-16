@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
@@ -53,7 +54,6 @@ public class RefereeServiceTest {
 	private EventFactory eventFactoryMock;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private EncryptionUtils encryptionUtilsMock;
-
 
 	@Before
 	public void setUp() {
@@ -458,7 +458,6 @@ public class RefereeServiceTest {
 		}
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock);
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -490,7 +489,31 @@ public class RefereeServiceTest {
 		refereeService.declineToActAsRefereeAndSendNotification(referee);
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock);
-
 	}
-
+	
+	@Test
+    public void shouldSetFlagSendToUclOnSelectedQualifications() {
+        ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
+        
+        Referee referee1 = new RefereeBuilder().id(1).sendToUCL(true).toReferee();
+        Referee referee2 = new RefereeBuilder().id(2).sendToUCL(true).toReferee();
+        Referee referee3 = new RefereeBuilder().id(3).sendToUCL(false).toReferee();
+        Referee referee4 = new RefereeBuilder().id(4).sendToUCL(false).toReferee();
+        
+        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("abc")).andReturn(applicationFormMock);
+        EasyMock.expect(applicationFormMock.getReferees()).andReturn(Arrays.asList(referee1, referee2, referee3, referee4));
+        EasyMock.expect(refereeDAOMock.getRefereeById(3)).andReturn(referee3);
+        EasyMock.expect(refereeDAOMock.getRefereeById(4)).andReturn(referee4);
+        
+        EasyMock.replay(applicationFormMock, refereeDAOMock, applicationFormDAOMock);
+        
+        refereeService.selectForSendingToPortico("abc", Arrays.asList(3, 4));
+        
+        EasyMock.verify(applicationFormMock, refereeDAOMock, applicationFormDAOMock);
+        
+        assertTrue("SendToUcl flag has not been updated to true", referee3.getSendToUCL());
+        assertTrue("SendToUcl flag has not been updated to true", referee4.getSendToUCL());
+        assertFalse("SendToUcl flag has not been updated to false", referee1.getSendToUCL());
+        assertFalse("SendToUcl flag has not been updated to false", referee2.getSendToUCL());
+    }
 }

@@ -46,8 +46,10 @@ public class RefereeService {
 	}
 
 	@Autowired
-	public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, UserService userService,
-			RoleDAO roleDAO, MessageSource messageSource, EventFactory eventFactory, ApplicationFormDAO applicationFormDAO) {
+    public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils,
+            MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender,
+            UserService userService, RoleDAO roleDAO, MessageSource messageSource, EventFactory eventFactory,
+            ApplicationFormDAO applicationFormDAO) {
 		this.refereeDAO = refereeDAO;
 		this.encryptionUtils = encryptionUtils;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
@@ -57,7 +59,6 @@ public class RefereeService {
 		this.messageSource = messageSource;
 		this.eventFactory = eventFactory;
 		this.applicationFormDAO = applicationFormDAO;
-
 	}
 
 	@Transactional
@@ -77,11 +78,9 @@ public class RefereeService {
 
 	@Transactional
 	public void saveReferenceAndSendMailNotifications(Referee referee) {
-//		save(referee);		
 		addReferenceEventToApplication(referee);
 		sendMailToApplicant(referee);
 		sendMailToAdministrators(referee);
-
 	}
 
 	private void sendMailToAdministrators(Referee referee) {
@@ -151,7 +150,6 @@ public class RefereeService {
 		for (Referee referee : referees) {
 			processRefereeAndGetAsUser(referee);
 		}
-
 	}
 
 	public RegisteredUser processRefereeAndGetAsUser(Referee referee) {
@@ -204,7 +202,6 @@ public class RefereeService {
 			referee.getUser().getReferees().remove(referee);
 		}
 		refereeDAO.delete(referee);
-
 	}
 
 	@Transactional
@@ -227,6 +224,19 @@ public class RefereeService {
 		sendMailToApplicant(referee);		
 		sendMailToAdministrators(referee);
 	}
+	
+	@Transactional
+    public void selectForSendingToPortico(final String applicationNumber, final List<Integer> refereeSendToUcl) {
+	    ApplicationForm applicationForm = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
+        for (Referee referee : applicationForm.getReferees()) {
+            referee.setSendToUCL(false);
+        }
+        
+        for (Integer refereeId : refereeSendToUcl) {
+            Referee referee = refereeDAO.getRefereeById(refereeId);
+            referee.setSendToUCL(true);
+        }
+    }
 
 	private void addReferenceEventToApplication(Referee referee) {
 		ApplicationForm application = referee.getApplication();

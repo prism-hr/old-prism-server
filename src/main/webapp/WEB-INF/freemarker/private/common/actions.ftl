@@ -6,7 +6,8 @@
 </#if>
 	<select class="actionType" name="app_[${application.applicationNumber}]">
 		<option>Actions</option> 
-		<option value="view">View<#if user == application.applicant && application.isModifiable()> / Edit</#if></option>
+		
+		<option value="view">View<#if (user.isAdminInProgramme(application.getProgram()) && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn() && !application.isInValidationStage()) || (user == application.applicant && application.isModifiable())> / Edit</#if></option>
 
 		<#if  user.hasAdminRightsOnApplication(application) && application.isInState('VALIDATION')> 
 			<option value="validate">Validate</option>

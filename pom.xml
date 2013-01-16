@@ -119,20 +119,6 @@
             <artifactId>cucumber-java</artifactId>
             <version>1.0.0.RC14</version>
         </dependency>
-        <!-- 
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
-            <scope>test</scope>
-            <version>2.17.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-server</artifactId>
-            <scope>test</scope>
-            <version>2.17.0</version>
-        </dependency>
-         -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
@@ -526,10 +512,10 @@
             </build>
         </profile>
         <profile>
-            <id>prod</id>
+            <id>ucl-test</id>
             <properties>
-                <sql.host>192.168.11.115</sql.host>
-                <sql.db>pgadmissions_sit</sql.db>
+                <sql.host>localhost</sql.host>
+                <sql.db>pgadmissions_test</sql.db>
             </properties>
             <build>
                 <plugins>
@@ -544,7 +530,7 @@
                                 <configuration>
                                     <tasks>
                                         <delete file="${project.build.outputDirectory}/environment.properties" />
-                                        <copy file="src/environments/environment.prod.properties" tofile="${project.build.outputDirectory}/environment.properties" />
+                                        <copy file="src/environments/environment.ucl.test.properties" tofile="${project.build.outputDirectory}/environment.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>

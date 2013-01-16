@@ -33,25 +33,28 @@ public class WithdrawController{
 	}
 
 	@Autowired
-	public WithdrawController(ApplicationsService applicationService, UserService userService, WithdrawService withdrawService, EventFactory eventFactory) {
-			
+    public WithdrawController(ApplicationsService applicationService, UserService userService,
+            WithdrawService withdrawService, EventFactory eventFactory) {
 		this.applicationService = applicationService;
 		this.userService = userService;
 		this.withdrawService = withdrawService;
 		this.eventFactory = eventFactory;
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String withdrawApplicationAndGetApplicationList(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
-		if (applicationForm.getStatus() == ApplicationFormStatus.UNSUBMITTED || applicationForm.getStatus() == ApplicationFormStatus.APPROVED
-				|| applicationForm.getStatus() == ApplicationFormStatus.REJECTED | applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN) {
-			throw new CannotWithdrawApplicationException();
-		}
-		applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
-		applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
-		withdrawService.saveApplicationFormAndSendMailNotifications(applicationForm);
-		return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
-	}
+    @RequestMapping(method = RequestMethod.POST)
+    public String withdrawApplicationAndGetApplicationList(@ModelAttribute ApplicationForm applicationForm,
+            ModelMap modelMap) {
+        if (applicationForm.getStatus() == ApplicationFormStatus.UNSUBMITTED
+                || applicationForm.getStatus() == ApplicationFormStatus.APPROVED
+                || applicationForm.getStatus() == ApplicationFormStatus.REJECTED
+                || applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN) {
+            throw new CannotWithdrawApplicationException();
+        }
+        applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
+        applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
+        withdrawService.saveApplicationFormAndSendMailNotifications(applicationForm);
+        return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
+    }
 	
 	protected RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();

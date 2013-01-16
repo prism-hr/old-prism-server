@@ -90,8 +90,6 @@ public class EvaluationTransitionController extends StateTransitionController {
                 if (approvalService.moveToApproved(applicationForm)) {
                     modelMap.put("messageCode", "move.approved");
                     modelMap.put("application", applicationForm.getApplicationNumber());
-                    // TODO: Enable when ready for production
-                    // uclExportService.sendToUCL(applicationForm);
                 } else {
                     Comment genericComment = commentFactory.createComment(applicationForm, user, newComment.getComment(), CommentType.GENERIC, null);
                     genericComment.setDocuments(newComment.getDocuments());

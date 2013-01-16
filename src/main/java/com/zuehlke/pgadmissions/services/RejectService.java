@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
@@ -21,18 +22,20 @@ public class RejectService {
 	private final ApplicationFormDAO applicationDao;
 	private final RejectReasonDAO rejectDao;
 	private final EventFactory eventFactory;
+	private final UclExportService uclExportService;
 
-	RejectService() {
-		this(null, null, null);
+	public RejectService() {
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public RejectService(ApplicationFormDAO applicationDAO, RejectReasonDAO rejectDao, EventFactory eventFactory) {
+    public RejectService(ApplicationFormDAO applicationDAO, RejectReasonDAO rejectDao, EventFactory eventFactory,
+            UclExportService exportService) {
 		this.applicationDao = applicationDAO;
 		this.rejectDao = rejectDao;
 		this.eventFactory = eventFactory;
+		this.uclExportService = exportService;
 	}
-
 
 	@Transactional(readOnly = true)
 	public List<RejectReason> getAllRejectionReasons() {
@@ -60,7 +63,8 @@ public class RejectService {
 		application.setRejection(rejection);
 		application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));
 		applicationDao.save(application);
-
+		
+        // TODO: Enable when ready for production
+        //uclExportService.sendToUCL(application);
 	}
-
 }

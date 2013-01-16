@@ -50,7 +50,6 @@ public class ReviewControllerTest {
 
 			@Override
 			public ReviewRound getReviewRound(Object applicationId) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 
@@ -121,7 +120,6 @@ public class ReviewControllerTest {
 
 			@Override
 			public ReviewRound getReviewRound(Object applicationId) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 
@@ -138,6 +136,7 @@ public class ReviewControllerTest {
 	public void shouldGetCurrentUserAsUser(){
 		assertEquals(currentUserMock, controller.getUser());
 	}
+	
 	@Before
 	public void setUp() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -156,7 +155,6 @@ public class ReviewControllerTest {
 
 			@Override
 			public ReviewRound getReviewRound(Object applicationId) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 		};

@@ -116,12 +116,12 @@ public class UclExportService {
      * @return application transfer id - may be usable for diagnostic purposes, but usually simple ignore this
      */
     public Long sendToUCL(ApplicationForm applicationForm, TransferListener listener) {
-        log.debug("submitting application form " + applicationForm.getId() + " for ucl-export processing");
+        log.info("Submitting application form " + applicationForm.getApplicationNumber() + " for ucl-export processing");
         ApplicationFormTransfer transfer = this.createPersistentQueueItem(applicationForm);
         //TODO: create an event in application form's timeline ("scheduled transfer to UCL-PORTICO")
         webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
         this.triggerQueued(listener);
-        log.debug("succecfully added application form " + applicationForm.getId() + " to ucl-export queue (transfer-id=" + transfer.getId() +")");
+        log.info("Succecfully added application form " + applicationForm.getApplicationNumber() + " to ucl-export queue (transfer-id=" + transfer.getId() +")");
         return transfer.getId();
     }
 
@@ -134,7 +134,7 @@ public class UclExportService {
         this.pauseWsQueueForMinutes(1);
         this.pauseSftpQueueForMinutes(1);
         
-        log.info("Re-initialising the queues for ucl-eexport processing");
+        log.info("Re-initialising the queues for ucl-export processing");
         
         for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForWebserviceCall()) {
             webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationFormTransfer.getApplicationForm().getId(),  applicationFormTransfer.getId(), new DeafListener()));
@@ -182,11 +182,11 @@ public class UclExportService {
         
         try  {
             //call webservice
-            log.debug("calling marshalSendAndReceive for transfer " + transferId);
+            log.info("Calling marshalSendAndReceive for transfer " + transferId + " (" + applicationForm.getApplicationNumber() + ")");
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
-            log.debug("successfully returned from webservice call for transfer " + transferId);
+            log.info("Successfully returned from webservice call for transfer " + transferId + " (" + applicationForm.getApplicationNumber() + ")");
         } catch (WebServiceIOException e) {            
-            log.debug("WebServiceTransportException during webservice call for transfer " + transferId, e);
+            log.warn("WebServiceTransportException during webservice call for transfer " + transferId + " (" + applicationForm.getApplicationNumber() + ")", e);
             //CASE 1: webservice call failed because of network failure, protocol problems etc
             //seems like we have communication problems so makes no sense to push more application forms at the moment
             //TODO: we should measure the time of this problem constantly occurring; after some threshold (1 day?) we should inform admins
@@ -212,7 +212,7 @@ public class UclExportService {
             return;
 
         } catch (SoapFaultClientException e) {
-            log.debug("SoapFaultClientException during webservice call for transfer " + transferId, e);
+            log.warn("SoapFaultClientException during webservice call for transfer " + transferId + " (" + applicationForm.getApplicationNumber() + ")", e);
             //CASE 2: webservice is alive but refused to accept our request
             //usually this will be caused by validation problems - and is actually expected as side effect of PORTICO and PRISM evolution
 
@@ -245,6 +245,7 @@ public class UclExportService {
             if (numberOfConsecutiveSoapFaults > consecutiveSoapFaultsLimit) {
                 webserviceCallingQueueExecutor.pause();
                 //TODO: inform admins that we have repeating webservice problems (probably by sending an email with problem description)
+                log.error("Could not transfer application " + " (" + applicationForm.getApplicationNumber() + ") repeatedly.");
             }
             return;
         }
@@ -304,6 +305,7 @@ public class UclExportService {
             transfer.setStatus(ApplicationTransferStatus.CANCELLED);
             
             //TODO: notify administrators, needs attention
+            log.error("CouldNotCreateAttachmentsPack for (" + applicationForm.getApplicationNumber() + ")", couldNotCreateAttachmentsPack);
 
         } catch (SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong locallyDefinedSshConfigurationIsWrong) {
             //stop queue
@@ -325,6 +327,7 @@ public class UclExportService {
             sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
 
             //TODO: notify administrators, needs attention
+            log.error("LocallyDefinedSshConfigurationIsWrong for (" + applicationForm.getApplicationNumber() + ")", locallyDefinedSshConfigurationIsWrong);
 
         } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost couldNotOpenSshConnectionToRemoteHost) {
             //network problems - just wait some time and try again (pause queue)
@@ -344,6 +347,8 @@ public class UclExportService {
 
             //Schedule the same transfer again
             sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+            
+            log.warn("CouldNotOpenSshConnectionToRemoteHost for (" + applicationForm.getApplicationNumber() + ")", couldNotOpenSshConnectionToRemoteHost);
             
         } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible sftpTargetDirectoryNotAccessible) {
             //stop queue, inform admin (possibly ucl has to correct their config)
@@ -365,6 +370,7 @@ public class UclExportService {
             sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
 
             //TODO: notify administrators, needs attention
+            log.warn("SftpTargetDirectoryNotAccessible for (" + applicationForm.getApplicationNumber() + ")", sftpTargetDirectoryNotAccessible);
 
         } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError sftpTransmissionFailedOrProtocolError) {
             //network problems - just wait some time and try again (pause queue)
@@ -384,6 +390,8 @@ public class UclExportService {
 
             //Schedule the same transfer again
             sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+            
+            log.warn("SftpTransmissionFailedOrProtocolError for (" + applicationForm.getApplicationNumber() + ")", sftpTransmissionFailedOrProtocolError);
         }
     }
 

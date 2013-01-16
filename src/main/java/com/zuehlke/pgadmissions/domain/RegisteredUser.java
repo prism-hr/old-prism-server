@@ -273,6 +273,7 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
 		if (applicationForm.getApplicationAdministrator() != null && this.getId().equals(applicationForm.getApplicationAdministrator().getId())) {
 			return true;
 		}
+		
 		if (isInRole(Authority.ADMINISTRATOR)) {
 			if (listContainsId(this, applicationForm.getProgram().getAdministrators())) {
 				return true;
@@ -297,13 +298,14 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
 		}
 
 		ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
-		if (latestApprovalRound != null && (applicationForm.getStatus() == ApplicationFormStatus.APPROVAL  ||applicationForm.getStatus() == ApplicationFormStatus.APPROVED )  ) {
+		if (latestApprovalRound != null && (applicationForm.getStatus() == ApplicationFormStatus.APPROVAL || applicationForm.getStatus() == ApplicationFormStatus.APPROVED)) {
 			for (Supervisor surevisor : latestApprovalRound.getSupervisors()) {
 				if (this.getId().equals(surevisor.getUser().getId())) {
 					return true;
 				}
 			}
 		}
+		
 		if (isInRole(Authority.APPROVER) && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
 			if (applicationForm.getProgram().isApprover(this)) {
 				return true;
@@ -436,7 +438,7 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
 	}
 
 	public boolean isAdminInProgramme(Program program) {
-		if (listContainsId(this, program.getAdministrators())) {
+	    if (program != null && listContainsId(this, program.getAdministrators())) {
 			return true;
 		}
 		return false;

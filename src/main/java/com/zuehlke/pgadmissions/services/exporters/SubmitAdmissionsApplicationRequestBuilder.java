@@ -330,7 +330,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
         if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
-            // TODO: Which supervisor to pick if there are multiple
+            // Which supervisor to pick if there are multiple
+            // Just send the first one. Confirmed by Alastair Knowles
             applicationTp.setSupervisorName(buildSupervisorName(0));
         }
         applicationTp.setPersonalStatement(REFER_TO_ATTACHED_DOCUMENT);

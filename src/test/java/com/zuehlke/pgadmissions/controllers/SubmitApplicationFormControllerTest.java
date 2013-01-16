@@ -22,10 +22,12 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
@@ -45,10 +47,8 @@ public class SubmitApplicationFormControllerTest {
 	private ApplicationsService applicationsServiceMock;
 
 	private RegisteredUser student;
-	
 
 	private ApplicationFormValidator applicationFormValidatorMock;
-	
 
 	private StageDurationDAO stageDurationDAOMock;
 
@@ -65,28 +65,72 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test
 	public void shouldReturnStudenApplicationViewOnGetForApplicantOfApplciation() {
-		String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().applicant(student).id(1).build());
+		String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().applicant(student).id(1).program(new ProgramBuilder().id(1).build()).build());
 		assertEquals("/private/pgStudents/form/main_application_page", view);
 	}
+
 	@Test
 	public void shouldReturnAdminApplicationViewOnGetForApplicantButNotOfApplication() {
-		String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().id(6).build()).id(1).build());
+		String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().id(6).build()).id(1).program(new ProgramBuilder().id(1).build()).build());
 		assertEquals("/private/staff/application/main_application_page", view);
 	}
+	
 	@Test
 	public void shouldReturnAdminApplicationViewOnGetForApplicantForEndStateApp() {
-		String view = applicationController.getApplicationView(null,  new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(1).build());
+		String view = applicationController.getApplicationView(null,  new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(1).program(new ProgramBuilder().id(1).build()).build());
 		assertEquals("/private/staff/application/main_application_page", view);
 	}
+	
+	@Test
+	public void shouldReturnEditableApplicationViewOnGetForProgrammeAdministrator() {
+	    Program program = new ProgramBuilder().id(1).administrators(student).build();
+	    ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).applicationNumber("abc").program(program).build();
+	    String view = applicationController.getApplicationView(null,  applicationForm);
+	    assertEquals("redirect:/editApplicationFormAsProgrammeAdmin?applicationId=abc", view);
+	}
+	
+	@Test
+    public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsNotSubmitted() {
+        Program program = new ProgramBuilder().id(1).administrators(student).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).id(1).program(program).build();
+        String view = applicationController.getApplicationView(null,  applicationForm);
+        assertEquals("/private/staff/application/main_application_page", view);
+    }
+	
+	@Test
+    public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsDecided() {
+        Program program = new ProgramBuilder().id(1).administrators(student).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(1).program(program).build();
+        String view = applicationController.getApplicationView(null,  applicationForm);
+        assertEquals("/private/staff/application/main_application_page", view);
+    }
+	
+	@Test
+    public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsWithdrawn() {
+        Program program = new ProgramBuilder().id(1).administrators(student).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).id(1).program(program).build();
+        String view = applicationController.getApplicationView(null,  applicationForm);
+        assertEquals("/private/staff/application/main_application_page", view);
+    }
+	
+	@Test
+    public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsInValidation() {
+        Program program = new ProgramBuilder().id(1).administrators(student).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).program(program).build();
+        String view = applicationController.getApplicationView(null,  applicationForm);
+        assertEquals("/private/staff/application/main_application_page", view);
+    }
+    
 	@Test
 	public void shouldReturnStudenApplicationViewOnGetForNonApplicant() {
 		RegisteredUser otherUser = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(otherUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-		String view = applicationController.getApplicationView(null,new ApplicationFormBuilder().id(1).build());
+		String view = applicationController.getApplicationView(null,new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build()).build());
 		assertEquals("/private/staff/application/main_application_page", view);
 	}
+	
 	@Test
 	public void shouldReturnStudenApplicationViewWithoutHeaders() {
 		RegisteredUser otherUser = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
@@ -100,6 +144,7 @@ public class SubmitApplicationFormControllerTest {
 		String view = applicationController.getApplicationView(request, null);
 		assertEquals("/private/staff/application/main_application_page_without_headers", view);
 	}
+	
 	@Test
 	public void shouldReturnToApplicationViewIfErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
@@ -109,7 +154,6 @@ public class SubmitApplicationFormControllerTest {
 		String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
 		assertEquals("/private/pgStudents/form/main_application_page", view);
 	}
-
 
 	@Test
 	public void shouldChangeStatusToValidateAndSaveIfNoErrors() {
@@ -127,7 +171,6 @@ public class SubmitApplicationFormControllerTest {
 		
 		EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationDAOMock, eventFactoryMock);
 		
-		
 		applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
 
 		EasyMock.verify(applicationsServiceMock);
@@ -141,8 +184,6 @@ public class SubmitApplicationFormControllerTest {
 		
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(event, applicationForm.getEvents().get(0));
-		
-
 	}
 
 	@Test
@@ -256,12 +297,10 @@ public class SubmitApplicationFormControllerTest {
 		Calendar tomorrow = Calendar.getInstance();
 		tomorrow.add(Calendar.MINUTE, 1440);
 		Assert.assertEquals(tomorrow.getTime().getTime(), applicationForm.getDueDate().getTime(), 5);
-		
 	}
 
 	@Before
 	public void setUp() {
-
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 
@@ -271,13 +310,10 @@ public class SubmitApplicationFormControllerTest {
 		applicationController = new SubmitApplicationFormController(applicationsServiceMock,userServiceMock,  applicationFormValidatorMock, stageDurationDAOMock,eventFactoryMock);
 		httpServletRequestMock = new MockHttpServletRequest();
 
-
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
 				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student).anyTimes();
 		EasyMock.replay(userServiceMock);
-
 	}
-
 }

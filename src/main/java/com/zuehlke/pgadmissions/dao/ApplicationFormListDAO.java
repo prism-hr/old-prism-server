@@ -142,8 +142,8 @@ public class ApplicationFormListDAO {
             if (searchCategory != SearchCategory.APPLICANT_NAME) {
                 criteria.createAlias("applicant", "a");
             }
-            criteria.addOrder(getOrderCriteria("a.firstName", ascending));
             criteria.addOrder(getOrderCriteria("a.lastName", ascending));
+            criteria.addOrder(getOrderCriteria("a.firstName", ascending));
             break;
             
         case PROGRAMME_NAME:

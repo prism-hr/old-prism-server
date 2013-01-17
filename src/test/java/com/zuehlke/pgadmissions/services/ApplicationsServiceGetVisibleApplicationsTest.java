@@ -686,10 +686,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(superUser, SearchCategory.APPLICATION_NUMBER, "ABCD", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1);
         
         Assert.assertEquals(4, applications.size());
-        Assert.assertEquals(applicationFormOne.getId(), applications.get(0).getId());
-        Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getId());
-        Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getId());
-        Assert.assertEquals(applicationFormFour.getId(), applications.get(3).getId());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormThree.getId(), applications.get(0).getId());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormFour.getId(), applications.get(1).getId());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormOne.getId(), applications.get(2).getId());
+        Assert.assertEquals("The users should be ordered by lastname first.", applicationFormTwo.getId(), applications.get(3).getId());
     }
     
     @Test

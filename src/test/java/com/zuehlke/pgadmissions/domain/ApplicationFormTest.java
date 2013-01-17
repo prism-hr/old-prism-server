@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -21,9 +22,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -249,7 +252,6 @@ public class ApplicationFormTest {
 
 		List<RegisteredUser> users = applicationForm.getUsersWillingToSupervise();
 		assertEquals(1, users.size());
-
 	}
 
 	@Test
@@ -271,7 +273,6 @@ public class ApplicationFormTest {
 
 		List<RegisteredUser> users = applicationForm.getUsersWillingToSupervise();
 		assertEquals(Collections.EMPTY_LIST, users);
-
 	}
 
 	@Test
@@ -294,7 +295,6 @@ public class ApplicationFormTest {
 
 		List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
 		assertEquals(2, users.size());
-
 	}
 
 	@Test
@@ -312,7 +312,6 @@ public class ApplicationFormTest {
 
 		List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
 		assertEquals(Collections.EMPTY_LIST, users);
-
 	}
 	
 	@Test
@@ -344,6 +343,7 @@ public class ApplicationFormTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).interviews(interviewOne).reviewRounds(reviewRound).status(ApplicationFormStatus.INTERVIEW).build();
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getOutcomeOfStage());
 	}
+	
 	@Test
 	public void shouldReturnInterviewIfStateInterviewAndMoreThanOneInteriew(){
 		Interview interviewOne = new InterviewBuilder().id(3).build();
@@ -395,6 +395,7 @@ public class ApplicationFormTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).status(ApplicationFormStatus.REJECTED).interviews(interviewOne).build();
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getOutcomeOfStage());
 	}
+	
 	@Test
 	public void shouldReturnIReviewForStatusRejectedIfNoApprovalRoundsorinterviewButSomereviewRounds(){
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(3).build();
@@ -409,6 +410,123 @@ public class ApplicationFormTest {
 		assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getOutcomeOfStage());
 	}
 	
+	@Test
+	public void shouldReturnTrueForIsCompleteForSendingToPorticoIf2ReferencesHaveBeenSelected() {
+	    RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+	    RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        
+	    Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
+	    Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+        
+        user1.getReferees().add(referee1);
+        user2.getReferees().add(referee2);
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).build();
+        
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
+        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
+        
+        referee1.setReference(referenceComment1);
+        referee2.setReference(referenceComment2);
+        
+        applicationForm.getApplicationComments().add(referenceComment1);
+        applicationForm.getApplicationComments().add(referenceComment2);
+
+        assertTrue("Two reference comments have been selected for sending to Portico but function returned false.", 
+                applicationForm.isCompleteForSendingToPortico());
+	}
+	
+	@Test
+    public void shouldReturnFalseForIsCompleteForSendingToPorticoIf2ReferencesHaveBeenSelected() {
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(false).toReferee();
+        
+        user1.getReferees().add(referee1);
+        user2.getReferees().add(referee2);
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).build();
+        
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
+        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
+        
+        referee1.setReference(referenceComment1);
+        referee2.setReference(referenceComment2);
+        
+        applicationForm.getApplicationComments().add(referenceComment1);
+        applicationForm.getApplicationComments().add(referenceComment2);
+
+        assertFalse("Less than two reference comments have been selected for sending to Portico but function returned true.", 
+                applicationForm.isCompleteForSendingToPortico());
+    }
+	
+    @Test
+    public void shouldReturnTrueForIsCompleteForSendingToPorticoIf2ReferencesAndLessThan3QualificationsHaveBeenSelected() {
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+        
+        user1.getReferees().add(referee1);
+        user2.getReferees().add(referee2);
+        
+        Document document1 = new DocumentBuilder().id(1).build();
+        
+        Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+        Qualification qualification2 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).build();
+        
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
+        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
+        
+        referee1.setReference(referenceComment1);
+        referee2.setReference(referenceComment2);
+        
+        applicationForm.getApplicationComments().add(referenceComment1);
+        applicationForm.getApplicationComments().add(referenceComment2);
+
+        applicationForm.setQualifications(Arrays.asList(qualification1, qualification2));
+        
+        assertTrue(applicationForm.isCompleteForSendingToPortico());
+    }
+	
+    @Test
+    public void shouldReturnFalseForIsCompleteForSendingToPorticoIf2ReferencesAndMoreThan3QualificationsHaveBeenSelected() {
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+        
+        user1.getReferees().add(referee1);
+        user2.getReferees().add(referee2);
+        
+        Document document1 = new DocumentBuilder().id(1).build();
+        
+        Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+        Qualification qualification2 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+        Qualification qualification3 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).build();
+        
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
+        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
+        
+        referee1.setReference(referenceComment1);
+        referee2.setReference(referenceComment2);
+        
+        applicationForm.getApplicationComments().add(referenceComment1);
+        applicationForm.getApplicationComments().add(referenceComment2);
+
+        applicationForm.setQualifications(Arrays.asList(qualification1, qualification2, qualification3));
+        
+        assertFalse(applicationForm.isCompleteForSendingToPortico());
+    }	
+    
 	@After
 	public void tearDown() {
 		SecurityContextHolder.clearContext();

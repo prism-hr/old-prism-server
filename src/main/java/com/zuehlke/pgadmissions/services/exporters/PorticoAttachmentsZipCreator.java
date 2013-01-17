@@ -143,7 +143,6 @@ public class PorticoAttachmentsZipCreator {
                 contentsProperties.put("transcript.1.serverFilename", filename);
                 contentsProperties.put("transcript.1.applicationFilename", qualifications.get(0).getFileName());
             case 0:
-                // TODO: There should be at least one transcript. Add a PDF with some comments in it in the future.
                 break;//todo: check if business ruless force us to have at least one transcript file attached - it yes, throw CouldNotCreateAttachmentsPack
             default:
                 throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");

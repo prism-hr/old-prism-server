@@ -85,10 +85,11 @@
       </div>                              
     </div>
       
-      <#list applicationForm.personalDetails.languageQualifications! as languageQualification>
+      <#if applicationForm.personalDetails.isLanguageQualificationAvailableSet() && applicationForm.personalDetails.languageQualificationAvailable>
+      <#assign languageQualification = applicationForm.personalDetails.languageQualifications[0]>
       <div class="row-group">
           <div class="admin_row">
-            <label class="admin_header">Language Qualifications (${languageQualification_index + 1})</label>
+            <label class="admin_header">Language Qualifications</label>
             <div class="field">&nbsp</div>
           </div>
 
@@ -124,7 +125,7 @@
           
           <div class="admin_row">
             <span class="admin_row_label">Speaking Score</span>
-            <div class="field">${(languageQualification.speakingcore?html)!"Not Provided"}</div>
+            <div class="field">${(languageQualification.speakingScore?html)!"Not Provided"}</div>
           </div>
           
           <div class="admin_row">
@@ -148,7 +149,7 @@
             </div>         
         </div>
       </div>  
-      </#list>
+      </#if>
     
     <div class="row-group"> 
       <!-- Nationality -->

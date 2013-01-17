@@ -15,25 +15,26 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
+import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
 public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 	private RegisteredUser user;
 	private Program program;
-	private LanguageDAO languageDAO;
-	private CountriesDAO countriesDAO;
 
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
@@ -83,16 +84,14 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 	public void shouldDeleteQualificationProofOfAward() throws ParseException {
 		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.PROOF_OF_AWARD).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
-		//QualificationTypeDAO typeDao = new QualificationTypeDAO(sessionFactory);
-		// typeDao.getAllQualificationTypes().get(0)
 		DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
 		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
 		dao.save(document);
 		flushAndClearSession();
 		Qualification qualification = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
 				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0))
-				.proofOfAward(document).build();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+				.institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).proofOfAward(document).build();
 		sessionFactory.getCurrentSession().save(qualification);
 		flushAndClearSession();
 
@@ -102,6 +101,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		assertNull(sessionFactory.getCurrentSession().get(Document.class, id));
 
 	}
+
 	@Test
 	public void shouldDeleteQualificationProofOfAwardNotYetSavedOnQUalification() throws ParseException {
 		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.PROOF_OF_AWARD).build();
@@ -129,15 +129,15 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")
 				.document(document).build();
 		save(application, funding);
-		
+
 		flushAndClearSession();
 
 		Integer id = document.getId();
 		dao.deleteDocument(document);
 		flushAndClearSession();
 		assertNull(sessionFactory.getCurrentSession().get(Document.class, id));
-
 	}
+
 	@Test
 	public void shouldDeleteFundingProofOfAwardNotYetSetOnFunding() throws ParseException {
 		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.SUPPORTING_FUNDING).build();
@@ -147,13 +147,13 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		
+
 		Integer id = document.getId();
 		dao.deleteDocument(document);
 		flushAndClearSession();
 		assertNull(sessionFactory.getCurrentSession().get(Document.class, id));
-
 	}
+
 	@Test
 	public void shouldDeleteCommentDocument() throws ParseException {
 		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.COMMENT).build();
@@ -170,14 +170,36 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		comment.setUser(user);
 		comment.getDocuments().add(document);
 		save(comment);
-		
+
 		flushAndClearSession();
 
 		Integer id = document.getId();
 		dao.deleteDocument(document);
 		flushAndClearSession();
 		assertNull(sessionFactory.getCurrentSession().get(Document.class, id));
+	}
 
+	@Test
+	public void shouldDeleteLanguageQualificationDocument() throws ParseException {
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.LANGUAGE_QUALIFICATION).build();
+		DocumentDAO dao = new DocumentDAO(sessionFactory);
+		dao.save(document);
+		flushAndClearSession();
+		
+		LanguageQualification languageQualification = new LanguageQualificationBuilder()
+		.dateOfExamination(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).examTakenOnline(true)
+		.languageQualification(LanguageQualificationEnum.IELTS_ACADEMIC).listeningScore("6").overallScore("6").readingScore("6").speakingScore("6")
+		.writingScore("6").languageQualificationDocument(document).build();
+		
+		save(languageQualification);
+		flushAndClearSession();
+
+		Integer id = document.getId();
+		dao.deleteDocument(document);
+		flushAndClearSession();
+		assertNull(sessionFactory.getCurrentSession().get(Document.class, id));
+		languageQualification = (LanguageQualification) sessionFactory.getCurrentSession().get(LanguageQualification.class, languageQualification.getId());
+		assertNull(languageQualification.getLanguageQualificationDocument());
 	}
 
 	@Before
@@ -189,8 +211,6 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
 		save(user, program);
-		languageDAO = new LanguageDAO(sessionFactory);
-		countriesDAO = new CountriesDAO(sessionFactory);
 		flushAndClearSession();
 	}
 }

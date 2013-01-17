@@ -33,7 +33,7 @@
                         <input type="checkbox" name="qualificationSendToUcl" value="${encQualificationId}"  
                         <#if existingQualification.sendToUCL>checked="checked"</#if> 
                         <#if !(existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??)>disabled="disabled"</#if>  
-                        data-desc="<#if existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??>Send proof of award to UCL Admissions<#else>Proof of award not provided</#if>" 
+                        data-desc="<#if existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??>Send transcript for offer processing<#else>Transcript not provided</#if>" 
                         />
                     </td>
         

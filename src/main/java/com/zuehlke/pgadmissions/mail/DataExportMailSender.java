@@ -1,0 +1,75 @@
+package com.zuehlke.pgadmissions.mail;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.mail.internet.InternetAddress;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
+
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.Environment;
+
+@Component
+public class DataExportMailSender {
+
+    private final UserService userService;
+    
+    private final MessageSource messageSource;
+    
+    private final JavaMailSender mailSender;
+    
+    private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
+    
+    private final Logger log = Logger.getLogger(DataExportMailSender.class);
+    
+    public DataExportMailSender() {
+        this(null, null, null, null);
+    }
+    
+    @Autowired
+    public DataExportMailSender(final UserService userService, final JavaMailSender mailSender,
+            final MessageSource messageSource, final MimeMessagePreparatorFactory mimeMessagePreparatorFactory) {
+        this.userService = userService;
+        this.mailSender = mailSender;
+        this.messageSource = messageSource;
+        this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
+    }
+    
+    private Map<String, Object> createModel(RegisteredUser user, String message) {
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("user", user);
+        model.put("message", message);
+        model.put("time", new Date());
+        model.put("host", Environment.getInstance().getApplicationHostName());
+        return model;
+    }
+
+    public void sendErrorMessage(String message) {
+        try {
+            List<RegisteredUser> superadmins = userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
+            for (RegisteredUser user : superadmins) {           
+                internalSendMail("reference.data.export.error", message, user, "private/mail/export_error.ftl");
+            }
+        } catch (Throwable e) {
+            log.warn("Error while sending email", e);
+        }
+    }
+
+    private void internalSendMail(String subjectCode, String message, RegisteredUser user, String template)
+            throws UnsupportedEncodingException {
+        InternetAddress toAddress = new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
+        String subject = messageSource.getMessage(subjectCode, null, null);
+        mailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, template, createModel(user, message), null));
+    }
+
+}

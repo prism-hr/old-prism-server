@@ -9,27 +9,29 @@
 
     <context:property-placeholder location="classpath:environment.properties" />
 
-	<import resource="hibernateTestConfig.xml" />
+    <import resource="hibernateTestConfig.xml" />
 
     <import resource="../../src/main/webapp/WEB-INF/spring/uclIntegrationContext.xml" />
-    
+
     <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
-    
+
     <bean id="pdfDocumentBuilder" class="com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder" />
     
+    <bean id="dataExportMailSender" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
+        <constructor-arg value="com.zuehlke.pgadmissions.mail.DataExportMailSender" />
+    </bean>
+
     <context:component-scan base-package="com.zuehlke.pgadmissions.dao" />
     <context:component-scan base-package="com.zuehlke.pgadmissions.services.exporters" />
 
-	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
 
-	<bean id="defaultTransactionTemplate"
-		class="org.springframework.transaction.support.TransactionTemplate">
-		<property name="transactionManager" ref="transactionManager" />
-	</bean>
+    <bean id="defaultTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
 
-	<bean id="dwrController"
-		class="com.zuehlke.pgadmissions.test.utils.DwrControllerWithTestSupport" />
+    <bean id="dwrController" class="com.zuehlke.pgadmissions.test.utils.DwrControllerWithTestSupport" />
 
 </beans>

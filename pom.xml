@@ -386,6 +386,7 @@
                         <version>5.1.12</version>
                     </dependency>
                 </dependencies>
+                <!-- 
                 <executions>
                     <execution>
                         <phase>compile</phase>
@@ -394,6 +395,7 @@
                         </goals>
                     </execution>
                 </executions>
+                -->
             </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>

@@ -11,7 +11,12 @@
     	${applicationForm.program.code} - ${applicationForm.program.title}
     </#if>
   </div>
-    
+  
+  <div class="row">
+    <label>Applicant Name</label>
+    ${(applicationForm.personalDetails.title?capitalize)!} ${(applicationForm.applicant.firstName?html)!} ${(applicationForm.applicant.lastName?html)!}
+  </div>
+      
   <div class="row">
     <label>Application Number</label>
     ${applicationForm.applicationNumber}

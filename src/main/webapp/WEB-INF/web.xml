@@ -4,8 +4,6 @@
 	version="3.0">
 	<display-name>UCL Postgraduate admissions application</display-name>
 
-
-
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/spring/MainContext.xml,
@@ -65,7 +63,6 @@
 	<filter>
 		<filter-name>openSessionInViewFilter</filter-name>
 		<filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
-		
 	</filter>
 
 	<filter-mapping>
@@ -77,16 +74,24 @@
   		<error-code>403</error-code>
     	<location>/404</location>
 	</error-page>
+
 	<error-page>
   		<error-code>404</error-code>
     	<location>/404</location>
 	</error-page>
+
 	<error-page>
   		<error-code>500</error-code>
     	<location>/error</location>
 	</error-page>
+
 	<error-page>
   		<error-code>400</error-code>
     	<location>/400</location>
 	</error-page>
+    
+    <session-config>
+        <session-timeout>120</session-timeout>
+    </session-config>
+    
 </web-app>

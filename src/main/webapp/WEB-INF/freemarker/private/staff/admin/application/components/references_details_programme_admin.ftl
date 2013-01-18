@@ -218,18 +218,38 @@
             </div>
             <@spring.bind "refereesAdminEditDTO.comment" />
             <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
+                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>|
             </#list>
         </div>
         
+        
         <div class="row-group">
             <div class="row">
-                <span class="plain-label">Attach Document<em>*</em></span>
+                <label class="plain-label" for="file">Attach Document</label>
                 <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
-                <div class="field">
-                    <input type="file" value="" name="file" data-reference="" data-type="PERSONAL_STATEMENT" class="full" id="psDocument">
+                <div class="field" id="uploadFields">
+                    <input id="commentDocument_${encRefereeId}" class="full" data-type="COMMENT" data-reference="Comment" type="file" name="file" value="" />                   
+                    <input type="hidden" class="file" id="document_COMMENT" value=""/>
+                    <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+                    <span id="commentDocumentProgress" class="progress" style="display: none;"></span>
                 </div>
             </div>
+                
+            <span id="commentUploadedDocument_${encRefereeId}" class="uploaded-files">
+                <#if refereesAdminEditDTO.documents??>
+                    <#list refereesAdminEditDTO.documents as document>
+                        <div class="row">
+                            <div class="field">
+                                <span class="uploaded-file" name="supportingDocumentSpan" style="display:inline">
+                                    <input class="file" style="display:none" type="text" value="${encrypter.encrypt(document.id)}" name="documents"/>   
+                                    <a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a>
+                                    <a name="delete" data-desc="Delete" class="button-delete button-hint" id="${encrypter.encrypt(document.id)}">delete</a>
+                                </span>
+                            </div>
+                        </div>
+                    </#list>
+                </#if>
+            </span>
         </div>
         
         <div class="row-group">

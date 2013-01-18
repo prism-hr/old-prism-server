@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.QualificationsAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
-import com.zuehlke.pgadmissions.dto.RefereesAdminEditJsonDTO;
+import com.zuehlke.pgadmissions.dto.RefereesAdminEditSendToUclDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -90,7 +90,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     
     @RequestMapping(value="/postRefereesData", method = RequestMethod.POST)
     public String submitRefereesData(@Valid @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result, 
-            @RequestParam String jsonString, Model model) {
+            @RequestParam String sendToUclData, @ModelAttribute ApplicationForm applicationForm, Model model) {
         
         model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
 
@@ -98,19 +98,18 @@ public class EditApplicationFormAsProgrammeAdminController {
             return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
         }
         
-        ApplicationForm applicationForm = getApplicationForm(refereesAdminEditDTO.getApplicationId());
         if (!isUserAllowedToSeeAndPost(applicationForm)) {
             throw new ResourceNotFoundException();
         }
         
-        if (StringUtils.isNotBlank(jsonString)) {
+        if (StringUtils.isNotBlank(sendToUclData)) {
             Gson gson = new Gson();
-            RefereesAdminEditJsonDTO refereesData = gson.fromJson(jsonString, RefereesAdminEditJsonDTO.class);
+            RefereesAdminEditSendToUclDTO refereesData = gson.fromJson(sendToUclData, RefereesAdminEditSendToUclDTO.class);
             ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
-            for (String encryptedId : refereesData.getRefereeSendToUcl()) {
+            for (String encryptedId : refereesData.getReferees()) {
                 decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
             }
-            refereeService.selectForSendingToPortico(refereesData.getApplicationId(), decryptedIds);
+            refereeService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedIds);
         }
         
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
@@ -118,25 +117,24 @@ public class EditApplicationFormAsProgrammeAdminController {
     
     @RequestMapping(value="/postQualificationsData", method = RequestMethod.POST)
     @ResponseBody
-    public String submitQualificationsData(@RequestParam final String jsonString) {
-        if (StringUtils.isBlank(jsonString)) {
+    public String submitQualificationsData(@RequestParam final String sendToUclData, @ModelAttribute ApplicationForm applicationForm) {
+        if (StringUtils.isBlank(sendToUclData)) {
             throw new ResourceNotFoundException();
         }
         
         Gson gson = new Gson();
-        QualificationsAdminEditDTO qualificationsData = gson.fromJson(jsonString, QualificationsAdminEditDTO.class);
+        QualificationsAdminEditDTO qualificationsData = gson.fromJson(sendToUclData, QualificationsAdminEditDTO.class);
 
-        ApplicationForm applicationForm = getApplicationForm(qualificationsData.getApplicationId());
         if (!isUserAllowedToSeeAndPost(applicationForm)) {
             throw new ResourceNotFoundException();
         }
         
         ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
-        for (String encryptedId : qualificationsData.getQualificationSendToUcl()) {
+        for (String encryptedId : qualificationsData.getQualifications()) {
             decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
         }
         
-        qualificationService.selectForSendingToPortico(qualificationsData.getApplicationId(), decryptedIds);
+        qualificationService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedIds);
         return "OK";
     }
     

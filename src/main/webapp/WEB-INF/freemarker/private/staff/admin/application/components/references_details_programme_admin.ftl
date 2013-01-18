@@ -218,7 +218,7 @@
             </div>
             <@spring.bind "refereesAdminEditDTO.comment" />
             <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
+                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>|
             </#list>
         </div>
         
@@ -226,10 +226,19 @@
             <div class="row">
                 <span class="plain-label">Attach Document<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
-                <div class="field">
-                    <input type="file" value="" name="file" data-reference="" data-type="PERSONAL_STATEMENT" class="full" id="psDocument">
+                <div class="field" id="psUploadFields">
+                    <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">
+                    <span id="psUploadedDocument">
+                        <input type="hidden" class="file" id="document_COMMENT" value=""/>
+                    </span>
+                    <span id="referenceDocumentProgress" class="progress" style="display: none;"></span>
                 </div>
             </div>
+            
+            <@spring.bind "refereesAdminEditDTO.referenceDocument" /> 
+            <#list spring.status.errorMessages as error>
+                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
+            </#list>
         </div>
         
         <div class="row-group">

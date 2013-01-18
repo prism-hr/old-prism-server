@@ -66,6 +66,10 @@ $(document).ready(function() {
     $('#qualificationSaveButton').on("click", function() {
         postQualificationsData();
     });
+    
+    $("input:file").each(function() {
+    	watchUpload($(this));
+    });
 });
 
 function clearRefereeFormErrors() {
@@ -116,15 +120,14 @@ function showQualificationAndReferenceSection() {
 function postRefereesData() {
     var refereeId = $('#editedRefereeId').val();
     
-    var jsonData = {
-            applicationId : $('#applicationId').val(),
-            refereeSendToUcl : new Array()
+    var sendToUclData = {
+            referees : new Array()
     };
     
     $('input[name="refereeSendToUcl"]:checkbox').each(function() {
         var checked = $(this).attr("checked");
         if (checked) {
-            jsonData.refereeSendToUcl.push($(this).val());
+            sendToUclData.referees.push($(this).val());
         }
     });
     
@@ -137,6 +140,10 @@ function postRefereesData() {
     if ($('input:radio[name=suitableProgrammeRadio_' + refereeId + ']:checked').length > 0) {
         suitableForProgramme = $('input:radio[name=suitableProgrammeRadio_' + refereeId + ']:checked').val();
     }
+    
+    var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
+    var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
+    var $ref_doc_hidden     = $ref_doc_container.find('span input');
     
     $('#referencesSection > div').append('<div class="ajax" />');
     $.ajax({
@@ -155,10 +162,11 @@ function postRefereesData() {
             telephone : $('#refereeTelephone_' + refereeId).val(),
             skype: $('#refereeSkype_' + refereeId).val(),
             comment: $('#refereeComment_' + refereeId).val(),
+            referenceDocument: $ref_doc_hidden.val(),
             "suitableForUCL" : suitableUCL,
             "suitableForProgramme" : suitableForProgramme, 
             editedRefereeId : $('#editedRefereeId').val(),
-            jsonString: JSON.stringify(jsonData),
+            sendToUclData: JSON.stringify(sendToUclData),
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {
@@ -173,16 +181,14 @@ function postRefereesData() {
 
 function postQualificationsData() {
     $('#qualificationsSection > div').append('<div class="ajax" />');
-    var postData = {
-            applicationId : $('#applicationId').val(),
-            qualificationSendToUcl : new Array(),
-            cacheBreaker: new Date().getTime()
+    var sendToUclData = {
+            qualifications : new Array(),
     };
     
     $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
         var checked = $(this).attr("checked");
         if (checked) {
-            postData.qualificationSendToUcl.push($(this).val());
+        	sendToUclData.qualifications.push($(this).val());
         }
     });
     
@@ -198,7 +204,7 @@ function postQualificationsData() {
         url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postQualificationsData",
         data :  {
             applicationId : $('#applicationId').val(),
-            jsonString: JSON.stringify(postData),
+            sendToUclData: JSON.stringify(sendToUclData),
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {

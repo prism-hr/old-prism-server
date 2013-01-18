@@ -3,34 +3,26 @@ package com.zuehlke.pgadmissions.dto;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class RefereesAdminEditDTO {
-    
-    private String applicationId;
-    
+
     private String editedRefereeId;
-    
+
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     private String email;
-    
+
     @ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
     private String telephone;
-    
+
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
     private String skype;
-    
+
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
     private String comment;
-    
-    private Boolean suitableForUCL;
-    
-    private Boolean suitableForProgramme;
-    
-    public String getApplicationId() {
-        return applicationId;
-    }
 
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
-    }
+    private String referenceDocument;
+
+    private Boolean suitableForUCL;
+
+    private Boolean suitableForProgramme;
 
     public String getEmail() {
         return email;
@@ -63,15 +55,15 @@ public class RefereesAdminEditDTO {
     public void setComment(String comment) {
         this.comment = comment;
     }
-    
+
     public boolean isSuitableForUCLSet() {
         return suitableForUCL != null;
     }
-    
+
     public boolean isSuitableForProgrammeSet() {
         return suitableForProgramme != null;
     }
-    
+
     public Boolean getSuitableForUCL() {
         return suitableForUCL;
     }
@@ -94,5 +86,13 @@ public class RefereesAdminEditDTO {
 
     public void setEditedRefereeId(String editedRefereeId) {
         this.editedRefereeId = editedRefereeId;
+    }
+
+    public String getReferenceDocument() {
+        return referenceDocument;
+    }
+
+    public void setReferenceDocument(String referenceDocument) {
+        this.referenceDocument = referenceDocument;
     }
 }

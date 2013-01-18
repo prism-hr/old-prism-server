@@ -1012,10 +1012,19 @@ public class PdfDocumentBuilder {
         PdfContentByte cb = writer.getDirectContent();
 
         for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
+            PdfImportedPage page = writer.getImportedPage(pdfReader, i);
+
+            if (page.getWidth() <= page.getHeight()) {
+                document.setPageSize(PageSize.A4);
+            } else {
+                document.setPageSize(PageSize.A4.rotate());
+            }
             document.newPage();
             headerEvent.setAddHeaderAndFooter(false);
-            PdfImportedPage page = writer.getImportedPage(pdfReader, i);
-            cb.addTemplate(page, 0, 0);
+
+            cb.addTemplate(page, 
+                    document.getPageSize().getWidth() / pdfReader.getPageSize(i).getWidth(), 0, 0,
+                    document.getPageSize().getHeight() / pdfReader.getPageSize(i).getHeight(), 0, 0);            
         }
     }
 

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+    xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:oxm="http://www.springframework.org/schema/oxm" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd      
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+        http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <!-- WebService -->
+    <oxm:jaxb2-marshaller id="marshaller" contextPath="com.zuehlke.pgadmissions.admissionsservice.jaxb" />
+    <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.services.exporters.KeystoreEnabledWebServiceTemplate">
+        <property name="marshaller" ref="marshaller" />
+        <property name="unmarshaller" ref="marshaller" />
+        <property name="defaultUri" value="${xml.data.export.webservice.url}" />
+        <property name="keyStorePassword" value="${xml.data.export.webservice.keystorePassword}" />
+        <property name="keyStoreLocation" value="${xml.data.export.webservice.keystore}" />
+    </bean>
+
+    <!-- Annotation driven spring task scheduling -->
+    <task:annotation-driven executor="default-task-executor" scheduler="default-task-scheduler"/>
+    
+    <task:scheduler id="default-task-scheduler" pool-size="5"/>
+    
+    <task:executor id="default-task-executor" pool-size="5"/>
+    
+    <!--the following executor is dedicated for @Async methods that need to enforce FIFO policy on submitted tasks-->
+    <!--this mimics "input-events-queue" in Spring-->
+    <task:executor id="central-events-queue" pool-size="1"/>
+
+    <!-- Application form queue executors used by UclExportService -->
+    <bean id="webservice-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor">
+        <property name="name" value="webservice-executor"/>
+        <property name="transactionTemplate" ref="defaultTransactionTemplate"/>
+    </bean>
+
+    <bean id="sftp-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor">
+        <property name="name" value="sftp-executor"/>
+        <property name="transactionTemplate" ref="defaultTransactionTemplate"/>
+    </bean>
+    
+    <task:scheduler id="ucl-export-service-scheduler" pool-size="1"/>
+
+</beans>

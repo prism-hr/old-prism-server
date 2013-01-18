@@ -68,7 +68,8 @@ $(document).ready(function() {
     });
     
     $("input:file").each(function() {
-    	watchUpload($(this));
+    	refereeId = $(this).attr('id').replace("commentDocument_", "");
+    	watchUploadComment($(this), $("#commentUploadedDocument_" + refereeId));
     });
 });
 
@@ -141,9 +142,15 @@ function postRefereesData() {
         suitableForProgramme = $('input:radio[name=suitableProgrammeRadio_' + refereeId + ']:checked').val();
     }
     
-    var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
-    var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
-    var $ref_doc_hidden     = $ref_doc_container.find('span input');
+    var documents = new Array();
+    $("#commentUploadedDocument_" + refereeId).find('input.file').each(function(){
+    	documents.push($(this).val());
+    });
+    documents = documents.join(",");
+    
+//    var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
+//    var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
+//    var $ref_doc_hidden     = $ref_doc_container.find('span input');
     
     $('#referencesSection > div').append('<div class="ajax" />');
     $.ajax({
@@ -162,7 +169,7 @@ function postRefereesData() {
             telephone : $('#refereeTelephone_' + refereeId).val(),
             skype: $('#refereeSkype_' + refereeId).val(),
             comment: $('#refereeComment_' + refereeId).val(),
-            referenceDocument: $ref_doc_hidden.val(),
+            documents: documents,
             "suitableForUCL" : suitableUCL,
             "suitableForProgramme" : suitableForProgramme, 
             editedRefereeId : $('#editedRefereeId').val(),

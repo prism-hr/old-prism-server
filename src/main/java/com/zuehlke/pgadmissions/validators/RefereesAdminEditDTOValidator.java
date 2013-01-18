@@ -19,6 +19,5 @@ public class RefereesAdminEditDTOValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "telephone", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "referenceDocument", "file.upload.empty");
     }
 }

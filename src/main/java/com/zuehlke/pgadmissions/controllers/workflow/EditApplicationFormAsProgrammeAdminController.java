@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,12 +21,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.QualificationsAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditSendToUclDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -47,6 +50,8 @@ public class EditApplicationFormAsProgrammeAdminController {
     
     private final ApplicationsService applicationsService;
     
+    private final DocumentPropertyEditor documentPropertyEditor;
+    
     private final QualificationService qualificationService;
     
     private final RefereeService refereeService;
@@ -56,17 +61,18 @@ public class EditApplicationFormAsProgrammeAdminController {
     private final EncryptionHelper encryptionHelper;
     
     public EditApplicationFormAsProgrammeAdminController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
     
     @Autowired
     public EditApplicationFormAsProgrammeAdminController(
-            final UserService userService, final ApplicationsService applicationsService,
+            final UserService userService, final ApplicationsService applicationsService, final DocumentPropertyEditor documentPropertyEditor,
             final QualificationService qualificationService, final RefereeService refereeService,
             final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator,
             EncryptionHelper encryptionHelper) {
         this.userService = userService;
         this.applicationsService = applicationsService;
+        this.documentPropertyEditor = documentPropertyEditor;
         this.qualificationService = qualificationService;
         this.refereeService = refereeService;
         this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
@@ -76,7 +82,9 @@ public class EditApplicationFormAsProgrammeAdminController {
     @InitBinder(value = "refereesAdminEditDTO")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(refereesAdminEditDTOValidator);
+        binder.registerCustomEditor(Document.class, documentPropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
     }
     
     @RequestMapping(method = RequestMethod.GET)

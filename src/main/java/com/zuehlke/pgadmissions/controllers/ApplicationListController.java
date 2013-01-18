@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,7 +58,7 @@ public class ApplicationListController {
 	
 	public List<ApplicationForm> getApplications(
 	        SearchCategory searchCategory, String searchTerm, SortCategory sortCategory, SortOrder sortOrder, Integer blockCount) {
-	    return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, sortOrder, blockCount);
+	    return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, StringUtils.trim(searchTerm), sortCategory, sortOrder, blockCount);
 	}
 
 	@ModelAttribute("user")

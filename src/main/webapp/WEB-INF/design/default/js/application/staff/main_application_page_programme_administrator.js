@@ -68,8 +68,7 @@ $(document).ready(function() {
     });
     
     $("input:file").each(function() {
-    	refereeId = $(this).attr('id').replace("commentDocument_", "");
-    	watchUploadComment($(this), $("#commentUploadedDocument_" + refereeId));
+    	watchUpload($(this));
     });
 });
 
@@ -133,24 +132,18 @@ function postRefereesData() {
     });
     
     var suitableUCL = "";
-    if ($('input:radio[name=suitableUCL_' + refereeId + ']:checked').length > 0) {
-        suitableUCL = $('input:radio[name=suitableUCL_' + refereeId + ']:checked').val();
+    if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
+        suitableUCL = $('input:radio[name=suitableForUCL_' + refereeId + ']:checked').val();
     }
 
     var suitableForProgramme = "";
-    if ($('input:radio[name=suitableProgrammeRadio_' + refereeId + ']:checked').length > 0) {
-        suitableForProgramme = $('input:radio[name=suitableProgrammeRadio_' + refereeId + ']:checked').val();
+    if ($('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').length > 0) {
+        suitableForProgramme = $('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').val();
     }
     
-    var documents = new Array();
-    $("#commentUploadedDocument_" + refereeId).find('input.file').each(function(){
-    	documents.push($(this).val());
-    });
-    documents = documents.join(",");
-    
-//    var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
-//    var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
-//    var $ref_doc_hidden     = $ref_doc_container.find('span input');
+    var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
+    var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
+    var $ref_doc_hidden     = $ref_doc_container.find('span input');
     
     $('#referencesSection > div').append('<div class="ajax" />');
     $.ajax({
@@ -165,13 +158,10 @@ function postRefereesData() {
         url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereesData",
         data :  {
             applicationId : $('#applicationId').val(),
-            email : $('#refereeEmail_' + refereeId).val(),
-            telephone : $('#refereeTelephone_' + refereeId).val(),
-            skype: $('#refereeSkype_' + refereeId).val(),
             comment: $('#refereeComment_' + refereeId).val(),
-            documents: documents,
-            "suitableForUCL" : suitableUCL,
-            "suitableForProgramme" : suitableForProgramme, 
+            referenceDocument: $ref_doc_hidden.val(),
+            suitableForUCL : suitableUCL,
+            suitableForProgramme : suitableForProgramme, 
             editedRefereeId : $('#editedRefereeId').val(),
             sendToUclData: JSON.stringify(sendToUclData),
             cacheBreaker: new Date().getTime()

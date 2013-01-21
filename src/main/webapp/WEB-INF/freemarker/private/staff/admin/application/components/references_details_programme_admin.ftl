@@ -170,45 +170,6 @@
     
         <#if !referee.hasResponded()>
         <div class="row-group">
-            <h3>Contact Details</h3>
-            <div class="row">
-                <span class="plain-label">Email<em>*</em></span>
-                <span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
-                <div class="field">
-                    <input type="text" class="full" name="refereeEmail" id="refereeEmail_${encRefereeId}" value="${(refereesAdminEditDTO.email?html)!}" />
-                </div>
-            </div>
-            <@spring.bind "refereesAdminEditDTO.email" />
-            <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-            </#list>
-            
-            <div class="row">
-                <span class="plain-label">Telephone<em>*</em></span>
-                <span class="hint" data-desc="<@spring.message 'referee.telephone'/>"></span>
-                <div class="field">
-                    <input type="text" class="full" name="refereeTelephone" id="refereeTelephone_${encRefereeId}" placeholder="e.g. +44 (0) 123 123 1234" value="${(refereesAdminEditDTO.telephone?html)!}" />
-                </div>
-            </div>
-            <@spring.bind "refereesAdminEditDTO.telephone" />
-            <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-            </#list>
-            
-            <div class="row">
-                <span class="plain-label">Skype</span>
-                <span class="hint" data-desc="<@spring.message 'referee.skype'/>"></span>
-                <div class="field">
-                    <input type="text" class="full" name="refereeSkype" id="refereeSkype_${encRefereeId}" value="${(refereesAdminEditDTO.skype?html)!}" />
-                </div>
-            </div>
-            <@spring.bind "refereesAdminEditDTO.skype" />
-            <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-            </#list>
-        </div>
-        
-        <div class="row-group">
             <div class="row">
                 <span class="plain-label">Comment<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
@@ -222,59 +183,61 @@
             </#list>
         </div>
         
-        
         <div class="row-group">
             <div class="row">
-                <label class="plain-label" for="file">Attach Document</label>
+                <span class="plain-label">Attach Document</span>
                 <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
-                <div class="field" id="uploadFields">
-                    <input id="commentDocument_${encRefereeId}" class="full" data-type="COMMENT" data-reference="Comment" type="file" name="file" value="" />                   
-                    <input type="hidden" class="file" id="document_COMMENT" value=""/>
-                    <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
-                    <span id="commentDocumentProgress" class="progress" style="display: none;"></span>
+                <div class="field" id="psUploadFields">
+                    <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">
+                    <span id="psUploadedDocument">
+                        <input type="hidden" class="file" id="document_COMMENT" value=""/>
+                    </span>
+                    <span id="referenceDocumentProgress" class="progress" style="display: none;"></span>
                 </div>
             </div>
                 
-            <span id="commentUploadedDocument_${encRefereeId}" class="uploaded-files">
-                <#if refereesAdminEditDTO.documents??>
-                    <#list refereesAdminEditDTO.documents as document>
-                        <div class="row">
-                            <div class="field">
-                                <span class="uploaded-file" name="supportingDocumentSpan" style="display:inline">
-                                    <input class="file" style="display:none" type="text" value="${encrypter.encrypt(document.id)}" name="documents"/>   
-                                    <a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a>
-                                    <a name="delete" data-desc="Delete" class="button-delete button-hint" id="${encrypter.encrypt(document.id)}">delete</a>
-                                </span>
-                            </div>
-                        </div>
-                    </#list>
-                </#if>
-            </span>
+            <@spring.bind "refereesAdminEditDTO.referenceDocument" /> 
+            <#list spring.status.errorMessages as error>
+                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
+            </#list>
+
         </div>
         
         <div class="row-group">
             <h3>Applicant Suitability</h3>
+        
             <div class="row">
-                <span class="plain-label">Is the applicant suitable for postgraduate study at UCL?</span>
+                <span id="suitable-lbl" class="plain-label">Is the applicant suitable for postgraduate study at UCL?<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPG'/>"></span>
-                <div class="field">
-                    <label><input type="radio" id="suitableUCL_true" value="TRUE" name="suitableUCL_${encRefereeId}" 
-                    <#if refereesAdminEditDTO.isSuitableForUCLSet() && refereesAdminEditDTO.getSuitableForUCL()> checked="checked"</#if> > Yes</label>
-                    <label><input type="radio" id="suitableUCL_false" value="FALSE" name="suitableUCL_${encRefereeId}" 
-                    <#if refereesAdminEditDTO.isSuitableForUCLSet() && !refereesAdminEditDTO.getSuitableForUCL()> checked="checked"</#if> > No</label>
-                </div>
+                <div class="field" id="field-issuitableucl">
+                    <label><input type="radio" name="suitableForUCL_${encRefereeId}" value="true" id="suitableRB_true"
+                    <#if refereesAdminEditDTO.isSuitableForUCLSet() && refereesAdminEditDTO.suitableForUCL> checked="checked"</#if>
+                    /> Yes</label> 
+                    <label><input type="radio" name="suitableForUCL_${encRefereeId}" value="false" id="suitableRB_false"
+                    <#if refereesAdminEditDTO.isSuitableForUCLSet() && !refereesAdminEditDTO.suitableForUCL> checked="checked"</#if>
+                    /> No</label>
+                    <@spring.bind "refereesAdminEditDTO.suitableForUCL" /> 
+                        <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                    </div>
             </div>
-            <div class="row">
-                <span class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?</span>
+            <div class="row multi-line" id="field-issuitableprog">
+                <span id="supervise-lbl" class="plain-label">Is the applicant suitable for their chosen postgraduate study programme?<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'interviewOutcome.suitsPGP'/>"></span>
                 <div class="field">
-                    <label><input type="radio" id="suitableProgramme_true" value="TRUE" name="suitableProgrammeRadio_${encRefereeId}" 
-                    <#if refereesAdminEditDTO.isSuitableForProgrammeSet() && refereesAdminEditDTO.getSuitableForProgramme()> checked="checked"</#if> > Yes</label>
-                    <label><input type="radio" id="suitableProgramme_false" value="FALSE" name="suitableProgrammeRadio_${encRefereeId}"
-                    <#if refereesAdminEditDTO.isSuitableForProgrammeSet() && !refereesAdminEditDTO.getSuitableForProgramme()> checked="checked"</#if> > No</label>
+                    <label><input type="radio" name="suitableForProgramme_${encRefereeId}" value="true" id="willingRB_true"
+                    <#if refereesAdminEditDTO.isSuitableForProgrammeSet() && refereesAdminEditDTO.suitableForProgramme> checked="checked"</#if> 
+                    /> Yes</label> 
+                    <label><input type="radio" name="suitableForProgramme_${encRefereeId}" value="false" id="willingRB_false"
+                    <#if refereesAdminEditDTO.isSuitableForProgrammeSet() && !refereesAdminEditDTO.suitableForProgramme> checked="checked"</#if>
+                    /> No</label> 
+                    <@spring.bind "refereesAdminEditDTO.suitableForProgramme" /> 
+                    <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                 </div>
             </div>
-        </div>
+            
+        </div>        
+
+
         </#if>
     </div>
     </#list>

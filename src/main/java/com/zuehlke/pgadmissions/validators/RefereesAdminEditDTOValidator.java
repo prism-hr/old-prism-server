@@ -16,8 +16,8 @@ public class RefereesAdminEditDTOValidator extends AbstractValidator {
     
     @Override
     protected void addExtraValidation(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "telephone", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
+        ValidationUtils.rejectIfEmpty(errors, "suitableForUCL", "dropdown.radio.select.none");
+        ValidationUtils.rejectIfEmpty(errors, "suitableForProgramme", "dropdown.radio.select.none");
     }
 }

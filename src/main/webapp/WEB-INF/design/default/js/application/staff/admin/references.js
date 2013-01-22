@@ -2,21 +2,7 @@ $(document).ready(function() {
     
     addToolTips();
     
-    showQualificationAndReferenceSection();
-    
     showFirstRefereeEntry();
-    
-    showFirstQualificationEntry();
-    
-    // --------------------------------------------------------------------------------
-    // SHOW SELECTED QUALIFICATION
-    // --------------------------------------------------------------------------------
-    $('a[name="showQualificationLink"]').on("click", function() {
-        $('a[name="showQualificationLink"]').each(function() {
-            $("#" + $(this).attr("toggles")).hide();
-        });
-        $("#" + $(this).attr("toggles")).show();
-    });
     
     // --------------------------------------------------------------------------------
     // SHOW SELECTED REFEREE
@@ -43,28 +29,10 @@ $(document).ready(function() {
     });
     
     // --------------------------------------------------------------------------------
-    // ONLY ALLOW A MAXIMUM OF 2 QUALIFICATIONS TO BE SELECTED AT THE SAME TIME
-    // --------------------------------------------------------------------------------
-    $('input[name="qualificationSendToUcl"]:checkbox').on("change", function() {
-        var maxAllowed = 2;
-        var checked = $('input[name="qualificationSendToUcl"]:checked').size();
-        if (checked > maxAllowed) {
-            $(this).attr("checked", false);
-        }
-    });
-
-    // --------------------------------------------------------------------------------
     // POST REFEREE DATA
     // --------------------------------------------------------------------------------
     $('#refereeSaveButton').live("click", function() {
         postRefereesData();
-    });
-    
-    // --------------------------------------------------------------------------------
-    // POST QUALIFICATION DATA
-    // --------------------------------------------------------------------------------
-    $('#qualificationSaveButton').on("click", function() {
-        postQualificationsData();
     });
     
     $("input:file").each(function() {
@@ -88,6 +56,30 @@ function clearRefereeForm() {
     $("input:radio").each(function() {
         $(this).attr('checked', false);
     });
+    
+    $("input:file").each(function() {
+    	var $container  = $(this).parent('div.field');
+    	$deleteButton = $container.find('a.button-delete');
+
+    	// TODO deleting on the server is not working
+    	// for some reason $hidden.val() returns empty string even if the value is set
+//		$deleteButton.trigger('click');
+		
+    	var $hidden  = $container.find('input.file');
+    	deleteUploadedFile($hidden);
+    	
+    	$container.find('span a').each(function()
+		{
+			$(this).remove();
+		});
+    	
+    	$hidden.val(''); // clear field value.
+    	$container.removeClass('uploaded');
+
+		var newField = $container.find('input.full');
+		newField.val("");
+    });
+    
 }
 
 function showFirstRefereeEntry() {
@@ -95,25 +87,6 @@ function showFirstRefereeEntry() {
         $("#" + $(this).attr("toggles")).show();
         $('#editedRefereeId').val($(this).attr("toggles").replace("referee_", ""));
         return false;
-    });
-}
-
-function showFirstQualificationEntry() {
-    $('a[name="showQualificationLink"]').each(function() {
-        $("#" + $(this).attr("toggles")).show();
-        return false;
-    });
-}
-
-function showQualificationAndReferenceSection() {
-    $('section.folding h2').each(function() {
-        if ($(this).attr('id') === "qualifications-H2" || $(this).attr('id') === "referee-H2") {
-            $(this).addClass('open');
-            $(this).next('div').show();
-        } else {
-            $(this).removeClass('open');
-            $(this).next('div').hide();
-        }
     });
 }
 
@@ -172,42 +145,6 @@ function postRefereesData() {
         },
         complete : function() {
             $('#referencesSection div.ajax').remove();
-        }
-    });
-}
-
-function postQualificationsData() {
-    $('#qualificationsSection > div').append('<div class="ajax" />');
-    var sendToUclData = {
-            qualifications : new Array(),
-    };
-    
-    $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
-        var checked = $(this).attr("checked");
-        if (checked) {
-        	sendToUclData.qualifications.push($(this).val());
-        }
-    });
-    
-    $.ajax({
-        type : 'POST',
-        statusCode : {
-            401 : function() { window.location.reload(); },
-            500 : function() { window.location.href = "/pgadmissions/error"; },
-            404 : function() { window.location.href = "/pgadmissions/404"; },
-            400 : function() { window.location.href = "/pgadmissions/400"; },
-            403 : function() { window.location.href = "/pgadmissions/404"; }
-        },
-        url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postQualificationsData",
-        data :  {
-            applicationId : $('#applicationId').val(),
-            sendToUclData: JSON.stringify(sendToUclData),
-            cacheBreaker: new Date().getTime()
-        },
-        success : function(data) {
-        },
-        complete : function() {
-            $('#qualificationsSection div.ajax').remove();
         }
     });
 }

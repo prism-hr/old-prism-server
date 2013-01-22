@@ -187,10 +187,15 @@
             <div class="row">
                 <span class="plain-label">Attach Document</span>
                 <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
-                <div class="field" id="psUploadFields">
+                <div class="field <#if refereesAdminEditDTO.referenceDocument??>uploaded</#if>" id="psUploadFields">
                     <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">
                     <span id="psUploadedDocument">
-                        <input type="hidden" class="file" id="document_COMMENT" value=""/>
+                        <input type="hidden" class="file" id="document_COMMENT" value="${(encrypter.encrypt(refereesAdminEditDTO.referenceDocument.id))!}"/>
+                        <#if refereesAdminEditDTO.referenceDocument??> 
+                            <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(personalDetails.referenceDocument.id))!}'/>" target="_blank">
+                            ${(refereesAdminEditDTO.referenceDocument.fileName?html)!}</a>
+                            <a id="deleteLq" class="button-delete button-hint" data-desc="Change reference document">delete</a> 
+                        </#if>
                     </span>
                     <span id="referenceDocumentProgress" class="progress" style="display: none;"></span>
                 </div>
@@ -250,3 +255,4 @@
 </div>
 </#if>
 
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/admin/references.js' />"></script>

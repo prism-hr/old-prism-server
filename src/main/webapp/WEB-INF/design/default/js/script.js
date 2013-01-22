@@ -358,12 +358,17 @@ function watchUpload($field, $deleteFunction)
 	
 		$hidden.val(''); // clear field value.
 		$container.removeClass('uploaded');
-	
+
 		// Replace the file field with a fresh copy (that's the only way we can set its value to empty).
-		var id		= $field.attr('id');
-		var ref		= $field.attr('data-reference');
-		var type	= $field.attr('data-type');
-		$field.replaceWith('<input class="full" type="file" name="file" value="" id="' + id +'" data-reference="' + ref + '" data-type="' + type + '" />');
+//		var id		= $field.attr('id');
+//		var ref		= $field.attr('data-reference');
+//		var type	= $field.attr('data-type');
+//		$field.replaceWith('<input class="full" type="file" name="file" value="" id="' + id +'" data-reference="' + ref + '" data-type="' + type + '" />');
+		
+		// this is another way to clear out local file path
+		var newField = $container.find('input.full');
+		newField.val("");
+		
 		watchUpload($('#'+id));
 	});
 

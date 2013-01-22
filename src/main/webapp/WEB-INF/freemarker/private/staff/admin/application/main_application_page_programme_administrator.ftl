@@ -37,7 +37,7 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />" />
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/main_application_page_programme_administrator.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/admin/common.js' />"></script>
 
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>

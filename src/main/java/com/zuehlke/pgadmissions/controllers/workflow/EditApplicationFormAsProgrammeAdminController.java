@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.validation.Valid;
 
@@ -22,7 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.dto.QualificationsAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditSendToUclDTO;
@@ -30,6 +34,8 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -60,8 +66,12 @@ public class EditApplicationFormAsProgrammeAdminController {
     
     private final EncryptionHelper encryptionHelper;
     
+    private final DocumentService documentService;
+    
+    private final CommentService commentService;
+    
     public EditApplicationFormAsProgrammeAdminController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
     
     @Autowired
@@ -69,7 +79,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             final UserService userService, final ApplicationsService applicationsService, final DocumentPropertyEditor documentPropertyEditor,
             final QualificationService qualificationService, final RefereeService refereeService,
             final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator,
-            EncryptionHelper encryptionHelper) {
+            EncryptionHelper encryptionHelper, DocumentService documentService, CommentService commentService) {
         this.userService = userService;
         this.applicationsService = applicationsService;
         this.documentPropertyEditor = documentPropertyEditor;
@@ -77,6 +87,8 @@ public class EditApplicationFormAsProgrammeAdminController {
         this.refereeService = refereeService;
         this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
         this.encryptionHelper = encryptionHelper;
+        this.documentService = documentService;
+        this.commentService = commentService;
     }
         
     @InitBinder(value = "refereesAdminEditDTO")
@@ -109,6 +121,29 @@ public class EditApplicationFormAsProgrammeAdminController {
         if (!isUserAllowedToSeeAndPost(applicationForm)) {
             throw new ResourceNotFoundException();
         }
+        
+        Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
+        Referee referee = refereeService.getRefereeById(refereeId);
+        if(referee.getReference() != null){
+            // reference already uploaded
+            throw new ResourceNotFoundException();
+        }
+        
+        Integer documentId = refereesAdminEditDTO.getReferenceDocument().getId();
+        Document document = documentService.getDocumentById(documentId);
+        
+        ReferenceComment referenceComment = new ReferenceComment();
+        referenceComment.setApplication(applicationForm);
+        referenceComment.setReferee(referee);
+        referenceComment.setType(CommentType.REFERENCE);
+        referenceComment.setUser(getCurrentUser());
+        referenceComment.setComment(refereesAdminEditDTO.getComment());
+        referenceComment.setDocuments(Collections.singletonList(document));
+        referenceComment.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
+        referenceComment.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
+        
+//        commentService.save(referenceComment);       
+//        refereeService.saveReferenceAndSendMailNotifications(referee);
         
         if (StringUtils.isNotBlank(sendToUclData)) {
             Gson gson = new Gson();

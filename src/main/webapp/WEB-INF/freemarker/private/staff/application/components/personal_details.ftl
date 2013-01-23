@@ -99,7 +99,7 @@
           </div>
           
           <div class="admin_row">
-            <span class="admin_row_label">Qualification Type</span>
+            <span class="admin_row_label">Other Qualification Type Name</span>
             <div class="field">${(languageQualification.otherQualificationTypeName?html)!"Not Provided"}</div>
           </div>
           

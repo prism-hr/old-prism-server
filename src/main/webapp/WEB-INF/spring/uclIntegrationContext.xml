@@ -21,8 +21,8 @@
         <property name="marshaller" ref="marshaller" />
         <property name="unmarshaller" ref="marshaller" />
         <property name="defaultUri" value="${xml.data.export.webservice.url}" />
-        <property name="keyStorePassword" value="${xml.data.export.webservice.keystorePassword}" />
-        <property name="keyStoreLocation" value="${xml.data.export.webservice.keystore}" />
+<!--         <property name="keyStorePassword" value="${xml.data.export.webservice.keystorePassword}" /> -->
+<!--         <property name="keyStoreLocation" value="${xml.data.export.webservice.keystore}" /> -->
     </bean>
 
     <!-- Annotation driven spring task scheduling -->

@@ -25,9 +25,9 @@ public class Phase2Task implements Runnable {
 
     @Override
     public void run() {
-        log.debug("starting phase-2 task for transfer " + transferId);
+        log.info("Starting phase-2 task for transfer " + transferId);
         uclExportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(transferId, listener);
-        log.debug("finishing phase-2 task for transfer " + transferId);
+        log.info("Finishing phase-2 task for transfer " + transferId);
     }
 
     @Override

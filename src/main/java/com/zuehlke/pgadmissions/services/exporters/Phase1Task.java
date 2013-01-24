@@ -25,9 +25,9 @@ public class Phase1Task implements Runnable {
 
     @Override
     public void run() {
-        log.debug("starting phase-1 task for transfer " + transferId);
+        log.info("Sstarting phase-1 task for transfer " + transferId);
         uclExportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(transferId, listener);
-        log.debug("finishing phase-1 task for transfer " + transferId);
+        log.info("Finishing phase-1 task for transfer " + transferId);
     }
 
     @Override

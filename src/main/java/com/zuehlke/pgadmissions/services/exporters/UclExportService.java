@@ -145,11 +145,11 @@ public class UclExportService {
         log.info("Re-initialising the queues for ucl-export processing");
         
         for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForWebserviceCall()) {
-            webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationFormTransfer.getApplicationForm().getId(),  applicationFormTransfer.getId(), new DeafListener()));
+            webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationFormTransfer.getApplicationForm().getId(), applicationFormTransfer.getId(), new DeafListener()));
         }
         
         for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForAttachmentsSending()) {
-            webserviceCallingQueueExecutor.execute(new Phase2Task(this, applicationFormTransfer.getApplicationForm().getId(),  applicationFormTransfer.getId(), new DeafListener()));
+            sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationFormTransfer.getApplicationForm().getId(), applicationFormTransfer.getId(), new DeafListener()));
         }
     }
 
@@ -341,7 +341,7 @@ public class UclExportService {
             this.triggerTransferFailed(listener, error);
 
             //Schedule the same transfer again
-            sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+            sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(),  transfer.getId(), listener));
 
             logAndSendEmailToSuperadministrator(String.format(
                     "LocallyDefinedSshConfigurationIsWrong for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -363,7 +363,7 @@ public class UclExportService {
             this.triggerTransferFailed(listener, error);
 
             //Schedule the same transfer again
-            sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+            sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(),  transfer.getId(), listener));
             
             logAndSendEmailToSuperadministrator(String.format(
                     "CouldNotOpenSshConnectionToRemoteHost for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -385,7 +385,7 @@ public class UclExportService {
             this.triggerTransferFailed(listener, error);
 
             //Schedule the same transfer again
-            sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+            sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(),  transfer.getId(), listener));
 
             logAndSendEmailToSuperadministrator(String.format(
                     "SftpTargetDirectoryNotAccessible for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -407,7 +407,7 @@ public class UclExportService {
             this.triggerTransferFailed(listener, error);
 
             //Schedule the same transfer again
-            sftpCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+            sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(),  transfer.getId(), listener));
             
             logAndSendEmailToSuperadministrator(String.format(
                     "SftpTransmissionFailedOrProtocolError for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -423,20 +423,24 @@ public class UclExportService {
     }
 
     protected void pauseWsQueueForMinutes(int minutes) {
+        log.info("Pausing WebService queue for " + minutes + " minutes");
         webserviceCallingQueueExecutor.pause();
         scheduler.schedule(new Runnable() {
             @Override
             public void run() {
+                log.info("Resuming WebService queue");
                 webserviceCallingQueueExecutor.resume();
             }
         }, DateUtils.addMinutes(new Date(), minutes));
     }
     
     protected void pauseSftpQueueForMinutes(int minutes) {
+        log.info("Pausing SFTP queue for " + minutes + " minutes");
         sftpCallingQueueExecutor.pause();
         scheduler.schedule(new Runnable() {
             @Override
             public void run() {
+                log.info("Resuming SFTP queue");
                 sftpCallingQueueExecutor.resume();
             }
         }, DateUtils.addMinutes(new Date(), minutes));

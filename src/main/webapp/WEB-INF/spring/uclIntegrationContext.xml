@@ -16,12 +16,13 @@
 
     <!-- WebService -->
     <oxm:jaxb2-marshaller id="marshaller" contextPath="com.zuehlke.pgadmissions.admissionsservice.jaxb" />
-    <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.services.exporters.KeystoreEnabledWebServiceTemplate">
+<!--     <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.services.exporters.KeystoreEnabledWebServiceTemplate"> -->
+    <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
         <property name="marshaller" ref="marshaller" />
         <property name="unmarshaller" ref="marshaller" />
         <property name="defaultUri" value="${xml.data.export.webservice.url}" />
-        <property name="keyStorePassword" value="${xml.data.export.webservice.keystorePassword}" />
-        <property name="keyStoreLocation" value="${xml.data.export.webservice.keystore}" />
+<!--         <property name="keyStorePassword" value="${xml.data.export.webservice.keystorePassword}" /> -->
+<!--         <property name="keyStoreLocation" value="${xml.data.export.webservice.keystore}" /> -->
     </bean>
 
     <!-- Annotation driven spring task scheduling -->

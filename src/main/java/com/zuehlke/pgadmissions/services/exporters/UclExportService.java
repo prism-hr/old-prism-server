@@ -190,9 +190,13 @@ public class UclExportService {
         
         try  {
             //call webservice
-            log.info("Calling marshalSendAndReceive for transfer " + transferId + " (" + applicationForm.getApplicationNumber() + ")");
+            log.info(String.format("Calling marshalSendAndReceive for transfer %d (%s)", transferId,  applicationForm.getApplicationNumber()));
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
-            log.info("Successfully returned from webservice call for transfer " + transferId + " (" + applicationForm.getApplicationNumber() + ")");
+            log.info(String.format("Successfully returned from webservice call for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
+            log.info(String
+                    .format("Received web service response [transferId=%d, applicationNumber=%s, applicantID=%s, applicationID=%s]",
+                            transferId, applicationForm.getApplicationNumber(), response.getReference()
+                                    .getApplicantID(), response.getReference().getApplicationID()));
         } catch (WebServiceIOException e) {
             logAndSendEmailToSuperadministrator(String.format(
                     "WebServiceTransportException during webservice call for transfer [transferId=%d, applicationNumber=%s]", transferId,

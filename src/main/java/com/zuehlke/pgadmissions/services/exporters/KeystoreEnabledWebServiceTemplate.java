@@ -21,10 +21,11 @@ public class KeystoreEnabledWebServiceTemplate extends WebServiceTemplate {
     public Object marshalSendAndReceive(String uri, final Object requestPayload,
             final WebServiceMessageCallback requestCallback) {
         try {
-            //log.info("javax.net.ssl.keyStore=" + keyStoreLocation.getFile().getAbsolutePath());
-            //log.info("javax.net.ssl.keyStorePassword=" + keyStorePassword);
-            //System.getProperties().setProperty("javax.net.ssl.keyStore", keyStoreLocation.getFile().getAbsolutePath());
-            //System.getProperties().setProperty("javax.net.ssl.keyStorePassword", keyStorePassword);
+            log.info("javax.net.ssl.keyStore=" + keyStoreLocation.getFile().getAbsolutePath());
+            log.info("javax.net.ssl.keyStorePassword=" + keyStorePassword);
+            
+            System.getProperties().setProperty("javax.net.ssl.keyStore", keyStoreLocation.getFile().getAbsolutePath());
+            System.getProperties().setProperty("javax.net.ssl.keyStorePassword", keyStorePassword);
         } catch (Throwable t) {
             log.error("Could not set javax.net.ssl.keyStore, or javax.net.ssl.keyStorePassword", t);
         }

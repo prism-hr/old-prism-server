@@ -352,16 +352,15 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         switch (applicationForm.getStatus()) {
         case WITHDRAWN:
-            applicationTp.setApplicationStatus("W");
-            applicationTp.setDepartmentalDecision("R");
+            applicationTp.setApplicationStatus("WITHDRAWN");
             break;
         case APPROVED:
-            applicationTp.setApplicationStatus("A");
-            applicationTp.setDepartmentalDecision("O");
+            applicationTp.setApplicationStatus("ACTIVE");
+            applicationTp.setDepartmentalDecision("OFFER");
             break;
         case REJECTED:
-            applicationTp.setApplicationStatus("A");
-            applicationTp.setDepartmentalDecision("R");
+            applicationTp.setApplicationStatus("ACTIVE");
+            applicationTp.setDepartmentalDecision("REJECT");
             break;
         default:
             throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getStatus().displayValue());

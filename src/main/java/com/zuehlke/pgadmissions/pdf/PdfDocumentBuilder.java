@@ -24,6 +24,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
@@ -1010,21 +1011,12 @@ public class PdfDocumentBuilder {
     private void readPdf(Document document, com.zuehlke.pgadmissions.domain.Document doc, PdfWriter writer) throws Exception {
         PdfReader pdfReader = new PdfReader(doc.getContent());
         PdfContentByte cb = writer.getDirectContent();
-
         for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
             PdfImportedPage page = writer.getImportedPage(pdfReader, i);
-
-            if (page.getWidth() <= page.getHeight()) {
-                document.setPageSize(PageSize.A4);
-            } else {
-                document.setPageSize(PageSize.A4.rotate());
-            }
+            document.setPageSize(new Rectangle(page.getWidth(), page.getHeight()));
             document.newPage();
             headerEvent.setAddHeaderAndFooter(false);
-
-            cb.addTemplate(page, 
-                    document.getPageSize().getWidth() / pdfReader.getPageSize(i).getWidth(), 0, 0,
-                    document.getPageSize().getHeight() / pdfReader.getPageSize(i).getHeight(), 0, 0);            
+            cb.addTemplate(page, 0, 0);
         }
     }
 

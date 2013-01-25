@@ -110,8 +110,8 @@ public class UclExportService {
      * @param applicationForm application form to be transferred
      * @return application transfer id - may be usable for diagnostic purposes, but usually simple ignore this
      */
-    public Long sendToUCL(ApplicationForm applicationForm) {
-        return this.sendToUCL(applicationForm, new DeafListener());
+    public Long sendToPortico(ApplicationForm applicationForm) {
+        return this.sendToPortico(applicationForm, new DeafListener());
     }
 
     /**
@@ -123,7 +123,7 @@ public class UclExportService {
      * @param listener callback listener for observing the sending process
      * @return application transfer id - may be usable for diagnostic purposes, but usually simple ignore this
      */
-    public Long sendToUCL(ApplicationForm applicationForm, TransferListener listener) {
+    public Long sendToPortico(ApplicationForm applicationForm, TransferListener listener) {
         log.info("Submitting application form " + applicationForm.getApplicationNumber() + " for ucl-export processing");
 
         ApplicationFormTransfer transfer = this.createPersistentQueueItem(applicationForm);
@@ -134,7 +134,7 @@ public class UclExportService {
         
         this.triggerQueued(listener);
         
-        log.info("Succecfully added application form " + applicationForm.getApplicationNumber() + " to ucl-export queue (transfer-id=" + transfer.getId() +")");
+        log.info(String.format("Succecfully sent application form %s to PORTICO (transfer-id=%d)", applicationForm.getApplicationNumber(), transfer.getId()));
         
         return transfer.getId();
     }

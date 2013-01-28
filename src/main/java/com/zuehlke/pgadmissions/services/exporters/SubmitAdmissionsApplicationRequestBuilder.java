@@ -558,49 +558,50 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     private RefereeListTp buildReferee() {
         RefereeListTp resultList = xmlFactory.createRefereeListTp();
-        List<Referee> referees = applicationForm.getReferees();
-        if (!referees.isEmpty()) {
-            for (Referee referee : referees) {
-                RefereeTp refereeTp = xmlFactory.createRefereeTp();
-
-                refereeTp.setPosition(referee.getJobTitle());
-
-                NameTp nameTp = xmlFactory.createNameTp();
-                nameTp.setForename1(referee.getFirstname());
-                nameTp.setSurname(referee.getLastname());
-                refereeTp.setName(nameTp);
-
-                ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
-                contactDtlsTp.setEmail(referee.getEmail());
-                contactDtlsTp.setLandline(cleanPhoneNumber(referee.getPhoneNumber()));
-
-                if (StringUtils.isBlank(referee.getPhoneNumber())) {
-                    contactDtlsTp.setLandline(PHONE_NUMBER_NOT_PROVIDED_VALUE);
-                } else if (!ESAPI.validator().isValidInput("PhoneNumber", referee.getPhoneNumber(), "PhoneNumber", 25,
-                        false)) {
-                    contactDtlsTp.setLandline(PHONE_NUMBER_NOT_PROVIDED_VALUE);
-                }
-
-                AddressTp addressTp = xmlFactory.createAddressTp();
-                addressTp.setAddressLine1(referee.getAddressLocation().getAddress1());
-                addressTp.setAddressLine2(referee.getAddressLocation().getAddress2());
-                addressTp.setAddressLine3(referee.getAddressLocation().getAddress3());
-                addressTp.setAddressLine4(referee.getAddressLocation().getAddress4());
-                addressTp.setAddressLine5(referee.getAddressLocation().getAddress5());
-                addressTp.setCountry(referee.getAddressLocation().getCountry().getCode());
-
-                // addressLine3 is mandatory but PRISM did not collect addresses
-                // in this format before.
-                if (StringUtils.isBlank(referee.getAddressLocation().getAddress3())) {
-                    addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);
-                }
-
-                contactDtlsTp.setAddressDtls(addressTp);
-
-                refereeTp.setContactDetails(contactDtlsTp);
-
-                resultList.getReferee().add(refereeTp);
+        for (Referee referee : applicationForm.getReferees()) {
+            if (BooleanUtils.isFalse(referee.getSendToUCL())) {
+                continue;
             }
+
+            RefereeTp refereeTp = xmlFactory.createRefereeTp();
+
+            refereeTp.setPosition(referee.getJobTitle());
+
+            NameTp nameTp = xmlFactory.createNameTp();
+            nameTp.setForename1(referee.getFirstname());
+            nameTp.setSurname(referee.getLastname());
+            refereeTp.setName(nameTp);
+
+            ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
+            contactDtlsTp.setEmail(referee.getEmail());
+            contactDtlsTp.setLandline(cleanPhoneNumber(referee.getPhoneNumber()));
+
+            if (StringUtils.isBlank(referee.getPhoneNumber())) {
+                contactDtlsTp.setLandline(PHONE_NUMBER_NOT_PROVIDED_VALUE);
+            } else if (!ESAPI.validator().isValidInput("PhoneNumber", referee.getPhoneNumber(), "PhoneNumber", 25,
+                    false)) {
+                contactDtlsTp.setLandline(PHONE_NUMBER_NOT_PROVIDED_VALUE);
+            }
+
+            AddressTp addressTp = xmlFactory.createAddressTp();
+            addressTp.setAddressLine1(referee.getAddressLocation().getAddress1());
+            addressTp.setAddressLine2(referee.getAddressLocation().getAddress2());
+            addressTp.setAddressLine3(referee.getAddressLocation().getAddress3());
+            addressTp.setAddressLine4(referee.getAddressLocation().getAddress4());
+            addressTp.setAddressLine5(referee.getAddressLocation().getAddress5());
+            addressTp.setCountry(referee.getAddressLocation().getCountry().getCode());
+
+            // addressLine3 is mandatory but PRISM did not collect addresses
+            // in this format before.
+            if (StringUtils.isBlank(referee.getAddressLocation().getAddress3())) {
+                addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);
+            }
+
+            contactDtlsTp.setAddressDtls(addressTp);
+
+            refereeTp.setContactDetails(contactDtlsTp);
+
+            resultList.getReferee().add(refereeTp);
         }
         return resultList;
     }

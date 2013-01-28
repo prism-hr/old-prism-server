@@ -18,7 +18,12 @@
 		          <div class="box">
 		            <div class="title">
 		              <span class="icon-role <#if timelineObject.userCapacity == 'admin'>administrator<#else>${timelineObject.userCapacity}</#if>" data-desc="<#if timelineObject.userCapacity == 'admin'>Administrator<#else>${timelineObject.userCapacity?cap_first}</#if>"></span>
-		              <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
+		              <#if timelineObject.type == 'reference' && timelineObject.referee.reference.providedBy??>
+		                  <#assign comment = timelineObject.referee.reference/>
+                          <span class="name">${(comment.providedBy.firstName?html)!} ${(comment.providedBy.lastName?html)!} <em>on behalf of</em> ${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
+	                  <#else>
+		                  <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
+	                  </#if>
 		              <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 		            </div>
 		      

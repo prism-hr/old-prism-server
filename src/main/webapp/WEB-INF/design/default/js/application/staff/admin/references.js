@@ -2,12 +2,29 @@ $(document).ready(function() {
     
     addToolTips();
     
-    showFirstRefereeEntry();
+    showProperRefereeEntry();
+    
+    // --------------------------------------------------------------------------------
+    // Close button.
+    // --------------------------------------------------------------------------------
+	$('#refereeCloseButton').click(function(){
+		$('#referee-H2').trigger('click');
+		return false;
+	});
+	
+    // -------------------------------------------------------------------------------
+    // Clear button.
+    // -------------------------------------------------------------------------------
+    $('#refereeClearButton').click(function() {
+    	$('input[name="refereeSendToUcl"]').each(function() {
+    		$(this).attr("checked", false);
+        });
+    });
     
     // --------------------------------------------------------------------------------
     // SHOW SELECTED REFEREE
     // --------------------------------------------------------------------------------
-    $('a[name="showRefereeLink"]').live("click", function() {
+    $('a[name="showRefereeLink"]').on("click", function() {
         $('a[name="showRefereeLink"]').each(function() {
             $("#" + $(this).attr("toggles")).hide();
         });
@@ -20,7 +37,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // ONLY ALLOW A MAXIMUM OF 2 REFEREES TO BE SELECTED AT THE SAME TIME
     // --------------------------------------------------------------------------------
-    $('input[name="refereeSendToUcl"]:checkbox').live("change", function() {
+    $('input[name="refereeSendToUcl"]:checkbox').on("change", function() {
         var maxAllowed = 2;
         var checked = $('input[name="refereeSendToUcl"]:checked').size();
         if (checked > maxAllowed) {
@@ -31,7 +48,7 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // POST REFEREE DATA
     // --------------------------------------------------------------------------------
-    $('#refereeSaveButton').live("click", function() {
+    $('#refereeSaveButton').on("click", function() {
         postRefereesData();
     });
     
@@ -63,8 +80,6 @@ function clearRefereeForm() {
 
     	// TODO deleting on the server is not working
     	// for some reason $hidden.val() returns empty string even if the value is set
-//		$deleteButton.trigger('click');
-		
     	var $hidden  = $container.find('input.file');
     	deleteUploadedFile($hidden);
     	
@@ -82,25 +97,36 @@ function clearRefereeForm() {
     
 }
 
-function showFirstRefereeEntry() {
-    $('a[name="showRefereeLink"]').each(function() {
-        $("#" + $(this).attr("toggles")).show();
-        $('#editedRefereeId').val($(this).attr("toggles").replace("referee_", ""));
-        return false;
-    });
+function showProperRefereeEntry() {
+	var $refereeId = $('#editedRefereeId').val(); 
+	if($refereeId == "") {
+		// referee ID not set yet, display first one
+	    $('a[name="showRefereeLink"]').each(function() {
+	        $("#" + $(this).attr("toggles")).show();
+	        $('#editedRefereeId').val($(this).attr("toggles").replace("referee_", ""));
+	        return false;
+	    });
+	} else {
+		// referee ID already set, display this one
+		$('a[name="showRefereeLink"]').each(function() {
+			if($refereeId == $(this).attr("toggles").replace("referee_", "")){
+				$("#" + $(this).attr("toggles")).show();
+			}
+		});
+	}
 }
 
 function postRefereesData() {
     var refereeId = $('#editedRefereeId').val();
     
-    var sendToUclData = {
+    var sendToPorticoData = {
             referees : new Array()
     };
     
     $('input[name="refereeSendToUcl"]:checkbox').each(function() {
         var checked = $(this).attr("checked");
         if (checked) {
-            sendToUclData.referees.push($(this).val());
+        	sendToPorticoData.referees.push($(this).val());
         }
     });
     
@@ -136,7 +162,7 @@ function postRefereesData() {
             suitableForUCL : suitableUCL,
             suitableForProgramme : suitableForProgramme, 
             editedRefereeId : $('#editedRefereeId').val(),
-            sendToUclData: JSON.stringify(sendToUclData),
+            sendToPorticoData: JSON.stringify(sendToPorticoData),
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {

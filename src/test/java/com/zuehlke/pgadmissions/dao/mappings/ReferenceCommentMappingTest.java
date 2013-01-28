@@ -37,10 +37,13 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
+		RegisteredUser commentProviderUser = new RegisteredUserBuilder().firstName("Bob").lastName("Kowalski").email("bob@test.com").username("bob").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		
 		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).build();
 		
 		Country country = new CountryBuilder().name("nae").code("aa").enabled(true).build(); 
-		save(applicant, application, country);
+		save(applicant, application, country, commentProviderUser);
 		
 		Referee referee = new RefereeBuilder().application(application).email("email@test.com").firstname("bob")
 				.lastname("smith").addressCountry(country).address1("london").jobEmployer("zuhlke").jobTitle("se")
@@ -54,7 +57,7 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 		
 		ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee)
 				.comment("This is a reference comment").suitableForProgramme(false).user(refereeUser).application(applicationForm)
-				.build();
+				.providedBy(commentProviderUser).build();
 		referee.setReference(referenceComment);
 		save(referenceComment, referee);
 		
@@ -75,6 +78,7 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 		assertFalse(reloadedComment.getSuitableForUCL());
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(reloadedComment.getDate(), Calendar.DATE));
 		assertEquals(referee.getId(), reloadedComment.getReferee().getId());
+		assertEquals(commentProviderUser.getId(), reloadedComment.getProvidedBy().getId());
 	}
 }
 

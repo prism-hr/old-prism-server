@@ -19,6 +19,7 @@ public class ReferenceCommentBuilder {
 	private boolean suitableForProgramme;
 	private String comment;
 	private RegisteredUser user;
+	private RegisteredUser providedBy;
 
 	private ApplicationForm application;
 	private Date date;
@@ -69,6 +70,11 @@ public class ReferenceCommentBuilder {
 		return this;
 	}
 	
+	   public ReferenceCommentBuilder providedBy(RegisteredUser providedBy){
+	        this.providedBy = providedBy;
+	        return this;
+	    }
+	
 	public ReferenceComment build() {
 		ReferenceComment reference = new ReferenceComment();
 		reference.setId(id);
@@ -77,6 +83,7 @@ public class ReferenceCommentBuilder {
 		reference.setSuitableForUCL(suitableForUcl);
 		reference.setComment(comment);
 		reference.setUser(user);
+		reference.setProvidedBy(providedBy);
 		reference.setType(CommentType.REFERENCE);
 		reference.getDocuments().add(document);
 		reference.setApplication(application);

@@ -45,10 +45,6 @@ public class QualificationService {
 
 	@Transactional
     public void selectForSendingToPortico(final String applicationNumber, final List<Integer> qualificationSendToUcl) {
-        if (qualificationSendToUcl.isEmpty()) {
-            return;
-        }
-	    
 	    ApplicationForm applicationForm = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
 	    for (Qualification qualification : applicationForm.getQualifications()) {
 	        qualification.setSendToUCL(false);

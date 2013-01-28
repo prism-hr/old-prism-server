@@ -5,6 +5,23 @@ $(document).ready(function() {
     showFirstQualificationEntry();
     
     // --------------------------------------------------------------------------------
+    // Close button.
+    // --------------------------------------------------------------------------------
+	$('#qualificationCloseButton').click(function(){
+		$('#qualifications-H2').trigger('click');
+		return false;
+	});
+	
+    // -------------------------------------------------------------------------------
+    // Clear button.
+    // -------------------------------------------------------------------------------
+    $('#qualificationClearButton').click(function() {
+    	$('input[name="qualificationSendToUcl"]').each(function() {
+    		$(this).attr("checked", false);
+        });
+    });
+    
+    // --------------------------------------------------------------------------------
     // SHOW SELECTED QUALIFICATION
     // --------------------------------------------------------------------------------
     $('a[name="showQualificationLink"]').on("click", function() {
@@ -43,14 +60,14 @@ function showFirstQualificationEntry() {
 
 function postQualificationsData() {
     $('#qualificationsSection > div').append('<div class="ajax" />');
-    var sendToUclData = {
+    var sendToPorticoData = {
             qualifications : new Array(),
     };
     
     $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
         var checked = $(this).attr("checked");
         if (checked) {
-        	sendToUclData.qualifications.push($(this).val());
+        	sendToPorticoData.qualifications.push($(this).val());
         }
     });
     
@@ -66,7 +83,7 @@ function postQualificationsData() {
         url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postQualificationsData",
         data :  {
             applicationId : $('#applicationId').val(),
-            sendToUclData: JSON.stringify(sendToUclData),
+            sendToPorticoData: JSON.stringify(sendToPorticoData),
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {

@@ -105,4 +105,8 @@ public class RefereeDAO {
     public Referee getRefereeByUser(RegisteredUser user) {
         return (Referee) sessionFactory.getCurrentSession().createCriteria(Referee.class).add(Restrictions.eq("user", user)).uniqueResult();
     }
+    
+    public void refresh(Referee referee){
+        sessionFactory.getCurrentSession().refresh(referee);
+    }
 }

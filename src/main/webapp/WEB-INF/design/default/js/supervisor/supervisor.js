@@ -179,8 +179,6 @@ $(document).ready(function()
 	
 });
 
-
-
 function getSupervisorsSection(){
 	$('#approvalsection').append('<div class="ajax" />');
 	

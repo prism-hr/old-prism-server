@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -912,25 +913,15 @@ public class RegisteredUserTest {
 	}
 
 	@Test
-	public void shouldReturnReviewersForApplicationForm() {
+	public void shouldThrowExceptionIfLatestReviewRoundIsNull() {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).build();
-		Reviewer reviewerOne = new ReviewerBuilder().id(7).user(user).build();
-		Reviewer reviewerTwo = new ReviewerBuilder().id(8).user(new RegisteredUserBuilder().id(9).build()).build();
-		Reviewer reviewerThree = new ReviewerBuilder().id(9).user(user).build();
-		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo, reviewerThree).build();
-
-		applicationForm.setLatestReviewRound(reviewRound);
-		List<Reviewer> reviewers = user.getReviewersForApplicationForm(applicationForm);
-		assertEquals(2, reviewers.size());
-		assertTrue(reviewers.containsAll(Arrays.asList(reviewerOne, reviewerThree)));
-	}
-
-	@Test
-	public void shouldReturnEmptyListfNotReviewerForApplicationForm() {
-		RegisteredUser user = new RegisteredUserBuilder().id(8).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).build();
-		assertTrue(user.getReviewersForApplicationForm(applicationForm).isEmpty());
+		try {
+		    user.getReviewerForCurrentUserFromLatestReviewRound(applicationForm);
+		    fail("the latestReviewRound is null and should have thrown an IllegalStateException");
+		} catch (IllegalStateException e) {
+		    // do nothing
+		}
 	}
 
 	@Test

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -78,24 +79,56 @@ public class CommentServiceTest {
 	}
 	
 	@Test
-	public void shouldDeclineReview(){
-		final ReviewComment reviewComment = new ReviewCommentBuilder().id(1).build();
-		service = new CommentService(commentDAOMock){
-			@Override
-			public ReviewComment getNewReviewComment(){
-				return reviewComment;
-			}
-		};
-		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).build();
-		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
-		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
-		ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).build();
-		service.save(reviewComment);
-		service.declineReview(reviewerUser, application);
-		Assert.assertTrue(reviewComment.isDecline());
-		Assert.assertEquals(reviewerUser, reviewComment.getUser());
-		Assert.assertEquals(application, reviewComment.getApplication());
+    public void shouldDeclineReview() {
+        final ReviewComment reviewComment = new ReviewCommentBuilder().id(1).build();
+        service = new CommentService(commentDAOMock) {
+            @Override
+            public ReviewComment getNewReviewComment() {
+                return reviewComment;
+            }
+        };
+        RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).build();
+        Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
+        ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
+        ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).build();
+        
+        EasyMock.expect(commentDAOMock.getReviewCommentsForReviewerAndApplication(reviewer, application)).andReturn(new ArrayList<ReviewComment>());
+        commentDAOMock.save(reviewComment);
+        EasyMock.replay(commentDAOMock);
+        
+        service.declineReview(reviewerUser, application);
+        
+        Assert.assertTrue(reviewComment.isDecline());
+        Assert.assertEquals(reviewerUser, reviewComment.getUser());
+        Assert.assertEquals(application, reviewComment.getApplication());
+        
+        EasyMock.verify(commentDAOMock);
 	}
+	
+    @Test
+    public void shouldNotDeclineReviewIfUserAlreadyProvidedAReviewComment() {
+        final ReviewComment reviewComment = new ReviewCommentBuilder().id(1).build();
+        service = new CommentService(commentDAOMock) {
+            @Override
+            public ReviewComment getNewReviewComment() {
+                return reviewComment;
+            }
+        };
+        RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).build();
+        Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
+        ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
+        ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).build();
+        
+        EasyMock.expect(commentDAOMock.getReviewCommentsForReviewerAndApplication(reviewer, application)).andReturn(Arrays.asList(reviewComment));
+        
+        EasyMock.replay(commentDAOMock);
+        
+        service.declineReview(reviewerUser, application);
+        
+        Assert.assertFalse(reviewComment.isDecline());
+        
+        EasyMock.verify(commentDAOMock);
+    }	
 	
 	@Test
 	public void shouldcreateDelegateComment(){

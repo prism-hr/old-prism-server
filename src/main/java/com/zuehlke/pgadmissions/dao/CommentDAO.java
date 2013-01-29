@@ -8,10 +8,11 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Repository
@@ -19,9 +20,9 @@ public class CommentDAO {
 
 	private final SessionFactory sessionFactory;
 	
-	CommentDAO(){
-		this(null);
-	}
+    public CommentDAO() {
+        this(null);
+    }
 	
 	@Autowired
 	public CommentDAO(SessionFactory sessionFactory) {
@@ -58,5 +59,12 @@ public class CommentDAO {
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<ReviewComment> getReviewCommentsForReviewerAndApplication(Reviewer reviewer, ApplicationForm applicationForm) {
+	    return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class)
+	            .add(Restrictions.eq("type", CommentType.REVIEW))
+	            .add(Restrictions.eq("reviewer", reviewer))
+	            .add(Restrictions.eq("application", applicationForm)).list();
+	}
 	
 }

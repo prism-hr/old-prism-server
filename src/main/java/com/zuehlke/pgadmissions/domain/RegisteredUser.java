@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -655,20 +656,21 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
 	public void setProgramsOfWhichInterviewer(List<Program> programsOfWhichInterviewer) {
 		this.programsOfWhichInterviewer = programsOfWhichInterviewer;
 	}
-
-	public List<Reviewer> getReviewersForApplicationForm(ApplicationForm applicationForm) {
-		List<Reviewer> reviewers = new ArrayList<Reviewer>();
-		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
-		if (latestReviewRound == null) {
-			return reviewers;
-		}
-		List<Reviewer> formReviewers = latestReviewRound.getReviewers();
-		for (Reviewer reviewer : formReviewers) {
-			if (this.getId().equals(reviewer.getUser().getId())) {
-				reviewers.add(reviewer);
-			}
-		}
-		return reviewers;
+	
+	public Reviewer getReviewerForCurrentUserFromLatestReviewRound(ApplicationForm applicationForm) {
+        ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
+        
+        if (latestReviewRound == null) {
+            throw new IllegalStateException(String.format("latestReviewRound is null for application[applicationNumber=%s]", applicationForm.getApplicationNumber()));
+        }
+        
+        List<Reviewer> formReviewers = latestReviewRound.getReviewers();
+        for (Reviewer reviewer : formReviewers) {
+            if (this.getId().equals(reviewer.getUser().getId())) {
+                return reviewer;
+            }
+        }
+        throw new IllegalStateException(String.format("Reviewer object could not be found for user [id=%d]", getId()));
 	}
 
 	public List<Interviewer> getInterviewersForApplicationForm(ApplicationForm applicationForm) {

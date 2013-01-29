@@ -42,8 +42,10 @@
                     ${(existingReferee.firstname?html)!} ${(existingReferee.lastname?html)!} (${(existingReferee.email?html)!})
                 </td>
                 <td>
-                    <#if existingReferee.hasResponded()>
+                    <#if existingReferee.hasProvidedReference()>
                         ${(existingReferee.reference.lastUpdated?string('dd MMM yyyy'))!}
+                    <#elseif existingReferee.isDeclined()>
+                        Declined
                     <#else>
                         Not Provided
                     </#if>
@@ -129,7 +131,7 @@
             </div>
         </div>
         
-        <#if referee.hasResponded()>
+        <#if referee.hasResponded() && !referee.isDeclined()>
         <div class="row-group">
             <div class="admin_row">
                 <label class="admin_header">Reference Comment</label>
@@ -168,7 +170,7 @@
         </div>
         </#if>
     
-        <#if !referee.hasResponded()>
+        <#if !referee.hasResponded() && !referee.isDeclined()>
         <div class="row-group">
             <div class="row">
                 <span class="plain-label">Comment<em>*</em></span>

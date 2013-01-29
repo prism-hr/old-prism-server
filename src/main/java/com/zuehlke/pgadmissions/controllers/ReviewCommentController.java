@@ -73,14 +73,14 @@ public class ReviewCommentController {
 
 	@ModelAttribute("comment")
 	public ReviewComment getComment(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
+	    ApplicationForm applicationForm = getApplicationForm(applicationId);
 		ReviewComment reviewComment = new ReviewComment();
 		reviewComment.setApplication(applicationForm);
 		RegisteredUser currentUser = getUser();
 		reviewComment.setUser(currentUser);
 		reviewComment.setComment("");
 		reviewComment.setType(CommentType.REVIEW);
-		reviewComment.setReviewer(currentUser.getReviewersForApplicationForm(applicationForm).get(0));
+		reviewComment.setReviewer(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm));
 		return reviewComment;
 	}
 

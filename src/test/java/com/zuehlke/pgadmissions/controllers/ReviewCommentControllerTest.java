@@ -119,7 +119,7 @@ public class ReviewCommentControllerTest {
 		final RegisteredUser currentUser =EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		Reviewer reviewer = new ReviewerBuilder().id(5).build();
-		EasyMock.expect(currentUser.getReviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(reviewer));
+		EasyMock.expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);
 		EasyMock.replay(userServiceMock, currentUser);
 		controller = new  ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock, documentPropertyEditorMock){
 

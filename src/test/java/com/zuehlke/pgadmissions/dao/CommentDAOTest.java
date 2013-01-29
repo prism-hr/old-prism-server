@@ -20,6 +20,8 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
@@ -27,6 +29,8 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class CommentDAOTest extends AutomaticRollbackTestCase {
@@ -53,12 +57,10 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		save(user, program);
 
 		flushAndClearSession();
-
 	}
 
 	@Test
 	public void shouldSaveAndLoadGenericComment() {
-
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
@@ -88,7 +90,6 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldSaveAndLoadStateChangeComment() {
-
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
@@ -121,7 +122,6 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldSaveAndLoadReviewComment() {
-		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
@@ -146,8 +146,6 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		assertEquals(user.getId(), reloadedComment.getUser().getId());
 		assertEquals(CommentType.REVIEW, reloadedComment.getType());
 		assertEquals(reviewComment.getComment(), reloadedComment.getComment());
-		
-		
 		assertTrue(reloadedComment instanceof ReviewComment);
 	}
 	
@@ -197,6 +195,32 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(listContainsId(interviewComment2, reloadedComments));
 		assertTrue(listContainsId(interviewComment3, reloadedComments));
 		assertFalse(listContainsId(interviewComment4, reloadedComments));
+	}
+	
+	@Test
+	public void shouldReturnListOfExistingReviewCommentsForUserAndApplication() {
+        RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
+                .email("email@test.com").username("834734374lksdh").password("password").accountNonExpired(false)
+                .accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
+        ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(reviewerUser)
+                .latestReviewRound(reviewRound).reviewRounds(reviewRound).id(1).build();
+
+        ReviewComment reviewComment = new ReviewCommentBuilder()
+            .application(application)
+            .adminsNotified(false)
+            .comment("comment")
+            .user(reviewerUser)
+            .reviewer(reviewer)
+            .commentType(CommentType.REVIEW)
+            .build();
+
+        save(reviewerUser, reviewer, reviewRound, application, reviewComment);
+        flushAndClearSession();
+        
+        List<ReviewComment> existingComments = commentDAO.getReviewCommentsForReviewerAndApplication(reviewer, application);
+        assertEquals(1, existingComments.size());
 	}
 	
     private boolean listContainsId(Comment comment, List<? extends Comment> reloadedComments) {

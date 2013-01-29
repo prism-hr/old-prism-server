@@ -252,7 +252,6 @@ public class RefereeService {
         }
     }
 
-    // TODO: move encryptionHelper into DTO
     @Transactional
     public ReferenceComment postCommentOnBehalfOfReferee(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());

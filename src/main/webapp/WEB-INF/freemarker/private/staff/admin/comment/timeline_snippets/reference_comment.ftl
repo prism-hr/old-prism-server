@@ -8,7 +8,7 @@
 		<div class="box">
 			<div class="title">
 				<span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
-				<#if comment.providedBy??>
+				<#if comment?? && comment.providedBy??>
 				    <span class="name">${(comment.providedBy.firstName?html)!} ${(comment.providedBy.lastName?html)!} <em>on behalf of</em> ${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>
 				<#else>
 				    <span class="name">${(timelineObject.referee.user.firstName?html)!} ${(timelineObject.referee.user.lastName?html)!}</span>

@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -70,13 +71,17 @@ public class PdfDocumentBuilder {
     private HeaderEvent headerEvent;
     private int pageCounter = 0;
     
-    public void writeCombinedReferencesAsPdfToOutputstream(ReferenceComment referenceComment, OutputStream outputStream) {
+    public void writeCombinedReferencesAsPdfToOutputStream(ReferenceComment referenceComment, OutputStream outputStream) {
         try {
             Document document = new Document(PageSize.A4, 50, 50, 100, 50);
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
             writer.setCloseStream(false); // otherwise we're loosing our ZipOutputstream for calling zos.closeEntry();
             document.open();
-            document.add(new Paragraph("Refree comment:\n"+referenceComment.getComment()));
+            if (referenceComment.getReferee() != null && BooleanUtils.isTrue(referenceComment.getReferee().isDeclined())) {
+                document.add(new Paragraph("Referee comment:\n Declined to provide a reference."));
+            } else {
+                document.add(new Paragraph("Referee comment:\n" + referenceComment.getComment()));
+            }
             PdfContentByte cb = writer.getDirectContent();
             for (com.zuehlke.pgadmissions.domain.Document in : referenceComment.getDocuments()) {
                 PdfReader reader = new PdfReader(in.getContent());
@@ -306,7 +311,7 @@ public class PdfDocumentBuilder {
 
                 table.addCell(newTableCell("Is this supervisor aware of your application?", smallerBoldFont));
 
-                if (supervisor.isAware()) {
+                if (BooleanUtils.isTrue(supervisor.isAware())) {
                     table.addCell(newTableCell("Yes", smallerFont));
                 } else {
                     table.addCell(newTableCell("No", smallerFont));
@@ -409,7 +414,7 @@ public class PdfDocumentBuilder {
         if (application.getPersonalDetails().getEnglishFirstLanguage() == null) {
             table.addCell(newTableCell(null, smallFont));
         } else {
-            if (application.getPersonalDetails().getEnglishFirstLanguage()) {
+            if (BooleanUtils.isTrue(application.getPersonalDetails().getEnglishFirstLanguage())) {
                 table.addCell(newTableCell("Yes", smallFont));
             } else {
                 table.addCell(newTableCell("No", smallFont));
@@ -420,7 +425,7 @@ public class PdfDocumentBuilder {
         if (application.getPersonalDetails().getLanguageQualificationAvailable() == null) {
             table.addCell(newTableCell(null, smallFont));
         } else {
-            if (application.getPersonalDetails().getLanguageQualificationAvailable()) {
+            if (BooleanUtils.isTrue(application.getPersonalDetails().getLanguageQualificationAvailable())) {
                 table.addCell(newTableCell("Yes", smallFont));
             } else {
                 table.addCell(newTableCell("No", smallFont));
@@ -438,7 +443,7 @@ public class PdfDocumentBuilder {
         if (application.getPersonalDetails().getRequiresVisa() == null) {
             table.addCell(newTableCell(null, smallFont));
         } else {
-            if (application.getPersonalDetails().getRequiresVisa()) {
+            if (BooleanUtils.isTrue(application.getPersonalDetails().getRequiresVisa())) {
                 table.addCell(newTableCell("Yes", smallFont));
             } else {
                 table.addCell(newTableCell("No", smallFont));
@@ -449,7 +454,7 @@ public class PdfDocumentBuilder {
         if (application.getPersonalDetails().getPassportAvailable() == null) {
             table.addCell(newTableCell(null, smallFont));
         } else {
-            if (application.getPersonalDetails().getPassportAvailable()) {
+            if (BooleanUtils.isTrue(application.getPersonalDetails().getPassportAvailable())) {
                 table.addCell(newTableCell("Yes", smallFont));
             } else {
                 table.addCell(newTableCell("No", smallFont));
@@ -544,7 +549,7 @@ public class PdfDocumentBuilder {
                 if (qualification.getExamTakenOnline() == null) {
                     table.addCell(newTableCell(null, smallFont));
                 } else {
-                    if (qualification.getExamTakenOnline()) {
+                    if (BooleanUtils.isTrue(qualification.getExamTakenOnline())) {
                         table.addCell(newTableCell("Yes", smallFont));
                     } else {
                         table.addCell(newTableCell("No", smallFont));
@@ -667,7 +672,7 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationStartDate()), smallFont));
 
                 table.addCell(newTableCell("Has this Qualification been awarded", smallBoldFont));
-                if (qualification.isQualificationCompleted()) {
+                if (BooleanUtils.isTrue(qualification.isQualificationCompleted())) {
                     table.addCell(newTableCell("Yes", smallFont));
                 } else {
                     table.addCell(newTableCell("No", smallFont));
@@ -741,7 +746,7 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell(simpleDateFormat.format(position.getStartDate()), smallFont));
 
                 table.addCell(newTableCell("Is this your Current Position", smallBoldFont));
-                if (position.isCurrent()) {
+                if (BooleanUtils.isTrue(position.isCurrent())) {
                     table.addCell(newTableCell("Yes", smallFont));
                 } else {
                     table.addCell(newTableCell("No", smallFont));
@@ -916,7 +921,7 @@ public class PdfDocumentBuilder {
         if (application.getAdditionalInformation().getConvictions() == null) {
             table.addCell(newTableCell(null, smallFont));
         } else {
-            if (application.getAdditionalInformation().getConvictions()) {
+            if (BooleanUtils.isTrue(application.getAdditionalInformation().getConvictions())) {
                 table.addCell(newTableCell("Yes", smallFont));
             } else {
                 table.addCell(newTableCell("No", smallFont));
@@ -985,13 +990,13 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell("Comment", smallBoldFont));
                 table.addCell(newTableCell(reference.getComment(), smallFont));
                 table.addCell(newTableCell("Is the applicant suitable for postgraduate study at UCL?", smallBoldFont));
-                if (reference.getSuitableForUCL()!= null && reference.getSuitableForUCL()) {
+                if (BooleanUtils.isTrue(reference.getSuitableForUCL())) {
                     table.addCell(newTableCell("Yes", smallFont));
                 } else {
                     table.addCell(newTableCell("No", smallFont));
                 }
                 table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study programme?", smallBoldFont));
-                if (reference.getSuitableForProgramme()!= null && reference.getSuitableForProgramme()) {
+                if (BooleanUtils.isTrue(reference.getSuitableForProgramme())) {
                     table.addCell(newTableCell("Yes", smallFont));
                 } else {
                     table.addCell(newTableCell("No", smallFont));

@@ -60,16 +60,7 @@ function showFirstQualificationEntry() {
 
 function postQualificationsData() {
     $('#qualificationsSection > div').append('<div class="ajax" />');
-    var sendToPorticoData = {
-            qualifications : new Array(),
-    };
-    
-    $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
-        var checked = $(this).attr("checked");
-        if (checked) {
-        	sendToPorticoData.qualifications.push($(this).val());
-        }
-    });
+    var sendToPorticoData = collectQualificationsSendToPortico();
     
     $.ajax({
         type : 'POST',
@@ -92,4 +83,18 @@ function postQualificationsData() {
             $('#qualificationsSection div.ajax').remove();
         }
     });
+}
+
+function collectQualificationsSendToPortico(){
+    var sendToPorticoData = {
+            qualifications : new Array(),
+    };
+    
+    $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
+        var checked = $(this).attr("checked");
+        if (checked) {
+        	sendToPorticoData.qualifications.push($(this).val());
+        }
+    });
+    return sendToPorticoData;
 }

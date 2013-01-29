@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.validators;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -20,13 +19,8 @@ public class NewUserByAdminValidator extends AbstractValidator {
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-		RegisteredUser user = (RegisteredUser) target;
-
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
-
-		if (!EmailValidator.getInstance().isValid(user.getEmail())) {
-			errors.rejectValue("email", "text.email.notvalid");
-		}
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
 	}
 }

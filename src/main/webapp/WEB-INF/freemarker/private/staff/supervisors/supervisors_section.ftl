@@ -80,6 +80,8 @@
        
 </section>
 
+<div id="postApprovalData"></div>
+
 <div class="buttons">
     <button class="blue" type="button" id="assignSupervisorsBtn">Submit</button>
 </div>

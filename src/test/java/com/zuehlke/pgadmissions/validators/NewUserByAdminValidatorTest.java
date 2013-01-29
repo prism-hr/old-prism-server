@@ -75,12 +75,12 @@ public class NewUserByAdminValidatorTest {
 	}
 
 	@Test
-	public void shouldRejectIfEmailNotValid() {
+	public void shouldRejectIfEmailEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 		user.setEmail("");
 		newUserByAdminValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
+		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("email").getCode());
 	}
 	
 	@Test

@@ -1,7 +1,5 @@
 $(document).ready(function()
 {
-//	getSupervisorsSection();
-//	getCreateSupervisorsSection();
 	
 	// -----------------------------------------------------------------------------------------
 	// Add supervisor
@@ -127,7 +125,6 @@ $(document).ready(function()
 
 	$('#assignSupervisorsBtn').click(function()
 	{
-		
 		$('#approvalsection').append('<div class="ajax" />');
 		var url = "/pgadmissions/approval/move";
 	

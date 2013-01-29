@@ -66,42 +66,16 @@
 				<!-- content box -->
 				<div class="content-box">
 					<div class="content-box-inner">
-						<#include "/private/common/parts/application_info.ftl"/>
-    					<input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
-							
-							<section class="form-rows"  id="approvalsection">
-								<h2 class="no-arrow">
-									Assign Supervisors
-								</h2>
-								<div>
-									<form>
-									
-										<div class="section-info-bar" id="add-info-bar-div">
-											Assign supervisors to the application here. You may also create new supervisors.
-										</div>
-									
-										<div class="row-group" id="assignSupervisorsToAppSection">			
-											
-										</div>
-										
-										<!-- Create supervisor -->
-										<div class="row-group" id ="createsupervisorsection">
-											
-										</div>
-															
-										<div class="buttons">
-											<button class="blue" type="button" id="moveToApprovalBtn">Submit</button>
-										</div>
+                        <#include "/private/common/parts/application_info.ftl"/>
 
-										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-										<input type="hidden" id="approvalRoundId" name="approvalRoundId" value="<#if approvalRound.id??>${encrypter.encrypt(approvalRound.id)}</#if>" />  
-
-								</form>
-							</div>
-						</section>
+                        <div id="approve-content">
+        					
+        					<#include "/private/staff/supervisors/supervisors_section.ftl"/>
+                            
+                        </div>
 						
-						<div id="postApprovalData"></div>
-						<form id="postSupervisorForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/approval/assignNewSupervisor'/>" <#else> action ="<@spring.url '/approval/createSupervisor'/>" </#if>>				
+    				<!-- <div id="postApprovalData"></div> -->
+    				<!-- <form id="postSupervisorForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/approval/assignNewSupervisor'/>" <#else> action ="<@spring.url '/approval/createSupervisor'/>" </#if>> -->				
 							
   				<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 				</div>

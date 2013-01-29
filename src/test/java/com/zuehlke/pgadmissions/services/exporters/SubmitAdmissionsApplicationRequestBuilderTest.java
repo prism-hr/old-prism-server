@@ -49,12 +49,12 @@ public class SubmitAdmissionsApplicationRequestBuilderTest extends UclIntegratio
         marshaller.marshal(request, stringWriter);
 
         String expectedPayloadLocal = requestXml.replace("<creationDate></creationDate>", "<creationDate>" + submittedDateXml.toXMLFormat() + "</creationDate>"); 
-        String expectedPayloadJenkins = requestXml.replace("<creationDate></creationDate>", "<creationDate>" + submittedDateXml.toXMLFormat() + "</creationDate>"); 
+        String expectedPayloadJenkins = requestXmlJenkins.replace("<creationDate></creationDate>", "<creationDate>" + submittedDateXml.toXMLFormat() + "</creationDate>"); 
         
         String payload = stringWriter.toString();
         
-        if (!(expectedPayloadLocal.equals(payload) || expectedPayloadJenkins.equals(expectedPayloadJenkins))) {
-            Assert.fail("Building web service request failed!");
+        if (!(expectedPayloadLocal.equals(payload) || expectedPayloadJenkins.equals(payload))) {
+            Assert.fail("Building web service request failed.");
         }
         //Assert.assertEquals(requestXml.replace("<creationDate></creationDate>", "<creationDate>" + submittedDateXml.toXMLFormat() + "</creationDate>"), stringWriter.toString());
     }

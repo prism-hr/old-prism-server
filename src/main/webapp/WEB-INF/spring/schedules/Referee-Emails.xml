@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+<!-- referee notification -->
+	<bean id="refereeNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="refereeMailSender" />
+		<constructor-arg index="2" ref="mainRefereeDAO" />
+		<constructor-arg index="3" ref="mailRefereeService" />
+	</bean>
+
+	<bean id="refereeNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="${delay.24}" />
+		<property name="period" value="${email.schedule.period.milliseconds}" />
+		<property name="timerTask" ref="refereeNotificationTimerTask" />
+	</bean>
+
+	<!-- referee remindeers -->
+	<bean id="refereeReminderTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeReminderTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="refereeMailSender" />
+		<constructor-arg index="2" ref="mainRefereeDAO" />
+	</bean>
+
+	<bean id="refereeReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="${delay.25}" />
+		<property name="period" value="${email.schedule.period.milliseconds}" />
+		<property name="timerTask" ref="refereeReminderTimerTask" />
+	</bean>
+</beans>

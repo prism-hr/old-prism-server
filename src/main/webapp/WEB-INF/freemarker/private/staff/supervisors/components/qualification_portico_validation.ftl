@@ -31,7 +31,7 @@
                 <tr>
                     <td>
                         <input type="checkbox" name="qualificationSendToUcl" value="${encQualificationId}"  
-                        <#if existingQualification.sendToUCL>checked="checked"</#if> 
+                        <#if existingQualification.sendToUCL?? && existingQualification.sendToUCL>checked="checked"</#if> 
                         <#if !(existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??)>disabled="disabled"</#if>  
                         data-desc="<#if existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??>Send transcript for offer processing<#else>Transcript not provided</#if>" 
                         />
@@ -82,6 +82,15 @@
                 Select a maximum of two qualification transcripts to submit for offer processing.
             </div>
         </#if>
+        
+        <div class="row-group">
+            <div class="row">
+                <span class="plain-label">Explanation<em>*</em></span> <span class="hint" data-desc="Explain why you wish to submit this application for offer processing without any accompanying transcript."></span>
+                <div class="field">
+                    <textarea cols="80" rows="5" class="max" id="explanation" name="explanation"></textarea>
+                </div>
+            </div>
+        </div>
 
         <#if hasQualifications> 
         <#list applicationForm.qualifications as qualification>

@@ -26,13 +26,18 @@
                 </tr>
             </thead>
             <tbody>
+                <#assign anyQualificationEnabled = false>
                 <#list applicationForm.qualifications as existingQualification>
                 <#assign encQualificationId = encrypter.encrypt(existingQualification.id) />
                 <tr>
                     <td>
                         <input type="checkbox" name="qualificationSendToUcl" value="${encQualificationId}"  
                         <#if existingQualification.sendToUCL?? && existingQualification.sendToUCL>checked="checked"</#if> 
-                        <#if !(existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??)>disabled="disabled"</#if>  
+                        <#if !(existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??)>
+                            disabled="disabled"
+                        <#else>
+                            <#assign anyQualificationEnabled = true>
+                        </#if>
                         data-desc="<#if existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??>Send transcript for offer processing<#else>Transcript not provided</#if>" 
                         />
                     </td>
@@ -75,6 +80,16 @@
             <div class="section-error-bar">
                 <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
                     Select the proof award documents that you wish to send to UCL Admissions. <b>You may select a maximum of 2.</b>
+                </span>
+            </div>
+        <#elseif applicationForm.qualificationsToSendToPortico?size == 0>
+            <div class="section-error-bar">
+                <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
+                    <#if anyQualificationEnabled>
+                        You have not selected any transcripts to submit for offer processing. <b>You must explain why.</b>
+                    <#else>
+                        You must explain why no transcripts have been not selected to submit for offer processing.
+                    </#if>
                 </span>
             </div>
         <#else>

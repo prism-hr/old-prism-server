@@ -87,7 +87,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     private final ObjectFactory xmlFactory;
 
-    private final DatatypeFactory datatypeFactory;
+    protected final DatatypeFactory datatypeFactory;
 
     private ApplicationForm applicationForm;
 
@@ -669,7 +669,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         return number.replaceAll("[^0-9()+ ]", "");
     }
 
-    private XMLGregorianCalendar buildXmlDate(Date date) {
+    protected XMLGregorianCalendar buildXmlDate(Date date) {
         if (date != null) {
             GregorianCalendar gc = new GregorianCalendar();
             gc.setTimeInMillis(date.getTime());
@@ -678,7 +678,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         return null;
     }
 
-    private XMLGregorianCalendar buildXmlDateYearOnly(String date) {
+    protected XMLGregorianCalendar buildXmlDateYearOnly(String date) {
         if (date != null) {
             XMLGregorianCalendar xmlCalendar = datatypeFactory.newXMLGregorianCalendar();
             xmlCalendar.setYear(Integer.valueOf(date));
@@ -687,7 +687,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         return null;
     }
 
-    private XMLGregorianCalendar buildXmlDateYearOnly(Date date) {
+    protected XMLGregorianCalendar buildXmlDateYearOnly(Date date) {
         if (date != null) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);

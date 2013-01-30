@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -198,7 +197,7 @@ public class ApprovalController {
             return SUPERVISORS_SECTION;
         }
 
-        if (!validateSendToPorticoData(applicationForm)) {
+        if (!approvalService.validateSendToPorticoData(applicationForm)) {
             return PORTICO_VALIDATION_SECTION;
         }
 
@@ -214,7 +213,7 @@ public class ApprovalController {
 
         saveSendToPorticoData(applicationForm, qualificationsSendToPorticoData, referencesSendToPorticoData);
 
-        if (!validateSendToPorticoData(applicationForm)) {
+        if (!approvalService.validateSendToPorticoData(applicationForm)) {
             return PORTICO_VALIDATION_SECTION;
         }
 
@@ -272,21 +271,4 @@ public class ApprovalController {
         return false;
     }
 
-    private boolean validateSendToPorticoData(ApplicationForm applicationForm) {
-        boolean valid = true;
-
-        List<ReferenceComment> referencesToSendToPortico = applicationForm.getReferencesToSendToPortico();
-        if (referencesToSendToPortico.size() != 2) {
-            valid = false;
-        }
-
-        List<Document> qualificationsToSendToPortico = applicationForm.getQualificationsToSendToPortico();
-        if (qualificationsToSendToPortico.size() > 2) {
-            valid = false;
-        } else if (qualificationsToSendToPortico.isEmpty()) {
-            valid = false;
-        }
-
-        return valid;
-    }
 }

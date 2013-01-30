@@ -17,7 +17,9 @@ import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -197,6 +199,24 @@ public class ApprovalService {
 		}
 		
 	}
+	
+    public boolean validateSendToPorticoData(ApplicationForm applicationForm) {
+        boolean valid = true;
+
+        List<ReferenceComment> referencesToSendToPortico = applicationForm.getReferencesToSendToPortico();
+        if (referencesToSendToPortico.size() != 2) {
+            valid = false;
+        }
+
+        List<Document> qualificationsToSendToPortico = applicationForm.getQualificationsToSendToPortico();
+        if (qualificationsToSendToPortico.size() > 2) {
+            valid = false;
+        } else if (qualificationsToSendToPortico.isEmpty()) {
+            valid = false;
+        }
+
+        return valid;
+    }
 	
 	public Supervisor newSupervisor() {
 		return new Supervisor();

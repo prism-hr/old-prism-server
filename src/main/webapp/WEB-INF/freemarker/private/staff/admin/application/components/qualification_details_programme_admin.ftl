@@ -31,7 +31,7 @@
                 <tr>
                     <td>
                         <input type="checkbox" name="qualificationSendToUcl" value="${encQualificationId}"  
-                        <#if existingQualification.sendToUCL>checked="checked"</#if> 
+                        <#if existingQualification.sendToUCL?? && existingQualification.sendToUCL>checked="checked"</#if> 
                         <#if !(existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??)>disabled="disabled"</#if>  
                         data-desc="<#if existingQualification.proofOfAward?? && existingQualification.proofOfAward.id??>Send transcript for offer processing<#else>Transcript not provided</#if>" 
                         />

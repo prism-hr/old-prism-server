@@ -1,10 +1,8 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -126,12 +124,9 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-1")).andReturn(1);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-2")).andReturn(2);
         EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
 
-        List<Integer> sendToPortico = Arrays.asList(new Integer[] { 1, 2 });
-        refereeServiceMock.selectForSendingToPortico("app1", sendToPortico);
+        refereeServiceMock.selectForSendingToPortico(applicationForm, "{\"referees\":[\"ref-1\",\"ref-2\"]}");
         EasyMock.expectLastCall();
 
         EasyMock.replay(userServiceMock, encryptionHelperMock, refereeServiceMock);
@@ -150,11 +145,8 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
                 .build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("qual-1")).andReturn(1);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("qual-2")).andReturn(2);
 
-        List<Integer> sendToPortico = Arrays.asList(new Integer[] { 1, 2 });
-        qualificationServiceMock.selectForSendingToPortico("app1", sendToPortico);
+        qualificationServiceMock.selectForSendingToPortico(applicationForm, "{\"qualifications\":[\"qual-1\",\"qual-2\"]}");
         EasyMock.expectLastCall();
 
         EasyMock.replay(userServiceMock, encryptionHelperMock, qualificationServiceMock);
@@ -173,7 +165,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
 
-        qualificationServiceMock.selectForSendingToPortico("app1", Collections.<Integer> emptyList());
+        qualificationServiceMock.selectForSendingToPortico(applicationForm, "{\"qualifications\":[]}");
         EasyMock.expectLastCall();
 
         EasyMock.replay(userServiceMock, qualificationServiceMock);

@@ -1,6 +1,5 @@
 $(document).ready(function()
 {
-	showFirstQualificationEntry();
 	$('#applyQualificationsAndReferences').click(function()
 	{
 		// TODO show ajax progress
@@ -8,6 +7,7 @@ $(document).ready(function()
 		
 		var qualificationsSendToPorticoData = collectQualificationsSendToPortico();
 		var referencesSendToPorticoData = collectReferencesSendToPortico();
+		var explanation = $("#explanationText").val();
 		
 		$.ajax({
 			type: 'POST',
@@ -33,6 +33,7 @@ $(document).ready(function()
 	            applicationId : $('#applicationId').val(),
 	            qualificationsSendToPorticoData: JSON.stringify(qualificationsSendToPorticoData),
 	            referencesSendToPorticoData: JSON.stringify(referencesSendToPorticoData),
+	            explanation: explanation,
 	            cacheBreaker: new Date().getTime()
 	        },
 			success: function(data)

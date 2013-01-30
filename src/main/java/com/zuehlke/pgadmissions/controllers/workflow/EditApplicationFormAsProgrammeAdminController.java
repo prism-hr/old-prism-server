@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import java.util.ArrayList;
-
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,14 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.dto.QualificationsAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
-import com.zuehlke.pgadmissions.dto.RefereesAdminEditSendToUclDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -101,13 +96,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
         // save "send to UCL" data first
         if (StringUtils.isNotBlank(sendToPorticoData)) {
-            Gson gson = new Gson();
-            RefereesAdminEditSendToUclDTO refereesData = gson.fromJson(sendToPorticoData, RefereesAdminEditSendToUclDTO.class);
-            ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
-            for (String encryptedId : refereesData.getReferees()) {
-                decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
-            }
-            refereeService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedIds);
+            refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData);
         }
 
         // then handle the new comment
@@ -136,15 +125,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             throw new ResourceNotFoundException();
         }
 
-        Gson gson = new Gson();
-        QualificationsAdminEditDTO qualificationsData = gson.fromJson(sendToPorticoData, QualificationsAdminEditDTO.class);
-
-        ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
-        for (String encryptedId : qualificationsData.getQualifications()) {
-            decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
-        }
-
-        qualificationService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedIds);
+        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData);
         return "OK";
     }
 

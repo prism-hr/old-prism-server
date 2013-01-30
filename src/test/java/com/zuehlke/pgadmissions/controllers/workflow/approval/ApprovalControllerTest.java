@@ -16,6 +16,8 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.bind.support.SimpleSessionStatus;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -318,6 +320,7 @@ public class ApprovalControllerTest {
         Referee referee2 = new RefereeBuilder().id(2).reference(reference2).sendToUCL(true).toReferee();
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").qualifications(qualification)
                 .referees(referee1, referee2).build();
+        SessionStatus sessionStatus = new SimpleSessionStatus();
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
@@ -332,16 +335,17 @@ public class ApprovalControllerTest {
         approvalServiceMock.moveApplicationToApproval(application, interview);
         EasyMock.replay(approvalServiceMock);
 
-        String view = controller.moveToApproval("abc", interview, bindingResultMock);
+        String view = controller.moveToApproval("abc", interview, bindingResultMock, sessionStatus);
         assertEquals("/private/common/ajax_OK", view);
         EasyMock.verify(approvalServiceMock);
-
+        assertTrue(sessionStatus.isComplete());
     }
 
     @Test
     public void shouldNotSaveApprovalRoundAndReturnToApprovalPageIfHasErrors() {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+        SessionStatus sessionStatus = new SimpleSessionStatus();
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock) {
@@ -355,8 +359,8 @@ public class ApprovalControllerTest {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
         EasyMock.replay(errorsMock, applicationServiceMock);
-        assertEquals("/private/staff/supervisors/supervisors_section", controller.moveToApproval("abc", approvalRound, errorsMock));
-
+        assertEquals("/private/staff/supervisors/supervisors_section", controller.moveToApproval("abc", approvalRound, errorsMock, sessionStatus));
+        assertTrue(!sessionStatus.isComplete());
     }
 
     @Test

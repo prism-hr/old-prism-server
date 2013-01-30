@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -191,7 +192,7 @@ public class ApprovalController {
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
     public String moveToApproval(@RequestParam String applicationId, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, SessionStatus sessionStatus) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         if (bindingResult.hasErrors()) {
             return SUPERVISORS_SECTION;
@@ -202,12 +203,13 @@ public class ApprovalController {
         }
 
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        sessionStatus.setComplete();
         return "/private/common/ajax_OK";
     }
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
     public String applySendToPorticoData(@RequestParam String applicationId, @RequestParam final String qualificationsSendToPorticoData,
-            @RequestParam final String referencesSendToPorticoData, @ModelAttribute("approvalRound") ApprovalRound approvalRound) {
+            @RequestParam final String referencesSendToPorticoData, @ModelAttribute("approvalRound") ApprovalRound approvalRound, SessionStatus sessionStatus) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
 
         saveSendToPorticoData(applicationForm, qualificationsSendToPorticoData, referencesSendToPorticoData);
@@ -217,6 +219,7 @@ public class ApprovalController {
         }
 
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        sessionStatus.setComplete();
         return "/private/common/ajax_OK";
     }
 

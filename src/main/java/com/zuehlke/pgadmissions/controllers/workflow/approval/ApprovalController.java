@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -27,12 +28,17 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.QualificationsAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
+import com.zuehlke.pgadmissions.dto.RefereesAdminEditSendToUclDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.QualificationService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
@@ -55,15 +61,19 @@ public class ApprovalController {
     private final DocumentPropertyEditor documentPropertyEditor;
     private final GenericCommentValidator commentValidator;
     private final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
+    private final QualificationService qualificationService;
+    private final RefereeService refereeService;
+    private final EncryptionHelper encryptionHelper;
 
     ApprovalController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApprovalController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
             ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
-            GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator) {
+            GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
+            RefereeService refereeService, EncryptionHelper encryptionHelper) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
@@ -72,6 +82,9 @@ public class ApprovalController {
         this.documentPropertyEditor = documentPropertyEditor;
         this.commentValidator = commentValidator;
         this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
+        this.qualificationService = qualificationService;
+        this.refereeService = refereeService;
+        this.encryptionHelper = encryptionHelper;
     }
 
     @InitBinder(value = "refereesAdminEditDTO")
@@ -184,19 +197,49 @@ public class ApprovalController {
             return SUPERVISORS_SECTION;
         }
 
-        List<ReferenceComment> referencesToSendToPortico = applicationForm.getReferencesToSendToPortico();
-        if (referencesToSendToPortico.size() != 2) {
+        if (!validateSendToPorticoData(applicationForm)) {
             return PORTICO_VALIDATION_SECTION;
         }
 
-        // approvalService.moveApplicationToApproval(applicationForm,
-        // approvalRound);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
         return "/private/common/ajax_OK";
     }
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
-    public String applySendToPorticoData(@RequestParam String applicationId, @RequestParam final String qualificationsSendToPorticoData, @RequestParam final String referencesSendToPorticoData, @ModelAttribute("approvalRound") ApprovalRound approvalRound) {
-        return PORTICO_VALIDATION_SECTION;
+    public String applySendToPorticoData(@RequestParam String applicationId, @RequestParam final String qualificationsSendToPorticoData,
+            @RequestParam final String referencesSendToPorticoData, @ModelAttribute("approvalRound") ApprovalRound approvalRound) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+
+        saveSendToPorticoData(applicationForm, qualificationsSendToPorticoData, referencesSendToPorticoData);
+
+        if (!validateSendToPorticoData(applicationForm)) {
+            return PORTICO_VALIDATION_SECTION;
+        }
+
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        return "/private/common/ajax_OK";
+    }
+
+    private void saveSendToPorticoData(ApplicationForm applicationForm, String qualificationsSendToPorticoData, String referencesSendToPorticoData) {
+        Gson gson = new Gson();
+
+        // Save Qualifications
+        QualificationsAdminEditDTO qualificationsData = gson.fromJson(qualificationsSendToPorticoData, QualificationsAdminEditDTO.class);
+
+        ArrayList<Integer> decryptedQualificationsIds = new ArrayList<Integer>(2);
+        for (String encryptedId : qualificationsData.getQualifications()) {
+            decryptedQualificationsIds.add(encryptionHelper.decryptToInteger(encryptedId));
+        }
+        qualificationService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedQualificationsIds);
+
+        // Save references
+        RefereesAdminEditSendToUclDTO refereesData = gson.fromJson(referencesSendToPorticoData, RefereesAdminEditSendToUclDTO.class);
+        ArrayList<Integer> decryptedRefereeIds = new ArrayList<Integer>(2);
+        for (String encryptedId : refereesData.getReferees()) {
+            decryptedRefereeIds.add(encryptionHelper.decryptToInteger(encryptedId));
+        }
+        refereeService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedRefereeIds);
+
     }
 
     @ModelAttribute("comment")
@@ -224,5 +267,23 @@ public class ApprovalController {
             }
         }
         return false;
+    }
+
+    private boolean validateSendToPorticoData(ApplicationForm applicationForm) {
+        boolean valid = true;
+
+        List<ReferenceComment> referencesToSendToPortico = applicationForm.getReferencesToSendToPortico();
+        if (referencesToSendToPortico.size() != 2) {
+            valid = false;
+        }
+
+        List<Document> qualificationsToSendToPortico = applicationForm.getQualificationsToSendToPortico();
+        if (qualificationsToSendToPortico.size() > 2) {
+            valid = false;
+        } else if (qualificationsToSendToPortico.isEmpty()) {
+            valid = false;
+        }
+
+        return valid;
     }
 }

@@ -71,9 +71,17 @@
             </tbody>
         </table>
 
-        <div class="section-info-bar">
-            Select a maximum of two qualification transcripts to submit for offer processing.
-        </div>
+        <#if applicationForm.qualificationsToSendToPortico?size &gt; 2>
+            <div class="section-error-bar">
+                <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
+                    Select the proof award documents that you wish to send to UCL Admissions. <b>You may select a maximum of 2.</b>
+                </span>
+            </div>
+        <#else>
+            <div class="section-info-bar">
+                Select a maximum of two qualification transcripts to submit for offer processing.
+            </div>
+        </#if>
 
         <#if hasQualifications> 
         <#list applicationForm.qualifications as qualification>

@@ -119,16 +119,7 @@ function showProperRefereeEntry() {
 function postRefereesData() {
     var refereeId = $('#editedRefereeId').val();
     
-    var sendToPorticoData = {
-            referees : new Array()
-    };
-    
-    $('input[name="refereeSendToUcl"]:checkbox').each(function() {
-        var checked = $(this).attr("checked");
-        if (checked) {
-        	sendToPorticoData.referees.push($(this).val());
-        }
-    });
+    var sendToPorticoData = collectReferencesSendToPortico();
     
     var suitableUCL = "";
     if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
@@ -173,4 +164,18 @@ function postRefereesData() {
             $('#referencesSection div.ajax').remove();
         }
     });
+}
+
+function collectReferencesSendToPortico(){
+    var sendToPorticoData = {
+            referees : new Array()
+    };
+    
+    $('input[name="refereeSendToUcl"]:checkbox').each(function() {
+        var checked = $(this).attr("checked");
+        if (checked) {
+        	sendToPorticoData.referees.push($(this).val());
+        }
+    });
+    return sendToPorticoData;
 }

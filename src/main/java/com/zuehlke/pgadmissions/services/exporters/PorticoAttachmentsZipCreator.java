@@ -68,19 +68,20 @@ public class PorticoAttachmentsZipCreator {
             case 2:
                 filename = UUID.randomUUID() + ".pdf";
                 zos.putNextEntry(new ZipEntry(filename));
-                pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputstream(references.get(1), zos);
+                pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(1), zos);
                 zos.closeEntry();
                 contentsProperties.put("reference.2.serverFilename", filename);
                 contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
-            case 1:
+
                 filename = UUID.randomUUID() + ".pdf";
                 zos.putNextEntry(new ZipEntry(filename));
-                pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputstream(references.get(0), zos);
+                pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(0), zos);
                 zos.closeEntry();
                 contentsProperties.put("reference.1.serverFilename", filename);
                 contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
-            case 0:
                 break;
+            case 1:
+            case 0:
             default:
                 throw new CouldNotCreateAttachmentsPack("There should be at most 2 references marked for sending to UCL");
         }
@@ -100,8 +101,9 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
         List<LanguageQualification> languageQualifications = applicationForm.getPersonalDetails().getLanguageQualificationToSend();
-        if (languageQualifications.size() > 1)
+        if (languageQualifications.size() > 1) {
             throw new CouldNotCreateAttachmentsPack("There should be at most 1 languageQualification marked for sending to UCL");
+        }
         if (!languageQualifications.isEmpty()) {
             String filename = UUID.randomUUID() + ".pdf";
             zos.putNextEntry(new ZipEntry(filename));
@@ -144,7 +146,8 @@ public class PorticoAttachmentsZipCreator {
                 contentsProperties.put("transcript.1.applicationFilename", qualifications.get(0).getFileName());
             case 0:
                 // TODO: There should be at least one transcript. Add a PDF with some comments in it in the future.
-                break;//todo: check if business ruless force us to have at least one transcript file attached - it yes, throw CouldNotCreateAttachmentsPack
+                // They need to explain why they did not select a qualification
+                break;
             default:
                 throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
         }

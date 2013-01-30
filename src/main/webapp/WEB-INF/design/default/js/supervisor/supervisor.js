@@ -1,7 +1,5 @@
 $(document).ready(function()
 {
-	getSupervisorsSection();
-	getCreateSupervisorsSection();
 	
 	// -----------------------------------------------------------------------------------------
 	// Add supervisor
@@ -125,9 +123,8 @@ $(document).ready(function()
 
 	
 
-	$('#moveToApprovalBtn').click(function()
+	$('#assignSupervisorsBtn').click(function()
 	{
-		
 		$('#approvalsection').append('<div class="ajax" />');
 		var url = "/pgadmissions/approval/move";
 	
@@ -166,7 +163,7 @@ $(document).ready(function()
 					window.location.href = '/pgadmissions/applications?messageCode=move.approval&application=' + $('#applicationId').val();
 				
 				}else{
-					$('#assignSupervisorsToAppSection').html(data);
+					$('#approve-content').html(data);
 					$('#postApprovalData').html('');
 				}
 				addToolTips();
@@ -181,8 +178,6 @@ $(document).ready(function()
 		
 	
 });
-
-
 
 function getSupervisorsSection(){
 	$('#approvalsection').append('<div class="ajax" />');
@@ -211,7 +206,7 @@ function getSupervisorsSection(){
 		url: url +"?applicationId=" + $('#applicationId').val(), 
 		success: function(data)
 		{
-			$('#assignSupervisorsToAppSection').html(data);			
+			$('#approve-content').html(data);			
 			addToolTips();			
 		},
 	    complete: function()

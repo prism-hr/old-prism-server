@@ -60,9 +60,17 @@
         </tbody>
     </table>
 
-    <div class="section-info-bar">
-        <b>You must select two completed references to submit for offer processing.</b>
-    </div>
+    <#if applicationForm.referencesToSendToPortico?size != 2>
+        <div class="section-error-bar">
+            <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
+                Select the references that you wish to send to UCL Admissions. <b>You must select 2.</b>
+            </span>
+        </div>
+    <#else>
+        <div class="section-info-bar">
+            <b>You must select two completed references to submit for offer processing.</b>
+        </div>
+    </#if>
     
     <#list applicationForm.referees as referee>
     <#assign encRefereeId = encrypter.encrypt(referee.id) />

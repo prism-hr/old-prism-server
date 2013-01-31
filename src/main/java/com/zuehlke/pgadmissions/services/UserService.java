@@ -17,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.controllers.LinkAccountsException;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -26,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
+import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;

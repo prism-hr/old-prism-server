@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.SwitchAndLinkUserAccountDTO;
+import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.security.PgAdmissionSwitchUserAuthenticationProvider;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AccountValidator;

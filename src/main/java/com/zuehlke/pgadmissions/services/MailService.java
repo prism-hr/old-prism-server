@@ -59,8 +59,7 @@ public class MailService {
 				model.put("admin", admin);
 				InternetAddress toAddress = createAddress(admin);
 				delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
-			} catch (Throwable e) {
-				e.printStackTrace();
+			} catch (Exception e) {
 				log.warn("error while sending email", e);
 			}
 		}
@@ -72,8 +71,7 @@ public class MailService {
 						model.put("admin", interviewer.getUser());
 						InternetAddress toAddress = createAddress(interviewer.getUser());
 						delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
-					} catch (Throwable e) {
-						e.printStackTrace();
+					} catch (Exception e) {
 						log.warn("error while sending email", e);
 					}
 				}
@@ -86,8 +84,7 @@ public class MailService {
 					model.put("admin", approver);
 					InternetAddress toAddress = createAddress(approver);
 					delegateToMailSender(toAddress, null, mailSubject, "private/staff/admin/mail/application_updated_confirmation.ftl", model);
-				} catch (Throwable e) {
-					e.printStackTrace();
+				} catch (Exception e) {
 					log.warn("error while sending email", e);
 				}
 			}
@@ -210,8 +207,7 @@ public class MailService {
 					.getApplicant().getFirstName(), application.getApplicant().getLastName());
 
 			delegateToMailSender(toAddress, null, mailSubject, "private/staff/mail/application_withdrawn_notification.ftl", model);
-		} catch (Throwable e) {
-
+		} catch (Exception e) {
 			log.warn("error while sending email", e);
 		}
 	}

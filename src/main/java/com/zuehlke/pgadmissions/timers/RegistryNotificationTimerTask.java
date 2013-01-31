@@ -60,12 +60,12 @@ public class RegistryNotificationTimerTask extends TimerTask {
     				applicationsService.save(applicationForm);
     				transaction.commit();
     				log.info("Notification sent to registry persons for application " + applicationForm.getApplicationNumber());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error while sending notification to registry persons for application " + applicationForm.getApplicationNumber(), e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Registry Notification Task", e);
 	    }
 		log.info("Registry Notification Task Complete");

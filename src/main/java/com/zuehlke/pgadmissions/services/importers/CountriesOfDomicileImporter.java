@@ -57,7 +57,7 @@ public class CountriesOfDomicileImporter implements Importer {
 				domicileDAO.save(domicile);
 			}
 			log.info("Import done. Wrote " + changes.size() + " change(s) to the database.");
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new XMLDataImportException("Error during the import of file: " + xmlFileLocation, e);
 		}
 	}

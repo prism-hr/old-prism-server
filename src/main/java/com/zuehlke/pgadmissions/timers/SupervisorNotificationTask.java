@@ -40,12 +40,12 @@ public class SupervisorNotificationTask extends TimerTask {
     				supervisorDAO.save(supervisor);
     				transaction.commit();
     				log.info("Notification sent to supervisor " + supervisor.getUser().getEmail());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error while sending notification to supervisor " + supervisor.getUser().getEmail(), e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Supervisor Notification Task", e);
 	    }
 		log.info("Supervisor Notification Task Complete");

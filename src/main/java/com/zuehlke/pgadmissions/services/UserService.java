@@ -43,7 +43,7 @@ public class UserService {
 	private final MessageSource msgSource;
 	private final EncryptionUtils encryptionUtils;
 
-	UserService() {
+	public UserService() {
 		this(null, null, null, null, null, null, null);
 	}
 
@@ -297,7 +297,7 @@ public class UserService {
 			String hashPassword = encryptionUtils.getMD5Hash(newPassword);
 			storedUser.setPassword(hashPassword);
 			userDAO.save(storedUser);
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			log.warn("error while sending email", e);
 		}
 	}

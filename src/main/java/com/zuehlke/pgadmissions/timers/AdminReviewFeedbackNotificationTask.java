@@ -46,14 +46,12 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask {
     				commentService.save(comment);
     				transaction.commit();
     				log.info("Notification sent to admins for review comment " + comment.getId());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
-    
     			}
-    
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Review Comment Notification Task", e);
 	    }
 		log.info("Review Comment Notification Task Complete");

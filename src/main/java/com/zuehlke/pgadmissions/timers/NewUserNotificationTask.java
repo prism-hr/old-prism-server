@@ -49,12 +49,12 @@ public class NewUserNotificationTask extends TimerTask {
     		        userDAO.save(user);
     		        transaction.commit();
                     log.info("Notification sent to new user " + user.getEmail());
-    		    } catch (Throwable e) {
+    		    } catch (Exception e) {
     		        transaction.rollback();
                     log.warn("Error while sending notification to new user " + user.getEmail(), e);        
     		    }
     	    }
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing New User Notification Task", e);
 	    }
 		log.info("New User Notification Task Complete");

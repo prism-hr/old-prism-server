@@ -41,13 +41,13 @@ public class ReviewerReminderTask extends TimerTask {
     				reviewerDAO.save(reviewer);
     				transaction.commit();
     				log.info("Notification reminder sent to reviewer " + reviewer.getUser().getEmail());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				e.printStackTrace();
     				transaction.rollback();
     				log.warn("Error while sending reminder to reviewer " + reviewer.getUser().getEmail(), e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Reviewer Reminder Task", e);
 	    }
 		log.info("Reviewer Reminder Task Complete");

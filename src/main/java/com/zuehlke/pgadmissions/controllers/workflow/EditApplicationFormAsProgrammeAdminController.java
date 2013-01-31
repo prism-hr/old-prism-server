@@ -80,7 +80,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
-        if (!isUserAllowedToSeeAndPost(applicationForm)) {
+        if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
@@ -90,7 +90,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     public String submitRefereesData(@Valid @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result,
             @RequestParam(required = false) String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm, Model model) {
 
-        if (!isUserAllowedToSeeAndPost(applicationForm)) {
+        if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }
 
@@ -121,7 +121,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
     @ResponseBody
     public String submitQualificationsData(@RequestParam final String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm) {
-        if (StringUtils.isBlank(sendToPorticoData) || !isUserAllowedToSeeAndPost(applicationForm)) {
+        if (StringUtils.isBlank(sendToPorticoData) || applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }
 
@@ -132,14 +132,6 @@ public class EditApplicationFormAsProgrammeAdminController {
     @ModelAttribute(value = "refereesAdminEditDTO")
     public RefereesAdminEditDTO getRefereesAdminEditDTO() {
         return new RefereesAdminEditDTO();
-    }
-
-    private boolean isUserAllowedToSeeAndPost(final ApplicationForm applicationForm) {
-        return getCurrentUser().isAdminInProgramme(applicationForm.getProgram()) //
-                && applicationForm.isSubmitted() //
-                && !applicationForm.isInValidationStage() //
-                && !applicationForm.isDecided() //
-                && !applicationForm.isWithdrawn();
     }
 
     private RegisteredUser getCurrentUser() {

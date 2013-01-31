@@ -28,6 +28,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
+import org.bouncycastle.util.Arrays;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
@@ -772,12 +773,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setIpAddress(byte[] ipAddress) {
-        this.ipAddress = ipAddress;
+        this.ipAddress = Arrays.copyOf(ipAddress, ipAddress.length);
     }
 
-    /**
-     * @return IP address or an EMPTY string if there was an exception.
-     */
     public String getIpAddressAsString() {
         try {
             return InetAddress.getByAddress(ipAddress).getHostAddress();
@@ -856,6 +854,35 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
         return ApplicationFormStatus.VALIDATION;
     }
+    
+    public boolean isProgrammeStillAvailable() {
+        Date maxProgrammeEndDate = null;
+        Date today = new Date();
+        
+        ProgrammeDetails details = getProgrammeDetails();
+        
+        for (ProgramInstance instance : getProgram().getInstances()) {
+            boolean isProgrammeEnabled = getProgram().isEnabled();
+            boolean isInstanceEnabled = instance.getEnabled();
+            boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
+            boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
+            
+            if (isProgrammeEnabled && isInstanceEnabled && sameStudyOption && sameStudyOptionCode) {
+                Date programmeEndDate = instance.getApplicationDeadline();
+                if (maxProgrammeEndDate == null) {
+                    maxProgrammeEndDate = programmeEndDate;
+                } else if (programmeEndDate.after(maxProgrammeEndDate)) {
+                    maxProgrammeEndDate = programmeEndDate;
+                }
+            }
+        }
+        
+        if (maxProgrammeEndDate == null || maxProgrammeEndDate.before(today)) {
+            return false;
+        }
+        
+        return true;
+    }
 
     public Date getEarliestPossibleStartDate() {
         Date result = null;
@@ -868,7 +895,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (instance.getEnabled() && (startDateInFuture || beforeEndDate) && sameStudyOption && sameStudyOptionCode) {
+            if (program.isEnabled() && instance.getEnabled() && (startDateInFuture || beforeEndDate) && sameStudyOption && sameStudyOptionCode) {
                 if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
                     result = applicationStartDate;
                 } else if (result == null || result.after(todayPlusConsiderationPeriod)) {
@@ -878,7 +905,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return result;
     }
-
+    
     public boolean isPrefferedStartDateWithinBounds() {
         ProgrammeDetails details = getProgrammeDetails();
         Date startDate = details.getStartDate();
@@ -887,7 +914,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (instance.getEnabled() && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
+            if (program.isEnabled() && instance.getEnabled() && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
                 return true;
             }
         }

@@ -341,7 +341,7 @@ public class ApprovalServiceTest {
 		Date startDate = new Date();
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
 		ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate,1)).enabled(true).studyOption("1", "full").build();
-		Program program = new ProgramBuilder().id(1).instances(instance).build();
+		Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
 		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).build();
 
 		applicationFormDAOMock.save(application);
@@ -359,7 +359,6 @@ public class ApprovalServiceTest {
 
 		assertEquals(1, application.getEvents().size());
 		assertEquals(event, application.getEvents().get(0));
-
 	}
 	
 	@Test
@@ -372,7 +371,7 @@ public class ApprovalServiceTest {
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
 		ProgramInstance instanceDisabled = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(false).studyOption("1", "full").build();
 		ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3)).applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption("1", "full").build();
-		Program program = new ProgramBuilder().id(1).instances(instanceDisabled, instanceEnabled).build();
+		Program program = new ProgramBuilder().id(1).enabled(true).instances(instanceDisabled, instanceEnabled).build();
 		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2).programmeDetails(programmeDetails).build();
 
 		programmeDetailDAOMock.save(EasyMock.same(programmeDetails));
@@ -392,7 +391,6 @@ public class ApprovalServiceTest {
 
 		assertEquals(1, application.getEvents().size());
 		assertEquals(event, application.getEvents().get(0));
-
 	}
 
 	@Test(expected = IllegalStateException.class)

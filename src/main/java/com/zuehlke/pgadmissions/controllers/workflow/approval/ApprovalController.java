@@ -204,7 +204,7 @@ public class ApprovalController {
             return SUPERVISORS_SECTION;
         }
 
-        if (!approvalService.validateSendToPorticoData(applicationForm)) {
+        if (!approvalService.validateSendToPorticoData(applicationForm, null)) {
             return PORTICO_VALIDATION_SECTION;
         }
 
@@ -222,7 +222,7 @@ public class ApprovalController {
         qualificationService.selectForSendingToPortico(applicationForm, qualificationsSendToPorticoData);
         refereeService.selectForSendingToPortico(applicationForm, referencesSendToPorticoData);
 
-        if (!approvalService.validateSendToPorticoData(applicationForm)) {
+        if (!approvalService.validateSendToPorticoData(applicationForm, explanation)) {
             return PORTICO_VALIDATION_SECTION;
         }
 

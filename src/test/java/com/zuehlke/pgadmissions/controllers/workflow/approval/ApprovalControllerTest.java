@@ -332,7 +332,7 @@ public class ApprovalControllerTest {
 
         };
 
-        EasyMock.expect(approvalServiceMock.validateSendToPorticoData(application)).andReturn(true);
+        EasyMock.expect(approvalServiceMock.validateSendToPorticoData(application, null)).andReturn(true);
         approvalServiceMock.moveApplicationToApproval(application, interview);
         EasyMock.replay(approvalServiceMock);
 

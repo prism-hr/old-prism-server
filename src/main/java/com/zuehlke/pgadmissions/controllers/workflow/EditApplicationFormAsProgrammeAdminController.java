@@ -120,20 +120,15 @@ public class EditApplicationFormAsProgrammeAdminController {
             throw new ResourceNotFoundException();
         }
 
-        Gson gson = new Gson();
-        RefereesAdminEditSendToUclDTO refereesData = gson.fromJson(sendToPorticoData, RefereesAdminEditSendToUclDTO.class);
-        ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
-        for (String encryptedId : refereesData.getReferees()) {
-            decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
-        }
-        refereeService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedIds);
+        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData);
         return "OK";
     }
 
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
     @ResponseBody
     public String submitQualificationsData(@RequestParam final String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm) {
-        if (StringUtils.isBlank(sendToPorticoData) || applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
+        
+        if (StringUtils.isBlank(sendToPorticoData) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }
         qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData);

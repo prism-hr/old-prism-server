@@ -142,21 +142,17 @@ public class Interview implements Serializable {
 	public void setInterviewTime(String interviewTime) {
 		this.interviewTime = interviewTime;
 		if (interviewTime != null) {
-			int semiColonPosition = interviewTime.indexOf(":");		
+			int semiColonPosition = interviewTime.indexOf(':');		
 			timeHours = interviewTime.substring(0, semiColonPosition);
 			timeMinutes = interviewTime.substring(semiColonPosition + 1);
-			
 		}
 	}
 
-
 	public String getTimeHours() {
-
 		return timeHours;
 	}
 
 	public String getTimeMinutes() {
-
 		return timeMinutes;
 	}
 

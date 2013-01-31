@@ -66,8 +66,9 @@ public class ProgrammesImporter implements Importer {
 			List<ProgramInstance> changes = importService.merge(currentData, importData);
 			for (ProgramInstance programInstance : changes) {
 				programInstanceDAO.save(programInstance);
-				if(programInstance.getProgram().getId() == null)
+				if (programInstance.getProgram().getId() == null) {
 					programDao.save(programInstance.getProgram());
+				}
 			}
 			log.info("Import done. Wrote " + changes.size() + " change(s) to the database.");
 		} catch (Exception e) {

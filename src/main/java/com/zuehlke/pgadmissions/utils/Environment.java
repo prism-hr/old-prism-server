@@ -4,9 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class Environment {
+import org.apache.log4j.Logger;
 
+public final class Environment {
+
+    private Logger log = Logger.getLogger(Environment.class);
+    
 	private static Environment instance;
+	
 	private String applicationHost;
 	private String emailFromAddress;
 	private String emailToAddress;
@@ -25,9 +30,9 @@ public class Environment {
 			emailToAddress = environmentProperties.getProperty("email.address.to");
 			uclProspectusLink = environmentProperties.getProperty("ucl.prospectus.url");
 			admissionsOfferServieLevel = environmentProperties.getProperty("admissions.servicelevel.offer");
-			 admissionsValidationServiceLevel = environmentProperties.getProperty("admissions.servicelevel.validation");
+			admissionsValidationServiceLevel = environmentProperties.getProperty("admissions.servicelevel.validation");
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		} finally {
 			try {
 				in.close();				
@@ -35,13 +40,11 @@ public class Environment {
 				// ignore
 			}
 		}
-		
 	}
 
 	public static synchronized Environment getInstance() {
 		if (instance == null) {
 			instance = new Environment();
-
 		}
 		return instance;
 	}

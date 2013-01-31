@@ -99,16 +99,21 @@ public class Address implements Serializable {
 	
 	public String getLocationString() {
 		StringBuilder sb = new StringBuilder();
-		if(StringUtils.isNotBlank(address1))
+		if(StringUtils.isNotBlank(address1)) {
 			sb.append(address1);
-		if(StringUtils.isNotBlank(address2))
+		}
+		if(StringUtils.isNotBlank(address2)) {
 			sb.append("\n"+address2);
-		if(StringUtils.isNotBlank(address3))
+		}
+		if(StringUtils.isNotBlank(address3)) {
 			sb.append("\n"+address3);
-		if(StringUtils.isNotBlank(address4))
+		}
+		if(StringUtils.isNotBlank(address4)) {
 			sb.append("\n"+address4);
-		if(StringUtils.isNotBlank(address5))
+		}
+		if(StringUtils.isNotBlank(address5)) {
 			sb.append("\n"+address5);
+		}
 		return sb.toString();
 	}
 	

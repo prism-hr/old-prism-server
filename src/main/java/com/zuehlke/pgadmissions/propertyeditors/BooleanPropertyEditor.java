@@ -14,6 +14,6 @@ public class BooleanPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(new Boolean(boolText));
+		setValue(Boolean.valueOf(boolText));
 	}
 }

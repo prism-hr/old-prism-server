@@ -353,7 +353,6 @@ public class ApprovalServiceTest {
 
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
-
         EasyMock.replay(applicationFormDAOMock, eventFactoryMock, commentDAOMock);
 
         approvalService.moveToApproved(application);
@@ -385,7 +384,6 @@ public class ApprovalServiceTest {
 
         programmeDetailDAOMock.save(EasyMock.same(programmeDetails));
         applicationFormDAOMock.save(application);
-
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
 

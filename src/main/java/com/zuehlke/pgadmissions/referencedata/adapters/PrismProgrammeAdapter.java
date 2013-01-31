@@ -18,112 +18,115 @@ import com.zuehlke.pgadmissions.services.importers.ImportService;
 
 public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportData {
 
-	private ProgrammeOccurrence programme;
-	
-	public String getName() {
-		return programme.getProgramme().getName();
-	}
+    private ProgrammeOccurrence programme;
 
-	public PrismProgrammeAdapter(ProgrammeOccurrence programme) {
-		this.programme = programme;
-	}
+    public String getName() {
+        return programme.getProgramme().getName();
+    }
 
-	@Override
-	public String getStringCode() {
-		return programme.getProgramme().getCode();
-	}
+    public PrismProgrammeAdapter(ProgrammeOccurrence programme) {
+        this.programme = programme;
+    }
 
-	@Override
-	public String getStudyOptionCode() {
-		return programme.getModeOfAttendance().getCode();
-	}
+    @Override
+    public String getStringCode() {
+        return programme.getProgramme().getCode();
+    }
 
-	@Override
-	public String getStudyOption() {
-		return programme.getModeOfAttendance().getName();
-	}
+    @Override
+    public String getStudyOptionCode() {
+        return programme.getModeOfAttendance().getCode();
+    }
 
-	@Override
-	public String getAcademic_year() {
-		return programme.getAcademicYear();
-	}
-	
-	@Override
-	public String getIdentifier() {
-		return programme.getIdentifier();
-	}
+    @Override
+    public String getStudyOption() {
+        return programme.getModeOfAttendance().getName();
+    }
 
-	@Override
-	public Date getApplicationStartDate() {
-		try {
-			return DateUtils.parseDate(programme.getStartDate(), new String[] {"yyyy-MM-dd", "dd-MMM-yy"});
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public String getAcademic_year() {
+        return programme.getAcademicYear();
+    }
 
-	@Override
-	public Date getApplicationDeadline() {
-		try {
-			return DateUtils.parseDate(programme.getEndDate(), new String[] {"yyyy-MM-dd", "dd-MMM-yy"});
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public String getIdentifier() {
+        return programme.getIdentifier();
+    }
 
-	@Override
-	public ProgramInstance createDomainObject(List<? extends CodeObject> currentData, List<? extends CodeObject> changes) {
-		ProgramInstance result = new ProgramInstance();
-		result.setAcademicYear(getAcademic_year());
-		result.setApplicationDeadline(getApplicationDeadline());
-		result.setApplicationStartDate(getApplicationStartDate());
-		result.setStudyOption(getStudyOption());
-		result.setStudyOptionCode(getStudyOptionCode());
-		result.setIdentifier(getIdentifier());
-		result.setEnabled(true);
-		Program program = getProgramme(currentData, changes);
-		result.setProgram(program);
-		return result;
-	}
+    @Override
+    public Date getApplicationStartDate() {
+        try {
+            return DateUtils.parseDate(programme.getStartDate(), new String[] { "yyyy-MM-dd", "dd-MMM-yy" });
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	private Program getProgramme(List<? extends CodeObject> currentData, List<? extends CodeObject> changes) {
-		Program program = getProgrammeBinary(currentData);
-		if(program != null)
-			return program;
-		program = getProgrammeLineary(changes);
-		if(program != null)
-			return program;
-		program = new Program();
-		program.setCode(getStringCode());
-		program.setTitle(getName());
-		program.setEnabled(true);
-		return program;
-	}
-	
-	private Program getProgrammeLineary(List<? extends CodeObject> exsistingData) {
-		ProgramInstance programInstance = (ProgramInstance) CollectionUtils.find(exsistingData, new Predicate() {			
-			@Override
-			public boolean evaluate(Object object) {
-				ProgramInstance instance = (ProgramInstance)object;
-				return instance.getStringCode().equals(getStringCode()) && instance.getName().equals(getName());
-			}
-		});
-		
-		if(programInstance!=null)
-			return programInstance.getProgram();
-		else
-			return null;
-	}
+    @Override
+    public Date getApplicationDeadline() {
+        try {
+            return DateUtils.parseDate(programme.getEndDate(), new String[] { "yyyy-MM-dd", "dd-MMM-yy" });
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	private Program getProgrammeBinary(List<? extends CodeObject> exsistingData) {
-		Program program;
-		int i = Collections.binarySearch(exsistingData, this, ImportService.codeComparator);
-		
-		if(i>=0) {
-			 program = ((ProgramInstance) exsistingData.get(i)).getProgram();
-		} else {
-			program = null;
-		}
-		return program;
-	}
+    @Override
+    public ProgramInstance createDomainObject(List<? extends CodeObject> currentData, List<? extends CodeObject> changes) {
+        ProgramInstance result = new ProgramInstance();
+        result.setAcademicYear(getAcademic_year());
+        result.setApplicationDeadline(getApplicationDeadline());
+        result.setApplicationStartDate(getApplicationStartDate());
+        result.setStudyOption(getStudyOption());
+        result.setStudyOptionCode(getStudyOptionCode());
+        result.setIdentifier(getIdentifier());
+        result.setEnabled(true);
+        Program program = getProgramme(currentData, changes);
+        result.setProgram(program);
+        return result;
+    }
+
+    private Program getProgramme(List<? extends CodeObject> currentData, List<? extends CodeObject> changes) {
+        Program program = getProgrammeBinary(currentData);
+        if (program != null) {
+            return program;
+        }
+        program = getProgrammeLineary(changes);
+        if (program != null) {
+            return program;
+        }
+        program = new Program();
+        program.setCode(getStringCode());
+        program.setTitle(getName());
+        program.setEnabled(true);
+        return program;
+    }
+
+    private Program getProgrammeLineary(List<? extends CodeObject> exsistingData) {
+        ProgramInstance programInstance = (ProgramInstance) CollectionUtils.find(exsistingData, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                ProgramInstance instance = (ProgramInstance) object;
+                return instance.getStringCode().equals(getStringCode()) && instance.getName().equals(getName());
+            }
+        });
+
+        if (programInstance != null) {
+            return programInstance.getProgram();
+        } else {
+            return null;
+        }
+    }
+
+    private Program getProgrammeBinary(List<? extends CodeObject> exsistingData) {
+        Program program;
+        int i = Collections.binarySearch(exsistingData, this, ImportService.codeComparator);
+
+        if (i >= 0) {
+            program = ((ProgramInstance) exsistingData.get(i)).getProgram();
+        } else {
+            program = null;
+        }
+        return program;
+    }
 }

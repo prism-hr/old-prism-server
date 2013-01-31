@@ -254,7 +254,7 @@ public class UclExportService {
             try {
                 e.getWebServiceMessage().writeTo(responseMessageBuffer);
             } catch (IOException ioex) {
-                throw new RuntimeException("Line unreachable");//writing to in-memory buffer should not fail
+                throw new RuntimeException("Line unreachable", e);//writing to in-memory buffer should not fail
             }
             error.setResponseCopy(responseMessageBuffer.toString());
             applicationFormTransferErrorDAO.save(error);
@@ -287,9 +287,10 @@ public class UclExportService {
         if (applicationForm.getApplicant().getUclUserId() == null)
             applicationForm.getApplicant().setUclUserId(response.getReference().getApplicantID());
         else {
-            if (! applicationForm.getApplicant().getUclUserId().equals(response.getReference().getApplicantID()))
+            if (! applicationForm.getApplicant().getUclUserId().equals(response.getReference().getApplicantID())) {
                 throw new RuntimeException("User code received from PORTICO do not mach with our PRISM user id: PRISM_ID=" +
                     applicationForm.getApplicant().getUclUserId() + " PORTICO_ID=" + response.getReference().getApplicantID());
+            }
         }
 
         //update transfer status in the database

@@ -78,6 +78,7 @@ function postQualificationsData() {
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {
+        	$('#qualifications-H2').trigger('click');
         },
         complete : function() {
             $('#qualificationsSection div.ajax').remove();

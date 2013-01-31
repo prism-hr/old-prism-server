@@ -82,15 +82,15 @@ public class LoginController {
 	
 	private void clearApplyRequestInSession(HttpSession session) {
 	    session.setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, null);
-        session.setAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE, new Integer(0));
+        session.setAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE, Integer.valueOf(0));
 	}
 	
 	private void increaseNumberOfClicks(final HttpSession session) {
 	    Integer numberOfClicks = (Integer) session.getAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE);
 	    if (numberOfClicks == null) {
-	        session.setAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE, new Integer(1));
+	        session.setAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE, Integer.valueOf(1));
 	    } else {
-	        session.setAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE, new Integer(((Integer)session.getAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE)) + 1));
+	        session.setAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE, Integer.valueOf((((Integer) session.getAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE)) + 1)));
 	    }
 	}
 	

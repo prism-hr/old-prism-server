@@ -121,6 +121,14 @@
 
                                 <section id="additionalInformationSection" class="folding form-rows lightblue"><#include "/private/staff/application/components/additional_information.ftl"/></section>
 
+                                <hr />
+                                
+                                <div class="buttons">
+                                    <form>
+                                      <button id="saveAndClose" type="button">Save &amp; Close</a>
+                                    </form>
+                                </div>
+                                
                             </div>
                             <div class="tab-page" id="timeline"></div>
                         </div>

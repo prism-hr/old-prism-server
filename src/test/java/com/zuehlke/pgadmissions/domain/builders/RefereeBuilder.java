@@ -23,7 +23,7 @@ public class RefereeBuilder {
 	private String address2;
 	private String address3;
 	private String address4;
-
+	private String address5;
 
 	private Country addressCountry;
 	private ReferenceComment reference;
@@ -77,7 +77,6 @@ public class RefereeBuilder {
 		return this;
 	}
 
-
 	public RefereeBuilder firstname(String firstname) {
 		this.firstname = firstname;
 		return this;
@@ -118,6 +117,11 @@ public class RefereeBuilder {
 		this.address4 = address4;
 		return this;
 	}
+	
+	public RefereeBuilder address5(String address5) {
+        this.address5 = address5;
+        return this;
+    }
 
 	public RefereeBuilder addressCountry(Country addressCountry) {
 		this.addressCountry = addressCountry;
@@ -136,7 +140,7 @@ public class RefereeBuilder {
 
 	public Referee toReferee() {
 		Referee referee = new Referee();
-		Address address = new AddressBuilder().address1(address1).address2(address2).address3(address3).address4(address4).country(addressCountry).build();
+		Address address = new AddressBuilder().address1(address1).address2(address2).address3(address3).address4(address4).address5(address5).country(addressCountry).build();
 		referee.setAddressLocation(address);
 		referee.setApplication(application);
 		referee.setEmail(email);

@@ -30,6 +30,7 @@ public class EmploymentPositionBuilder {
 	private String employerAdress2;
 	private String employerAdress3;
 	private String employerAdress4;
+	private String employerAdress5;
 	
 	private Country employerCountry;
 	
@@ -44,18 +45,26 @@ public class EmploymentPositionBuilder {
 		this.employerAdress1 = employerAdress;
 		return this;
 	}
+	
 	public EmploymentPositionBuilder address2(String employerAdress){
 		this.employerAdress2 = employerAdress;
 		return this;
 	}
+	
 	public EmploymentPositionBuilder address3(String employerAdress){
 		this.employerAdress3 = employerAdress;
 		return this;
 	}
+	
 	public EmploymentPositionBuilder address4(String employerAdress){
 		this.employerAdress4 = employerAdress;
 		return this;
 	}
+	
+    public EmploymentPositionBuilder address5(String employerAdress) {
+        this.employerAdress5 = employerAdress;
+        return this;
+    }
 	
 	public EmploymentPositionBuilder country(Country employerCountry){
 		this.employerCountry = employerCountry;
@@ -66,10 +75,12 @@ public class EmploymentPositionBuilder {
 		this.employerName = employerName;
 		return this;
 	}
+	
 	public EmploymentPositionBuilder position(String title){
 		this.position = title;
 		return this;
 	}
+	
 	public EmploymentPositionBuilder remit(String remit){
 		this.remit = remit;
 		return this;
@@ -84,19 +95,22 @@ public class EmploymentPositionBuilder {
 		this.startDate = startDate;
 		return this;
 	}
+	
 	public EmploymentPositionBuilder endDate(Date endDate){
 		this.endDate = endDate;
 		return this;
 	}
+	
 	public EmploymentPositionBuilder application(ApplicationForm application){
 		this.application = application;
 		return this;
 	}
+	
 	public EmploymentPosition toEmploymentPosition(){
 		EmploymentPosition employment = new EmploymentPosition();
 		employment.setApplication(application);
 		employment.setEmployerName(employerName);
-		Address employerAdress = new AddressBuilder().address1(employerAdress1).address2(employerAdress2).address3(employerAdress3).address4(employerAdress4).country(employerCountry).build();
+		Address employerAdress = new AddressBuilder().address1(employerAdress1).address2(employerAdress2).address3(employerAdress3).address4(employerAdress4).address5(employerAdress5).country(employerCountry).build();
 		employment.setEmployerAddress(employerAdress);
 		employment.setEndDate(endDate);
 		employment.setRemit(remit);

@@ -63,7 +63,6 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
@@ -289,7 +288,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setAddressLine2(currentAddress.getAddress2());
         addressTp.setAddressLine3(currentAddress.getAddress3());
         addressTp.setAddressLine4(currentAddress.getAddress4());
-        addressTp.setAddressLine5(currentAddress.getAddress5());
+        addressTp.setPostCode(currentAddress.getAddress5());
         addressTp.setCountry(currentAddress.getCountry().getCode());
 
         // addressLine3 is mandatory but PRISM did not collect addresses in this
@@ -312,7 +311,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setAddressLine2(contactAddress.getAddress2());
         addressTp.setAddressLine3(contactAddress.getAddress3());
         addressTp.setAddressLine4(contactAddress.getAddress4());
-        addressTp.setAddressLine5(contactAddress.getAddress5());
+        addressTp.setPostCode(contactAddress.getAddress5());
         addressTp.setCountry(contactAddress.getCountry().getCode());
 
         // addressLine3 is mandatory but PRISM did not collect addresses in this
@@ -588,7 +587,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             addressTp.setAddressLine2(referee.getAddressLocation().getAddress2());
             addressTp.setAddressLine3(referee.getAddressLocation().getAddress3());
             addressTp.setAddressLine4(referee.getAddressLocation().getAddress4());
-            addressTp.setAddressLine5(referee.getAddressLocation().getAddress5());
+            addressTp.setPostCode(referee.getAddressLocation().getAddress5());
             addressTp.setCountry(referee.getAddressLocation().getCountry().getCode());
 
             // addressLine3 is mandatory but PRISM did not collect addresses

@@ -1,16 +1,17 @@
 package com.zuehlke.pgadmissions.dto;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class QualificationsAdminEditDTO {
     
-    private ArrayList<String> qualifications = new ArrayList<String>();
+    private List<String> qualifications = new ArrayList<String>();
     
-    public ArrayList<String> getQualifications() {
+    public List<String> getQualifications() {
         return qualifications;
     }
 
-    public void setQualifications(ArrayList<String> qualifications) {
+    public void setQualifications(List<String> qualifications) {
         this.qualifications = qualifications;
     }
 }

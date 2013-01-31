@@ -34,22 +34,24 @@ public class RejectApplicationController {
 
 	private static final String REJECT_VIEW_NAME = "private/staff/approver/reject_page";
 	private static final String NEXT_VIEW_NAME = "redirect:/applications";
+	
 	private final RejectService rejectService;
 	
-
 	private final RejectReasonPropertyEditor rejectReasonPropertyEditor;
+	
 	private final UserService userService;
+	
 	private final RejectionValidator rejectionValidator;
+	
 	private final ApplicationsService applicationsService;
 
-	RejectApplicationController() {
+	public RejectApplicationController() {
 		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
-			RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator) {
-		
+			RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator) {	
 		this.applicationsService = applicationsService;
 		this.rejectService = rejectService;
 		this.userService = userService;
@@ -63,17 +65,14 @@ public class RejectApplicationController {
 	}
 
 	@RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
-	public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors,
-			@ModelAttribute("applicationForm") ApplicationForm application, ModelMap modelMap) {
-
+    public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection,
+            BindingResult errors, @ModelAttribute("applicationForm") ApplicationForm application, ModelMap modelMap) {
 		checkPermissionForApplication(application);
 		checkApplicationStatus(application);
 		if(errors.hasErrors()){
 			return REJECT_VIEW_NAME;
 		}
-
 		rejectService.moveApplicationToReject(application, getCurrentUser(), rejection);
-		
 		return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
 	}
 
@@ -104,8 +103,7 @@ public class RejectApplicationController {
 
 	private void checkPermissionForApplication(ApplicationForm application) {
 		RegisteredUser currentUser = getCurrentUser();
-		if (application == null || //
-				!(application.getProgram().isApprover(currentUser) || currentUser.hasAdminRightsOnApplication(application))) {
+		if (application == null || !(application.getProgram().isApprover(currentUser) || currentUser.hasAdminRightsOnApplication(application))) {
 			throw new ResourceNotFoundException();
 		}
 	}
@@ -113,8 +111,6 @@ public class RejectApplicationController {
 	protected RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();
 	}
-
-
 
 	@ModelAttribute("rejection")
 	public Rejection getRejection() {

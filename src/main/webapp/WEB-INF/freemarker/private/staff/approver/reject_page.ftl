@@ -140,5 +140,7 @@
 	
 </div><!-- #wrapper -->
 
+<script type="text/javascript" src="<@spring.url '/design/default/js/approver/reject_page.js'/>"></script>
+
 </body>
 </html>

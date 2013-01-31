@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.log4j.Logger;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -32,6 +33,9 @@ import org.springframework.transaction.support.TransactionTemplate;
  * 2. Both "queue consumer thread" and "queueWe run all threads issued inside implementation with background priority (Thread.MIN_PRIORITY).
  */
 public class PausableHibernateCompatibleSequentialTaskExecutor implements Executor {
+    
+    private Logger log = Logger.getLogger(PausableHibernateCompatibleSequentialTaskExecutor.class);
+            
     private boolean pickingTasksIsPaused = false;
     
     private String name;
@@ -85,9 +89,10 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
      * @param name my new name
      */
     public synchronized void setName(String name) {
-        if (isDead)
+        if (isDead) {
             return;//dead executor is just dead
-
+        }
+        
         this.name = name;
         queueConsumer.setName(name + "-queue-consumer");
     }
@@ -100,9 +105,9 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
      * @param task task to be executed in the future
      */
     public synchronized void execute(Runnable task) {
-        if (isDead)
+        if (isDead) {
             return;//dead executor is just dead
-
+        }
         queue.add(task);
     }
 
@@ -112,9 +117,9 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
      * If I am already paused, I just ignore.
      */
     public synchronized void pause() {
-        if (isDead)
+        if (isDead){
             return;//dead executor is just dead
-
+        }
         pickingTasksIsPaused = true;
     }
 
@@ -123,9 +128,9 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
      * If not paused before, I just ignore.
      */
     public synchronized void resume() {
-        if (isDead)
+        if (isDead) {
             return;//dead executor is just dead
-
+        }
         pickingTasksIsPaused = false;
         this.notify();
     }
@@ -135,9 +140,9 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
      * Then I destroy the queue (tasks are abandoned) and queue consumer thread.  Finally I put myself in a "destroyed" state.
      */
     public synchronized void shutdown() {
-        if (isDead)
+        if (isDead) {
             return;//dead executor is just dead
-
+        }
         this.isDead = true;
         queueConsumer.interrupt();
         queue = null;
@@ -146,8 +151,9 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
     //ooooooooooooooooooooooooooooooooooooooooooooooooooooo PRIVATE ooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
     private synchronized void startTask(Runnable task) throws InterruptedException {
-        while (someTaskIsJustExecuting || pickingTasksIsPaused)
+        while (someTaskIsJustExecuting || pickingTasksIsPaused) {
             wait();
+        }
         lastTaskPickedUpSeqentialNumber++;
         String threadName = "executor-" + name + "-task-thread-" + lastTaskPickedUpSeqentialNumber;
         Thread taskExecutionThread = new TaskExecutionThread(task, lastTaskPickedUpSeqentialNumber, threadName);
@@ -213,9 +219,9 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
                 //2. invoke some (pluggable) master error handler
                 //Currently only stratego (1) is implemented.
                 //todo: consider implementing pluggable "master exception handler queue" feature
-                System.out.println("Exeption propagation from task submitted to task executor. Exception was ignored." +
+                log.error("Exeption propagation from task submitted to task executor. Exception was ignored." +
                     "\n    task info: " + this.getName() +
-                    "\n" + StacktraceDump.forException(e));
+                    "\n" + StacktraceDump.forException(e), e);
             }
 
             //step 2 - inform my executor that I have just finished my work.

@@ -86,20 +86,14 @@ public class EditApplicationFormAsProgrammeAdminController {
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
 
-    @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
-    public String submitRefereesData(@Valid @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result,
-            @RequestParam(required = false) String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm, Model model) {
+    @RequestMapping(value = "/postReference", method = RequestMethod.POST)
+    public String submitReference(@Valid @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result,
+            @ModelAttribute ApplicationForm applicationForm, Model model) {
 
         if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }
 
-        // save "send to UCL" data first
-        if (StringUtils.isNotBlank(sendToPorticoData)) {
-            refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData);
-        }
-
-        // then handle the new comment
         model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
 
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
@@ -118,13 +112,30 @@ public class EditApplicationFormAsProgrammeAdminController {
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
     }
 
+    @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
+    @ResponseBody
+    public String submitRefereesData(@RequestParam String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm) {
+
+        if (StringUtils.isBlank(sendToPorticoData) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
+            throw new ResourceNotFoundException();
+        }
+
+        Gson gson = new Gson();
+        RefereesAdminEditSendToUclDTO refereesData = gson.fromJson(sendToPorticoData, RefereesAdminEditSendToUclDTO.class);
+        ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
+        for (String encryptedId : refereesData.getReferees()) {
+            decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
+        }
+        refereeService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedIds);
+        return "OK";
+    }
+
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
     @ResponseBody
     public String submitQualificationsData(@RequestParam final String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm) {
         if (StringUtils.isBlank(sendToPorticoData) || applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }
-
         qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData);
         return "OK";
     }

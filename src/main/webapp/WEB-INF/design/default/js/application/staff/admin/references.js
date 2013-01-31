@@ -46,10 +46,19 @@ $(document).ready(function() {
     });
     
     // --------------------------------------------------------------------------------
-    // POST REFEREE DATA
+    // POST SEND TO PORTICO REFEREE DATA
     // --------------------------------------------------------------------------------
     $('#refereeSaveButton').on("click", function() {
         postRefereesData();
+    });
+
+    // --------------------------------------------------------------------------------
+    // POST REFERENCE DATA
+    // --------------------------------------------------------------------------------
+    $('button[id="saveReferenceButton"]').each(function() {
+    	$(this).on("click", function() {
+            postReferenceData();
+        });
     });
     
     $("input:file").each(function() {
@@ -117,9 +126,36 @@ function showProperRefereeEntry() {
 }
 
 function postRefereesData() {
-    var refereeId = $('#editedRefereeId').val();
-    
     var sendToPorticoData = collectReferencesSendToPortico();
+    
+    $('#referencesSection > div').append('<div class="ajax" />');
+    $.ajax({
+        type : 'POST',
+        statusCode : {
+            401 : function() { window.location.reload(); },
+            500 : function() { window.location.href = "/pgadmissions/error"; },
+            404 : function() { window.location.href = "/pgadmissions/404"; },
+            400 : function() { window.location.href = "/pgadmissions/400"; },
+            403 : function() { window.location.href = "/pgadmissions/404"; }
+        },
+        url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereesData",
+        data :  {
+            applicationId : $('#applicationId').val(),
+            sendToPorticoData: JSON.stringify(sendToPorticoData),
+            cacheBreaker: new Date().getTime()
+        },
+        success : function(data) {
+			$('#referee-H2').trigger('click');
+            
+        },
+        complete : function() {
+            $('#referencesSection div.ajax').remove();
+        }
+    });
+}
+
+function postReferenceData() {
+    var refereeId = $('#editedRefereeId').val();
     
     var suitableUCL = "";
     if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
@@ -145,7 +181,7 @@ function postRefereesData() {
             400 : function() { window.location.href = "/pgadmissions/400"; },
             403 : function() { window.location.href = "/pgadmissions/404"; }
         },
-        url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereesData",
+        url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postReference",
         data :  {
             applicationId : $('#applicationId').val(),
             comment: $('#refereeComment_' + refereeId).val(),
@@ -153,12 +189,11 @@ function postRefereesData() {
             suitableForUCL : suitableUCL,
             suitableForProgramme : suitableForProgramme, 
             editedRefereeId : $('#editedRefereeId').val(),
-            sendToPorticoData: JSON.stringify(sendToPorticoData),
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {
-            $("#referencesSection").html(data);
-            $("#referee_" + $("#editedRefereeId").val()).show();
+        	$("#referencesSection").html(data);
+        	$("#referee_" + $("#editedRefereeId").val()).show();
         },
         complete : function() {
             $('#referencesSection div.ajax').remove();

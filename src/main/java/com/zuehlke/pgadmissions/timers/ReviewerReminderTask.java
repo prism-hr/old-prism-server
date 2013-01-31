@@ -42,7 +42,6 @@ public class ReviewerReminderTask extends TimerTask {
     				transaction.commit();
     				log.info("Notification reminder sent to reviewer " + reviewer.getUser().getEmail());
     			} catch (Exception e) {
-    				e.printStackTrace();
     				transaction.rollback();
     				log.warn("Error while sending reminder to reviewer " + reviewer.getUser().getEmail(), e);
     			}

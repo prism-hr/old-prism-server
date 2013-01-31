@@ -2,6 +2,14 @@ $(document).ready(function() {
     
     showQualificationAndReferenceSection();
     
+	// --------------------------------------------------------------------------------
+	// "SAVE AND CLOSE" BUTTON
+	// --------------------------------------------------------------------------------
+	$('#saveAndClose').click(function()
+	{
+		window.location.href = '/pgadmissions/applications';
+	});
+    
 });
 
 function showQualificationAndReferenceSection() {

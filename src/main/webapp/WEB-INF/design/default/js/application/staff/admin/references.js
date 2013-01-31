@@ -166,8 +166,16 @@ function postRefereesData() {
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {
-            $("#referencesSection").html(data);
-            $("#referee_" + $("#editedRefereeId").val()).show();
+			$("#referencesSection").html(data);
+			$("#referee_" + $("#editedRefereeId").val()).show();
+			
+			// Close the section only if there are no errors.
+			var errorCount = $('#referencesSection .invalid:visible').length;
+			if (errorCount == 0)
+			{
+				$('#referee-H2').trigger('click');
+			}
+            
         },
         complete : function() {
             $('#referencesSection div.ajax').remove();

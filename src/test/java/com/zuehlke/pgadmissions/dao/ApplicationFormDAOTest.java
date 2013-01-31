@@ -1021,7 +1021,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		assertEquals(1, applicationDAO.getApplicationsInProgramThisYear(program, thisYear));
+		assertEquals(Long.valueOf(1), applicationDAO.getApplicationsInProgramThisYear(program, thisYear));
 
 		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
 				.build();
@@ -1029,9 +1029,9 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		assertEquals(2, applicationDAO.getApplicationsInProgramThisYear(program, thisYear));
-		assertEquals(0, applicationDAO.getApplicationsInProgramThisYear(program, lastYear));
-		assertEquals(0, applicationDAO.getApplicationsInProgramThisYear(program, nextYear));
+		assertEquals(Long.valueOf(2), applicationDAO.getApplicationsInProgramThisYear(program, thisYear));
+		assertEquals(Long.valueOf(0), applicationDAO.getApplicationsInProgramThisYear(program, lastYear));
+		assertEquals(Long.valueOf(0), applicationDAO.getApplicationsInProgramThisYear(program, nextYear));
 
 	}
 

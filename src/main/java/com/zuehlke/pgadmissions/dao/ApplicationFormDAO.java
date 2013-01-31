@@ -156,7 +156,7 @@ public class ApplicationFormDAO {
 		return result;
 	}
 
-	public long getApplicationsInProgramThisYear(Program program, String year) {
+	public Long getApplicationsInProgramThisYear(Program program, String year) {
 		Date startYear = null;
 		
 		try {

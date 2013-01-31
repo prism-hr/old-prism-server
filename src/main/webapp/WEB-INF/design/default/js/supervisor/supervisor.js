@@ -126,7 +126,7 @@ $(document).ready(function()
 	$('#assignSupervisorsBtn').click(function()
 	{
 		$('#approvalsection').append('<div class="ajax" />');
-		var url = "/pgadmissions/approval/move";
+		var url = "/pgadmissions/approval/assignSupervisors";
 	
 		$('#applicationSupervisors option').each(function(){	
 			$('#postApprovalData').append("<input name='supervisors' type='hidden' value='" +  $(this).val() + "'/>");

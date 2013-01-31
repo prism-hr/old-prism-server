@@ -196,8 +196,8 @@ public class ApprovalController {
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }
 
-    @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToApproval(@RequestParam String applicationId, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
+    @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
+    public String assignSupervisors(@RequestParam String applicationId, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
             BindingResult bindingResult, SessionStatus sessionStatus) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         if (bindingResult.hasErrors()) {

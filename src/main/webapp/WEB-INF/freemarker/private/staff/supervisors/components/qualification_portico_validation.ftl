@@ -195,11 +195,6 @@
             </div>
         </div>
         </#list>
-        <div class="buttons">
-            <button name="qualificationClearButton" type="button" id="qualificationClearButton" class="clear">Clear</button>
-            <button type="button" id="qualificationCloseButton" class="blue">Close</button>
-            <button type="button" id="qualificationSaveButton" class="blue">Save</button>
-        </div> 
         <#else>
             <div class="row-group">
             <div class="row">
@@ -208,6 +203,11 @@
             </div>
         </div>
         </#if>
+        <div class="buttons">
+            <button name="qualificationClearButton" type="button" id="qualificationClearButton" class="clear">Clear</button>
+            <button type="button" id="qualificationCloseButton" class="blue">Close</button>
+            <button type="button" id="qualificationSaveButton" class="blue">Save</button>
+        </div> 
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/qualifications_portico_validation.js' />"></script>

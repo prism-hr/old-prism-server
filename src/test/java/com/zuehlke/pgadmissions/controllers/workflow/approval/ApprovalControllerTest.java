@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -24,20 +25,13 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RequestRestartCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
@@ -310,16 +304,9 @@ public class ApprovalControllerTest {
     }
 
     @Test
-    public void shouldMoveApplicationToApprovalRound() {
-        ApprovalRound interview = new ApprovalRoundBuilder().id(4).build();
-        Document proofOfAward = new DocumentBuilder().id(1).build();
-        Qualification qualification = new QualificationBuilder().id(8).proofOfAward(proofOfAward).sendToUCL(true).build();
-        ReferenceComment reference1 = new ReferenceCommentBuilder().id(1).build();
-        ReferenceComment reference2 = new ReferenceCommentBuilder().id(2).build();
-        Referee referee1 = new RefereeBuilder().id(1).reference(reference1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().id(2).reference(reference2).sendToUCL(true).toReferee();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").qualifications(qualification)
-                .referees(referee1, referee2).build();
+    public void shouldAssignSupervisorsAndMoveApplicationToApprovalRound() {
+        final ApprovalRound interview = new ApprovalRoundBuilder().id(4).build();
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
         SessionStatus sessionStatus = new SimpleSessionStatus();
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
@@ -336,7 +323,7 @@ public class ApprovalControllerTest {
         approvalServiceMock.moveApplicationToApproval(application, interview);
         EasyMock.replay(approvalServiceMock);
 
-        String view = controller.moveToApproval("abc", interview, bindingResultMock, sessionStatus);
+        String view = controller.assignSupervisors("abc", interview, bindingResultMock, sessionStatus);
         assertEquals("/private/common/ajax_OK", view);
         EasyMock.verify(approvalServiceMock);
         assertTrue(sessionStatus.isComplete());
@@ -357,11 +344,36 @@ public class ApprovalControllerTest {
 
         };
         ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-        EasyMock.replay(errorsMock, applicationServiceMock);
-        assertEquals("/private/staff/supervisors/supervisors_section", controller.moveToApproval("abc", approvalRound, errorsMock, sessionStatus));
-        assertTrue(!sessionStatus.isComplete());
+        EasyMock.replay(errorsMock);
+        assertEquals("/private/staff/supervisors/supervisors_section", controller.assignSupervisors("abc", approvalRound, errorsMock, sessionStatus));
+        assertFalse(sessionStatus.isComplete());
+        EasyMock.verify(errorsMock);
+    }
+    
+    @Test
+    public void shouldAssignSupervisorsAndMoveToSendToPorticoPageIfValidationErrors() {
+        final ApprovalRound interview = new ApprovalRoundBuilder().id(4).build();
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
+        SessionStatus sessionStatus = new SimpleSessionStatus();
+
+        controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
+                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
+                refereeServiceMock, encryptionHelperMock) {
+            @Override
+            public ApplicationForm getApplicationForm(String applicationId) {
+                return application;
+            }
+
+        };
+
+        EasyMock.expect(approvalServiceMock.validateSendToPorticoData(application, null)).andReturn(false);
+        EasyMock.replay(approvalServiceMock);
+
+        String view = controller.assignSupervisors("abc", interview, bindingResultMock, sessionStatus);
+        assertEquals("/private/staff/supervisors/portico_validation_section", view);
+        EasyMock.verify(approvalServiceMock);
+        assertFalse(sessionStatus.isComplete());
     }
 
     @Test

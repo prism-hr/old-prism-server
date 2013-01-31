@@ -26,13 +26,14 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
-public class SampleSoapRequestGenerator extends UclIntegrationBaseTest {
+public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
 
     @Autowired
     private WebServiceTemplate webServiceTemplate;

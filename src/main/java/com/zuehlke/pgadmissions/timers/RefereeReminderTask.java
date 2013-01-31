@@ -44,12 +44,12 @@ public class RefereeReminderTask extends TimerTask {
     				refereeDAO.save(referee);
     				transaction.commit();				
     				log.info("Notification reminder sent to referee " +  referee.getEmail());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error while sending reminder to referee " + referee.getEmail(), e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Referee Reminder Task", e);
 	    }
 		log.info("Referee Reminder Task Complete");

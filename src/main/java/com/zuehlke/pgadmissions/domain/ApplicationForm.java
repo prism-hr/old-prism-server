@@ -33,6 +33,7 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
@@ -42,7 +43,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private static final int CONSIDERATION_PERIOD_MONTHS = 1;
 
     private static final long serialVersionUID = -7671357234815343496L;
-    
+
     @Id
     @GeneratedValue
     private Integer id;
@@ -220,7 +221,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "latest_review_round_id")
     private ReviewRound latestReviewRound;
-    
+
     @Column(name = "ip_address")
     private byte[] ipAddress;
 
@@ -288,6 +289,16 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isWithdrawn() {
         return status == ApplicationFormStatus.WITHDRAWN;
+    }
+
+    public boolean isUserAllowedToSeeAndEditAsAdministrator(final RegisteredUser user) {
+        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
+                || user.isAdminInProgramme(getProgram());
+        return hasPermissionToEdit //
+                && isSubmitted() //
+                && !isInValidationStage() //
+                && !isDecided() //
+                && !isWithdrawn();
     }
 
     public List<Comment> getApplicationComments() {
@@ -494,14 +505,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public NotificationRecord getNotificationForType(String strType) {
         return getNotificationForType(NotificationType.valueOf(strType));
     }
-    
+
     public boolean addNotificationRecord(NotificationRecord record) {
-        // Kevin: This should resolve a mysterious issue we had on production. For 
+        // Kevin: This should resolve a mysterious issue we had on production. For
         // some reason we had multiple email schedulers of the same class running in parallel
-        // which then created duplicate notification records for the same type 
-        // such as UPDATED_NOTIFICATION. This then further lead to some of the SQL queries always 
+        // which then created duplicate notification records for the same type
+        // such as UPDATED_NOTIFICATION. This then further lead to some of the SQL queries always
         // returning the same records and thus sending thousands of emails in short intervals.
-        // This function just ensures that we are not creating duplicate entries in the 
+        // This function just ensures that we are not creating duplicate entries in the
         // notification_record table for the same type.
         for (NotificationRecord existingRecord : notificationRecords) {
             if (existingRecord.getNotificationType() == record.getNotificationType()) {
@@ -512,7 +523,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return notificationRecords.add(record);
     }
-    
+
     public boolean removeNotificationRecord(NotificationRecord record) {
         return notificationRecords.remove(record);
     }
@@ -755,15 +766,15 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public void setApproverRequestedRestart(RegisteredUser approverRequestedRestart) {
         this.approverRequestedRestart = approverRequestedRestart;
     }
-    
+
     public byte[] getIpAddress() {
         return ipAddress;
     }
-    
+
     public void setIpAddress(byte[] ipAddress) {
         this.ipAddress = ipAddress;
     }
-    
+
     /**
      * @return IP address or an EMPTY string if there was an exception.
      */
@@ -774,7 +785,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return StringUtils.EMPTY;
         }
     }
-    
+
     public void setIpAddressAsString(String ipAddress) throws UnknownHostException {
         this.ipAddress = InetAddress.getByName(ipAddress).getAddress();
     }
@@ -803,26 +814,26 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         if (ApplicationFormStatus.APPROVAL == status) {
             return resolveOutcomeOfStageForApprovalStatus();
         }
-        if (!approvalRounds.isEmpty() ) {
+        if (!approvalRounds.isEmpty()) {
             return ApplicationFormStatus.APPROVAL;
         }
-        if(!interviews.isEmpty()){
+        if (!interviews.isEmpty()) {
             return ApplicationFormStatus.INTERVIEW;
         }
-        if(!reviewRounds.isEmpty()){
+        if (!reviewRounds.isEmpty()) {
             return ApplicationFormStatus.REVIEW;
         }
         return ApplicationFormStatus.VALIDATION;
     }
 
     private ApplicationFormStatus resolveOutcomeOfStageForApprovalStatus() {
-        if (approvalRounds.size()  > 1 ) {
+        if (approvalRounds.size() > 1) {
             return ApplicationFormStatus.APPROVAL;
         }
-        if(!interviews.isEmpty()){
+        if (!interviews.isEmpty()) {
             return ApplicationFormStatus.INTERVIEW;
         }
-        if(!reviewRounds.isEmpty()){
+        if (!reviewRounds.isEmpty()) {
             return ApplicationFormStatus.REVIEW;
         }
         return ApplicationFormStatus.VALIDATION;
@@ -842,7 +853,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         if (reviewRounds.size() > 1) {
             return ApplicationFormStatus.REVIEW;
         }
-    
+
         return ApplicationFormStatus.VALIDATION;
     }
 
@@ -857,11 +868,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if(instance.getEnabled() && (startDateInFuture || beforeEndDate) && sameStudyOption && sameStudyOptionCode ) {
-                if(startDateInFuture && (result == null || result.after(applicationStartDate))) {
-                        result = applicationStartDate;
+            if (instance.getEnabled() && (startDateInFuture || beforeEndDate) && sameStudyOption && sameStudyOptionCode) {
+                if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
+                    result = applicationStartDate;
                 } else if (result == null || result.after(todayPlusConsiderationPeriod)) {
-                    result = todayPlusConsiderationPeriod;                  
+                    result = todayPlusConsiderationPeriod;
                 }
             }
         }
@@ -876,7 +887,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if(instance.getEnabled() && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode ) {
+            if (instance.getEnabled() && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
                 return true;
             }
         }
@@ -906,19 +917,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return result;
     }
-    
+
     public boolean isCompleteForSendingToPortico() {
         int exactNumberOfReferences = 2;
         int maxNumberOfQualifications = 2;
-        
+
         if (getReferencesToSendToPortico().size() != exactNumberOfReferences) {
             return false;
         }
-        
+
         if (getQualificationsToSendToPortico().size() > maxNumberOfQualifications) {
             return false;
         }
-        
+
         return true;
     }
 }

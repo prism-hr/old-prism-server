@@ -207,7 +207,7 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
                     }
                 });
 
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 //in general tasks should handle all exceptions, in case of some exception propagating from run() we could:
                 //1. log the error
                 //2. invoke some (pluggable) master error handler

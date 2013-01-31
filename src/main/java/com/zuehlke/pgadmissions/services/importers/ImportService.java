@@ -124,10 +124,11 @@ public class ImportService {
 	}
 	
 	private Comparator<? extends CodeObject> getComparator(CodeObject object) {
-		if(object instanceof ProgramInstanceInterface)
+		if(object instanceof ProgramInstanceInterface) {
 			return programComparator;
-		else
+		} else {
 			return codeComparator;
+		}
 	}
 
 }

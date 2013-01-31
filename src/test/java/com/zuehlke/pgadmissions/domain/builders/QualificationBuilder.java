@@ -11,21 +11,22 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class QualificationBuilder {
 
-	private String q_name_of_programme;
-	private String q_institution;
-	private String q_language_of_study;
-	private QualificationType q_type;
-	private String q_grade;	
-	private Date q_start_date;
-	private Date q_award_date;
+	private String subject;
+	private String title;
+	private String institution;
+	private String language_of_study;
+	private QualificationType type;
+	private String grade;	
+	private Date start_date;
+	private Date award_date;
 	private ApplicationForm application;
 	private Integer id;
 	private CheckedStatus completed;
-	private Domicile institutionCountry;
+	private Domicile country;
 	private Document proofOfAward;
     private boolean sendToUCL;
-    private String otherQualificationInstitution;
-    private String qualificationInstitutionCode;
+    private String otherInstitution;
+    private String institutionCode;
     
     public QualificationBuilder id(Integer id) {
         this.id = id;
@@ -33,12 +34,12 @@ public class QualificationBuilder {
     }
     
     public QualificationBuilder otherInstitution(String name) {
-        this.otherQualificationInstitution = name;
+        this.otherInstitution = name;
         return this;
     }
     
     public QualificationBuilder institutionCode(String code) {
-        this.qualificationInstitutionCode = code;
+        this.institutionCode = code;
         return this;
     }
 
@@ -53,7 +54,7 @@ public class QualificationBuilder {
 	}
 	
 	public QualificationBuilder institutionCountry(Domicile institutionCountry) {
-		this.institutionCountry = institutionCountry;
+		this.country = institutionCountry;
 		return this;
 	}
 	
@@ -62,19 +63,23 @@ public class QualificationBuilder {
 		return this;
 	}
 	
-	public QualificationBuilder awardDate(Date q_award_date) {
-		this.q_award_date = q_award_date;
+	public QualificationBuilder awardDate(Date award_date) {
+		this.award_date = award_date;
 		return this;
 	}
 
+	public QualificationBuilder title(String title) {
+        this.title = title;
+        return this;
+    }
 
-	public QualificationBuilder subject(String q_name_of_programme) {
-		this.q_name_of_programme = q_name_of_programme;
+	public QualificationBuilder subject(String subject) {
+		this.subject = subject;
 		return this;
 	}
 
-	public QualificationBuilder institution(String q_institution) {
-		this.q_institution = q_institution;
+	public QualificationBuilder institution(String institution) {
+		this.institution = institution;
 		return this;
 	}
 
@@ -83,43 +88,44 @@ public class QualificationBuilder {
 		return this;
 	}
 	
-	public QualificationBuilder languageOfStudy(String q_language_of_study) {
-		this.q_language_of_study = q_language_of_study;
+	public QualificationBuilder languageOfStudy(String languageOfStudy) {
+		this.language_of_study = languageOfStudy;
 		return this;
 	}
 
-	public QualificationBuilder type(QualificationType q_type) {
-		this.q_type = q_type;
+	public QualificationBuilder type(QualificationType type) {
+		this.type = type;
 		return this;
 	}
 	
-	public QualificationBuilder grade(String q_grade) {
-		this.q_grade = q_grade;
+	public QualificationBuilder grade(String grade) {
+		this.grade = grade;
 		return this;
 	}
 
-	public QualificationBuilder startDate(Date q_start_date) {
-		this.q_start_date = q_start_date;
+	public QualificationBuilder startDate(Date start_date) {
+		this.start_date = start_date;
 		return this;
 	}
 
 	public Qualification build() {
 		Qualification qualification = new Qualification();
 		qualification.setApplication(application);
-		qualification.setQualificationAwardDate(q_award_date);
-		qualification.setQualificationGrade(q_grade);
-		qualification.setQualificationInstitution(q_institution);
-		qualification.setQualificationLanguage(q_language_of_study);
-		qualification.setQualificationSubject(q_name_of_programme);
-		qualification.setQualificationStartDate(q_start_date);
-		qualification.setQualificationType(q_type);
+		qualification.setQualificationAwardDate(award_date);
+		qualification.setQualificationGrade(grade);
+		qualification.setQualificationInstitution(institution);
+		qualification.setQualificationLanguage(language_of_study);
+		qualification.setQualificationSubject(subject);
+//		qualification.setQualificationTitle(title);
+		qualification.setQualificationStartDate(start_date);
+		qualification.setQualificationType(type);
 		qualification.setId(id);
 		qualification.setCompleted(completed);
-		qualification.setInstitutionCountry(institutionCountry);
+		qualification.setInstitutionCountry(country);
 		qualification.setProofOfAward(proofOfAward);
 		qualification.setSendToUCL(sendToUCL);
-		qualification.setOtherQualificationInstitution(otherQualificationInstitution);
-		qualification.setQualificationInstitutionCode(qualificationInstitutionCode);
+		qualification.setOtherQualificationInstitution(otherInstitution);
+		qualification.setQualificationInstitutionCode(institutionCode);
 		return qualification;
 	}
 }

@@ -19,13 +19,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml") 
-public class PorticoAttachmentsZipCreatorTest extends UclIntegrationBaseTest {
+public class PorticoAttachmentsZipCreatorTest {
 
+    private String uclBookingReferenceNumber = "P123456";
+    
     private PorticoAttachmentsZipCreator attachmentsZipCreator;
 
     private ApplicationForm applicationForm;
@@ -73,7 +76,7 @@ public class PorticoAttachmentsZipCreatorTest extends UclIntegrationBaseTest {
 
     @Before
     public void setup() {
-        applicationForm = getValidApplicationForm();
+        applicationForm = new ValidApplicationFormBuilder().build();
         pdfDocumentBuilder = new PdfDocumentBuilder();
         attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder);
     }

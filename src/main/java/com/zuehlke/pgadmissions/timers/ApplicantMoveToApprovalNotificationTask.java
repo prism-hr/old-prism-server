@@ -57,12 +57,12 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
     				applicationFormDAO.save(application);
     				transaction.commit();
     				log.info("Notification move to approval sent for " + application.getApplicationNumber());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error in move to approval notification for " + application.getApplicationNumber(), e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Applicant Move To Approval Notification Task", e);
 	    }
 		log.info("Applicant Move To Approval Notification Task Complete");

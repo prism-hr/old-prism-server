@@ -58,12 +58,12 @@ public class StateChangeNotificationTask extends TimerTask {
     				applicationFormDAO.save(application);
     				transaction.commit();
     				log.info("Notification move to " + newStatus + " notification sent for " + application.getId());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error in move to  "+  newStatus + " notification for " + application.getId(), e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing " + notificationType +  " Notification Task", e);
 	    }
 		log.info(notificationType + " Notification Task Complete");

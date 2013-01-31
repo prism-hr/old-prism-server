@@ -116,7 +116,7 @@ public class ProgrammeDetailsController {
                     convertedDate = format.format(instance.getApplicationStartDate());
                     break;
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // do nothing
             }
         }

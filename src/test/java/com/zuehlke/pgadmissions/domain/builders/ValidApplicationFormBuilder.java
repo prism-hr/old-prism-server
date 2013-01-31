@@ -1,14 +1,14 @@
-package com.zuehlke.pgadmissions.services.exporters;
+package com.zuehlke.pgadmissions.domain.builders;
 
 import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.SessionFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -30,29 +30,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
-import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
-import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
-import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
-import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PassportInformationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationTypeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -61,27 +38,43 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
-public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
+public class ValidApplicationFormBuilder {
 
-    protected String uclUserId = "ucl-user-AX78101";
+    protected RegisteredUser user;
+    protected Document cvDocument;
+    protected Document referenceDocument;
+    protected Document personalStatement;
+    protected Document proofOfAwardDocument;
+    protected Document languageQualificationDocument;
+    protected Document fundingDocument;
+    protected RegisteredUser approverUser;
+    protected Country country;
+    protected Address address;
+    protected ReferenceComment referenceComment1;
+    protected ReferenceComment referenceComment2;
+    protected Referee refereeOne;
+    protected Referee refereeTwo;
+    protected EmploymentPosition employmentPosition;
+    protected Language language;
+    protected Disability disability;
+    protected Ethnicity ethnicity;
+    protected Domicile domicile;
+    protected PersonalDetails personalDetails;
+    protected AdditionalInformation additionalInformation;
+    protected ProgramInstance instance;
+    protected Program program;
+    protected SourcesOfInterest interest;
+    protected ProgrammeDetails programDetails;
+    protected QualificationType qualificationType;
+    protected Qualification qualification;
+    protected Funding funding;
+    protected ApplicationForm applicationForm;
+    private ApplicationFormBuilder applicationFormBuilder;
     
-    protected String uclBookingReferenceNumber = "P123456";
-    
-    protected String sftpHost = "localhost";
+    public ValidApplicationFormBuilder() {
+    }
 
-    protected String sftpPort = "22";
-
-    protected String sftpUsername = "foo";
-
-    protected String sftpPassword = "bar";
-
-    protected String targetFolder = "/home/prism";
-    
-    protected int consecutiveSoapFaultsLimit = 5;
-
-    protected int queuePausingDelayInCaseOfNetworkProblemsDiscovered = 15;
-    
-    public Document getRandomDocument(DocumentType docType, String filename, RegisteredUser user) {
+    protected Document getRandomDocument(DocumentType docType, String filename, RegisteredUser user) {
         try {
             Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
             Document document = new DocumentBuilder()
@@ -98,25 +91,37 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
         }
         return null;
     }
+
+    public ApplicationForm build(SessionFactory sessionFactory) {
+        ApplicationForm applicationForm = build();
+        save(sessionFactory, user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser, language, country, domicile, address, program, employmentPosition, applicationForm);
+        program.setCode("TMRMBISING001");
+        return applicationForm;
+    }
     
-    public ApplicationForm getValidApplicationForm() {
-        
+    protected void save(SessionFactory sessionFactory, Object... domainObjects) {
+        for (Object domainObject : domainObjects) {
+            sessionFactory.getCurrentSession().save(domainObject);
+        }
+    }
+    
+    public ApplicationForm build() {
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon W1T 4HD\nUnited Kingdom";
-        RegisteredUser user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).firstName("Kevin").lastName("Denver").username("denk@zhaw.ch").enabled(true).build();
-        Document cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
-        Document referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
-        Document personalStatement = getRandomDocument(DocumentType.PERSONAL_STATEMENT, "My Personal Statement (v1.0).pdf", user);
-        Document proofOfAwardDocument = getRandomDocument(DocumentType.PROOF_OF_AWARD, "My Proof of Award.pdf", user);
-        Document languageQualificationDocument = getRandomDocument(DocumentType.LANGUAGE_QUALIFICATION, "Language Qualification - My Name.pdf", user);
-        Document fundingDocument = getRandomDocument(DocumentType.SUPPORTING_FUNDING, "Supporting Funding - My Name.pdf", user);
-        RegisteredUser approverUser = new RegisteredUserBuilder().id(Integer.MAX_VALUE-1).username("approver@zhaw.ch").enabled(true).build();
-        Country country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
-        Address address = new AddressBuilder().id(Integer.MAX_VALUE).country(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).build();
-        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").document(referenceDocument).build();
-        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().comment("Hello World").document(referenceDocument).build();
-        Referee refereeOne = new RefereeBuilder().user(approverUser).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).toReferee();
-        Referee refereeTwo = new RefereeBuilder().user(approverUser).email("ked2@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment2).toReferee();
-        EmploymentPosition employmentPosition = new EmploymentPositionBuilder()
+        user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).firstName("Kevin").lastName("Denver").username("denk@zhaw.ch").enabled(true).build();
+        cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
+        referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
+        personalStatement = getRandomDocument(DocumentType.PERSONAL_STATEMENT, "My Personal Statement (v1.0).pdf", user);
+        proofOfAwardDocument = getRandomDocument(DocumentType.PROOF_OF_AWARD, "My Proof of Award.pdf", user);
+        languageQualificationDocument = getRandomDocument(DocumentType.LANGUAGE_QUALIFICATION, "Language Qualification - My Name.pdf", user);
+        fundingDocument = getRandomDocument(DocumentType.SUPPORTING_FUNDING, "Supporting Funding - My Name.pdf", user);
+        approverUser = new RegisteredUserBuilder().id(Integer.MAX_VALUE-1).username("approver@zhaw.ch").enabled(true).build();
+        country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
+        address = new AddressBuilder().id(Integer.MAX_VALUE).country(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).build();
+        referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").document(referenceDocument).build();
+        referenceComment2 = new ReferenceCommentBuilder().comment("Hello World").document(referenceDocument).build();
+        refereeOne = new RefereeBuilder().user(approverUser).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).toReferee();
+        refereeTwo = new RefereeBuilder().user(approverUser).email("ked2@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment2).toReferee();
+        employmentPosition = new EmploymentPositionBuilder()
             .current(true)
             .address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3])
             .country(country)
@@ -126,11 +131,11 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .remit("Developer")
             .employerName("Zuhlke Ltd.")
             .toEmploymentPosition();
-        Language language = new LanguageBuilder().id(Integer.MAX_VALUE).code("GB").name("England").enabled(true).build();
-        Disability disability = new DisabilityBuilder().id(Integer.MAX_VALUE).code(0).name("No Disability").enabled(true).build();
-        Ethnicity ethnicity = new EthnicityBuilder().id(Integer.MAX_VALUE).code(10).name("White").enabled(true).build();
-        Domicile domicile = new DomicileBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
-        PersonalDetails personalDetails = new PersonalDetailsBuilder()
+        language = new LanguageBuilder().id(Integer.MAX_VALUE).code("GB").name("England").enabled(true).build();
+        disability = new DisabilityBuilder().id(Integer.MAX_VALUE).code(0).name("No Disability").enabled(true).build();
+        ethnicity = new EthnicityBuilder().id(Integer.MAX_VALUE).code(10).name("White").enabled(true).build();
+        domicile = new DomicileBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
+        personalDetails = new PersonalDetailsBuilder()
             .id(Integer.MAX_VALUE)
             .candiateNationalities(language)
             .country(country)
@@ -150,11 +155,11 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .residenceDomicile(domicile)
             .title(Title.MR)
             .build();
-        AdditionalInformation additionalInformation = new AdditionalInformationBuilder()
+        additionalInformation = new AdditionalInformationBuilder()
             .id(Integer.MAX_VALUE)
             .setConvictions(false)
             .build();
-        ProgramInstance instance = new ProgramInstanceBuilder()
+        instance = new ProgramInstanceBuilder()
             .id(Integer.MAX_VALUE)
             .academicYear("2013")
             .applicationDeadline(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 1))
@@ -163,7 +168,7 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .studyOption("F+++++", "Full-time")
             .identifier("0009")
             .build();
-        Program program = new ProgramBuilder()
+        program = new ProgramBuilder()
             .id(Integer.MAX_VALUE)
             .administrators(user)
             .approver(user)
@@ -175,8 +180,8 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .supervisors(user)
             .title("MRes Medical and Biomedical Imaging")
             .build();
-        SourcesOfInterest interest = new SourcesOfInterestBuilder().id(Integer.MAX_VALUE).code("BRIT_COUN").name("British Council").build();
-        ProgrammeDetails programDetails = new ProgrammeDetailsBuilder()
+        interest = new SourcesOfInterestBuilder().id(Integer.MAX_VALUE).code("BRIT_COUN").name("British Council").build();
+        programDetails = new ProgrammeDetailsBuilder()
             .id(Integer.MAX_VALUE)
             .programmeName("MRes Medical and Biomedical Imaging")
             .projectName("Project Title")
@@ -184,8 +189,8 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
             .studyOption("F+++++", "Full-time")
             .build();
-        QualificationType qualificationType = new QualificationTypeBuilder().id(Integer.MAX_VALUE).code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
-        Qualification qualification = new QualificationBuilder()
+        qualificationType = new QualificationTypeBuilder().id(Integer.MAX_VALUE).code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
+        qualification = new QualificationBuilder()
             .id(Integer.MAX_VALUE)
             .awardDate(new Date())
             .grade("6")
@@ -200,8 +205,8 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .proofOfAward(proofOfAwardDocument)
             .sendToUCL(true)
             .build();
-        Funding funding = new FundingBuilder().id(Integer.MAX_VALUE).awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument).type(FundingType.SCHOLARSHIP).value("5").build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder()
+        funding = new FundingBuilder().id(Integer.MAX_VALUE).awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument).type(FundingType.SCHOLARSHIP).value("5").build();
+        applicationFormBuilder = new ApplicationFormBuilder()
             .id(Integer.MAX_VALUE)
             .applicant(user)
             .acceptedTerms(CheckedStatus.YES)
@@ -228,13 +233,12 @@ public class UclIntegrationBaseTest extends AutomaticRollbackTestCase {
             .cv(cvDocument)
             .personalStatement(personalStatement)
             .referees(refereeOne, refereeTwo)
-            .ipAddress("127.0.0.1")
-            .build();
-        
-        save(user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser, language, country, domicile, address, program, employmentPosition, applicationForm);
-        
-        program.setCode("TMRMBISING01");
-        
+            .ipAddress("127.0.0.1");
+        applicationForm = getApplicationFormBuilder().build();
         return applicationForm;
+    }
+
+    public ApplicationFormBuilder getApplicationFormBuilder() {
+        return applicationFormBuilder;
     }
 }

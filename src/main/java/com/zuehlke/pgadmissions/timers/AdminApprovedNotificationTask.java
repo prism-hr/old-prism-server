@@ -56,12 +56,12 @@ public class AdminApprovedNotificationTask extends TimerTask {
     				applicationDAO.save(application);
     				transaction.commit();
     				log.info("Notification approved sent for application: " + application.getApplicationNumber());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error in sending approved notification for application: " + application.getApplicationNumber(), e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Admin Approved Notification Task", e);
 	    }
 		log.info("Admin Approved Notification Task Complete");

@@ -345,7 +345,7 @@ public class ApprovalServiceTest {
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
         ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
                 .enabled(true).studyOption("1", "full").build();
-        Program program = new ProgramBuilder().id(1).instances(instance).build();
+        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
                 .programmeDetails(programmeDetails).build();
 
@@ -378,7 +378,7 @@ public class ApprovalServiceTest {
                 .enabled(false).studyOption("1", "full").build();
         ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3))
                 .applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption("1", "full").build();
-        Program program = new ProgramBuilder().id(1).instances(instanceDisabled, instanceEnabled).build();
+        Program program = new ProgramBuilder().id(1).enabled(true).instances(instanceDisabled, instanceEnabled).build();
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
                 .programmeDetails(programmeDetails).build();
 
@@ -449,7 +449,7 @@ public class ApprovalServiceTest {
 
         assertFalse(approvalService.validateSendToPorticoData(application, null));
     }
-    
+
     @Test
     public void shouldValidateIncorrectApplicationWithOnlyOneReference() {
         Document proofOfAward = new DocumentBuilder().id(1).build();
@@ -463,7 +463,7 @@ public class ApprovalServiceTest {
 
         assertFalse(approvalService.validateSendToPorticoData(application, null));
     }
-    
+
     @Test
     public void shouldValidateIncorrectApplicationWithThreeQualifications() {
         Document proofOfAward1 = new DocumentBuilder().id(1).build();
@@ -472,13 +472,13 @@ public class ApprovalServiceTest {
         Qualification qualification1 = new QualificationBuilder().id(1).proofOfAward(proofOfAward1).sendToUCL(true).build();
         Qualification qualification2 = new QualificationBuilder().id(2).proofOfAward(proofOfAward2).sendToUCL(true).build();
         Qualification qualification3 = new QualificationBuilder().id(3).proofOfAward(proofOfAward3).sendToUCL(true).build();
-        
+
         ReferenceComment reference1 = new ReferenceCommentBuilder().id(1).build();
         ReferenceComment reference2 = new ReferenceCommentBuilder().id(2).build();
         Referee referee1 = new RefereeBuilder().id(1).reference(reference1).sendToUCL(true).toReferee();
         Referee referee2 = new RefereeBuilder().id(2).reference(reference2).sendToUCL(true).toReferee();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").qualifications(qualification1, qualification2, qualification3)
-                .referees(referee1, referee2).build();
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
+                .qualifications(qualification1, qualification2, qualification3).referees(referee1, referee2).build();
 
         assertFalse(approvalService.validateSendToPorticoData(application, null));
     }

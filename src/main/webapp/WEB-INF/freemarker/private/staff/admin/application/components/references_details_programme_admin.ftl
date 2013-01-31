@@ -63,7 +63,7 @@
     </table>
 
     <div class="section-info-bar">
-        <b>You must select two completed references to submit for offer processing.</b>
+        You may select two completed references to submit for offer processing. You may also enter a reference on behalf of a referee by clicking the provide reference icon.
     </div>
     
     <#list applicationForm.referees as referee>
@@ -239,6 +239,13 @@
                     /> No</label> 
                     <@spring.bind "refereesAdminEditDTO.suitableForProgramme" /> 
                     <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                </div>
+            </div>
+            
+            <!-- Add reference save button -->
+            <div class="row">
+                <div class="field">
+                    <button id="saveReferenceButton" type="button" class="blue">Save</button>
                 </div>
             </div>
             

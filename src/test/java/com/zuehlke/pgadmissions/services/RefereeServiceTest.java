@@ -458,45 +458,70 @@ public class RefereeServiceTest {
 
     }
 
-    @SuppressWarnings("unchecked")
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldSetDeclineAndSendDeclineNotificationToAdmin() throws UnsupportedEncodingException {
-
         RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").build();
         RegisteredUser addmin = new RegisteredUserBuilder().id(43).firstName("bob").lastName("blogs").email("blogs@test.com").build();
         Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+
         ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant)
                 .program(new ProgramBuilder().title("klala").administrators(addmin).build()).build();
+        
         referee.setApplication(form);
 
         refereeDAOMock.save(referee);
 
         ReferenceEvent event = new ReferenceEventBuilder().id(4).build();
+        
         EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
+        
         applicationFormDAOMock.save(form);
+        
         MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 
-        InternetAddress toAddress = new InternetAddress("blogs@test.com", "bob blogs");
-
-        EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.provided.admin"),//
-                EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
-
-        EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), //
-                EasyMock.eq("subject"), //
-                EasyMock.eq("private/staff/admin/mail/reference_submit_confirmation.ftl"),//
-                EasyMock.isA(Map.class), //
+        // Mails to Applicant        
+        InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
+        EasyMock.expect(msgSourceMock.getMessage(
+                EasyMock.eq("reference.provided.applicant"),
+                EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy"}), 
+                EasyMock.eq((Locale) null)))
+                .andReturn("subject");
+        EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(
+                EasyMock.eq(toAddress),
+                EasyMock.eq("subject"), 
+                EasyMock.eq("private/pgStudents/mail/reference_respond_confirmation.ftl"),
+                EasyMock.isA(Map.class), 
                 (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
         javaMailSenderMock.send(preparatorMock);
 
-        EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock);
+        // Mails to Admin
+        InternetAddress toAdminAddress = new InternetAddress("blogs@test.com", "bob blogs");
+        EasyMock.expect(msgSourceMock.getMessage(
+                EasyMock.eq("reference.provided.admin"),
+                EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy"}), 
+                EasyMock.eq((Locale) null)))
+                .andReturn("subject");
+        EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(
+                EasyMock.eq(toAdminAddress),
+                EasyMock.eq("subject"), 
+                EasyMock.eq("private/staff/admin/mail/reference_submit_confirmation.ftl"),
+                EasyMock.isA(Map.class), 
+                (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+        javaMailSenderMock.send(preparatorMock);
+        
+        EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock,
+                eventFactoryMock, applicationFormDAOMock);
 
         refereeService.declineToActAsRefereeAndSendNotification(referee);
 
         assertTrue(referee.isDeclined());
+        
         assertEquals(1, form.getEvents().size());
+        
         assertEquals(event, form.getEvents().get(0));
+        
         EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock, applicationFormDAOMock);
-
     }
 
     @Test

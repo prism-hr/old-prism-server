@@ -49,7 +49,7 @@ public class RefereeService {
     private final EncryptionUtils encryptionUtils;
     private final EncryptionHelper encryptionHelper;
 
-    RefereeService() {
+    public RefereeService() {
         this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
@@ -113,7 +113,7 @@ public class RefereeService {
 
                 mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
                         "private/staff/admin/mail/reference_submit_confirmation.ftl", model, null));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 log.warn("error while sending email", e);
             }
         }
@@ -137,7 +137,7 @@ public class RefereeService {
 
             mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
                     "private/pgStudents/mail/reference_respond_confirmation.ftl", model, null));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.warn("error while sending email", e);
         }
     }
@@ -303,7 +303,7 @@ public class RefereeService {
             String subject = resolveMessage("reference.request", form);
             mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/referees/mail/referee_notification_email.ftl",
                     model, null));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.warn("error while sending email", e);
         }
     }

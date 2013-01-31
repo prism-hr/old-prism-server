@@ -83,8 +83,10 @@ public class ApplicationUpdatedNotificationTaskTest {
 		
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
+		
 		mailServiceMock.sendApplicationUpdatedMailToAdmins(appTwo);		
 		transactionThree.commit();
+		applicationFormDAOMock.save(appTwo);
 		
 		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationFormDAOMock, mailServiceMock);
 		

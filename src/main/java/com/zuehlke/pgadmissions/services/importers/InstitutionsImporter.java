@@ -62,7 +62,7 @@ public class InstitutionsImporter implements Importer {
                 qualificationInstitutionReferenceDAO.save(institution);
             }
             log.info("Import done. Wrote " + changes.size() + " change(s) to the database.");
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new XMLDataImportException("Error during the import of file: " + xmlFileLocation, e);
 		}
 	}

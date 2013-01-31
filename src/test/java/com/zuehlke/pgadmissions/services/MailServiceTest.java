@@ -85,10 +85,12 @@ public class MailServiceTest {
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock3 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator preparatorMock4 = EasyMock.createMock(MimeMessagePreparator.class);
 	
-		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
-		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "henry harck");
-		InternetAddress toAddress3 = new InternetAddress("jj@test.com", "julia jumper");
+		InternetAddress toAddress1 = new InternetAddress("kk@test.com", "kate kook");
+		InternetAddress toAddress2 = new InternetAddress("bb@test.com", "benny brack");
+		InternetAddress toAddress3 = new InternetAddress("hh@test.com", "henry harck");
+		InternetAddress toAddress4 = new InternetAddress("jj@test.com", "julia jumper");
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.update"), 
 				EasyMock.aryEq(new Object[] { "xyz", "program title" , "a", "b"}), EasyMock.eq((Locale)null))).andReturn("update subject").anyTimes();
@@ -96,16 +98,23 @@ public class MailServiceTest {
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
 						EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
 						EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
+		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress3), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
 						EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock3);
 		
+		EasyMock.expect(
+		        mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress4), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
+		                EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock4);
+		
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock3);
+		javaMailSenderMock.send(preparatorMock4);
 		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 		mailService.sendApplicationUpdatedMailToAdmins(form);

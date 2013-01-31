@@ -31,7 +31,6 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 			NotificationType notificationType, ApplicationFormStatus status, String fisrtSubjectCode, String firstEmailTemplate,
 			String subjectCode, String emailTemplate) {
 				this.sessionFactory = sessionFactory;
-
 				this.applicationFormDAO = applicationFormDAO;
 				this.adminMailSender = adminMailSender;
 				this.notificationType = notificationType;
@@ -68,12 +67,12 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
     				applicationFormDAO.save(application);
     				transaction.commit();
     				log.info("Notification " + status + " reminders sent to " + application.getId());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				log.warn("Error in sending " + status + " reminders for " + application.getId(), e);
     				transaction.rollback();
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing " + notificationType +  " Reminder Task", e);
 	    }
 		log.info(notificationType +  " Reminder Task Complete");

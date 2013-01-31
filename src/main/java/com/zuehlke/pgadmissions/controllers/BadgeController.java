@@ -111,11 +111,10 @@ public class BadgeController {
         for (Date date : allClosingDates) {
             try {
                 convertedDates.add(format.format(date));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // do nothing
             }
         }
-        
         Gson gson = new Gson();
         return gson.toJson(convertedDates);
     }

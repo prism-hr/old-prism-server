@@ -39,7 +39,7 @@ public class AdminRejectNotificationTask extends TimerTask {
     		for (ApplicationForm application : applications) {
     			sendRejectNotificationsForApplication(sessionFactory.getCurrentSession(), application);
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Admin Reject Notification Task", e);
 	    }
 		log.info("Admin Reject Notification Task Complete");
@@ -56,7 +56,7 @@ public class AdminRejectNotificationTask extends TimerTask {
 			applicationDAO.save(application);
 			transaction.commit();
 			log.info("Reject notification sent for application: " + application.getApplicationNumber());
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			transaction.rollback();
 			log.info("Error in sending reject notification for application: " + application.getApplicationNumber(), e);
 		}

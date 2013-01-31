@@ -36,10 +36,12 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicati
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
@@ -55,8 +57,26 @@ import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskE
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
-public class UclExportServiceTest extends UclIntegrationBaseTest {
+public class UclExportServiceTest extends AutomaticRollbackTestCase {
+    
+    private String uclUserId = "ucl-user-AX78101";
+    
+    private String uclBookingReferenceNumber = "P123456";
+    
+    private String sftpHost = "localhost";
 
+    private String sftpPort = "22";
+
+    private String sftpUsername = "foo";
+
+    private String sftpPassword = "bar";
+
+    private String targetFolder = "/home/prism";
+    
+    private int consecutiveSoapFaultsLimit = 5;
+
+    private int queuePausingDelayInCaseOfNetworkProblemsDiscovered = 15;
+    
 	private boolean hasBeenCalled = false;
 	
     private PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutorMock;
@@ -149,7 +169,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
                         EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(
                 new WebServiceIOException("Error"));
         
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(WebServiceIOException.class));
 
         //webserviceCallingQueueExecutorMock.pause();
         //webserviceCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
@@ -237,7 +257,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
                         EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
                         EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(e);
 
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SoapFaultClientException.class));
         
         EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
         
@@ -284,8 +304,8 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
                         EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
                         EasyMock.anyObject(WebServiceMessageCallback.class))).andThrow(e);
 
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SoapFaultClientException.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SoapFaultClientException.class));
         
         EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
         
@@ -450,7 +470,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
                 consecutiveSoapFaultsLimit, queuePausingDelayInCaseOfNetworkProblemsDiscovered,
                 sftpAttachmentsSendingService, schedulerMock, dataExportMailSenderMock);
 
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(LocallyDefinedSshConfigurationIsWrong.class));
         
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, dataExportMailSenderMock);
 
@@ -535,7 +555,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
                 consecutiveSoapFaultsLimit, queuePausingDelayInCaseOfNetworkProblemsDiscovered,
                 sftpAttachmentsSendingService, schedulerMock, dataExportMailSenderMock);
 
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(CouldNotOpenSshConnectionToRemoteHost.class));
         
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, dataExportMailSenderMock);
 
@@ -631,7 +651,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
                 consecutiveSoapFaultsLimit, queuePausingDelayInCaseOfNetworkProblemsDiscovered,
                 sftpAttachmentsSendingService, schedulerMock, dataExportMailSenderMock);
 
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SftpTransmissionFailedOrProtocolError.class));
         
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
 
@@ -730,7 +750,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
                 consecutiveSoapFaultsLimit, queuePausingDelayInCaseOfNetworkProblemsDiscovered,
                 sftpAttachmentsSendingService, schedulerMock, dataExportMailSenderMock);
 
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SftpTargetDirectoryNotAccessible.class));
         
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
 
@@ -831,7 +851,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
                 consecutiveSoapFaultsLimit, queuePausingDelayInCaseOfNetworkProblemsDiscovered,
                 sftpAttachmentsSendingService, schedulerMock, dataExportMailSenderMock);
 
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SftpTransmissionFailedOrProtocolError.class));
         
         EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
 
@@ -912,7 +932,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
             }
         });
         
-        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class));
+        dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(CouldNotCreateAttachmentsPack.class));
 
         EasyMock.replay(sftpAttachmentsSendingServiceMock, sftpCallingQueueExecutorMock, dataExportMailSenderMock);
 
@@ -994,7 +1014,7 @@ public class UclExportServiceTest extends UclIntegrationBaseTest {
 
     @Before
     public void setup() {
-        applicationForm = getValidApplicationForm();
+        applicationForm = new ValidApplicationFormBuilder().build(sessionFactory);
 
         jschfactoryMock = EasyMock.createMock(JSchFactory.class);
 

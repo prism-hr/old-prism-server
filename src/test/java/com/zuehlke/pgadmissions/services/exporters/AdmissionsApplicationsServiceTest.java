@@ -37,10 +37,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWebServiceContext.xml")
-public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
+public class AdmissionsApplicationsServiceTest {
 
     private final Logger logger = Logger.getLogger(AdmissionsApplicationsServiceTest.class);
     
@@ -175,6 +176,6 @@ public class AdmissionsApplicationsServiceTest extends UclIntegrationBaseTest {
     @Before
     public void setup() {
         programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
-        applicationForm = getValidApplicationForm();
+        applicationForm = new ValidApplicationFormBuilder().build();
     }
 }

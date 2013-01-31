@@ -164,10 +164,12 @@ public class SftpAttachmentsSendingService {
 
         } finally {
             IOUtils.closeQuietly(sftpOs);
-            if (sftpChannel != null && sftpChannel.isConnected())
+            if (sftpChannel != null && sftpChannel.isConnected()) {
                 sftpChannel.disconnect();
-            if (session != null && session.isConnected())
+            }
+            if (session != null && session.isConnected()) {
                 session.disconnect();
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.security;
 
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.log4j.Logger;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +20,8 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class PgAdmissionAuthenticationProvider implements AuthenticationProvider {
 
+    private Logger log = Logger.getLogger(PgAdmissionAuthenticationProvider.class);
+    
 	private final UserDetailsService userDetailsService;
 	
 	private final EncryptionUtils encryptionUtils;
@@ -40,10 +43,9 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 			user = findAndValidateUser(preProcessToken);
 			authentication = new UsernamePasswordAuthenticationToken(preProcessToken.getPrincipal(),
 					preProcessToken.getCredentials(), user.getAuthorities());
-			
 			authentication.setDetails(user);
 		} catch (NoSuchAlgorithmException e) {		
-			e.printStackTrace();
+		    log.error(e.getMessage(), e);
 		}
 		return authentication;
 	}

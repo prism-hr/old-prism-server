@@ -45,16 +45,12 @@ public class PrintController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void printPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletRequestBindingException {
-
 		String applicationFormNumber = ServletRequestUtils.getStringParameter(request, "applicationFormId");
-
 		ApplicationForm application = applicationSevice.getApplicationByApplicationNumber(applicationFormNumber);
 		if (application == null || !userService.getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
 		}
-
 		sendPDF(response, applicationFormNumber, builder.buildPdfWithAttachments(application));
-
 	}
 
 
@@ -72,7 +68,6 @@ public class PrintController {
 
 		}
 		sendPDF(response,getTimestamp(), builder.buildPdfWithAttachments(applicationList.toArray(new ApplicationForm[] {})));
-
 	}
 
 	private void sendPDF(HttpServletResponse response, String pdfFileNamePostFix, byte[] pdf) throws IOException {
@@ -90,13 +85,14 @@ public class PrintController {
 		} finally {
 			try {
 				out.flush();
-			} catch (Throwable e) {
-
-			}
-			try {
-				out.close();
 			} catch (Exception e) {
-
+			    // do nothing
+			}
+			
+			try {
+			    out.close();
+			} catch (Exception e) {
+			    // do nothing
 			}
 		}
 	}

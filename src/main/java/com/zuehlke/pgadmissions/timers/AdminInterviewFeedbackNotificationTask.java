@@ -46,12 +46,12 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
     				commentService.save(comment);
     				transaction.commit();
     				log.info("Notification sent to admins for interview comment " + comment.getId());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Interview Comment Notification Task", e);
 	    }
 		log.info("Interview Comment Notification Task Complete");

@@ -6,7 +6,6 @@ import java.util.Date;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -435,9 +434,7 @@ public class UclExportService {
     
     private void logAndSendEmailToSuperadministrator(final String message, final Level logLevel, final Exception exception) {
         log.log(logLevel, message, exception);
-        StringBuilder builder = new StringBuilder();
-        builder.append(message).append("\n").append(exception.getMessage()).append("\n").append(ExceptionUtils.getFullStackTrace(exception.getCause()));
-        dataExportMailSender.sendErrorMessage(builder.toString());
+        dataExportMailSender.sendErrorMessage(message, exception);
     }
 
     protected void pauseWsQueueForMinutes(int minutes) {

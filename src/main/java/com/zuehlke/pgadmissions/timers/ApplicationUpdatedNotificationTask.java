@@ -49,12 +49,12 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
     			    applicationDAO.save(applicationForm);			
     				transaction.commit();
     				log.info("Notification update sent for " + applicationForm.getId());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error while sending email", e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Application Update Notification Task", e);
 	    }
 		log.info("Application Update Notification Task Complete");

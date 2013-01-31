@@ -42,12 +42,12 @@ public class AdminReviewerAssignedNotificationTask extends TimerTask {
     				reviewerDAO.save(reviewer);
     				transaction.commit();
     				log.info("Notification Reviewer assigned sent to admins for reviewer " + reviewer.getUser().getEmail());
-    			} catch (Throwable e) {
+    			} catch (Exception e) {
     				transaction.rollback();
     				log.warn("Error while sending notification to admins for reviewer " + reviewer.getUser().getEmail(), e);
     			}
     		}
-	    } catch (Throwable e) {
+	    } catch (Exception e) {
 	        log.warn("Error in executing Assigned Reviewer Notification Task", e);
 	    }
 		log.info("Assigned Reviewer Notification Task Complete");

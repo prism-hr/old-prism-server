@@ -50,7 +50,7 @@ public class ValidationTransitionController extends StateTransitionController {
 	
 	private final MessageSource messageSource;
 	
-	ValidationTransitionController() {
+	public ValidationTransitionController() {
 		 this(null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
@@ -170,7 +170,7 @@ public class ValidationTransitionController extends StateTransitionController {
         for (Date date : allClosingDates) {
             try {
                 convertedDates.add(format.format(date));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // do nothing
             }
         }

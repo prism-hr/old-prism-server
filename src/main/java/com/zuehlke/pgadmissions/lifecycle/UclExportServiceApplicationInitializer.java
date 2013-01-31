@@ -51,7 +51,7 @@ public class UclExportServiceApplicationInitializer {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 try {
                     exportService.systemStartupSendingQueuesRecovery();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     log.error("There was an error re-initialising the queues for UCL-Export processing.", e);
                     status.setRollbackOnly();
                 }
@@ -72,7 +72,7 @@ public class UclExportServiceApplicationInitializer {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 try {
                     xMLDataImportTask.imoprtData();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     log.error("There was an error downloading the latest reference data.", e);
                     status.setRollbackOnly();
                 }

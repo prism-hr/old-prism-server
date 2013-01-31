@@ -196,7 +196,7 @@ public class ValidApplicationFormBuilder {
             .grade("6")
             .institutionCode("UK0000")
             .institution("University of London")
-            .country(domicile)
+            .institutionCountry(domicile)
             .languageOfStudy("English")
             .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1))
             .subject("Engineering")

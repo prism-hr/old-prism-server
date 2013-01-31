@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
@@ -242,15 +242,16 @@ public class ApprovalController {
     }
     
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
-    public String submitRefereesData(@Valid @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result,
-            @RequestParam(required = false) String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm, Model model) {
+    public String submitRefereesData(@RequestParam String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm) {
 
-        // save "send to UCL" data first
-        if (StringUtils.isNotBlank(sendToPorticoData)) {
-            refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData);
-        }
-
-        // then handle the new comment
+        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData);
+        
+        return REFERENCE_SECTION;
+    }
+    
+    @RequestMapping(value = "/postReference", method = RequestMethod.POST)
+    public String submitReference(@Valid @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result,
+            @ModelAttribute ApplicationForm applicationForm, Model model) {
         model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
 
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());

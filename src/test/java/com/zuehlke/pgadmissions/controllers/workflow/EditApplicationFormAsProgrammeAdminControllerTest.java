@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,14 +21,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -99,7 +97,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         EasyMock.expectLastCall();
 
         EasyMock.replay(userServiceMock, encryptionHelperMock, refereeServiceMock);
-        String viewName = controller.submitRefereesData(refereesAdminEditDTO, result, null, applicationForm, model);
+        String viewName = controller.submitReference(refereesAdminEditDTO, result, applicationForm, model);
 
         assertEquals("/private/staff/admin/application/components/references_details_programme_admin", viewName);
         assertEquals("refereeId", model.asMap().get("editedRefereeId"));
@@ -115,30 +113,19 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)
                 .build();
 
-        ReferenceComment reference = new ReferenceCommentBuilder().build();
-        Referee referee = new RefereeBuilder().application(applicationForm).reference(reference).toReferee();
-
-        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
-        refereesAdminEditDTO.setEditedRefereeId("refereeId");
-
-        BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
-        Model model = new ExtendedModelMap();
-
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
         EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-1")).andReturn(1);
         EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-2")).andReturn(2);
-        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
 
         List<Integer> sendToPortico = Arrays.asList(new Integer[] { 1, 2 });
         refereeServiceMock.selectForSendingToPortico("app1", sendToPortico);
         EasyMock.expectLastCall();
 
-        EasyMock.replay(userServiceMock, encryptionHelperMock, refereeServiceMock);
-        String viewName = controller.submitRefereesData(refereesAdminEditDTO, result, "{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm, model);
-        assertEquals("/private/staff/admin/application/components/references_details_programme_admin", viewName);
+        EasyMock.replay(userServiceMock, encryptionHelperMock);
+        String viewName = controller.submitRefereesData("{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm);
+        assertEquals("OK", viewName);
 
-        EasyMock.verify(userServiceMock, encryptionHelperMock, refereeServiceMock);
+        EasyMock.verify(userServiceMock, encryptionHelperMock);
     }
 
     @Test
@@ -209,7 +196,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
         EasyMock.replay(userServiceMock);
 
-        controller.submitRefereesData(null, null, "{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm, null);
+        controller.submitRefereesData("{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm);
     }
 
     @Test

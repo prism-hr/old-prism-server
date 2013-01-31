@@ -156,17 +156,23 @@ public class ApplicationFormDAO {
 		return result;
 	}
 
-	public int getApplicationsInProgramThisYear(Program program, String year) {
+	public long getApplicationsInProgramThisYear(Program program, String year) {
 		Date startYear = null;
+		
 		try {
 			startYear = new SimpleDateFormat("yyyy").parse(year);
 		} catch (ParseException e) {
 			throw new IllegalArgumentException(e);
 		}
+		
 		Date endYear = DateUtils.addYears(startYear, 1);
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("program", program))
-				.add(Restrictions.between("applicationTimestamp", startYear, endYear)).list().size();
 
+		return (Long) sessionFactory.getCurrentSession()
+                .createCriteria(ApplicationForm.class)
+                .setProjection(Projections.rowCount())
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.between("applicationTimestamp", startYear, endYear))
+                .uniqueResult();
 	}
 
 	public ApplicationForm getApplicationByApplicationNumber(String applicationNumber) {

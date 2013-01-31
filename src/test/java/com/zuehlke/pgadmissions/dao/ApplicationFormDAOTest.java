@@ -1012,7 +1012,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		save(program);
 		flushAndClearSession();
 
-		int number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);
+		long number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);
 		assertEquals(0, number);
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
 				.build();

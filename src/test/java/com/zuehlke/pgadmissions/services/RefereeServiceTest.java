@@ -587,16 +587,18 @@ public class RefereeServiceTest {
         Referee referee3 = new RefereeBuilder().id(3).sendToUCL(false).toReferee();
         Referee referee4 = new RefereeBuilder().id(4).sendToUCL(false).toReferee();
 
-        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("abc")).andReturn(applicationFormMock);
         EasyMock.expect(applicationFormMock.getReferees()).andReturn(Arrays.asList(referee1, referee2, referee3, referee4));
         EasyMock.expect(refereeDAOMock.getRefereeById(3)).andReturn(referee3);
         EasyMock.expect(refereeDAOMock.getRefereeById(4)).andReturn(referee4);
+        
+        EasyMock.expect(encryptionHelper.decryptToInteger("ref-3")).andReturn(3);
+        EasyMock.expect(encryptionHelper.decryptToInteger("ref-4")).andReturn(4);
 
-        EasyMock.replay(applicationFormMock, refereeDAOMock, applicationFormDAOMock);
+        EasyMock.replay(applicationFormMock, refereeDAOMock, applicationFormDAOMock, encryptionHelper);
 
-        refereeService.selectForSendingToPortico("abc", Arrays.asList(3, 4));
+        refereeService.selectForSendingToPortico(applicationFormMock, "{\"referees\":[\"ref-3\",\"ref-4\"]}");
 
-        EasyMock.verify(applicationFormMock, refereeDAOMock, applicationFormDAOMock);
+        EasyMock.verify(applicationFormMock, refereeDAOMock, applicationFormDAOMock, encryptionHelper);
 
         assertTrue("SendToUcl flag has not been updated to true", referee3.getSendToUCL());
         assertTrue("SendToUcl flag has not been updated to true", referee4.getSendToUCL());

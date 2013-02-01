@@ -142,9 +142,6 @@ function postRefereesData() {
     var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
     var $ref_doc_hidden     = $ref_doc_container.find('span input');
 	
-    var sendToPorticoData = {
-            referees : new Array()
-    };
     var sendToPorticoData = collectReferencesSendToPortico();
     
     $('#referencesSection > div').append('<div class="ajax" />');

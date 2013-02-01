@@ -48,7 +48,7 @@ public class SendToPorticoDataDTOEditor extends PropertyEditorSupport {
                 SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
 
                 List<Integer> references = new ArrayList<Integer>();
-                JsonElement referencesArray = json.getAsJsonObject().get("references");
+                JsonElement referencesArray = json.getAsJsonObject().get("referees");
                 if (referencesArray != null) {
                     for (JsonElement referenceString : referencesArray.getAsJsonArray()) {
                         Integer referenceId = encryptionHelper.decryptToInteger(referenceString.getAsString());

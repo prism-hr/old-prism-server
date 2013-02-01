@@ -122,7 +122,7 @@ public class ApplicationsServiceTest {
 			}
 		};
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
-		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23);
+		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
 		applicationFormDAOMock.save(newApplicationForm);
 		EasyMock.replay(applicationFormDAOMock);
 		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program, null, null, null);
@@ -147,7 +147,7 @@ public class ApplicationsServiceTest {
 			}
 		};
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
-		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23);
+		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
 		applicationFormDAOMock.save(newApplicationForm);
 		EasyMock.replay(applicationFormDAOMock);
 		Date batchDeadline = new SimpleDateFormat("dd/MM/yyyy").parse("12/12/2012");

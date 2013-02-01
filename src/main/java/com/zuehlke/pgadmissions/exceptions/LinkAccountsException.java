@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.exceptions;
 
 public class LinkAccountsException extends Exception {
 

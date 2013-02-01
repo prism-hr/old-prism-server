@@ -60,7 +60,7 @@ public class ApplicationsService {
 		
 		applicationForm.setProjectTitle(projectTitle);
 		applicationForm.setResearchHomePage(researchHomePage);
-		int runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
+		Long runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
 		applicationForm.setApplicationNumber(program.getCode() + "-" + thisYear + "-" + String.format("%06d", ++runningCount));
 		applicationFormDAO.save(applicationForm);
 		return applicationForm;

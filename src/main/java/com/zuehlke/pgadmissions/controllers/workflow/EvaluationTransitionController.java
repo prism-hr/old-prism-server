@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -101,7 +102,7 @@ public class EvaluationTransitionController extends StateTransitionController {
 		
 		commentService.save(newComment);
 		
-        if (delegate != null && delegate) {
+        if (BooleanUtils.isTrue(delegate)) {
             return "redirect:/applications?messageCode=delegate.success&application="+ applicationForm.getApplicationNumber();
         }
         

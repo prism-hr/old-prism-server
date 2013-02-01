@@ -2,7 +2,7 @@ $(document).ready(function() {
     
     addToolTips();
     
-    showFirstQualificationEntry();
+    showFirstQualificationEntryOrExplanationArea();
     
     // --------------------------------------------------------------------------------
     // Close button.
@@ -25,6 +25,7 @@ $(document).ready(function() {
     // SHOW SELECTED QUALIFICATION
     // --------------------------------------------------------------------------------
     $('a[name="showQualificationLink"]').on("click", function() {
+    	$('#explanationArea').hide();
         $('a[name="showQualificationLink"]').each(function() {
             $("#" + $(this).attr("toggles")).hide();
         });
@@ -51,7 +52,20 @@ $(document).ready(function() {
     
 });
 
-function showFirstQualificationEntry() {
+function showFirstQualificationEntryOrExplanationArea() {
+	var anyQualificationChecked = false;
+	$('input[name="qualificationSendToUcl"]:checkbox').each(function() {
+        var checked = $(this).attr("checked");
+        if (checked) {
+        	anyQualificationChecked = true;
+        }
+    });
+	
+	if(!anyQualificationChecked) {
+		$('#explanationArea').show();
+		return false;
+	}
+	
     $('a[name="showQualificationLink"]').each(function() {
         $("#" + $(this).attr("toggles")).show();
         return false;
@@ -61,7 +75,7 @@ function showFirstQualificationEntry() {
 function postQualificationsData() {
     $('#qualificationsSection > div').append('<div class="ajax" />');
     var sendToPorticoData = collectQualificationsSendToPortico();
-    
+    var explanation = $("#explanationText").val();
     $.ajax({
         type : 'POST',
         statusCode : {
@@ -71,14 +85,15 @@ function postQualificationsData() {
             400 : function() { window.location.href = "/pgadmissions/400"; },
             403 : function() { window.location.href = "/pgadmissions/404"; }
         },
-        url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postQualificationsData",
+        url : "/pgadmissions/approval/postQualificationsData",
         data :  {
             applicationId : $('#applicationId').val(),
             sendToPorticoData: JSON.stringify(sendToPorticoData),
+            explanation: explanation,
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {
-        	$('#qualifications-H2').trigger('click');
+        	$("#qualificationsSection").html(data);
         },
         complete : function() {
             $('#qualificationsSection div.ajax').remove();

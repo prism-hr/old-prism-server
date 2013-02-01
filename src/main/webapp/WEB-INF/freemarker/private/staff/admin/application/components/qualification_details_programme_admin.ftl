@@ -72,7 +72,7 @@
         </table>
 
         <div class="section-info-bar">
-            Select a maximum of two qualification transcripts to submit for offer processing.
+            You may select a maximum of two qualification transcripts to submit for offer processing.
         </div>
 
         <#if hasQualifications> 

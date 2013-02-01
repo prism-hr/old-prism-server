@@ -104,7 +104,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     }
 
     @Test
-    public void shouldSaveSendToPorticoReferences() {
+    public void shouldSaveSendToPorticoReferencesWithoutAddingNewReference() {
         Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
@@ -116,11 +116,97 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         refereeServiceMock.selectForSendingToPortico(applicationForm, "{\"referees\":[\"ref-1\",\"ref-2\"]}");
         EasyMock.expectLastCall();
 
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
+        Model model = new ExtendedModelMap();
+
         EasyMock.replay(userServiceMock, encryptionHelperMock);
-        String viewName = controller.submitRefereesData("{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm);
-        assertEquals("OK", viewName);
+        String viewName = controller.submitRefereesData("{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm, refereesAdminEditDTO, result, model);
+        assertEquals("/private/staff/admin/application/components/references_details_programme_admin", viewName);
 
         EasyMock.verify(userServiceMock, encryptionHelperMock);
+    }
+    
+    @Test
+    public void shouldSaveSendToPorticoReferencesAndAddNewReference() {
+        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)
+                .build();
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-1")).andReturn(1);
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-2")).andReturn(2);
+
+        List<Integer> sendToPortico = Arrays.asList(new Integer[] { 1, 2 });
+        refereeServiceMock.selectForSendingToPortico("app1", sendToPortico);
+        EasyMock.expectLastCall();
+        
+        Document document = new DocumentBuilder().build();
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        refereesAdminEditDTO.setComment("comment text");
+        refereesAdminEditDTO.setEditedRefereeId("refereeId");
+        refereesAdminEditDTO.setReferenceDocument(document);
+        refereesAdminEditDTO.setSuitableForProgramme(true);
+        refereesAdminEditDTO.setSuitableForUCL(false);
+
+        Referee referee = new RefereeBuilder().application(applicationForm).toReferee();
+        
+        BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
+        Model model = new ExtendedModelMap();
+
+        refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
+        EasyMock.expectLastCall();
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(null);
+        refereeServiceMock.refresh(referee);
+        EasyMock.expectLastCall();
+        
+        EasyMock.replay(userServiceMock, encryptionHelperMock, refereeServiceMock, refereesAdminEditDTOValidatorMock);
+        String viewName = controller.submitRefereesData("{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm, refereesAdminEditDTO, result, model);
+        assertEquals("/private/staff/admin/application/components/references_details_programme_admin", viewName);
+
+        EasyMock.verify(userServiceMock, encryptionHelperMock, refereeServiceMock, refereesAdminEditDTOValidatorMock);
+    }
+    
+    @Test
+    public void shouldSaveSendToPorticoReferencesAndReportFormErrors() {
+        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)
+                .build();
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-1")).andReturn(1);
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-2")).andReturn(2);
+
+        List<Integer> sendToPortico = Arrays.asList(new Integer[] { 1, 2 });
+        refereeServiceMock.selectForSendingToPortico("app1", sendToPortico);
+        EasyMock.expectLastCall();
+        
+        Document document = new DocumentBuilder().build();
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        refereesAdminEditDTO.setComment("comment text");
+        refereesAdminEditDTO.setEditedRefereeId("refereeId");
+        refereesAdminEditDTO.setReferenceDocument(document);
+        refereesAdminEditDTO.setSuitableForProgramme(true);
+        refereesAdminEditDTO.setSuitableForUCL(false);
+
+        BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
+        result.reject("error");
+        Model model = new ExtendedModelMap();
+
+        refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
+        EasyMock.expectLastCall();
+        
+        EasyMock.replay(userServiceMock, encryptionHelperMock, refereeServiceMock, refereesAdminEditDTOValidatorMock);
+        String viewName = controller.submitRefereesData("{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm, refereesAdminEditDTO, result, model);
+        assertEquals("/private/staff/admin/application/components/references_details_programme_admin", viewName);
+
+        EasyMock.verify(userServiceMock, encryptionHelperMock, refereeServiceMock, refereesAdminEditDTOValidatorMock);
     }
 
     @Test
@@ -188,7 +274,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
         EasyMock.replay(userServiceMock);
 
-        controller.submitRefereesData("{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm);
+        controller.submitRefereesData("{\"referees\":[\"ref-1\",\"ref-2\"]}", applicationForm, null, null, null);
     }
 
     @Test

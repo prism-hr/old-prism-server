@@ -182,6 +182,7 @@ public class QualificationValidatorTest {
         qualification.setInstitutionCountry(new Domicile());
         qualification.setQualificationLanguage("Abkhazian");
         qualification.setQualificationSubject("CS");
+        qualification.setQualificationTitle("MS");
         qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
         qualification.setQualificationType(new QualificationTypeBuilder().name("degree").build());
 

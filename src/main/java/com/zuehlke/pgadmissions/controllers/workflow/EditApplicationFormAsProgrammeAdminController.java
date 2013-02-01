@@ -118,13 +118,16 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
-    @ResponseBody
-    public String submitRefereesData(@RequestParam String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm) {
+    public String submitRefereesData(@RequestParam String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm,
+            @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result, Model model) {
 
         if (StringUtils.isBlank(sendToPorticoData) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }
 
+        model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
+
+        // save "send to UCL" data first
         Gson gson = new Gson();
         RefereesAdminEditSendToUclDTO refereesData = gson.fromJson(sendToPorticoData, RefereesAdminEditSendToUclDTO.class);
         ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
@@ -132,7 +135,22 @@ public class EditApplicationFormAsProgrammeAdminController {
             decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
         }
         refereeService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedIds);
-        return "OK";
+
+        if (refereesAdminEditDTO.hasUserStartedTyping()) {
+            refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
+            
+            if (result.hasErrors()) {
+                return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
+            }
+
+            Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
+            Referee referee = refereeService.getRefereeById(refereeId);
+
+            refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+            refereeService.refresh(referee);
+        }
+
+        return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
     }
 
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)

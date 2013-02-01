@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -10,7 +12,7 @@ public class RefereesAdminEditDTO {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
     private String comment;
 
-    private Document referenceDocument; 
+    private Document referenceDocument;
 
     private Boolean suitableForUCL;
 
@@ -62,6 +64,10 @@ public class RefereesAdminEditDTO {
 
     public void setReferenceDocument(Document referenceDocument) {
         this.referenceDocument = referenceDocument;
+    }
+
+    public boolean hasUserStartedTyping() {
+        return StringUtils.isNotBlank(comment) || referenceDocument != null || suitableForProgramme != null || suitableForUCL != null;
     }
 
 }

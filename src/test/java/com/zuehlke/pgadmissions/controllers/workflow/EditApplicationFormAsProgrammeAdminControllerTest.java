@@ -136,11 +136,8 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
                 .build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-1")).andReturn(1);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-2")).andReturn(2);
 
-        List<Integer> sendToPortico = Arrays.asList(new Integer[] { 1, 2 });
-        refereeServiceMock.selectForSendingToPortico("app1", sendToPortico);
+        refereeServiceMock.selectForSendingToPortico(applicationForm, "{\"referees\":[\"ref-1\",\"ref-2\"]}");
         EasyMock.expectLastCall();
         
         Document document = new DocumentBuilder().build();
@@ -180,11 +177,8 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
                 .build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-1")).andReturn(1);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("ref-2")).andReturn(2);
 
-        List<Integer> sendToPortico = Arrays.asList(new Integer[] { 1, 2 });
-        refereeServiceMock.selectForSendingToPortico("app1", sendToPortico);
+        refereeServiceMock.selectForSendingToPortico(applicationForm, "{\"referees\":[\"ref-1\",\"ref-2\"]}");
         EasyMock.expectLastCall();
         
         Document document = new DocumentBuilder().build();

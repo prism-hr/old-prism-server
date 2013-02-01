@@ -120,10 +120,14 @@ public class EditApplicationFormAsProgrammeAdminController {
             throw new ResourceNotFoundException();
         }
 
-        model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());        // save "send to UCL" data first        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData);
+        model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
+
+        // save "send to UCL" data first
+        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData);
+
         if (refereesAdminEditDTO.hasUserStartedTyping()) {
             refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
-            
+
             if (result.hasErrors()) {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
@@ -141,7 +145,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
     @ResponseBody
     public String submitQualificationsData(@RequestParam final String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm) {
-        
+
         if (StringUtils.isBlank(sendToPorticoData) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }

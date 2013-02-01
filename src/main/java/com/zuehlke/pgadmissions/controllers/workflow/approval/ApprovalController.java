@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
@@ -30,9 +29,11 @@ import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
+import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -66,16 +67,17 @@ public class ApprovalController {
     private final QualificationService qualificationService;
     private final RefereeService refereeService;
     private final EncryptionHelper encryptionHelper;
+    private final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
 
     ApprovalController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApprovalController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
             ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
             GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
-            RefereeService refereeService, EncryptionHelper encryptionHelper) {
+            RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
@@ -87,6 +89,7 @@ public class ApprovalController {
         this.qualificationService = qualificationService;
         this.refereeService = refereeService;
         this.encryptionHelper = encryptionHelper;
+        this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
     }
 
     @InitBinder(value = "refereesAdminEditDTO")
@@ -195,6 +198,11 @@ public class ApprovalController {
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }
+    
+    @InitBinder(value = "sendToPorticoData")
+    public void registerSendToPorticoData(WebDataBinder binder) {
+        binder.registerCustomEditor(SendToPorticoDataDTO.class, sendToPorticoDataDTOEditor);
+    }
 
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
     public String assignSupervisors(@RequestParam String applicationId, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
@@ -214,13 +222,15 @@ public class ApprovalController {
     }
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
-    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @RequestParam final String qualificationsSendToPorticoData,
-            @RequestParam final String referencesSendToPorticoData, @RequestParam String explanation,
+    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @Valid @RequestParam final SendToPorticoDataDTO sendToPorticoData, @RequestParam String explanation,
             @ModelAttribute("approvalRound") ApprovalRound approvalRound, SessionStatus sessionStatus, Model model) {
+        if(sendToPorticoData.getQualificationsSendToPortico() == null || sendToPorticoData.getReferencesSendToPortico() == null){
+            throw new ResourceNotFoundException();
+        }
         model.addAttribute("explanation", explanation);
 
-        qualificationService.selectForSendingToPortico(applicationForm, qualificationsSendToPorticoData);
-        refereeService.selectForSendingToPortico(applicationForm, referencesSendToPorticoData);
+        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
+        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getReferencesSendToPortico());
 
         if (!approvalService.validateSendToPorticoData(applicationForm, explanation)) {
             return PORTICO_VALIDATION_SECTION;
@@ -232,19 +242,24 @@ public class ApprovalController {
     }
 
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
-    public String submitQualificationsData(@ModelAttribute ApplicationForm applicationForm, @RequestParam final String sendToPorticoData,
+    public String submitQualificationsData(@ModelAttribute ApplicationForm applicationForm, @Valid @RequestParam final SendToPorticoDataDTO sendToPorticoData,
             @RequestParam String explanation, Model model) {
+        if(sendToPorticoData.getQualificationsSendToPortico() == null){
+            throw new ResourceNotFoundException();
+        }
         model.addAttribute("explanation", explanation);
 
-        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData);
+        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
 
         return QUALIFICATION_SECTION;
     }
     
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
-    public String submitRefereesData(@RequestParam String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm) {
-
-        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData);
+    public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm, @Valid @RequestParam final SendToPorticoDataDTO sendToPorticoData) {
+        if(sendToPorticoData.getReferencesSendToPortico() == null){
+            throw new ResourceNotFoundException();
+        }
+        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getReferencesSendToPortico());
         
         return REFERENCE_SECTION;
     }

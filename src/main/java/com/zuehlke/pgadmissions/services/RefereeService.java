@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -29,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
-import com.zuehlke.pgadmissions.dto.RefereesAdminEditSendToUclDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -243,19 +240,13 @@ public class RefereeService {
     }
 
     @Transactional
-    public void selectForSendingToPortico(final ApplicationForm applicationForm, final String sendToPorticoData) {
-        Gson gson = new Gson();
-        RefereesAdminEditSendToUclDTO refereesData = gson.fromJson(sendToPorticoData, RefereesAdminEditSendToUclDTO.class);
-        ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
-        for (String encryptedId : refereesData.getReferees()) {
-            decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
-        }
+    public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {
         
         for (Referee referee : applicationForm.getReferees()) {
             referee.setSendToUCL(false);
         }
 
-        for (Integer refereeId : decryptedIds) {
+        for (Integer refereeId : refereesSendToPortico) {
             Referee referee = refereeDAO.getRefereeById(refereeId);
             referee.setSendToUCL(true);
         }

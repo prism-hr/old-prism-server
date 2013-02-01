@@ -5,28 +5,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 public class QualificationServiceTest {
 
     private QualificationDAO qualificationDAOMock;
 
-    private ApplicationFormDAO applicationFormDAOMock;
-
-    private EncryptionHelper encryptionHelperMock;
-
     private QualificationService qualificationService;
-    
 
     @Test
     public void shouldDelegateGetQualificationToDAO() {
@@ -64,18 +58,15 @@ public class QualificationServiceTest {
         Qualification qualification3 = new QualificationBuilder().id(3).sendToUCL(false).build();
         Qualification qualification4 = new QualificationBuilder().id(4).sendToUCL(false).build();
 
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("qual-3")).andReturn(3);
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("qual-4")).andReturn(4);
-        
         EasyMock.expect(applicationFormMock.getQualifications()).andReturn(Arrays.asList(qualification1, qualification2, qualification3, qualification4));
         EasyMock.expect(qualificationDAOMock.getQualificationById(3)).andReturn(qualification3);
         EasyMock.expect(qualificationDAOMock.getQualificationById(4)).andReturn(qualification4);
 
-        EasyMock.replay(applicationFormMock, qualificationDAOMock, applicationFormDAOMock, encryptionHelperMock);
+        EasyMock.replay(applicationFormMock, qualificationDAOMock);
 
-        qualificationService.selectForSendingToPortico(applicationFormMock, "{\"qualifications\":[\"qual-3\",\"qual-4\"]}");
+        qualificationService.selectForSendingToPortico(applicationFormMock, Arrays.asList(new Integer[] { 3, 4 }));
 
-        EasyMock.verify(applicationFormMock, qualificationDAOMock, applicationFormDAOMock, encryptionHelperMock);
+        EasyMock.verify(applicationFormMock, qualificationDAOMock);
 
         assertTrue("SendToUcl flag has not been updated to true", qualification3.getSendToUCL());
         assertTrue("SendToUcl flag has not been updated to true", qualification4.getSendToUCL());
@@ -94,11 +85,11 @@ public class QualificationServiceTest {
 
         EasyMock.expect(applicationFormMock.getQualifications()).andReturn(Arrays.asList(qualification1, qualification2, qualification3, qualification4));
 
-        EasyMock.replay(applicationFormMock, qualificationDAOMock, applicationFormDAOMock);
+        EasyMock.replay(applicationFormMock, qualificationDAOMock);
 
-        qualificationService.selectForSendingToPortico(applicationFormMock, "{\"qualifications\":[]}");
+        qualificationService.selectForSendingToPortico(applicationFormMock, Collections.<Integer> emptyList());
 
-        EasyMock.verify(applicationFormMock, qualificationDAOMock, applicationFormDAOMock);
+        EasyMock.verify(applicationFormMock, qualificationDAOMock);
 
         assertFalse("SendToUcl flag has not been updated to false", qualification3.getSendToUCL());
         assertFalse("SendToUcl flag has not been updated to false", qualification4.getSendToUCL());
@@ -109,8 +100,6 @@ public class QualificationServiceTest {
     @Before
     public void setup() {
         qualificationDAOMock = EasyMock.createMock(QualificationDAO.class);
-        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-        encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-        qualificationService = new QualificationService(qualificationDAOMock, applicationFormDAOMock, encryptionHelperMock);
+        qualificationService = new QualificationService(qualificationDAOMock);
     }
 }

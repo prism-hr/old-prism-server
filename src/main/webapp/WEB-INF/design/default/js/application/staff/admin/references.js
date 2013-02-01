@@ -19,6 +19,8 @@ $(document).ready(function() {
     	$('input[name="refereeSendToUcl"]').each(function() {
     		$(this).attr("checked", false);
         });
+        clearRefereeFormErrors();
+        clearRefereeForm();
     });
     
     // --------------------------------------------------------------------------------

@@ -83,13 +83,11 @@
                 </span>
             </div>
         <#elseif applicationForm.qualificationsToSendToPortico?size == 0>
-            <#if explanation == "">
+            <#if missingExplanation?? && missingExplanation>
                 <div class="section-error-bar">
                     <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
                         <#if anyQualificationEnabled>
                             You have not selected any transcripts to submit for offer processing. <b>You must explain why.</b>
-                        <#elseif applicationForm.qualifications?size == 0>
-                            It looks like you wish to approve an applicant that has no known qualifications. Please explain why you wish to do this.
                         <#else>
                             You must explain why no transcripts have been not selected to submit for offer processing.
                         </#if>
@@ -97,7 +95,11 @@
                 </div>
             <#else>
                 <div class="section-info-bar">
-                    Please explain why no transcripts have been not selected to submit for offer processing.
+                    <#if applicationForm.qualifications?size == 0>
+                        It looks like you wish to approve an applicant that has no known qualifications. Please explain why you wish to do this.
+                    <#else>
+                        Please explain why no transcripts have been not selected to submit for offer processing.
+                    </#if>
                 </div>
             </#if>
         <#else>

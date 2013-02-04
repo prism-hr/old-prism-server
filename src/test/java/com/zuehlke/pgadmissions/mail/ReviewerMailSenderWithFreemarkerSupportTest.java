@@ -60,7 +60,6 @@ public class ReviewerMailSenderWithFreemarkerSupportTest extends BaseEmailTestWi
             
             @Override
             public void onBody(String body) {
-                System.out.println(body);
                 boolean registrationUrl = body.contains("pgadmissions/reviewFeedback?applicationId=123&activationCode=1234");
                 boolean normalUrl = body.contains("pgadmissions/decline/review?applicationId=123&activationCode=1234");
                 if (!(registrationUrl && normalUrl)) {

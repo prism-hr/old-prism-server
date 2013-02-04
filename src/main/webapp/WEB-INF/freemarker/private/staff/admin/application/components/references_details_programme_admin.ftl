@@ -242,10 +242,11 @@
                 </div>
             </div>
             
-                    <@spring.bind "refereesAdminEditDTO.*" />
-                     
-                    <#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
-                    <input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
+            <@spring.bind "refereesAdminEditDTO.*" />
+             
+            <#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
+            <input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
+            
             <!-- Add reference add button -->
             <div class="row">
                 <div class="field">

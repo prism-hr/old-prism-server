@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -243,11 +244,14 @@ public class ApprovalController {
 
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
     public String submitQualificationsData(@ModelAttribute ApplicationForm applicationForm, @Valid @RequestParam final SendToPorticoDataDTO sendToPorticoData,
-            @RequestParam String explanation, Model model) {
+            @RequestParam String explanation, Model model, BindingResult result) {
         if(sendToPorticoData.getQualificationsSendToPortico() == null){
             throw new ResourceNotFoundException();
         }
         model.addAttribute("explanation", explanation);
+        if(sendToPorticoData.getQualificationsSendToPortico().isEmpty() && StringUtils.isBlank(explanation)){
+            model.addAttribute("missingExplanation", true);
+        }
 
         qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
 

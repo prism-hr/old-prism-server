@@ -248,10 +248,10 @@
                 </div>
             </div>
             
-            <!-- Add reference save button -->
+            <!-- Add reference add button -->
             <div class="row">
                 <div class="field">
-                    <button id="saveReferenceButton" type="button" class="blue">Save</button>
+                    <button id="addReferenceButton" type="button" class="blue">Add</button>
                 </div>
             </div>
             

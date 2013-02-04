@@ -19,6 +19,8 @@ $(document).ready(function() {
     	$('input[name="refereeSendToUcl"]').each(function() {
     		$(this).attr("checked", false);
         });
+        clearRefereeFormErrors();
+        clearRefereeForm();
     });
     
     // --------------------------------------------------------------------------------
@@ -53,11 +55,11 @@ $(document).ready(function() {
     });
 
     // --------------------------------------------------------------------------------
-    // POST REFERENCE DATA
+    // POST ADD REFERENCE DATA
     // --------------------------------------------------------------------------------
-    $('button[id="saveReferenceButton"]').each(function() {
+    $('button[id="addReferenceButton"]').each(function() {
     	$(this).on("click", function() {
-            postReferenceData();
+            postAddReferenceData();
         });
     });
     
@@ -126,6 +128,22 @@ function showProperRefereeEntry() {
 }
 
 function postRefereesData() {
+    var refereeId = $('#editedRefereeId').val();
+    
+    var suitableUCL = "";
+    if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
+        suitableUCL = $('input:radio[name=suitableForUCL_' + refereeId + ']:checked').val();
+    }
+
+    var suitableForProgramme = "";
+    if ($('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').length > 0) {
+        suitableForProgramme = $('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').val();
+    }
+    
+    var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
+    var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
+    var $ref_doc_hidden     = $ref_doc_container.find('span input');
+	
     var sendToPorticoData = collectReferencesSendToPortico();
     
     $('#referencesSection > div').append('<div class="ajax" />');
@@ -142,10 +160,17 @@ function postRefereesData() {
         data :  {
             applicationId : $('#applicationId').val(),
             sendToPorticoData: JSON.stringify(sendToPorticoData),
+            comment: $('#refereeComment_' + refereeId).val(),
+            referenceDocument: $ref_doc_hidden.val(),
+            suitableForUCL : suitableUCL,
+            suitableForProgramme : suitableForProgramme, 
+            editedRefereeId : $('#editedRefereeId').val(),
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {
         	$("#referencesSection").html(data);
+        	$("#referee_" + $("#editedRefereeId").val()).show();
+            
         },
         complete : function() {
             $('#referencesSection div.ajax').remove();
@@ -153,7 +178,7 @@ function postRefereesData() {
     });
 }
 
-function postReferenceData() {
+function postAddReferenceData() {
     var refereeId = $('#editedRefereeId').val();
     
     var suitableUCL = "";
@@ -199,7 +224,6 @@ function postReferenceData() {
         }
     });
 }
-
 
 function collectReferencesSendToPortico(){
     var sendToPorticoData = {

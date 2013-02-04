@@ -171,9 +171,24 @@
             </div>
             </#list>
             
-            <!-- Name (of programme) -->
+            <!-- Title -->
             <div class="row">
-                <span class="plain-label">Title / Subject<em>*</em></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.subject'/>"></span>
+                <span class="plain-label">Qualification Title<em>*</em></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.title'/>"></span>
+                <div class="field">
+                    <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <input id="qualificationTitle" class="full" type="text" placeholder="e.g. MSc" value="${(qualification.qualificationTitle?html)!}" /> <#else> <input readonly="readonly" id="qualificationTitle" class="full" type="text" placeholder="e.g. Civil Engineering" value="${(qualification.qualificationTitle?html)!}" /> </#if>
+                </div>
+            </div>
+            <@spring.bind "qualification.qualificationTitle" /> <#list spring.status.errorMessages as error>
+            <div class="row">
+                <div class="field">
+                    <span class="invalid">${error}</span>
+                </div>
+            </div>
+            </#list>
+            
+            <!-- Subject -->
+            <div class="row">
+                <span class="plain-label">Qualification Subject<em>*</em></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.subject'/>"></span>
                 <div class="field">
                     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <input id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" value="${(qualification.qualificationSubject?html)!}" /> <#else> <input readonly="readonly" id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" value="${(qualification.qualificationSubject?html)!}" /> </#if>
                 </div>

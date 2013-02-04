@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -66,7 +67,7 @@ public class PdfDocumentBuilder {
     private final BaseColor grayColor = new BaseColor(220, 220, 220);
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
-    private HashMap<Integer, Object> bookmarkMap;
+    private Map<Integer, Object> bookmarkMap;
     private int appendixCounter = 1;
     private HeaderEvent headerEvent;
     private int pageCounter = 0;
@@ -662,9 +663,12 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell("Qualification Type", smallBoldFont));
                 table.addCell(newTableCell(qualification.getQualificationType().getName(), smallFont));
 
-                table.addCell(newTableCell("Title/Subject", smallBoldFont));
-                table.addCell(newTableCell(qualification.getQualificationSubject(), smallFont));
+                table.addCell(newTableCell("Qualification Title", smallBoldFont));
+                table.addCell(newTableCell(qualification.getQualificationTitle(), smallFont));
 
+                table.addCell(newTableCell("Qualification Subject", smallBoldFont));
+                table.addCell(newTableCell(qualification.getQualificationSubject(), smallFont));
+                
                 table.addCell(newTableCell("Language of Study", smallBoldFont));
                 table.addCell(newTableCell(qualification.getQualificationLanguage(), smallFont));
 
@@ -1022,6 +1026,7 @@ public class PdfDocumentBuilder {
             document.newPage();
             headerEvent.setAddHeaderAndFooter(false);
             cb.addTemplate(page, 0, 0);
+            document.setPageSize(PageSize.A4);
         }
     }
 

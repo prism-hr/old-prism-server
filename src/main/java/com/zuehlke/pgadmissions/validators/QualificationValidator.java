@@ -28,12 +28,13 @@ public class QualificationValidator  extends FormSectionObjectValidator implemen
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationTitle", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationStartDate", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLanguage", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "text.field.empty");		
-		
+
 		Qualification qualification = (Qualification) target;
 		String startDate = qualification.getQualificationStartDate() == null ? "": qualification.getQualificationStartDate().toString();
 		String awardDate = qualification.getQualificationAwardDate() == null ? "": qualification.getQualificationAwardDate().toString();
@@ -61,6 +62,10 @@ public class QualificationValidator  extends FormSectionObjectValidator implemen
 		if (qualification.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
             errors.reject("");
         }
+		
+		if (StringUtils.equalsIgnoreCase("Select...", qualification.getQualificationInstitution())) {
+		    errors.reject("qualificationInstitution", "dropdown.radio.select.none");
+		}
 		
 		String institutionCode = qualification.getQualificationInstitutionCode();
 		if (StringUtils.isNotBlank(institutionCode) && StringUtils.equalsIgnoreCase("OTHER", institutionCode)) {

@@ -29,9 +29,12 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	public void shouldGetQualificationById() throws ParseException{
 	    QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
 	    DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
-		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
-				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
+        Qualification qualification = new QualificationBuilder()
+                .awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("").title("")
+                .languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
+                .type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+                .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
 		sessionFactory.getCurrentSession().save(qualification);
 		Integer id = qualification.getId();
 		flushAndClearSession();
@@ -43,9 +46,12 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	public void shouldSaveQualification() throws ParseException{
 	    QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
 	    DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
-	    Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
-				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
+        Qualification qualification = new QualificationBuilder()
+                .awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("").title("")
+                .languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
+                .type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+                .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
 		qualificationDAO.save(qualification);
 		flushAndClearSession();		
 		Integer id = qualification.getId();
@@ -60,9 +66,12 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		
 		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
 		 DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
-		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
-				.institution("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
+        Qualification qualification = new QualificationBuilder()
+                .awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("").title("")
+                .languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
+                .type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+                .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
 		save(application, qualification);
 		flushAndClearSession();
 		

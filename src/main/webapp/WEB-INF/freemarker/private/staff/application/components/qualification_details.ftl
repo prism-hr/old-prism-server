@@ -46,9 +46,15 @@
         <div class="field" id="qualificationType">${(qualification.qualificationType.name?html)!"Not Provided"}</div>
       </div>
       
-      <!-- Title / Subject -->
+      <!-- Title -->
       <div class="admin_row">
-        <span class="admin_row_label">Title / Subject</span>
+        <span class="admin_row_label">Qualification Title</span>
+        <div class="field" id="qualificationSubject">${(qualification.qualificationTitle?html)!"Not Provided"}</div>
+      </div>
+      
+      <!-- Subject -->
+      <div class="admin_row">
+        <span class="admin_row_label">Qualification Subject</span>
         <div class="field" id="qualificationSubject">${(qualification.qualificationSubject?html)!"Not Provided"}</div>
       </div>
       

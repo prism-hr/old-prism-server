@@ -43,6 +43,10 @@ public class Qualification implements FormSectionObject, Serializable {
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
 	private String qualificationSubject;
 	
+	@Column(name="title")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
+    private String qualificationTitle;
+    
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "institution_domicile_id")	
 	private Domicile institutionCountry;
@@ -220,5 +224,13 @@ public class Qualification implements FormSectionObject, Serializable {
 
     public void setQualificationInstitutionCode(String qualificationInstitutionCode) {
         this.qualificationInstitutionCode = qualificationInstitutionCode;
+    }
+
+    public String getQualificationTitle() {
+        return qualificationTitle;
+    }
+
+    public void setQualificationTitle(String qualificationTitle) {
+        this.qualificationTitle = qualificationTitle;
     }
 }

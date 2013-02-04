@@ -65,7 +65,7 @@ public class QualificationController {
     private final QualificationTypePropertyEditor qualificationTypePropertyEditor;
     private final QualificationInstitutionDAO qualificationInstitutionDAO;
 
-	QualificationController() {
+	public QualificationController() {
 		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
@@ -121,23 +121,26 @@ public class QualificationController {
 	
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
 	public String editQualification(@Valid Qualification qualification, BindingResult result, Model model) {
-		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
-		
-		if(qualification.getApplication().isDecided()){
-			throw new CannotUpdateApplicationException();
-		}
-		
-		if (result.hasErrors()) {
-		    model.addAttribute("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(qualification.getInstitutionCountry().getCode()));
-			return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
-		}
-		
-		qualificationService.save(qualification);
-		qualification.getApplication().setLastUpdated(new Date());
-		applicationService.save(qualification.getApplication());
-		
+        if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
+            throw new ResourceNotFoundException();
+        }
+
+        if (qualification.getApplication().isDecided()) {
+            throw new CannotUpdateApplicationException();
+        }
+
+        if (result.hasErrors()) {
+            if (qualification.getInstitutionCountry() != null) {
+                model.addAttribute("institutions", qualificationInstitutionDAO
+                        .getEnabledInstitutionsByCountryCode(qualification.getInstitutionCountry().getCode()));
+            }
+            return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
+        }
+
+        qualificationService.save(qualification);
+        qualification.getApplication().setLastUpdated(new Date());
+        applicationService.save(qualification.getApplication());
+
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
 	}
 

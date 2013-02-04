@@ -1026,6 +1026,7 @@ public class PdfDocumentBuilder {
             document.newPage();
             headerEvent.setAddHeaderAndFooter(false);
             cb.addTemplate(page, 0, 0);
+            document.setPageSize(PageSize.A4);
         }
     }
 

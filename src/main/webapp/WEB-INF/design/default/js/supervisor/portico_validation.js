@@ -6,12 +6,8 @@ $(document).ready(function()
 		$('#qualificationsSection').append('<div class="ajax" />');
 		$('#referencesSection').append('<div class="ajax" />');
 		
-		var qualificationsSendToPorticoData = collectQualificationsSendToPortico();
-		var referencesSendToPorticoData = collectReferencesSendToPortico();
-		var sendToPorticoData = {
-				qualifications : qualificationsSendToPorticoData.qualifications,
-				referees : referencesSendToPorticoData.referees
-		};
+		var qualificationsSendToPortico = collectQualificationsSendToPortico();
+		var refereesSendToPorticoData = collectRefereesSendToPortico();
 		var explanation = $("#explanationText").val();
 		
 		$.ajax({
@@ -36,8 +32,9 @@ $(document).ready(function()
 			url: "/pgadmissions/approval/applyPorticoData",
 			data :  {
 			    applicationId : $('#applicationId').val(),
-			    sendToPorticoData: JSON.stringify(sendToPorticoData),
-			    explanation: explanation,
+			    qualificationsSendToPortico : JSON.stringify(qualificationsSendToPortico),
+				refereesSendToPortico : JSON.stringify(refereesSendToPorticoData),
+			    emptyQualificationsExplanation: explanation,
 			    cacheBreaker: new Date().getTime()
 			},
 			success: function(data)

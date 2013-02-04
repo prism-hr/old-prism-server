@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
+import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 
 public class ApprovalControllerTest {
     private ApplicationsService applicationServiceMock;
@@ -66,6 +67,7 @@ public class ApprovalControllerTest {
     private RefereeService refereeServiceMock;
     private EncryptionHelper encryptionHelperMock;
     private SendToPorticoDataDTOEditor sendToPorticoDataDTOEditorMock;
+    private SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator;
 
     @Test
     public void shouldGetApprovalPage() {
@@ -76,7 +78,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -115,7 +117,7 @@ public class ApprovalControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -148,7 +150,7 @@ public class ApprovalControllerTest {
                 .build();
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -176,7 +178,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -206,7 +208,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -231,7 +233,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -313,7 +315,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return application;
@@ -338,7 +340,7 @@ public class ApprovalControllerTest {
         SessionStatus sessionStatus = new SimpleSessionStatus();
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return applicationForm;
@@ -361,7 +363,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 return application;
@@ -395,7 +397,7 @@ public class ApprovalControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if ("5".equals(applicationId)) {
@@ -475,7 +477,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock);
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidator);
 
     }
 }

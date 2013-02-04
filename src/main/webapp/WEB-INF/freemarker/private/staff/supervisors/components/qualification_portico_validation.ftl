@@ -75,7 +75,8 @@
                 </#list>
             </tbody>
         </table>
-
+        
+        <@spring.bind "sendToPorticoData.emptyQualificationsExplanation" />
         <#if applicationForm.qualificationsToSendToPortico?size &gt; 2>
             <div class="section-error-bar">
                 <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
@@ -83,7 +84,7 @@
                 </span>
             </div>
         <#elseif applicationForm.qualificationsToSendToPortico?size == 0>
-            <#if missingExplanation?? && missingExplanation>
+            <#if spring.status.errorCodes?seq_contains("portico.submit.explanation.empty")>
                 <div class="section-error-bar">
                     <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
                         <#if anyQualificationEnabled>

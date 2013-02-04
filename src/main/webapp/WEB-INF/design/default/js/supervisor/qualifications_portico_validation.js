@@ -74,7 +74,7 @@ function showFirstQualificationEntryOrExplanationArea() {
 
 function postQualificationsData() {
     $('#qualificationsSection > div').append('<div class="ajax" />');
-    var sendToPorticoData = collectQualificationsSendToPortico();
+    var qualificationsSendToPortico = collectQualificationsSendToPortico();
     var explanation = $("#explanationText").val();
     $.ajax({
         type : 'POST',
@@ -88,7 +88,7 @@ function postQualificationsData() {
         url : "/pgadmissions/approval/postQualificationsData",
         data :  {
             applicationId : $('#applicationId').val(),
-            sendToPorticoData: JSON.stringify(sendToPorticoData),
+            qualificationsSendToPortico: JSON.stringify(qualificationsSendToPortico),
             explanation: explanation,
             cacheBreaker: new Date().getTime()
         },
@@ -102,15 +102,13 @@ function postQualificationsData() {
 }
 
 function collectQualificationsSendToPortico(){
-    var sendToPorticoData = {
-            qualifications : new Array(),
-    };
+    qualifications = new Array();
     
     $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
         var checked = $(this).attr("checked");
         if (checked) {
-        	sendToPorticoData.qualifications.push($(this).val());
+        	qualifications.push($(this).val());
         }
     });
-    return sendToPorticoData;
+    return qualifications;
 }

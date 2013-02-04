@@ -229,6 +229,9 @@ public class ApprovalController {
             throw new ResourceNotFoundException();
         }
         model.addAttribute("explanation", explanation);
+        if(sendToPorticoData.getQualificationsSendToPortico().isEmpty() && StringUtils.isBlank(explanation)){
+            model.addAttribute("missingExplanation", true);
+        }
 
         qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
         refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getReferencesSendToPortico());

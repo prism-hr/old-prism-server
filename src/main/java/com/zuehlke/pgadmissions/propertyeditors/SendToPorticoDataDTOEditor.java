@@ -14,9 +14,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-
 
 @Component
 public class SendToPorticoDataDTOEditor extends PropertyEditorSupport {
@@ -33,6 +31,7 @@ public class SendToPorticoDataDTOEditor extends PropertyEditorSupport {
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setAsText(String sendToPorticoData) throws IllegalArgumentException {
         if (sendToPorticoData == null || StringUtils.isBlank(sendToPorticoData)) {
@@ -41,37 +40,21 @@ public class SendToPorticoDataDTOEditor extends PropertyEditorSupport {
         }
 
         GsonBuilder gson = new GsonBuilder();
-        gson.registerTypeAdapter(SendToPorticoDataDTO.class, new JsonDeserializer<SendToPorticoDataDTO>() {
+        gson.registerTypeAdapter(List.class, new JsonDeserializer<List<Integer>>() {
 
             @Override
-            public SendToPorticoDataDTO deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
+            public List<Integer> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
-                List<Integer> references = new ArrayList<Integer>();
-                JsonElement referencesArray = json.getAsJsonObject().get("referees");
-                if (referencesArray != null) {
-                    for (JsonElement referenceString : referencesArray.getAsJsonArray()) {
-                        Integer referenceId = encryptionHelper.decryptToInteger(referenceString.getAsString());
-                        references.add(referenceId);
-                    }
-                    sendToPorticoDataDTO.setReferencesSendToPortico(references);
+                List<Integer> decryptedElements = new ArrayList<Integer>();
+                for (JsonElement encryptedString : json.getAsJsonArray()) {
+                    Integer decryptedId = encryptionHelper.decryptToInteger(encryptedString.getAsString());
+                    decryptedElements.add(decryptedId);
                 }
-
-                List<Integer> qualifications = new ArrayList<Integer>();
-                JsonElement qualificationsArray = json.getAsJsonObject().get("qualifications");
-                if (qualificationsArray != null) {
-                    for (JsonElement qualificationString : qualificationsArray.getAsJsonArray()) {
-                        Integer qualificationId = encryptionHelper.decryptToInteger(qualificationString.getAsString());
-                        qualifications.add(qualificationId);
-                    }
-                    sendToPorticoDataDTO.setQualificationsSendToPortico(qualifications);
-                }
-
-                return sendToPorticoDataDTO;
+                return decryptedElements;
             }
         });
-        SendToPorticoDataDTO dto = gson.create().fromJson(sendToPorticoData, SendToPorticoDataDTO.class);
-        setValue(dto);
+        List<Integer> decrypted = gson.create().fromJson(sendToPorticoData, List.class);
+        setValue(decrypted);
     }
 
     @Override
@@ -79,7 +62,6 @@ public class SendToPorticoDataDTOEditor extends PropertyEditorSupport {
         if (getValue() == null) {
             return null;
         }
-        // return encryptionHelper.encrypt(((Language)getValue()).getId());
         return null;
     }
 }

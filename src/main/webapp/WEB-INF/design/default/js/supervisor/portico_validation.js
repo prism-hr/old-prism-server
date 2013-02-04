@@ -3,10 +3,15 @@ $(document).ready(function()
 	$('#applyQualificationsAndReferences').click(function()
 	{
 		// TODO show ajax progress
-//		$('#approvalsection').append('<div class="ajax" />');
+		$('#qualificationsSection').append('<div class="ajax" />');
+		$('#referencesSection').append('<div class="ajax" />');
 		
 		var qualificationsSendToPorticoData = collectQualificationsSendToPortico();
 		var referencesSendToPorticoData = collectReferencesSendToPortico();
+		var sendToPorticoData = {
+				qualifications : qualificationsSendToPorticoData.qualifications,
+				referees : referencesSendToPorticoData.referees
+		};
 		var explanation = $("#explanationText").val();
 		
 		$.ajax({
@@ -30,12 +35,11 @@ $(document).ready(function()
 			  },
 			url: "/pgadmissions/approval/applyPorticoData",
 			data :  {
-	            applicationId : $('#applicationId').val(),
-	            qualificationsSendToPorticoData: JSON.stringify(qualificationsSendToPorticoData),
-	            referencesSendToPorticoData: JSON.stringify(referencesSendToPorticoData),
-	            explanation: explanation,
-	            cacheBreaker: new Date().getTime()
-	        },
+			    applicationId : $('#applicationId').val(),
+			    sendToPorticoData: JSON.stringify(sendToPorticoData),
+			    explanation: explanation,
+			    cacheBreaker: new Date().getTime()
+			},
 			success: function(data)
 			{	
 				if(data == "OK"){					
@@ -46,10 +50,11 @@ $(document).ready(function()
 				}
 				addToolTips();
 			},
-		      complete: function()
-		      {
-//					$('#approvalsection div.ajax').remove();
-		      }
+			complete: function()
+			{
+				$('#qualificationsSection div.ajax').remove();
+				$('#referencesSection div.ajax').remove();
+			}
 		});
 	});
 		

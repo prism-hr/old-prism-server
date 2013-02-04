@@ -381,6 +381,7 @@ function postQualificationData(message) {
         url : "/pgadmissions/update/editQualification",
         data : {
             qualificationSubject : $("#qualificationSubject").val(),
+            qualificationTitle : $("#qualificationTitle").val(),
             qualificationInstitution : $("#qualificationInstitution option:selected").text(),
             otherQualificationInstitution : $("#otherInstitutionProviderName").val(),
             qualificationInstitutionCode : $("#qualificationInstitution").val(),

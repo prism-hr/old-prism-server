@@ -230,19 +230,20 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProgram(program);
 		application.setApplicant(user);
 
-		// sessionFactory.getCurrentSession().save(application);
-		// Integer id = application.getId();
-		// flushAndClearSession();
 		QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
-		 DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
-		Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
-				.languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0))
-				.build();
-		Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
-				.isCompleted(CheckedStatus.YES).institution("").languageOfStudy("Achinese").subject("").institutionCode("AS008Z")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0)).institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0))
-				.build();
+        DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
+        Qualification qualification1 = new QualificationBuilder()
+                .awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("").title("")
+                .languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
+                .type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+                .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
+        Qualification qualification2 = new QualificationBuilder()
+                .awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").title("")
+                .isCompleted(CheckedStatus.YES).institution("").languageOfStudy("Achinese").subject("")
+                .institutionCode("AS008Z").startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
+                .type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+                .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
 
 		application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
 

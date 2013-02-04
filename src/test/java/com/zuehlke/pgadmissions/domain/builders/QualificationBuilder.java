@@ -116,7 +116,7 @@ public class QualificationBuilder {
 		qualification.setQualificationInstitution(institution);
 		qualification.setQualificationLanguage(language_of_study);
 		qualification.setQualificationSubject(subject);
-//		qualification.setQualificationTitle(title);
+		qualification.setQualificationTitle(title);
 		qualification.setQualificationStartDate(start_date);
 		qualification.setQualificationType(type);
 		qualification.setId(id);

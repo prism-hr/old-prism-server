@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
@@ -16,15 +15,11 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.BadgeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class BadgeServiceTest {
 
-	
-	
 	@Test
 	public void shouldGetBadgesFromDAO(){
 		Program program = new ProgramBuilder().id(1).build();
@@ -33,9 +28,7 @@ public class BadgeServiceTest {
 		Badge badge = new BadgeBuilder().id(1).build();
 		EasyMock.expect(badgeDAOMock.getBadgesByProgram(program)).andReturn(Arrays.asList(badge));
 		EasyMock.replay(badgeDAOMock);
-		
 		assertEquals(badge, service.getAllBadges(program).get(0));
-		
 	}
 	
 	@Test
@@ -55,8 +48,6 @@ public class BadgeServiceTest {
 		EasyMock.expect(badgeDAOMock.getBadgesByProgram(program)).andReturn(Arrays.asList(badge1, badge2, badge3, badge4, badge5, badge6));
 		EasyMock.replay(badgeDAOMock);
 		assertEquals(1, service.getAllClosingDatesByProgram(program).size());
-		
-		
 	}
 	
 	
@@ -83,8 +74,6 @@ public class BadgeServiceTest {
 		assertEquals(badge5.getClosingDate(), allBadgesByClosingDate.get(1));
 		assertEquals(badge3.getClosingDate(), allBadgesByClosingDate.get(2));
 		assertEquals(badge2.getClosingDate(), allBadgesByClosingDate.get(3));
-		System.out.println("yianna");
-		
 	}
 	
 	@Test
@@ -104,7 +93,5 @@ public class BadgeServiceTest {
 		EasyMock.expect(badgeDAOMock.getBadgesByProgram(program)).andReturn(Arrays.asList(badge1, badge2, badge3, badge4, badge5, badge6, badge7));
 		EasyMock.replay(badgeDAOMock);
 		assertEquals(2, service.getAllProjectTitlesByProgram(program).size());
-		
 	}
-	
 }

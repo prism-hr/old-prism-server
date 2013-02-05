@@ -53,15 +53,8 @@ $(document).ready(function() {
 });
 
 function showFirstQualificationEntryOrExplanationArea() {
-	var anyQualificationChecked = false;
-	$('input[name="qualificationSendToUcl"]:checkbox').each(function() {
-        var checked = $(this).attr("checked");
-        if (checked) {
-        	anyQualificationChecked = true;
-        }
-    });
 	
-	if(!anyQualificationChecked) {
+	if($('#showExplanationText').val() == 'yes' || $("#explanationText").val() != '') {
 		$('#explanationArea').show();
 		return false;
 	}
@@ -74,8 +67,12 @@ function showFirstQualificationEntryOrExplanationArea() {
 
 function postQualificationsData() {
     $('#qualificationsSection > div').append('<div class="ajax" />');
-    var sendToPorticoData = collectQualificationsSendToPortico();
+    var qualificationsSendToPortico = collectQualificationsSendToPortico();
     var explanation = $("#explanationText").val();
+    if(qualificationsSendToPortico.length > 0){
+    	// explanation doesn't matter when at least one qualification is selected
+    	explanation = "";
+    }
     $.ajax({
         type : 'POST',
         statusCode : {
@@ -88,8 +85,8 @@ function postQualificationsData() {
         url : "/pgadmissions/approval/postQualificationsData",
         data :  {
             applicationId : $('#applicationId').val(),
-            sendToPorticoData: JSON.stringify(sendToPorticoData),
-            explanation: explanation,
+            qualificationsSendToPortico: JSON.stringify(qualificationsSendToPortico),
+            emptyQualificationsExplanation: explanation,
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {
@@ -102,15 +99,13 @@ function postQualificationsData() {
 }
 
 function collectQualificationsSendToPortico(){
-    var sendToPorticoData = {
-            qualifications : new Array(),
-    };
+    qualifications = new Array();
     
     $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
         var checked = $(this).attr("checked");
         if (checked) {
-        	sendToPorticoData.qualifications.push($(this).val());
+        	qualifications.push($(this).val());
         }
     });
-    return sendToPorticoData;
+    return qualifications;
 }

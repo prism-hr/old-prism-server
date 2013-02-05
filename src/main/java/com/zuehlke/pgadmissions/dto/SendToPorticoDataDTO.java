@@ -4,26 +4,34 @@ import java.util.List;
 
 public class SendToPorticoDataDTO {
 
-    List<Integer> referencesSendToPortico;
+    private List<Integer> refereesSendToPortico;
     
-    List<Integer> qualificationsSendToPortico;
+    private List<Integer> qualificationsSendToPortico;
 
-    public List<Integer> getReferencesSendToPortico() {
-        return referencesSendToPortico;
+    private String emptyQualificationsExplanation;
+    
+    public List<Integer> getRefereesSendToPortico() {
+        return refereesSendToPortico;
     }
 
-    public void setReferencesSendToPortico(List<Integer> referencesSendToPortico) {
-        this.referencesSendToPortico = referencesSendToPortico;
+    public void setRefereesSendToPortico(List<Integer> referees) {
+        this.refereesSendToPortico = referees;
     }
 
     public List<Integer> getQualificationsSendToPortico() {
         return qualificationsSendToPortico;
     }
 
-    public void setQualificationsSendToPortico(List<Integer> qualificationsSendToPortico) {
-        this.qualificationsSendToPortico = qualificationsSendToPortico;
+    public void setQualificationsSendToPortico(List<Integer> qualifications) {
+        this.qualificationsSendToPortico = qualifications;
     }
-    
-    
+
+    public String getEmptyQualificationsExplanation() {
+        return emptyQualificationsExplanation;
+    }
+
+    public void setEmptyQualificationsExplanation(String emptyQualificationsExplanation) {
+        this.emptyQualificationsExplanation = emptyQualificationsExplanation;
+    }
 
 }

@@ -60,7 +60,8 @@
         </tbody>
     </table>
 
-    <#if applicationForm.referencesToSendToPortico?size != 2>
+    <@spring.bind "sendToPorticoData.refereesSendToPortico" />
+    <#if spring.status.errorCodes?seq_contains("portico.submit.referees.invalid")>
         <div class="section-error-bar">
             <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
                 Select the references that you wish to send to UCL Admissions. <b>You must select 2.</b>

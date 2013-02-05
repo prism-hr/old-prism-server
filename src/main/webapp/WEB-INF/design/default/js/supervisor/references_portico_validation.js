@@ -144,7 +144,7 @@ function postRefereesData() {
     var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
     var $ref_doc_hidden     = $ref_doc_container.find('span input');
 	
-    var sendToPorticoData = collectReferencesSendToPortico();
+    var refereesSendToPortico = collectRefereesSendToPortico();
     
     $('#referencesSection > div').append('<div class="ajax" />');
     $.ajax({
@@ -159,7 +159,7 @@ function postRefereesData() {
         url : "/pgadmissions/approval/postRefereesData",
         data :  {
             applicationId : $('#applicationId').val(),
-            sendToPorticoData: JSON.stringify(sendToPorticoData),
+            refereesSendToPortico: JSON.stringify(refereesSendToPortico),
             comment: $('#refereeComment_' + refereeId).val(),
             referenceDocument: $ref_doc_hidden.val(),
             suitableForUCL : suitableUCL,
@@ -225,16 +225,14 @@ function postAddReferenceData() {
     });
 }
 
-function collectReferencesSendToPortico(){
-    var sendToPorticoData = {
-            referees : new Array()
-    };
+function collectRefereesSendToPortico(){
+    referees = new Array();
     
     $('input[name="refereeSendToUcl"]:checkbox').each(function() {
         var checked = $(this).attr("checked");
         if (checked) {
-        	sendToPorticoData.referees.push($(this).val());
+        	referees.push($(this).val());
         }
     });
-    return sendToPorticoData;
+    return referees;
 }

@@ -77,35 +77,36 @@
         </table>
         
         <@spring.bind "sendToPorticoData.emptyQualificationsExplanation" />
-        <#if applicationForm.qualificationsToSendToPortico?size &gt; 2>
+
+        <input type="hidden" name="showExplanationText" id="showExplanationText" value="${spring.status.errorCodes?seq_contains("portico.submit.explanation.empty")?string("yes", "no")}" />
+        
+        <#if spring.status.errorCodes?seq_contains("portico.submit.explanation.empty")>
+            <div class="section-error-bar">
+                <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
+                    <#if anyQualificationEnabled>
+                        You have not selected any transcripts to submit for offer processing. <b>You must explain why.</b>
+                    <#else>
+                        You must explain why no transcripts have been not selected to submit for offer processing.
+                    </#if>
+                </span>
+            </div>
+        <#elseif spring.status.errorCodes?seq_contains("portico.submit.qualifications.exceed")>
             <div class="section-error-bar">
                 <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
                     Select the proof award documents that you wish to send to UCL Admissions. <b>You may select a maximum of 2.</b>
                 </span>
             </div>
-        <#elseif applicationForm.qualificationsToSendToPortico?size == 0>
-            <#if spring.status.errorCodes?seq_contains("portico.submit.explanation.empty")>
-                <div class="section-error-bar">
-                    <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
-                        <#if anyQualificationEnabled>
-                            You have not selected any transcripts to submit for offer processing. <b>You must explain why.</b>
-                        <#else>
-                            You must explain why no transcripts have been not selected to submit for offer processing.
-                        </#if>
-                    </span>
-                </div>
-            <#else>
-                <div class="section-info-bar">
+        <#else>
+            <div class="section-info-bar">
+                <#if applicationForm.qualificationsToSendToPortico?size == 0>
                     <#if applicationForm.qualifications?size == 0>
                         It looks like you wish to approve an applicant that has no known qualifications. Please explain why you wish to do this.
                     <#else>
                         Please explain why no transcripts have been not selected to submit for offer processing.
                     </#if>
-                </div>
-            </#if>
-        <#else>
-            <div class="section-info-bar">
-                Select a maximum of two qualification transcripts to submit for offer processing.
+                <#else>
+                    Select a maximum of two qualification transcripts to submit for offer processing.
+                </#if>
             </div>
         </#if>
         
@@ -113,7 +114,7 @@
             <div class="row">
                 <span class="plain-label">Explanation<em>*</em></span> <span class="hint" data-desc="Explain why you wish to submit this application for offer processing without any accompanying transcript."></span>
                 <div class="field">
-                    <textarea cols="80" rows="5" class="max" id="explanationText" name="explanationText">${explanation}</textarea>
+                    <textarea cols="80" rows="5" class="max" id="explanationText" name="explanationText">${(sendToPorticoData.emptyQualificationsExplanation?html)!""}</textarea>
                 </div>
             </div>
         </div>

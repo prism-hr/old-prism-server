@@ -4,6 +4,8 @@
 
 <section id="referencesSection" class="folding form-rows navy"><#include "/private/staff/supervisors/components/reference_portico_validation.ftl"/></section>
 
+<hr />
+
 <div class="buttons">
     <button class="blue" type="button" id="applyQualificationsAndReferences">Submit</button>
 </div>

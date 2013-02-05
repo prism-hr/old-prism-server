@@ -235,8 +235,10 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-	public ApplicationFormBuilder qualification(Qualification qualification) {
-		this.qualifications.add(qualification);
+	public ApplicationFormBuilder qualification(Qualification... qualifications) {
+		for (Qualification qual : qualifications) {
+		    this.qualifications.add(qual);
+		}
 		return this;
 	}
 

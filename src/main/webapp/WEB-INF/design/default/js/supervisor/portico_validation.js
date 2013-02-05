@@ -9,7 +9,12 @@ $(document).ready(function()
 		var qualificationsSendToPortico = collectQualificationsSendToPortico();
 		var refereesSendToPorticoData = collectRefereesSendToPortico();
 		var explanation = $("#explanationText").val();
-		
+
+		if(qualificationsSendToPortico.length > 0){
+			// explanation doesn't matter when at least one qualification is selected
+			explanation = "";
+		}
+
 		$.ajax({
 			type: 'POST',
 			 statusCode: {

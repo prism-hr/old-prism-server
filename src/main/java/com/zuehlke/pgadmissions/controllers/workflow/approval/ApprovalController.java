@@ -265,13 +265,29 @@ public class ApprovalController {
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
     public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm,
-            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
+            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult, Model model) {
         if (sendToPorticoData.getRefereesSendToPortico() == null) {
             throw new ResourceNotFoundException();
         }
+        
+        model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
 
         refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
 
+        if (refereesAdminEditDTO.hasUserStartedTyping()) {
+            refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
+
+            if (referenceResult.hasErrors()) {
+                return REFERENCE_SECTION;
+            }
+
+            Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
+            Referee referee = refereeService.getRefereeById(refereeId);
+
+            refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+            refereeService.refresh(referee);
+        }
+        
         return REFERENCE_SECTION;
     }
 

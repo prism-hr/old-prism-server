@@ -25,6 +25,7 @@ $(document).ready(function() {
     // SHOW SELECTED QUALIFICATION
     // --------------------------------------------------------------------------------
     $('a[name="showQualificationLink"]').on("click", function() {
+    	$("#explanationText").val("");
     	$('#explanationArea').hide();
         $('a[name="showQualificationLink"]').each(function() {
             $("#" + $(this).attr("toggles")).hide();

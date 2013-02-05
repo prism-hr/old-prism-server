@@ -66,7 +66,8 @@ public class ValidApplicationFormBuilder {
     protected SourcesOfInterest interest;
     protected ProgrammeDetails programDetails;
     protected QualificationType qualificationType;
-    protected Qualification qualification;
+    protected Qualification qualification1;
+    protected Qualification qualification2;
     protected Funding funding;
     protected ApplicationForm applicationForm;
     private ApplicationFormBuilder applicationFormBuilder;
@@ -190,7 +191,22 @@ public class ValidApplicationFormBuilder {
             .studyOption("F+++++", "Full-time")
             .build();
         qualificationType = new QualificationTypeBuilder().id(Integer.MAX_VALUE).code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
-        qualification = new QualificationBuilder()
+        qualification1 = new QualificationBuilder()
+            .id(Integer.MAX_VALUE)
+            .awardDate(new Date())
+            .grade("6")
+            .institutionCode("UK0000")
+            .institution("University of London")
+            .institutionCountry(domicile)
+            .languageOfStudy("English")
+            .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1))
+            .subject("Engineering")
+            .type(qualificationType)
+            .isCompleted(CheckedStatus.YES)
+            .proofOfAward(proofOfAwardDocument)
+            .sendToUCL(true)
+            .build();
+        qualification2 = new QualificationBuilder()
             .id(Integer.MAX_VALUE)
             .awardDate(new Date())
             .grade("6")
@@ -227,7 +243,7 @@ public class ValidApplicationFormBuilder {
             .program(program)
             .programmeDetails(programDetails)
             .projectTitle("Project Title")
-            .qualification(qualification)
+            .qualification(qualification1, qualification2)
             .status(ApplicationFormStatus.APPROVED)
             .submittedDate(new Date())
             .cv(cvDocument)

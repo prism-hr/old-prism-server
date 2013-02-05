@@ -204,7 +204,7 @@ public class ApprovalController {
     }
 
     @InitBinder(value = "sendToPorticoData")
-    public void registerSendToPorticoData(WebDataBinder binder) {
+    public void registerSendToPorticoDataBinder(WebDataBinder binder) {
         binder.setValidator(sendToPorticoDataDTOValidator);
         binder.registerCustomEditor(List.class, sendToPorticoDataDTOEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());

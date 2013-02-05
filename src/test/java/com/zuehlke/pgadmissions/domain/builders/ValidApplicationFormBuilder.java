@@ -192,7 +192,7 @@ public class ValidApplicationFormBuilder {
             .build();
         qualificationType = new QualificationTypeBuilder().id(Integer.MAX_VALUE).code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
         qualification1 = new QualificationBuilder()
-            .id(Integer.MAX_VALUE)
+            .id(Integer.MAX_VALUE - 1)
             .awardDate(new Date())
             .grade("6")
             .institutionCode("UK0000")
@@ -207,7 +207,7 @@ public class ValidApplicationFormBuilder {
             .sendToUCL(true)
             .build();
         qualification2 = new QualificationBuilder()
-            .id(Integer.MAX_VALUE)
+            .id(Integer.MAX_VALUE - 2)
             .awardDate(new Date())
             .grade("6")
             .institutionCode("UK0000")

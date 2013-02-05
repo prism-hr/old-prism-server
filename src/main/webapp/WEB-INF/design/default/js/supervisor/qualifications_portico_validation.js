@@ -59,10 +59,18 @@ function showFirstQualificationEntryOrExplanationArea() {
 		return false;
 	}
 	
-    $('a[name="showQualificationLink"]').each(function() {
-        $("#" + $(this).attr("toggles")).show();
-        return false;
-    });
+	qualifications = $('input[name="qualificationSendToUcl"]:checkbox');
+	for(var i = 0 ; i < qualifications.length ; i++){
+		qualificationCheckbox = qualifications[i];
+		
+		if(!$(qualificationCheckbox).attr("disabled")){
+			var qualificationId = $(qualificationCheckbox).attr("value");
+			$('#qualification_' + qualificationId).show();
+			return false;
+		}
+	}
+    
+	$('#explanationArea').show();
 }
 
 function postQualificationsData() {

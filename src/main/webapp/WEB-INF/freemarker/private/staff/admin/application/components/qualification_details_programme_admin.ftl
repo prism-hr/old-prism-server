@@ -46,14 +46,14 @@
                                 <#else>
                                     ${(existingQualification.qualificationInstitution?html)!} 
                                 </#if> 
-                            ${(existingQualification.qualificationSubject?html)!} (${(existingQualification.qualificationGrade?html)!}) </a> 
+                            ${(existingQualification.qualificationTitle?html)!} ${(existingQualification.qualificationSubject?html)!} (${(existingQualification.qualificationGrade?html)!}) </a> 
                         <#else> 
                             <#if existingQualification.otherQualificationInstitution?has_content> 
                                 ${(existingQualification.otherQualificationInstitution?html)!} 
                             <#else> 
                                 ${(existingQualification.qualificationInstitution?html)!} 
                             </#if> 
-                            ${(existingQualification.qualificationSubject?html)!} (${(existingQualification.qualificationGrade?html)!}) 
+                            ${(existingQualification.qualificationTitle?html)!} ${(existingQualification.qualificationSubject?html)!} (${(existingQualification.qualificationGrade?html)!}) 
                         </#if>
                     </td>
         

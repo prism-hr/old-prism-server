@@ -60,6 +60,8 @@
                             <li data-supervisorid="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" class="ui-widget-content">${supervisor.user.firstName?html} ${supervisor.user.lastName?html} <span style="float:right; padding-right:20px;"><input type="radio" value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" name="primarySupervisor"> Primary Supervisor</span></li>
                         </#list>
                     </ol>
+                    <@spring.bind "approvalRound.supervisors" />
+                    <#list spring.status.errorMessages as error> <span class="invalid" id="supervisorsErrorSpan">${error}</span></#list>
                 </div>
             </div>
         </div>

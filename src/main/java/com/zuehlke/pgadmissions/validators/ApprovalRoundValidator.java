@@ -22,8 +22,8 @@ public class ApprovalRoundValidator extends AbstractValidator {
 
         ApprovalRound approvalRound = (ApprovalRound) target;
 
-        if (approvalRound.getSupervisors().isEmpty()) {
-            errors.rejectValue("supervisors", "dropdown.radio.select.none");
+        if (approvalRound.getSupervisors().size() != 2) {
+            errors.rejectValue("supervisors", "approvalround.supervisors.incomplete");
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectDescriptionAvailable", "dropdown.radio.select.none");

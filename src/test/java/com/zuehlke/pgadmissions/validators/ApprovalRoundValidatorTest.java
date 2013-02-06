@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
+import java.util.Collections;
 
 import junit.framework.Assert;
 
@@ -63,7 +64,18 @@ public class ApprovalRoundValidatorTest {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
         approvalRoundValidator.validate(approvalRound, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("supervisors").getCode());
+        Assert.assertEquals("approvalround.supervisors.incomplete", mappingResult.getFieldError("supervisors").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfOnlyOneSupervisor() {
+        Supervisor supervisor = new SupervisorBuilder().id(4).build();
+        
+        approvalRound.setSupervisors(Collections.singletonList(supervisor));
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("approvalround.supervisors.incomplete", mappingResult.getFieldError("supervisors").getCode());
     }
     
     @Test
@@ -128,11 +140,12 @@ public class ApprovalRoundValidatorTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
-        Supervisor supervisor = new SupervisorBuilder().id(4).build();
+        Supervisor supervisor1 = new SupervisorBuilder().id(4).build();
+        Supervisor supervisor2 = new SupervisorBuilder().id(5).build();
         ApplicationForm application = new ApplicationFormBuilder().id(2).build();
         approvalRound = new ApprovalRoundBuilder() //
                 .application(application)//
-                .supervisors(supervisor)//
+                .supervisors(supervisor1, supervisor2)//
                 .projectDescriptionAvailable(true)//
                 .projectTitle("title")//
                 .projectAbstract("abstract")//

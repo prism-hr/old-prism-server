@@ -216,20 +216,13 @@ public class ApprovalController {
     }
 
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
-    public String assignSupervisors(@RequestParam String applicationId, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
-            BindingResult bindingResult, SessionStatus sessionStatus) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+    public String assignSupervisors(@ModelAttribute ApplicationForm applicationForm, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
+            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return SUPERVISORS_SECTION;
         }
 
-        if (!approvalService.validateSendToPorticoData(applicationForm, null)) {
-            return PORTICO_VALIDATION_SECTION;
-        }
-
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        sessionStatus.setComplete();
-        return "/private/common/ajax_OK";
+        return PORTICO_VALIDATION_SECTION;
     }
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
@@ -246,6 +239,7 @@ public class ApprovalController {
             return PORTICO_VALIDATION_SECTION;
         }
 
+        approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
         sessionStatus.setComplete();
         return "/private/common/ajax_OK";
@@ -265,11 +259,12 @@ public class ApprovalController {
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
     public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm,
-            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult, Model model) {
+            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
+            @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult, Model model) {
         if (sendToPorticoData.getRefereesSendToPortico() == null) {
             throw new ResourceNotFoundException();
         }
-        
+
         model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
 
         refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
@@ -287,7 +282,7 @@ public class ApprovalController {
             refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
             refereeService.refresh(referee);
         }
-        
+
         return REFERENCE_SECTION;
     }
 

@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -19,17 +18,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.dto.QualificationsAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
-import com.zuehlke.pgadmissions.dto.RefereesAdminEditSendToUclDTO;
+import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -56,16 +54,19 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     private final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
 
+    private final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
+
     private final EncryptionHelper encryptionHelper;
 
     public EditApplicationFormAsProgrammeAdminController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationService,
             final DocumentPropertyEditor documentPropertyEditor, final QualificationService qualificationService, final RefereeService refereeService,
-            final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final EncryptionHelper encryptionHelper) {
+            final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
+            final EncryptionHelper encryptionHelper) {
         this.userService = userService;
         this.applicationService = applicationService;
         this.documentPropertyEditor = documentPropertyEditor;
@@ -73,6 +74,12 @@ public class EditApplicationFormAsProgrammeAdminController {
         this.refereeService = refereeService;
         this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
         this.encryptionHelper = encryptionHelper;
+        this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
+    }
+
+    @InitBinder(value = "sendToPorticoData")
+    public void registerSendToPorticoData(WebDataBinder binder) {
+        binder.registerCustomEditor(List.class, sendToPorticoDataDTOEditor);
     }
 
     @InitBinder(value = "refereesAdminEditDTO")
@@ -118,28 +125,22 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
-    public String submitRefereesData(@RequestParam String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm,
-            @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result, Model model) {
+    public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+            BindingResult referenceResult, @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, Model model) {
 
-        if (StringUtils.isBlank(sendToPorticoData) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
+        if (sendToPorticoData.getRefereesSendToPortico() == null || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }
 
         model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
 
         // save "send to UCL" data first
-        Gson gson = new Gson();
-        RefereesAdminEditSendToUclDTO refereesData = gson.fromJson(sendToPorticoData, RefereesAdminEditSendToUclDTO.class);
-        ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
-        for (String encryptedId : refereesData.getReferees()) {
-            decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
-        }
-        refereeService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedIds);
+        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
 
         if (refereesAdminEditDTO.hasUserStartedTyping()) {
-            refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
-            
-            if (result.hasErrors()) {
+            refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
+
+            if (referenceResult.hasErrors()) {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
 
@@ -155,20 +156,13 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
     @ResponseBody
-    public String submitQualificationsData(@RequestParam final String sendToPorticoData, @ModelAttribute ApplicationForm applicationForm) {
+    public String submitQualificationsData(@ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
+            @ModelAttribute ApplicationForm applicationForm) {
 
-        if (StringUtils.isBlank(sendToPorticoData) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
+        if (sendToPorticoData.getQualificationsSendToPortico() == null || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
         }
-
-        Gson gson = new Gson();
-        QualificationsAdminEditDTO qualificationsData = gson.fromJson(sendToPorticoData, QualificationsAdminEditDTO.class);
-        ArrayList<Integer> decryptedIds = new ArrayList<Integer>(2);
-        for (String encryptedId : qualificationsData.getQualifications()) {
-            decryptedIds.add(encryptionHelper.decryptToInteger(encryptedId));
-        }
-
-        qualificationService.selectForSendingToPortico(applicationForm.getApplicationNumber(), decryptedIds);
+        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
         return "OK";
     }
 

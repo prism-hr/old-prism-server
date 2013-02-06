@@ -66,14 +66,14 @@ public class PorticoAttachmentsZipCreator {
         String filename;
         switch (references.size()) {
             case 2:
-                filename = UUID.randomUUID() + ".pdf";
+                filename = getRandomFilename();
                 zos.putNextEntry(new ZipEntry(filename));
                 pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(1), zos);
                 zos.closeEntry();
                 contentsProperties.put("reference.2.serverFilename", filename);
                 contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
 
-                filename = UUID.randomUUID() + ".pdf";
+                filename = getRandomFilename();
                 zos.putNextEntry(new ZipEntry(filename));
                 pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(0), zos);
                 zos.closeEntry();
@@ -90,7 +90,7 @@ public class PorticoAttachmentsZipCreator {
     protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
         Document cv = applicationForm.getCv();
         if (cv != null) {
-            String filename = UUID.randomUUID() + ".pdf";
+            String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
             zos.write(cv.getContent());
             zos.closeEntry();
@@ -105,7 +105,7 @@ public class PorticoAttachmentsZipCreator {
             throw new CouldNotCreateAttachmentsPack("There should be at most 1 languageQualification marked for sending to UCL");
         }
         if (!languageQualifications.isEmpty()) {
-            String filename = UUID.randomUUID() + ".pdf";
+            String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
             zos.write(languageQualifications.get(0).getLanguageQualificationDocument().getContent());
             zos.closeEntry();            
@@ -117,7 +117,7 @@ public class PorticoAttachmentsZipCreator {
     protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
         Document personalStatement = applicationForm.getPersonalStatement();
         if (personalStatement != null) {
-            String filename = UUID.randomUUID() + ".pdf";
+            String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
             zos.write(personalStatement.getContent());
             zos.closeEntry();
@@ -131,14 +131,14 @@ public class PorticoAttachmentsZipCreator {
         String filename;
         switch (qualifications.size()) {
             case 2:
-                filename = UUID.randomUUID() + ".pdf";
+                filename = getRandomFilename();
                 zos.putNextEntry(new ZipEntry(filename));
                 zos.write(qualifications.get(1).getContent());
                 zos.closeEntry();
                 contentsProperties.put("transcript.2.serverFilename", filename);
                 contentsProperties.put("transcript.2.applicationFilename", qualifications.get(1).getFileName());
             case 1:
-                filename = UUID.randomUUID() + ".pdf";
+                filename = getRandomFilename();
                 zos.putNextEntry(new ZipEntry(filename));
                 zos.write(qualifications.get(0).getContent());
                 zos.closeEntry();
@@ -171,5 +171,9 @@ public class PorticoAttachmentsZipCreator {
         zos.closeEntry();
         contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);
         contentsProperties.put("mergedApplication.1.applicationFilename", applicationFilename);        
+    }
+    
+    protected String getRandomFilename() {
+        return UUID.randomUUID() + ".pdf";
     }
 }

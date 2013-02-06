@@ -93,8 +93,6 @@
         <property name="defaultThemeName" value="default" />
     </bean>
 
-    <import resource="hibernateEntities.xml" />
-
 <!--     Mail configuration -->
 <!-- Use this bean if you want to debug outgoing email messages locally on your development machine. -->
 <!--     <bean id="mailSender"  class="com.zuehlke.pgadmissions.mail.FakeLoggingMailSender"> -->

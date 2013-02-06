@@ -42,10 +42,8 @@
                     ${(existingReferee.firstname?html)!} ${(existingReferee.lastname?html)!} (${(existingReferee.email?html)!})
                 </td>
                 <td>
-                    <#if existingReferee.hasProvidedReference()>
+                    <#if existingReferee.hasResponded()>
                         ${(existingReferee.reference.lastUpdated?string('dd MMM yyyy'))!}
-                    <#elseif existingReferee.isDeclined()>
-                        Declined
                     <#else>
                         Not Provided
                     </#if>
@@ -62,9 +60,18 @@
         </tbody>
     </table>
 
-    <div class="section-info-bar">
-        You may select two completed references to submit for offer processing. You may also enter a reference on behalf of a referee by clicking the provide reference icon.
-    </div>
+    <@spring.bind "sendToPorticoData.refereesSendToPortico" />
+    <#if spring.status.errorCodes?seq_contains("portico.submit.referees.invalid")>
+        <div class="section-error-bar">
+            <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
+                Select the references that you wish to send to UCL Admissions. <b>You must select 2.</b>
+            </span>
+        </div>
+    <#else>
+        <div class="section-info-bar">
+            Select two completed references to submit for offer processing. You may also enter a reference on behalf of a referee by clicking the provide reference icon.
+        </div>
+    </#if>
     
     <#list applicationForm.referees as referee>
     <#assign encRefereeId = encrypter.encrypt(referee.id) />
@@ -131,7 +138,7 @@
             </div>
         </div>
         
-        <#if referee.hasResponded() && !referee.isDeclined()>
+        <#if referee.hasResponded()>
         <div class="row-group">
             <div class="admin_row">
                 <label class="admin_header">Reference Comment</label>
@@ -170,7 +177,7 @@
         </div>
         </#if>
     
-        <#if !referee.hasResponded() && !referee.isDeclined()>
+        <#if !referee.hasResponded()>
         <div class="row-group">
             <div class="row">
                 <span class="plain-label">Comment<em>*</em></span>
@@ -242,11 +249,6 @@
                 </div>
             </div>
             
-            <@spring.bind "refereesAdminEditDTO.*" />
-             
-            <#assign anyReferenceErrors = spring.status.errorMessages?size &gt; 0>
-            <input type="hidden" name="anyReferenceErrors" id="anyReferenceErrors" value="${anyReferenceErrors?string}" />
-            
             <!-- Add reference add button -->
             <div class="row">
                 <div class="field">
@@ -269,4 +271,4 @@
 </div>
 </#if>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/admin/references.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/references_portico_validation.js' />"></script>

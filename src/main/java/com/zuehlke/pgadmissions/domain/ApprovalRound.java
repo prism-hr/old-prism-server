@@ -31,7 +31,10 @@ public class ApprovalRound implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "approval_round_id")
-	private List<Supervisor> supervisors = new ArrayList<Supervisor>();	
+	private List<Supervisor> supervisors = new ArrayList<Supervisor>();
+	
+	@Column(name = "missing_qualification_explanation")
+	private String missingQualificationExplanation;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "application_form_id")	
@@ -58,8 +61,16 @@ public class ApprovalRound implements Serializable {
 	public void setApplication(ApplicationForm application) {
 		this.application = application;
 	}
+	
+	public String getMissingQualificationExplanation() {
+        return missingQualificationExplanation;
+    }
 
-	public Date getCreatedDate() {
+    public void setMissingQualificationExplanation(String missingQualificationExplanation) {
+        this.missingQualificationExplanation = missingQualificationExplanation;
+    }
+
+    public Date getCreatedDate() {
 		return createdDate;
 	}
 

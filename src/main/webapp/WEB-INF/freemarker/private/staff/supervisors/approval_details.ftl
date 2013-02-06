@@ -9,6 +9,9 @@
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 		<meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
 		
+        <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/qualifications.css' />"/>
+        <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/references.css' />"/>
+
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/global_private.css'/>" />
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/private/application.css'/>" />
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />" />
@@ -17,7 +20,6 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/approval.js'/>"></script>
 		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
         <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
@@ -37,85 +39,57 @@
 	<body>
 	<!--<![endif]-->
 
-		<div id="wrapper">
+	<div id="wrapper">
 
-			<#include "/private/common/global_header.ftl"/>
+		<#include "/private/common/global_header.ftl"/>
 
-			<!-- Middle. -->
-			<div id="middle">
+		<!-- Middle. -->
+		<div id="middle">
 
-				<#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
-				<@header />
-				<!-- Main content area. -->
-				<article id="content" role="main">
+			<#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
+			<@header />
+			<!-- Main content area. -->
+			<article id="content" role="main">
 
-				  <!-- "Tools" -->
-				  <div id="tools">
-					<ul class="left">
-					  <li class="icon-print"><a target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
-					  <li class="icon-feedback"><a title="Send Feedback" href="mailto:prism@ucl.ac.uk?subject=Feedback" target="_blank">Send Feedback</a></li>
-					</ul>
-				  </div>
-      
-					<!-- FLOATING TOOLBAR -->
-		            <ul id="view-toolbar" class="toolbar">
-		            	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-		                <li class="print"><a target="_blank" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Click to Download">Print</a></li>
-					</ul>
+			  <!-- "Tools" -->
+			  <div id="tools">
+				<ul class="left">
+				  <li class="icon-print"><a target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
+				  <li class="icon-feedback"><a title="Send Feedback" href="mailto:prism@ucl.ac.uk?subject=Feedback" target="_blank">Send Feedback</a></li>
+				</ul>
+			  </div>
+  
+				<!-- FLOATING TOOLBAR -->
+	            <ul id="view-toolbar" class="toolbar">
+	            	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
+	                <li class="print"><a target="_blank" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Click to Download">Print</a></li>
+				</ul>
 
 				<!-- content box -->
 				<div class="content-box">
 					<div class="content-box-inner">
-						<#include "/private/common/parts/application_info.ftl"/>
-    					<input type="hidden" id="applicationId" value="${applicationForm.applicationNumber}"/>
-							
-							<section class="form-rows"  id="approvalsection">
-								<h2 class="no-arrow">
-									Assign Supervisors
-								</h2>
-								<div>
-									<form>
-									
-										<div class="section-info-bar" id="add-info-bar-div">
-											Assign supervisors to the application here. You may also create new supervisors.
-										</div>
-									
-										<div class="row-group" id="assignSupervisorsToAppSection">			
-											
-										</div>
-										
-										<!-- Create supervisor -->
-										<div class="row-group" id ="createsupervisorsection">
-											
-										</div>
-															
-										<div class="buttons">
-											<button class="blue" type="button" id="moveToApprovalBtn">Submit</button>
-										</div>
-
-										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-										<input type="hidden" id="approvalRoundId" name="approvalRoundId" value="<#if approvalRound.id??>${encrypter.encrypt(approvalRound.id)}</#if>" />  
-
-								</form>
-							</div>
-						</section>
-						
-						<div id="postApprovalData"></div>
-						<form id="postSupervisorForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/approval/assignNewSupervisor'/>" <#else> action ="<@spring.url '/approval/createSupervisor'/>" </#if>>				
-							
-  				<#include "/private/staff/admin/comment/timeline_application.ftl"/>
+                        <#include "/private/common/parts/application_info.ftl"/>
+                        <div id="approve-content">
+                            <#include "/private/staff/supervisors/supervisors_section.ftl"/>
+                        </div>
+					</div>
 				</div>
-				<!-- .content-box-inner -->
-		</div>
-		<!-- .content-box -->
+				
+				<br />
+				
+				<div class="content-box">	
+					<div class="content-box-inner">
+                        <#include "/private/staff/admin/comment/timeline_application.ftl"/>
+    				</div>
+        		</div>
 
-		</article>
+            </article>
 
-	</div>
+    	</div>
 
-	<#include "/private/common/global_footer.ftl"/>
+       <#include "/private/common/global_footer.ftl"/>
 
-</div>
+    </div>
 
 </body>
 </html>

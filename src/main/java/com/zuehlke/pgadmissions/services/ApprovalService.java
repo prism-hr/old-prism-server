@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +17,7 @@ import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -197,26 +194,6 @@ public class ApprovalService {
             save(latestApprovalRound);
         }
 
-    }
-
-    public boolean validateSendToPorticoData(ApplicationForm applicationForm, String explanation) {
-        boolean valid = true;
-
-        List<ReferenceComment> referencesToSendToPortico = applicationForm.getReferencesToSendToPortico();
-        if (referencesToSendToPortico.size() != 2) {
-            valid = false;
-        }
-
-        List<Document> qualificationsToSendToPortico = applicationForm.getQualificationsToSendToPortico();
-        if (qualificationsToSendToPortico.size() > 2) {
-            valid = false;
-        } else if (qualificationsToSendToPortico.isEmpty()) {
-            if (StringUtils.isBlank(explanation)) {
-                valid = false;
-            }
-        }
-
-        return valid;
     }
 
     public Supervisor newSupervisor() {

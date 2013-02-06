@@ -26,13 +26,9 @@ import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -40,14 +36,10 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
@@ -414,72 +406,4 @@ public class ApprovalServiceTest {
 
     }
 
-    @Test
-    public void shouldValidateCorrectApplication() {
-        Document proofOfAward = new DocumentBuilder().id(1).build();
-        Qualification qualification = new QualificationBuilder().id(8).proofOfAward(proofOfAward).sendToUCL(true).build();
-        ReferenceComment reference1 = new ReferenceCommentBuilder().id(1).build();
-        ReferenceComment reference2 = new ReferenceCommentBuilder().id(2).build();
-        Referee referee1 = new RefereeBuilder().id(1).reference(reference1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().id(2).reference(reference2).sendToUCL(true).toReferee();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").qualifications(qualification)
-                .referees(referee1, referee2).build();
-
-        assertTrue(approvalService.validateSendToPorticoData(application, null));
-    }
-
-    @Test
-    public void shouldValidateCorrectApplicationWithNoQualificationsAndExplanation() {
-        ReferenceComment reference1 = new ReferenceCommentBuilder().id(1).build();
-        ReferenceComment reference2 = new ReferenceCommentBuilder().id(2).build();
-        Referee referee1 = new RefereeBuilder().id(1).reference(reference1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().id(2).reference(reference2).sendToUCL(true).toReferee();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").referees(referee1, referee2).build();
-
-        assertTrue(approvalService.validateSendToPorticoData(application, "no explanation"));
-    }
-
-    @Test
-    public void shouldValidateInorrectApplicationWithNoQualificationsAndNoExplanation() {
-        ReferenceComment reference1 = new ReferenceCommentBuilder().id(1).build();
-        ReferenceComment reference2 = new ReferenceCommentBuilder().id(2).build();
-        Referee referee1 = new RefereeBuilder().id(1).reference(reference1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().id(2).reference(reference2).sendToUCL(true).toReferee();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").referees(referee1, referee2).build();
-
-        assertFalse(approvalService.validateSendToPorticoData(application, null));
-    }
-
-    @Test
-    public void shouldValidateIncorrectApplicationWithOnlyOneReference() {
-        Document proofOfAward = new DocumentBuilder().id(1).build();
-        Qualification qualification = new QualificationBuilder().id(8).proofOfAward(proofOfAward).sendToUCL(true).build();
-        ReferenceComment reference1 = new ReferenceCommentBuilder().id(1).build();
-        ReferenceComment reference2 = new ReferenceCommentBuilder().id(2).build();
-        Referee referee1 = new RefereeBuilder().id(1).reference(reference1).sendToUCL(false).toReferee();
-        Referee referee2 = new RefereeBuilder().id(2).reference(reference2).sendToUCL(true).toReferee();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").qualifications(qualification)
-                .referees(referee1, referee2).build();
-
-        assertFalse(approvalService.validateSendToPorticoData(application, null));
-    }
-
-    @Test
-    public void shouldValidateIncorrectApplicationWithThreeQualifications() {
-        Document proofOfAward1 = new DocumentBuilder().id(1).build();
-        Document proofOfAward2 = new DocumentBuilder().id(2).build();
-        Document proofOfAward3 = new DocumentBuilder().id(3).build();
-        Qualification qualification1 = new QualificationBuilder().id(1).proofOfAward(proofOfAward1).sendToUCL(true).build();
-        Qualification qualification2 = new QualificationBuilder().id(2).proofOfAward(proofOfAward2).sendToUCL(true).build();
-        Qualification qualification3 = new QualificationBuilder().id(3).proofOfAward(proofOfAward3).sendToUCL(true).build();
-
-        ReferenceComment reference1 = new ReferenceCommentBuilder().id(1).build();
-        ReferenceComment reference2 = new ReferenceCommentBuilder().id(2).build();
-        Referee referee1 = new RefereeBuilder().id(1).reference(reference1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().id(2).reference(reference2).sendToUCL(true).toReferee();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
-                .qualifications(qualification1, qualification2, qualification3).referees(referee1, referee2).build();
-
-        assertFalse(approvalService.validateSendToPorticoData(application, null));
-    }
 }

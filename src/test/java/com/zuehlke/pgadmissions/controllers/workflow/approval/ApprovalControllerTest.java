@@ -315,77 +315,25 @@ public class ApprovalControllerTest {
     }
 
     @Test
-    public void shouldAssignSupervisorsAndMoveApplicationToApprovalRound() {
+    public void shouldAssignSupervisorsAndMoveToPorticoSection() {
         final ApprovalRound interview = new ApprovalRoundBuilder().id(4).build();
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
-        SessionStatus sessionStatus = new SimpleSessionStatus();
 
-        controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
-                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return application;
-            }
-
-        };
-
-        EasyMock.expect(approvalServiceMock.validateSendToPorticoData(application, null)).andReturn(true);
-        approvalServiceMock.moveApplicationToApproval(application, interview);
-        EasyMock.replay(approvalServiceMock);
-
-        String view = controller.assignSupervisors("abc", interview, bindingResultMock, sessionStatus);
-        assertEquals("/private/common/ajax_OK", view);
-        EasyMock.verify(approvalServiceMock);
-        assertTrue(sessionStatus.isComplete());
+        String view = controller.assignSupervisors(application, interview, bindingResultMock);
+        assertEquals("/private/staff/supervisors/portico_validation_section", view);
     }
 
     @Test
     public void shouldNotSaveApprovalRoundAndReturnToApprovalPageIfHasErrors() {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        SessionStatus sessionStatus = new SimpleSessionStatus();
-        controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
-                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return applicationForm;
-            }
-
-        };
         ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).build();
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
         EasyMock.replay(errorsMock);
-        assertEquals("/private/staff/supervisors/supervisors_section", controller.assignSupervisors("abc", approvalRound, errorsMock, sessionStatus));
-        assertFalse(sessionStatus.isComplete());
+        assertEquals("/private/staff/supervisors/supervisors_section", controller.assignSupervisors(applicationForm, approvalRound, errorsMock));
         EasyMock.verify(errorsMock);
     }
 
-    @Test
-    public void shouldAssignSupervisorsAndMoveToSendToPorticoPageIfValidationErrors() {
-        final ApprovalRound interview = new ApprovalRoundBuilder().id(4).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
-        SessionStatus sessionStatus = new SimpleSessionStatus();
-
-        controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
-                supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock) {
-            @Override
-            public ApplicationForm getApplicationForm(String applicationId) {
-                return application;
-            }
-
-        };
-
-        EasyMock.expect(approvalServiceMock.validateSendToPorticoData(application, null)).andReturn(false);
-        EasyMock.replay(approvalServiceMock);
-
-        String view = controller.assignSupervisors("abc", interview, bindingResultMock, sessionStatus);
-        assertEquals("/private/staff/supervisors/portico_validation_section", view);
-        EasyMock.verify(approvalServiceMock);
-        assertFalse(sessionStatus.isComplete());
-    }
 
     @Test
     public void shouldAddApprovalRoundValidatorAndSupervisorPropertyEditor() {
@@ -474,7 +422,7 @@ public class ApprovalControllerTest {
     @Test
     public void shouldApplySendToPorticoDataAndMoveToApproval() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();
-        ApprovalRound interview = new ApprovalRoundBuilder().id(4).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(4).build();
 
         SendToPorticoDataDTO sendToPorticoData = new SendToPorticoDataDTO();
         sendToPorticoData.setQualificationsSendToPortico(Arrays.asList(new Integer[]{1,2}));
@@ -489,14 +437,46 @@ public class ApprovalControllerTest {
         refereeServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
         EasyMock.expectLastCall().once();
         
-        approvalServiceMock.moveApplicationToApproval(applicationForm, interview);
+        approvalServiceMock.moveApplicationToApproval(applicationForm, approvalRound);
         EasyMock.expectLastCall().once();
         
         EasyMock.replay(qualificationServiceMock, refereeServiceMock, approvalServiceMock);
         
-        String returnValue = controller.applySendToPorticoData(applicationForm, interview, sendToPorticoData, result, sessionStatus);
+        String returnValue = controller.applySendToPorticoData(applicationForm, approvalRound, sendToPorticoData, result, sessionStatus);
         assertEquals("/private/common/ajax_OK", returnValue);
         assertTrue(sessionStatus.isComplete());
+        
+        EasyMock.verify(qualificationServiceMock, refereeServiceMock, approvalServiceMock);
+    }
+    
+    @Test
+    public void shouldApplySendToPorticoDataWithMissingQualificationsAndExplanation() {
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(4).build();
+
+        SendToPorticoDataDTO sendToPorticoData = new SendToPorticoDataDTO();
+        sendToPorticoData.setQualificationsSendToPortico(Collections.<Integer>emptyList());
+        sendToPorticoData.setRefereesSendToPortico(Arrays.asList(new Integer[]{11,12}));
+        sendToPorticoData.setEmptyQualificationsExplanation("explanation");
+        
+        BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
+        SessionStatus sessionStatus = new SimpleSessionStatus(); 
+        
+        qualificationServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
+        EasyMock.expectLastCall().once();
+        
+        refereeServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
+        EasyMock.expectLastCall().once();
+        
+        approvalServiceMock.moveApplicationToApproval(applicationForm, approvalRound);
+        EasyMock.expectLastCall().once();
+        
+        EasyMock.replay(qualificationServiceMock, refereeServiceMock, approvalServiceMock);
+        
+        String returnValue = controller.applySendToPorticoData(applicationForm, approvalRound, sendToPorticoData, result, sessionStatus);
+        assertEquals("/private/common/ajax_OK", returnValue);
+        assertTrue(sessionStatus.isComplete());
+        assertEquals("explanation", approvalRound.getMissingQualificationExplanation());
         
         EasyMock.verify(qualificationServiceMock, refereeServiceMock, approvalServiceMock);
     }

@@ -125,8 +125,22 @@ $(document).ready(function() {
         var postData = {
             applicationId : $('#applicationId').val(),
             supervisors : '',
-            primarySupervisor : $('input[name=primarySupervisor]').val() 
+            primarySupervisor : $('input[name=primarySupervisor]').val(),
+            projectTitle : $('#projectTitle').val(),
+            projectAbstract : $('#projectAbstract').val(),
+            recommendedStartDate : $('#offerStartDate').val(),
+            recommendedConditions : $('#offerConditions').val()
         };
+        
+        if ($('input:radio[name=provideProjectDescription]:checked').length > 0) {
+        	var provide = $('input:radio[name=provideProjectDescription]:checked').val();
+            postData.projectDescriptionAvailable = (provide == "yes" ? true : false);
+        }
+        
+        if ($('input:radio[name=offerType]:checked').length > 0) {
+        	var provide = $('input:radio[name=offerType]:checked').val();
+            postData.recommendedConditionsAvailable = (provide == "conditional" ? true : false);
+        }
         
         $.ajax({
             type : 'POST',

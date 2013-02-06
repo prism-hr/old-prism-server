@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -32,6 +33,7 @@ import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
@@ -70,9 +72,10 @@ public class ApprovalController {
     private final EncryptionHelper encryptionHelper;
     private final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
     private final SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator;
+    private final DatePropertyEditor datePropertyEditor;
 
     ApprovalController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -80,7 +83,7 @@ public class ApprovalController {
             ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
             GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
             RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-            SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator) {
+            SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
@@ -94,6 +97,7 @@ public class ApprovalController {
         this.encryptionHelper = encryptionHelper;
         this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
         this.sendToPorticoDataDTOValidator = sendToPorticoDataDTOValidator;
+        this.datePropertyEditor = datePropertyEditor;
     }
 
     @InitBinder(value = "refereesAdminEditDTO")
@@ -189,6 +193,7 @@ public class ApprovalController {
     public void registerValidatorAndPropertyEditorForApprovalRound(WebDataBinder binder) {
         binder.setValidator(approvalRoundValidator);
         binder.registerCustomEditor(Supervisor.class, supervisorPropertyEditor);
+        binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }
 

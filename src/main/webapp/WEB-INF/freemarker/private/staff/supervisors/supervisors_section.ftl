@@ -79,25 +79,71 @@
                 <label id="lbl_provideProjectDescription" class="plain-label">Do you wish to provide a project description?<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectDescription'/>"></span>
                 <div class="field">
-                    <label><input type="radio" name="provideProjectDescription" id="provideProjectDescriptionYes" value="yes" /> Yes</label>
-                    <label><input type="radio" name="provideProjectDescription" id="provideProjectDescriptionNo" value="no" /> No</label>
+                    <label><input type="radio" name="provideProjectDescription" id="provideProjectDescriptionYes" value="yes" 
+                        <#if  approvalRound.projectDescriptionAvailable?? && approvalRound.projectDescriptionAvailable >
+                            checked="checked"
+                        </#if>
+                    /> Yes</label>
+                    <label><input type="radio" name="provideProjectDescription" id="provideProjectDescriptionNo" value="no"
+                        <#if  approvalRound.projectDescriptionAvailable?? && !approvalRound.projectDescriptionAvailable >
+                            checked="checked"
+                        </#if>
+                    /> No</label>
                 </div>
+                
+                <@spring.bind "approvalRound.projectDescriptionAvailable" />
+                <#list spring.status.errorMessages as error >
+                    <div class="row">
+                        <div class="field">
+                            <span class="invalid">${error}</span>
+                        </div>
+                    </div>
+                </#list>
+                
             </div>
             
             <div class="row">
                 <label id="lbl_projectTitle" class="plain-label grey-label">Project Title</label>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectTitle'/>"></span>
                 <div class="field">
-                    <input class="max" type="text" name="projectTitle" id="projectTitle" disabled="disabled" value="" />
+                    <input class="max" type="text" name="projectTitle" id="projectTitle" 
+                        <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
+                              disabled="disabled"
+                        </#if>
+                    value="${(approvalRound.projectTitle?html)!}" />
                 </div>
+                
+                <@spring.bind "approvalRound.projectTitle" />
+                <#list spring.status.errorMessages as error >
+                    <div class="row">
+                        <div class="field">
+                            <span class="invalid">${error}</span>
+                        </div>
+                    </div>
+                </#list>
+                
             </div>
             
             <div class="row">
                 <label id="lbl_projectAbstract" class="plain-label grey-label">Project Abstract</label>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
                 <div class="field">
-                    <textarea class="max" cols="80" rows="6" name="projectAbstract" id="projectAbstract" disabled="disabled"></textarea>
+                    <textarea class="max" cols="80" rows="6" name="projectAbstract" id="projectAbstract"
+                        <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
+                              disabled="disabled"
+                        </#if>
+                    >${(approvalRound.projectAbstract?html)!}</textarea>
                 </div>
+                
+                <@spring.bind "approvalRound.projectAbstract" />
+                <#list spring.status.errorMessages as error >
+                    <div class="row">
+                        <div class="field">
+                            <span class="invalid">${error}</span>
+                        </div>
+                    </div>
+                </#list>
+                                
             </div>
         </div>
         
@@ -111,25 +157,67 @@
                 <span class="plain-label">Provisional Start Date<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerStartDate'/>"></span>
                 <div class="field">
-                    <input type="text" value="23 Sep 2013" name="offerStartDate" id="offerStartDate" class="full date" readonly="readonly">
+                    <input type="text" value="${(approvalRound.recommendedStartDate?string('dd MMM yyyy'))!}" name="offerStartDate" id="offerStartDate" class="full date" readonly="readonly">
                 </div>
+                
+                <@spring.bind "approvalRound.recommendedStartDate" />
+                <#list spring.status.errorMessages as error >
+                    <div class="row">
+                        <div class="field">
+                            <span class="invalid">${error}</span>
+                        </div>
+                    </div>
+                </#list>                
+                
             </div>
             
             <div class="row">
                 <label id="lbl_offerType" class="plain-label">Recommended Offer Type<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerType'/>"></span>
                 <div class="field">
-                    <label><input type="radio" name="offerType" id="offerTypeUnconditional" value="unconditional" /> Unconditional</label>
-                    <label><input type="radio" name="offerType" id="offerTypeConditional" value="conditional" /> Conditional</label>
+                    <label><input type="radio" name="offerType" id="offerTypeUnconditional" value="unconditional"
+                        <#if  approvalRound.recommendedConditionsAvailable?? && !approvalRound.recommendedConditionsAvailable >
+                            checked="checked"
+                        </#if>
+                    /> Unconditional</label>
+                    <label><input type="radio" name="offerType" id="offerTypeConditional" value="conditional"
+                        <#if  approvalRound.recommendedConditionsAvailable?? && approvalRound.recommendedConditionsAvailable >
+                            checked="checked"
+                        </#if>
+                    /> Conditional</label>
                 </div>
+                
+                <@spring.bind "approvalRound.recommendedConditionsAvailable" />
+                <#list spring.status.errorMessages as error >
+                    <div class="row">
+                        <div class="field">
+                            <span class="invalid">${error}</span>
+                        </div>
+                    </div>
+                </#list>                
+                
             </div>
             
             <div class="row">
                 <label id="lbl_offerConditions" class="plain-label grey-label">Recommended Conditions</label>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
                 <div class="field">
-                    <textarea class="max" cols="80" rows="6" name="offerConditions" id="offerConditions" disabled="disabled"></textarea>
+                    <textarea class="max" cols="80" rows="6" name="offerConditions" id="offerConditions"
+                        <#if  !approvalRound.recommendedConditionsAvailable?? || !approvalRound.recommendedConditionsAvailable >
+                            disabled="disabled"
+                        </#if>
+                    >${(approvalRound.recommendedConditions?html)!}</textarea>
                 </div>
+                
+                <@spring.bind "approvalRound.recommendedConditions" />
+                <#list spring.status.errorMessages as error >
+                    <div class="row">
+                        <div class="field">
+                            <span class="invalid">${error}</span>
+                        </div>
+                    </div>
+                </#list>      
+                
             </div>
         
     </div>

@@ -222,7 +222,7 @@ public class RefereeServiceTest {
         refereeService.saveReferenceAndSendMailNotifications(referee);
         EasyMock.verify(refereeDAOMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
     }
-    
+
     @Test
     public void shouldPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
         Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
@@ -233,7 +233,7 @@ public class RefereeServiceTest {
         RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
         Referee referee = new RefereeBuilder().user(refereeUser).application(applicationForm).toReferee();
-        
+
         Document document = new DocumentBuilder().build();
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
         refereesAdminEditDTO.setComment("comment text");
@@ -241,7 +241,7 @@ public class RefereeServiceTest {
         refereesAdminEditDTO.setReferenceDocument(document);
         refereesAdminEditDTO.setSuitableForProgramme(true);
         refereesAdminEditDTO.setSuitableForUCL(false);
-        
+
         EasyMock.expect(encryptionHelper.decryptToInteger("refereeId")).andReturn(8);
         EasyMock.expect(refereeDAOMock.getRefereeById(8)).andReturn(referee);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -253,7 +253,7 @@ public class RefereeServiceTest {
         EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
         ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
         EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
-        
+
         assertSame(applicationForm, referenceComment.getApplication());
         assertSame(referee, referenceComment.getReferee());
         assertEquals(CommentType.REFERENCE, referenceComment.getType());
@@ -467,60 +467,51 @@ public class RefereeServiceTest {
 
         ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant)
                 .program(new ProgramBuilder().title("klala").administrators(addmin).build()).build();
-        
+
         referee.setApplication(form);
 
         refereeDAOMock.save(referee);
 
         ReferenceEvent event = new ReferenceEventBuilder().id(4).build();
-        
+
         EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
-        
+
         applicationFormDAOMock.save(form);
-        
+
         MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 
-        // Mails to Applicant        
+        // Mails to Applicant
         InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
-        EasyMock.expect(msgSourceMock.getMessage(
-                EasyMock.eq("reference.provided.applicant"),
-                EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy"}), 
-                EasyMock.eq((Locale) null)))
-                .andReturn("subject");
-        EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(
-                EasyMock.eq(toAddress),
-                EasyMock.eq("subject"), 
-                EasyMock.eq("private/pgStudents/mail/reference_respond_confirmation.ftl"),
-                EasyMock.isA(Map.class), 
-                (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+        EasyMock.expect(
+                msgSourceMock.getMessage(EasyMock.eq("reference.provided.applicant"), EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy" }),
+                        EasyMock.eq((Locale) null))).andReturn("subject");
+        EasyMock.expect(
+                mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("subject"),
+                        EasyMock.eq("private/pgStudents/mail/reference_respond_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull()))
+                .andReturn(preparatorMock);
         javaMailSenderMock.send(preparatorMock);
 
         // Mails to Admin
         InternetAddress toAdminAddress = new InternetAddress("blogs@test.com", "bob blogs");
-        EasyMock.expect(msgSourceMock.getMessage(
-                EasyMock.eq("reference.provided.admin"),
-                EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy"}), 
-                EasyMock.eq((Locale) null)))
-                .andReturn("subject");
-        EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(
-                EasyMock.eq(toAdminAddress),
-                EasyMock.eq("subject"), 
-                EasyMock.eq("private/staff/admin/mail/reference_submit_confirmation.ftl"),
-                EasyMock.isA(Map.class), 
-                (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+        EasyMock.expect(
+                msgSourceMock.getMessage(EasyMock.eq("reference.provided.admin"), EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy" }),
+                        EasyMock.eq((Locale) null))).andReturn("subject");
+        EasyMock.expect(
+                mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAdminAddress), EasyMock.eq("subject"),
+                        EasyMock.eq("private/staff/admin/mail/reference_submit_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull()))
+                .andReturn(preparatorMock);
         javaMailSenderMock.send(preparatorMock);
-        
-        EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock,
-                eventFactoryMock, applicationFormDAOMock);
+
+        EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock);
 
         refereeService.declineToActAsRefereeAndSendNotification(referee);
 
         assertTrue(referee.isDeclined());
-        
+
         assertEquals(1, form.getEvents().size());
-        
+
         assertEquals(event, form.getEvents().get(0));
-        
+
         EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock, applicationFormDAOMock);
     }
 
@@ -587,16 +578,15 @@ public class RefereeServiceTest {
         Referee referee3 = new RefereeBuilder().id(3).sendToUCL(false).toReferee();
         Referee referee4 = new RefereeBuilder().id(4).sendToUCL(false).toReferee();
 
-        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("abc")).andReturn(applicationFormMock);
         EasyMock.expect(applicationFormMock.getReferees()).andReturn(Arrays.asList(referee1, referee2, referee3, referee4));
         EasyMock.expect(refereeDAOMock.getRefereeById(3)).andReturn(referee3);
         EasyMock.expect(refereeDAOMock.getRefereeById(4)).andReturn(referee4);
 
-        EasyMock.replay(applicationFormMock, refereeDAOMock, applicationFormDAOMock);
+        EasyMock.replay(applicationFormMock, refereeDAOMock, applicationFormDAOMock, encryptionHelper);
 
-        refereeService.selectForSendingToPortico("abc", Arrays.asList(3, 4));
+        refereeService.selectForSendingToPortico(applicationFormMock, Arrays.asList(new Integer[] { 3, 4 }));
 
-        EasyMock.verify(applicationFormMock, refereeDAOMock, applicationFormDAOMock);
+        EasyMock.verify(applicationFormMock, refereeDAOMock, applicationFormDAOMock, encryptionHelper);
 
         assertTrue("SendToUcl flag has not been updated to true", referee3.getSendToUCL());
         assertTrue("SendToUcl flag has not been updated to true", referee4.getSendToUCL());

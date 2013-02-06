@@ -240,13 +240,13 @@ public class RefereeService {
     }
 
     @Transactional
-    public void selectForSendingToPortico(final String applicationNumber, final List<Integer> refereeSendToUcl) {
-        ApplicationForm applicationForm = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
+    public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {
+        
         for (Referee referee : applicationForm.getReferees()) {
             referee.setSendToUCL(false);
         }
 
-        for (Integer refereeId : refereeSendToUcl) {
+        for (Integer refereeId : refereesSendToPortico) {
             Referee referee = refereeDAO.getRefereeById(refereeId);
             referee.setSendToUCL(true);
         }

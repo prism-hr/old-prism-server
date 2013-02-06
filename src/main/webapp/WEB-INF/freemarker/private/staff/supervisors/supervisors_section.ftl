@@ -76,7 +76,7 @@
             </p>                            
             
             <div class="row">
-                <label id="lbl_provideProjectDescription" class="plain-label">Do you wish to provide a project description? <em>*</em></label>
+                <label id="lbl_provideProjectDescription" class="plain-label">Do you wish to provide a project description?<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectDescription'/>"></span>
                 <div class="field">
                     <label><input type="radio" name="provideProjectDescription" id="provideProjectDescriptionYes" value="yes" /> Yes</label>
@@ -108,7 +108,7 @@
             </p>                            
             
             <div class="row">
-                <span class="plain-label">Provisional Start Date <em>*</em></span>
+                <span class="plain-label">Provisional Start Date<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerStartDate'/>"></span>
                 <div class="field">
                     <input type="text" value="23 Sep 2013" name="offerStartDate" id="offerStartDate" class="full date" readonly="readonly">
@@ -116,7 +116,7 @@
             </div>
             
             <div class="row">
-                <label id="lbl_offerType" class="plain-label">Recommended Offer Type <em>*</em></label>
+                <label id="lbl_offerType" class="plain-label">Recommended Offer Type<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerType'/>"></span>
                 <div class="field">
                     <label><input type="radio" name="offerType" id="offerTypeUnconditional" value="unconditional" /> Unconditional</label>

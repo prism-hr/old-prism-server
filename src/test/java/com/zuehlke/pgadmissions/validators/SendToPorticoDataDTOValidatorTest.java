@@ -113,6 +113,16 @@ public class SendToPorticoDataDTOValidatorTest {
         assertEquals(1, mappingResult.getErrorCount());
         assertEquals("portico.submit.referees.hasNotResponded", mappingResult.getFieldError("refereesSendToPortico").getCode());
     }
+    
+    @Test
+    public void shouldRejectIfProvidedBothQualificationsAndExplanation() {
+        sendToPorticoDataDTO.setEmptyQualificationsExplanation("explanation");
+        
+        EasyMock.replay(qualificationServiceMock, refereeServiceMock);
+        sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
+        assertEquals(1, mappingResult.getErrorCount());
+        assertEquals("portico.submit.explanation.notnull", mappingResult.getFieldError("emptyQualificationsExplanation").getCode());
+    }
 
     @Before
     public void setup() {

@@ -129,27 +129,33 @@ public class PorticoAttachmentsZipCreator {
     protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
         List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
         String filename;
+        
         switch (qualifications.size()) {
-            case 2:
-                filename = getRandomFilename();
-                zos.putNextEntry(new ZipEntry(filename));
-                zos.write(qualifications.get(1).getContent());
-                zos.closeEntry();
-                contentsProperties.put("transcript.2.serverFilename", filename);
-                contentsProperties.put("transcript.2.applicationFilename", qualifications.get(1).getFileName());
-            case 1:
-                filename = getRandomFilename();
-                zos.putNextEntry(new ZipEntry(filename));
-                zos.write(qualifications.get(0).getContent());
-                zos.closeEntry();
-                contentsProperties.put("transcript.1.serverFilename", filename);
-                contentsProperties.put("transcript.1.applicationFilename", qualifications.get(0).getFileName());
-            case 0:
-                // TODO: There should be at least one transcript. Add a PDF with some comments in it in the future.
-                // They need to explain why they did not select a qualification
-                break;
-            default:
-                throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
+        case 2:
+            filename = getRandomFilename();
+            zos.putNextEntry(new ZipEntry(filename));
+            zos.write(qualifications.get(1).getContent());
+            zos.closeEntry();
+            contentsProperties.put("transcript.2.serverFilename", filename);
+            contentsProperties.put("transcript.2.applicationFilename", qualifications.get(1).getFileName());
+        case 1:
+            filename = getRandomFilename();
+            zos.putNextEntry(new ZipEntry(filename));
+            zos.write(qualifications.get(0).getContent());
+            zos.closeEntry();
+            contentsProperties.put("transcript.1.serverFilename", filename);
+            contentsProperties.put("transcript.1.applicationFilename", qualifications.get(0).getFileName());
+            break;
+        case 0:
+            filename = getRandomFilename();
+            zos.putNextEntry(new ZipEntry(filename));
+            zos.write(pdfDocumentBuilder.buildTranscript1FromApprovalRoundComment(applicationForm));
+            zos.closeEntry();
+            contentsProperties.put("transcript.1.serverFilename", filename);
+            contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
+            break;
+        default:
+            throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
         }
     }
     

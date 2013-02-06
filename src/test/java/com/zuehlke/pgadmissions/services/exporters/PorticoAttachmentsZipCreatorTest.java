@@ -15,15 +15,27 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.api.easymock.annotation.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 
+@RunWith(PowerMockRunner.class)
 public class PorticoAttachmentsZipCreatorTest {
 
     private String uclBookingReferenceNumber = "P123456";
@@ -40,8 +52,32 @@ public class PorticoAttachmentsZipCreatorTest {
 
     private static final String RANDOM_FILENAME = "RANDOM_FILENAME";
     
+    @Mock 
+    private SecurityContextHolder mockSecurityContextHolder;
+    
+    @Mock
+    private SecurityContext mockSecurityContext;
+    
+    @Mock
+    private Authentication authenticationMock;
+    
+    private RegisteredUser registeredUserMock;
+    
     @Test
+    @PrepareForTest(SecurityContextHolder.class)
     public void shouldWriteZipFile() throws IOException, CouldNotCreateAttachmentsPack {
+        // Given
+        registeredUserMock = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(registeredUserMock.hasAdminRightsOnApplication(EasyMock.isA(ApplicationForm.class))).andReturn(true).anyTimes();
+        EasyMock.expect(registeredUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
+        EasyMock.expect(registeredUserMock.isInRole(Authority.APPLICANT)).andReturn(false).anyTimes();
+        PowerMock.mockStatic(SecurityContextHolder.class);
+        EasyMock.expect(SecurityContextHolder.getContext()).andReturn(mockSecurityContext).anyTimes();
+        EasyMock.expect(mockSecurityContext.getAuthentication()).andReturn(authenticationMock).anyTimes();
+        EasyMock.expect(authenticationMock.getDetails()).andReturn(registeredUserMock).anyTimes();
+        PowerMock.replay(SecurityContextHolder.class);
+        EasyMock.replay(mockSecurityContextHolder, mockSecurityContext, authenticationMock, registeredUserMock);
+        
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
@@ -51,8 +87,11 @@ public class PorticoAttachmentsZipCreatorTest {
                 return randomFilename;
             }
         };
+
+        // When
         attachmentsZipCreator.writeZipEntries(applicationForm, uclBookingReferenceNumber, outputStream);
 
+        // Then
         int numberOfFiles = 0;
         Set<String> fileNames = new HashSet<String>();
         Properties contentProperties = new Properties();

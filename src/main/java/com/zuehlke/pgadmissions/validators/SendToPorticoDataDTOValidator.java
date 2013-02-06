@@ -43,7 +43,13 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
         if (qualifications != null) {
             if (qualifications.isEmpty() && StringUtils.isBlank(explanation)) {
                 errors.rejectValue("emptyQualificationsExplanation", "portico.submit.explanation.empty");
-            } else if (qualifications.size() > 2) {
+            }
+            
+            if(!qualifications.isEmpty() && explanation != null){
+                errors.rejectValue("emptyQualificationsExplanation", "portico.submit.explanation.notnull");
+            }
+            
+            if (qualifications.size() > 2) {
                 errors.rejectValue("qualificationsSendToPortico", "portico.submit.qualifications.exceed");
             }
 

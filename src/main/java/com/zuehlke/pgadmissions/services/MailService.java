@@ -30,22 +30,18 @@ public class MailService {
 
 	private final JavaMailSender mailsender;
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
-	private final ApplicationsService applicationsService;
 
 	private final Logger log = Logger.getLogger(MailService.class);
 	private final MessageSource msgSource;
 
 	public MailService() {
-		this(null, null, null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender,//
-			ApplicationsService applicationsService, MessageSource msgSource) {
-
+	public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, MessageSource msgSource) {
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
-		this.applicationsService = applicationsService;
 		this.msgSource = msgSource;
 	}
 

@@ -18,6 +18,8 @@
     <import resource="uclIntegrationContext.xml" />
     
 <!--     <import resource="profilingContext.xml"/> -->
+
+    <import resource="dwrContext.xml" />
     
     <mvc:interceptors>
         <bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor" />
@@ -60,8 +62,6 @@
             </props>
         </property>
     </bean>
-
-    <import resource="dwrContext.xml" />
 
     <!-- freemarker config -->
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">

@@ -46,8 +46,7 @@
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
-		<constructor-arg index="2" ref="mailApplicationsService" />
-		<constructor-arg index="3" ref="messageSource" />
+		<constructor-arg index="2" ref="messageSource" />
 	</bean>
 
 	<bean id="refereeMailSender" class="com.zuehlke.pgadmissions.mail.RefereeMailSender"

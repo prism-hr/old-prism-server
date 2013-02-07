@@ -1,0 +1,147 @@
+package com.zuehlke.pgadmissions.validators;
+
+import static org.junit.Assert.assertTrue;
+
+import java.util.Calendar;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
+
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/testValidatorContext.xml")
+public class ApprovalRoundValidatorTest {
+
+    @Autowired
+    private Validator validator;
+
+    private ApprovalRound approvalRound;
+
+    private ApprovalRoundValidator approvalRoundValidator;
+
+    @Test
+    public void shouldSupportReviewRound() {
+        assertTrue(approvalRoundValidator.supports(ApprovalRound.class));
+    }
+
+    @Test
+    public void shouldValidateIfDataIsCorrect() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldValidateIfDataIsCorrectWithoutProjectDescriptionAndConditions() {
+        approvalRound.setProjectDescriptionAvailable(false);
+        approvalRound.setProjectTitle(null);
+        approvalRound.setProjectAbstract(null);
+        approvalRound.setRecommendedConditionsAvailable(false);
+        approvalRound.setRecommendedConditions(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldRejectIfSupervisorListIsEmpty() {
+        approvalRound.getSupervisors().clear();
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("supervisors").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfProjectTitleIsEmpty() {
+        approvalRound.setProjectTitle("");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("projectTitle").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfProjectAbstractIsEmpty() {
+        approvalRound.setProjectAbstract("");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("projectAbstract").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfStartDateIsInThePast() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        
+        approvalRound.setRecommendedStartDate(calendar.getTime());
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("recommendedStartDate").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfConditionsTextIsEmpty() {
+        approvalRound.setRecommendedConditions("");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("recommendedConditions").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfProjectDescriptionAvailableIsNotSet() {
+        approvalRound.setProjectDescriptionAvailable(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("projectDescriptionAvailable").getCode());
+    }
+    
+    @Test
+    public void shouldRejectIfRecommendedConditionsAvailableIsNotSet() {
+        approvalRound.setRecommendedConditionsAvailable(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("recommendedConditionsAvailable").getCode());
+    }
+    
+    @Before
+    public void setup() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+        Supervisor supervisor = new SupervisorBuilder().id(4).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(2).build();
+        approvalRound = new ApprovalRoundBuilder() //
+                .application(application)//
+                .supervisors(supervisor)//
+                .projectDescriptionAvailable(true)//
+                .projectTitle("title")//
+                .projectAbstract("abstract")//
+                .recommendedStartDate(calendar.getTime())//
+                .recommendedConditionsAvailable(true)//
+                .recommendedConditions("conditions")//
+                .build();
+
+        approvalRoundValidator = new ApprovalRoundValidator();
+        approvalRoundValidator.setValidator((javax.validation.Validator) validator);
+    }
+}

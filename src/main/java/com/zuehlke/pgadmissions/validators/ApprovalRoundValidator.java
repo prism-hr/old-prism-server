@@ -8,6 +8,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 
 @Component
 public class ApprovalRoundValidator extends AbstractValidator {
@@ -24,6 +25,17 @@ public class ApprovalRoundValidator extends AbstractValidator {
 
         if (approvalRound.getSupervisors().size() != 2) {
             errors.rejectValue("supervisors", "approvalround.supervisors.incomplete");
+        }
+        
+        int primarySupervisors = 0;
+        for(Supervisor supervisor : approvalRound.getSupervisors()){
+            if(BooleanUtils.isTrue(supervisor.getIsPrimary())){
+                primarySupervisors++;
+            }
+        }
+        
+        if(primarySupervisors != 1){
+            errors.rejectValue("supervisors", "approvalround.supervisors.noprimary");
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectDescriptionAvailable", "dropdown.radio.select.none");

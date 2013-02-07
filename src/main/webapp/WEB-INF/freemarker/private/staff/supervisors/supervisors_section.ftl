@@ -57,7 +57,16 @@
                 <div class="field">
                     <ol id="applicationSupervisorsList">
                         <#list approvalRound.supervisors as supervisor>
-                            <li data-supervisorid="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" class="ui-widget-content">${supervisor.user.firstName?html} ${supervisor.user.lastName?html} <span style="float:right; padding-right:20px;"><input type="radio" value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" name="primarySupervisor"> Primary Supervisor</span></li>
+                            <li data-supervisorid="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" class="ui-widget-content">
+                                ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}
+                                <span style="float:right; padding-right:20px;">
+                                    <input type="radio" value="${applicationForm.applicationNumber}|${encrypter.encrypt(supervisor.user.id)}" name="primarySupervisor"
+                                        <#if  supervisor.isPrimary?? && supervisor.isPrimary >
+                                            checked="checked"
+                                        </#if>
+                                    > Primary Supervisor
+                                </span>
+                            </li>
                         </#list>
                     </ol>
                     <@spring.bind "approvalRound.supervisors" />

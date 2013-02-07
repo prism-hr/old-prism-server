@@ -12,6 +12,7 @@ public class SupervisorBuilder {
 	private RegisteredUser user;
 	private Date lastNotified;
 	private ApprovalRound approvalRound;
+	private Boolean isPrimary = false;
 
 	public SupervisorBuilder id(Integer id) {
 		this.id = id;
@@ -28,11 +29,15 @@ public class SupervisorBuilder {
 		return this;
 	}
 	
-	
 	public SupervisorBuilder lastNotified(Date lastNotified) {
 		this.lastNotified = lastNotified;
 		return this;
 	}
+	
+	public SupervisorBuilder isPrimary(Boolean isPrimary) {
+        this.isPrimary = isPrimary;
+        return this;
+    }
 	
 	public Supervisor build() {
 		Supervisor supervisor = new Supervisor();
@@ -40,6 +45,7 @@ public class SupervisorBuilder {
 		supervisor.setUser(user);
 		supervisor.setLastNotified(lastNotified);
 		supervisor.setApprovalRound(approvalRound);
+		supervisor.setIsPrimary(isPrimary);
 		return supervisor;
 	}
 }

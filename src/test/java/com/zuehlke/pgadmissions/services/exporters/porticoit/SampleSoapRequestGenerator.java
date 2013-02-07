@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
+@Ignore
 public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
 
     @Autowired
@@ -55,7 +56,6 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
      * Run this test when connected to the UCL network.
      */
     @Test
-    @Ignore
     public void generateSampleSoapRequestsFromProductionData() {
         long idx = 0;
         Marshaller marshaller = webServiceTemplate.getMarshaller();

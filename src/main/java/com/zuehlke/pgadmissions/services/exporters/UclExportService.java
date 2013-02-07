@@ -109,8 +109,6 @@ public class UclExportService {
         
         transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(transfer.getId(), listener);
         
-        this.triggerQueued(listener);
-        
         log.info(String.format("Successfully sent application form %s to PORTICO (transfer-id=%d)", applicationForm.getApplicationNumber(), transfer.getId()));
         
         return transfer.getId();
@@ -152,9 +150,6 @@ public class UclExportService {
 
     @Transactional
     public void transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
-        this.triggerTransferStarted(listener);
-
-        //retrieve AppliationForm and ApplicationFormTransfer instances from the db
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
         ApplicationForm applicationForm  = transfer.getApplicationForm();
 
@@ -169,17 +164,18 @@ public class UclExportService {
             }
         };
 
-        //build webservice request
         request = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory()).applicationForm(applicationForm).build();
-        listener.sendingSubmitAdmissionsApplicantRequest(request);
+        listener.webServiceCallStarted(request);
         
         try  {
             //call webservice
             log.info(String.format("Calling marshalSendAndReceive for transfer %d (%s)", transferId,  applicationForm.getApplicationNumber()));
+            
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
+            
             log.info(String.format("Successfully returned from webservice call for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
-            log.info(String.format("Received web service response [transferId=%d, applicationNumber=%s, applicantID=%s, applicationID=%s]",
-                            transferId, applicationForm.getApplicationNumber(), response.getReference().getApplicantID(), response.getReference().getApplicationID()));
+            
+            log.info(String.format("Received web service response [transferId=%d, applicationNumber=%s, applicantID=%s, applicationID=%s]", transferId, applicationForm.getApplicationNumber(), response.getReference().getApplicantID(), response.getReference().getApplicationID()));
         } catch (WebServiceIOException e) {
             logAndSendEmailToSuperadministrator(String.format(
                     "WebServiceTransportException during webservice call for transfer [transferId=%d, applicationNumber=%s]", transferId,
@@ -197,7 +193,7 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
             applicationFormTransferErrorDAO.save(error);
 
-            this.triggerTransferFailed(listener, error);
+            listener.webServiceCallFailed(error);
 
             return;
 
@@ -225,7 +221,7 @@ public class UclExportService {
             error.setResponseCopy(responseMessageBuffer.toString());
             applicationFormTransferErrorDAO.save(error);
 
-            this.triggerTransferFailed(listener, error);
+            listener.webServiceCallFailed(error);
 
             //update transfer status
             transfer.setStatus(ApplicationTransferStatus.REJECTED_BY_WEBSERVICE);
@@ -260,30 +256,31 @@ public class UclExportService {
         //update transfer status in the database
         transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING);
 
+        listener.webServiceCallCompleted(response);
+        
         //schedule phase 2 (sftp)
         transactionallyExecuteSftpTransferAndUpdatePersistentQueue(transferId, listener);
-
-        //inform the listener
-        this.triggerWebserviceCallCompleted(listener);
     }
 
     @Transactional
     public void transactionallyExecuteSftpTransferAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
-        this.triggerAttachmentsSftpTransmissionStarted(listener);
-
-        //retrieve AppliationForm and ApplicationFormTransfer instances from the db
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
         ApplicationForm applicationForm  = transfer.getApplicationForm();
 
-        this.triggerAttachmentsSftpTransmissionStarted(listener);
+        listener.sftpTransferStarted();
 
         //pack attachments and send them over sftp
         try {
             log.info(String.format("Calling sendApplicationFormDocuments for transfer %d (%s)", transferId,  applicationForm.getApplicationNumber()));
-            sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm, listener);
+            
+            String zipFileName = sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm, listener);
+            
             transfer.setStatus(ApplicationTransferStatus.COMPLETED);
+            
             transfer.setTransferFinishTimepoint(new Date());
-            this.triggerTransferCompleted(listener, transfer.getUclUserIdReceived(), transfer.getUclBookingReferenceReceived());
+            
+            listener.sftpTransferCompleted(zipFileName, transfer.getUclUserIdReceived(), transfer.getUclBookingReferenceReceived());
+            
             log.info(String.format("Transfer of documents completed for transfer %d (%s)", transferId,  applicationForm.getApplicationNumber()));
         } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -294,8 +291,8 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY);
             applicationFormTransferErrorDAO.save(error);
 
-            //inform the listener
-            this.triggerTransferFailed(listener, error);
+            listener.sftpTransferFailed(error);
+
             transfer.setStatus(ApplicationTransferStatus.CANCELLED);
             
             logAndSendEmailToSuperadministrator(String.format(
@@ -311,7 +308,7 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION);
             applicationFormTransferErrorDAO.save(error);
             
-            this.triggerTransferFailed(listener, error);
+            listener.sftpTransferFailed(error);
 
             logAndSendEmailToSuperadministrator(String.format(
                     "LocallyDefinedSshConfigurationIsWrong for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -326,7 +323,7 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
             applicationFormTransferErrorDAO.save(error);
             
-            this.triggerTransferFailed(listener, error);
+            listener.sftpTransferFailed(error);
 
             logAndSendEmailToSuperadministrator(String.format(
                     "CouldNotOpenSshConnectionToRemoteHost for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -341,7 +338,7 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION);
             applicationFormTransferErrorDAO.save(error);
 
-            this.triggerTransferFailed(listener, error);
+            listener.sftpTransferFailed(error);
 
             logAndSendEmailToSuperadministrator(String.format(
                     "SftpTargetDirectoryNotAccessible for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -356,7 +353,7 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
             applicationFormTransferErrorDAO.save(error);
             
-            this.triggerTransferFailed(listener, error);
+            listener.sftpTransferFailed(error);
 
             logAndSendEmailToSuperadministrator(String.format(
                     "SftpTransmissionFailedOrProtocolError for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -367,61 +364,5 @@ public class UclExportService {
     private void logAndSendEmailToSuperadministrator(final String message, final Level logLevel, final Exception exception) {
         log.log(logLevel, message, exception);
         dataExportMailSender.sendErrorMessage(message, exception);
-    }
-
-    void triggerQueued(TransferListener listener) {
-        try {
-            listener.queued();
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void triggerTransferStarted(TransferListener listener) {
-        try {
-            listener.transferStarted();
-        } catch (Exception e) {
-            log.warn(e.getMessage(), e);
-        }
-    }
-
-    void triggerWebserviceCallCompleted(TransferListener listener) {
-        try {
-            listener.webserviceCallCompleted();
-        } catch (Exception e) {
-            log.warn(e.getMessage(), e);
-        }
-    }
-
-    void triggerSshConnectionEstablished(TransferListener listener) {
-        try {
-            listener.sshConnectionEstablished();
-        } catch (Exception e) {
-            log.warn(e.getMessage(), e);
-        }
-    }
-
-    void triggerAttachmentsSftpTransmissionStarted(TransferListener listener) {
-        try {
-            listener.attachmentsSftpTransmissionStarted();
-        } catch (Exception e) {
-            log.warn(e.getMessage(), e);
-        }
-    }
-
-    void triggerTransferCompleted(TransferListener listener, String uclUserId, String uclBookingReferenceNumber) {
-        try {
-            listener.transferCompleted(uclUserId, uclBookingReferenceNumber);
-        } catch (Exception e) {
-            log.warn(e.getMessage(), e);
-        }
-    }
-
-    void triggerTransferFailed(TransferListener listener, ApplicationFormTransferError error) {
-        try {
-            listener.transferFailed(error);
-        } catch (Exception e) {
-            log.warn(e.getMessage(), e);
-        }
     }
 }

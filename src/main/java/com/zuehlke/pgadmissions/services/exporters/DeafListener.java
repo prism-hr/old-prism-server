@@ -1,39 +1,32 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 
 public class DeafListener implements TransferListener {
 
     @Override
-    public void queued() {
+    public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
     }
 
     @Override
-    public void transferStarted() {
+    public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
     }
 
     @Override
-    public void webserviceCallCompleted() {
+    public void webServiceCallFailed(ApplicationFormTransferError error) {
     }
 
     @Override
-    public void attachmentsSftpTransmissionStarted() {
+    public void sftpTransferStarted() {
     }
 
     @Override
-    public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
+    public void sftpTransferCompleted(String zipFilename, String applicantId, String bookingReferenceId) {
     }
 
     @Override
-    public void transferFailed(ApplicationFormTransferError error) {
-    }
-
-    @Override
-    public void sshConnectionEstablished() {
-    }
-
-    @Override
-    public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+    public void sftpTransferFailed(ApplicationFormTransferError error) {
     }
 }

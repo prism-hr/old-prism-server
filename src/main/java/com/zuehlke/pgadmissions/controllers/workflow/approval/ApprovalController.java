@@ -222,17 +222,19 @@ public class ApprovalController {
 
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
     public String assignSupervisors(@ModelAttribute ApplicationForm applicationForm, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, SessionStatus sessionStatus) {
         if (bindingResult.hasErrors()) {
             return SUPERVISORS_SECTION;
         }
 
-        return PORTICO_VALIDATION_SECTION;
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        sessionStatus.setComplete();
+        return "/private/common/ajax_OK";
     }
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
     public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("approvalRound") ApprovalRound approvalRound,
-            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result, SessionStatus sessionStatus) {
+            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
         if (sendToPorticoData.getQualificationsSendToPortico() == null || sendToPorticoData.getRefereesSendToPortico() == null) {
             throw new ResourceNotFoundException();
         }
@@ -245,9 +247,7 @@ public class ApprovalController {
         }
 
         approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        sessionStatus.setComplete();
-        return "/private/common/ajax_OK";
+        return SUPERVISORS_SECTION;
     }
 
     @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)

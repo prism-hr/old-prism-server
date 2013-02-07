@@ -30,8 +30,9 @@ $(document).ready(function() {
                 var $option = $("#programSupervisors option[value='" + id + "']");
                 var selText = $option.text();
                 var category = $option.attr("category");
-                $("#programSupervisors option[value='" + id + "']").addClass('selected').removeAttr('selected').attr('disabled', 'disabled');
-                appendNewSupervisorToList(id, selText, category);
+                if(appendNewSupervisorToList(id, selText, category)){
+                	$("#programSupervisors option[value='" + id + "']").addClass('selected').removeAttr('selected').attr('disabled', 'disabled');
+                }
             }
         }
         resetSupervisorsErrors();
@@ -192,6 +193,7 @@ function appendNewSupervisorToList(id, text, category) {
     if($('#applicationSupervisorsList li').length >= 2){
     	disableAddingSupervisorsToList();
     }
+    return true;
 }
 
 function getSupervisorsSection() {
@@ -308,6 +310,9 @@ function enableProjectDescription() {
 
 function disableAddingSupervisorsToList() {
 	$('#programSupervisors').attr("disabled", "disabled");
+	$("#addSupervisorBtn").addClass("disabled");
+	
+	$("#p_newSupervisor").addClass("grey-label");
 	
 	$("#newSupervisorFirstName").attr("disabled", "disabled");
 	$("#newSupervisorFirstName").val("");
@@ -331,6 +336,9 @@ function disableAddingSupervisorsToList() {
 
 function enableAddingSupervisorsToList() {
 	$('#programSupervisors').removeAttr("disabled", "disabled");
+	$("#addSupervisorBtn").removeClass("disabled");
+	
+	$("#p_newSupervisor").removeClass("grey-label");
 	
 	$("#newSupervisorFirstName").removeAttr("disabled", "disabled");
     $("#lbl_newSupervisorFirstName").removeClass("grey-label");

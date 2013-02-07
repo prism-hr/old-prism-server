@@ -2,12 +2,12 @@
 <input type="hidden" id="approvalRoundId" name="approvalRoundId" value="<#if approvalRound.id??>${encrypter.encrypt(approvalRound.id)}</#if>" />  
 <section class="form-rows"  id="approvalsection">
 <h2 class="no-arrow">
-    Assign Supervisors
+    Confirm project details
 </h2>
 
     <div>
         <div class="section-info-bar" id="add-info-bar-div">
-           Assign supervisors to the application here. You may also create new supervisors.
+           Confirm project details. You must nominate a primary and secondary supervisor and provide a description of the project and your recommended offer to the applicant.
         </div>
         
         <div class="row-group" id="assignSupervisorsToAppSection">          

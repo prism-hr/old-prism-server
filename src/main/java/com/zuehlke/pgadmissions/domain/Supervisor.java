@@ -16,26 +16,29 @@ import javax.validation.Valid;
 @Entity(name = "SUPERVISOR")
 public class Supervisor implements Serializable {
 
-	private static final long serialVersionUID = -189828903532203309L;
+    private static final long serialVersionUID = -189828903532203309L;
 
-	@Id
-	@GeneratedValue
+    @Id
+    @GeneratedValue
     private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "registered_user_id")
-	@Valid
-	private RegisteredUser user;
-	
-	@Column(name = "last_notified")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastNotified;
-	
-	@ManyToOne
-	@JoinColumn(name = "approval_round_id")
-	private ApprovalRound approvalRound;
+    @ManyToOne
+    @JoinColumn(name = "registered_user_id")
+    @Valid
+    private RegisteredUser user;
 
-	public void setId(Integer id) {
+    @Column(name = "last_notified")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastNotified;
+
+    @ManyToOne
+    @JoinColumn(name = "approval_round_id", insertable = false, updatable = false)
+    private ApprovalRound approvalRound;
+
+    @Column(name = "is_primary")
+    private Boolean isPrimary = false;
+
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -43,27 +46,36 @@ public class Supervisor implements Serializable {
         return id;
     }
 
-	public RegisteredUser getUser() {
-		return user;
-	}
+    public RegisteredUser getUser() {
+        return user;
+    }
 
-	public void setUser(RegisteredUser user) {
-		this.user = user;
-	}
+    public void setUser(RegisteredUser user) {
+        this.user = user;
+    }
 
-	public Date getLastNotified() {
-		return lastNotified;
-	}
+    public Date getLastNotified() {
+        return lastNotified;
+    }
 
-	public void setLastNotified(Date lastNotified) {
-		this.lastNotified = lastNotified;
-	}
+    public void setLastNotified(Date lastNotified) {
+        this.lastNotified = lastNotified;
+    }
 
-	public ApprovalRound getApprovalRound() {
-		return approvalRound;
-	}
+    public ApprovalRound getApprovalRound() {
+        return approvalRound;
+    }
 
-	public void setApprovalRound(ApprovalRound approvalRound) {
-		this.approvalRound = approvalRound;
-	}
+    public void setApprovalRound(ApprovalRound approvalRound) {
+        this.approvalRound = approvalRound;
+    }
+
+    public Boolean getIsPrimary() {
+        return isPrimary;
+    }
+
+    public void setIsPrimary(Boolean isPrimary) {
+        this.isPrimary = isPrimary;
+    }
+
 }

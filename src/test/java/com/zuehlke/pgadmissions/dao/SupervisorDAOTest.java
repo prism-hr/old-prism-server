@@ -25,100 +25,115 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 
-	private SupervisorDAO dao;
-	private RegisteredUser user;
-	private Program program;
+    private SupervisorDAO dao;
+    private RegisteredUser user;
+    private Program program;
 
-	@Test(expected = NullPointerException.class)
-	public void shouldThrowNullPointerException() {
-		SupervisorDAO supervisorDAO = new SupervisorDAO();
-		supervisorDAO.getSupervisorWithId(1);
-	}
-	
-	@Test
-	public void shouldGetSupervisorWithId(){
-		Supervisor supervisor = new SupervisorBuilder().id(1).build();
-		sessionFactory.getCurrentSession().save(supervisor);
-		flushAndClearSession();		
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowNullPointerException() {
+        SupervisorDAO supervisorDAO = new SupervisorDAO();
+        supervisorDAO.getSupervisorWithId(1);
+    }
 
-		Supervisor returnedSupervisor = dao.getSupervisorWithId(supervisor.getId());
-		assertEquals(supervisor.getId(), returnedSupervisor.getId());
-	}
-	
-	@Test
-	public void shouldReturnSupervisorIfLastNotifiedIsNull() {
-		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
-		Supervisor supervisor = new SupervisorBuilder().user(user).build();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
-		application.setLatestApprovalRound(approvalRound);
-		save(application, supervisor, approvalRound);
-		flushAndClearSession();
+    @Test
+    public void shouldGetSupervisorWithId() {
+        Supervisor supervisor = new SupervisorBuilder().id(1).build();
+        sessionFactory.getCurrentSession().save(supervisor);
+        flushAndClearSession();
 
-		List<Supervisor> supervisors = dao.getSupervisorsDueNotification();
-		assertTrue(listContainsId(supervisor, supervisors));
-	}
+        Supervisor returnedSupervisor = dao.getSupervisorWithId(supervisor.getId());
+        assertEquals(supervisor.getId(), returnedSupervisor.getId());
+    }
 
-	@Test
-	public void shouldNotReturnSupervisorInLastNotifiedIsNotNull() {
-		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
-		Supervisor supervisor = new SupervisorBuilder().user(user).lastNotified(new Date()).build();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
-		application.setLatestApprovalRound(approvalRound);
-		save(application, supervisor, approvalRound);
-		flushAndClearSession();
+    @Test
+    public void shouldReturnApprovalRoundForGivenSupervisor() {
 
-		List<Supervisor> supervisors = dao.getSupervisorsDueNotification();
-		assertFalse(supervisors.contains(supervisor));
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        Supervisor supervisor = new SupervisorBuilder().user(user).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).projectTitle("title").application(application).build();
+        application.setLatestApprovalRound(approvalRound);
+        save(application, approvalRound);
+        flushAndClearSession();
 
-	}
+        supervisor = dao.getSupervisorWithId(supervisor.getId());
+        approvalRound = supervisor.getApprovalRound();
+        assertEquals("title", approvalRound.getProjectTitle());
+    }
 
-	@Test
-	public void shouldNotReturnSupervisorIfApplicationNotInApproved() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).build();
-		Supervisor supervisor = new SupervisorBuilder().user(user).build();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
-		application.setLatestApprovalRound(approvalRound);
-		save(application, supervisor, approvalRound);
-		flushAndClearSession();
+    @Test
+    public void shouldReturnSupervisorIfLastNotifiedIsNull() {
 
-		List<Supervisor> supervisors = dao.getSupervisorsDueNotification();
-		assertFalse(supervisors.contains(supervisor));
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        Supervisor supervisor = new SupervisorBuilder().user(user).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
+        application.setLatestApprovalRound(approvalRound);
+        save(application, supervisor, approvalRound);
+        flushAndClearSession();
 
-		
-	}
-	@Test
-	public void shouldNotReturnSupervisorifNotSupervisorOfLatestApprovalRound() {
-		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
-		Supervisor supervisor = new SupervisorBuilder().user(user).build();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
-		application.getApprovalRounds().add(approvalRound);
-		save(application, supervisor, approvalRound);
-		flushAndClearSession();
+        List<Supervisor> supervisors = dao.getSupervisorsDueNotification();
+        assertTrue(listContainsId(supervisor, supervisors));
+    }
 
-		List<Supervisor> supervisors = dao.getSupervisorsDueNotification();
-		assertFalse(supervisors.contains(supervisor));
+    @Test
+    public void shouldNotReturnSupervisorInLastNotifiedIsNotNull() {
 
-	}
-	
-	@Before
-	public void initialise() {
-		dao = new SupervisorDAO(sessionFactory);
-		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-		program = new ProgramBuilder().code("doesntexist").title("another title").build();
-		save(user, program);
-		flushAndClearSession();
-	}
-	
-	private boolean listContainsId(Supervisor supervisor, List<Supervisor> supervisors) {
-	    for (Supervisor entry : supervisors) {
-	        if (supervisor.getId().equals(entry.getId())) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        Supervisor supervisor = new SupervisorBuilder().user(user).lastNotified(new Date()).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
+        application.setLatestApprovalRound(approvalRound);
+        save(application, supervisor, approvalRound);
+        flushAndClearSession();
+
+        List<Supervisor> supervisors = dao.getSupervisorsDueNotification();
+        assertFalse(supervisors.contains(supervisor));
+
+    }
+
+    @Test
+    public void shouldNotReturnSupervisorIfApplicationNotInApproved() {
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).build();
+        Supervisor supervisor = new SupervisorBuilder().user(user).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
+        application.setLatestApprovalRound(approvalRound);
+        save(application, supervisor, approvalRound);
+        flushAndClearSession();
+
+        List<Supervisor> supervisors = dao.getSupervisorsDueNotification();
+        assertFalse(supervisors.contains(supervisor));
+
+    }
+
+    @Test
+    public void shouldNotReturnSupervisorifNotSupervisorOfLatestApprovalRound() {
+
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        Supervisor supervisor = new SupervisorBuilder().user(user).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
+        application.getApprovalRounds().add(approvalRound);
+        save(application, supervisor, approvalRound);
+        flushAndClearSession();
+
+        List<Supervisor> supervisors = dao.getSupervisorsDueNotification();
+        assertFalse(supervisors.contains(supervisor));
+
+    }
+
+    @Before
+    public void initialise() {
+        dao = new SupervisorDAO(sessionFactory);
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        program = new ProgramBuilder().code("doesntexist").title("another title").build();
+        save(user, program);
+        flushAndClearSession();
+    }
+
+    private boolean listContainsId(Supervisor supervisor, List<Supervisor> supervisors) {
+        for (Supervisor entry : supervisors) {
+            if (supervisor.getId().equals(entry.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

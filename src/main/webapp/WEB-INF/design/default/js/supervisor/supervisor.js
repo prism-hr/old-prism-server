@@ -142,6 +142,17 @@ $(document).ready(function() {
             postData.recommendedConditionsAvailable = (provide == "conditional" ? true : false);
         }
         
+        var serializedPostData = $.param(postData);
+        var primarySupervisor = $('input[name=primarySupervisor]:checked').val();
+        $('input[name="supervisors"]').each(function() {
+        	var supervisorId = $(this).val();
+        	if(supervisorId == primarySupervisor){
+        		serializedPostData = serializedPostData + "&supervisors=" + supervisorId + "|primary";
+        	} else {
+        		serializedPostData = serializedPostData + "&supervisors=" + supervisorId;
+        	}
+        });
+        
         $.ajax({
             type : 'POST',
             statusCode : {
@@ -152,7 +163,7 @@ $(document).ready(function() {
                 403 : function() { window.location.href = "/pgadmissions/404"; }
             },
             url : url,
-            data : $.param(postData) + "&" + $('input[name="supervisors"]').serialize(),
+            data : serializedPostData,
             success : function(data) {
                 if (data == "OK") {
                     window.location.href = '/pgadmissions/applications?messageCode=move.approval&application=' + $('#applicationId').val();

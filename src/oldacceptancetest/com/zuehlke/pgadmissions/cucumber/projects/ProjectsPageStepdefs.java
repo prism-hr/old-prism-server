@@ -55,7 +55,7 @@ public class ProjectsPageStepdefs {
 	
 	@Before
 	public void setup() {
-		sessionFactory = (SessionFactory) new ClassPathXmlApplicationContext("hibernateTestConfig.xml").getBean("sessionFactory");
+		sessionFactory = (SessionFactory) new ClassPathXmlApplicationContext("testHibernateContext.xml").getBean("sessionFactory");
 		transaction = sessionFactory.getCurrentSession().beginTransaction();
 		cleanUp();
 		commitAndGetNewTransaction();

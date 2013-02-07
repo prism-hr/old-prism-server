@@ -70,7 +70,7 @@
 					<div class="content-box-inner">
                         <#include "/private/common/parts/application_info.ftl"/>
                         <div id="approve-content">
-                            <#include "/private/staff/supervisors/supervisors_section.ftl"/>
+                            <#include "/private/staff/supervisors/portico_validation_section.ftl"/>
                         </div>
 					</div>
 				</div>

@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
-<p>
+<p id="p_newSupervisor">
 	<strong>Create New Supervisor</strong>											
 </p>									
 

@@ -15,7 +15,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.client.WebServiceIOException;
@@ -53,7 +52,6 @@ import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError;
 import com.zuehlke.pgadmissions.utils.DateUtils;
-import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
@@ -78,16 +76,10 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     private int queuePausingDelayInCaseOfNetworkProblemsDiscovered = 15;
     
 	private boolean hasBeenCalled = false;
-	
-    private PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutorMock;
-
-    private PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutorMock;
 
     private WebServiceTemplate webServiceTemplateMock;
 
     private JSchFactory jschfactoryMock;
-
-    private TaskScheduler schedulerMock;
 
     private ApplicationFormTransferDAO applicationFormTransferDAO;
 
@@ -119,47 +111,36 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webserviceCallCompleted() {
-                Assert.fail();
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                assertNotNull(request);
             }
 
             @Override
-            public void transferStarted() {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+                Assert.fail("The web service call should not complete but throw an exception instead");
             }
 
             @Override
-            public void transferFailed(ApplicationFormTransferError error) {
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
-                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
-                        "org.springframework.ws.client.WebServiceIOException: Error"));
-                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY,
-                        error.getErrorHandlingStrategy());
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "org.springframework.ws.client.WebServiceIOException: Error"));
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY, error.getErrorHandlingStrategy());
                 assertEquals(ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE, error.getProblemClassification());
             }
 
             @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                Assert.fail();
+            public void sftpTransferStarted() {
+                Assert.fail("The SFTP transfer should not start");
             }
 
             @Override
-            public void sshConnectionEstablished() {
-                Assert.fail();
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+                Assert.fail("The SFTP transfer should not start");
             }
 
             @Override
-            public void queued() {
-                Assert.fail();
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-                Assert.fail();
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
-                assertNotNull(request);
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
+                Assert.fail("The SFTP transfer should not start");                
             }
         };
 
@@ -171,12 +152,9 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(WebServiceIOException.class));
 
-        //webserviceCallingQueueExecutorMock.pause();
-        //webserviceCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
-
         EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
         
-        EasyMock.replay(webServiceTemplateMock, webserviceCallingQueueExecutorMock, qualificationInstitutionDAOMock, dataExportMailSenderMock);
+        EasyMock.replay(webServiceTemplateMock, qualificationInstitutionDAOMock, dataExportMailSenderMock);
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
@@ -184,55 +162,46 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(), listener);
 
-        EasyMock.verify(webServiceTemplateMock, webserviceCallingQueueExecutorMock, dataExportMailSenderMock);
+        EasyMock.verify(webServiceTemplateMock, dataExportMailSenderMock);
     }
 
     @Test
     public void shouldReportWebServiceSoapFaultAndGiveUpThisTransferOnly() throws IOException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         TransferListener listener = new TransferListener() {
+            
             @Override
-            public void webserviceCallCompleted() {
-                Assert.fail();
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                assertNotNull(request);
             }
 
             @Override
-            public void transferStarted() {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+                Assert.fail("The web service call should not complete but throw an exception instead");
+                
             }
 
             @Override
-            public void transferFailed(ApplicationFormTransferError error) {
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
-                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
-                        "org.springframework.ws.soap.client.SoapFaultClientException: Authentication Failed"));
-                assertEquals(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY,
-                        error.getErrorHandlingStrategy());
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),"org.springframework.ws.soap.client.SoapFaultClientException: Authentication Failed"));
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY, error.getErrorHandlingStrategy());
                 assertEquals(ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT, error.getProblemClassification());
             }
 
             @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                Assert.fail();
+            public void sftpTransferStarted() {
+                Assert.fail("The SFTP transfer should not start");
             }
 
             @Override
-            public void sshConnectionEstablished() {
-                Assert.fail();
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+                Assert.fail("The SFTP transfer should not start");                
             }
 
             @Override
-            public void queued() {
-                Assert.fail();
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-                Assert.fail();
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
-                assertNotNull(request);
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
+                Assert.fail("The SFTP transfer should not start");
             }
         };
 
@@ -260,7 +229,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         
         EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
         
-        EasyMock.replay(webServiceTemplateMock, webserviceCallingQueueExecutorMock, qualificationInstitutionDAOMock, dataExportMailSenderMock);
+        EasyMock.replay(webServiceTemplateMock, qualificationInstitutionDAOMock, dataExportMailSenderMock);
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
@@ -269,7 +238,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(), listener);
 
-        EasyMock.verify(webServiceTemplateMock, webserviceCallingQueueExecutorMock, dataExportMailSenderMock);
+        EasyMock.verify(webServiceTemplateMock, dataExportMailSenderMock);
 
         assertEquals(ApplicationTransferStatus.REJECTED_BY_WEBSERVICE, applicationFormTransfer.getStatus());
     }
@@ -305,8 +274,6 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SoapFaultClientException.class));
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SoapFaultClientException.class));
         
-        //webserviceCallingQueueExecutorMock.pause();
-
         EasyMock.replay(webServiceTemplateMock, dataExportMailSenderMock);
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(), new DeafListener());
@@ -317,42 +284,33 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     public void shouldSuccessfullyCallWebServiceAndRetrieveAResponse() {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         TransferListener listener = new TransferListener() {
+            
+            
             @Override
-            public void webserviceCallCompleted() {
-            }
-
-            @Override
-            public void transferStarted() {
-            }
-
-            @Override
-            public void transferFailed(ApplicationFormTransferError error) {
-                Assert.fail();
-            }
-
-            @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                Assert.fail();
-            }
-
-            @Override
-            public void sshConnectionEstablished() {
-                Assert.fail();
-            }
-
-            @Override
-            public void queued() {
-                Assert.fail();
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-                Assert.fail();
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 assertNotNull(request);
+            }
+
+            @Override
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+                assertNotNull(response);
+            }
+
+            @Override
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
+                Assert.fail("The web service call should succeed");
+            }
+
+            @Override
+            public void sftpTransferStarted() {
+            }
+
+            @Override
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+            }
+
+            @Override
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
             }
         };
 
@@ -366,18 +324,10 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
                 webServiceTemplateMock.marshalSendAndReceive(
                         EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
                         EasyMock.anyObject(WebServiceMessageCallback.class))).andReturn(response);
-
-        sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase2Task.class));
-        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
-            @Override
-            public Object answer() throws Throwable {
-                return null;
-            }
-        });
         
         EasyMock.expect(qualificationInstitutionDAOMock.getAllInstitutionByName(EasyMock.anyObject(String.class))).andReturn(new ArrayList<QualificationInstitution>());
         
-        EasyMock.replay(webServiceTemplateMock, sftpCallingQueueExecutorMock, qualificationInstitutionDAOMock);
+        EasyMock.replay(webServiceTemplateMock, qualificationInstitutionDAOMock);
         
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
@@ -390,7 +340,6 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(), listener);
 
-        //EasyMock.verify(webServiceTemplateMock, sftpCallingQueueExecutorMock);
         EasyMock.verify(webServiceTemplateMock);
 
         assertEquals(uclUserId, applicationForm.getApplicant().getUclUserId());
@@ -408,71 +357,58 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webserviceCallCompleted() {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 Assert.fail();
             }
 
             @Override
-            public void transferStarted() {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+                Assert.fail();
             }
 
             @Override
-            public void transferFailed(ApplicationFormTransferError error) {
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferStarted() {
+            }
+
+            @Override
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+                Assert.fail("The sftp transfer should not succeed");
+            }
+
+            @Override
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
-                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
-                        "Failed to configure SSH connection"));
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Failed to configure SSH connection"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
-                assertEquals(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION,
-                        error.getProblemClassification());
-                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION,
-                        error.getErrorHandlingStrategy());
-            }
-
-            @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                Assert.fail();
-            }
-
-            @Override
-            public void sshConnectionEstablished() {
-            }
-
-            @Override
-            public void queued() {
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
-                Assert.fail();
+                assertEquals(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION, error.getProblemClassification());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION, error.getErrorHandlingStrategy());
             }
         };
 
         EasyMock.expect(jschfactoryMock.getInstance()).andThrow(new JSchException());
-
-        //sftpCallingQueueExecutorMock.pause();
-        //sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
 
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
                 jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, dataExportMailSenderMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, dataExportMailSenderMock);
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(LocallyDefinedSshConfigurationIsWrong.class));
         
-        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, dataExportMailSenderMock);
+        EasyMock.replay(jschfactoryMock, dataExportMailSenderMock);
 
         exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
 
         assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
 
-        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock, dataExportMailSenderMock);
+        EasyMock.verify(jschfactoryMock, dataExportMailSenderMock);
     }
 
     @Test
@@ -481,46 +417,38 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webserviceCallCompleted() {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 Assert.fail();
             }
 
             @Override
-            public void transferStarted() {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+                Assert.fail();
             }
 
             @Override
-            public void transferFailed(ApplicationFormTransferError error) {
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferStarted() {
+            }
+
+            @Override
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
-                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
-                        "Failed to open SSH connection to PORTICO host"));
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Failed to open SSH connection to PORTICO host"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
                 assertEquals(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE, error.getProblemClassification());
-                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY,
-                        error.getErrorHandlingStrategy());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY, error.getErrorHandlingStrategy());
             }
-
-            @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                Assert.fail();
-            }
-
-            @Override
-            public void sshConnectionEstablished() {
-            }
-
-            @Override
-            public void queued() {
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
-                Assert.fail();
-            }
+            
         };
 
         Session sessionMock = EasyMock.createMock(Session.class);
@@ -537,26 +465,23 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         EasyMock.expect(sessionMock.isConnected()).andReturn(false);
 
-        //sftpCallingQueueExecutorMock.pause();
-        //sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
-
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
                 jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, dataExportMailSenderMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, dataExportMailSenderMock);
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(CouldNotOpenSshConnectionToRemoteHost.class));
         
-        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, dataExportMailSenderMock);
+        EasyMock.replay(jschfactoryMock, sessionMock, dataExportMailSenderMock);
 
         exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
 
         assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
 
-        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, dataExportMailSenderMock);
+        EasyMock.verify(jschfactoryMock, sessionMock, dataExportMailSenderMock);
     }
 
     @Test
@@ -564,46 +489,38 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
             JSchException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         TransferListener listener = new TransferListener() {
+            
             @Override
-            public void webserviceCallCompleted() {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 Assert.fail();
             }
 
             @Override
-            public void transferStarted() {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+                Assert.fail();
             }
 
             @Override
-            public void transferFailed(ApplicationFormTransferError error) {
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferStarted() {
+            }
+
+            @Override
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+                Assert.fail();            
+            }
+
+            @Override
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
-                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
-                        "Failed to open sftp channel over previously established SSH connection"));
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Failed to open sftp channel over previously established SSH connection"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
                 assertEquals(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE, error.getProblemClassification());
-                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY,
-                        error.getErrorHandlingStrategy());
-            }
-
-            @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                Assert.fail();
-            }
-
-            @Override
-            public void sshConnectionEstablished() {
-            }
-
-            @Override
-            public void queued() {
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
-                Assert.fail();
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY, error.getErrorHandlingStrategy());
             }
         };
 
@@ -632,26 +549,23 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         sessionMock.disconnect();
 
-        //sftpCallingQueueExecutorMock.pause();
-        //sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
-
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
                 jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, dataExportMailSenderMock);
+                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, dataExportMailSenderMock);
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SftpTransmissionFailedOrProtocolError.class));
         
-        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
+        EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
 
         exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
 
         assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
 
-        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
+        EasyMock.verify(jschfactoryMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
     }
 
     @Test
@@ -660,46 +574,36 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         TransferListener listener = new TransferListener() {
             @Override
-            public void webserviceCallCompleted() {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 Assert.fail();
             }
 
             @Override
-            public void transferStarted() {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+                Assert.fail();
             }
 
             @Override
-            public void transferFailed(ApplicationFormTransferError error) {
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferStarted() {
+            }
+
+            @Override
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
-                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
-                        "Failed to access remote directory for SFTP transmission"));
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Failed to access remote directory for SFTP transmission"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
-                assertEquals(ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE,
-                        error.getProblemClassification());
-                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION,
-                        error.getErrorHandlingStrategy());
-            }
-
-            @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                Assert.fail();
-            }
-
-            @Override
-            public void sshConnectionEstablished() {
-            }
-
-            @Override
-            public void queued() {
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
-                Assert.fail();
+                assertEquals(ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE, error.getProblemClassification());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION, error.getErrorHandlingStrategy());
             }
         };
 
@@ -730,9 +634,6 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         sessionMock.disconnect();
 
-        //sftpCallingQueueExecutorMock.pause();
-        //sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
-
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
                 jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
         
@@ -742,13 +643,13 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SftpTargetDirectoryNotAccessible.class));
         
-        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
+        EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
 
         exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(), listener);
 
         assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
 
-        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
+        EasyMock.verify(jschfactoryMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
     }
 
     @Test
@@ -756,48 +657,39 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
             throws ResourceNotFoundException, JSchException, SftpException {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
-
         TransferListener listener = new TransferListener() {
             @Override
-            public void webserviceCallCompleted() {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                Assert.fail();
+                
+            }
+
+            @Override
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
                 Assert.fail();
             }
 
             @Override
-            public void transferStarted() {
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
+                Assert.fail();
             }
 
             @Override
-            public void transferFailed(ApplicationFormTransferError error) {
+            public void sftpTransferStarted() {
+            }
+
+            @Override
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
-                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(),
-                        "SFTP protocol error during transmission of attachments for application form"));
+                assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "SFTP protocol error during transmission of attachments for application form"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
                 assertEquals(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE, error.getProblemClassification());
-                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY,
-                        error.getErrorHandlingStrategy());
-            }
-
-            @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                Assert.fail();
-            }
-
-            @Override
-            public void sshConnectionEstablished() {
-            }
-
-            @Override
-            public void queued() {
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
-                Assert.fail();
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY, error.getErrorHandlingStrategy());
             }
         };
 
@@ -830,9 +722,6 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         sessionMock.disconnect();
 
-        //sftpCallingQueueExecutorMock.pause();
-        //sftpCallingQueueExecutorMock.execute(EasyMock.anyObject(Phase1Task.class));
-
         SftpAttachmentsSendingService sftpAttachmentsSendingService = new SftpAttachmentsSendingService(
                 jschfactoryMock, attachmentsZipCreatorMock, sftpHost, sftpPort, sftpUsername, sftpPassword, targetFolder);
 
@@ -842,14 +731,14 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SftpTransmissionFailedOrProtocolError.class));
         
-        EasyMock.replay(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
+        EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
 
         exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
 
         assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
 
-        EasyMock.verify(jschfactoryMock, sftpCallingQueueExecutorMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
+        EasyMock.verify(jschfactoryMock, sessionMock, sftpChannelMock, dataExportMailSenderMock);
     }
 
     @Test
@@ -859,48 +748,38 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
             SftpTransmissionFailedOrProtocolError {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
-
         TransferListener listener = new TransferListener() {
             @Override
-            public void webserviceCallCompleted() {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 Assert.fail();
             }
 
             @Override
-            public void transferStarted() {
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+                Assert.fail();
             }
 
             @Override
-            public void transferFailed(ApplicationFormTransferError error) {
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferStarted() {
+            }
+
+            @Override
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
                 assertNotNull(error);
                 assertTrue(StringUtils.containsIgnoreCase(error.getDiagnosticInfo(), "Error"));
                 assertTrue(DateUtils.isToday(error.getTimepoint()));
-                assertEquals(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION,
-                        error.getProblemClassification());
-                assertEquals(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY,
-                        error.getErrorHandlingStrategy());
-            }
-
-            @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                Assert.fail();
-            }
-
-            @Override
-            public void sshConnectionEstablished() {
-            }
-
-            @Override
-            public void queued() {
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
-                Assert.fail();
+                assertEquals(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION, error.getProblemClassification());
+                assertEquals(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY, error.getErrorHandlingStrategy());
             }
         };
 
@@ -922,14 +801,14 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(CouldNotCreateAttachmentsPack.class));
 
-        EasyMock.replay(sftpAttachmentsSendingServiceMock, sftpCallingQueueExecutorMock, dataExportMailSenderMock);
+        EasyMock.replay(sftpAttachmentsSendingServiceMock, dataExportMailSenderMock);
 
         exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
                 listener);
 
         assertEquals(ApplicationTransferStatus.CANCELLED, applicationFormTransfer.getStatus());
 
-        EasyMock.verify(sftpAttachmentsSendingServiceMock, sftpCallingQueueExecutorMock, dataExportMailSenderMock);
+        EasyMock.verify(sftpAttachmentsSendingServiceMock, dataExportMailSenderMock);
     }
 
     @Test
@@ -940,63 +819,54 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         applicationFormTransfer.setUclBookingReferenceReceived(uclBookingReferenceNumber);
         applicationFormTransfer.setUclUserIdReceived(uclUserId);
         applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
-
         TransferListener listener = new TransferListener() {
             @Override
-            public void webserviceCallCompleted() {
-            }
-
-            @Override
-            public void transferStarted() {
-            }
-
-            @Override
-            public void transferFailed(ApplicationFormTransferError error) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 Assert.fail();
             }
 
             @Override
-            public void transferCompleted(String uclUserId, String uclBookingReferenceNumber) {
-                assertNotNull(uclUserId, uclBookingReferenceNumber);
+            public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+                Assert.fail();                
+            }
+
+            @Override
+            public void webServiceCallFailed(ApplicationFormTransferError error) {
+                Assert.fail();
+            }
+
+            @Override
+            public void sftpTransferStarted() {
+            }
+
+            @Override
+            public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+                assertTrue(StringUtils.isNotBlank(zipFileName));
                 assertTrue(StringUtils.isNotBlank(uclUserId));
                 assertTrue(StringUtils.isNotBlank(uclBookingReferenceNumber));
             }
 
             @Override
-            public void sshConnectionEstablished() {
-            }
-
-            @Override
-            public void queued() {
-            }
-
-            @Override
-            public void attachmentsSftpTransmissionStarted() {
-            }
-
-            @Override
-            public void sendingSubmitAdmissionsApplicantRequest(SubmitAdmissionsApplicationRequest request) {
+            public void sftpTransferFailed(ApplicationFormTransferError error) {
                 Assert.fail();
             }
         };
 
-        SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock
-                .createMock(SftpAttachmentsSendingService.class);
+        SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock.createMock(SftpAttachmentsSendingService.class);
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
                 queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingServiceMock, dataExportMailSenderMock);
 
-        sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener);
+        EasyMock.expect(sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener)).andReturn("abc.zip");
 
-        EasyMock.replay(sftpAttachmentsSendingServiceMock, sftpCallingQueueExecutorMock);
+        EasyMock.replay(sftpAttachmentsSendingServiceMock);
 
-        exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(),
-                listener);
+        exportService.transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(), listener);
 
         assertEquals(ApplicationTransferStatus.COMPLETED, applicationFormTransfer.getStatus());
 
-        EasyMock.verify(sftpAttachmentsSendingServiceMock, sftpCallingQueueExecutorMock);
+        EasyMock.verify(sftpAttachmentsSendingServiceMock);
     }
 
     @Before
@@ -1004,10 +874,6 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         applicationForm = new ValidApplicationFormBuilder().build(sessionFactory);
 
         jschfactoryMock = EasyMock.createMock(JSchFactory.class);
-
-        sftpCallingQueueExecutorMock = EasyMock.createMock(PausableHibernateCompatibleSequentialTaskExecutor.class);
-
-        webserviceCallingQueueExecutorMock = EasyMock.createMock(PausableHibernateCompatibleSequentialTaskExecutor.class);
 
         applicationFormTransferDAO = new ApplicationFormTransferDAO(sessionFactory);
 
@@ -1018,8 +884,6 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         webServiceTemplateMock = EasyMock.createMock(WebServiceTemplate.class);
 
-        schedulerMock = EasyMock.createMock(TaskScheduler.class);
-        
         qualificationInstitutionDAOMock = EasyMock.createMock(QualificationInstitutionDAO.class);
         
         attachmentsZipCreatorMock = EasyMock.createMock(PorticoAttachmentsZipCreator.class);

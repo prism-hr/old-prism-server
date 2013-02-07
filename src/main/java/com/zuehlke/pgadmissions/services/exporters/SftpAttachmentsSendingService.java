@@ -7,7 +7,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -106,9 +105,10 @@ public class SftpAttachmentsSendingService {
      * @throws LocallyDefinedSshConfigurationIsWrong local problems with preparing ssh session (like - no access to key file etc.)
      * @throws CouldNotOpenSshConnectionToRemoteHost network is down, some firewall stopped us or SSH authentication failed
      * @throws SftpTargetDirectoryNotAccessible target directory does not exist or our SSH user has no permissions to access this directory
+     * @return the name of the created ZIP file on the server
      * @throws SftpTransmissionFailedOrProtocolError we were able to establish SSH connection but SFTP transfer over this connection failed - protocol error happened (possibly we lost the connection to the remote host)
      */
-    public void sendApplicationFormDocuments(ApplicationForm applicationForm, TransferListener listener)  throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
+    public String sendApplicationFormDocuments(ApplicationForm applicationForm, TransferListener listener)  throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
         CouldNotOpenSshConnectionToRemoteHost,  SftpTargetDirectoryNotAccessible, SftpTransmissionFailedOrProtocolError
     {
         Session session = null;
@@ -130,9 +130,7 @@ public class SftpAttachmentsSendingService {
             } catch (JSchException e) {
                 throw new CouldNotOpenSshConnectionToRemoteHost("Failed to open SSH connection to PORTICO host, configured address was: " + sftpHost + ":" + sftpPort + " username/password=" + sftpUsername + "/" + sftpPassword, e);
             }
-
-            this.triggerSshConnectionEstablished(listener);
-
+            
             //possible errors: sftp protocol-level problems
             try {
                 sftpChannel = (ChannelSftp) session.openChannel("sftp");
@@ -150,12 +148,12 @@ public class SftpAttachmentsSendingService {
                 throw new SftpTargetDirectoryNotAccessible("Failed to access remote directory for SFTP transmission: " + targetFolder + ", remote host address is: " + sftpHost + ":" + sftpPort, e);
             }
 
-            this.triggerAttachmentsSftpTransmissionStarted(listener);
-
             //possible errors: sftp protocol-level problems, connection lost during transmission and local problem with building zip-pack with attachments
             try {
-                sftpOs = sftpChannel.put(applicationForm.getUclBookingReferenceNumber() + ".zip", ChannelSftp.OVERWRITE);
+                String finalZipName = applicationForm.getUclBookingReferenceNumber() + ".zip";
+                sftpOs = sftpChannel.put(finalZipName, ChannelSftp.OVERWRITE);
                 attachmentsZipCreator.writeZipEntries(applicationForm, applicationForm.getUclBookingReferenceNumber(), sftpOs);
+                return finalZipName;
             } catch (SftpException e) {
                 throw new SftpTransmissionFailedOrProtocolError("SFTP protocol error during transmission of attachments for application form " + applicationForm.getId(), e);
             } catch (IOException e) {
@@ -170,24 +168,6 @@ public class SftpAttachmentsSendingService {
             if (session != null && session.isConnected()) {
                 session.disconnect();
             }
-        }
-    }
-
-    @Async
-    void triggerSshConnectionEstablished(TransferListener listener) {
-        try {
-            listener.sshConnectionEstablished();
-        } catch (RuntimeException e) {
-            e.printStackTrace();//there is nothing better we can do with this exeption
-        }
-    }
-
-    @Async
-    void triggerAttachmentsSftpTransmissionStarted(TransferListener listener) {
-        try {
-            listener.attachmentsSftpTransmissionStarted();
-        } catch (RuntimeException e) {
-            e.printStackTrace();//there is nothing better we can do with this exeption
         }
     }
 

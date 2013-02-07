@@ -32,9 +32,9 @@ public class Supervisor implements Serializable {
 	private Date lastNotified;
 	
 	@ManyToOne
-	@JoinColumn(name = "approval_round_id")
+	@JoinColumn(name = "approval_round_id", insertable = false, updatable = false)
 	private ApprovalRound approvalRound;
-
+	
 	public void setId(Integer id) {
         this.id = id;
     }

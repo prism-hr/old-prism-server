@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -257,6 +258,10 @@ public class RefereeService {
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
         Referee referee = getRefereeById(refereeId);
 
+        if(referee.getUser() == null){
+            processRefereesRoles(Arrays.asList(referee));
+        }
+        
         ReferenceComment referenceComment = new ReferenceComment();
         referenceComment.setApplication(applicationForm);
         referenceComment.setReferee(referee);

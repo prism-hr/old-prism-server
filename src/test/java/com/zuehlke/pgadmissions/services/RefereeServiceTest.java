@@ -265,6 +265,57 @@ public class RefereeServiceTest {
         assertEquals(true, referenceComment.getSuitableForProgramme());
         assertEquals(false, referenceComment.getSuitableForUCL());
     }
+    
+    @Test
+    public void shouldCreateRefereeUserAndPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
+        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
+
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
+        Referee referee = new RefereeBuilder().application(applicationForm).firstname("Franciszek").lastname("Pieczka"). toReferee();
+
+        Document document = new DocumentBuilder().build();
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        refereesAdminEditDTO.setComment("comment text");
+        refereesAdminEditDTO.setEditedRefereeId("refereeId");
+        refereesAdminEditDTO.setReferenceDocument(document);
+        refereesAdminEditDTO.setSuitableForProgramme(true);
+        refereesAdminEditDTO.setSuitableForUCL(false);
+
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(referee.getEmail())).andReturn(null);
+        EasyMock.expect(encryptionHelper.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(refereeDAOMock.getRefereeById(8)).andReturn(referee);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        userServiceMock.save(EasyMock.isA(RegisteredUser.class));
+        EasyMock.expectLastCall().once();
+        refereeDAOMock.save(referee);
+        EasyMock.expectLastCall().once();
+        commentServiceMock.save(EasyMock.isA(ReferenceComment.class));
+        EasyMock.expectLastCall().once();
+        applicationFormDAOMock.save(applicationForm);
+        EasyMock.expectLastCall().once();
+
+        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+
+        RegisteredUser refereeUser = referenceComment.getUser();
+        assertEquals("Franciszek", refereeUser.getFirstName());
+        assertEquals("Pieczka", refereeUser.getLastName());
+        
+        assertSame(applicationForm, referenceComment.getApplication());
+        assertSame(referee, referenceComment.getReferee());
+        assertEquals(CommentType.REFERENCE, referenceComment.getType());
+        
+        assertSame(currentUser, referenceComment.getProvidedBy());
+        assertEquals("comment text", referenceComment.getComment());
+        assertEquals(1, referenceComment.getDocuments().size());
+        assertSame(document, referenceComment.getDocuments().get(0));
+        assertEquals(true, referenceComment.getSuitableForProgramme());
+        assertEquals(false, referenceComment.getSuitableForUCL());
+    }
 
     @Test
     public void shouldReturnUserIfRefereeAlreadyExists() {

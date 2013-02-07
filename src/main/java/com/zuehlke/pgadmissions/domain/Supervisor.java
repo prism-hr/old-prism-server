@@ -36,7 +36,7 @@ public class Supervisor implements Serializable {
     private ApprovalRound approvalRound;
 
     @Column(name = "is_primary")
-    private Boolean isPrimary;
+    private Boolean isPrimary = false;
 
     public void setId(Integer id) {
         this.id = id;

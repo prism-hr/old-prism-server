@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.exporters;
+package com.zuehlke.pgadmissions.services.exporters.porticoit;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,11 +29,12 @@ import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testSftpContext.xml")
-public class UclXferPrismUclAcUkConnectionTest  {
+@Ignore
+public class UclXferPrismUclConnectionIT  {
 
     @Autowired
     private JSchFactory jSchFactory;

@@ -358,6 +358,7 @@
                 <version>2.13</version>
                 <configuration>
                     <argLine>-Xms1024m -Xmx1024m</argLine>
+                    <disableXmlReport>true</disableXmlReport>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
@@ -388,17 +389,6 @@
                         <version>5.1.22</version>
                     </dependency>
                 </dependencies>
-                <!-- Do not run this as part of the compile phase. Invoke by using "dbdeploy:update" -->
-                <!-- 
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>update</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                -->
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -465,6 +455,7 @@
                 <sql.db>pgadmissions</sql.db>
             </properties>
         </profile>
+
         <profile>
             <id>jenkins</id>
             <properties>
@@ -493,6 +484,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>uat</id>
             <properties>
@@ -521,6 +513,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>ucl-test</id>
             <properties>
@@ -549,6 +542,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>ucl-prod</id>
             <properties>

@@ -63,7 +63,7 @@ public class SftpAttachmentsSendingService {
 
     private final JSchFactory jSchFactory;
     
-    private final PorticoAttachmentsZipCreator attachmentsZipCreator;
+    private PorticoAttachmentsZipCreator attachmentsZipCreator;
 
     private String sftpHost;
 
@@ -189,5 +189,9 @@ public class SftpAttachmentsSendingService {
         } catch (RuntimeException e) {
             e.printStackTrace();//there is nothing better we can do with this exeption
         }
+    }
+
+    public void setPorticoAttachmentsZipCreator(PorticoAttachmentsZipCreator zipCreator) {
+        this.attachmentsZipCreator = zipCreator;
     }
 }

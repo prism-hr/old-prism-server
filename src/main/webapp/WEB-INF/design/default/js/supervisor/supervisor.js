@@ -180,6 +180,10 @@ $(document).ready(function() {
         });
     });
     
+    if($('#applicationSupervisorsList li').length >= 2){
+    	disableAddingSupervisorsToList();
+    }
+    
     bindDatePicker('#offerStartDate');
 });
 

@@ -247,9 +247,9 @@ public class UclExportService {
         transfer.setUclUserIdReceived(response.getReference().getApplicantID());
         transfer.setUclBookingReferenceReceived(response.getReference().getApplicationID());
         applicationForm.setUclBookingReferenceNumber(response.getReference().getApplicationID());
-        if (applicationForm.getApplicant().getUclUserId() == null)
+        if (applicationForm.getApplicant().getUclUserId() == null) {
             applicationForm.getApplicant().setUclUserId(response.getReference().getApplicantID());
-        else {
+        } else {
             if (! applicationForm.getApplicant().getUclUserId().equals(response.getReference().getApplicantID())) {
                 throw new RuntimeException("User code received from PORTICO do not mach with our PRISM user id: PRISM_ID=" +
                     applicationForm.getApplicant().getUclUserId() + " PORTICO_ID=" + response.getReference().getApplicantID());

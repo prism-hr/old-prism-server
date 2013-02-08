@@ -107,8 +107,6 @@ public class InterviewService {
 	}
 
 	public Interview newInterview() {
-		Interview interview = new Interview();
-		return interview;
+		return new Interview();
 	}
-
 }

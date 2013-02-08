@@ -207,7 +207,7 @@ public class PdfDocumentBuilder {
 
         addSectionSeparators(document);
 
-        addQualificationSection(application, document, writer);
+        addQualificationSection(application, document);
 
         addSectionSeparators(document);
 
@@ -215,7 +215,7 @@ public class PdfDocumentBuilder {
 
         addSectionSeparators(document);
 
-        addFundingSection(application, document, writer);
+        addFundingSection(application, document);
 
         addSectionSeparators(document);
 
@@ -663,7 +663,7 @@ public class PdfDocumentBuilder {
         document.add(table);
     }
 
-    private void addQualificationSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
+    private void addQualificationSection(ApplicationForm application, Document document) throws DocumentException, IOException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
         table.addCell(newTableCell("QUALIFICATIONS", boldFont, BaseColor.GRAY));
@@ -807,7 +807,7 @@ public class PdfDocumentBuilder {
         }
     }
 
-    private void addFundingSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
+    private void addFundingSection(ApplicationForm application, Document document) throws DocumentException, IOException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
         table.addCell(newTableCell("FUNDING", boldFont, BaseColor.GRAY));

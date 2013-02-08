@@ -945,7 +945,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return result;
     }
 
-    public boolean isCompleteForSendingToPortico() {
+    public boolean isCompleteForSendingToPortico(boolean withMissingQualificationExplanation) {
         int exactNumberOfReferences = 2;
         int maxNumberOfQualifications = 2;
 
@@ -957,6 +957,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return false;
         }
 
+        if (getQualificationsToSendToPortico().isEmpty() && !withMissingQualificationExplanation) {
+            return false;
+        }
+        
         return true;
     }
 }

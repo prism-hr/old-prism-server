@@ -26,7 +26,21 @@
         </div>
     </#if>
     
-    <#include "/private/staff/admin/application/components/referees_edit_view_stack.ftl"/>
+    <#list applicationForm.referees as referee>
+        <#assign encRefereeId = encrypter.encrypt(referee.id) />
+        <div id="referee_${encRefereeId}" style="display:none">
+            
+            <#include "/private/staff/admin/application/components/referee_view.ftl"/>
+            
+            <#if referee.hasResponded() && !referee.isDeclined()>
+                <#include "/private/staff/admin/application/components/reference_view.ftl"/>
+            </#if>
+        
+            <#if !referee.hasResponded() && !referee.isDeclined()>
+                <#include "/private/staff/admin/application/components/reference_edit.ftl"/>
+            </#if>
+        </div>
+    </#list>
     
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />
     <div class="buttons">

@@ -51,7 +51,7 @@ public class UclExportService {
 
     private final int consecutiveSoapFaultsLimit;
 
-    private final SftpAttachmentsSendingService sftpAttachmentsSendingService;
+    private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
     private final DataExportMailSender dataExportMailSender;
     
@@ -134,7 +134,10 @@ public class UclExportService {
     public void setPorticoAttachmentsZipCreator(PorticoAttachmentsZipCreator zipCreator) {
         sftpAttachmentsSendingService.setPorticoAttachmentsZipCreator(zipCreator);
     }
-
+    
+    public void setSftpAttachmentsSendingService(SftpAttachmentsSendingService sendingService) {
+        sftpAttachmentsSendingService = sendingService;
+    }
 
     //ooooooooooooooooooooooooooooooo PRIVATE oooooooooooooooooooooooooooooooo
 

@@ -16,9 +16,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +46,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoAttachmentsZipCreator;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
@@ -53,7 +54,6 @@ import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/testPorticoIntegrationContext.xml"})
 @TransactionConfiguration(defaultRollback = true)
-@Ignore
 public class PorticoIntegrationIT {
 
     private static final String TEST_REPORT_FILENAME = "PorticoIntegrationIT.csv";
@@ -101,9 +101,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingDocumentUploadContentsFile() {
-        
         csvEntries.add("Missing document upload contents file.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             public void writeZipEntries(ApplicationForm applicationForm, String referenceNumber, OutputStream sftpOs) throws IOException, CouldNotCreateAttachmentsPack {
@@ -129,9 +127,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void emptyDocumentUploadContentsFile() {
-        
         csvEntries.add("Empty document upload contents file.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -147,9 +143,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void unreadableDocumentUploadContentsFileSpecialCharacters() {
-        
         csvEntries.add("Unreadable document upload contents file. (Special Characters).");
-        
         final char END_OF_TEXT = 0x03;
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
@@ -167,9 +161,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingBookingReferenceNumberInDocumentUploadContentsFile() {
-        
         csvEntries.add("Missing bookingReferenceNumber in document upload contents file.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -185,9 +177,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void unrecognisedBookingReferenceNumberInDocumentUploadContentsFile() {
-        
         csvEntries.add("Wrong/unrecognised bookingReferenceNumber in document upload contents file (e.g. does not match with document upload filename).");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -204,9 +194,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingApplicationNumberInDocumentUploadContentsFile() {
-        
         csvEntries.add("Missing applicationNumber in document upload contents file.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -222,9 +210,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void unrecognisedApplicationNumberInDocumentUploadContentsFile() {
-        
         csvEntries.add("Wrong/unrecognised applicationNumber in document upload contents file.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -241,9 +227,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingResearchProposal1ApplicationFilenameForValidResearchProposal() {
-        
         csvEntries.add("Missing researchProposal.1.applicationFilename for valid research proposal document in the document upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -263,9 +247,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingResearchProposal1ServerFilenameForValidResearchProposal() {
-        
         csvEntries.add("Missing researchProposal.1.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -285,9 +267,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingMergedApplication1ApplicationFilename() {
-        
         csvEntries.add("Missing mergedApplication.1.applicationFilename with valid corresponding document in the upload package.");
-
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -304,9 +284,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingMergedApplication1serverFilename() {
-        
         csvEntries.add("Missing mergedApplication.1.serverFilename with valid corresponding document in the upload package.");
-
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -324,9 +302,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingCurriculumVitae1applicationFilename() {
-        
         csvEntries.add("Missing curriculumVitae.1.applicationFilename with valid corresponding document in the upload package.");
-
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -346,9 +322,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingCurriculumVitae1serverFilename() {
-    
         csvEntries.add("Missing curriculumVitae.1.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -368,9 +342,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingtranscript1applicationFilename() {
-    
         csvEntries.add("Missing transcript.1.applicationFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -410,9 +382,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingtranscript1serverFilename() {
-    
         csvEntries.add("Missing transcript.1.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -452,9 +422,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingtranscript2applicationFilename() {
-    
         csvEntries.add("Missing transcript.2.applicationFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -495,9 +463,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingtranscript2serverFilename() {
-    
         csvEntries.add("Missing transcript.2.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -538,9 +504,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingApplicationForm1applicationFilename() {
-    
         csvEntries.add("Missing applicationForm.1.applicationFilename with valid corresponding document in the upload package.");
-    
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -557,9 +521,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingapplicationForm1serverFilename() {
-    
         csvEntries.add("Missing applicationForm.1.serverFilename with valid corresponding document in the upload package.");
-    
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -611,9 +573,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingreference1serverFilename() {
-    
         csvEntries.add("Missing reference.1.serverFilename with valid corresponding document in the upload package.");
-    
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -647,7 +607,6 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingreference2applicationFilename() {
-    
         csvEntries.add("Missing reference.2.applicationFilename with valid corresponding document in the upload package.");
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
@@ -682,9 +641,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void missingreference2serverFilename() {
-    
         csvEntries.add("Missing reference.2.serverFilename with valid corresponding document in the upload package.");
-    
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -719,7 +676,6 @@ public class PorticoIntegrationIT {
     @Transactional
     public void missingEnglishLanguageTestCertificate1applicationFilename() {
         csvEntries.add("Missing englishLanguageTestCertificate.1.applicationFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -744,7 +700,6 @@ public class PorticoIntegrationIT {
     @Transactional
     public void missingEnglishLanguageTestCertificate1serverFilename() {
         csvEntries.add("Missing englishLanguageTestCertificate.1.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -767,9 +722,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongBookingReferenceNumberInDocumentUploadContentsFile() {
-        
         csvEntries.add("Wrong bookingReferenceNumber in document upload contents file.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -786,9 +739,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongApplicationNumberInDocumentUploadContentsFile() {
-        
         csvEntries.add("Wrong applicationNumber in document upload contents file.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -805,9 +756,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongResearchProposal1ApplicationFilenameForValidResearchProposal() {
-        
         csvEntries.add("Wrong researchProposal.1.applicationFilename for valid research proposal document in the document upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -828,9 +777,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongResearchProposal1ServerFilenameForValidResearchProposal() {
-        
         csvEntries.add("Wrong researchProposal.1.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -851,9 +798,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongMergedApplication1ApplicationFilename() {
-        
         csvEntries.add("Wrong mergedApplication.1.applicationFilename with valid corresponding document in the upload package.");
-
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -871,9 +816,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongMergedApplication1serverFilename() {
-        
         csvEntries.add("Wrong mergedApplication.1.serverFilename with valid corresponding document in the upload package.");
-
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -892,9 +835,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongCurriculumVitae1applicationFilename() {
-        
         csvEntries.add("Wrong curriculumVitae.1.applicationFilename with valid corresponding document in the upload package.");
-
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -915,9 +856,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongCurriculumVitae1serverFilename() {
-    
         csvEntries.add("Wrong curriculumVitae.1.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -938,9 +877,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongtranscript1applicationFilename() {
-    
         csvEntries.add("Wrong transcript.1.applicationFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -982,9 +919,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongtranscript1serverFilename() {
-    
         csvEntries.add("Wrong transcript.1.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -1026,9 +961,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongtranscript2applicationFilename() {
-    
         csvEntries.add("Wrong transcript.2.applicationFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -1070,9 +1003,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongtranscript2serverFilename() {
-    
         csvEntries.add("Wrong transcript.2.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -1114,9 +1045,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongApplicationForm1applicationFilename() {
-    
         csvEntries.add("Wrong applicationForm.1.applicationFilename with valid corresponding document in the upload package.");
-    
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -1134,9 +1063,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongapplicationForm1serverFilename() {
-    
         csvEntries.add("Wrong applicationForm.1.serverFilename with valid corresponding document in the upload package.");
-    
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -1190,9 +1117,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongreference1serverFilename() {
-    
         csvEntries.add("Wrong reference.1.serverFilename with valid corresponding document in the upload package.");
-    
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -1227,7 +1152,6 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongreference2applicationFilename() {
-    
         csvEntries.add("Wrong reference.2.applicationFilename with valid corresponding document in the upload package.");
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
@@ -1263,9 +1187,7 @@ public class PorticoIntegrationIT {
     @Test
     @Transactional
     public void wrongreference2serverFilename() {
-    
         csvEntries.add("Wrong reference.2.serverFilename with valid corresponding document in the upload package.");
-    
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -1301,7 +1223,6 @@ public class PorticoIntegrationIT {
     @Transactional
     public void wrongEnglishLanguageTestCertificate1applicationFilename() {
         csvEntries.add("Wrong englishLanguageTestCertificate.1.applicationFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -1326,7 +1247,6 @@ public class PorticoIntegrationIT {
     @Transactional
     public void wrongEnglishLanguageTestCertificate1serverFilename() {
         csvEntries.add("Wrong englishLanguageTestCertificate.1.serverFilename with valid corresponding document in the upload package.");
-        
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -1347,8 +1267,502 @@ public class PorticoIntegrationIT {
         sendToPortico();
     }
     
+    @Test
+    @Transactional
+    public void documentUploadNotSent() {
+        csvEntries.add("Document upload not sent.");
+        SftpAttachmentsSendingService sendingServiceMock = EasyMock.createMock(SftpAttachmentsSendingService.class);
+        uclExportService.setSftpAttachmentsSendingService(sendingServiceMock);
+        sendToPortico();
+    }
     
+    @Test
+    @Transactional
+    public void emptyDocumentUpload() {
+        csvEntries.add("Empty document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            public void writeZipEntries(ApplicationForm applicationForm, String referenceNumber, OutputStream sftpOs) throws IOException, CouldNotCreateAttachmentsPack {
+                ZipOutputStream zos = null;
+                try {
+                    zos = new ZipOutputStream(sftpOs);
+                } finally {
+                    IOUtils.closeQuietly(zos);
+                }
+            }
+        });
+        sendToPortico();
+    }
+
+    @Test
+    @Transactional
+    public void noResearchProposal1IndocumentUpload() {
+        csvEntries.add("No researchProposal.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+                Document personalStatement = applicationForm.getPersonalStatement();
+                if (personalStatement != null) {
+                    String filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(new byte[]{});
+                    zos.closeEntry();
+                    contentsProperties.put("researchProposal.1.serverFilename", filename);
+                    contentsProperties.put("researchProposal.1.applicationFilename", personalStatement.getFileName());
+                }
+            }
+        });
+        sendToPortico();
+    }
     
+    @Test
+    @Transactional
+    public void corruptedResearchProposal1InDocumentUpload() {
+        csvEntries.add("Corrupted researchProposal.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+                Document personalStatement = applicationForm.getPersonalStatement();
+                if (personalStatement != null) {
+                    String filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(FileUtils.readFileToByteArray(damagedPdf.getFile()));
+                    zos.closeEntry();
+                    contentsProperties.put("researchProposal.1.serverFilename", filename);
+                    contentsProperties.put("researchProposal.1.applicationFilename", personalStatement.getFileName());
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void noMergedApplication1InDocumentUpload() {
+        csvEntries.add("No mergedApplication.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                String serverfilename = "MergedApplicationForm" + referenceNumber + ".pdf";
+                String applicationFilename = "MergedApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
+                zos.putNextEntry(new ZipEntry(serverfilename));
+                zos.write(new byte[]{});
+                zos.closeEntry();
+                contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);
+                contentsProperties.put("mergedApplication.1.applicationFilename", applicationFilename);        
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void corruptedMergedApplication1InDocumentUpload() {
+        csvEntries.add("Corrupted mergedApplication.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                String serverfilename = "MergedApplicationForm" + referenceNumber + ".pdf";
+                String applicationFilename = "MergedApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
+                zos.putNextEntry(new ZipEntry(serverfilename));
+                zos.write(FileUtils.readFileToByteArray(damagedPdf.getFile()));
+                zos.closeEntry();
+                contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);
+                contentsProperties.put("mergedApplication.1.applicationFilename", applicationFilename);        
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void noCurriculumVitae1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() {
+        csvEntries.add("No curriculumVitae.1 in document upload with valid corresponding entry in document upload contents file (optional document).");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+                Document cv = applicationForm.getCv();
+                if (cv != null) {
+                    String filename = getRandomFilename();                    
+                    contentsProperties.put("curriculumVitae.1.serverFilename", filename);
+                    contentsProperties.put("curriculumVitae.1.applicationFilename", cv.getFileName());
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void corruptedCurriculumVitae1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() {
+        csvEntries.add("Corrupted curriculumVitae.1 in document upload with valid corresponding entry in document upload contents file (optional document).");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+                Document cv = applicationForm.getCv();
+                if (cv != null) {
+                    String filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(FileUtils.readFileToByteArray(damagedPdf.getFile()));
+                    zos.closeEntry();
+                    contentsProperties.put("curriculumVitae.1.serverFilename", filename);
+                    contentsProperties.put("curriculumVitae.1.applicationFilename", cv.getFileName());
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void noTranscript1InDocumentUpload() {
+        csvEntries.add("No transcript.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
+                String filename;
+                
+                switch (qualifications.size()) {
+                case 2:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(qualifications.get(1).getContent());
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.2.serverFilename", filename);
+                    contentsProperties.put("transcript.2.applicationFilename", qualifications.get(1).getFileName());
+                case 1:                    
+                    break;
+                case 0:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(pdfDocumentBuilder.buildTranscript1FromApprovalRoundComment(applicationForm));
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.1.serverFilename", filename);
+                    contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
+                    break;
+                default:
+                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void corruptedTranscript1InDocumentUpload() {
+        csvEntries.add("Corrupted transcript.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
+                String filename;
+                
+                switch (qualifications.size()) {
+                case 2:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(qualifications.get(1).getContent());
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.2.serverFilename", filename);
+                    contentsProperties.put("transcript.2.applicationFilename", qualifications.get(1).getFileName());
+                case 1:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(FileUtils.readFileToByteArray(damagedPdf.getFile()));
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.1.serverFilename", filename);
+                    contentsProperties.put("transcript.1.applicationFilename", qualifications.get(0).getFileName());
+                    break;
+                case 0:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(pdfDocumentBuilder.buildTranscript1FromApprovalRoundComment(applicationForm));
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.1.serverFilename", filename);
+                    contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
+                    break;
+                default:
+                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void noTranscript2InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() {
+        csvEntries.add("No transcript.2 in document upload with valid corresponding entry in document upload contents file (optional document).");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
+                String filename;
+                
+                switch (qualifications.size()) {
+                case 2:
+                    filename = getRandomFilename();
+                    contentsProperties.put("transcript.2.serverFilename", filename);
+                    contentsProperties.put("transcript.2.applicationFilename", qualifications.get(1).getFileName());
+                case 1:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(qualifications.get(0).getContent());
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.1.serverFilename", filename);
+                    contentsProperties.put("transcript.1.applicationFilename", qualifications.get(0).getFileName());
+                    break;
+                case 0:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(pdfDocumentBuilder.buildTranscript1FromApprovalRoundComment(applicationForm));
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.1.serverFilename", filename);
+                    contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
+                    break;
+                default:
+                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void corruptedTranscript2InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile () {
+        csvEntries.add("Corrupted transcript.2 in document upload with valid corresponding entry in document upload contents file (optional document).");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
+                String filename;
+                
+                switch (qualifications.size()) {
+                case 2:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(FileUtils.readFileToByteArray(damagedPdf.getFile()));
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.2.serverFilename", filename);
+                    contentsProperties.put("transcript.2.applicationFilename", qualifications.get(1).getFileName());
+                case 1:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(qualifications.get(0).getContent());
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.1.serverFilename", filename);
+                    contentsProperties.put("transcript.1.applicationFilename", qualifications.get(0).getFileName());
+                    break;
+                case 0:
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    zos.write(pdfDocumentBuilder.buildTranscript1FromApprovalRoundComment(applicationForm));
+                    zos.closeEntry();
+                    contentsProperties.put("transcript.1.serverFilename", filename);
+                    contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
+                    break;
+                default:
+                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void noApplicationForm1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() {
+        csvEntries.add("No applicationForm.1 in document upload with valid corresponding entry in document upload contents file (optional document).");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
+                String applicationFilename = "ApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
+                contentsProperties.put("applicationForm.1.serverFilename", serverfilename);
+                contentsProperties.put("applicationForm.1.applicationFilename", applicationFilename);
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void corruptedApplicationForm1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() {
+        csvEntries.add("Corrupted applicationForm.1 in document upload with valid corresponding entry in document upload contents file (optional document).");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
+                String applicationFilename = "ApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
+                zos.putNextEntry(new ZipEntry(serverfilename));
+                zos.write(FileUtils.readFileToByteArray(damagedPdf.getFile()));
+                zos.closeEntry();
+                contentsProperties.put("applicationForm.1.serverFilename", serverfilename);
+                contentsProperties.put("applicationForm.1.applicationFilename", applicationFilename);
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void noReference1InDocumentUpload() {
+        csvEntries.add("No reference.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                List<ReferenceComment> references = applicationForm.getReferencesToSendToPortico();
+                String filename;
+                switch (references.size()) {
+                    case 2:
+                        filename = getRandomFilename();
+                        zos.putNextEntry(new ZipEntry(filename));
+                        pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(1), zos);
+                        zos.closeEntry();
+                        contentsProperties.put("reference.2.serverFilename", filename);
+                        contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
+                        break;
+                    case 1:
+                    case 0:
+                    default:
+                        throw new CouldNotCreateAttachmentsPack("There should be at most 2 references marked for sending to UCL");
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void corruptedReference1InDocumentUpload() {
+        csvEntries.add("Corrupted reference.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                List<ReferenceComment> references = applicationForm.getReferencesToSendToPortico();
+                String filename;
+                switch (references.size()) {
+                    case 2:
+                        filename = getRandomFilename();
+                        zos.putNextEntry(new ZipEntry(filename));
+                        pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(1), zos);
+                        zos.closeEntry();
+                        contentsProperties.put("reference.2.serverFilename", filename);
+                        contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
+
+                        filename = getRandomFilename();
+                        zos.putNextEntry(new ZipEntry(filename));
+                        zos.write(FileUtils.readFileToByteArray(damagedPdf.getFile()));
+                        zos.closeEntry();
+                        contentsProperties.put("reference.1.serverFilename", filename);
+                        contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
+                        break;
+                    case 1:
+                    case 0:
+                    default:
+                        throw new CouldNotCreateAttachmentsPack("There should be at most 2 references marked for sending to UCL");
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void noReference2InDocumentUpload() {
+        csvEntries.add("No reference.2 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                List<ReferenceComment> references = applicationForm.getReferencesToSendToPortico();
+                String filename;
+                switch (references.size()) {
+                    case 2:
+                        filename = getRandomFilename();
+                        zos.putNextEntry(new ZipEntry(filename));
+                        pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(0), zos);
+                        zos.closeEntry();
+                        contentsProperties.put("reference.1.serverFilename", filename);
+                        contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
+                        break;
+                    case 1:
+                    case 0:
+                    default:
+                        throw new CouldNotCreateAttachmentsPack("There should be at most 2 references marked for sending to UCL");
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void corruptedReference2InDocumentUpload() {
+        csvEntries.add("Corrupted reference.2 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                List<ReferenceComment> references = applicationForm.getReferencesToSendToPortico();
+                String filename;
+                switch (references.size()) {
+                    case 2:
+                        filename = getRandomFilename();
+                        zos.putNextEntry(new ZipEntry(filename));
+                        zos.write(FileUtils.readFileToByteArray(damagedPdf.getFile()));
+                        zos.closeEntry();
+                        contentsProperties.put("reference.2.serverFilename", filename);
+                        contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
+
+                        filename = getRandomFilename();
+                        zos.putNextEntry(new ZipEntry(filename));
+                        pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(0), zos);
+                        zos.closeEntry();
+                        contentsProperties.put("reference.1.serverFilename", filename);
+                        contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
+                        break;
+                    case 1:
+                    case 0:
+                    default:
+                        throw new CouldNotCreateAttachmentsPack("There should be at most 2 references marked for sending to UCL");
+                }
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void noEnglishLanguageTestCertificate1InDocumentUpload() {
+        csvEntries.add("No englishLanguageTestCertificate.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+            }
+        });
+        sendToPortico();
+    }
+    
+    @Test
+    @Transactional
+    public void corruptedEnglishLanguageTestCertificate1InDocumentUpload() {
+        csvEntries.add("Corrupted englishLanguageTestCertificate.1 in document upload.");
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+            @Override
+            protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+                String filename = getRandomFilename();
+                zos.putNextEntry(new ZipEntry(filename));
+                zos.write(FileUtils.readFileToByteArray(damagedPdf.getFile()));
+                zos.closeEntry();            
+                contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
+                contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", "damaged.pdf");
+            }
+        });
+        sendToPortico();
+    }
+        
     private void sendToPortico() {        
         List<ApplicationForm> allApplicationsByStatus = applicationsService.getAllApplicationsByStatus(ApplicationFormStatus.REVIEW);
         applicationForm = null; 
@@ -1421,7 +1835,7 @@ public class PorticoIntegrationIT {
             
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {
-                marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getApplicant().getFullName().getSurname() + ".txt")));
+                marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -12,6 +12,8 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 public class ApprovalRoundBuilder {
 
     private List<Supervisor> supervisors = new ArrayList<Supervisor>();
+    
+    private String missingQualificationExplanation;
 
     private Boolean projectDescriptionAvailable;
 
@@ -50,7 +52,12 @@ public class ApprovalRoundBuilder {
         this.supervisors.addAll(Arrays.asList(supervisors));
         return this;
     }
-
+    
+    public ApprovalRoundBuilder missingQualificationExplanation(String missingQualificationExplanation) {
+        this.missingQualificationExplanation = missingQualificationExplanation;
+        return this;
+    }
+    
     public ApprovalRoundBuilder projectDescriptionAvailable(Boolean projectDescriptionAvailable) {
         this.projectDescriptionAvailable = projectDescriptionAvailable;
         return this;
@@ -86,6 +93,7 @@ public class ApprovalRoundBuilder {
         approvalRound.setApplication(application);
         approvalRound.setCreatedDate(createdDate);
         approvalRound.setSupervisors(supervisors);
+        approvalRound.setMissingQualificationExplanation(missingQualificationExplanation);
         approvalRound.setProjectDescriptionAvailable(projectDescriptionAvailable);
         approvalRound.setProjectTitle(projectTitle);
         approvalRound.setProjectAbstract(projectAbstract);

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,7 @@ public class ApprovalService {
     @Transactional
     public void moveApplicationToApproval(ApplicationForm application, ApprovalRound approvalRound) {
         checkApplicationStatus(application);
+        checkSendToPorticoStatus(application, approvalRound);
         copyLastNotifiedForRepeatSupervisors(application, approvalRound);
         application.setLatestApprovalRound(approvalRound);
 
@@ -145,6 +147,13 @@ public class ApprovalService {
             break;
         default:
             throw new IllegalStateException(String.format("Application in invalid status: '%s'!", status));
+        }
+    }
+
+    private void checkSendToPorticoStatus(ApplicationForm application, ApprovalRound approvalRound) {
+        boolean explanationProvided = !StringUtils.isBlank(approvalRound.getMissingQualificationExplanation());
+        if (!application.isCompleteForSendingToPortico(explanationProvided)) {
+            throw new IllegalStateException("Send to portico data is not valid");
         }
     }
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zuehlke.pgadmissions.mail.DataExportMailSender;
+import com.zuehlke.pgadmissions.services.ReportPorticoDocumentUploadFailureService;
 
 /**
  * This controller exposes a simple GET request which is used by 
@@ -21,21 +21,21 @@ import com.zuehlke.pgadmissions.mail.DataExportMailSender;
  */
 @Controller
 @RequestMapping("/reportDocumentUploadFailure")
-public class ReportPorticoDocumentUploadFailure {
+public class ReportPorticoDocumentUploadFailureController {
 
-    private Logger log = Logger.getLogger(ReportPorticoDocumentUploadFailure.class);
+    private Logger log = Logger.getLogger(ReportPorticoDocumentUploadFailureController.class);
     
-    private DataExportMailSender dataExportMailSender;
+    private final ReportPorticoDocumentUploadFailureService service;
     
     private static final String PORTICO_UPLOAD_ACTIVATION_CODE = "6a219fb0-6acb-11e2-bcfd-0800200c9a66";
     
-    public ReportPorticoDocumentUploadFailure() {
+    public ReportPorticoDocumentUploadFailureController() {
         this(null);
     }
     
     @Autowired
-    public ReportPorticoDocumentUploadFailure(final DataExportMailSender exportMailSender) {
-        dataExportMailSender = exportMailSender;
+    public ReportPorticoDocumentUploadFailureController(final ReportPorticoDocumentUploadFailureService service) {
+        this.service = service;
     }
     
     @ResponseBody
@@ -52,7 +52,7 @@ public class ReportPorticoDocumentUploadFailure {
             mailMessageBuilder.append("The error message received was: \n");
             mailMessageBuilder.append(StringUtils.trimToEmpty(message));
             // TODO: Enabled when ready for production
-            //dataExportMailSender.sendErrorMessage(mailMessageBuilder.toString());
+            //service.sendErrorMessage(mailMessageBuilder.toString());
             log.warn(mailMessageBuilder.toString());
             return "OK";
         }

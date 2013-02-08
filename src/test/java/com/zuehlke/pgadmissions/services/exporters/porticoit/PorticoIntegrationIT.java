@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/testPorticoIntegrationContext.xml"})
 @TransactionConfiguration(defaultRollback = true)
+@Ignore
 public class PorticoIntegrationIT {
 
     private static final String TEST_REPORT_FILENAME = "PorticoIntegrationIT.csv";

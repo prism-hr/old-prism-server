@@ -34,7 +34,13 @@
         <button type="button" id="refereeCloseButton" class="blue">Close</button>
         <button type="button" id="refereeSaveButton" class="blue">Save</button>
     </div>
-</div>
 </#if>
+</div>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/references_portico_validation.js' />"></script>
+<script type="text/javascript">
+    var $closeReferenceSectionAfterSaving = false;
+    var $postRefereesDataUrl = "/pgadmissions/approval/postRefereesData";
+    var $postReferenceUrl = "/pgadmissions/approval/postReference";
+</script>
+
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/admin/references.js' />"></script>

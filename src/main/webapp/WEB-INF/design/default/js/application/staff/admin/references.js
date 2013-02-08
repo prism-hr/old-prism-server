@@ -156,7 +156,7 @@ function postRefereesData() {
             400 : function() { window.location.href = "/pgadmissions/400"; },
             403 : function() { window.location.href = "/pgadmissions/404"; }
         },
-        url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereesData",
+        url : $postRefereesDataUrl,
         data :  {
             applicationId : $('#applicationId').val(),
             refereesSendToPortico: JSON.stringify(refereesSendToPortico),
@@ -170,7 +170,7 @@ function postRefereesData() {
         success : function(data) {
         	$("#referencesSection").html(data);
         	$("#referee_" + $("#editedRefereeId").val()).show();
-        	if($('#anyReferenceErrors').val() == 'false'){
+        	if($closeReferenceSectionAfterSaving && $('#anyReferenceErrors').val() == 'false'){
         		$('#referee-H2').trigger('click');
         	}
             
@@ -208,7 +208,7 @@ function postAddReferenceData() {
             400 : function() { window.location.href = "/pgadmissions/400"; },
             403 : function() { window.location.href = "/pgadmissions/404"; }
         },
-        url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postReference",
+        url : $postReferenceUrl,
         data :  {
             applicationId : $('#applicationId').val(),
             comment: $('#refereeComment_' + refereeId).val(),

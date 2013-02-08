@@ -25,7 +25,13 @@
         <button type="button" id="refereeCloseButton" class="blue">Close</button>
         <button type="button" id="refereeSaveButton" class="blue">Save</button>
     </div>
-</div>
 </#if>
+</div>
+
+<script type="text/javascript">
+    var $closeReferenceSectionAfterSaving = true;
+    var $postRefereesDataUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereesData";
+    var $postReferenceUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/postReference";
+</script>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/admin/references.js' />"></script>

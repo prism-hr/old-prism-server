@@ -1778,7 +1778,7 @@ public class PorticoIntegrationIT {
             foundEnoughDataForQualifications = false;
             foundEnoughDataForReferees = false;
            
-            applicationForm = allApplicationsByStatus.get(random.nextInt(allApplicationsByStatus.size() + 1));
+            applicationForm = allApplicationsByStatus.get(random.nextInt(allApplicationsByStatus.size()));
             
             for (Qualification qualification : applicationForm.getQualifications()) {
                 if (qualification.getProofOfAward() != null) {
@@ -1823,17 +1823,21 @@ public class PorticoIntegrationIT {
         public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
             switch (sentApps % 3) {
             case 1:
-                applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
+                request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
                 break;
             case 2:
-                applicationForm.setStatus(ApplicationFormStatus.REJECTED);
-                request.getApplication().getCourseApplication().setAtasStatement("EXAMPLE UN-CONDITIONAL");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("REJECT");
+                request.getApplication().getCourseApplication().setDepartmentalOfferConditions("EXAMPLE UN-CONDITIONAL");
                 break;
             default:
             case 0:
-                applicationForm.setStatus(ApplicationFormStatus.APPROVED);
-                request.getApplication().getCourseApplication().setAtasStatement("EXAMPLE CONDITIONAL");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("OFFER");
+                request.getApplication().getCourseApplication().setDepartmentalOfferConditions("EXAMPLE CONDITIONAL");
             }
+            
+            request.getApplication().getCourseApplication().setAtasStatement("ATAS STATEMENT");
             
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {

@@ -74,7 +74,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     private static final String NOT_PROVIDED_VALUE = "NOT PROVIDED";
 
-    private static final String ADDRESS_LINE3_EMPTY_VALUE = "-";
+    private static final String ADDRESS_LINE_EMPTY_VALUE = "-";
 
     private static final String INSTITUTION_OTHER_CODE = "OTHER";
 
@@ -291,12 +291,18 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setPostCode(currentAddress.getAddress5());
         addressTp.setCountry(currentAddress.getCountry().getCode());
 
-        // addressLine3 is mandatory but PRISM did not collect addresses in this
-        // format before
-        if (StringUtils.isBlank(currentAddress.getAddress3())) {
-            addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);
+        // postCode is mandatory but but PRISM did not collect addresses
+        // in this format before.
+        if (StringUtils.isBlank(addressTp.getPostCode())) {
+            addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
         }
 
+        // addressLine3 is mandatory but PRISM did not collect addresses
+        // in this format before.
+        if (StringUtils.isBlank(addressTp.getAddressLine3())) {
+            addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
+        }
+        
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(personalDetails.getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(personalDetails.getPhoneNumber()));
@@ -314,12 +320,18 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setPostCode(contactAddress.getAddress5());
         addressTp.setCountry(contactAddress.getCountry().getCode());
 
-        // addressLine3 is mandatory but PRISM did not collect addresses in this
-        // format before
-        if (StringUtils.isBlank(contactAddress.getAddress3())) {
-            addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);
+        // postCode is mandatory but but PRISM did not collect addresses
+        // in this format before.
+        if (StringUtils.isBlank(addressTp.getPostCode())) {
+            addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
         }
 
+        // addressLine3 is mandatory but PRISM did not collect addresses
+        // in this format before.
+        if (StringUtils.isBlank(addressTp.getAddressLine3())) {
+            addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
+        }
+        
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(applicationForm.getPersonalDetails().getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(applicationForm.getPersonalDetails().getPhoneNumber()));
@@ -368,9 +380,9 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         try {
             applicationTp.setProgramme(buildProgrammeOccurence());
         } catch (NoActiveProgrameInstanceFoundException exp) {
-            throw new IllegalArgumentException("NoActiveProgrameInstanceFound", exp);
+            throw new IllegalArgumentException(exp.getMessage(), exp);
         } catch (NoIdentifierForProgrameInstanceFoundException exp) {
-            throw new IllegalArgumentException("NoIdentifierForProgrameInstanceFound", exp);
+            throw new IllegalArgumentException(exp.getMessage(), exp);
         }
         
 //      TODO: ATASSTatement
@@ -590,10 +602,16 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             addressTp.setPostCode(referee.getAddressLocation().getAddress5());
             addressTp.setCountry(referee.getAddressLocation().getCountry().getCode());
 
+            // postCode is mandatory but but PRISM did not collect addresses
+            // in this format before.
+            if (StringUtils.isBlank(addressTp.getPostCode())) {
+                addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
+            }
+
             // addressLine3 is mandatory but PRISM did not collect addresses
             // in this format before.
-            if (StringUtils.isBlank(referee.getAddressLocation().getAddress3())) {
-                addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);
+            if (StringUtils.isBlank(addressTp.getAddressLine3())) {
+                addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
             }
 
             contactDtlsTp.setAddressDtls(addressTp);

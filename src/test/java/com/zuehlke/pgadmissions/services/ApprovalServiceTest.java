@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -26,9 +27,13 @@ import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -36,10 +41,14 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
@@ -151,6 +160,7 @@ public class ApprovalServiceTest {
         applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(5).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER)
                 .build());
         applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(4).notificationType(NotificationType.APPROVAL_NOTIFICATION).build());
+        applyValidSendToPorticoData(applicationForm);
         EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
@@ -192,7 +202,7 @@ public class ApprovalServiceTest {
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(previousApprovalRound).status(ApplicationFormStatus.APPROVAL).id(1)
                 .build();
-
+        applyValidSendToPorticoData(applicationForm);
         EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(newApprovalRound);
@@ -210,9 +220,9 @@ public class ApprovalServiceTest {
 
     @Test
     public void shouldMoveToApprovalIfInApproval() {
-
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).id(1).build();
+        applyValidSendToPorticoData(applicationForm);
         EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
@@ -241,6 +251,46 @@ public class ApprovalServiceTest {
                 Assert.assertTrue(threwException);
             }
         }
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void shouldFailIfApplicationHasNoReferencesForSendingToPortico() {
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
+        applyValidSendToPorticoData(applicationForm);
+        for(Referee referee : applicationForm.getReferees()){
+            referee.setSendToUCL(false);
+        }
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void shouldFailIfApplicationHasNoQualicifacionsForSendingToPorticoAndNoExplanation() {
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
+        applyValidSendToPorticoData(applicationForm);
+        for(Qualification qualifications : applicationForm.getQualifications()){
+            qualifications.setSendToUCL(false);
+        }
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+    }
+    
+    @Test
+    public void shouldMoveToApprovalIfInApplicationWithNoQualificationsButExplanationProvided() {
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
+        applyValidSendToPorticoData(applicationForm);
+        for(Qualification qualifications : applicationForm.getQualifications()){
+            qualifications.setSendToUCL(false);
+        }
+        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
+                new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
+        approvalRoundDAOMock.save(approvalRound);
+        applicationFormDAOMock.save(applicationForm);
+        EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock);
+
     }
 
     @Test
@@ -404,6 +454,32 @@ public class ApprovalServiceTest {
 
         EasyMock.verify(applicationFormDAOMock, commentDAOMock);
 
+    }
+
+    private void applyValidSendToPorticoData(ApplicationForm applicationForm) {
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+
+        user1.getReferees().add(referee1);
+        user2.getReferees().add(referee2);
+
+        Document document1 = new DocumentBuilder().id(1).build();
+
+        Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+        Qualification qualification2 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
+        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
+
+        referee1.setReference(referenceComment1);
+        referee2.setReference(referenceComment2);
+
+        applicationForm.setReferees(Arrays.asList(referee1, referee2));
+        applicationForm.setApplicationComments(Arrays.<Comment> asList(referenceComment1, referenceComment2));
+        applicationForm.setQualifications(Arrays.asList(qualification1, qualification2));
     }
 
 }

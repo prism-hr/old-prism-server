@@ -242,7 +242,7 @@ public class RefereeService {
 
     @Transactional
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {
-        
+
         for (Referee referee : applicationForm.getReferees()) {
             referee.setSendToUCL(false);
         }
@@ -258,10 +258,10 @@ public class RefereeService {
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
         Referee referee = getRefereeById(refereeId);
 
-        if(referee.getUser() == null){
+        if (referee.getUser() == null) {
             processRefereesRoles(Arrays.asList(referee));
         }
-        
+
         ReferenceComment referenceComment = new ReferenceComment();
         referenceComment.setApplication(applicationForm);
         referenceComment.setReferee(referee);
@@ -278,6 +278,11 @@ public class RefereeService {
         }
 
         commentService.save(referenceComment);
+
+        if (applicationForm.getReferencesToSendToPortico().size() < 2) {
+            referee.setSendToUCL(true);
+        }
+
         saveReferenceAndSendMailNotifications(referee);
         return referenceComment;
     }

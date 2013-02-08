@@ -232,7 +232,9 @@ public class RefereeServiceTest {
 
         RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
-        Referee referee = new RefereeBuilder().user(refereeUser).application(applicationForm).toReferee();
+        Referee referee = new RefereeBuilder().user(refereeUser).id(8).application(applicationForm).toReferee();
+        
+        applicationForm.setReferees(Arrays.asList(referee));
 
         Document document = new DocumentBuilder().build();
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
@@ -252,6 +254,7 @@ public class RefereeServiceTest {
 
         EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
         ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+        referee.setReference(referenceComment);
         EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
 
         assertSame(applicationForm, referenceComment.getApplication());
@@ -264,6 +267,8 @@ public class RefereeServiceTest {
         assertSame(document, referenceComment.getDocuments().get(0));
         assertEquals(true, referenceComment.getSuitableForProgramme());
         assertEquals(false, referenceComment.getSuitableForUCL());
+        assertEquals(1, applicationForm.getReferencesToSendToPortico().size());
+        assertEquals("comment text", applicationForm.getReferencesToSendToPortico().get(0).getComment());
     }
     
     @Test

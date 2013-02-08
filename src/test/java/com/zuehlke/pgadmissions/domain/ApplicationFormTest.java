@@ -400,61 +400,9 @@ public class ApplicationFormTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).approvalRounds(approvalRoundOne).status(ApplicationFormStatus.REJECTED).build();
         assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getOutcomeOfStage());
     }
-
+    
     @Test
-    public void shouldReturnTrueForIsCompleteForSendingToPorticoIf2ReferencesHaveBeenSelected() {
-        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-
-        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
-
-        user1.getReferees().add(referee1);
-        user2.getReferees().add(referee2);
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).build();
-
-        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
-        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
-
-        referee1.setReference(referenceComment1);
-        referee2.setReference(referenceComment2);
-
-        applicationForm.getApplicationComments().add(referenceComment1);
-        applicationForm.getApplicationComments().add(referenceComment2);
-
-        assertTrue("Two reference comments have been selected for sending to Portico but function returned false.",
-                applicationForm.isCompleteForSendingToPortico());
-    }
-
-    @Test
-    public void shouldReturnFalseForIsCompleteForSendingToPorticoIf2ReferencesHaveBeenSelected() {
-        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
-
-        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
-        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(false).toReferee();
-
-        user1.getReferees().add(referee1);
-        user2.getReferees().add(referee2);
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).build();
-
-        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
-        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
-
-        referee1.setReference(referenceComment1);
-        referee2.setReference(referenceComment2);
-
-        applicationForm.getApplicationComments().add(referenceComment1);
-        applicationForm.getApplicationComments().add(referenceComment2);
-
-        assertFalse("Less than two reference comments have been selected for sending to Portico but function returned true.",
-                applicationForm.isCompleteForSendingToPortico());
-    }
-
-    @Test
-    public void shouldReturnTrueForIsCompleteForSendingToPorticoIf2ReferencesAndLessThan3QualificationsHaveBeenSelected() {
+    public void shouldBeCompleteForSendingToPorticoWithTwoReferencesAndTwoQualifications() {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 
@@ -482,11 +430,94 @@ public class ApplicationFormTest {
 
         applicationForm.setQualifications(Arrays.asList(qualification1, qualification2));
 
-        assertTrue(applicationForm.isCompleteForSendingToPortico());
+        assertTrue(applicationForm.isCompleteForSendingToPortico(false));
     }
 
     @Test
-    public void shouldReturnFalseForIsCompleteForSendingToPorticoIf2ReferencesAndMoreThan3QualificationsHaveBeenSelected() {
+    public void shouldBeCompleteForSendingToPorticoWithTwoReferencesAndExplanation() {
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+
+        user1.getReferees().add(referee1);
+        user2.getReferees().add(referee2);
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).build();
+
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
+        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
+
+        referee1.setReference(referenceComment1);
+        referee2.setReference(referenceComment2);
+
+        applicationForm.getApplicationComments().add(referenceComment1);
+        applicationForm.getApplicationComments().add(referenceComment2);
+
+        assertTrue("Two reference comments have been selected for sending to Portico but function returned false.",
+                applicationForm.isCompleteForSendingToPortico(true));
+    }
+
+    @Test
+    public void shouldNotBeCompleteForSendingToPorticoWithOnlyOneReference() {
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(false).toReferee();
+
+        user1.getReferees().add(referee1);
+        user2.getReferees().add(referee2);
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).build();
+
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
+        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
+
+        referee1.setReference(referenceComment1);
+        referee2.setReference(referenceComment2);
+
+        Document document1 = new DocumentBuilder().id(1).build();
+        Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+        
+        applicationForm.getApplicationComments().add(referenceComment1);
+        applicationForm.getApplicationComments().add(referenceComment2);
+        
+        
+        applicationForm.setQualifications(Arrays.asList(qualification1));
+
+        assertFalse("Less than two reference comments have been selected for sending to Portico but function returned true.",
+                applicationForm.isCompleteForSendingToPortico(false));
+    }
+
+    @Test
+    public void shouldNotBeCompleteForSendingToPorticoWithNoQualificationsAndNoExplanation() {
+        RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+        RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
+
+        Referee referee1 = new RefereeBuilder().user(user1).sendToUCL(true).toReferee();
+        Referee referee2 = new RefereeBuilder().user(user2).sendToUCL(true).toReferee();
+
+        user1.getReferees().add(referee1);
+        user2.getReferees().add(referee2);
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).build();
+
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
+        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
+
+        referee1.setReference(referenceComment1);
+        referee2.setReference(referenceComment2);
+
+        applicationForm.getApplicationComments().add(referenceComment1);
+        applicationForm.getApplicationComments().add(referenceComment2);
+
+        assertFalse(applicationForm.isCompleteForSendingToPortico(false));
+    }
+
+    @Test
+    public void shouldNotBeCompleteForSendingToPorticoWithMoreThanTwoQualifications() {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).build()).build();
 
@@ -515,7 +546,7 @@ public class ApplicationFormTest {
 
         applicationForm.setQualifications(Arrays.asList(qualification1, qualification2, qualification3));
 
-        assertFalse(applicationForm.isCompleteForSendingToPortico());
+        assertFalse(applicationForm.isCompleteForSendingToPortico(false));
     }
 
     @Test

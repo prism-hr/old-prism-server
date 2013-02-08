@@ -298,6 +298,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return hasPermissionToEdit //
                 && isSubmitted() //
                 && !isInValidationStage() //
+                && !isInApprovalStage() //
                 && !isDecided() //
                 && !isWithdrawn();
     }
@@ -483,6 +484,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isInValidationStage() {
         return status == ApplicationFormStatus.VALIDATION;
+    }
+    
+    public boolean isInApprovalStage() {
+        return status == ApplicationFormStatus.APPROVAL;
     }
 
     public List<NotificationRecord> getNotificationRecords() {

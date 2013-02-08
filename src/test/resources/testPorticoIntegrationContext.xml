@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx" 
+    xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-        http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+        http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
-    <context:property-placeholder location="classpath:environment.properties" />
-
+    <context:property-placeholder location="file:src/environments/environment.ucl.test.properties" /> 
+    
     <import resource="../../src/main/webapp/WEB-INF/spring/uclIntegrationContext.xml" />
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -17,7 +19,7 @@
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
-                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.format_sql">true</prop>
                 <prop key="javax.persistence.validation.mode">NONE</prop>
             </props>
@@ -26,10 +28,9 @@
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver" />
-<!--         <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/pgadmissions_test?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true" /> -->
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/pgadmissions?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true" />
-        <property name="user" value="pgadmissions" />
-        <property name="password" value="pgadmissions" />
+        <property name="jdbcUrl" value="jdbc:mysql://${db.host}/${db.schema}?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true" />
+        <property name="user" value="${db.username}" />
+        <property name="password" value="${db.password}" />
 
         <!-- these are C3P0 properties -->
         <property name="acquireIncrement" value="${db.acquireIncrement}" />

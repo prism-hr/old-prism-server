@@ -46,7 +46,6 @@ public class PorticoAttachmentsZipCreator {
             addReferences(applicationForm, referenceNumber, contentsProperties, zos);
             addApplicationForm(applicationForm, referenceNumber, contentsProperties, zos);
             addMergedApplicationForm(applicationForm, referenceNumber, contentsProperties, zos);
-            
             addContentsFiles(applicationForm, referenceNumber, contentsProperties, zos);
         } finally {
             IOUtils.closeQuietly(zos);

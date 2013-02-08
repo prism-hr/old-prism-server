@@ -63,7 +63,7 @@ public class ApprovalRoundValidatorTest {
         approvalRound.getSupervisors().clear();
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
         approvalRoundValidator.validate(approvalRound, mappingResult);
-        Assert.assertEquals(2, mappingResult.getErrorCount());
+        Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("approvalround.supervisors.incomplete", mappingResult.getFieldError("supervisors").getCode());
     }
 
@@ -74,7 +74,7 @@ public class ApprovalRoundValidatorTest {
         approvalRound.setSupervisors(Collections.singletonList(supervisor));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
         approvalRoundValidator.validate(approvalRound, mappingResult);
-        Assert.assertEquals(2, mappingResult.getErrorCount());
+        Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("approvalround.supervisors.incomplete", mappingResult.getFieldError("supervisors").getCode());
     }
 

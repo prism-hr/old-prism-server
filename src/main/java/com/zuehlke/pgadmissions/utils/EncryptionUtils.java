@@ -21,8 +21,6 @@ public class EncryptionUtils {
     
     private static final String DEFAULT_HASH_ALGORITHM = "MD5";
     
-    private static final int DEFAULT_SALT_LENGTH_IN_BYTES = 128;
-    
 	private final static int PASSWORD_LENGTH = 8;
 	
     public final static char[] DEFAULT_CHARACTER_SET = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n',
@@ -89,7 +87,6 @@ public class EncryptionUtils {
 	        int index = secureRandom.nextInt(characterSet.length);
 	        sb.append(characterSet[index]);
 	    }
-	    String nonce = sb.toString();
-	    return nonce;
+	    return sb.toString();
 	}
 }

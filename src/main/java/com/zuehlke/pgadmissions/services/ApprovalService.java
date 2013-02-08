@@ -210,8 +210,6 @@ public class ApprovalService {
     }
 
     public ApprovalRound newApprovalRound() {
-        ApprovalRound approvalRound = new ApprovalRound();
-        return approvalRound;
+        return new ApprovalRound();
     }
-
 }

@@ -612,6 +612,14 @@ public class ApplicationFormTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REJECTED).program(program).build();
         assertFalse(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(admin));
     }
+    
+    @Test
+    public void shouldNotAllowAdministratorToEditApplicationInApprovalState() {
+        RegisteredUser admin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).id(7).build();
+        Program program = new ProgramBuilder().id(1).administrators(admin).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVAL).program(program).build();
+        assertFalse(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(admin));
+    }
 
     @Test
     public void shouldReturnTrueForIsProgrammeStillAvailableIfLargestEndDateIsAfterToday() {

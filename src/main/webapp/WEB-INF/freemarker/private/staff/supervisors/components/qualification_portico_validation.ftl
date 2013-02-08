@@ -98,12 +98,8 @@
             </div>
         <#else>
             <div class="section-info-bar">
-                <#if applicationForm.qualificationsToSendToPortico?size == 0>
-                    <#if applicationForm.qualifications?size == 0>
-                        It looks like you wish to approve an applicant that has no known qualifications. Please explain why you wish to do this.
-                    <#else>
-                        Please explain why no transcripts have been not selected to submit for offer processing.
-                    </#if>
+                <#if applicationForm.qualifications?size == 0>
+                    It looks like you wish to approve an applicant that has no known qualifications. Please explain why you wish to do this.
                 <#else>
                     Select a maximum of two qualification transcripts to submit for offer processing.
                 </#if>

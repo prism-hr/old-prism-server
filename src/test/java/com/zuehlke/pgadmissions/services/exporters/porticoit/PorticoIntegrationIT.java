@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Marshaller;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -49,6 +50,10 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoAttachmentsZipCreator;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible;
+import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 
@@ -373,8 +378,6 @@ public class PorticoIntegrationIT {
                     zos.closeEntry();
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -413,8 +416,6 @@ public class PorticoIntegrationIT {
                     zos.closeEntry();
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -454,8 +455,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -495,8 +494,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -910,8 +907,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     contentsProperties.put("transcript.1.applicationFilename", StringUtils.EMPTY);
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -952,8 +947,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", StringUtils.EMPTY);
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -994,8 +987,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -1036,8 +1027,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -1271,9 +1260,14 @@ public class PorticoIntegrationIT {
     
     @Test
     @Transactional
-    public void documentUploadNotSent() {
+    @DirtiesContext
+    public void documentUploadNotSent() throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
+            CouldNotOpenSshConnectionToRemoteHost, SftpTargetDirectoryNotAccessible,
+            SftpTransmissionFailedOrProtocolError {
         csvEntries.add("Document upload not sent.");
         SftpAttachmentsSendingService sendingServiceMock = EasyMock.createMock(SftpAttachmentsSendingService.class);
+        EasyMock.expect(sendingServiceMock.sendApplicationFormDocuments(EasyMock.anyObject(ApplicationForm.class), EasyMock.anyObject(TransferListener.class))).andReturn("123.zip");
+        EasyMock.replay(sendingServiceMock);
         uclExportService.setSftpAttachmentsSendingService(sendingServiceMock);
         sendToPortico();
     }
@@ -1443,8 +1437,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -1485,8 +1477,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -1524,8 +1514,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -1566,8 +1554,6 @@ public class PorticoIntegrationIT {
                     contentsProperties.put("transcript.1.serverFilename", filename);
                     contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
                     break;
-                default:
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
                 }
             }
         });
@@ -1784,6 +1770,9 @@ public class PorticoIntegrationIT {
                 if (qualification.getProofOfAward() != null) {
                     qualification.setSendToUCL(true);
                     numberOfQualifications++;
+                    if (numberOfQualifications == 2) {
+                        break;
+                    }
                 }
             }
             
@@ -1797,7 +1786,7 @@ public class PorticoIntegrationIT {
                 }
             }
             
-            if (numberOfQualifications >= 1) {
+            if (numberOfQualifications >= 2) {
                 foundEnoughDataForQualifications = true;
             }
             
@@ -1837,6 +1826,8 @@ public class PorticoIntegrationIT {
                 request.getApplication().getCourseApplication().setDepartmentalOfferConditions("EXAMPLE CONDITIONAL");
             }
             
+            request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
+            request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
             request.getApplication().getCourseApplication().setAtasStatement("ATAS STATEMENT");
             
             Marshaller marshaller = webServiceTemplate.getMarshaller();
@@ -1882,8 +1873,8 @@ public class PorticoIntegrationIT {
         @Override
         public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
             csvEntries.add(zipFileName);
-            csvEntries.add("applicantId");
-            csvEntries.add("bookingReferenceId");
+            csvEntries.add(applicantId);
+            csvEntries.add(bookingReferenceId);
             csvEntries.add("null");
         }
     }

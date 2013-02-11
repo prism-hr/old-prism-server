@@ -171,8 +171,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getConvictions());
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEmployerList(buildEmployer());
-        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails()
-                .getEnglishFirstLanguage()));
+        //  TODO: what if it is missing (null translates to false)
+        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getEnglishFirstLanguage()));
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
 
         if (StringUtils.isNotBlank(applicationForm.getApplicant().getUclUserId())) {

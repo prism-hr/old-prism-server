@@ -219,9 +219,11 @@ public class PdfDocumentBuilder {
 
         addSectionSeparators(document);
 
-        RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        if (currentUser.hasAdminRightsOnApplication(application)) {
-            addReferencesSection(application, document);
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (currentUser.hasAdminRightsOnApplication(application)) {
+                addReferencesSection(application, document);
+            }
         }
 
         addSectionSeparators(document);
@@ -605,20 +607,22 @@ public class PdfDocumentBuilder {
             }
         }
         
-        RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        if (currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.getId().equals(application.getApplicant().getId())) {
-            table.addCell(newTableCell("Ethnicity", smallBoldFont));
-            if (application.getPersonalDetails().getEthnicity() == null) {
-                table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
-            } else {
-                table.addCell(newTableCell(application.getPersonalDetails().getEthnicity().getName(), smallFont));                
-            }
-            
-            table.addCell(newTableCell("Disability", smallBoldFont));
-            if (application.getPersonalDetails().getDisability() == null) {
-                table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
-            } else {
-                table.addCell(newTableCell(application.getPersonalDetails().getDisability().getName(), smallFont));                
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.getId().equals(application.getApplicant().getId())) {
+                table.addCell(newTableCell("Ethnicity", smallBoldFont));
+                if (application.getPersonalDetails().getEthnicity() == null) {
+                    table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
+                } else {
+                    table.addCell(newTableCell(application.getPersonalDetails().getEthnicity().getName(), smallFont));                
+                }
+                
+                table.addCell(newTableCell("Disability", smallBoldFont));
+                if (application.getPersonalDetails().getDisability() == null) {
+                    table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
+                } else {
+                    table.addCell(newTableCell(application.getPersonalDetails().getDisability().getName(), smallFont));                
+                }
             }
         }
         document.add(table);
@@ -899,14 +903,16 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell("Skype", smallBoldFont));
                 table.addCell(newTableCell(referee.getMessenger(), smallFont));
 
-                RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-                if (!currentUser.isInRole(Authority.APPLICANT) && currentUser.hasAdminRightsOnApplication(application)) {
-                    table.addCell(newTableCell("Reference", smallBoldFont));
-                    if (referee.getReference() != null) {
-                        table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
-                        bookmarkMap.put(appendixCounter++, referee.getReference());
-                    } else {
-                        table.addCell(newTableCell(null, smallFont));
+                if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                    RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+                    if (!currentUser.isInRole(Authority.APPLICANT) && currentUser.hasAdminRightsOnApplication(application)) {
+                        table.addCell(newTableCell("Reference", smallBoldFont));
+                        if (referee.getReference() != null) {
+                            table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
+                            bookmarkMap.put(appendixCounter++, referee.getReference());
+                        } else {
+                            table.addCell(newTableCell(null, smallFont));
+                        }
                     }
                 }
                 document.add(table);
@@ -958,21 +964,18 @@ public class PdfDocumentBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(100f);
         table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", smallBoldFont));
-        if (application.getAdditionalInformation().getConvictions() == null) {
-            table.addCell(newTableCell(null, smallFont));
+        if (BooleanUtils.isTrue(application.getAdditionalInformation().getConvictions())) {
+            table.addCell(newTableCell("Yes", smallFont));
         } else {
-            if (BooleanUtils.isTrue(application.getAdditionalInformation().getConvictions())) {
-                table.addCell(newTableCell("Yes", smallFont));
-            } else {
-                table.addCell(newTableCell("No", smallFont));
-            }
+            table.addCell(newTableCell("No", smallFont));
         }
-        
-        if (SecurityContextHolder.getContext().getAuthentication() != null && ( 
-                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).isInRole(Authority.SUPERADMINISTRATOR) ||
-                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).getId().equals(application.getApplicant().getId()))) {
-            table.addCell(newTableCell("Description", smallBoldFont));
-            table.addCell(newTableCell(application.getAdditionalInformation().getConvictionsText(), smallFont));
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.getId().equals(application.getApplicant().getId())) {
+                table.addCell(newTableCell("Description", smallBoldFont));
+                table.addCell(newTableCell(application.getAdditionalInformation().getConvictionsText(), smallFont));
+            }
         }
         document.add(table);
     }

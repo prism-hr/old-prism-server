@@ -153,8 +153,6 @@ public class PorticoAttachmentsZipCreator {
             contentsProperties.put("transcript.1.serverFilename", filename);
             contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
             break;
-        default:
-            throw new CouldNotCreateAttachmentsPack("There should be at most 2 qualifications marked for sending to UCL");
         }
     }
     

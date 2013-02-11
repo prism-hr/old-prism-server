@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.pdf;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
-import org.bouncycastle.util.Arrays;
 import org.springframework.core.io.InputStreamSource;
 
 public class PdfAttachmentInputSource implements InputStreamSource{

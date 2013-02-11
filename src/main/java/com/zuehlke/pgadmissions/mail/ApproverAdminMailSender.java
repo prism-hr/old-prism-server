@@ -15,16 +15,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApproverAdminMailSender extends MailSender {
 
-	private final ApplicationsService applicationService;
-
-	public ApproverAdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource, ApplicationsService applicationService) {
+    public ApproverAdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
+            JavaMailSender mailSender, MessageSource msgSource) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
-		this.applicationService = applicationService;	
 	}
 
 	Map<String, Object> createModel(RegisteredUser user, ApplicationForm application) {

@@ -47,58 +47,63 @@ public class RefereeDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesDueAReminder() {
-		List<Referee> refereesDueReminder = new ArrayList<Referee>();
-		Date today = Calendar.getInstance().getTime();
-		ReminderInterval reminderInterval = (ReminderInterval)sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
-		Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
-		List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession()
-					.createCriteria(Referee.class)
-					.createAlias("application", "application")
-					.add(Restrictions.eq("declined", false))
-					.add(Restrictions.isNotNull("user"))
-					.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
-					.add(Restrictions.le("lastNotified", dateWithSubtractedInterval)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-				.list();
-		for (Referee referee : referees) {
-			if(referee.getReference() == null){
-				refereesDueReminder.add(referee);
-			}
-		}
-		return refereesDueReminder;
+        List<Referee> refereesDueReminder = new ArrayList<Referee>();
+        Date today = Calendar.getInstance().getTime();
+        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession()
+                .createCriteria(ReminderInterval.class).uniqueResult();
+        Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+        List<Referee> referees = (List<Referee>) sessionFactory
+                .getCurrentSession()
+                .createCriteria(Referee.class)
+                .createAlias("application", "application")
+                .add(Restrictions.eq("declined", false))
+                .add(Restrictions.isNotNull("user"))
+                .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[] {
+                        ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED,
+                        ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED })))
+                .add(Restrictions.le("lastNotified", dateWithSubtractedInterval))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        for (Referee referee : referees) {
+            if (!referee.hasProvidedReference()) {
+                refereesDueReminder.add(referee);
+            }
+        }
+        return refereesDueReminder;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesWhoDidntProvideReferenceYet(ApplicationForm form) {
-		List<Referee> refereesDueReminder = new ArrayList<Referee>();
-		List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession()
-				.createCriteria(Referee.class)
-				.add(Restrictions.eq("declined", false))
-				.add(Restrictions.eq("application", form)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-				.list();
-		for (Referee referee : referees) {
-			if(referee.getReference() == null){
-				refereesDueReminder.add(referee);
-			}
-		}
+        List<Referee> refereesDueReminder = new ArrayList<Referee>();
+        List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
+                .add(Restrictions.eq("declined", false)).add(Restrictions.eq("application", form))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        for (Referee referee : referees) {
+            if (!referee.hasProvidedReference()) {
+                refereesDueReminder.add(referee);
+            }
+        }
 		return refereesDueReminder;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesDueNotification() {		
-		List<Referee> refereesDueReminder = new ArrayList<Referee>();
-		List<Referee> referees = sessionFactory.getCurrentSession()
-				.createCriteria(Referee.class)
-				.add(Restrictions.isNull("lastNotified"))
-				.add(Restrictions.eq("declined", false))
-				.createAlias("application", "application")
-				.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED,
-						ApplicationFormStatus.REJECTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.UNSUBMITTED}))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-				.list();
-		for (Referee referee : referees) {
-			if(referee.getReference() == null){
-				refereesDueReminder.add(referee);
-			}
-		}
+        List<Referee> refereesDueReminder = new ArrayList<Referee>();
+        List<Referee> referees = sessionFactory
+                .getCurrentSession()
+                .createCriteria(Referee.class)
+                .add(Restrictions.isNull("lastNotified"))
+                .add(Restrictions.eq("declined", false))
+                .createAlias("application", "application")
+                .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[] {
+                        ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED,
+                        ApplicationFormStatus.REJECTED, ApplicationFormStatus.VALIDATION,
+                        ApplicationFormStatus.UNSUBMITTED }))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .list();
+        for (Referee referee : referees) {
+            if (!referee.hasProvidedReference()) {
+                refereesDueReminder.add(referee);
+            }
+        }
 		return refereesDueReminder;
 	}
 

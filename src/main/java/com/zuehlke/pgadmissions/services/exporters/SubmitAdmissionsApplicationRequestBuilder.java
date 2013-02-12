@@ -164,7 +164,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setCountryOfBirth(buildCountry());
         applicant.setCountryOfDomicile(buildDomicile());
         applicant.setVisaRequired(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getRequiresVisa()));
-        if (BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getRequiresVisa())) {
+        if (BooleanUtils.isTrue(applicationForm.getPersonalDetails().getRequiresVisa())) {
             applicant.setPassport(buildPassport());
         }
         applicant.setDisability(buildDisability());
@@ -179,7 +179,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getEnglishFirstLanguage()));
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
         
-        if (!BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getEnglishFirstLanguage()) && !BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
+        if (BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getEnglishFirstLanguage()) && BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
             printLanguageQualificationAdmissionsNote = true;
         }
         
@@ -582,7 +582,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private RefereeListTp buildReferee() {
         RefereeListTp resultList = xmlFactory.createRefereeListTp();
         for (Referee referee : applicationForm.getReferees()) {
-            if (!BooleanUtils.toBoolean(referee.getSendToUCL())) {
+            if (BooleanUtils.isNotTrue(referee.getSendToUCL())) {
                 continue;
             }
 

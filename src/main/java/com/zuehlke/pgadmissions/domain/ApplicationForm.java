@@ -929,7 +929,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public List<Document> getQualificationsToSendToPortico() {
         List<Document> result = new ArrayList<Document>(2);
         for (Qualification qualification : getQualifications()) {
-            if (BooleanUtils.toBoolean(qualification.getSendToUCL())) {
+            if (BooleanUtils.isTrue(qualification.getSendToUCL())) {
                 Validate.notNull(qualification.getProofOfAward(), "Qualification with id: " + qualification.getId()
                         + " is marked for sending to UCL but has no proofOfAward assosiated with it.");
                 result.add(qualification.getProofOfAward());
@@ -941,7 +941,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public List<ReferenceComment> getReferencesToSendToPortico() {
         List<ReferenceComment> result = new ArrayList<ReferenceComment>(2);
         for (Referee refree : getReferees()) {
-            if (BooleanUtils.toBoolean(refree.getSendToUCL())) {
+            if (BooleanUtils.isTrue(refree.getSendToUCL())) {
                 Validate.notNull(refree.getReference(), "Referee with id: " + refree.getId()
                         + " is marked for sending to UCL but has no reference assosiated with it.");
                 result.add(refree.getReference());

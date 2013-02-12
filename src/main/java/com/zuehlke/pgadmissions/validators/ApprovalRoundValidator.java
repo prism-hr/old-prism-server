@@ -32,7 +32,7 @@ public class ApprovalRoundValidator extends AbstractValidator {
         } else {
             int primarySupervisors = 0;
             for (Supervisor supervisor : approvalRound.getSupervisors()) {
-                if (BooleanUtils.toBoolean(supervisor.getIsPrimary())) {
+                if (BooleanUtils.isTrue(supervisor.getIsPrimary())) {
                     primarySupervisors++;
                 }
             }
@@ -46,7 +46,7 @@ public class ApprovalRoundValidator extends AbstractValidator {
         // project description validation
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectDescriptionAvailable", "dropdown.radio.select.none");
 
-        if (BooleanUtils.toBoolean(approvalRound.getProjectDescriptionAvailable())) {
+        if (BooleanUtils.isTrue(approvalRound.getProjectDescriptionAvailable())) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectTitle", "text.field.empty");
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectAbstract", "text.field.empty");
         }
@@ -69,7 +69,7 @@ public class ApprovalRoundValidator extends AbstractValidator {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditionsAvailable", "dropdown.radio.select.none");
 
-        if (BooleanUtils.toBoolean(approvalRound.getRecommendedConditionsAvailable())) {
+        if (BooleanUtils.isTrue(approvalRound.getRecommendedConditionsAvailable())) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditions", "text.field.empty");
         }
 

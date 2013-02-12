@@ -281,7 +281,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
 	public void setRequiresVisa(Boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
-		if (!BooleanUtils.toBoolean(requiresVisa)) {
+		if (BooleanUtils.isNotTrue(requiresVisa)) {
 		    this.passportInformation = null;
 		}
 	}
@@ -308,7 +308,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
     public void setLanguageQualificationAvailable(Boolean languageQualificationAvailable) {
         this.languageQualificationAvailable = languageQualificationAvailable;
-        if (!BooleanUtils.toBoolean(languageQualificationAvailable)) {
+        if (BooleanUtils.isNotTrue(languageQualificationAvailable)) {
             this.languageQualifications = new ArrayList<LanguageQualification>();
         }
     }
@@ -344,7 +344,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     public List<LanguageQualification> getLanguageQualificationToSend() {
         List<LanguageQualification> result = new ArrayList<LanguageQualification>(1);
         for (LanguageQualification languageQualification : languageQualifications) {
-            if (BooleanUtils.toBoolean(languageQualification.getSendToUCL())) {
+            if (BooleanUtils.isTrue(languageQualification.getSendToUCL())) {
                 Validate.notNull(languageQualification.getLanguageQualificationDocument(),
                         "LanguageQualification with id: " + languageQualification.getId()
                                 + " is marked for sending to UCL but has no document assosiated with it.");

@@ -8,7 +8,7 @@
 
 <h2 id="referee-H2" class="no-arrow empty">References</h2>
 
-<div class="open">
+<div id="refereesTable" class="open">
 <#if hasReferees>
 
     <#include "/private/staff/admin/application/components/referees_table.ftl"/>

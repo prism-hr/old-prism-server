@@ -28,7 +28,6 @@ public class QualificationValidator  extends FormSectionObjectValidator implemen
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationTitle", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationStartDate", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLanguage", "text.field.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", "dropdown.radio.select.none");

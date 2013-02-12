@@ -49,7 +49,7 @@ public class QualificationValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfInstaitutionCoutnryIssEmpty() {
+    public void shouldRejectIfInstitutionCountryIsEmpty() {
         qualification.setInstitutionCountry(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);

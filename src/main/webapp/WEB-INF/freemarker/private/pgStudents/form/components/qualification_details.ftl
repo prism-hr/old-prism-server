@@ -173,7 +173,7 @@
             
             <!-- Title -->
             <div class="row">
-                <span class="plain-label">Qualification Title<em>*</em></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.title'/>"></span>
+                <span class="plain-label">Qualification Title</span> <span class="hint" data-desc="<@spring.message 'education.qualifications.title'/>"></span>
                 <div class="field">
                     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <input id="qualificationTitle" class="full" type="text" placeholder="e.g. MSc" value="${(qualification.qualificationTitle?html)!}" /> <#else> <input readonly="readonly" id="qualificationTitle" class="full" type="text" placeholder="e.g. Civil Engineering" value="${(qualification.qualificationTitle?html)!}" /> </#if>
                 </div>

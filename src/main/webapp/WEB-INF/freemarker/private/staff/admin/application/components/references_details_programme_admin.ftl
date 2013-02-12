@@ -32,6 +32,13 @@
             </#if>
         </div>
     </#list>
+    
+    <div id="referee_newReferee" style="display:none">
+        <#assign encRefereeId = "newReferee" />
+        <#include "/private/staff/admin/application/components/referee_edit.ftl"/>
+        
+        <#include "/private/staff/admin/application/components/reference_edit.ftl"/>
+    </div>
 
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />
     <div class="buttons">
@@ -46,6 +53,7 @@
     var $closeReferenceSectionAfterSaving = true;
     var $postRefereesDataUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereesData";
     var $postReferenceUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/postReference";
+    var $postRefereeAndReferenceUrl = "/pgadmissions/editApplicationFormAsProgrammeAdmin/postRefereeAndReference";
 </script>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/admin/references.js' />"></script>

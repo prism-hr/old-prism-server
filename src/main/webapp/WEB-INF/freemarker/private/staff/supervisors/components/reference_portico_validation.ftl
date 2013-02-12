@@ -8,7 +8,7 @@
 
 <h2 id="referee-H2" class="no-arrow empty">References</h2>
 
-<div class="open">
+<div id="refereesTable" class="open">
 <#if hasReferees>
 
     <#include "/private/staff/admin/application/components/referees_table.ftl"/>
@@ -41,6 +41,13 @@
             </#if>
         </div>
     </#list>
+    
+    <div id="referee_newReferee" style="display:none">
+        <#assign encRefereeId = "newReferee" />
+        <#include "/private/staff/admin/application/components/referee_edit.ftl"/>
+        
+        <#include "/private/staff/admin/application/components/reference_edit.ftl"/>
+    </div>
     
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />
     <div class="buttons">

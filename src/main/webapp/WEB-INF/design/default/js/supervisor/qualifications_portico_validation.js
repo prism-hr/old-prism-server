@@ -19,6 +19,7 @@ $(document).ready(function() {
     	$('input[name="qualificationSendToUcl"]').each(function() {
     		$(this).attr("checked", false);
         });
+    	$("#explanationText").val("");
     });
     
     // --------------------------------------------------------------------------------

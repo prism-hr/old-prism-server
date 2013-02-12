@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -190,8 +191,7 @@ public class RefereeService {
     }
 
     private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee, Role refereeRole) {
-        RegisteredUser user;
-        user = newRegisteredUser();
+        RegisteredUser user = newRegisteredUser();
         user.setEmail(referee.getEmail());
         user.setFirstName(referee.getFirstname());
         user.setLastName(referee.getLastname());
@@ -255,13 +255,45 @@ public class RefereeService {
 
     @Transactional
     public ReferenceComment postCommentOnBehalfOfReferee(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
-        Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
-        Referee referee = getRefereeById(refereeId);
+        Referee referee;
+        if (BooleanUtils.isTrue(refereesAdminEditDTO.getContainsRefereeData())) {
+            referee = createReferee(refereesAdminEditDTO, applicationForm);
+        } else {
+            Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
+            referee = getRefereeById(refereeId);
+        }
 
         if (referee.getUser() == null) {
             processRefereesRoles(Arrays.asList(referee));
         }
 
+        ReferenceComment referenceComment = createReferenceComment(refereesAdminEditDTO, referee, applicationForm);
+
+        commentService.save(referenceComment);
+        
+        if (applicationForm.getReferencesToSendToPortico().size() < 2) {
+            referee.setSendToUCL(true);
+        }
+
+        saveReferenceAndSendMailNotifications(referee);
+        return referenceComment;
+    }
+
+    private Referee createReferee(RefereesAdminEditDTO refereesAdminEditDTO, ApplicationForm applicationForm) {
+        Referee referee = new Referee();
+        referee.setApplication(applicationForm);
+        referee.setFirstname(refereesAdminEditDTO.getFirstname());
+        referee.setLastname(refereesAdminEditDTO.getLastname());
+        referee.setAddressLocation(refereesAdminEditDTO.getAddressLocation());
+        referee.setJobEmployer(refereesAdminEditDTO.getJobEmployer());
+        referee.setJobTitle(refereesAdminEditDTO.getJobTitle());
+        referee.setEmail(refereesAdminEditDTO.getEmail());
+        referee.setPhoneNumber(refereesAdminEditDTO.getPhoneNumber());
+        referee.setMessenger(refereesAdminEditDTO.getMessenger());
+        return referee;
+    }
+
+    private ReferenceComment createReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO, Referee referee, ApplicationForm applicationForm) {
         ReferenceComment referenceComment = new ReferenceComment();
         referenceComment.setApplication(applicationForm);
         referenceComment.setReferee(referee);
@@ -276,14 +308,6 @@ public class RefereeService {
         if (document != null) {
             referenceComment.setDocuments(Collections.singletonList(document));
         }
-
-        commentService.save(referenceComment);
-
-        if (applicationForm.getReferencesToSendToPortico().size() < 2) {
-            referee.setSendToUCL(true);
-        }
-
-        saveReferenceAndSendMailNotifications(referee);
         return referenceComment;
     }
 

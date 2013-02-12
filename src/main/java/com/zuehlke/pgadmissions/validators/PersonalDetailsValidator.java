@@ -79,7 +79,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", "dropdown.radio.select.none");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", "dropdown.radio.select.none");
 		
-		if (BooleanUtils.toBoolean(personalDetail.getPassportAvailable()) && BooleanUtils.isTrue(personalDetail.getRequiresVisa())) {
+		if (BooleanUtils.toBoolean(personalDetail.getPassportAvailable()) && BooleanUtils.toBoolean(personalDetail.getRequiresVisa())) {
 		    try {
 		        errors.pushNestedPath("passportInformation");
     	        ValidationUtils.invokeValidator(passportInformationValidator, personalDetail.getPassportInformation(), errors);

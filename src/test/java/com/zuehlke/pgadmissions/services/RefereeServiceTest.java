@@ -24,6 +24,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -33,7 +34,9 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReferenceEvent;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -272,7 +275,7 @@ public class RefereeServiceTest {
     }
     
     @Test
-    public void shouldCreateRefereeUserAndPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
+    public void shouldCreateRefereeRegisteredUserAndPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
         Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
         Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
@@ -312,6 +315,65 @@ public class RefereeServiceTest {
         
         assertSame(applicationForm, referenceComment.getApplication());
         assertSame(referee, referenceComment.getReferee());
+        assertTrue(referenceComment.getReferee().getSendToUCL());
+        assertEquals(CommentType.REFERENCE, referenceComment.getType());
+        
+        assertSame(currentUser, referenceComment.getProvidedBy());
+        assertEquals("comment text", referenceComment.getComment());
+        assertEquals(1, referenceComment.getDocuments().size());
+        assertSame(document, referenceComment.getDocuments().get(0));
+        assertEquals(true, referenceComment.getSuitableForProgramme());
+        assertEquals(false, referenceComment.getSuitableForUCL());
+    }
+    
+    @Test
+    public void shouldCreateNewRefereeAndPostReferenceOnBehalfOfHim() throws UnsupportedEncodingException {
+        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
+
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
+
+        Document document = new DocumentBuilder().build();
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        refereesAdminEditDTO.setComment("comment text");
+        refereesAdminEditDTO.setEditedRefereeId("refereeId");
+        refereesAdminEditDTO.setReferenceDocument(document);
+        refereesAdminEditDTO.setSuitableForProgramme(true);
+        refereesAdminEditDTO.setSuitableForUCL(false);
+        refereesAdminEditDTO.setFirstname("Franciszek");
+        refereesAdminEditDTO.setLastname("Pieczka");
+        refereesAdminEditDTO.setJobEmployer("Employer");
+        refereesAdminEditDTO.setJobTitle("Job");
+        Address address = new AddressBuilder().address1("1").address2("2").address3("3").address4("4").address5("5").country(new CountryBuilder().code("aa").build()).build();
+        refereesAdminEditDTO.setAddressLocation(address);
+        refereesAdminEditDTO.setEmail("aaa@.fff.ccc");
+        refereesAdminEditDTO.setPhoneNumber("+44 111111111");
+        refereesAdminEditDTO.setContainsRefereeData(true);
+
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("aaa@.fff.ccc")).andReturn(null);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        userServiceMock.save(EasyMock.isA(RegisteredUser.class));
+        EasyMock.expectLastCall().once();
+        refereeDAOMock.save(EasyMock.isA(Referee.class));
+        EasyMock.expectLastCall().once();
+        commentServiceMock.save(EasyMock.isA(ReferenceComment.class));
+        EasyMock.expectLastCall().once();
+        applicationFormDAOMock.save(applicationForm);
+        EasyMock.expectLastCall().once();
+
+        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+
+        RegisteredUser refereeUser = referenceComment.getUser();
+        assertEquals("Franciszek", refereeUser.getFirstName());
+        assertEquals("Pieczka", refereeUser.getLastName());
+        
+        assertSame(applicationForm, referenceComment.getApplication());
+        assertEquals("Franciszek", referenceComment.getReferee().getFirstname());
+        assertTrue(referenceComment.getReferee().getSendToUCL());
         assertEquals(CommentType.REFERENCE, referenceComment.getType());
         
         assertSame(currentUser, referenceComment.getProvidedBy());

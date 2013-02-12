@@ -81,12 +81,17 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     private final static String PHONE_NUMBER_NOT_PROVIDED_VALUE = "+44 (0) 0000 000 000";
 
+    private final static String LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE = 
+            "Application predates mandatory language qualification. Please check qualifications for potential language certificates.";
+    
     private final ObjectFactory xmlFactory;
 
     protected final DatatypeFactory datatypeFactory;
 
     private ApplicationForm applicationForm;
 
+    private boolean printLanguageQualificationAdmissionsNote = false;
+    
     private static class NoActiveProgrameInstanceFoundException extends RuntimeException {
         private final ProgrammeOccurrenceTp occurrenceTp;
         private static final long serialVersionUID = 8359986556018188704L;
@@ -134,6 +139,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     }
 
     public SubmitAdmissionsApplicationRequest build() {
+        printLanguageQualificationAdmissionsNote = false;
         SubmitAdmissionsApplicationRequest request = xmlFactory.createSubmitAdmissionsApplicationRequest();
         request.setApplication(buildApplication());
         return request;
@@ -157,7 +163,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setCountryOfBirth(buildCountry());
         applicant.setCountryOfDomicile(buildDomicile());
         applicant.setVisaRequired(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getRequiresVisa()));
-        if (BooleanUtils.isTrue(applicationForm.getPersonalDetails().getRequiresVisa())) {
+        if (BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getRequiresVisa())) {
             applicant.setPassport(buildPassport());
         }
         applicant.setDisability(buildDisability());
@@ -168,10 +174,14 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getConvictions());
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEmployerList(buildEmployer());
-        //  TODO: what if it is missing (null translates to false)
+
         applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getEnglishFirstLanguage()));
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
-
+        
+        if (!BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getEnglishFirstLanguage()) && !BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
+            printLanguageQualificationAdmissionsNote = true;
+        }
+        
         if (StringUtils.isNotBlank(applicationForm.getApplicant().getUclUserId())) {
             applicant.setApplicantID(applicationForm.getApplicant().getUclUserId());
         }
@@ -382,6 +392,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             throw new IllegalArgumentException(exp.getMessage(), exp);
         }
         
+        if (printLanguageQualificationAdmissionsNote) {
+            applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
+        }
+        
 //      TODO: ATASSTatement
 //      <v1_0:atasStatement>string</v1_0:atasStatement> // Project description
         
@@ -567,7 +581,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private RefereeListTp buildReferee() {
         RefereeListTp resultList = xmlFactory.createRefereeListTp();
         for (Referee referee : applicationForm.getReferees()) {
-            if (BooleanUtils.isFalse(referee.getSendToUCL())) {
+            if (!BooleanUtils.toBoolean(referee.getSendToUCL())) {
                 continue;
             }
 

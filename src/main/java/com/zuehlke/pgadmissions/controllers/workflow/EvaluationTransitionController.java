@@ -102,7 +102,7 @@ public class EvaluationTransitionController extends StateTransitionController {
 		
 		commentService.save(newComment);
 		
-        if (BooleanUtils.isTrue(delegate)) {
+        if (BooleanUtils.toBoolean(delegate)) {
             return "redirect:/applications?messageCode=delegate.success&application="+ applicationForm.getApplicationNumber();
         }
         

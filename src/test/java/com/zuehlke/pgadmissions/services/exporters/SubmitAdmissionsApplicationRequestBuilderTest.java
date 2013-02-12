@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Date;
@@ -100,6 +102,15 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory());
         exception.expect(IllegalArgumentException.class);
         requestBuilder.applicationForm(applicationForm).build();
+    }
+    
+    @Test
+    public void shouldSetAdditionalTextInOfferConditionsIfLanguageQualificationIsNull() {
+        applicationForm.getPersonalDetails().setLanguageQualificationAvailable(null);
+        applicationForm.getPersonalDetails().setEnglishFirstLanguage(null);
+        SubmitAdmissionsApplicationRequestBuilder requestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory());
+        SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
+        assertEquals("Application predates mandatory language qualification. Please check qualifications for potential language certificates.", request.getApplication().getCourseApplication().getDepartmentalOfferConditions());
     }
 
     @Test

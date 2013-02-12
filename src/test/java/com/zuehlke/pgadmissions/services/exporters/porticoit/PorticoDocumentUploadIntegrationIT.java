@@ -62,7 +62,7 @@ import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 @ContextConfiguration({ "/testPorticoIntegrationContext.xml"})
 @TransactionConfiguration(defaultRollback = true)
 @Ignore
-public class PorticoIntegrationIT {
+public class PorticoDocumentUploadIntegrationIT {
 
     private static final String TEST_REPORT_FILENAME = "PorticoIntegrationIT.csv";
 

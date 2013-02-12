@@ -46,14 +46,8 @@ public class ReportPorticoDocumentUploadFailureController {
             @RequestParam(required = true) String message,
             @RequestParam(required = true) String activationCode) {
         if (StringUtils.equals(PORTICO_UPLOAD_ACTIVATION_CODE, activationCode)) {
-            StringBuilder mailMessageBuilder = new StringBuilder();
-            mailMessageBuilder.append("Portico reported that there was an error uploading the documents [bookingReference=").append(StringUtils.trimToEmpty(bookingReference)).append("].");
-            mailMessageBuilder.append("\n");
-            mailMessageBuilder.append("The error message received was: \n");
-            mailMessageBuilder.append(StringUtils.trimToEmpty(message));
-            // TODO: Enabled when ready for production
-            //service.sendErrorMessage(mailMessageBuilder.toString());
-            log.warn(mailMessageBuilder.toString());
+            String logMessage = String.format("Portico reported that there was an error uploading the documents [errorCode=%s, bookingReference=%s]: %s", StringUtils.trimToEmpty(errorCode), StringUtils.trimToEmpty(bookingReference), StringUtils.trimToEmpty(message));
+            log.warn(logMessage);
             return "OK";
         }
         return "NOK";

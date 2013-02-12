@@ -36,6 +36,7 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
@@ -1829,6 +1830,10 @@ public class PorticoIntegrationIT {
             request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
             request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
             request.getApplication().getCourseApplication().setAtasStatement("ATAS STATEMENT");
+            
+            for (QualificationsTp detailsTp : request.getApplication().getApplicant().getQualificationList().getQualificationDetail()) {
+                detailsTp.getInstitution().setCode("UK0275");
+            }
             
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {

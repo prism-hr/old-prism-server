@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -23,8 +24,10 @@ import org.springframework.web.bind.support.SessionStatus;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -33,12 +36,14 @@ import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -73,9 +78,11 @@ public class ApprovalController {
     private final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
     private final SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator;
     private final DatePropertyEditor datePropertyEditor;
+    private final CountryService countryService;
+    private final CountryPropertyEditor countryPropertyEditor;
 
     ApprovalController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -83,7 +90,8 @@ public class ApprovalController {
             ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
             GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
             RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-            SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor) {
+            SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, CountryService countryService,
+            CountryPropertyEditor countryPropertyEditor) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
@@ -98,12 +106,15 @@ public class ApprovalController {
         this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
         this.sendToPorticoDataDTOValidator = sendToPorticoDataDTOValidator;
         this.datePropertyEditor = datePropertyEditor;
+        this.countryService = countryService;
+        this.countryPropertyEditor = countryPropertyEditor;
     }
 
     @InitBinder(value = "refereesAdminEditDTO")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(refereesAdminEditDTOValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
+        binder.registerCustomEditor(Country.class, countryPropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
         binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
     }
@@ -264,50 +275,41 @@ public class ApprovalController {
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)
     public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm,
-            @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
-            @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult, Model model) {
-        if (sendToPorticoData.getRefereesSendToPortico() == null) {
-            throw new ResourceNotFoundException();
+            @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult porticoResult,
+            @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,
+            @RequestParam(required = false) Boolean forceSavingReference, Model model) {
+
+        if (refereesAdminEditDTO.getEditedRefereeId() != null) {
+            model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
         }
 
-        model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
+        // save "send to UCL" data first
+        List<Integer> refereesSendToPortico = sendToPorticoData.getRefereesSendToPortico();
+        if (refereesSendToPortico != null) {
+            refereeService.selectForSendingToPortico(applicationForm, refereesSendToPortico);
+        }
 
-        refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
-
-        if (refereesAdminEditDTO.hasUserStartedTyping()) {
+        if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
             refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
 
             if (referenceResult.hasErrors()) {
                 return REFERENCE_SECTION;
             }
 
-            Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
-            Referee referee = refereeService.getRefereeById(refereeId);
-
-            refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+            ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+            Referee referee = newComment.getReferee();
+            String encryptedId = encryptionHelper.encrypt(referee.getId());
+            model.addAttribute("editedRefereeId", encryptedId);
+            applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
-        }
-
-        return REFERENCE_SECTION;
-    }
-
-    @RequestMapping(value = "/postReference", method = RequestMethod.POST)
-    public String submitReference(@Valid @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result,
-            @ModelAttribute ApplicationForm applicationForm, Model model) {
-        model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
-
-        Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
-        Referee referee = refereeService.getRefereeById(refereeId);
-
-        if (referee.getReference() == null) {
-            // reference not uploaded yet, try to do it now
-            if (result.hasErrors()) {
-                return REFERENCE_SECTION;
+            
+            // update referees send to Portico in order to validate it
+            if (refereesSendToPortico != null && !refereesSendToPortico.contains(referee.getId())) {
+                refereesSendToPortico.add(referee.getId());
             }
-
-            refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-            refereeService.refresh(referee);
         }
+
+        sendToPorticoDataDTOValidator.validate(sendToPorticoData, porticoResult);
 
         return REFERENCE_SECTION;
     }
@@ -318,6 +320,11 @@ public class ApprovalController {
         comment.setApplication(getApplicationForm(applicationId));
         comment.setUser(getUser());
         return comment;
+    }
+
+    @ModelAttribute("countries")
+    public List<Country> getAllCountries() {
+        return countryService.getAllCountries();
     }
 
     @RequestMapping(value = "submitRequestRestart", method = RequestMethod.POST)

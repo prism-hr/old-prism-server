@@ -13,7 +13,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.owasp.esapi.ESAPI;
 
@@ -67,8 +66,6 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
 public class SubmitAdmissionsApplicationRequestBuilder {
-
-    private final Logger log = Logger.getLogger(SubmitAdmissionsApplicationRequestBuilder.class);
 
     private static final String IP_ADDRESS_NOT_PROVIDED_VALUE = "127.0.0.1";
 

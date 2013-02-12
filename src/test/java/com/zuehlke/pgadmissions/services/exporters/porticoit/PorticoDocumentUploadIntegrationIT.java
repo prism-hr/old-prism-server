@@ -64,7 +64,7 @@ import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 @Ignore
 public class PorticoDocumentUploadIntegrationIT {
 
-    private static final String TEST_REPORT_FILENAME = "PorticoIntegrationIT.csv";
+    private static final String TEST_REPORT_FILENAME = "PorticoDocumentUploadIntegrationIT.csv";
 
     @Autowired
     private WebServiceTemplate webServiceTemplate;

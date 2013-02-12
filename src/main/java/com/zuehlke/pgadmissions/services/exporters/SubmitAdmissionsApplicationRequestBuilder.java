@@ -62,6 +62,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
@@ -392,7 +393,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             throw new IllegalArgumentException(exp.getMessage(), exp);
         }
         
-        if (printLanguageQualificationAdmissionsNote) {
+        if (printLanguageQualificationAdmissionsNote && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
         

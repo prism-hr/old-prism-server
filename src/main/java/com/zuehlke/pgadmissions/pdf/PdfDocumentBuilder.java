@@ -190,8 +190,10 @@ public class PdfDocumentBuilder {
             submittedDateHeader = new Chunk("", smallerFont);
         }
 
-        headerEvent = new HeaderEvent(new Chunk(application.getProgram().getTitle(), smallerFont), new Chunk(
-                application.getApplicationNumber(), smallerFont), submittedDateHeader);
+        headerEvent = new HeaderEvent(
+                new Chunk(application.getProgram().getTitle(), smallerFont), 
+                new Chunk(application.getApplicationNumber(), smallerFont), 
+                submittedDateHeader);
         
         writer.setPageEvent(headerEvent);
         
@@ -964,7 +966,9 @@ public class PdfDocumentBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(100f);
         table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", smallBoldFont));
-        if (BooleanUtils.toBoolean(application.getAdditionalInformation().getConvictions())) {
+        if (application.getAdditionalInformation().getConvictions() == null) {
+            table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
+        } else if (BooleanUtils.isTrue(application.getAdditionalInformation().getConvictions())) {
             table.addCell(newTableCell("Yes", smallFont));
         } else {
             table.addCell(newTableCell("No", smallFont));

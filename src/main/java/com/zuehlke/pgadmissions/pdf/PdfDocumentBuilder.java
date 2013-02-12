@@ -88,7 +88,7 @@ public class PdfDocumentBuilder {
             document.add(table);
             document.add(new Paragraph(" "));
             
-            if (referenceComment.getReferee() != null && BooleanUtils.toBoolean(referenceComment.getReferee().isDeclined())) {
+            if (referenceComment.getReferee() != null && BooleanUtils.isTrue(referenceComment.getReferee().isDeclined())) {
                 document.add(new Paragraph("Comment:\nDeclined to provide a reference."));
             } else {
                 document.add(new Paragraph("Comment:\n" + referenceComment.getComment()));
@@ -356,7 +356,7 @@ public class PdfDocumentBuilder {
 
                 table.addCell(newTableCell("Is this supervisor aware of your application?", smallerBoldFont));
 
-                if (BooleanUtils.toBoolean(supervisor.isAware())) {
+                if (BooleanUtils.isTrue(supervisor.isAware())) {
                     table.addCell(newTableCell("Yes", smallerFont));
                 } else {
                     table.addCell(newTableCell("No", smallerFont));
@@ -457,7 +457,7 @@ public class PdfDocumentBuilder {
         if (application.getPersonalDetails().getEnglishFirstLanguage() == null) {
             table.addCell(newTableCell(null, smallFont));
         } else {
-            if (BooleanUtils.toBoolean(application.getPersonalDetails().getEnglishFirstLanguage())) {
+            if (BooleanUtils.isTrue(application.getPersonalDetails().getEnglishFirstLanguage())) {
                 table.addCell(newTableCell("Yes", smallFont));
             } else {
                 table.addCell(newTableCell("No", smallFont));
@@ -468,7 +468,7 @@ public class PdfDocumentBuilder {
         if (application.getPersonalDetails().getLanguageQualificationAvailable() == null) {
             table.addCell(newTableCell(null, smallFont));
         } else {
-            if (BooleanUtils.toBoolean(application.getPersonalDetails().getLanguageQualificationAvailable())) {
+            if (BooleanUtils.isTrue(application.getPersonalDetails().getLanguageQualificationAvailable())) {
                 table.addCell(newTableCell("Yes", smallFont));
             } else {
                 table.addCell(newTableCell("No", smallFont));
@@ -486,7 +486,7 @@ public class PdfDocumentBuilder {
         if (application.getPersonalDetails().getRequiresVisa() == null) {
             table.addCell(newTableCell(null, smallFont));
         } else {
-            if (BooleanUtils.toBoolean(application.getPersonalDetails().getRequiresVisa())) {
+            if (BooleanUtils.isTrue(application.getPersonalDetails().getRequiresVisa())) {
                 table.addCell(newTableCell("Yes", smallFont));
             } else {
                 table.addCell(newTableCell("No", smallFont));
@@ -497,14 +497,14 @@ public class PdfDocumentBuilder {
         if (application.getPersonalDetails().getPassportAvailable() == null) {
             table.addCell(newTableCell(null, smallFont));
         } else {
-            if (BooleanUtils.toBoolean(application.getPersonalDetails().getPassportAvailable())) {
+            if (BooleanUtils.isTrue(application.getPersonalDetails().getPassportAvailable())) {
                 table.addCell(newTableCell("Yes", smallFont));
             } else {
                 table.addCell(newTableCell("No", smallFont));
             }
         }
         
-        if (BooleanUtils.toBoolean(application.getPersonalDetails().getRequiresVisa())) {
+        if (BooleanUtils.isTrue(application.getPersonalDetails().getRequiresVisa())) {
             PassportInformation passportInformation = application.getPersonalDetails().getPassportInformation();
             if (passportInformation != null) {
                 table.addCell(newTableCell("Passport Number", smallBoldFont));
@@ -592,7 +592,7 @@ public class PdfDocumentBuilder {
                 if (qualification.getExamTakenOnline() == null) {
                     table.addCell(newTableCell(null, smallFont));
                 } else {
-                    if (BooleanUtils.toBoolean(qualification.getExamTakenOnline())) {
+                    if (BooleanUtils.isTrue(qualification.getExamTakenOnline())) {
                         table.addCell(newTableCell("Yes", smallFont));
                     } else {
                         table.addCell(newTableCell("No", smallFont));
@@ -719,7 +719,7 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationStartDate()), smallFont));
 
                 table.addCell(newTableCell("Has this Qualification been awarded", smallBoldFont));
-                if (BooleanUtils.toBoolean(qualification.isQualificationCompleted())) {
+                if (BooleanUtils.isTrue(qualification.isQualificationCompleted())) {
                     table.addCell(newTableCell("Yes", smallFont));
                 } else {
                     table.addCell(newTableCell("No", smallFont));
@@ -793,7 +793,7 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell(simpleDateFormat.format(position.getStartDate()), smallFont));
 
                 table.addCell(newTableCell("Is this your Current Position", smallBoldFont));
-                if (BooleanUtils.toBoolean(position.isCurrent())) {
+                if (BooleanUtils.isTrue(position.isCurrent())) {
                     table.addCell(newTableCell("Yes", smallFont));
                 } else {
                     table.addCell(newTableCell("No", smallFont));
@@ -1037,13 +1037,13 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell("Comment", smallBoldFont));
                 table.addCell(newTableCell(reference.getComment(), smallFont));
                 table.addCell(newTableCell("Is the applicant suitable for postgraduate study at UCL?", smallBoldFont));
-                if (BooleanUtils.toBoolean(reference.getSuitableForUCL())) {
+                if (BooleanUtils.isTrue(reference.getSuitableForUCL())) {
                     table.addCell(newTableCell("Yes", smallFont));
                 } else {
                     table.addCell(newTableCell("No", smallFont));
                 }
                 table.addCell(newTableCell("Is the applicant suitable for their chosen postgraduate study programme?", smallBoldFont));
-                if (BooleanUtils.toBoolean(reference.getSuitableForProgramme())) {
+                if (BooleanUtils.isTrue(reference.getSuitableForProgramme())) {
                     table.addCell(newTableCell("Yes", smallFont));
                 } else {
                     table.addCell(newTableCell("No", smallFont));

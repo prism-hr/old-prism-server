@@ -177,7 +177,7 @@ public class PersonalDetailsController {
             return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
         }
         
-        if(BooleanUtils.isFalse(personalDetails.getLanguageQualificationAvailable())){
+        if (!BooleanUtils.toBoolean(personalDetails.getLanguageQualificationAvailable())) {
         	personalDetails.getLanguageQualifications().clear();
         }
         

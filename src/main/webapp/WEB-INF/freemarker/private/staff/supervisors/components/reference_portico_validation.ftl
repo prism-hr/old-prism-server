@@ -42,6 +42,13 @@
         </div>
     </#list>
     
+    <div id="referee_newReferee" style="display:none">
+        <#assign encRefereeId = "newReferee" />
+        <#include "/private/staff/admin/application/components/referee_edit.ftl"/>
+        
+        <#include "/private/staff/admin/application/components/reference_edit.ftl"/>
+    </div>
+    
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />
     <div class="buttons">
         <button name="refereeClearButton" type="button" id="refereeClearButton" class="clear">Clear</button>

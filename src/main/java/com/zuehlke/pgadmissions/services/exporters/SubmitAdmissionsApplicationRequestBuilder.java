@@ -684,7 +684,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     
     private String cleanString(String text) {
         if (text != null) {
-            return text.replaceAll("[^\\x20-\\x7F|\\x80-\\xFD|\\n]", "");
+            return text.replaceAll("[^\\x20-\\x7F|\\x80-\\xFD|\\n|\\r]", "");
         }
         return null;
     }

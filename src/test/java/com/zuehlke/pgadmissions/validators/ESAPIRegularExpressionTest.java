@@ -34,6 +34,7 @@ public class ESAPIRegularExpressionTest {
     @Test
     public void shouldAllowCarriageReturn() {
         assertTrue(ESAPI.validator().isValidInput("Input", "\nDenver", "ExtendedAscii", 30, false));
+        assertTrue(ESAPI.validator().isValidInput("Input", "\r\nDenver", "ExtendedAscii", 30, false));
     }
     
     @Test

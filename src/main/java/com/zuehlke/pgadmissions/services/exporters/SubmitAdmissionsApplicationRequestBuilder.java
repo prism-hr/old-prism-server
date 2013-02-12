@@ -167,7 +167,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setEthnicity(buildEthnicity());
         applicant.setHomeAddress(buildHomeAddress());
         applicant.setCorrespondenceAddress(buildCorrespondenceAddress());
-        applicant.setCriminalConvictionDetails(applicationForm.getAdditionalInformation().getConvictionsText());
+        applicant.setCriminalConvictionDetails(cleanString(applicationForm.getAdditionalInformation().getConvictionsText()));
         applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getConvictions());
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEmployerList(buildEmployer());
@@ -553,7 +553,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 AppointmentTp appointmentTp = xmlFactory.createAppointmentTp();
 
                 appointmentTp.setJobTitle(employmentPosition.getPosition());
-                appointmentTp.setResponsibilities(employmentPosition.getRemit());
+                appointmentTp.setResponsibilities(cleanString(employmentPosition.getRemit()));
                 appointmentTp.setStartDate(buildXmlDate(employmentPosition.getStartDate()));
                 appointmentTp.setEndDate(buildXmlDate(employmentPosition.getEndDate()));
 
@@ -680,6 +680,13 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);
         }
         return englishLanguageQualificationDetailsTp;
+    }
+    
+    private String cleanString(String text) {
+        if (text != null) {
+            return text.replaceAll("[^\\x20-\\x7F|\\x80-\\xFD|\\n]", "");
+        }
+        return null;
     }
 
     private String cleanPhoneNumber(String number) {

@@ -31,7 +31,8 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
-import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
@@ -61,20 +62,22 @@ public class PorticoWebServiceIT {
     
     private List<String> csvEntries;
     
-    private int sentApps = 0;
-
-    private ApplicationForm applicationForm;
-
     private CSVWriter writer;
     
-    private ValidApplicationFormBuilder applicationFormBuilder;
+    private String randomLastname;
+    
+    private String randomFirstname;
+    
+    private String receivedApplicantId;
+    
+    private String receivedApplicationId;
     
     @Before
     public void prepare() throws IOException {
         writer = new CSVWriter(new FileWriter(TEST_REPORT_FILENAME, true), ',');
         csvEntries = new ArrayList<String>();
-        applicationFormBuilder = new ValidApplicationFormBuilder();
-        applicationForm = applicationFormBuilder.build(sessionFactory);
+        randomLastname = getRandomString();
+        randomFirstname = getRandomString();
     }
     
     @After
@@ -87,12 +90,19 @@ public class PorticoWebServiceIT {
     @Transactional
     public void withdrawnApplicationWithNoMatchAtTRAN() {
         csvEntries.add("Withdrawn application with no match at ‘tran’");
-        
-        applicationForm.getPersonalDetails().setLastName(getRandomString());
-        applicationForm.getPersonalDetails().setFirstName(getRandomString());
-        applicationForm.getPersonalDetails().setEmail(getRandomEmail());
-        applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
-        
+        final ApplicationForm randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                addGeneratedFirstAndLastnameToCsvFile(randomApplicationForm);
+
+                request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+                request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
+                request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
+                
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
     @Test
@@ -206,20 +216,64 @@ public class PorticoWebServiceIT {
     private String getRandomString() {
         return new BigInteger(128, random).toString(32);
     }
-    
-    private String getRandomEmail() {
-        String randomStr = new BigInteger(32, random).toString(32);
-        return randomStr + "@" + randomStr + ".com";
-    }
-    
-    private void sendToPortico(ApplicationForm applicationForm) {
-        uclExportService.sendToPortico(applicationForm, new CsvTransferListener());
-    }
-    
-    private class CsvTransferListener implements TransferListener {
         
+    private ApplicationForm randomlyPickApplicationForm() {        
+        List<ApplicationForm> allApplicationsByStatus = applicationsService.getAllApplicationsByStatus(ApplicationFormStatus.REVIEW);
+        ApplicationForm applicationForm = null;
+        boolean foundEnoughDataForQualifications = false;
+        boolean foundEnoughDataForReferees = false;
+        
+        do {
+            int numberOfQualifications = 0;
+            int numberOfReferees = 0;
+            foundEnoughDataForQualifications = false;
+            foundEnoughDataForReferees = false;
+           
+            applicationForm = allApplicationsByStatus.get(random.nextInt(allApplicationsByStatus.size()));
+            
+            for (Qualification qualification : applicationForm.getQualifications()) {
+                if (qualification.getProofOfAward() != null) {
+                    qualification.setSendToUCL(true);
+                    numberOfQualifications++;
+                    if (numberOfQualifications == 2) {
+                        break;
+                    }
+                }
+            }
+            
+            for (Referee referee : applicationForm.getReferees()) {
+                if (referee.getReference() != null) {
+                    referee.setSendToUCL(true);
+                    numberOfReferees++;
+                    if (numberOfReferees == 2) {
+                        break;
+                    }
+                }
+            }
+            
+            if (numberOfQualifications >= 2) {
+                foundEnoughDataForQualifications = true;
+            }
+            
+            if (numberOfReferees == 2) {
+                foundEnoughDataForReferees = true;
+            }
+        } while (!(foundEnoughDataForQualifications && foundEnoughDataForReferees));
+        
+        applicationsService.save(applicationForm);
+        
+        return applicationForm;
+    }
+    
+    private abstract class AbstractPorticoITTransferListener implements TransferListener {
         @Override
-        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+        public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+            receivedApplicantId = response.getReference().getApplicantID();
+            receivedApplicationId = response.getReference().getApplicantID();
+            addReceivedPorticoIdsToCsvFile(response);
+        }
+        
+        public void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request) {
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {
                 marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
@@ -227,47 +281,44 @@ public class PorticoWebServiceIT {
                 Assert.fail(String.format("Could not marshall request correctly [reason=%s]", e.getMessage()));
             }
         }
-
-        @Override
-        public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
-            if (response != null) {
-                csvEntries.add(response.getReference().getApplicantID());
-                csvEntries.add(response.getReference().getApplicationID());
-                csvEntries.add("null");
-            } else {
-                csvEntries.add("null");
-                csvEntries.add("null");
-                csvEntries.add("null");
-            }
+        
+        public void addReceivedPorticoIdsToCsvFile(AdmissionsApplicationResponse response) {
+            csvEntries.add(response.getReference().getApplicantID());
+            csvEntries.add(response.getReference().getApplicationID());
+            csvEntries.add("null"); // error field
         }
-
+        
+        public void addGeneratedFirstAndLastnameToCsvFile(ApplicationForm applicationForm) {
+            csvEntries.add(applicationForm.getApplicationNumber());
+            csvEntries.add(randomLastname);
+            csvEntries.add(randomFirstname);
+            csvEntries.add(applicationForm.getPersonalDetails().getDateOfBirth().toString());
+        }
+        
         @Override
         public void webServiceCallFailed(ApplicationFormTransferError error) {
-            csvEntries.add("null");
-            csvEntries.add("null");
+            csvEntries.add("null"); // applicantId
+            csvEntries.add("null"); // applicationId
             csvEntries.add(error.getDiagnosticInfo());
-            Assert.fail(String.format("Received error from SFTP upload [reason=%s]", error.getDiagnosticInfo()));
+            Assert.fail(String.format("Received error from web service [reason=%s]", error.getDiagnosticInfo()));
         }
-
+        
         @Override
         public void sftpTransferStarted() {
+            // we do nothing here
         }
-
+        
         @Override
         public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
             csvEntries.add(zipFileName);
-            csvEntries.add(applicantId);
-            csvEntries.add(bookingReferenceId);
             csvEntries.add("null");
         }
-
+        
         @Override
         public void sftpTransferFailed(ApplicationFormTransferError error) {
-            csvEntries.add("null");
-            csvEntries.add("null");
-            csvEntries.add("null");
+            csvEntries.add("null"); // zipFileName
             csvEntries.add(error.getDiagnosticInfo());
-            Assert.fail(String.format("Received error from SFTP upload [reason=%s]", error.getDiagnosticInfo()));
+            Assert.fail(String.format("SFTP call failed with: %s", error.getDiagnosticInfo()));
         }
     }
 }

@@ -186,7 +186,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         if (StringUtils.isNotBlank(applicationForm.getApplicant().getUclUserId())) {
             applicant.setApplicantID(applicationForm.getApplicant().getUclUserId());
         }
-
+        
         return applicant;
     }
 
@@ -395,6 +395,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         if (printLanguageQualificationAdmissionsNote && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
+        }
+        
+        if (StringUtils.isNotBlank(applicationForm.getUclBookingReferenceNumber())) {
+            applicationTp.setUclApplicationID(applicationForm.getUclBookingReferenceNumber());
         }
         
 //      TODO: ATASSTatement

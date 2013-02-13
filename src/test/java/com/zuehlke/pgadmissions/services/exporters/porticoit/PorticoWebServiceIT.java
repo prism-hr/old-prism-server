@@ -6,11 +6,17 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,6 +34,8 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.GenderTp;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
@@ -68,9 +76,13 @@ public class PorticoWebServiceIT {
     
     private String randomFirstname;
     
+    private String randomEmail;
+    
     private String receivedApplicantId;
     
     private String receivedApplicationId;
+    
+    private ApplicationForm randomApplicationForm;
     
     @Before
     public void prepare() throws IOException {
@@ -78,143 +90,576 @@ public class PorticoWebServiceIT {
         csvEntries = new ArrayList<String>();
         randomLastname = getRandomString();
         randomFirstname = getRandomString();
+        randomEmail = getRandomEmailString();
     }
     
     @After
     public void finish() throws IOException {
-        writer.writeNext(csvEntries.toArray(new String[]{}));
-        writer.close();
+        if (!csvEntries.isEmpty()) {
+            writer.writeNext(csvEntries.toArray(new String[]{}));
+            writer.close();
+        }
     }
 
+    // ----------------------------------------------------------------------------------
+    // * Withdrawn application with no match at ‘tran’ – replace the real name and email with some ridiculous fictitious values. 
+    // * Withdrawn application with no match at ‘tran’ resent – resend the one above with the user identity returned by the web service.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void withdrawnApplicationWithNoMatchAtTRAN() {
+    public void withdrawnApplicationWithNoMatchAtTRAN_withdrawnApplicationWithNoMatchAtTRANResent() {
+        withdrawnApplicationWithNoMatchAtTRAN();
+        withdrawnApplicationWithNoMatchAtTRANResent();
+    }
+    private void withdrawnApplicationWithNoMatchAtTRAN() {
         csvEntries.add("Withdrawn application with no match at ‘tran’");
-        final ApplicationForm randomApplicationForm = randomlyPickApplicationForm();
+        randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
-                addGeneratedFirstAndLastnameToCsvFile(randomApplicationForm);
-
-                request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+                super.webServiceCallStarted(request);
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
+                request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+                request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
                 request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
+                saveRequest(randomApplicationForm, request, "1");
+            }
+        });
+    }
+    private void withdrawnApplicationWithNoMatchAtTRANResent() {
+        csvEntries.add("Withdrawn application with no match at ‘tran’ resent");
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
                 
+                request.getApplication().getApplicant().setApplicantID(receivedApplicantId);
+                request.getApplication().getCourseApplication().setUclApplicationID(receivedApplicationId);
+                
+                request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
+                request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+                request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
+                request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
+                saveRequest(randomApplicationForm, request, "2");
+            }
+        });
+    }
+
+    // ----------------------------------------------------------------------------------
+    // * Withdrawn application with match at ‘tran’ and no active user identity (MUA) – 
+    //   replace corresponding fields (except IPR code) with G in spreadsheet.
+    // ----------------------------------------------------------------------------------
+    @Test
+    @Transactional
+    public void withdrawnApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() {
+        csvEntries.add("Withdrawn application with match at ‘tran’ and no active user identity (MUA)");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname("AIYEGBUSI");
+                request.getApplication().getApplicant().getFullName().setForename1("ISRAEL ADEYEMI");
+                request.getApplication().getApplicant().setSex(GenderTp.M);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1982, 7, 7, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("000");
+                request.getApplication().getApplicant().setCountryOfBirth(null);
+                request.getApplication().getApplicant().setCountryOfDomicile(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("aaiyegbusi@aol.com");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("aaiyegbusi@aol.com");
+                request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
                 saveRequest(randomApplicationForm, request);
             }
         });
     }
     
-    @Test
-    @Transactional
-    public void withdrawnApplicationWithNoMatchAtTRANResent() {
-        csvEntries.add("Withdrawn application with no match at ‘tran’ resent");
-    }
-    
-    @Test
-    @Transactional
-    public void withdrawnApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() {
-        csvEntries.add("Withdrawn application with match at ‘tran’ and no active user identity (MUA)");
-    }
-    
+    // ----------------------------------------------------------------------------------
+    // * Withdrawn application with match at ‘tran’ and active user identity (MUA) – replace corresponding 
+    //   fields (except IPR code) with D in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void withdrawnApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() {
         csvEntries.add("Withdrawn application with match at ‘tran’ and active user identity (MUA)");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname("EDWARDS");
+                request.getApplication().getApplicant().getFullName().setForename1("DAVID ALLEN");
+                request.getApplication().getApplicant().setSex(GenderTp.M);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1988, 4, 25, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("000");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("000");
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("000");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("euanedwards@gmail.com");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("euanedwards@gmail.com");
+                request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
-    
+
+    // ----------------------------------------------------------------------------------
+    // * Withdrawn application with active user identity (MUA) known to UCL Prism – replace corresponding 
+    //   fields (INCLUDING IPR code) with K in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void withdrawnApplicationWithActiveUserIdentity_MUA_knownToUclPrism() {
         csvEntries.add("Withdrawn application with active user identity (MUA) known to UCL Prism");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getCourseApplication().setUclApplicationID("12058715");
+                request.getApplication().getApplicant().getFullName().setSurname("NOGUCHI");
+                request.getApplication().getApplicant().getFullName().setForename1("YUMIKO");
+                request.getApplication().getApplicant().setSex(GenderTp.F);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1989, 3, 28, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("681");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("681");
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("681");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("noguchi@ttpc.jp");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("noguchi@ttpc.jp");
+                request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
+    // ----------------------------------------------------------------------------------
+    // * Withdrawn UCL Prism application by applicant with a corresponding first application in progress in 
+    //   the UCL Portico system – replace corresponding fields with A in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void withdrawnUclPrismApplicationByApplicantWithACorrespondingFirstApplicationInProgressInTheUCLPorticoSystem() {
         csvEntries.add("Withdrawn UCL Prism application by applicant with a corresponding first application in progress in the UCL Portico system");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname("WEI");
+                request.getApplication().getApplicant().getFullName().setForename1("SIYING");
+                request.getApplication().getApplicant().setSex(GenderTp.F);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1991, 6, 18, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("631");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("631");
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("631");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("whweisiying24922@163.com");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("whweisiying24922@163.com");
+                request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
+    // ----------------------------------------------------------------------------------
+    // * Rejected application with no match at ‘tran’ – replace the real name and email with some ridiculous fictitious values.
+    // * Rejected application with no match at ‘tran’ resent – resend the one above with the user identity returned by the web service.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void rejectedApplicationWithNoMatchAtTRAN() {
+    public void rejectedApplicationWithNoMatchAtTRAN_rejectedApplicationWithNoMatchAtTRANResent() {
+        rejectedApplicationWithNoMatchAtTRAN();
+        rejectedApplicationWithNoMatchAtTRANResent();
+    }
+    private void rejectedApplicationWithNoMatchAtTRAN() {
         csvEntries.add("Rejected application with no match at ‘tran’");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
+                request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+                request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("REJECT");
+                saveRequest(randomApplicationForm, request, "1");
+            }
+        });
     }
-    
-    @Test
-    @Transactional
-    public void rejectedApplicationWithNoMatchAtTRANResent() {
+    private void rejectedApplicationWithNoMatchAtTRANResent() {
         csvEntries.add("Rejected application with no match at ‘tran’ resent");
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                
+                request.getApplication().getApplicant().setApplicantID(receivedApplicantId);
+                request.getApplication().getCourseApplication().setUclApplicationID(receivedApplicationId);
+                
+                request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
+                request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+                request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("REJECT");
+                saveRequest(randomApplicationForm, request, "2");
+            }
+        });
     }
     
+    // ----------------------------------------------------------------------------------
+    // * Rejected application with match at ‘tran’ and no active user identity (MUA) – 
+    //   replace corresponding fields (except IPR code) with H in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void rejectedApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() {
         csvEntries.add("Rejected application with match at ‘tran’ and no active user identity (MUA)");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname("RAOOFI");
+                request.getApplication().getApplicant().getFullName().setForename1("AZAM");
+                request.getApplication().getApplicant().setSex(GenderTp.F);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1982, 10, 31, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("674");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("674");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("azra6182@yahoo.com");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("azra6182@yahoo.com");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("REJECT");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
-    
+
+    // ----------------------------------------------------------------------------------
+    // * Rejected application with match at ‘tran’ and active user identity (MUA) – 
+    //   replace corresponding fields (except IPR code) with E in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void rejectedApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() {
         csvEntries.add("Rejected application with match at ‘tran’ and active user identity (MUA)");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname("SHARMA");
+                request.getApplication().getApplicant().getFullName().setForename1("DEEPSHIKHA");
+                request.getApplication().getApplicant().setSex(GenderTp.F);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1991, 2, 1, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("672");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("672");
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("672");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("deepshikha003@gmail.com");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("deepshikha003@gmail.com");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("REJECT");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
+    // ----------------------------------------------------------------------------------
+    // * Rejected application with active user identity (MUA) known to UCL Prism – 
+    //   replace corresponding fields (INCLUDING IPR code) with L in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void rejectedApplicationWithActiveUserIdentity_MUA_knownToUCLPrism() {
         csvEntries.add("Rejected application with active user identity (MUA) known to UCL Prism");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getCourseApplication().setUclApplicationID("12029459");
+                request.getApplication().getApplicant().getFullName().setSurname("SPENCER");
+                request.getApplication().getApplicant().getFullName().setForename1("ROBIN GRAHAM NELSON");
+                request.getApplication().getApplicant().setSex(GenderTp.M);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1958, 5, 27, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("5826");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("000");
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("000");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("robin.spencer@live.co.uk");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("robin.spencer@live.co.uk");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("REJECT");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
+    // ----------------------------------------------------------------------------------
+    // * Rejected UCL Prism application by applicant with a corresponding first application in progress in the 
+    //   UCL Portico system – replace corresponding fields with B in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void rejectedUCLPrismApplicationByApplicantWithACorrespondingFirstApplicationInProgressInTheUCLPorticoSystem() {
         csvEntries.add("Rejected UCL Prism application by applicant with a corresponding first application in progress in the UCL Portico system");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname("JONES");
+                request.getApplication().getApplicant().getFullName().setForename1("MATTHEW LLOYD");
+                request.getApplication().getApplicant().setSex(GenderTp.M);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1991, 2, 19, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("2826");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("000");
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("000");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("mjones5@hotmail.co.uk");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("mjones5@hotmail.co.uk");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("REJECT");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
+    // ----------------------------------------------------------------------------------
+    // * Approved application with no match at ‘tran’ – replace the real name and email with some ridiculous fictitious values.
+    // * Approved application with no match at ‘tran’ resent – resend the one above with the user identity returned by the web service.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void approvedApplicationWithNoMatchAtTRAN() {
+    public void approvedApplicationWithNoMatchAtTRAN_approvedApplicationWithNoMatchAtTRANResent() {
+        approvedApplicationWithNoMatchAtTRAN();
+        approvedApplicationWithNoMatchAtTRANResent();
+    }
+    private void approvedApplicationWithNoMatchAtTRAN() {
         csvEntries.add("Approved application with no match at ‘tran’");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
+                request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+                request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("OFFER");
+                saveRequest(randomApplicationForm, request, "1");
+            }
+        });
     }
-    
-    @Test
-    @Transactional
-    public void approvedApplicationWithNoMatchAtTRANResent() {
+    private void approvedApplicationWithNoMatchAtTRANResent() {
         csvEntries.add("Approved application with no match at ‘tran’ resent");
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                
+                request.getApplication().getApplicant().setApplicantID(receivedApplicantId);
+                request.getApplication().getCourseApplication().setUclApplicationID(receivedApplicationId);
+                
+                request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
+                request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+                request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("OFFER");
+                saveRequest(randomApplicationForm, request, "2");
+            }
+        });
     }
-    
+
+    // ----------------------------------------------------------------------------------
+    //  * Approved application with match at ‘tran’ and no active user identity (MUA) -  
+    //    replace corresponding fields (except IPR code) with I in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void approvedApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() {
         csvEntries.add("Approved application with match at ‘tran’ and no active user identity (MUA)");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname("ABIRHIRE");
+                request.getApplication().getApplicant().getFullName().setForename1("OGHENEMINE");
+                request.getApplication().getApplicant().setSex(GenderTp.F);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1983, 3, 8, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("717");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("mehmet@atlasedu.com");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("mehmet@atlasedu.com");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("OFFER");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
+    // ----------------------------------------------------------------------------------
+    // * Approved application with match at ‘tran’ and active user identity (MUA) – 
+    //   replace corresponding fields (except IPR code) with F in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void approvedApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() {
         csvEntries.add("Approved application with match at ‘tran’ and active user identity (MUA)");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname("KYRIAZIS");
+                request.getApplication().getApplicant().getFullName().setForename1("GEORGIOS");
+                request.getApplication().getApplicant().setSex(GenderTp.M);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1989, 3, 11, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("882");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("882");
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("882");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("george_s.k@hotmail.com");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("george_s.k@hotmail.com");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("OFFER");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
-    
+
+    // ----------------------------------------------------------------------------------
+    //  * Approved application with active user identity (MUA) known to UCL Prism – 
+    //    replace corresponding fields (INCLUDING IPR code) with M in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void approvedApplicationWithActiveUserIdentity_MUA_knownToUCLPrism() {
         csvEntries.add("Approved application with active user identity (MUA) known to UCL Prism");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getCourseApplication().setUclApplicationID("110016550");
+                request.getApplication().getApplicant().getFullName().setSurname("WHITE");
+                request.getApplication().getApplicant().getFullName().setForename1("HEATHER ELIZABETH JANET");
+                request.getApplication().getApplicant().setSex(GenderTp.F);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1981, 6, 7, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("000");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("000");
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("000");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("h.white.11@ucl.ac.uk");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("h.white.11@ucl.ac.uk");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("OFFER");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
+    // ----------------------------------------------------------------------------------
+    //  * Approved UCL Prism application by applicant with a corresponding first application in progress 
+    //    in the UCL Portico system – replace corresponding fields with C in spreadsheet.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void approvedUCLPrismApplicationByApplicantWithACorrespondingFirstApplicationInProgressInTheUCLPorticoSystem() {
         csvEntries.add("Approved UCL Prism application by applicant with a corresponding first application in progress in the UCL Portico system");
+        randomApplicationForm = randomlyPickApplicationForm();
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                request.getApplication().getApplicant().getFullName().setSurname("BARNETT");
+                request.getApplication().getApplicant().getFullName().setForename1("BRANDIE");
+                request.getApplication().getApplicant().setSex(GenderTp.F);
+                request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1989, 5, 19, 8, 0).toDate()));
+                request.getApplication().getApplicant().getNationality().setCode("771");
+                request.getApplication().getApplicant().getNationality().setName(null);
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("771");
+                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("771");
+                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
+                request.getApplication().getApplicant().getHomeAddress().setEmail("brbarnett66@gmail.com");
+                request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("brbarnett66@gmail.com");
+                request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
+                request.getApplication().getCourseApplication().setDepartmentalDecision("OFFER");
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
+    // ----------------------------------------------------------------------------------
+    //  * Approved UCL Prism application by applicant with a duplicate application 
+    //    in the UCL Portico system – use RRDCIVSGEO01-2012-000032.
+    // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void approvedUCLPrismApplicationByApplicantWithADuplicateApplicationInTheUCLPorticoSystem() {
         csvEntries.add("Approved UCL Prism application by applicant with a duplicate application in the UCL Portico system");
+        randomApplicationForm = applicationsService.getApplicationByApplicationNumber("RRDCIVSGEO01-2012-000032");
+        uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
+            @Override
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+                super.webServiceCallStarted(request);
+                saveRequest(randomApplicationForm, request);
+            }
+        });
     }
     
     private String getRandomString() {
         return new BigInteger(128, random).toString(32);
+    }
+    
+    private String getRandomEmailString() {
+        return new BigInteger(54, random).toString(32) + "@" + new BigInteger(54, random).toString(32) + ".com";
+    }
+    
+    private XMLGregorianCalendar buildXmlDate(Date date) {
+        if (date != null) {
+            try {
+                GregorianCalendar gc = new GregorianCalendar();
+                gc.setTimeInMillis(date.getTime());
+                return DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        return null;
     }
         
     private ApplicationForm randomlyPickApplicationForm() {        
@@ -267,32 +712,46 @@ public class PorticoWebServiceIT {
     
     private abstract class AbstractPorticoITTransferListener implements TransferListener {
         @Override
+        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+         for (QualificationsTp detailsTp : request.getApplication().getApplicant().getQualificationList().getQualificationDetail()) {
+                detailsTp.getInstitution().setCode("UK0275");
+            }
+        }
+        
+        @Override
         public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
             receivedApplicantId = response.getReference().getApplicantID();
-            receivedApplicationId = response.getReference().getApplicantID();
+            receivedApplicationId = response.getReference().getApplicationID();
             addReceivedPorticoIdsToCsvFile(response);
         }
         
-        public void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request) {
+        protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request) {
+            saveRequest(applicationForm, request, StringUtils.EMPTY);
+        }
+        
+        protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request, String postFix) {
+            addFirstAndLastnameToCsvFile(request);
+            
+            String pPostFix = StringUtils.isNotBlank(postFix) ? "_" + postFix : postFix; 
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {
-                marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
+                marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + pPostFix + ".txt")));
             } catch (Exception e) {
                 Assert.fail(String.format("Could not marshall request correctly [reason=%s]", e.getMessage()));
             }
         }
-        
-        public void addReceivedPorticoIdsToCsvFile(AdmissionsApplicationResponse response) {
+
+        private void addReceivedPorticoIdsToCsvFile(AdmissionsApplicationResponse response) {
             csvEntries.add(response.getReference().getApplicantID());
             csvEntries.add(response.getReference().getApplicationID());
             csvEntries.add("null"); // error field
         }
         
-        public void addGeneratedFirstAndLastnameToCsvFile(ApplicationForm applicationForm) {
-            csvEntries.add(applicationForm.getApplicationNumber());
-            csvEntries.add(randomLastname);
-            csvEntries.add(randomFirstname);
-            csvEntries.add(applicationForm.getPersonalDetails().getDateOfBirth().toString());
+        private void addFirstAndLastnameToCsvFile(SubmitAdmissionsApplicationRequest request) {
+            csvEntries.add(request.getApplication().getCourseApplication().getExternalApplicationID());
+            csvEntries.add(request.getApplication().getApplicant().getFullName().getSurname());
+            csvEntries.add(request.getApplication().getApplicant().getFullName().getForename1());
+            csvEntries.add(request.getApplication().getApplicant().getDateOfBirth().toString());
         }
         
         @Override
@@ -312,6 +771,14 @@ public class PorticoWebServiceIT {
         public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
             csvEntries.add(zipFileName);
             csvEntries.add("null");
+            
+            writer.writeNext(csvEntries.toArray(new String[]{}));
+            try {
+                writer.close();
+            } catch (Exception e) {
+                //do nothing
+            }
+            csvEntries.clear();
         }
         
         @Override

@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -1803,12 +1804,12 @@ public class PorticoDocumentUploadIntegrationIT {
         
         applicationsService.save(applicationForm);
         
-        uclExportService.sendToPortico(applicationForm, new StringBuilderTransfertListener());
+        uclExportService.sendToPortico(applicationForm, new CsvTransferListener());
 
         sentApps++;
     }
     
-    private class StringBuilderTransfertListener implements TransferListener {
+    private class CsvTransferListener implements TransferListener {
         @Override
         public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
             switch (sentApps % 3) {
@@ -1839,7 +1840,7 @@ public class PorticoDocumentUploadIntegrationIT {
             try {
                 marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
             } catch (Exception e) {
-                e.printStackTrace();
+                Assert.fail(String.format("Could not marshall request correctly [reason=%s]", e.getMessage()));
             }
         }
 
@@ -1861,6 +1862,7 @@ public class PorticoDocumentUploadIntegrationIT {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add(error.getDiagnosticInfo());
+            Assert.fail(String.format("Received error from web service [reason=%s]", error.getDiagnosticInfo()));
         }
 
         @Override
@@ -1873,6 +1875,7 @@ public class PorticoDocumentUploadIntegrationIT {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add(error.getDiagnosticInfo());
+            Assert.fail(String.format("Received error from SFTP upload [reason=%s]", error.getDiagnosticInfo()));
         }
 
         @Override

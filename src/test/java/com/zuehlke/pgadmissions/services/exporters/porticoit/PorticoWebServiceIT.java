@@ -102,8 +102,8 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with no match at ‘tran’ – replace the real name and email with some ridiculous fictitious values. 
-    // * Withdrawn application with no match at ‘tran’ resent – resend the one above with the user identity returned by the web service.
+    // * Withdrawn application with no match at ‘tran’ - replace the real name and email with some ridiculous fictitious values. 
+    // * Withdrawn application with no match at ‘tran’ resent - resend the one above with the user identity returned by the web service.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -148,7 +148,7 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with match at ‘tran’ and no active user identity (MUA) – 
+    // * Withdrawn application with match at ‘tran’ and no active user identity (MUA) - 
     //   replace corresponding fields (except IPR code) with G in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
@@ -176,7 +176,7 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with match at ‘tran’ and active user identity (MUA) – replace corresponding 
+    // * Withdrawn application with match at ‘tran’ and active user identity (MUA) - replace corresponding 
     //   fields (except IPR code) with D in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
@@ -207,7 +207,7 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with active user identity (MUA) known to UCL Prism – replace corresponding 
+    // * Withdrawn application with active user identity (MUA) known to UCL Prism - replace corresponding 
     //   fields (INCLUDING IPR code) with K in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
@@ -240,7 +240,7 @@ public class PorticoWebServiceIT {
     
     // ----------------------------------------------------------------------------------
     // * Withdrawn UCL Prism application by applicant with a corresponding first application in progress in 
-    //   the UCL Portico system – replace corresponding fields with A in spreadsheet.
+    //   the UCL Portico system - replace corresponding fields with A in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -270,8 +270,8 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Rejected application with no match at ‘tran’ – replace the real name and email with some ridiculous fictitious values.
-    // * Rejected application with no match at ‘tran’ resent – resend the one above with the user identity returned by the web service.
+    // * Rejected application with no match at ‘tran’ - replace the real name and email with some ridiculous fictitious values.
+    // * Rejected application with no match at ‘tran’ resent - resend the one above with the user identity returned by the web service.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -318,7 +318,7 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Rejected application with match at ‘tran’ and no active user identity (MUA) – 
+    // * Rejected application with match at ‘tran’ and no active user identity (MUA) - 
     //   replace corresponding fields (except IPR code) with H in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
@@ -350,7 +350,7 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Rejected application with match at ‘tran’ and active user identity (MUA) – 
+    // * Rejected application with match at ‘tran’ and active user identity (MUA) - 
     //   replace corresponding fields (except IPR code) with E in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
@@ -382,7 +382,7 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Rejected application with active user identity (MUA) known to UCL Prism – 
+    // * Rejected application with active user identity (MUA) known to UCL Prism - 
     //   replace corresponding fields (INCLUDING IPR code) with L in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
@@ -416,7 +416,7 @@ public class PorticoWebServiceIT {
     
     // ----------------------------------------------------------------------------------
     // * Rejected UCL Prism application by applicant with a corresponding first application in progress in the 
-    //   UCL Portico system – replace corresponding fields with B in spreadsheet.
+    //   UCL Portico system - replace corresponding fields with B in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -447,8 +447,8 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Approved application with no match at ‘tran’ – replace the real name and email with some ridiculous fictitious values.
-    // * Approved application with no match at ‘tran’ resent – resend the one above with the user identity returned by the web service.
+    // * Approved application with no match at ‘tran’ - replace the real name and email with some ridiculous fictitious values.
+    // * Approved application with no match at ‘tran’ resent - resend the one above with the user identity returned by the web service.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -527,7 +527,7 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Approved application with match at ‘tran’ and active user identity (MUA) – 
+    // * Approved application with match at ‘tran’ and active user identity (MUA) - 
     //   replace corresponding fields (except IPR code) with F in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
@@ -559,7 +559,7 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    //  * Approved application with active user identity (MUA) known to UCL Prism – 
+    //  * Approved application with active user identity (MUA) known to UCL Prism - 
     //    replace corresponding fields (INCLUDING IPR code) with M in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
@@ -593,7 +593,7 @@ public class PorticoWebServiceIT {
     
     // ----------------------------------------------------------------------------------
     //  * Approved UCL Prism application by applicant with a corresponding first application in progress 
-    //    in the UCL Portico system – replace corresponding fields with C in spreadsheet.
+    //    in the UCL Portico system - replace corresponding fields with C in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -625,7 +625,7 @@ public class PorticoWebServiceIT {
     
     // ----------------------------------------------------------------------------------
     //  * Approved UCL Prism application by applicant with a duplicate application 
-    //    in the UCL Portico system – use RRDCIVSGEO01-2012-000032.
+    //    in the UCL Portico system - use RRDCIVSGEO01-2012-000032.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -729,7 +729,7 @@ public class PorticoWebServiceIT {
             saveRequest(applicationForm, request, StringUtils.EMPTY);
         }
         
-        protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request, String postFix) {
+        protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request, String postFix) {          
             addFirstAndLastnameToCsvFile(request);
             
             String pPostFix = StringUtils.isNotBlank(postFix) ? "_" + postFix : postFix; 

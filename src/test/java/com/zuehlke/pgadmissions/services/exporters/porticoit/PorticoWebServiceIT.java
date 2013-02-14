@@ -165,8 +165,6 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().setSex(GenderTp.M);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1982, 7, 7, 8, 0).toDate()));
                 request.getApplication().getApplicant().getNationality().setCode("000");
-                request.getApplication().getApplicant().setCountryOfBirth(null);
-                request.getApplication().getApplicant().setCountryOfDomicile(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("aaiyegbusi@aol.com");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("aaiyegbusi@aol.com");
                 request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
@@ -194,9 +192,9 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1988, 4, 25, 8, 0).toDate()));
                 request.getApplication().getApplicant().getNationality().setCode("000");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode("000");
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("000");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("euanedwards@gmail.com");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("euanedwards@gmail.com");
@@ -224,11 +222,11 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("YUMIKO");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1989, 3, 28, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("681");
+                request.getApplication().getApplicant().getNationality().setCode("JP");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode("681");
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("JP");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("681");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("JP");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("noguchi@ttpc.jp");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("noguchi@ttpc.jp");
@@ -255,11 +253,11 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("SIYING");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1991, 6, 18, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("631");
+                request.getApplication().getApplicant().getNationality().setCode("CN");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode("631");
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("CN");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("631");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("CN");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("whweisiying24922@163.com");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("whweisiying24922@163.com");
@@ -334,11 +332,9 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("AZAM");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1982, 10, 31, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("674");
+                request.getApplication().getApplicant().getNationality().setCode("IR");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("674");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("IR");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("azra6182@yahoo.com");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("azra6182@yahoo.com");
@@ -366,11 +362,11 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("DEEPSHIKHA");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1991, 2, 1, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("672");
+                request.getApplication().getApplicant().getNationality().setCode("IN");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode("672");
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("IN");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("672");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("IN");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("deepshikha003@gmail.com");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("deepshikha003@gmail.com");
@@ -399,11 +395,11 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("ROBIN GRAHAM NELSON");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1958, 5, 27, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("5826");
+                request.getApplication().getApplicant().getNationality().setCode("XK");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode("000");
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("000");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("robin.spencer@live.co.uk");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("robin.spencer@live.co.uk");
@@ -431,11 +427,11 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("MATTHEW LLOYD");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1991, 2, 19, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("2826");
+                request.getApplication().getApplicant().getNationality().setCode("XK");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode("000");
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("000");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("mjones5@hotmail.co.uk");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("mjones5@hotmail.co.uk");
@@ -511,12 +507,8 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("OGHENEMINE");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1983, 3, 8, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("717");
+                request.getApplication().getApplicant().getNationality().setCode("NG");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("mehmet@atlasedu.com");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("mehmet@atlasedu.com");
                 request.getApplication().getCourseApplication().setApplicationStatus("ACTIVE");
@@ -543,11 +535,11 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("GEORGIOS");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1989, 3, 11, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("882");
+                request.getApplication().getApplicant().getNationality().setCode("XA");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode("882");
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("XA");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("882");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("XA");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("george_s.k@hotmail.com");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("george_s.k@hotmail.com");
@@ -576,11 +568,11 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("HEATHER ELIZABETH JANET");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1981, 6, 7, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("000");
+                request.getApplication().getApplicant().getNationality().setCode("XK");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode("000");
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("000");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("h.white.11@ucl.ac.uk");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("h.white.11@ucl.ac.uk");
@@ -608,11 +600,11 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("BRANDIE");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1989, 5, 19, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("771");
+                request.getApplication().getApplicant().getNationality().setCode("US");
                 request.getApplication().getApplicant().getNationality().setName(null);
-                request.getApplication().getApplicant().getCountryOfBirth().setCode("771");
+                request.getApplication().getApplicant().getCountryOfBirth().setCode("US");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
-                request.getApplication().getApplicant().getCountryOfDomicile().setCode("771");
+                request.getApplication().getApplicant().getCountryOfDomicile().setCode("US");
                 request.getApplication().getApplicant().getCountryOfDomicile().setName(null);
                 request.getApplication().getApplicant().getHomeAddress().setEmail("brbarnett66@gmail.com");
                 request.getApplication().getApplicant().getCorrespondenceAddress().setEmail("brbarnett66@gmail.com");
@@ -632,6 +624,46 @@ public class PorticoWebServiceIT {
     public void approvedUCLPrismApplicationByApplicantWithADuplicateApplicationInTheUCLPorticoSystem() {
         csvEntries.add("Approved UCL Prism application by applicant with a duplicate application in the UCL Portico system");
         randomApplicationForm = applicationsService.getApplicationByApplicationNumber("RRDCIVSGEO01-2012-000032");
+        
+        boolean foundEnoughDataForQualifications = false;
+        boolean foundEnoughDataForReferees = false;
+        int numberOfQualifications = 0;
+        int numberOfReferees = 0;
+           
+        for (Qualification qualification : randomApplicationForm.getQualifications()) {
+            if (qualification.getProofOfAward() != null) {
+                qualification.setSendToUCL(true);
+                numberOfQualifications++;
+                if (numberOfQualifications == 2) {
+                    break;
+                }
+            }
+        }
+            
+        for (Referee referee : randomApplicationForm.getReferees()) {
+            if (referee.getReference() != null) {
+                referee.setSendToUCL(true);
+                numberOfReferees++;
+                if (numberOfReferees == 2) {
+                    break;
+                }
+            }
+        }
+            
+        if (numberOfQualifications >= 2) {
+            foundEnoughDataForQualifications = true;
+        }
+        
+        if (numberOfReferees == 2) {
+            foundEnoughDataForReferees = true;
+        }
+    
+        if (!(foundEnoughDataForQualifications && foundEnoughDataForReferees)) {
+            Assert.fail("Application RRDCIVSGEO01-2012-000032 does not have enough referees or qualifications in order to be sent to Portico");
+        }
+        
+        applicationsService.save(randomApplicationForm);
+        
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
@@ -729,7 +761,7 @@ public class PorticoWebServiceIT {
             saveRequest(applicationForm, request, StringUtils.EMPTY);
         }
         
-        protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request, String postFix) {          
+        protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request, String postFix) {
             addFirstAndLastnameToCsvFile(request);
             
             String pPostFix = StringUtils.isNotBlank(postFix) ? "_" + postFix : postFix; 

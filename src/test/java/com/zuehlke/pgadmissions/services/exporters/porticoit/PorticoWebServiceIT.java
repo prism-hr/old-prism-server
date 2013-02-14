@@ -223,6 +223,7 @@ public class PorticoWebServiceIT {
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 super.webServiceCallStarted(request);
                 request.getApplication().getCourseApplication().setUclApplicationID("12058715");
+                request.getApplication().getCourseApplication().setExternalApplicationID(null);
                 request.getApplication().getApplicant().getFullName().setSurname("NOGUCHI");
                 request.getApplication().getApplicant().getFullName().setForename1("YUMIKO");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
@@ -308,6 +309,7 @@ public class PorticoWebServiceIT {
                 
                 request.getApplication().getApplicant().setApplicantID(receivedApplicantId);
                 request.getApplication().getCourseApplication().setUclApplicationID(receivedApplicationId);
+                request.getApplication().getCourseApplication().setExternalApplicationID(null);
                 
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
                 request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
@@ -396,6 +398,7 @@ public class PorticoWebServiceIT {
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 super.webServiceCallStarted(request);
                 request.getApplication().getCourseApplication().setUclApplicationID("12029459");
+                request.getApplication().getCourseApplication().setExternalApplicationID(null);
                 request.getApplication().getApplicant().getFullName().setSurname("SPENCER");
                 request.getApplication().getApplicant().getFullName().setForename1("ROBIN GRAHAM NELSON");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
@@ -483,6 +486,7 @@ public class PorticoWebServiceIT {
                 
                 request.getApplication().getApplicant().setApplicantID(receivedApplicantId);
                 request.getApplication().getCourseApplication().setUclApplicationID(receivedApplicationId);
+                request.getApplication().getCourseApplication().setExternalApplicationID(null);
                 
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
                 request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
@@ -569,6 +573,7 @@ public class PorticoWebServiceIT {
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 super.webServiceCallStarted(request);
                 request.getApplication().getCourseApplication().setUclApplicationID("110016550");
+                request.getApplication().getCourseApplication().setExternalApplicationID(null);
                 request.getApplication().getApplicant().getFullName().setSurname("WHITE");
                 request.getApplication().getApplicant().getFullName().setForename1("HEATHER ELIZABETH JANET");
                 request.getApplication().getApplicant().setSex(GenderTp.F);

@@ -39,8 +39,13 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
+import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
@@ -395,7 +400,7 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("ROBIN GRAHAM NELSON");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1958, 5, 27, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("XK");
+                request.getApplication().getApplicant().getNationality().setCode("000");
                 request.getApplication().getApplicant().getNationality().setName(null);
                 request.getApplication().getApplicant().getCountryOfBirth().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
@@ -427,7 +432,7 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("MATTHEW LLOYD");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1991, 2, 19, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("XK");
+                request.getApplication().getApplicant().getNationality().setCode("000");
                 request.getApplication().getApplicant().getNationality().setName(null);
                 request.getApplication().getApplicant().getCountryOfBirth().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
@@ -568,7 +573,7 @@ public class PorticoWebServiceIT {
                 request.getApplication().getApplicant().getFullName().setForename1("HEATHER ELIZABETH JANET");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
                 request.getApplication().getApplicant().setDateOfBirth(buildXmlDate(new DateTime(1981, 6, 7, 8, 0).toDate()));
-                request.getApplication().getApplicant().getNationality().setCode("XK");
+                request.getApplication().getApplicant().getNationality().setCode("000");
                 request.getApplication().getApplicant().getNationality().setName(null);
                 request.getApplication().getApplicant().getCountryOfBirth().setCode("XK");
                 request.getApplication().getApplicant().getCountryOfBirth().setName(null);
@@ -625,42 +630,21 @@ public class PorticoWebServiceIT {
         csvEntries.add("Approved UCL Prism application by applicant with a duplicate application in the UCL Portico system");
         randomApplicationForm = applicationsService.getApplicationByApplicationNumber("RRDCIVSGEO01-2012-000032");
         
-        boolean foundEnoughDataForQualifications = false;
-        boolean foundEnoughDataForReferees = false;
-        int numberOfQualifications = 0;
-        int numberOfReferees = 0;
-           
-        for (Qualification qualification : randomApplicationForm.getQualifications()) {
-            if (qualification.getProofOfAward() != null) {
-                qualification.setSendToUCL(true);
-                numberOfQualifications++;
-                if (numberOfQualifications == 2) {
-                    break;
-                }
-            }
-        }
-            
         for (Referee referee : randomApplicationForm.getReferees()) {
             if (referee.getReference() != null) {
                 referee.setSendToUCL(true);
-                numberOfReferees++;
-                if (numberOfReferees == 2) {
-                    break;
-                }
             }
         }
-            
-        if (numberOfQualifications >= 2) {
-            foundEnoughDataForQualifications = true;
-        }
         
-        if (numberOfReferees == 2) {
-            foundEnoughDataForReferees = true;
-        }
-    
-        if (!(foundEnoughDataForQualifications && foundEnoughDataForReferees)) {
-            Assert.fail("Application RRDCIVSGEO01-2012-000032 does not have enough referees or qualifications in order to be sent to Portico");
-        }
+        // we need to append another referee for this to work
+        Referee referee = randomApplicationForm.getReferees().get(0);
+        String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";        
+        Country country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").referee(referee).providedBy(referee.getUser()).suitableForProgramme(true).suitableForUcl(true).user(referee.getUser()).build();
+        Referee refereeOne = new RefereeBuilder().user(referee.getUser()).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).toReferee();
+        referenceComment1.setReferee(refereeOne);
+        refereeOne.setReference(referenceComment1);
+        randomApplicationForm.getReferees().add(refereeOne);
         
         applicationsService.save(randomApplicationForm);
         

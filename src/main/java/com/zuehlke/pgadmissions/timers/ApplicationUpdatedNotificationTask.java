@@ -31,8 +31,9 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Application Update Notification Task Running");
+	    Transaction transaction = null;
 	    try {
-    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applicationsDueUpdateNotification = applicationDAO.getApplicationsDueUpdateNotification();
     		transaction.commit();
     		for (ApplicationForm applicationForm : applicationsDueUpdateNotification) {
@@ -50,12 +51,13 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
     				transaction.commit();
     				log.info("Notification update sent for " + applicationForm.getId());
     			} catch (Exception e) {
+    			    log.warn("Error while sending email", e);
     				transaction.rollback();
-    				log.warn("Error while sending email", e);
     			}
     		}
 	    } catch (Exception e) {
 	        log.warn("Error in executing Application Update Notification Task", e);
+	        transaction.rollback();
 	    }
 		log.info("Application Update Notification Task Complete");
 	}

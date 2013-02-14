@@ -44,8 +44,9 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info(notificationType +  " Reminder Task Running");
+	    Transaction transaction = null;
 	    try {
-    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueUserReminder(notificationType, status);
     		transaction.commit();
     		for (ApplicationForm application : applications) {
@@ -74,6 +75,7 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
     		}
 	    } catch (Exception e) {
 	        log.warn("Error in executing " + notificationType +  " Reminder Task", e);
+	        transaction.rollback();
 	    }
 		log.info(notificationType +  " Reminder Task Complete");
 	}

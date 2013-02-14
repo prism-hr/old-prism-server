@@ -33,8 +33,9 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Review Comment Notification Task Running");
+	    Transaction transaction = null;
 	    try {
-    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ReviewComment> comments = commentService.getReviewCommentsDueNotification();
     		transaction.commit();
     		for (ReviewComment comment : comments) {
@@ -47,12 +48,13 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask {
     				transaction.commit();
     				log.info("Notification sent to admins for review comment " + comment.getId());
     			} catch (Exception e) {
+    			    log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
     				transaction.rollback();
-    				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
     			}
     		}
 	    } catch (Exception e) {
 	        log.warn("Error in executing Review Comment Notification Task", e);
+	        transaction.rollback();
 	    }
 		log.info("Review Comment Notification Task Complete");
 	}

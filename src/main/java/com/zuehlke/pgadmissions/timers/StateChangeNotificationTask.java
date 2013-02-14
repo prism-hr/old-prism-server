@@ -34,14 +34,14 @@ public class StateChangeNotificationTask extends TimerTask {
 		this.newStatus = newStatus;
 		this.messageCode = messageCode;
 		this.emailTemplate = emailTemplate;
-
 	}
 
 	@Override
 	public void run() {
 	    log.info(notificationType +  " Notification Task Running");
+	    Transaction transaction = null;
 	    try {
-    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus);
     		transaction.commit();
     		for (ApplicationForm application : applications) {
@@ -59,12 +59,13 @@ public class StateChangeNotificationTask extends TimerTask {
     				transaction.commit();
     				log.info("Notification move to " + newStatus + " notification sent for " + application.getId());
     			} catch (Exception e) {
+    			    log.warn("Error in move to  "+  newStatus + " notification for " + application.getId(), e);
     				transaction.rollback();
-    				log.warn("Error in move to  "+  newStatus + " notification for " + application.getId(), e);
     			}
     		}
 	    } catch (Exception e) {
 	        log.warn("Error in executing " + notificationType +  " Notification Task", e);
+	        transaction.rollback();
 	    }
 		log.info(notificationType + " Notification Task Complete");
 	}

@@ -349,7 +349,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private CourseApplicationTp buildCourseApplication() {
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
-        applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
         if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
             // Which supervisor to pick if there are multiple
@@ -399,6 +398,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         if (StringUtils.isNotBlank(applicationForm.getUclBookingReferenceNumber())) {
             applicationTp.setUclApplicationID(applicationForm.getUclBookingReferenceNumber());
+        } else {
+            applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
         }
         
 //      TODO: ATASSTatement
@@ -677,20 +678,23 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             writingScoreTp.setName(LanguageBandScoreTp.WRITING);
             writingScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
 
-            EnglishLanguageScoreTp essayScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-            essayScoreTp.setName(LanguageBandScoreTp.ESSAY);
-            essayScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
-
-            EnglishLanguageScoreTp speakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-            speakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
-            speakingScoreTp.setScore(String.valueOf(languageQualifications.getSpeakingScore()));
+            EnglishLanguageScoreTp essayOrSpeakingScoreTp = null;
+            if (StringUtils.equalsIgnoreCase("TOEFL_PAPER", englishLanguageTp.getMethod())) {
+                essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+                essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.ESSAY);
+                essayOrSpeakingScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
+            } else {
+                essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+                essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
+                essayOrSpeakingScoreTp.setScore(String.valueOf(languageQualifications.getSpeakingScore()));
+            }
 
             EnglishLanguageScoreTp listeningScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
             listeningScoreTp.setScore(String.valueOf(languageQualifications.getListeningScore()));
 
             englishLanguageTp.getLanguageScore().addAll(
-                    Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayScoreTp, speakingScoreTp,
+                    Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp,
                             listeningScoreTp));
 
             englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);

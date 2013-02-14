@@ -33,8 +33,9 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Interview Comment Notification Task Running");
+	    Transaction transaction = null;
 	    try {
-    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<InterviewComment> comments = commentService.getInterviewCommentsDueNotification();
     		transaction.commit();
     		for (InterviewComment comment : comments) {
@@ -47,12 +48,13 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
     				transaction.commit();
     				log.info("Notification sent to admins for interview comment " + comment.getId());
     			} catch (Exception e) {
+    			    log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
     				transaction.rollback();
-    				log.warn("Error while sending notification to admins for comment " + comment.getId(), e);
     			}
     		}
 	    } catch (Exception e) {
 	        log.warn("Error in executing Interview Comment Notification Task", e);
+	        transaction.rollback();
 	    }
 		log.info("Interview Comment Notification Task Complete");
 	}

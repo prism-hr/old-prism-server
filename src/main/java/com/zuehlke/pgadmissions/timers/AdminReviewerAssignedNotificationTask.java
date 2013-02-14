@@ -28,8 +28,9 @@ public class AdminReviewerAssignedNotificationTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Assigned Reviewer Notification Task Running");
+	    Transaction transaction = null;
 	    try {
-    	    Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    	    transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<Reviewer> reviewers = reviewerDAO.getReviewersRequireAdminNotification();
     		transaction.commit();
     		for (Reviewer reviewer : reviewers) {
@@ -43,12 +44,13 @@ public class AdminReviewerAssignedNotificationTask extends TimerTask {
     				transaction.commit();
     				log.info("Notification Reviewer assigned sent to admins for reviewer " + reviewer.getUser().getEmail());
     			} catch (Exception e) {
+    			    log.warn("Error while sending notification to admins for reviewer " + reviewer.getUser().getEmail(), e);
     				transaction.rollback();
-    				log.warn("Error while sending notification to admins for reviewer " + reviewer.getUser().getEmail(), e);
     			}
     		}
 	    } catch (Exception e) {
 	        log.warn("Error in executing Assigned Reviewer Notification Task", e);
+	        transaction.rollback();
 	    }
 		log.info("Assigned Reviewer Notification Task Complete");
 	}

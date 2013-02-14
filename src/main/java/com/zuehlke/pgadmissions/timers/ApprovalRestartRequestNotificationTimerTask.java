@@ -32,8 +32,9 @@ public class ApprovalRestartRequestNotificationTimerTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Approval Restart Request Notification Timer Task Running");
+	    Transaction transaction = null;
 	    try {
-    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applications = applicationsService.getApplicationsDueApprovalRestartRequestNotification();
     		transaction.commit();
     		for (ApplicationForm application : applications) {
@@ -49,12 +50,13 @@ public class ApprovalRestartRequestNotificationTimerTask extends TimerTask {
     				transaction.commit();
     				log.info("Notification approval restart request sent for " + application.getApplicationNumber());
     			} catch (Exception e) {
+    			    log.warn("Error in sending Approval restart request notification for " + application.getApplicationNumber(), e);
     			    transaction.rollback();
-    				log.warn("Error in sending Approval restart request notification for " + application.getApplicationNumber(), e);
     			}
     		}
 	    } catch (Exception e) {
 	        log.warn("Error in executing Approval Restart Request Notification Timer Task", e);	    
+	        transaction.rollback();
 	    }
 		log.info("Approval Restart Request Notification Timer Task Complete");
 	}

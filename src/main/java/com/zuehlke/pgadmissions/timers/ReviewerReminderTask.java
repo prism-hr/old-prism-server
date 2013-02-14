@@ -28,8 +28,9 @@ public class ReviewerReminderTask extends TimerTask {
 	@Override
 	public void run() {
 	    log.info("Reviewer Reminder Task Running");
+	    Transaction transaction = null;
 	    try {
-    		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<Reviewer> reviewersDuereminder = reviewerDAO.getReviewersDueReminder();
     		transaction.commit();
     		for (Reviewer reviewer : reviewersDuereminder) {
@@ -42,12 +43,13 @@ public class ReviewerReminderTask extends TimerTask {
     				transaction.commit();
     				log.info("Notification reminder sent to reviewer " + reviewer.getUser().getEmail());
     			} catch (Exception e) {
+    			    log.warn("Error while sending reminder to reviewer " + reviewer.getUser().getEmail(), e);
     				transaction.rollback();
-    				log.warn("Error while sending reminder to reviewer " + reviewer.getUser().getEmail(), e);
     			}
     		}
 	    } catch (Exception e) {
 	        log.warn("Error in executing Reviewer Reminder Task", e);
+	        transaction.rollback();
 	    }
 		log.info("Reviewer Reminder Task Complete");
 	}

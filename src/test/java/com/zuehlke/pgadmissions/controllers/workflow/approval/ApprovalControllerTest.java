@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -14,6 +15,7 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -25,12 +27,15 @@ import org.springframework.web.bind.support.SimpleSessionStatus;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
@@ -38,20 +43,25 @@ import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RequestRestartCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -78,7 +88,9 @@ public class ApprovalControllerTest {
     private SendToPorticoDataDTOEditor sendToPorticoDataDTOEditorMock;
     private SendToPorticoDataDTOValidator sendToPorticoDataDTOValidatorMock;
     private DatePropertyEditor datePropertyEditorMock;
-
+    private CountryService countryServiceMock;
+    private CountryPropertyEditor countryPropertyEditorMock;
+    
     @Test
     public void shouldGetApprovalPage() {
         Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
@@ -88,7 +100,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -127,7 +139,7 @@ public class ApprovalControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -160,7 +172,7 @@ public class ApprovalControllerTest {
                 .build();
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("5")) {
@@ -188,7 +200,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -218,7 +230,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -243,7 +255,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if (applicationId.equals("bob")) {
@@ -369,7 +381,7 @@ public class ApprovalControllerTest {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock) {
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock) {
             @Override
             public ApplicationForm getApplicationForm(String applicationId) {
                 if ("5".equals(applicationId)) {
@@ -540,7 +552,9 @@ public class ApprovalControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();
 
         SendToPorticoDataDTO sendToPorticoData = new SendToPorticoDataDTO();
-        sendToPorticoData.setRefereesSendToPortico(Arrays.asList(new Integer[] { 11, 12 }));
+        List<Integer> refereesSendToPortico = new ArrayList<Integer>();
+        refereesSendToPortico.add(11);
+        sendToPorticoData.setRefereesSendToPortico(refereesSendToPortico);
 
         BindingResult porticoResult = new MapBindingResult(Collections.emptyMap(), "");
         porticoResult.reject("error"); // does not matter if error
@@ -553,57 +567,86 @@ public class ApprovalControllerTest {
         refereesAdminEditDTO.setSuitableForProgramme(true);
         refereesAdminEditDTO.setSuitableForUCL(false);
 
-        Referee referee = new RefereeBuilder().application(applicationForm).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).id(12).toReferee();
 
         BindingResult referenceResult = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
 
+        ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
+        
         refereeServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
         EasyMock.expectLastCall().once();
 
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
-        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
-        EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(null);
+        EasyMock.expect(encryptionHelperMock.encrypt(12)).andReturn("refereeId");
+        EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(referenceComment);
         refereeServiceMock.refresh(referee);
         EasyMock.expectLastCall();
+        
+        sendToPorticoDataDTOValidatorMock.validate(sendToPorticoData, porticoResult);
+        EasyMock.expectLastCall();
+        
+        EasyMock.replay(refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOValidatorMock);
 
-        EasyMock.replay(refereeServiceMock, encryptionHelperMock);
-
-        String returnValue = controller.submitRefereesData(applicationForm, sendToPorticoData, porticoResult, refereesAdminEditDTO, referenceResult, model);
+        String returnValue = controller.submitRefereesData(applicationForm, sendToPorticoData, porticoResult, refereesAdminEditDTO, referenceResult, null, model);
         assertEquals("/private/staff/supervisors/components/reference_portico_validation", returnValue);
+        assertEquals(Arrays.asList(11, 12), refereesSendToPortico);
 
-        EasyMock.verify(refereeServiceMock, encryptionHelperMock);
+        EasyMock.verify(refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOValidatorMock);
     }
-
+    
     @Test
-    public void shouldSaveNewReference() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").build();
+    public void shouldAddNewReferenceWithoutSavingSendToPorticoReferences() {
+        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)
+                .build();
+        SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
+        BindingResult porticoResult = new MapBindingResult(Collections.emptyMap(), "");
 
-        Document document = new DocumentBuilder().build();
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
-        refereesAdminEditDTO.setComment("comment text");
-        refereesAdminEditDTO.setEditedRefereeId("refereeId");
-        refereesAdminEditDTO.setReferenceDocument(document);
-        refereesAdminEditDTO.setSuitableForProgramme(true);
-        refereesAdminEditDTO.setSuitableForUCL(false);
-
-        Referee referee = new RefereeBuilder().application(applicationForm).toReferee();
-
-        BindingResult referenceResult = new MapBindingResult(Collections.emptyMap(), "");
+        BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
+        
+        Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
+        ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
-        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
-        EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(null);
+        refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
+        EasyMock.expectLastCall();
+        EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("refereeId");
+        EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(referenceComment);
         refereeServiceMock.refresh(referee);
         EasyMock.expectLastCall();
 
-        EasyMock.replay(refereeServiceMock, encryptionHelperMock);
+        EasyMock.replay(encryptionHelperMock, refereeServiceMock, refereesAdminEditDTOValidatorMock);
+        String viewName = controller.submitRefereesData(applicationForm, sendToPorticoDataDTO, porticoResult, refereesAdminEditDTO, result,  true, model);
+        assertEquals("/private/staff/supervisors/components/reference_portico_validation", viewName);
 
-        String returnValue = controller.submitReference(refereesAdminEditDTO, referenceResult, applicationForm, model);
-        assertEquals("/private/staff/supervisors/components/reference_portico_validation", returnValue);
+        EasyMock.verify(encryptionHelperMock, refereeServiceMock, refereesAdminEditDTOValidatorMock);
+    }
+    
+    @Test
+    public void shouldRegisterPropertyEditors() {
+        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        binderMock.setValidator(refereesAdminEditDTOValidatorMock);
+        EasyMock.expectLastCall();
 
-        EasyMock.verify(refereeServiceMock, encryptionHelperMock);
+        binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
+        EasyMock.expectLastCall();
+        
+        binderMock.registerCustomEditor(Country.class, countryPropertyEditorMock);
+        EasyMock.expectLastCall();
+
+        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+        EasyMock.expectLastCall();
+
+        binderMock.registerCustomEditor(EasyMock.eq(String[].class), EasyMock.anyObject(StringArrayPropertyEditor.class));
+        EasyMock.expectLastCall();
+
+        EasyMock.replay(binderMock);
+        controller.registerPropertyEditors(binderMock);
+
+        EasyMock.verify(binderMock);
     }
 
     @Before
@@ -623,6 +666,8 @@ public class ApprovalControllerTest {
         sendToPorticoDataDTOEditorMock = EasyMock.createMock(SendToPorticoDataDTOEditor.class);
         sendToPorticoDataDTOValidatorMock = EasyMock.createMock(SendToPorticoDataDTOValidator.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
+        countryServiceMock = EasyMock.createMock(CountryService.class);
+        countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.replay(userServiceMock);
@@ -633,7 +678,7 @@ public class ApprovalControllerTest {
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
-                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock);
+                refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock, countryServiceMock, countryPropertyEditorMock);
 
     }
 }

@@ -14,36 +14,12 @@
         http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <!-- WebService -->
     <oxm:jaxb2-marshaller id="marshaller" contextPath="com.zuehlke.pgadmissions.admissionsservice.jaxb" />
+    
     <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
         <property name="marshaller" ref="marshaller" />
         <property name="unmarshaller" ref="marshaller" />
         <property name="defaultUri" value="${xml.data.export.webservice.url}" />
     </bean>
-
-    <!-- Annotation driven spring task scheduling -->
-    <task:annotation-driven executor="default-task-executor" scheduler="default-task-scheduler"/>
-    
-    <task:scheduler id="default-task-scheduler" pool-size="5"/>
-    
-    <task:executor id="default-task-executor" pool-size="5"/>
-    
-    <!--the following executor is dedicated for @Async methods that need to enforce FIFO policy on submitted tasks-->
-    <!--this mimics "input-events-queue" in Spring-->
-    <task:executor id="central-events-queue" pool-size="1"/>
-
-    <!-- Application form queue executors used by UclExportService -->
-    <bean id="webservice-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor">
-        <property name="name" value="webservice-executor"/>
-        <property name="transactionTemplate" ref="defaultTransactionTemplate"/>
-    </bean>
-
-    <bean id="sftp-calling-queue-executor" class="com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor">
-        <property name="name" value="sftp-executor"/>
-        <property name="transactionTemplate" ref="defaultTransactionTemplate"/>
-    </bean>
-    
-    <task:scheduler id="ucl-export-service-scheduler" pool-size="1"/>
 
 </beans>

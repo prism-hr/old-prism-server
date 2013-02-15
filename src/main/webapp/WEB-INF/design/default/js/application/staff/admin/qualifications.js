@@ -60,16 +60,7 @@ function showFirstQualificationEntry() {
 
 function postQualificationsData() {
     $('#qualificationsSection > div').append('<div class="ajax" />');
-    var sendToPorticoData = {
-            qualifications : new Array(),
-    };
-    
-    $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
-        var checked = $(this).attr("checked");
-        if (checked) {
-        	sendToPorticoData.qualifications.push($(this).val());
-        }
-    });
+    var qualificationsSendToPortico = collectQualificationsSendToPortico();
     
     $.ajax({
         type : 'POST',
@@ -83,7 +74,7 @@ function postQualificationsData() {
         url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/postQualificationsData",
         data :  {
             applicationId : $('#applicationId').val(),
-            sendToPorticoData: JSON.stringify(sendToPorticoData),
+            qualificationsSendToPortico: JSON.stringify(qualificationsSendToPortico),
             cacheBreaker: new Date().getTime()
         },
         success : function(data) {
@@ -93,4 +84,16 @@ function postQualificationsData() {
             $('#qualificationsSection div.ajax').remove();
         }
     });
+}
+
+function collectQualificationsSendToPortico(){
+    qualifications = new Array();
+    
+    $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
+        var checked = $(this).attr("checked");
+        if (checked) {
+        	qualifications.push($(this).val());
+        }
+    });
+    return qualifications;
 }

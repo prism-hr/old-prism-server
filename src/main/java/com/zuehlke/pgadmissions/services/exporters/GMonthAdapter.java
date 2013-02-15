@@ -9,10 +9,13 @@ import org.joda.time.format.DateTimeFormatter;
  * Sun's DatatypeFactory#newXMLGregorianCalendar(String) and XMLGregorianCalendar 
  * which was buldled in jdk/jre6 lost backward compatibility in xsd:gMonth.
  */
-public class GMonthAdapter {
+public final class GMonthAdapter {
     
     private static final String GMONTH_FORMAT = "--MM";
 
+    private GMonthAdapter() {
+    }
+    
     public static DateTime parse(String s) {
         DateTimeFormatter fmt = DateTimeFormat.forPattern(GMONTH_FORMAT);
         return fmt.parseDateTime(s);

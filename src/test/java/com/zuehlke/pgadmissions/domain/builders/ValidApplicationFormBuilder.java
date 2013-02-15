@@ -66,7 +66,8 @@ public class ValidApplicationFormBuilder {
     protected SourcesOfInterest interest;
     protected ProgrammeDetails programDetails;
     protected QualificationType qualificationType;
-    protected Qualification qualification;
+    protected Qualification qualification1;
+    protected Qualification qualification2;
     protected Funding funding;
     protected ApplicationForm applicationForm;
     private ApplicationFormBuilder applicationFormBuilder;
@@ -117,10 +118,14 @@ public class ValidApplicationFormBuilder {
         approverUser = new RegisteredUserBuilder().id(Integer.MAX_VALUE-1).username("approver@zhaw.ch").enabled(true).build();
         country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
         address = new AddressBuilder().id(Integer.MAX_VALUE).country(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).build();
-        referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").document(referenceDocument).build();
-        referenceComment2 = new ReferenceCommentBuilder().comment("Hello World").document(referenceDocument).build();
-        refereeOne = new RefereeBuilder().user(approverUser).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).toReferee();
-        refereeTwo = new RefereeBuilder().user(approverUser).email("ked2@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment2).toReferee();
+        referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").referee(refereeOne).document(referenceDocument).providedBy(user).suitableForProgramme(true).suitableForUcl(true).user(user).build();
+        referenceComment2 = new ReferenceCommentBuilder().comment("Hello World").referee(refereeTwo).document(referenceDocument).providedBy(user).suitableForProgramme(true).suitableForUcl(true).user(user).build();
+        refereeOne = new RefereeBuilder().id(Integer.MAX_VALUE-1).user(approverUser).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).toReferee();
+        refereeTwo = new RefereeBuilder().id(Integer.MAX_VALUE-2).user(approverUser).email("ked2@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment2).toReferee();
+        referenceComment1.setReferee(refereeOne);
+        referenceComment2.setReferee(refereeTwo);
+        refereeOne.setReference(referenceComment1);
+        refereeTwo.setReference(referenceComment2);
         employmentPosition = new EmploymentPositionBuilder()
             .current(true)
             .address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4])
@@ -190,8 +195,8 @@ public class ValidApplicationFormBuilder {
             .studyOption("F+++++", "Full-time")
             .build();
         qualificationType = new QualificationTypeBuilder().id(Integer.MAX_VALUE).code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
-        qualification = new QualificationBuilder()
-            .id(Integer.MAX_VALUE)
+        qualification1 = new QualificationBuilder()
+            .id(Integer.MAX_VALUE - 1)
             .awardDate(new Date())
             .grade("6")
             .institutionCode("UK0000")
@@ -200,6 +205,23 @@ public class ValidApplicationFormBuilder {
             .languageOfStudy("English")
             .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1))
             .subject("Engineering")
+            .title("MSc")
+            .type(qualificationType)
+            .isCompleted(CheckedStatus.YES)
+            .proofOfAward(proofOfAwardDocument)
+            .sendToUCL(true)
+            .build();
+        qualification2 = new QualificationBuilder()
+            .id(Integer.MAX_VALUE - 2)
+            .awardDate(new Date())
+            .grade("6")
+            .institutionCode("UK0000")
+            .institution("University of London")
+            .institutionCountry(domicile)
+            .languageOfStudy("English")
+            .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1))
+            .subject("Engineering")
+            .title("MSc")
             .type(qualificationType)
             .isCompleted(CheckedStatus.YES)
             .proofOfAward(proofOfAwardDocument)
@@ -227,7 +249,7 @@ public class ValidApplicationFormBuilder {
             .program(program)
             .programmeDetails(programDetails)
             .projectTitle("Project Title")
-            .qualification(qualification)
+            .qualification(qualification1, qualification2)
             .status(ApplicationFormStatus.APPROVED)
             .submittedDate(new Date())
             .cv(cvDocument)

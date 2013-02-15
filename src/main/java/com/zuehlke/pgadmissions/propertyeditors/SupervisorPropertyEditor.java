@@ -44,7 +44,7 @@ public class SupervisorPropertyEditor extends PropertyEditorSupport {
 			return;
 		}
 		String[] split = strAppAndUserId.split("\\|");
-		if (split.length != 2) {
+		if (split.length < 2 || split.length > 3) {
 			throw new IllegalArgumentException();
 		}
 		String appId = split[0];
@@ -59,7 +59,12 @@ public class SupervisorPropertyEditor extends PropertyEditorSupport {
 			throw new IllegalArgumentException("no such applications: " + split[0]);
 		}
 
-		setValue(findCreateNewSupervisor(user));
+		Supervisor supervisor = findCreateNewSupervisor(user);
+		if(split.length == 3 && "primary".equals(split[2])){
+		    supervisor.setIsPrimary(true);
+		}
+		
+        setValue(supervisor);
 	}
 
 	private Supervisor findCreateNewSupervisor(RegisteredUser user) {

@@ -17,7 +17,7 @@
 
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" scope="singleton">
 		<property name="dataSource" ref="dataSource" />
-		<property name="annotatedClasses" ref="entities"/>
+		<property name="packagesToScan" value="com.zuehlke.pgadmissions.domain"/>
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
@@ -28,6 +28,4 @@
 			</props>
 		</property>
 	</bean>
-
-	<import resource="../../src/main/webapp/WEB-INF/spring/hibernateEntities.xml" />
 </beans>

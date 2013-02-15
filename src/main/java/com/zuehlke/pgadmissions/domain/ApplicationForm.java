@@ -298,6 +298,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return hasPermissionToEdit //
                 && isSubmitted() //
                 && !isInValidationStage() //
+                && !isInApprovalStage() //
                 && !isDecided() //
                 && !isWithdrawn();
     }
@@ -483,6 +484,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isInValidationStage() {
         return status == ApplicationFormStatus.VALIDATION;
+    }
+    
+    public boolean isInApprovalStage() {
+        return status == ApplicationFormStatus.APPROVAL;
     }
 
     public List<NotificationRecord> getNotificationRecords() {
@@ -945,7 +950,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return result;
     }
 
-    public boolean isCompleteForSendingToPortico() {
+    public boolean isCompleteForSendingToPortico(boolean withMissingQualificationExplanation) {
         int exactNumberOfReferences = 2;
         int maxNumberOfQualifications = 2;
 
@@ -957,6 +962,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return false;
         }
 
+        if (getQualificationsToSendToPortico().isEmpty() && !withMissingQualificationExplanation) {
+            return false;
+        }
+        
         return true;
     }
 }

@@ -12,7 +12,9 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
@@ -26,7 +28,7 @@ public class ApplicationsService {
 	
 	private final ApplicationFormListDAO applicationFormListDAO; 
 
-	ApplicationsService() {
+	public ApplicationsService() {
 		this(null, null);
 	}
 
@@ -47,7 +49,6 @@ public class ApplicationsService {
 	@Transactional
 	public void save(ApplicationForm application) {
 		applicationFormDAO.save(application);
-
 	}
 
 	@Transactional
@@ -87,6 +88,11 @@ public class ApplicationsService {
         }
 		return applicationFormListDAO.getVisibleApplications(user, searchCategory, term, sortCategory, sortOrder, pageCount, APPLICATION_BLOCK_SIZE);
 	}
+	
+    @Transactional
+    public void refresh(ApplicationForm applicationForm) {
+        applicationFormDAO.refresh(applicationForm);
+    }
 
 	@Transactional
 	public List<ApplicationForm> getApplicationsDueRegistryNotification() {
@@ -99,5 +105,9 @@ public class ApplicationsService {
 
 	public List<ApplicationForm> getApplicationsDueApprovalRestartRequestReminder() {
 		return applicationFormDAO.getApplicationDueApprovalRestartRequestReminder();
+	}
+	
+	public List<ApplicationForm> getAllApplicationsByStatus(ApplicationFormStatus status) {
+	    return applicationFormDAO.getAllApplicationsByStatus(status);
 	}
 }

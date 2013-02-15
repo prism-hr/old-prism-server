@@ -24,6 +24,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -33,7 +34,9 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReferenceEvent;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -222,7 +225,7 @@ public class RefereeServiceTest {
         refereeService.saveReferenceAndSendMailNotifications(referee);
         EasyMock.verify(refereeDAOMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
     }
-    
+
     @Test
     public void shouldPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
         Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
@@ -232,8 +235,10 @@ public class RefereeServiceTest {
 
         RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
-        Referee referee = new RefereeBuilder().user(refereeUser).application(applicationForm).toReferee();
+        Referee referee = new RefereeBuilder().user(refereeUser).id(8).application(applicationForm).toReferee();
         
+        applicationForm.setReferees(Arrays.asList(referee));
+
         Document document = new DocumentBuilder().build();
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
         refereesAdminEditDTO.setComment("comment text");
@@ -241,7 +246,7 @@ public class RefereeServiceTest {
         refereesAdminEditDTO.setReferenceDocument(document);
         refereesAdminEditDTO.setSuitableForProgramme(true);
         refereesAdminEditDTO.setSuitableForUCL(false);
-        
+
         EasyMock.expect(encryptionHelper.decryptToInteger("refereeId")).andReturn(8);
         EasyMock.expect(refereeDAOMock.getRefereeById(8)).andReturn(referee);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -252,12 +257,125 @@ public class RefereeServiceTest {
 
         EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
         ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+        referee.setReference(referenceComment);
         EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
-        
+
         assertSame(applicationForm, referenceComment.getApplication());
         assertSame(referee, referenceComment.getReferee());
         assertEquals(CommentType.REFERENCE, referenceComment.getType());
         assertSame(refereeUser, referenceComment.getUser());
+        assertSame(currentUser, referenceComment.getProvidedBy());
+        assertEquals("comment text", referenceComment.getComment());
+        assertEquals(1, referenceComment.getDocuments().size());
+        assertSame(document, referenceComment.getDocuments().get(0));
+        assertEquals(true, referenceComment.getSuitableForProgramme());
+        assertEquals(false, referenceComment.getSuitableForUCL());
+        assertEquals(1, applicationForm.getReferencesToSendToPortico().size());
+        assertEquals("comment text", applicationForm.getReferencesToSendToPortico().get(0).getComment());
+    }
+    
+    @Test
+    public void shouldCreateRefereeRegisteredUserAndPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
+        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
+
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
+        Referee referee = new RefereeBuilder().application(applicationForm).firstname("Franciszek").lastname("Pieczka"). toReferee();
+
+        Document document = new DocumentBuilder().build();
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        refereesAdminEditDTO.setComment("comment text");
+        refereesAdminEditDTO.setEditedRefereeId("refereeId");
+        refereesAdminEditDTO.setReferenceDocument(document);
+        refereesAdminEditDTO.setSuitableForProgramme(true);
+        refereesAdminEditDTO.setSuitableForUCL(false);
+
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(referee.getEmail())).andReturn(null);
+        EasyMock.expect(encryptionHelper.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(refereeDAOMock.getRefereeById(8)).andReturn(referee);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        userServiceMock.save(EasyMock.isA(RegisteredUser.class));
+        EasyMock.expectLastCall().once();
+        refereeDAOMock.save(referee);
+        EasyMock.expectLastCall().once();
+        commentServiceMock.save(EasyMock.isA(ReferenceComment.class));
+        EasyMock.expectLastCall().once();
+        applicationFormDAOMock.save(applicationForm);
+        EasyMock.expectLastCall().once();
+
+        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+
+        RegisteredUser refereeUser = referenceComment.getUser();
+        assertEquals("Franciszek", refereeUser.getFirstName());
+        assertEquals("Pieczka", refereeUser.getLastName());
+        
+        assertSame(applicationForm, referenceComment.getApplication());
+        assertSame(referee, referenceComment.getReferee());
+        assertTrue(referenceComment.getReferee().getSendToUCL());
+        assertEquals(CommentType.REFERENCE, referenceComment.getType());
+        
+        assertSame(currentUser, referenceComment.getProvidedBy());
+        assertEquals("comment text", referenceComment.getComment());
+        assertEquals(1, referenceComment.getDocuments().size());
+        assertSame(document, referenceComment.getDocuments().get(0));
+        assertEquals(true, referenceComment.getSuitableForProgramme());
+        assertEquals(false, referenceComment.getSuitableForUCL());
+    }
+    
+    @Test
+    public void shouldCreateNewRefereeAndPostReferenceOnBehalfOfHim() throws UnsupportedEncodingException {
+        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
+
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
+
+        Document document = new DocumentBuilder().build();
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        refereesAdminEditDTO.setComment("comment text");
+        refereesAdminEditDTO.setEditedRefereeId("refereeId");
+        refereesAdminEditDTO.setReferenceDocument(document);
+        refereesAdminEditDTO.setSuitableForProgramme(true);
+        refereesAdminEditDTO.setSuitableForUCL(false);
+        refereesAdminEditDTO.setFirstname("Franciszek");
+        refereesAdminEditDTO.setLastname("Pieczka");
+        refereesAdminEditDTO.setJobEmployer("Employer");
+        refereesAdminEditDTO.setJobTitle("Job");
+        Address address = new AddressBuilder().address1("1").address2("2").address3("3").address4("4").address5("5").country(new CountryBuilder().code("aa").build()).build();
+        refereesAdminEditDTO.setAddressLocation(address);
+        refereesAdminEditDTO.setEmail("aaa@.fff.ccc");
+        refereesAdminEditDTO.setPhoneNumber("+44 111111111");
+        refereesAdminEditDTO.setContainsRefereeData(true);
+
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("aaa@.fff.ccc")).andReturn(null);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        userServiceMock.save(EasyMock.isA(RegisteredUser.class));
+        EasyMock.expectLastCall().once();
+        refereeDAOMock.save(EasyMock.isA(Referee.class));
+        EasyMock.expectLastCall().once();
+        commentServiceMock.save(EasyMock.isA(ReferenceComment.class));
+        EasyMock.expectLastCall().once();
+        applicationFormDAOMock.save(applicationForm);
+        EasyMock.expectLastCall().once();
+
+        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        ReferenceComment referenceComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+
+        RegisteredUser refereeUser = referenceComment.getUser();
+        assertEquals("Franciszek", refereeUser.getFirstName());
+        assertEquals("Pieczka", refereeUser.getLastName());
+        
+        assertSame(applicationForm, referenceComment.getApplication());
+        assertEquals("Franciszek", referenceComment.getReferee().getFirstname());
+        assertTrue(referenceComment.getReferee().getSendToUCL());
+        assertEquals(CommentType.REFERENCE, referenceComment.getType());
+        
         assertSame(currentUser, referenceComment.getProvidedBy());
         assertEquals("comment text", referenceComment.getComment());
         assertEquals(1, referenceComment.getDocuments().size());
@@ -467,60 +585,51 @@ public class RefereeServiceTest {
 
         ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant)
                 .program(new ProgramBuilder().title("klala").administrators(addmin).build()).build();
-        
+
         referee.setApplication(form);
 
         refereeDAOMock.save(referee);
 
         ReferenceEvent event = new ReferenceEventBuilder().id(4).build();
-        
+
         EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
-        
+
         applicationFormDAOMock.save(form);
-        
+
         MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 
-        // Mails to Applicant        
+        // Mails to Applicant
         InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
-        EasyMock.expect(msgSourceMock.getMessage(
-                EasyMock.eq("reference.provided.applicant"),
-                EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy"}), 
-                EasyMock.eq((Locale) null)))
-                .andReturn("subject");
-        EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(
-                EasyMock.eq(toAddress),
-                EasyMock.eq("subject"), 
-                EasyMock.eq("private/pgStudents/mail/reference_respond_confirmation.ftl"),
-                EasyMock.isA(Map.class), 
-                (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+        EasyMock.expect(
+                msgSourceMock.getMessage(EasyMock.eq("reference.provided.applicant"), EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy" }),
+                        EasyMock.eq((Locale) null))).andReturn("subject");
+        EasyMock.expect(
+                mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("subject"),
+                        EasyMock.eq("private/pgStudents/mail/reference_respond_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull()))
+                .andReturn(preparatorMock);
         javaMailSenderMock.send(preparatorMock);
 
         // Mails to Admin
         InternetAddress toAdminAddress = new InternetAddress("blogs@test.com", "bob blogs");
-        EasyMock.expect(msgSourceMock.getMessage(
-                EasyMock.eq("reference.provided.admin"),
-                EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy"}), 
-                EasyMock.eq((Locale) null)))
-                .andReturn("subject");
-        EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(
-                EasyMock.eq(toAdminAddress),
-                EasyMock.eq("subject"), 
-                EasyMock.eq("private/staff/admin/mail/reference_submit_confirmation.ftl"),
-                EasyMock.isA(Map.class), 
-                (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+        EasyMock.expect(
+                msgSourceMock.getMessage(EasyMock.eq("reference.provided.admin"), EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy" }),
+                        EasyMock.eq((Locale) null))).andReturn("subject");
+        EasyMock.expect(
+                mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAdminAddress), EasyMock.eq("subject"),
+                        EasyMock.eq("private/staff/admin/mail/reference_submit_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull()))
+                .andReturn(preparatorMock);
         javaMailSenderMock.send(preparatorMock);
-        
-        EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock,
-                eventFactoryMock, applicationFormDAOMock);
+
+        EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock);
 
         refereeService.declineToActAsRefereeAndSendNotification(referee);
 
         assertTrue(referee.isDeclined());
-        
+
         assertEquals(1, form.getEvents().size());
-        
+
         assertEquals(event, form.getEvents().get(0));
-        
+
         EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock, applicationFormDAOMock);
     }
 
@@ -587,16 +696,15 @@ public class RefereeServiceTest {
         Referee referee3 = new RefereeBuilder().id(3).sendToUCL(false).toReferee();
         Referee referee4 = new RefereeBuilder().id(4).sendToUCL(false).toReferee();
 
-        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("abc")).andReturn(applicationFormMock);
         EasyMock.expect(applicationFormMock.getReferees()).andReturn(Arrays.asList(referee1, referee2, referee3, referee4));
         EasyMock.expect(refereeDAOMock.getRefereeById(3)).andReturn(referee3);
         EasyMock.expect(refereeDAOMock.getRefereeById(4)).andReturn(referee4);
 
-        EasyMock.replay(applicationFormMock, refereeDAOMock, applicationFormDAOMock);
+        EasyMock.replay(applicationFormMock, refereeDAOMock, applicationFormDAOMock, encryptionHelper);
 
-        refereeService.selectForSendingToPortico("abc", Arrays.asList(3, 4));
+        refereeService.selectForSendingToPortico(applicationFormMock, Arrays.asList(new Integer[] { 3, 4 }));
 
-        EasyMock.verify(applicationFormMock, refereeDAOMock, applicationFormDAOMock);
+        EasyMock.verify(applicationFormMock, refereeDAOMock, applicationFormDAOMock, encryptionHelper);
 
         assertTrue("SendToUcl flag has not been updated to true", referee3.getSendToUCL());
         assertTrue("SendToUcl flag has not been updated to true", referee4.getSendToUCL());

@@ -104,8 +104,6 @@ public class ReviewService {
 	}
 
 	public ReviewRound newReviewRound() {
-		ReviewRound reviewRound = new ReviewRound();
-		return reviewRound;
+		return new ReviewRound();
 	}
-
 }

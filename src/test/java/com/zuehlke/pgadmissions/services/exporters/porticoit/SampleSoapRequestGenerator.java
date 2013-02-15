@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.exporters;
+package com.zuehlke.pgadmissions.services.exporters.porticoit;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,10 +29,12 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilder;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
+@Ignore
 public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
 
     @Autowired
@@ -54,7 +56,6 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
      * Run this test when connected to the UCL network.
      */
     @Test
-    @Ignore
     public void generateSampleSoapRequestsFromProductionData() {
         long idx = 0;
         Marshaller marshaller = webServiceTemplate.getMarshaller();

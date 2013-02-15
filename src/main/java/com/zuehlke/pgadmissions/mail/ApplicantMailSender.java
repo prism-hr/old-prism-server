@@ -13,21 +13,18 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSender extends StateChangeMailSender {
 
-	private final ApplicationsService applicationsService;
 	private final ConfigurationService personService;
 
-	public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,// 
-			ApplicationsService applicationsService, MessageSource msgSource, ConfigurationService personService) {
-		super(mimeMessagePreparatorFactory, mailSender, msgSource);
-		this.applicationsService = applicationsService;
-		this.personService = personService;
-	}
+    public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,//
+            MessageSource msgSource, ConfigurationService personService) {
+        super(mimeMessagePreparatorFactory, mailSender, msgSource);
+        this.personService = personService;
+    }
 
 	Map<String, Object> createModel(ApplicationForm form) {
 

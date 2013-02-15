@@ -24,12 +24,12 @@ public class PersonalDetailsService {
 
     @Transactional
     public void save(PersonalDetails personalDetails) {
-        if (BooleanUtils.isFalse(personalDetails.getPassportAvailable()) || BooleanUtils.isFalse(personalDetails.getRequiresVisa())) {
+        if (BooleanUtils.isNotTrue(personalDetails.getPassportAvailable()) || BooleanUtils.isNotTrue(personalDetails.getRequiresVisa())) {
             personalDetails.setPassportAvailable(false);
             personalDetails.setPassportInformation(null);
         }
         
-        if (BooleanUtils.isTrue(personalDetails.getEnglishFirstLanguage()) || BooleanUtils.isFalse(personalDetails.getLanguageQualificationAvailable())) {
+        if (BooleanUtils.isTrue(personalDetails.getEnglishFirstLanguage()) || BooleanUtils.isNotTrue(personalDetails.getLanguageQualificationAvailable())) {
             personalDetails.getLanguageQualifications().clear();
         }
         personalDetailDAO.save(personalDetails);

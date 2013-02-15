@@ -7,9 +7,8 @@ public class ApplicationContext {
 	private static ApplicationContext instance;
 	private ClassPathXmlApplicationContext classPathXmlApplicationContext;
 	
-
 	private ApplicationContext() {
-		 classPathXmlApplicationContext = new ClassPathXmlApplicationContext("hibernateTestConfig.xml");;
+		 classPathXmlApplicationContext = new ClassPathXmlApplicationContext("testHibernateContext.xml");
 	}
 
 	public static synchronized ApplicationContext getInstance() {

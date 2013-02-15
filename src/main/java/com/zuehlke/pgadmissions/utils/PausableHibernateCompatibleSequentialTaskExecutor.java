@@ -165,7 +165,7 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
      * Queue consuming thread - runs in an infinite loop, taking subsequent elements from task queue.
      * Each task is being executed by a dedicated thread.
      */
-    private class QueueConsumerThread extends Thread {
+    private final class QueueConsumerThread extends Thread {
 
         private QueueConsumerThread() {
             this.setDaemon(true);
@@ -191,7 +191,7 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
     /**
      * This is definition of a thread dedicated for running just a single task.
      */
-    private class TaskExecutionThread extends Thread {
+    private final class TaskExecutionThread extends Thread {
         private Runnable clientTask;
         private Long id;
 

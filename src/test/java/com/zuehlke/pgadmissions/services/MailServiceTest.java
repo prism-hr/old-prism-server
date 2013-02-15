@@ -47,19 +47,16 @@ import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 public class MailServiceTest {
 
 	private MailService mailService;
-	private ApplicationsService applicationsServiceMock;
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private MessageSource msgSourceMock;
 	
 	@Before
 	public void setUp() {
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-		
-		mailService = new MailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationsServiceMock, msgSourceMock);
+		mailService = new MailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -115,10 +112,10 @@ public class MailServiceTest {
 		javaMailSenderMock.send(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock3);
 		javaMailSenderMock.send(preparatorMock4);
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 		mailService.sendApplicationUpdatedMailToAdmins(form);
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -164,10 +161,10 @@ public class MailServiceTest {
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock3);
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 		mailService.sendApplicationUpdatedMailToAdmins(form);
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -198,10 +195,10 @@ public class MailServiceTest {
 						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		
 		mailService.sendWithdrawMailToReferees(Arrays.asList(referee1, referee2));
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -239,10 +236,10 @@ public class MailServiceTest {
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock3);
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		
 		mailService.sendWithdrawToAdmins(form);
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -277,10 +274,10 @@ public class MailServiceTest {
 						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 	
 		javaMailSenderMock.send(preparatorMock1);
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		
 		mailService.sendWithdrawToReviewers(form);
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -316,10 +313,10 @@ public class MailServiceTest {
 						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 	
 		javaMailSenderMock.send(preparatorMock1);
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		
 		mailService.sendWithdrawToInterviewers(form);
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -353,10 +350,10 @@ public class MailServiceTest {
 						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 	
 		javaMailSenderMock.send(preparatorMock1);
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		
 		mailService.sendWithdrawToSupervisors(form);
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
 	}
 
     @SuppressWarnings("unchecked")
@@ -393,9 +390,9 @@ public class MailServiceTest {
         
         EasyMock.expectLastCall();
         
-        EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+        EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
         
         mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(Arrays.asList(referee1, referee2), form);
-        EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);      
+        EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);      
     }	
 }

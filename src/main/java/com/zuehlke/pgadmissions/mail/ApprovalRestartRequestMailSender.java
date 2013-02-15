@@ -18,9 +18,9 @@ import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApprovalRestartRequestMailSender extends MailSender {
 
-	public ApprovalRestartRequestMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource messageSource) {
+    public ApprovalRestartRequestMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
+            JavaMailSender mailSender, MessageSource messageSource) {
 		super(mimeMessagePreparatorFactory, mailSender, messageSource);
-
 	}
 
 	protected Map<String, Object> createModel(ApplicationForm application) {

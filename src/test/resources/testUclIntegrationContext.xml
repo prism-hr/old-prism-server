@@ -9,7 +9,7 @@
 
     <context:property-placeholder location="classpath:environment.properties" />
 
-    <import resource="hibernateTestConfig.xml" />
+    <import resource="testHibernateContext.xml" />
 
     <import resource="../../src/main/webapp/WEB-INF/spring/uclIntegrationContext.xml" />
 

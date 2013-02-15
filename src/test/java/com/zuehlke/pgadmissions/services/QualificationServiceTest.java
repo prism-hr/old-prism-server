@@ -11,7 +11,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -20,8 +19,6 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 public class QualificationServiceTest {
 
     private QualificationDAO qualificationDAOMock;
-
-    private ApplicationFormDAO applicationFormDAOMock;
 
     private QualificationService qualificationService;
 
@@ -61,16 +58,15 @@ public class QualificationServiceTest {
         Qualification qualification3 = new QualificationBuilder().id(3).sendToUCL(false).build();
         Qualification qualification4 = new QualificationBuilder().id(4).sendToUCL(false).build();
 
-        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("abc")).andReturn(applicationFormMock);
         EasyMock.expect(applicationFormMock.getQualifications()).andReturn(Arrays.asList(qualification1, qualification2, qualification3, qualification4));
         EasyMock.expect(qualificationDAOMock.getQualificationById(3)).andReturn(qualification3);
         EasyMock.expect(qualificationDAOMock.getQualificationById(4)).andReturn(qualification4);
 
-        EasyMock.replay(applicationFormMock, qualificationDAOMock, applicationFormDAOMock);
+        EasyMock.replay(applicationFormMock, qualificationDAOMock);
 
-        qualificationService.selectForSendingToPortico("abc", Arrays.asList(3, 4));
+        qualificationService.selectForSendingToPortico(applicationFormMock, Arrays.asList(new Integer[] { 3, 4 }));
 
-        EasyMock.verify(applicationFormMock, qualificationDAOMock, applicationFormDAOMock);
+        EasyMock.verify(applicationFormMock, qualificationDAOMock);
 
         assertTrue("SendToUcl flag has not been updated to true", qualification3.getSendToUCL());
         assertTrue("SendToUcl flag has not been updated to true", qualification4.getSendToUCL());
@@ -87,14 +83,13 @@ public class QualificationServiceTest {
         Qualification qualification3 = new QualificationBuilder().id(3).sendToUCL(false).build();
         Qualification qualification4 = new QualificationBuilder().id(4).sendToUCL(false).build();
 
-        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("abc")).andReturn(applicationFormMock);
         EasyMock.expect(applicationFormMock.getQualifications()).andReturn(Arrays.asList(qualification1, qualification2, qualification3, qualification4));
 
-        EasyMock.replay(applicationFormMock, qualificationDAOMock, applicationFormDAOMock);
+        EasyMock.replay(applicationFormMock, qualificationDAOMock);
 
-        qualificationService.selectForSendingToPortico("abc", Collections.<Integer> emptyList());
+        qualificationService.selectForSendingToPortico(applicationFormMock, Collections.<Integer> emptyList());
 
-        EasyMock.verify(applicationFormMock, qualificationDAOMock, applicationFormDAOMock);
+        EasyMock.verify(applicationFormMock, qualificationDAOMock);
 
         assertFalse("SendToUcl flag has not been updated to false", qualification3.getSendToUCL());
         assertFalse("SendToUcl flag has not been updated to false", qualification4.getSendToUCL());
@@ -105,7 +100,6 @@ public class QualificationServiceTest {
     @Before
     public void setup() {
         qualificationDAOMock = EasyMock.createMock(QualificationDAO.class);
-        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-        qualificationService = new QualificationService(qualificationDAOMock, applicationFormDAOMock);
+        qualificationService = new QualificationService(qualificationDAOMock);
     }
 }

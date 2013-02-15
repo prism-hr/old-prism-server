@@ -15,6 +15,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.bouncycastle.util.Arrays;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
@@ -81,7 +82,9 @@ public class Document implements Serializable {
 	}
 
 	public void setContent(byte[] content) {
-		this.content = content;
+	    if (content != null) {
+	        this.content = Arrays.copyOf(content, content.length);
+	    }
 	}
 
 	public String getContentType() {

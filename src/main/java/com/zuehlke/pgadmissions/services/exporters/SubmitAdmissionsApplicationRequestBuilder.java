@@ -360,6 +360,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
         applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
+        applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
         
         if (StringUtils.isBlank(applicationForm.getIpAddressAsString())) {
             applicationTp.setIpAddress(IP_ADDRESS_NOT_PROVIDED_VALUE);
@@ -394,12 +395,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         if (printLanguageQualificationAdmissionsNote && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
-        }
-        
-        if (StringUtils.isNotBlank(applicationForm.getUclBookingReferenceNumber())) {
-            applicationTp.setUclApplicationID(applicationForm.getUclBookingReferenceNumber());
-        } else {
-            applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
         }
         
 //      TODO: ATASSTatement

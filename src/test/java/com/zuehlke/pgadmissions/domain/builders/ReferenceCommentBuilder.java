@@ -85,7 +85,9 @@ public class ReferenceCommentBuilder {
 		reference.setUser(user);
 		reference.setProvidedBy(providedBy);
 		reference.setType(CommentType.REFERENCE);
-		reference.getDocuments().add(document);
+		if (document != null) {
+		    reference.getDocuments().add(document);
+		}
 		reference.setApplication(application);
 		reference.setDate(date);
 		return reference;

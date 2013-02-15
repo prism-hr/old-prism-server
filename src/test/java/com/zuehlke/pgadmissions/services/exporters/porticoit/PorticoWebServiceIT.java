@@ -141,6 +141,7 @@ public class PorticoWebServiceIT {
                 
                 request.getApplication().getApplicant().setApplicantID(receivedApplicantId);
                 request.getApplication().getCourseApplication().setUclApplicationID(receivedApplicationId);
+                request.getApplication().getCourseApplication().setExternalApplicationID(null);
                 
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
                 request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
@@ -222,8 +223,7 @@ public class PorticoWebServiceIT {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 super.webServiceCallStarted(request);
-                request.getApplication().getCourseApplication().setUclApplicationID("12058715");
-                request.getApplication().getCourseApplication().setExternalApplicationID(null);
+//                request.getApplication().getCourseApplication().setUclApplicationID("12058715");
                 request.getApplication().getApplicant().getFullName().setSurname("NOGUCHI");
                 request.getApplication().getApplicant().getFullName().setForename1("YUMIKO");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
@@ -397,8 +397,7 @@ public class PorticoWebServiceIT {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 super.webServiceCallStarted(request);
-                request.getApplication().getCourseApplication().setUclApplicationID("12029459");
-                request.getApplication().getCourseApplication().setExternalApplicationID(null);
+//                request.getApplication().getCourseApplication().setUclApplicationID("12029459");
                 request.getApplication().getApplicant().getFullName().setSurname("SPENCER");
                 request.getApplication().getApplicant().getFullName().setForename1("ROBIN GRAHAM NELSON");
                 request.getApplication().getApplicant().setSex(GenderTp.M);
@@ -572,8 +571,7 @@ public class PorticoWebServiceIT {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
                 super.webServiceCallStarted(request);
-                request.getApplication().getCourseApplication().setUclApplicationID("110016550");
-                request.getApplication().getCourseApplication().setExternalApplicationID(null);
+//                request.getApplication().getCourseApplication().setUclApplicationID("110016550");
                 request.getApplication().getApplicant().getFullName().setSurname("WHITE");
                 request.getApplication().getApplicant().getFullName().setForename1("HEATHER ELIZABETH JANET");
                 request.getApplication().getApplicant().setSex(GenderTp.F);
@@ -643,10 +641,18 @@ public class PorticoWebServiceIT {
         
         // we need to append another referee for this to work
         Referee referee = randomApplicationForm.getReferees().get(0);
-        String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";        
-        Country country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
-        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").referee(referee).providedBy(referee.getUser()).suitableForProgramme(true).suitableForUcl(true).user(referee.getUser()).build();
-        Referee refereeOne = new RefereeBuilder().user(referee.getUser()).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).toReferee();
+        String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
+        Country country = new CountryBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true)
+                .build();
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").referee(referee)
+                .providedBy(referee.getUser()).suitableForProgramme(true).suitableForUcl(true).user(referee.getUser())
+                .build();
+        Referee refereeOne = new RefereeBuilder().user(referee.getUser()).email("ked1@zuhlke.com").firstname("Bob")
+                .lastname("Smith").addressCountry(country).address1(addressStr.split("\n")[0])
+                .address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
+                .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4])
+                .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress")
+                .phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).toReferee();
         referenceComment1.setReferee(refereeOne);
         refereeOne.setReference(referenceComment1);
         randomApplicationForm.getReferees().add(refereeOne);
@@ -751,6 +757,11 @@ public class PorticoWebServiceIT {
         }
         
         protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request, String postFix) {
+//            request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
+//            request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
+//            request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
+//            request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
+
             addFirstAndLastnameToCsvFile(request);
             
             String pPostFix = StringUtils.isNotBlank(postFix) ? "_" + postFix : postFix; 

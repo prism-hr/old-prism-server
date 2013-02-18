@@ -24,7 +24,7 @@
             <#include "/private/staff/admin/application/components/referee_view.ftl"/>
             
             <#if referee.hasResponded() && !referee.isDeclined()>
-                <#include "/private/staff/admin/application/components/reference_view.ftl"/>
+                <#include "/private/staff/admin/application/components/reference_edit.ftl"/>
             </#if>
         
             <#if !referee.hasResponded() && !referee.isDeclined()>

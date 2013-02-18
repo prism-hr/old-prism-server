@@ -52,8 +52,9 @@
                                 <td>
                                     <a name="showRefereeLink" id="showRefereeLink_${encRefereeId}" 
                                     toggles="referee_${encRefereeId}" 
-                                    class="<#if !existingReferee.hasResponded()>button-edit<#else>button-show</#if> button-hint" 
-                                    data-desc="<#if !existingReferee.hasResponded()>Provide Reference<#else>Show</#if>">edit</a>
+                                    <#if existingReferee.hasResponded()>responded="responded"</#if>
+                                    class="<#if !existingReferee.hasResponded()>button-edit<#else>button-show</#if> button-hint"
+                                    data-desc="<#if !existingReferee.hasResponded()>Provide reference<#else>Show</#if>">edit</a>
                                 </td>
                                 <td></td>
                             </tr>

@@ -28,7 +28,6 @@ $(document).ready(function() {
         $('#editedRefereeId').val("newReferee");
         
         clearRefereeFormErrors();
-        clearRefereeForm();
     });
     
     // --------------------------------------------------------------------------------
@@ -42,7 +41,11 @@ $(document).ready(function() {
         $("#" + $(this).attr("toggles")).show();
         $('#editedRefereeId').val($(this).attr("toggles").replace("referee_", "")); // set the id of the referee we are looking at
         clearRefereeFormErrors();
-        clearRefereeForm();
+        if(!$(this).attr("responded")){
+        	var refereeId = $('#editedRefereeId').val();
+        	clearRefereeForm($("#referee_" + refereeId));
+        }
+        
     });
     
     // --------------------------------------------------------------------------------
@@ -72,6 +75,15 @@ $(document).ready(function() {
         });
     });
     
+    // --------------------------------------------------------------------------------
+    // EDIT REFERENCE DATA
+    // --------------------------------------------------------------------------------
+    $('button[id="editReferenceButton"]').each(function() {
+    	$(this).on("click", function() {
+    		editReferenceData(false, true);
+        });
+    });
+    
     $("input:file").each(function() {
     	watchUpload($(this));
     });
@@ -81,28 +93,28 @@ function clearRefereeFormErrors() {
     $("#referencesSection").find('span.invalid').remove(); // remove all previous form errors
 }
 
-function clearRefereeForm() {
-    $("input:text").each(function() {
+function clearRefereeForm(form) {
+    form.find("input:text").each(function() {
         $(this).val("");
     });
     
-    $("input[type=email]").each(function() {
+    form.find("input[type=email]").each(function() {
         $(this).val("");
     });
     
-    $("textarea").each(function() {
+    form.find("textarea").each(function() {
         $(this).val("");
     });
     
-    $("input:radio").each(function() {
+    form.find("input:radio").each(function() {
         $(this).attr('checked', false);
     });
 
-    $("select").each(function() {
+    form.find("select").each(function() {
         $(this).val("");
     });
     
-    $("input:file").each(function() {
+    form.find("input:file").each(function() {
     	var $container  = $(this).parent('div.field');
     	$deleteButton = $container.find('a.button-delete');
 
@@ -220,6 +232,62 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
         complete : function() {
             $('#referencesSection div.ajax').remove();
         }
+    });
+}
+
+function editReferenceData() {
+    var refereeId = $('#editedRefereeId').val();
+    
+    var suitableUCL = "";
+    if ($('input:radio[name=suitableForUCL_' + refereeId + ']:checked').length > 0) {
+        suitableUCL = $('input:radio[name=suitableForUCL_' + refereeId + ']:checked').val();
+    }
+
+    var suitableForProgramme = "";
+    if ($('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').length > 0) {
+        suitableForProgramme = $('input:radio[name=suitableForProgramme_' + refereeId + ']:checked').val();
+    }
+    
+    var $ref_doc_upload_field = $('input:file[id=referenceDocument_' + refereeId + ']');
+    var $ref_doc_container  = $ref_doc_upload_field.parent('div.field');
+    var $ref_doc_hidden     = $ref_doc_container.find('span input');
+	
+    postData =  {
+		editedRefereeId : refereeId,
+        applicationId : $('#applicationId').val(),
+        comment: $('#refereeComment_' + refereeId).val(),
+        referenceDocument: $ref_doc_hidden.val(),
+        suitableForUCL : suitableUCL,
+        suitableForProgramme : suitableForProgramme, 
+    };
+    
+    $('#referencesSection > div').append('<div class="ajax" />');
+    $.ajax({
+    	dataType: "json",
+        type : 'POST',
+        statusCode : {
+            401 : function() { window.location.reload(); },
+            500 : function() { window.location.href = "/pgadmissions/error"; },
+            404 : function() { window.location.href = "/pgadmissions/404"; },
+            400 : function() { window.location.href = "/pgadmissions/400"; },
+            403 : function() { window.location.href = "/pgadmissions/404"; }
+        },
+        url : "/pgadmissions/editApplicationFormAsProgrammeAdmin/editReferenceData",
+        data :  postData,
+        success : function(data) {
+        	clearRefereeFormErrors();
+        	if(data.success == "true"){
+        		
+        	} else {
+        		if(data.comment != null){
+        			$("#commentError_" + refereeId).html('<span class="invalid">You must make an entry.</span>');
+        		}
+        	}
+        },
+        complete : function() {
+            $('#referencesSection div.ajax').remove();
+        },
+        
     });
 }
 

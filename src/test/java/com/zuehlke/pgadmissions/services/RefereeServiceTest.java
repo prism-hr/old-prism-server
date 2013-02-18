@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -227,6 +228,35 @@ public class RefereeServiceTest {
     }
 
     @Test
+    public void shouldEditReferenceComment() throws UnsupportedEncodingException {
+        RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
+        ReferenceComment referenceComment = new ReferenceCommentBuilder().comment("old comment").suitableForProgramme(false).suitableForUcl(false).document(null)
+                .build();
+        Referee referee = new RefereeBuilder().user(refereeUser).id(8).reference(referenceComment).toReferee();
+
+        Document document = new DocumentBuilder().build();
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        refereesAdminEditDTO.setComment("comment text");
+        refereesAdminEditDTO.setEditedRefereeId("refereeId");
+        refereesAdminEditDTO.setReferenceDocument(document);
+        refereesAdminEditDTO.setSuitableForProgramme(true);
+        refereesAdminEditDTO.setSuitableForUCL(true);
+
+        EasyMock.expect(encryptionHelper.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(refereeDAOMock.getRefereeById(8)).andReturn(referee);
+
+        EasyMock.replay(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+        refereeService.editReferenceComment(refereesAdminEditDTO);
+        EasyMock.verify(encryptionHelper, refereeDAOMock, userServiceMock, commentServiceMock);
+
+        
+        assertEquals("comment text", referenceComment.getComment());
+        assertEquals(document, referenceComment.getDocuments().get(0));
+        assertEquals(true, referenceComment.getSuitableForProgramme());
+        assertEquals(true, referenceComment.getSuitableForUCL());
+    }
+
+    @Test
     public void shouldPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
         Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
@@ -236,7 +266,7 @@ public class RefereeServiceTest {
         RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
         RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).firstName("Bob").build();
         Referee referee = new RefereeBuilder().user(refereeUser).id(8).application(applicationForm).toReferee();
-        
+
         applicationForm.setReferees(Arrays.asList(referee));
 
         Document document = new DocumentBuilder().build();
@@ -273,7 +303,7 @@ public class RefereeServiceTest {
         assertEquals(1, applicationForm.getReferencesToSendToPortico().size());
         assertEquals("comment text", applicationForm.getReferencesToSendToPortico().get(0).getComment());
     }
-    
+
     @Test
     public void shouldCreateRefereeRegisteredUserAndPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
         Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
@@ -282,7 +312,7 @@ public class RefereeServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
 
         RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
-        Referee referee = new RefereeBuilder().application(applicationForm).firstname("Franciszek").lastname("Pieczka"). toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).firstname("Franciszek").lastname("Pieczka").toReferee();
 
         Document document = new DocumentBuilder().build();
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
@@ -312,12 +342,12 @@ public class RefereeServiceTest {
         RegisteredUser refereeUser = referenceComment.getUser();
         assertEquals("Franciszek", refereeUser.getFirstName());
         assertEquals("Pieczka", refereeUser.getLastName());
-        
+
         assertSame(applicationForm, referenceComment.getApplication());
         assertSame(referee, referenceComment.getReferee());
         assertTrue(referenceComment.getReferee().getSendToUCL());
         assertEquals(CommentType.REFERENCE, referenceComment.getType());
-        
+
         assertSame(currentUser, referenceComment.getProvidedBy());
         assertEquals("comment text", referenceComment.getComment());
         assertEquals(1, referenceComment.getDocuments().size());
@@ -325,7 +355,7 @@ public class RefereeServiceTest {
         assertEquals(true, referenceComment.getSuitableForProgramme());
         assertEquals(false, referenceComment.getSuitableForUCL());
     }
-    
+
     @Test
     public void shouldCreateNewRefereeAndPostReferenceOnBehalfOfHim() throws UnsupportedEncodingException {
         Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
@@ -346,7 +376,8 @@ public class RefereeServiceTest {
         refereesAdminEditDTO.setLastname("Pieczka");
         refereesAdminEditDTO.setJobEmployer("Employer");
         refereesAdminEditDTO.setJobTitle("Job");
-        Address address = new AddressBuilder().address1("1").address2("2").address3("3").address4("4").address5("5").country(new CountryBuilder().code("aa").build()).build();
+        Address address = new AddressBuilder().address1("1").address2("2").address3("3").address4("4").address5("5")
+                .country(new CountryBuilder().code("aa").build()).build();
         refereesAdminEditDTO.setAddressLocation(address);
         refereesAdminEditDTO.setEmail("aaa@.fff.ccc");
         refereesAdminEditDTO.setPhoneNumber("+44 111111111");
@@ -370,12 +401,12 @@ public class RefereeServiceTest {
         RegisteredUser refereeUser = referenceComment.getUser();
         assertEquals("Franciszek", refereeUser.getFirstName());
         assertEquals("Pieczka", refereeUser.getLastName());
-        
+
         assertSame(applicationForm, referenceComment.getApplication());
         assertEquals("Franciszek", referenceComment.getReferee().getFirstname());
         assertTrue(referenceComment.getReferee().getSendToUCL());
         assertEquals(CommentType.REFERENCE, referenceComment.getType());
-        
+
         assertSame(currentUser, referenceComment.getProvidedBy());
         assertEquals("comment text", referenceComment.getComment());
         assertEquals(1, referenceComment.getDocuments().size());

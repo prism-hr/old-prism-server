@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -76,9 +78,10 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
 
         controller = new EditApplicationFormAsProgrammeAdminController(userServiceMock, applicationServiceMock, documentPropertyEditorMock,
-                qualificationServiceMock, refereeServiceMock, refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock, countryServiceMock, countryPropertyEditorMock);
+                qualificationServiceMock, refereeServiceMock, refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock,
+                countryServiceMock, countryPropertyEditorMock);
     }
-    
+
     @Test
     public void shouldAddNewReferenceWithoutSavingSendToPorticoReferences() {
         Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
@@ -93,7 +96,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
-        
+
         Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
@@ -109,6 +112,63 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         assertEquals("/private/staff/admin/application/components/references_details_programme_admin", viewName);
 
         EasyMock.verify(userServiceMock, encryptionHelperMock, refereeServiceMock);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldUpdateReference() {
+        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)
+                .build();
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
+
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
+        Model model = new ExtendedModelMap();
+
+        refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
+        EasyMock.expectLastCall();
+        EasyMock.expect(refereeServiceMock.editReferenceComment(refereesAdminEditDTO)).andReturn(null).once();
+
+        EasyMock.replay(userServiceMock, refereeServiceMock);
+        String ret = controller.updateReference(applicationForm, refereesAdminEditDTO, result, model);
+        Map<String, String> retMap = new Gson().fromJson(ret, Map.class);
+        assertEquals(1, retMap.size());
+        assertEquals("true", retMap.get("success"));
+
+        EasyMock.verify(userServiceMock, refereeServiceMock);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldReportUpdateReferenceFormErrors() {
+        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
+        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
+        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)
+                .build();
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
+
+        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
+        result.rejectValue("comment", "text.field.empty");
+        Model model = new ExtendedModelMap();
+
+        refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
+        EasyMock.expectLastCall();
+
+        EasyMock.replay(userServiceMock, refereeServiceMock);
+        String ret = controller.updateReference(applicationForm, refereesAdminEditDTO, result, model);
+        Map<String, String> retMap = new Gson().fromJson(ret, Map.class);
+        assertEquals(2, retMap.size());
+        assertEquals("false", retMap.get("success"));
+        assertEquals("text.field.empty", retMap.get("comment"));
+
+        EasyMock.verify(userServiceMock, refereeServiceMock);
     }
 
     @Test
@@ -160,10 +220,9 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         refereesAdminEditDTO.setSuitableForProgramme(true);
         refereesAdminEditDTO.setSuitableForUCL(false);
 
-
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
-        
+
         Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
@@ -319,7 +378,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
         EasyMock.expectLastCall();
-        
+
         binderMock.registerCustomEditor(Country.class, countryPropertyEditorMock);
         EasyMock.expectLastCall();
 

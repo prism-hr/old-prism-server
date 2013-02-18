@@ -279,14 +279,21 @@ public class ApprovalController {
             @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult referenceResult,
             @RequestParam(required = false) Boolean forceSavingReference, Model model) {
 
-        if (refereesAdminEditDTO.getEditedRefereeId() != null) {
-            model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
-        }
+        String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
+        model.addAttribute("editedRefereeId", editedRefereeId);
 
         // save "send to UCL" data first
         List<Integer> refereesSendToPortico = sendToPorticoData.getRefereesSendToPortico();
         if (refereesSendToPortico != null) {
             refereeService.selectForSendingToPortico(applicationForm, refereesSendToPortico);
+        }
+        
+        if(editedRefereeId != null){
+            Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
+            Referee referee = refereeService.getRefereeById(decryptedId);
+            if(referee.getReference() != null){
+                return REFERENCE_SECTION;
+            }
         }
 
         if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
@@ -298,11 +305,9 @@ public class ApprovalController {
 
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
             Referee referee = newComment.getReferee();
-            String encryptedId = encryptionHelper.encrypt(referee.getId());
-            model.addAttribute("editedRefereeId", encryptedId);
             applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
-            
+
             // update referees send to Portico in order to validate it
             if (refereesSendToPortico != null && !refereesSendToPortico.contains(referee.getId())) {
                 refereesSendToPortico.add(referee.getId());

@@ -114,7 +114,8 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST)
     @ResponseBody
-    public String updateRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result, Model model) {
+    public String updateRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+            BindingResult result, Model model) {
 
         if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new ResourceNotFoundException();
@@ -124,16 +125,16 @@ public class EditApplicationFormAsProgrammeAdminController {
         refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
 
         Map<String, String> map = new HashMap<String, String>();
-        if(!result.hasErrors()){
+        if (!result.hasErrors()) {
             refereeService.editReferenceComment(refereesAdminEditDTO);
             map.put("success", "true");
         } else {
             map.put("success", "false");
-            for(FieldError error : result.getFieldErrors()){
+            for (FieldError error : result.getFieldErrors()) {
                 map.put(error.getField(), error.getCode());
             }
         }
-        
+
         Gson gson = new Gson();
         return gson.toJson(map);
     }
@@ -147,15 +148,22 @@ public class EditApplicationFormAsProgrammeAdminController {
             throw new ResourceNotFoundException();
         }
 
-        if (refereesAdminEditDTO.getEditedRefereeId() != null) {
-            model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
-        }
+        String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
+        model.addAttribute("editedRefereeId", editedRefereeId);
 
         // save "send to UCL" data first
         if (sendToPorticoData.getRefereesSendToPortico() != null) {
             refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
         }
-
+        
+        if(editedRefereeId != null){
+            Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
+            Referee referee = refereeService.getRefereeById(decryptedId);
+            if(referee.getReference() != null){
+                return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
+            }
+        }
+        
         if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
             refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
 
@@ -165,8 +173,6 @@ public class EditApplicationFormAsProgrammeAdminController {
 
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
             Referee referee = newComment.getReferee();
-            String encryptedId = encryptionHelper.encrypt(referee.getId());
-            model.addAttribute("editedRefereeId", encryptedId);
             applicationService.refresh(applicationForm);
             refereeService.refresh(referee);
         }

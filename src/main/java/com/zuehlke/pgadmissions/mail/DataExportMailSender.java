@@ -38,15 +38,15 @@ public class DataExportMailSender {
     }
     
     @Autowired
-    public DataExportMailSender(final UserService userService, final JavaMailSender mailSender,
-            final MessageSource messageSource, final MimeMessagePreparatorFactory mimeMessagePreparatorFactory) {
+    public DataExportMailSender(final MimeMessagePreparatorFactory mimeMessagePreparatorFactory, 
+            final JavaMailSender mailSender, final MessageSource messageSource, final UserService userService) {
         this.userService = userService;
         this.mailSender = mailSender;
         this.messageSource = messageSource;
         this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
     }
     
-    private Map<String, Object> createModel(final RegisteredUser user, final String message) {
+    Map<String, Object> createModel(final RegisteredUser user, final String message) {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("user", user);
         model.put("message", message);

@@ -114,7 +114,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST)
     @ResponseBody
-    public String updateRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
+    public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
             BindingResult result, Model model) {
 
         if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {

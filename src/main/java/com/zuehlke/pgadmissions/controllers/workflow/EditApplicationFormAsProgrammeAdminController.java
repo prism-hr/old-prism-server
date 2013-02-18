@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -106,6 +110,32 @@ public class EditApplicationFormAsProgrammeAdminController {
             throw new ResourceNotFoundException();
         }
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
+    }
+
+    @RequestMapping(value = "/editReferenceData", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO, BindingResult result, Model model) {
+
+        if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
+            throw new ResourceNotFoundException();
+        }
+
+        model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
+        refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
+
+        Map<String, String> map = new HashMap<String, String>();
+        if(!result.hasErrors()){
+            refereeService.editReferenceComment(refereesAdminEditDTO);
+            map.put("success", "true");
+        } else {
+            map.put("success", "false");
+            for(FieldError error : result.getFieldErrors()){
+                map.put(error.getField(), error.getCode());
+            }
+        }
+        
+        Gson gson = new Gson();
+        return gson.toJson(map);
     }
 
     @RequestMapping(value = "/postRefereesData", method = RequestMethod.POST)

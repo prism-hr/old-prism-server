@@ -252,6 +252,24 @@ public class RefereeService {
             referee.setSendToUCL(true);
         }
     }
+    
+    @Transactional
+    public ReferenceComment editReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO){
+        Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
+        Referee referee = getRefereeById(refereeId);
+        ReferenceComment reference = referee.getReference();
+        
+        reference.setComment(refereesAdminEditDTO.getComment());
+        reference.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
+        reference.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
+
+        Document document = refereesAdminEditDTO.getReferenceDocument();
+        if (document != null) {
+            reference.setDocuments(Collections.singletonList(document));
+        }
+        
+        return reference;
+    }
 
     @Transactional
     public ReferenceComment postCommentOnBehalfOfReferee(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {

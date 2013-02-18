@@ -23,6 +23,10 @@ import com.zuehlke.pgadmissions.services.ReportPorticoDocumentUploadFailureServi
 @RequestMapping("/reportDocumentUploadFailure")
 public class ReportPorticoDocumentUploadFailureController {
 
+    private static final String OK = "OK";
+
+    private static final String NOK = "NOK";
+
     private Logger log = Logger.getLogger(ReportPorticoDocumentUploadFailureController.class);
     
     private final ReportPorticoDocumentUploadFailureService service;
@@ -40,16 +44,23 @@ public class ReportPorticoDocumentUploadFailureController {
     
     @ResponseBody
     @RequestMapping(method=RequestMethod.GET)
-    public String reportError(
-            @RequestParam(required = true) String bookingReference,
-            @RequestParam(required = true) String errorCode, 
-            @RequestParam(required = true) String message,
+    public String reportError(@RequestParam(required = true) String bookingReference,
+            @RequestParam(required = true) String errorCode, @RequestParam(required = true) String message,
             @RequestParam(required = true) String activationCode) {
         if (StringUtils.equals(PORTICO_UPLOAD_ACTIVATION_CODE, activationCode)) {
-            String logMessage = String.format("Portico reported that there was an error uploading the documents [errorCode=%s, bookingReference=%s]: %s", StringUtils.trimToEmpty(errorCode), StringUtils.trimToEmpty(bookingReference), StringUtils.trimToEmpty(message));
-            log.warn(logMessage);
-            return "OK";
+            String errorMessage = String
+                    .format("Portico reported that there was an error uploading the documents [errorCode=%s, bookingReference=%s]: %s",
+                            StringUtils.trimToEmpty(errorCode), StringUtils.trimToEmpty(bookingReference),
+                            StringUtils.trimToEmpty(message));
+
+            log.warn(errorMessage);
+            
+            service.saveDocumentUploadError(bookingReference, errorCode, message);
+            
+            service.sendErrorMessageToSuperAdministrators(errorMessage);
+            
+            return OK;
         }
-        return "NOK";
+        return NOK;
     }
 }

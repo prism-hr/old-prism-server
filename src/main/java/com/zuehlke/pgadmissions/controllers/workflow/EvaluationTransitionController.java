@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.StateTransitionViewResolver;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
@@ -37,20 +36,17 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 @RequestMapping("/progress")
 public class EvaluationTransitionController extends StateTransitionController {
 
-    private final UclExportService uclExportService;
-    
-	EvaluationTransitionController() {
-		this(null, null, null, null, null, null, null, null, null, null, null);
+	public EvaluationTransitionController() {
+		this(null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public EvaluationTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
 			CommentFactory commentFactory, StateTransitionViewResolver stateTransitionViewResolver, EncryptionHelper encryptionHelper,
 			DocumentService documentService, ApprovalService approvalService, StateChangeValidator stateChangeValidator,
-			DocumentPropertyEditor documentPropertyEditor, UclExportService uclExportService) {
+			DocumentPropertyEditor documentPropertyEditor) {
 		super(applicationsService, userService, commentService, commentFactory, stateTransitionViewResolver, encryptionHelper, documentService,
 				approvalService, stateChangeValidator, documentPropertyEditor);
-		this.uclExportService = uclExportService;
 	}
 
 	@ModelAttribute("comment")

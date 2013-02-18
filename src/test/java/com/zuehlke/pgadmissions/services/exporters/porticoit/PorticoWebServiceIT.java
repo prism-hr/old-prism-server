@@ -8,7 +8,9 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -86,6 +88,8 @@ public class PorticoWebServiceIT {
     private String receivedApplicantId;
     
     private ApplicationForm randomApplicationForm;
+    
+    private static Set<String> USED_APPLICATION_NUMBERS = new HashSet<String>();
     
     @Before
     public void prepare() throws IOException {
@@ -722,7 +726,9 @@ public class PorticoWebServiceIT {
             if (numberOfReferees == 2) {
                 foundEnoughDataForReferees = true;
             }
-        } while (!(foundEnoughDataForQualifications && foundEnoughDataForReferees));
+        } while (!(foundEnoughDataForQualifications && foundEnoughDataForReferees && !USED_APPLICATION_NUMBERS.contains(applicationForm.getApplicationNumber())));
+        
+        USED_APPLICATION_NUMBERS.add(applicationForm.getApplicationNumber());
         
         applicationsService.save(applicationForm);
         
@@ -757,6 +763,7 @@ public class PorticoWebServiceIT {
             prismId = prismId.replace("2011", "2014");
             prismId = prismId.replace("2012", "2014");
             prismId = prismId.replace("2013", "2014");
+            prismId = prismId + "-2";
             request.getApplication().getCourseApplication().setExternalApplicationID(prismId);
             
             addFirstAndLastnameToCsvFile(request);

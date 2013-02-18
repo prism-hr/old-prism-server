@@ -753,6 +753,12 @@ public class PorticoWebServiceIT {
 //            request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
 //            request.getApplication().getApplicant().getCorrespondenceAddress().setEmail(randomEmail);
 
+            String prismId = request.getApplication().getCourseApplication().getExternalApplicationID();
+            prismId = prismId.replace("2011", "2014");
+            prismId = prismId.replace("2012", "2014");
+            prismId = prismId.replace("2013", "2014");
+            request.getApplication().getCourseApplication().setExternalApplicationID(prismId);
+            
             addFirstAndLastnameToCsvFile(request);
             
             String pPostFix = StringUtils.isNotBlank(postFix) ? "_" + postFix : postFix; 

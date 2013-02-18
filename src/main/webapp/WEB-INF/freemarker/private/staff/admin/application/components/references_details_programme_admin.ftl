@@ -28,16 +28,16 @@
             </#if>
         
             <#if !referee.hasResponded() && !referee.isDeclined()>
-                <#include "/private/staff/admin/application/components/reference_edit.ftl"/>
+                <#include "/private/staff/admin/application/components/reference_add.ftl"/>
             </#if>
         </div>
     </#list>
     
     <div id="referee_newReferee" style="display:none">
         <#assign encRefereeId = "newReferee" />
-        <#include "/private/staff/admin/application/components/referee_edit.ftl"/>
+        <#include "/private/staff/admin/application/components/referee_add.ftl"/>
         
-        <#include "/private/staff/admin/application/components/reference_edit.ftl"/>
+        <#include "/private/staff/admin/application/components/reference_add.ftl"/>
     </div>
 
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />

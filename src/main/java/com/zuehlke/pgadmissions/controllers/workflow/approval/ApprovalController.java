@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -64,7 +63,6 @@ public class ApprovalController {
     private static final String APPROVAL_PAGE = "/private/staff/supervisors/approval_details";
     private static final String QUALIFICATION_SECTION = "/private/staff/supervisors/components/qualification_portico_validation";
     private static final String REFERENCE_SECTION = "/private/staff/supervisors/components/reference_portico_validation";
-    private static final String CONFIRM_SUPERVISION_PAGE = "/private/staff/supervisors/confirm_supervision_page";
 
     private final ApplicationsService applicationsService;
 
@@ -357,20 +355,6 @@ public class ApprovalController {
         }
         approvalService.requestApprovalRestart(applicationForm, getUser(), comment);
         return "redirect:/applications?messageCode=request.approval.restart&application=" + applicationForm.getApplicationNumber();
-    }
-
-    @RequestMapping(value = "confirmSupervision", method = RequestMethod.GET)
-    public String confirmSupervision(ApplicationForm applicationForm) {
-        return CONFIRM_SUPERVISION_PAGE;
-    }
-
-    @RequestMapping(value = "applyConfirmSupervision", method = RequestMethod.GET)
-    public String applyConfirmSupervision(@ModelAttribute ApplicationForm applicationForm, @Valid ConfirmSupervisionDTO confirmSupervisionDTO,
-            BindingResult result) {
-        if (result.hasErrors()) {
-            return CONFIRM_SUPERVISION_PAGE;
-        }
-        return CONFIRM_SUPERVISION_PAGE;
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

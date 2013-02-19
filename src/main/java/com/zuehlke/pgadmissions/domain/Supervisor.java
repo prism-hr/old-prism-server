@@ -37,6 +37,12 @@ public class Supervisor implements Serializable {
 
     @Column(name = "is_primary")
     private Boolean isPrimary = false;
+    
+    @Column(name = "confirmed_supervision")
+    private Boolean confirmedSupervision = false;
+    
+    @Column(name = "declined_supervision_reason")
+    private String declinedSupervisionReason;
 
     public void setId(Integer id) {
         this.id = id;
@@ -77,5 +83,20 @@ public class Supervisor implements Serializable {
     public void setIsPrimary(Boolean isPrimary) {
         this.isPrimary = isPrimary;
     }
+    
+    public Boolean getConfirmedSupervision() {
+        return confirmedSupervision;
+    }
 
+    public void setConfirmedSupervision(Boolean confirmedSupervision) {
+        this.confirmedSupervision = confirmedSupervision;
+    }
+
+    public String getDeclinedSupervisionReason() {
+        return declinedSupervisionReason;
+    }
+
+    public void setDeclinedSupervisionReason(String declinedSupervisionReason) {
+        this.declinedSupervisionReason = declinedSupervisionReason;
+    }
 }

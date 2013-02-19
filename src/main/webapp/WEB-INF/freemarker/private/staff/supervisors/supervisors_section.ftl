@@ -114,7 +114,11 @@
             </div>
             
             <div class="row">
-                <label id="lbl_projectTitle" class="plain-label grey-label">Project Title</label>
+                <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
+                    <label id="lbl_projectTitle" class="plain-label grey-label">Project Title</label>
+                <#else>
+                    <label id="lbl_projectTitle" class="plain-label">Project Title<em>*</em></label>
+                </#if>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectTitle'/>"></span>
                 <div class="field">
                     <input class="max" type="text" name="projectTitle" id="projectTitle" 
@@ -136,7 +140,11 @@
             </div>
             
             <div class="row">
-                <label id="lbl_projectAbstract" class="plain-label grey-label">Project Abstract</label>
+                <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
+                    <label id="lbl_projectAbstract" class="plain-label grey-label">Project Abstract</label>
+                <#else>
+                    <label id="lbl_projectAbstract" class="plain-label">Project Abstract<em>*</em></label>
+                </#if>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
                 <div class="field">
                     <textarea class="max" cols="80" rows="6" name="projectAbstract" id="projectAbstract"

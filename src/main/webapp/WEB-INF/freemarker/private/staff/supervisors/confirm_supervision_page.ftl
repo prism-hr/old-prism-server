@@ -92,17 +92,40 @@
                                                 </div>
                                             </div>
                                             
+                                            <@spring.bind "confirmSupervisionDTO.confirmedSupervision" />
+                                            <#list spring.status.errorMessages as error >
+                                                <div class="row">
+                                                    <div class="field">
+                                                        <span class="invalid">${error}</span>
+                                                    </div>
+                                                </div>
+                                            </#list>
+                                            
                                             <div class="row">
-                                                <#if confirmSupervisionDTO.confirmedSupervision?? && !confirmSupervisionDTO.confirmedSupervision>
-                                                    <label id="lbl_declinedSupervisionReason" class="plain-label">Reason<em>*</em></label>
-                                                <#else>
+                                                <#if !confirmSupervisionDTO.confirmedSupervision?? || confirmSupervisionDTO.confirmedSupervision>
                                                     <label id="lbl_declinedSupervisionReason" class="plain-label grey-label">Reason</label>
+                                                <#else>
+                                                    <label id="lbl_declinedSupervisionReason" class="plain-label">Reason<em>*</em></label>
                                                 </#if>
                                                 <span class="hint" data-desc="<@spring.message 'confirmSupervision.reason'/>"></span>
                                                 <div class="field">
-                                                    <textarea id="declinedSupervisionReason" name="declinedSupervisionReason" class="max" cols="80" rows="6"></textarea>
+                                                    <textarea id="declinedSupervisionReason" name="declinedSupervisionReason" class="max" cols="80" rows="6"
+                                                        <#if !confirmSupervisionDTO.confirmedSupervision?? || confirmSupervisionDTO.confirmedSupervision>
+                                                            disabled="disabled"
+                                                        </#if>
+                                                    >${(confirmSupervisionDTO.declinedSupervisionReason?html)!}</textarea>
                                                 </div>
                                             </div>
+                                            
+                                            <@spring.bind "confirmSupervisionDTO.declinedSupervisionReason" />
+                                            <#list spring.status.errorMessages as error >
+                                                <div class="row">
+                                                    <div class="field">
+                                                        <span class="invalid">${error}</span>
+                                                    </div>
+                                                </div>
+                                            </#list>
+                                            
                                         </div>
 
                                         <div class="row-group">
@@ -161,15 +184,18 @@
                                                     <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6">${(confirmSupervisionDTO.projectAbstract?html)!}</textarea>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <@spring.bind "confirmSupervisionDTO.projectAbstract" />
-                                        <#list spring.status.errorMessages as error >
-                                            <div class="row">
-                                                <div class="field">
-                                                    <span class="invalid">${error}</span>
+                                            
+                                            <@spring.bind "confirmSupervisionDTO.projectAbstract" />
+                                            <#list spring.status.errorMessages as error >
+                                                <div class="row">
+                                                    <div class="field">
+                                                        <span class="invalid">${error}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </#list>
+                                            </#list>
+                                            
+                                        </div>
+                                        
 
                                         <div class="row-group">
                                             <div class="row">

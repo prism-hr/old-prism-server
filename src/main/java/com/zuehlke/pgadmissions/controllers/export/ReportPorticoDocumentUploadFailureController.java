@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.export;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +26,6 @@ public class ReportPorticoDocumentUploadFailureController {
 
     private static final String NOK = "NOK";
 
-    private Logger log = Logger.getLogger(ReportPorticoDocumentUploadFailureController.class);
-    
     private final ReportPorticoDocumentUploadFailureService service;
     
     private static final String PORTICO_UPLOAD_ACTIVATION_CODE = "6a219fb0-6acb-11e2-bcfd-0800200c9a66";
@@ -48,17 +45,7 @@ public class ReportPorticoDocumentUploadFailureController {
             @RequestParam(required = true) String errorCode, @RequestParam(required = true) String message,
             @RequestParam(required = true) String activationCode) {
         if (StringUtils.equals(PORTICO_UPLOAD_ACTIVATION_CODE, activationCode)) {
-            String errorMessage = String
-                    .format("Portico reported that there was an error uploading the documents [errorCode=%s, bookingReference=%s]: %s",
-                            StringUtils.trimToEmpty(errorCode), StringUtils.trimToEmpty(bookingReference),
-                            StringUtils.trimToEmpty(message));
-
-            log.warn(errorMessage);
-            
-            service.saveDocumentUploadError(bookingReference, errorCode, message);
-            
-            service.sendErrorMessageToSuperAdministrators(errorMessage);
-            
+            service.reportPorticoUploadError(bookingReference, errorCode, message);
             return OK;
         }
         return NOK;

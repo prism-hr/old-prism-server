@@ -40,7 +40,28 @@ public class ReportPorticoDocumentUploadFailureService {
     }
     
     @Transactional
-    public void saveDocumentUploadError(final String bookingReference, final String errorCode, final String message) {
+    public void reportPorticoUploadError(final String bookingReference, final String errorCode, final String message) {
+        ApplicationFormTransferError transferError = saveDocumentUploadError(bookingReference, errorCode, message);
+        
+        String errorMessage = String
+                .format("Portico reported that there was an error uploading the documents for application %s [errorCode=%s, bookingReference=%s]: %s",
+                        StringUtils.trimToEmpty(transferError.getTransfer().getApplicationForm().getApplicationNumber()),
+                        StringUtils.trimToEmpty(errorCode), 
+                        StringUtils.trimToEmpty(bookingReference),
+                        StringUtils.trimToEmpty(message));
+        
+        log.warn(errorMessage);
+
+        sendErrorMessageToSuperAdministrators(errorMessage);
+    }
+
+    @Transactional(readOnly = true)
+    private void sendErrorMessageToSuperAdministrators(final String message) {
+        this.dataExportMailSender.sendErrorMessage(message);
+    }
+    
+    @Transactional
+    private ApplicationFormTransferError saveDocumentUploadError(final String bookingReference, final String errorCode, final String message) {
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getByReceivedBookingReferenceNumber(bookingReference);
         if (transfer != null) {
             ApplicationFormTransferError transferError = new ApplicationFormTransferError();
@@ -52,16 +73,10 @@ public class ReportPorticoDocumentUploadFailureService {
             transferError.setTimepoint(new Date());
             transferError.setTransfer(transfer);
             applicationFormTransferErrorDAO.save(transferError);
+            return transferError;
         } else {
             log.warn(String.format("Couldn't find an existing transfer object for bookingReference: %s", bookingReference));
         }
-    }
-    
-    public void sendErrorMessageToSuperAdministrators(final String message, final Exception exception) {
-        this.dataExportMailSender.sendErrorMessage(message, exception);
-    }
-
-    public void sendErrorMessageToSuperAdministrators(final String message) {
-        this.dataExportMailSender.sendErrorMessage(message);
+        return null;
     }
 }

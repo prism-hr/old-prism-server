@@ -94,15 +94,21 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        refereesAdminEditDTO.setComment("comment text");
+        refereesAdminEditDTO.setEditedRefereeId("refereeId");
+        refereesAdminEditDTO.setSuitableForProgramme(true);
+        refereesAdminEditDTO.setSuitableForUCL(false);
+        
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
 
         Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expectLastCall();
-        EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("refereeId");
         EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(referenceComment);
         refereeServiceMock.refresh(referee);
         EasyMock.expectLastCall();
@@ -182,9 +188,14 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
 
         RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
+        refereesAdminEditDTO.setEditedRefereeId("refereeId");
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
+        
+        Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
 
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
 
         refereeServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoDataDTO.getRefereesSendToPortico());
@@ -226,9 +237,10 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expectLastCall();
-        EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("refereeId");
         EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(referenceComment);
         refereeServiceMock.refresh(referee);
         EasyMock.expectLastCall();
@@ -263,10 +275,14 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         refereesAdminEditDTO.setSuitableForProgramme(true);
         refereesAdminEditDTO.setSuitableForUCL(false);
 
+        Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
+        
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         result.reject("error");
         Model model = new ExtendedModelMap();
 
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expectLastCall();
 

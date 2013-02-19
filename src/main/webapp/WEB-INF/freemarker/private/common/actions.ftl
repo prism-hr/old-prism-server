@@ -38,7 +38,10 @@
         <#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL') && !application.isPendingApprovalRestart()>
             <option value="validate">Approve</option>
         </#if>
-        <#if user.isSupervisorOfApplicationForm(application) && application.isInState('APPROVAL')> 
-            <option value="confirmSupervision">Confirm Supervision</option>
+        <#if application.isInState('APPROVAL')>
+            <#assign primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor()>
+            <#if primarySupervisor?? && user == primarySupervisor.getUser() && !primarySupervisor.confirmedSupervision??> 
+                <option value="confirmSupervision">Confirm Supervision</option>
+            </#if>
         </#if>
 </select>

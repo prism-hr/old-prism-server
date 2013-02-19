@@ -39,7 +39,7 @@ public class Supervisor implements Serializable {
     private Boolean isPrimary = false;
     
     @Column(name = "confirmed_supervision")
-    private Boolean confirmedSupervision = false;
+    private Boolean confirmedSupervision;
     
     @Column(name = "declined_supervision_reason")
     private String declinedSupervisionReason;

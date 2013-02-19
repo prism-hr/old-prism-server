@@ -72,8 +72,6 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
     private String targetFolder = "/home/prism";
     
     private int consecutiveSoapFaultsLimit = 5;
-
-    private int queuePausingDelayInCaseOfNetworkProblemsDiscovered = 15;
     
 	private boolean hasBeenCalled = false;
 
@@ -158,7 +156,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, dataExportMailSenderMock);
+                attachmentsSendingService, dataExportMailSenderMock);
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(), listener);
 
@@ -233,7 +231,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, dataExportMailSenderMock);
+                attachmentsSendingService, dataExportMailSenderMock);
 
 
         exportService.transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(), listener);
@@ -248,7 +246,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationFormTransfer applicationFormTransfer = exportService.createPersistentQueueItem(applicationForm);
         
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
-                applicationFormTransferErrorDAO, 0, queuePausingDelayInCaseOfNetworkProblemsDiscovered,
+                applicationFormTransferErrorDAO, 0,
                 attachmentsSendingService, dataExportMailSenderMock);
 
         SoapFault mockFault = EasyMock.createMock(SoapFault.class);
@@ -331,7 +329,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, dataExportMailSenderMock) {
+                attachmentsSendingService, dataExportMailSenderMock) {
         	@Override
         	public void transactionallyExecuteSftpTransferAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
         		hasBeenCalled = true;
@@ -397,7 +395,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, dataExportMailSenderMock);
+                sftpAttachmentsSendingService, dataExportMailSenderMock);
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(LocallyDefinedSshConfigurationIsWrong.class));
         
@@ -470,7 +468,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, dataExportMailSenderMock);
+                sftpAttachmentsSendingService, dataExportMailSenderMock);
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(CouldNotOpenSshConnectionToRemoteHost.class));
         
@@ -554,7 +552,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, dataExportMailSenderMock);
+                sftpAttachmentsSendingService, dataExportMailSenderMock);
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SftpTransmissionFailedOrProtocolError.class));
         
@@ -639,7 +637,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
         
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, dataExportMailSenderMock);
+                sftpAttachmentsSendingService, dataExportMailSenderMock);
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SftpTargetDirectoryNotAccessible.class));
         
@@ -727,7 +725,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingService, dataExportMailSenderMock);
+                sftpAttachmentsSendingService, dataExportMailSenderMock);
 
         dataExportMailSenderMock.sendErrorMessage(EasyMock.anyObject(String.class), EasyMock.isA(SftpTransmissionFailedOrProtocolError.class));
         
@@ -788,7 +786,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingServiceMock, dataExportMailSenderMock);
+                sftpAttachmentsSendingServiceMock, dataExportMailSenderMock);
 
         sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener);
 
@@ -856,7 +854,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, sftpAttachmentsSendingServiceMock, dataExportMailSenderMock);
+                sftpAttachmentsSendingServiceMock, dataExportMailSenderMock);
 
         EasyMock.expect(sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener)).andReturn("abc.zip");
 
@@ -892,7 +890,7 @@ public class UclExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService = new UclExportService(webServiceTemplateMock, applicationFormTransferDAO,
                 applicationFormTransferErrorDAO, consecutiveSoapFaultsLimit,
-                queuePausingDelayInCaseOfNetworkProblemsDiscovered, attachmentsSendingService, 
+                attachmentsSendingService, 
                 dataExportMailSenderMock);
         
         hasBeenCalled = false;

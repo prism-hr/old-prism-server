@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.zuehlke.pgadmissions.domain.Address;
 
-public class AddressUtils {
+public final class AddressUtils {
 
     private AddressUtils() {
     }

@@ -84,7 +84,7 @@ public class PdfDocumentBuilder {
             
             PdfPTable table = new PdfPTable(1);
             table.setWidthPercentage(100f);
-            table.addCell(newTableCell("Referee Comment", boldFont, BaseColor.GRAY));
+            table.addCell(newGrayTableCell("Referee Comment", boldFont));
             document.add(table);
             document.add(new Paragraph(" "));
             
@@ -154,7 +154,7 @@ public class PdfDocumentBuilder {
             
             PdfPTable table = new PdfPTable(1);
             table.setWidthPercentage(100f);
-            table.addCell(newTableCell("No Transcripts Provided", boldFont, BaseColor.GRAY));
+            table.addCell(newGrayTableCell("No Transcripts Provided", boldFont));
             document.add(table);
             document.add(new Paragraph(" "));
             
@@ -256,7 +256,7 @@ public class PdfDocumentBuilder {
 
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("APPLICATION", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("APPLICATION", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
         table = new PdfPTable(2);
@@ -283,7 +283,7 @@ public class PdfDocumentBuilder {
     private void addProgrammeSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("PROGRAMME", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("PROGRAMME", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -381,7 +381,7 @@ public class PdfDocumentBuilder {
         return cell;
     }
 
-    private PdfPCell newTableCell(String content, Font font, BaseColor backgrounColor) {
+    private PdfPCell newGrayTableCell(String content, Font font) {
         PdfPCell c1 = newTableCell(content, font);
         c1.setBackgroundColor(grayColor);
         return c1;
@@ -403,7 +403,7 @@ public class PdfDocumentBuilder {
     private void addPersonalDetailsSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("PERSONAL DETAILS", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("PERSONAL DETAILS", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -633,7 +633,7 @@ public class PdfDocumentBuilder {
     private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("ADDRESS", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("ADDRESS", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
         table = new PdfPTable(2);
@@ -672,7 +672,7 @@ public class PdfDocumentBuilder {
     private void addQualificationSection(ApplicationForm application, Document document) throws DocumentException, IOException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("QUALIFICATIONS", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("QUALIFICATIONS", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -756,7 +756,7 @@ public class PdfDocumentBuilder {
     private void addEmploymentSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("EMPLOYMENT", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("EMPLOYMENT", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -816,7 +816,7 @@ public class PdfDocumentBuilder {
     private void addFundingSection(ApplicationForm application, Document document) throws DocumentException, IOException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("FUNDING", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("FUNDING", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -860,7 +860,7 @@ public class PdfDocumentBuilder {
     private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("REFERENCES", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("REFERENCES", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -926,7 +926,7 @@ public class PdfDocumentBuilder {
     private void addDocumentsSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("DOCUMENTS", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("DOCUMENTS", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -956,7 +956,7 @@ public class PdfDocumentBuilder {
     private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("ADDITIONAL INFORMATION", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("ADDITIONAL INFORMATION", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -1027,7 +1027,7 @@ public class PdfDocumentBuilder {
                 document.add(new Paragraph(" "));
                 PdfPTable table = new PdfPTable(1);
                 table.setWidthPercentage(100f);
-                table.addCell(newTableCell("REFERENCE", boldFont, BaseColor.GRAY));
+                table.addCell(newGrayTableCell("REFERENCE", boldFont));
                 document.add(table);
                 document.add(new Paragraph(" "));
                 table = new PdfPTable(2);

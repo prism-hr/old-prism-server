@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -22,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 @Service("applicationsService")
 public class ApplicationsService {
 	
-    public final static int APPLICATION_BLOCK_SIZE = 50;
+    public static final int APPLICATION_BLOCK_SIZE = 50;
     
 	private final ApplicationFormDAO applicationFormDAO;
 	

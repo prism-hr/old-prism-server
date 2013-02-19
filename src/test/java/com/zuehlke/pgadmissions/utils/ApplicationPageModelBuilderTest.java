@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
@@ -40,7 +39,6 @@ public class ApplicationPageModelBuilderTest {
 	private RegisteredUser userMock;
 	private CountryService countryServiceMock;
 	private LanguageService languageServiceMock;
-	private CommentService commentServiceMock;
 	private SourcesOfInterestService sourcesOfInterestServiceMock; 
 	private ApplicationPageModelBuilder builder;
 	private UsernamePasswordAuthenticationToken authenticationToken;
@@ -152,10 +150,9 @@ public class ApplicationPageModelBuilderTest {
 
 		countryServiceMock = EasyMock.createMock(CountryService.class);
 		languageServiceMock = EasyMock.createMock(LanguageService.class);
-		commentServiceMock = EasyMock.createMock(CommentService.class);
 		sourcesOfInterestServiceMock = EasyMock.createMock(SourcesOfInterestService.class);
 
-		builder = new ApplicationPageModelBuilder(commentServiceMock, countryServiceMock, languageServiceMock, sourcesOfInterestServiceMock);
+		builder = new ApplicationPageModelBuilder(countryServiceMock, languageServiceMock, sourcesOfInterestServiceMock);
 	}
 
 	@After

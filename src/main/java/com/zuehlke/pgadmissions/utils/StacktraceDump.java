@@ -5,7 +5,7 @@ import java.io.StringWriter;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
-public class StacktraceDump {
+public final class StacktraceDump {
 
     private StacktraceDump() {
     }

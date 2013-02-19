@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.errors.ValidationErrorsUtil;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
@@ -24,17 +23,15 @@ public class ApplicationPageModelBuilder {
 
 	private final CountryService countryService;
 	private final LanguageService languageService;
-	private final CommentService commentService;
 	private final SourcesOfInterestService sourcesOfInterestService;
 
 	ApplicationPageModelBuilder() {
-		this(null, null, null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public ApplicationPageModelBuilder(CommentService commentService, CountryService countryService, 
-	        LanguageService languageService, SourcesOfInterestService sourcesOfInterestService) {
-		this.commentService = commentService;
+    public ApplicationPageModelBuilder(CountryService countryService, LanguageService languageService,
+            SourcesOfInterestService sourcesOfInterestService) {
 		this.countryService = countryService;
 		this.languageService = languageService;
 		this.sourcesOfInterestService = sourcesOfInterestService;

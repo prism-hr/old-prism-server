@@ -5,8 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Component;
-
 
 @Component
 public class DatePropertyEditor extends PropertyEditorSupport {
@@ -17,16 +17,12 @@ public class DatePropertyEditor extends PropertyEditorSupport {
             setValue(null);
             return;
         }
+        
         try {
-            setValue(new SimpleDateFormat("dd-MMM-yyyy").parse(strDate));
+            setValue(DateUtils.parseDate(strDate, new String[] {"dd-MMM-yyyy", "dd MMM yyyy"}));
         } catch (ParseException e) {
-            try {
-                setValue(new SimpleDateFormat("dd MMM yyyy").parse(strDate));
-            } catch (ParseException e1) {
-                throw new IllegalArgumentException(e1);
-            }
+            throw new IllegalArgumentException(e);
         }
-
     }
 
     @Override

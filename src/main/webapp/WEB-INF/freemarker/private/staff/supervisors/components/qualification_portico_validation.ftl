@@ -32,17 +32,20 @@
                 </span>
             </div>
         <#else>
-            <div class="section-info-bar">
                 <#if sendToPorticoData.emptyQualificationsExplanation??>
-                    Explain why no transcripts have been not selected to submit for offer processing.
-                <#else>            
-                    <#if anyQualificationEnabled>
-                        Select a maximum of two qualification transcripts to submit for offer processing.
-                    <#else>
-                        It looks like you wish to approve an applicant that has no known qualifications containing transcripts. Please explain why you wish to do this.
-                    </#if>
+                    <div class="section-info-bar" style="color:blue">
+                        Explain why no transcripts have been not selected to submit for offer processing.
+                    </div>
+                <#else>
+                    <div class="section-info-bar">            
+                        <#if anyQualificationEnabled>
+                            Select a maximum of two qualification transcripts to submit for offer processing.
+                        <#else>
+                            It looks like you wish to approve an applicant that has no known qualifications containing transcripts. Please explain why you wish to do this.
+                        </#if>
+                    </div>
                 </#if>
-            </div>
+            
         </#if>
         
         <div class="row-group" id="explanationArea" style="display:none">

@@ -156,7 +156,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
         }
         
-        if(editedRefereeId != null){
+        if (!"newReferee".equals(editedRefereeId)) {
             Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
             Referee referee = refereeService.getRefereeById(decryptedId);
             if(referee.getReference() != null){

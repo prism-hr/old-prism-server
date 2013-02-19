@@ -218,7 +218,7 @@
 
             <!-- Attachment / supporting document -->
             <div class="row">
-                <span id="lbl-languageQualificationDocument" class="plain-label grey-label">Certificate (PDF)</span>
+                <span id="lbl-languageQualificationDocument" class="plain-label grey-label">Certificate (PDF)<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.pdf'/>"></span>
                 <div class="field <#if personalDetails.languageQualifications[0].languageQualificationDocument??>uploaded</#if>" id="uploadFields">                      
                     <input id="languageQualificationDocument" data-type="LANGUAGE_QUALIFICATION" data-reference="Language Qualification" class="full" type="file" name="file" value="" disabled="disabled" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>                    
@@ -233,4 +233,8 @@
                     <span class="progress" style="display: none;"></span>                   
                 </div>                  
             </div>
+            <@spring.bind "personalDetails.languageQualifications[0].languageQualificationDocument" />
+            <#list spring.status.errorMessages as error>
+                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
+            </#list>
             

@@ -56,7 +56,7 @@ public class UclExportService {
     private final DataExportMailSender dataExportMailSender;
     
     public UclExportService() {
-        this(null, null, null, 0, 0, null, null);
+        this(null, null, null, 0, null, null);
     }
     
     @Autowired
@@ -65,7 +65,6 @@ public class UclExportService {
             ApplicationFormTransferDAO applicationFormTransferDAO,
             ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO, 
             @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}") int consecutiveSoapFaultsLimit,
-            @Value("${xml.data.export.queue_pausing_delay_in_case_of_network_problem}") int queuePausingDelayInCaseOfNetworkProblemsDiscovered,
             SftpAttachmentsSendingService sftpAttachmentsSendingService,
             DataExportMailSender dataExportMailSender) {
         super();

@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.interceptors;
 
 import javax.crypto.SecretKey;
 
-public class KeyContextHolder {
+public final class KeyContextHolder {
 	
     private KeyContextHolder() {
     }

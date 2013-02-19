@@ -21,9 +21,9 @@ public class EncryptionUtils {
     
     private static final String DEFAULT_HASH_ALGORITHM = "MD5";
     
-	private final static int PASSWORD_LENGTH = 8;
+	private static final int PASSWORD_LENGTH = 8;
 	
-    public final static char[] DEFAULT_CHARACTER_SET = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n',
+    public static final char[] DEFAULT_CHARACTER_SET = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n',
             'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K',
             'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9' };

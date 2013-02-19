@@ -63,7 +63,7 @@ public class PausableHibernateCompatibleSequentialTaskExecutor implements Execut
     }
 
     public PausableHibernateCompatibleSequentialTaskExecutor(String name) {
-        this.setName(name);
+        this.name = name;
         queueConsumer.start();
     }
 

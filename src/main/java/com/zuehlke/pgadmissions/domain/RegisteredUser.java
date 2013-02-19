@@ -274,10 +274,8 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
 			return true;
 		}
 		
-		if (isInRole(Authority.ADMINISTRATOR)) {
-			if (listContainsId(this, applicationForm.getProgram().getAdministrators())) {
-				return true;
-			}
+		if (isInRole(Authority.ADMINISTRATOR) && listContainsId(this, applicationForm.getProgram().getAdministrators())) {
+		    return true;
 		}
 
 		if (applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
@@ -306,15 +304,13 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
 			}
 		}
 		
-		if (isInRole(Authority.APPROVER) && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
-			if (applicationForm.getProgram().isApprover(this)) {
-				return true;
-			}
+		if (isInRole(Authority.APPROVER) && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL && applicationForm.getProgram().isApprover(this)) {
+		    return true;
 		}
 
 		if (isInRole(Authority.REFEREE)) {
-			List<Referee> referees = applicationForm.getReferees();
-			for (Referee referee : referees) {
+			List<Referee> refereesList = applicationForm.getReferees();
+			for (Referee referee : refereesList) {
 				if (!referee.isDeclined() && referee.getUser() != null) {
 					if (referee.getUser().getId().equals(this.getId()) || (listContainsId(referee, this.getReferees()))) {
 						return true;
@@ -815,19 +811,19 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     }
     
     public List<RegisteredUser> getAllLinkedAccounts() {
-        List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
+        List<RegisteredUser> linkedAccountsList = new ArrayList<RegisteredUser>();
         
         if (this.primaryAccount == null) {
-            linkedAccounts.addAll(getLinkedAccounts());
+            linkedAccountsList.addAll(getLinkedAccounts());
         } else {
-            linkedAccounts.add(getPrimaryAccount());
+            linkedAccountsList.add(getPrimaryAccount());
             for (RegisteredUser u : getPrimaryAccount().getLinkedAccounts()) {
                 if (!u.getId().equals(this.id)) {
-                    linkedAccounts.add(u);
+                    linkedAccountsList.add(u);
                 }
             }
         }
-        return linkedAccounts;
+        return linkedAccountsList;
     }
 
     public void setLinkedAccounts(List<RegisteredUser> linkedAccounts) {

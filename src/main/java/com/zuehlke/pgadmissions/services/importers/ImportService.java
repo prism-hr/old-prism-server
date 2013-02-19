@@ -67,8 +67,8 @@ public class ImportService {
 		}
 	}
 
-	public final static CodeComparator codeComparator = new CodeComparator();
-	private final static ProgramComparator programComparator = new ProgramComparator();
+	public static final CodeComparator codeComparator = new CodeComparator();
+	private static final ProgramComparator programComparator = new ProgramComparator();
 
 	// Requires RandomAccess lists to run fast
 	@SuppressWarnings({ "unchecked", "rawtypes" })

@@ -78,11 +78,11 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     private static final String REFER_TO_ATTACHED_DOCUMENT = "Refer to attached document.";
 
-    private final static String SOURCE_IDENTIFIER = "PRISM";
+    private static final String SOURCE_IDENTIFIER = "PRISM";
 
-    private final static String PHONE_NUMBER_NOT_PROVIDED_VALUE = "+44 (0) 0000 000 000";
+    private static final String PHONE_NUMBER_NOT_PROVIDED_VALUE = "+44 (0) 0000 000 000";
 
-    private final static String LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE = 
+    private static final String LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE = 
             "Application predates mandatory language qualification. Please check qualifications for potential language certificates.";
     
     private final ObjectFactory xmlFactory;

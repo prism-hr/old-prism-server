@@ -39,6 +39,7 @@ public class LoginControllerTest {
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programhome")).andReturn(new String[]{"programhome"});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programDeadline")).andReturn(new String[]{"programDeadline"});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("projectTitle")).andReturn(new String[]{"projectTitle"});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(null).anyTimes();
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);		
 		loginController.getLoginPage(request, new MockHttpServletResponse());
@@ -56,6 +57,7 @@ public class LoginControllerTest {
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programhome")).andReturn(new String[]{});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("programDeadline")).andReturn(new String[]{});
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("projectTitle")).andReturn(new String[]{});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(null).anyTimes();
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	
 		loginController.getLoginPage(request, new MockHttpServletResponse() );
@@ -76,7 +78,6 @@ public class LoginControllerTest {
 		loginController.getLoginPage(request, new MockHttpServletResponse());
 		
 		assertNull(session.getAttribute("applyRequest"));
-		assertEquals(session.getAttribute("applyRequestClicks"), 0);
 	}
 	
 	@Test
@@ -114,7 +115,6 @@ public class LoginControllerTest {
         
         assertEquals("ked@zuhlke.com", session.getAttribute("loginUserEmail"));
         assertNull(session.getAttribute("applyRequest"));
-        assertEquals(session.getAttribute("applyRequestClicks"), 0);
     }
 	
 	@Test

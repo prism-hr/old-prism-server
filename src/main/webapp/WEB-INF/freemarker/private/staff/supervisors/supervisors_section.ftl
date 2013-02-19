@@ -210,7 +210,11 @@
             </div>
             
             <div class="row">
-                <label id="lbl_offerConditions" class="plain-label grey-label">Recommended Conditions</label>
+                <#if  !approvalRound.recommendedConditionsAvailable?? || !approvalRound.recommendedConditionsAvailable >
+                    <label id="lbl_offerConditions" class="plain-label grey-label">Recommended Conditions</label>
+                <#else>
+                    <label id="lbl_offerConditions" class="plain-label">Recommended Conditions <em>*</em></label>
+                </#if>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
                 <div class="field">
                     <textarea class="max" cols="80" rows="6" name="offerConditions" id="offerConditions"

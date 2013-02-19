@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -108,6 +109,24 @@ public class ApprovalRound implements Serializable {
             }
         }
     }
+    
+    public Supervisor getPrimarySupervisor() {
+        for (Supervisor supervisor : supervisors) {
+            if (BooleanUtils.isTrue(supervisor.getIsPrimary())) {
+                return supervisor;
+            }
+        }
+        return null;
+    }
+    
+    public Supervisor getSecondarySupervisor() {
+        for (Supervisor supervisor : supervisors) {
+            if (BooleanUtils.isNotTrue(supervisor.getIsPrimary())) {
+                return supervisor;
+            }
+        }
+        return null;
+    }
 
     public Boolean getProjectDescriptionAvailable() {
         return projectDescriptionAvailable;
@@ -148,7 +167,7 @@ public class ApprovalRound implements Serializable {
     public void setRecommendedConditionsAvailable(Boolean recommendedConditionsAvailable) {
         this.recommendedConditionsAvailable = recommendedConditionsAvailable;
     }
-
+    
     public String getRecommendedConditions() {
         return recommendedConditions;
     }

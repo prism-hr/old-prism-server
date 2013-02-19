@@ -379,7 +379,7 @@
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
                             <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate" />             
                         <#else>
-                            <input class="half date" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate"/>
+                            <input class="half date" readonly="readonly" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate"/>
                         </#if>    
                     </div>               
                 </div>
@@ -399,7 +399,7 @@
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
                             <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate" />             
                         <#else>
-                            <input class="half date" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate"/>
+                            <input class="half date" readonly="readonly" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate"/>
                         </#if>    
                     </div>               
                 </div>

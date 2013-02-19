@@ -385,19 +385,17 @@ function enablePassportInformation() {
 	$("#lbl_nameOnPassport").html("Name on Passport<em>*</em>");
 	
 	$("#passportIssueDate").removeAttr("disabled", "disabled");
-	$("#passportIssueDate").removeAttr("readonly", "readonly");
 	$("#lbl_passportIssueDate").removeClass("grey-label");
 	$("#lbl_passportIssueDate").html("Passport Issue Date<em>*</em>");
 	
 	$("#passportExpiryDate").removeAttr("disabled", "disabled");
-	$("#passportExpiryDate").removeAttr("readonly", "readonly");
 	$("#lbl_passportExpiryDate").removeClass("grey-label");
 	$("#lbl_passportExpiryDate").html("Passport Expiry Date<em>*</em>");	
 }
 
 function enableLanguageQualifications() {
 	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").removeAttr("disabled", "disabled");
-	$("#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").removeAttr("readonly", "readonly");
+	$("#qualificationType, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument").removeAttr("readonly", "readonly");
 	
 	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').removeAttr("disabled", "disabled");
 	$('#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect').removeAttr("readonly", "readonly");

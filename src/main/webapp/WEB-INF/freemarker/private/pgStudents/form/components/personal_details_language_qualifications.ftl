@@ -46,7 +46,7 @@
                 <span class="hint" data-desc="<@spring.message 'personalDetails.languageQualification.date'/>"></span>
                 <div class="field">
                     <#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
-                        <input class="half date" value="${(personalDetails.languageQualifications[0].dateOfExamination?string('dd MMM yyyy'))!}" name="dateOfExamination" id="dateOfExamination" readonly="readonly" disabled="disabled"/>                      
+                        <input class="half date" readonly="readonly" value="${(personalDetails.languageQualifications[0].dateOfExamination?string('dd MMM yyyy'))!}" name="dateOfExamination" id="dateOfExamination" readonly="readonly" disabled="disabled"/>                      
                     <#else>
                         <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.languageQualifications[0].dateOfExamination?string('dd MMM yyyy'))!}" name="dateOfExamination" id="dateOfExamination" />
                     </#if>    

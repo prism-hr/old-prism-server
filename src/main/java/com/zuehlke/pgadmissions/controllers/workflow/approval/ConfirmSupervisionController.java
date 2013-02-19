@@ -49,6 +49,7 @@ import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
+import com.zuehlke.pgadmissions.validators.ConfirmSupervisionDTOValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
@@ -67,43 +68,46 @@ public class ConfirmSupervisionController {
 
     private final DatePropertyEditor datePropertyEditor;
 
+    private final ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator;
+
     public ConfirmSupervisionController() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
     public ConfirmSupervisionController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-            DatePropertyEditor datePropertyEditor) {
+            DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;
         this.datePropertyEditor = datePropertyEditor;
+        this.confirmSupervisionDTOValidator = confirmSupervisionDTOValidator;
     }
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (application == null//
-                || (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()//
-                        .isInRoleInProgram(Authority.APPROVER, application.getProgram()))) {
+                || application.getLatestApprovalRound().getPrimarySupervisor() == null
+                || getUser().getId() != application.getLatestApprovalRound().getPrimarySupervisor().getUser().getId()) {
             throw new ResourceNotFoundException();
         }
         return application;
     }
-    
+
     @ModelAttribute("confirmSupervisionDTO")
-    public ConfirmSupervisionDTO getConfirmSupervisionDTO(@RequestParam String applicationId){
+    public ConfirmSupervisionDTO getConfirmSupervisionDTO(@RequestParam String applicationId) {
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
-        
+
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         ApprovalRound approvalRound = applicationForm.getLatestApprovalRound();
-        
+
         confirmSupervisionDTO.setProjectTitle(approvalRound.getProjectTitle());
         confirmSupervisionDTO.setProjectAbstract(approvalRound.getProjectAbstract());
         confirmSupervisionDTO.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
         confirmSupervisionDTO.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
         confirmSupervisionDTO.setRecommendedConditions(approvalRound.getRecommendedConditions());
-        
+
         return confirmSupervisionDTO;
     }
 
@@ -112,14 +116,20 @@ public class ConfirmSupervisionController {
         return userService.getCurrentUser();
     }
 
+    @InitBinder("confirmSupervisionDTO")
+    public void registerValidatorAndPropertyEditorForApprovalRound(WebDataBinder binder) {
+        binder.setValidator(confirmSupervisionDTOValidator);
+        binder.registerCustomEditor(Date.class, datePropertyEditor);
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
+    }
+
     @RequestMapping(value = "confirmSupervision", method = RequestMethod.GET)
     public String confirmSupervision(ApplicationForm applicationForm) {
         return CONFIRM_SUPERVISION_PAGE;
     }
 
     @RequestMapping(value = "applyConfirmSupervision", method = RequestMethod.POST)
-    public String applyConfirmSupervision(ApplicationForm applicationForm, @Valid ConfirmSupervisionDTO confirmSupervisionDTO,
-            BindingResult result) {
+    public String applyConfirmSupervision(ApplicationForm applicationForm, @Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result) {
         if (result.hasErrors()) {
             return CONFIRM_SUPERVISION_PAGE;
         }

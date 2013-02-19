@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -63,25 +64,41 @@ public class ApprovalController {
     private static final String APPROVAL_PAGE = "/private/staff/supervisors/approval_details";
     private static final String QUALIFICATION_SECTION = "/private/staff/supervisors/components/qualification_portico_validation";
     private static final String REFERENCE_SECTION = "/private/staff/supervisors/components/reference_portico_validation";
+    private static final String CONFIRM_SUPERVISION_PAGE = "/private/staff/supervisors/confirm_supervision_page";
 
     private final ApplicationsService applicationsService;
+
     private final UserService userService;
+
     private final ApprovalRoundValidator approvalRoundValidator;
+
     private final SupervisorPropertyEditor supervisorPropertyEditor;
+
     private final ApprovalService approvalService;
+
     private final DocumentPropertyEditor documentPropertyEditor;
+
     private final GenericCommentValidator commentValidator;
+
     private final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
+
     private final QualificationService qualificationService;
+
     private final RefereeService refereeService;
+
     private final EncryptionHelper encryptionHelper;
+
     private final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
+
     private final SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator;
+
     private final DatePropertyEditor datePropertyEditor;
+
     private final CountryService countryService;
+
     private final CountryPropertyEditor countryPropertyEditor;
 
-    ApprovalController() {
+    public ApprovalController() {
         this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
@@ -287,11 +304,11 @@ public class ApprovalController {
         if (refereesSendToPortico != null) {
             refereeService.selectForSendingToPortico(applicationForm, refereesSendToPortico);
         }
-        
-        if(editedRefereeId != null){
+
+        if (!"newReferee".equals(editedRefereeId)) {
             Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
             Referee referee = refereeService.getRefereeById(decryptedId);
-            if(referee.getReference() != null){
+            if (referee.getReference() != null) {
                 return REFERENCE_SECTION;
             }
         }
@@ -342,6 +359,20 @@ public class ApprovalController {
         return "redirect:/applications?messageCode=request.approval.restart&application=" + applicationForm.getApplicationNumber();
     }
 
+    @RequestMapping(value = "confirmSupervision", method = RequestMethod.GET)
+    public String confirmSupervision(ApplicationForm applicationForm) {
+        return CONFIRM_SUPERVISION_PAGE;
+    }
+
+    @RequestMapping(value = "applyConfirmSupervision", method = RequestMethod.GET)
+    public String applyConfirmSupervision(@ModelAttribute ApplicationForm applicationForm, @Valid ConfirmSupervisionDTO confirmSupervisionDTO,
+            BindingResult result) {
+        if (result.hasErrors()) {
+            return CONFIRM_SUPERVISION_PAGE;
+        }
+        return CONFIRM_SUPERVISION_PAGE;
+    }
+
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {
             if (entry.getId().equals(user.getId())) {
@@ -350,5 +381,4 @@ public class ApprovalController {
         }
         return false;
     }
-
 }

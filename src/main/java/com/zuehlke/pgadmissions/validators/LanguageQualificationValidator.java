@@ -24,6 +24,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "speakingScore", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "listeningScore", "text.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examTakenOnline", "text.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "languageQualificationDocument", "file.upload.empty");
         
         LanguageQualification qualification = (LanguageQualification) target;
         if (qualification == null) {

@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
@@ -16,8 +17,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Controller
 @RequestMapping("/login")
 public class LoginController {
-
-    private static final String APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE = "applyRequestClicks";
 
     private static final String APPLY_REQUEST_SESSION_ATTRIBUTE = "applyRequest";
 
@@ -43,16 +42,17 @@ public class LoginController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String getLoginPage(HttpServletRequest request, HttpServletResponse response) {
 		String returnPage = LOGIN_PAGE;
+
+		String referrer = request.getHeader("referer");
 		HttpSession session = request.getSession();
 		DefaultSavedRequest attribute = (DefaultSavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
 		
-		if (attribute != null && attribute.getRequestURL() != null && attribute.getRequestURL().endsWith("/apply/new")) {
-		    session.setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, composeQueryString(attribute));
-			returnPage = REGISTER_USER_REDIRECT;
-			increaseNumberOfClicks(session);
-			clearUserEmailInSession(session);
+		if (StringUtils.contains(referrer, "register") && StringUtils.contains(request.getRequestURI().toString(), "/login")) {
+		    returnPage = LOGIN_PAGE;
+		    clearUserEmailInSession(session);
+            clearApplyRequestInSession(session);
 		} else if (attribute != null && attribute.getRequestURL() != null && attribute.getParameterValues(ACTIVATION_CODE_URL_PARAMETER) != null) {
-		    // Kevin: When a user follows a link in a notification and launches the login form: Prepopulate the Email Address field on the login form.
+		    // When a user follows a link in a notification and launches the login form: populate the email address field on the login form.
 		    String[] activationCodeValues = attribute.getParameterValues(ACTIVATION_CODE_URL_PARAMETER);
 		    if (activationCodeValues.length == 1) {
 		        String activationCode = activationCodeValues[0];
@@ -62,16 +62,16 @@ public class LoginController {
 		        }
 		    }
 		    clearApplyRequestInSession(session);
+		} else if (attribute != null && StringUtils.contains(attribute.getRequestURL(), "/apply/new")) {
+            session.setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, composeQueryString(attribute));
+            returnPage = REGISTER_USER_REDIRECT;
+            clearUserEmailInSession(session);
 		} else {
 		    clearUserEmailInSession(session);
 		    clearApplyRequestInSession(session);
 		}
 		
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		
-		if (getNumberOfClicks(session) > 1) {
-            returnPage = LOGIN_PAGE;
-        }
 		
 		return returnPage;
 	}
@@ -82,26 +82,8 @@ public class LoginController {
 	
 	private void clearApplyRequestInSession(HttpSession session) {
 	    session.setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, null);
-        session.setAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE, Integer.valueOf(0));
 	}
 	
-	private void increaseNumberOfClicks(final HttpSession session) {
-	    Integer numberOfClicks = (Integer) session.getAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE);
-	    if (numberOfClicks == null) {
-	        session.setAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE, Integer.valueOf(1));
-	    } else {
-	        session.setAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE, Integer.valueOf((((Integer) session.getAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE)) + 1)));
-	    }
-	}
-	
-	private int getNumberOfClicks(final HttpSession session) {
-	    Integer numberOfClicks = (Integer) session.getAttribute(APPLY_REQUEST_CLICKS_SESSION_ATTRIBUTE);
-        if (numberOfClicks == null) {
-            return 0;
-        }
-        return numberOfClicks;
-	}
-
 	private String composeQueryString(DefaultSavedRequest savedRequest) {
 		StringBuilder sb = new StringBuilder();
 		String[] programIds = savedRequest.getParameterValues("program");

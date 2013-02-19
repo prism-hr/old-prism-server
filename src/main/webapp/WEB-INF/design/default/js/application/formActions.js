@@ -389,6 +389,9 @@ function loadAddresSection(clear){
 					$('#contactAddressLocation').removeAttr('disabled');
 					$('#contactAddressCountry').val('');
 					$('#contactAddressCountry').removeAttr('disabled');
+					$('#currentAddress1, #currentAddress2, #currentAddress3, #currentAddress4, #currentAddress5').val('');
+					$('#contactAddress1, #contactAddress2, #contactAddress3, #contactAddress4, #contactAddress5').val('');
+					$('#contactAddress1, #contactAddress2, #contactAddress3, #contactAddress4, #contactAddress5').removeAttr('disabled');
 					$('#sameAddressCB').prop('checked', false);
 				}else{
 					if ($('#addressSection .section-error-bar').length == 0)

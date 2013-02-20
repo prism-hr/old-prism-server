@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
-import org.hibernate.annotations.Type;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -12,7 +12,7 @@ public class RequestRestartComment extends Comment {
 
 	private static final long serialVersionUID = -4781109606355068105L;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CommentTypeEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name="comment_type")
 	private CommentType type = CommentType.REQUEST_RESTART; 
 	

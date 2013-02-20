@@ -8,6 +8,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -25,7 +27,6 @@ import javax.validation.Valid;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -78,7 +79,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 	private List<Language> candidateNationalities = new ArrayList<Language>();
 	
 	@Column(name = "title")
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.TitleEnumUserType")
+	@Enumerated(EnumType.STRING)
     private Title title;
 
     @Column(name = "first_name")
@@ -89,7 +90,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
 	private String lastName;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.GenderEnumUserType")
+	@Enumerated(EnumType.STRING)
 	private Gender gender;
 	
 	@ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")

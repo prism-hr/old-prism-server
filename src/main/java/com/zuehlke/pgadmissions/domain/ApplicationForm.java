@@ -11,6 +11,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -31,7 +33,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.bouncycastle.util.Arrays;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -84,7 +85,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "application_form_id")
     private List<Event> events = new ArrayList<Event>();
 
-    @Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
+    @Enumerated(EnumType.STRING)
     private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
@@ -107,8 +108,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "due_date")
     private Date dueDate;
 
-    @Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
     @Column(name = "accepted_terms")
+    @Enumerated(EnumType.STRING)
     private CheckedStatus acceptedTermsOnSubmission;
 
     @ManyToOne(fetch = FetchType.LAZY)

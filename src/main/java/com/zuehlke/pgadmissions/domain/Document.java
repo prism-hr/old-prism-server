@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -47,7 +49,7 @@ public class Document implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateUploaded;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.DocumentTypeEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name = "document_type")	
 	private DocumentType type;
 

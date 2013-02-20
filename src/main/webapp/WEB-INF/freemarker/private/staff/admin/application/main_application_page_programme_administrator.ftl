@@ -109,7 +109,7 @@
 
                                 <section id="addressSection" class="folding form-rows red"><#include "/private/staff/application/components/address_details.ftl"/></section>
 
-                                <section id="qualificationsSection" class="folding form-rows orange"><#include "/private/staff/admin/application/components/qualification_details_programme_admin.ftl"/></section>
+                                <section id="qualificationsSection" class="folding form-rows orange"><#include "/private/staff/application/components/qualification_details.ftl"/></section>
 
                                 <section id="positionSection" class="folding form-rows yellow"><#include "/private/staff/application/components/employment_position_details.ftl"/></section>
 

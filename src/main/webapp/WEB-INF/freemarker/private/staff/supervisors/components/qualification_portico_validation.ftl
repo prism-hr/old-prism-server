@@ -9,7 +9,7 @@
 <h2 id="qualifications-H2" class="no-arrow empty">Qualifications</h2>
 <div class="open">
 
-        <#include "/private/staff/admin/application/components/qualifications_table.ftl"/>
+        <#include "/private/staff/supervisors/components/qualifications_table.ftl"/>
         
         <@spring.bind "sendToPorticoData.emptyQualificationsExplanation" />
 
@@ -59,7 +59,7 @@
 
         <#if hasQualifications> 
 
-        <#include "/private/staff/admin/application/components/qualifications_edit_view_stack.ftl"/>
+        <#include "/private/staff/supervisors/components/qualifications_edit_view_stack.ftl"/>
         
         <#else>
             <div class="row-group">

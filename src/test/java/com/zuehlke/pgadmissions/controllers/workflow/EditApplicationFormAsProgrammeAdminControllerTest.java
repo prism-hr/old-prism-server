@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +44,6 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
-import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
@@ -57,7 +56,6 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     private EncryptionHelper encryptionHelperMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
 
-    private QualificationService qualificationServiceMock;
     private RefereeService refereeServiceMock;
     private RefereesAdminEditDTOValidator refereesAdminEditDTOValidatorMock;
     private SendToPorticoDataDTOEditor sendToPorticoDataDTOEditorMock;
@@ -70,7 +68,6 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-        qualificationServiceMock = EasyMock.createMock(QualificationService.class);
         refereeServiceMock = EasyMock.createMock(RefereeService.class);
         refereesAdminEditDTOValidatorMock = EasyMock.createMock(RefereesAdminEditDTOValidator.class);
         sendToPorticoDataDTOEditorMock = EasyMock.createMock(SendToPorticoDataDTOEditor.class);
@@ -78,7 +75,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
 
         controller = new EditApplicationFormAsProgrammeAdminController(userServiceMock, applicationServiceMock, documentPropertyEditorMock,
-                qualificationServiceMock, refereeServiceMock, refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock,
+                refereeServiceMock, refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock,
                 countryServiceMock, countryPropertyEditorMock);
     }
 
@@ -293,64 +290,6 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         EasyMock.verify(userServiceMock, encryptionHelperMock, refereeServiceMock, refereesAdminEditDTOValidatorMock);
     }
 
-    @Test
-    public void shouldSaveSendToPorticoQualifications() {
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
-        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)
-                .build();
-        SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
-        sendToPorticoDataDTO.setQualificationsSendToPortico(Arrays.asList(new Integer[] { 1, 2 }));
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
-
-        qualificationServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoDataDTO.getQualificationsSendToPortico());
-        EasyMock.expectLastCall();
-
-        EasyMock.replay(userServiceMock, encryptionHelperMock, qualificationServiceMock);
-        String viewName = controller.submitQualificationsData(sendToPorticoDataDTO, applicationForm);
-        assertEquals("OK", viewName);
-        EasyMock.verify(userServiceMock, encryptionHelperMock, qualificationServiceMock);
-    }
-
-    @Test
-    public void shouldSaveEmptySendToPorticoQualifications() {
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
-        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)
-                .build();
-        SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
-        sendToPorticoDataDTO.setQualificationsSendToPortico(Arrays.asList(new Integer[] {}));
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
-
-        qualificationServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoDataDTO.getQualificationsSendToPortico());
-        EasyMock.expectLastCall();
-
-        EasyMock.replay(userServiceMock, qualificationServiceMock);
-        String viewName = controller.submitQualificationsData(sendToPorticoDataDTO, applicationForm);
-        assertEquals("OK", viewName);
-        EasyMock.verify(userServiceMock, qualificationServiceMock);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldInterruptQualificationSubmittingIfUserNotAllowed() {
-        Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
-        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-        RegisteredUser applicant = new RegisteredUserBuilder().id(2).firstName("Franciszek").lastName("Pieczka").email("pieczka@test.com").build();
-
-        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.INTERVIEW).build();
-        SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
-        sendToPorticoDataDTO.setQualificationsSendToPortico(Arrays.asList(new Integer[] {}));
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        EasyMock.replay(userServiceMock);
-
-        controller.submitQualificationsData(sendToPorticoDataDTO, applicationForm);
-    }
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldInterruptReferenceSubmittingIfUserNotAllowed() {
@@ -379,11 +318,11 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin1);
 
-        EasyMock.replay(userServiceMock, qualificationServiceMock);
+        EasyMock.replay(userServiceMock);
         String viewName = controller.view(applicationForm);
 
         assertEquals("/private/staff/admin/application/main_application_page_programme_administrator", viewName);
-        EasyMock.verify(userServiceMock, qualificationServiceMock);
+        EasyMock.verify(userServiceMock);
     }
 
     @Test

@@ -1,6 +1,6 @@
 $(document).ready(function() {
     
-    showQualificationAndReferenceSection();
+	showReferenceSection();
     
 	// --------------------------------------------------------------------------------
 	// "SAVE AND CLOSE" BUTTON
@@ -12,9 +12,9 @@ $(document).ready(function() {
     
 });
 
-function showQualificationAndReferenceSection() {
+function showReferenceSection() {
     $('section.folding h2').each(function() {
-        if ($(this).attr('id') === "qualifications-H2" || $(this).attr('id') === "referee-H2") {
+        if ($(this).attr('id') === "referee-H2") {
             $(this).addClass('open');
             $(this).next('div').show();
         } else {

@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
-import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
@@ -55,8 +54,6 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     private final DocumentPropertyEditor documentPropertyEditor;
 
-    private final QualificationService qualificationService;
-
     private final RefereeService refereeService;
 
     private final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
@@ -70,18 +67,17 @@ public class EditApplicationFormAsProgrammeAdminController {
     private final CountryPropertyEditor countryPropertyEditor;
 
     public EditApplicationFormAsProgrammeAdminController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationService,
-            final DocumentPropertyEditor documentPropertyEditor, final QualificationService qualificationService, final RefereeService refereeService,
+            final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
             final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             final EncryptionHelper encryptionHelper, final CountryService countryService, final CountryPropertyEditor countryPropertyEditor) {
         this.userService = userService;
         this.applicationService = applicationService;
         this.documentPropertyEditor = documentPropertyEditor;
-        this.qualificationService = qualificationService;
         this.refereeService = refereeService;
         this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
         this.encryptionHelper = encryptionHelper;
@@ -178,18 +174,6 @@ public class EditApplicationFormAsProgrammeAdminController {
         }
 
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
-    }
-
-    @RequestMapping(value = "/postQualificationsData", method = RequestMethod.POST)
-    @ResponseBody
-    public String submitQualificationsData(@ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
-            @ModelAttribute ApplicationForm applicationForm) {
-
-        if (sendToPorticoData.getQualificationsSendToPortico() == null || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
-            throw new ResourceNotFoundException();
-        }
-        qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
-        return "OK";
     }
 
     @ModelAttribute(value = "refereesAdminEditDTO")

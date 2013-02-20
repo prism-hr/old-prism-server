@@ -12,8 +12,8 @@ public class SupervisorBuilder {
 	private RegisteredUser user;
 	private Date lastNotified;
 	private ApprovalRound approvalRound;
-	private Boolean isPrimary = false;
-	private Boolean confirmedSupervision = false;
+	private Boolean isPrimary;
+	private Boolean confirmedSupervision;
 	private String declinedSupervisionReason;
 
 	public SupervisorBuilder id(Integer id) {

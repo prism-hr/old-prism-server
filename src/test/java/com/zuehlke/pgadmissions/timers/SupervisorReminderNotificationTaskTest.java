@@ -23,13 +23,13 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.mail.SupervisorMailSender;
 
-public class SupervisorNotificationTaskTest {
+public class SupervisorReminderNotificationTaskTest {
     
 	private SessionFactory sessionFactoryMock;
 	
 	private Session sessionMock;
 	
-	private SupervisorNotificationTask supervisorNotificationTask;
+	private SupervisorReminderTask supervisorNotificationTask;
 	
 	private SupervisorMailSender mailServiceMock;
 	
@@ -41,7 +41,7 @@ public class SupervisorNotificationTaskTest {
 	    sessionMock = EasyMock.createMock(Session.class);
 	    mailServiceMock = EasyMock.createMock(SupervisorMailSender.class);
 	    supervisorDAOMock = EasyMock.createMock(SupervisorDAO.class);       
-	    supervisorNotificationTask = new SupervisorNotificationTask(sessionFactoryMock, mailServiceMock, supervisorDAOMock);
+	    supervisorNotificationTask = new SupervisorReminderTask(sessionFactoryMock, mailServiceMock, supervisorDAOMock);
 	}
 
 	@Test
@@ -59,15 +59,15 @@ public class SupervisorNotificationTaskTest {
         sessionMock.refresh(supervisorOne);
         sessionMock.refresh(supervisorTwo);
         List<Supervisor> supervisorList = Arrays.asList(supervisorOne, supervisorTwo);
-        EasyMock.expect(supervisorDAOMock.getPrimarySupervisorsDueNotification()).andReturn(supervisorList);
+        EasyMock.expect(supervisorDAOMock.getPrimarySupervisorsDueReminder()).andReturn(supervisorList);
         
         transactionOne.commit();
 
-        mailServiceMock.sendPrimarySupervisorConfirmationNotification(supervisorOne);
+        mailServiceMock.sendPrimarySupervisorConfirmationNotificationReminder(supervisorOne);
         supervisorDAOMock.save(supervisorOne);
         transactionTwo.commit();
 
-        mailServiceMock.sendPrimarySupervisorConfirmationNotification(supervisorTwo);
+        mailServiceMock.sendPrimarySupervisorConfirmationNotificationReminder(supervisorTwo);
         supervisorDAOMock.save(supervisorTwo);
         transactionThree.commit();
 
@@ -93,14 +93,14 @@ public class SupervisorNotificationTaskTest {
         Supervisor supervisorTwo = new SupervisorBuilder().user(new RegisteredUserBuilder().email("hello@test.com").build()).id(2).build();
         sessionMock.refresh(supervisorOne);
         sessionMock.refresh(supervisorTwo);
-        EasyMock.expect(supervisorDAOMock.getPrimarySupervisorsDueNotification()).andReturn(Arrays.asList(supervisorOne, supervisorTwo));
+        EasyMock.expect(supervisorDAOMock.getPrimarySupervisorsDueReminder()).andReturn(Arrays.asList(supervisorOne, supervisorTwo));
         
         transactionOne.commit();
-        mailServiceMock.sendPrimarySupervisorConfirmationNotification(supervisorOne);
+        mailServiceMock.sendPrimarySupervisorConfirmationNotificationReminder(supervisorOne);
 
         EasyMock.expectLastCall().andThrow(new RuntimeException());
         transactionTwo.rollback();
-        mailServiceMock.sendPrimarySupervisorConfirmationNotification(supervisorTwo);
+        mailServiceMock.sendPrimarySupervisorConfirmationNotificationReminder(supervisorTwo);
         supervisorDAOMock.save(supervisorTwo);
         transactionThree.commit();
 

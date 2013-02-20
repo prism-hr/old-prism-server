@@ -63,6 +63,7 @@ public class SupervisorDAO {
         return sessionFactory.getCurrentSession()
                 .createCriteria(Supervisor.class, "supervisor")
                 .add(Restrictions.isNull("lastNotified"))
+                .add(Restrictions.isNull("confirmedSupervision"))
                 .add(Restrictions.eq("isPrimary", true))
                 .createAlias("approvalRound.application", "application")
                 .add(Restrictions.eq("application.status", ApplicationFormStatus.APPROVAL))

@@ -20,11 +20,15 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class LoginControllerTest {
 
 	private LoginController loginController;
+	
+	private static final String LOGIN_PAGE = "public/login/login_page";
+	
+	private static final String REGISTER_USER_REDIRECT = "redirect:/register";
 
 	@Test
 	public void shouldReturnLoginPageViewNameAndSetNotAuthorizedResponseCode(){
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		assertEquals("public/login/login_page", loginController.getLoginPage(new MockHttpServletRequest(), response));
+		assertEquals(LOGIN_PAGE, loginController.getLoginPage(new MockHttpServletRequest(), response));
 		assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
 	}
 	
@@ -42,7 +46,7 @@ public class LoginControllerTest {
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(null).anyTimes();
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);		
-		loginController.getLoginPage(request, new MockHttpServletResponse());
+		assertEquals(REGISTER_USER_REDIRECT, loginController.getLoginPage(request, new MockHttpServletResponse()));
 		assertEquals("program:code||programhome:programhome||bacthdeadline:programDeadline||projectTitle:projectTitle", session.getAttribute("applyRequest"));
 	}
 	
@@ -60,7 +64,8 @@ public class LoginControllerTest {
 		EasyMock.expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(null).anyTimes();
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	
-		loginController.getLoginPage(request, new MockHttpServletResponse() );
+		
+		assertEquals(REGISTER_USER_REDIRECT, loginController.getLoginPage(request, new MockHttpServletResponse() ));
 		assertEquals("", session.getAttribute("applyRequest"));
 	}
 	
@@ -75,8 +80,8 @@ public class LoginControllerTest {
 		
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);	
-		loginController.getLoginPage(request, new MockHttpServletResponse());
-		
+
+		assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse()));
 		assertNull(session.getAttribute("applyRequest"));
 	}
 	
@@ -109,7 +114,7 @@ public class LoginControllerTest {
         EasyMock.replay(defaultSavedRequestMock, userServiceMock);
         
         session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock); 
-        loginController.getLoginPage(request, new MockHttpServletResponse());
+        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse()));
 
         EasyMock.verify(defaultSavedRequestMock, userServiceMock);
         
@@ -129,11 +134,25 @@ public class LoginControllerTest {
         EasyMock.replay(defaultSavedRequestMock);
         session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);
         session.putValue("loginUserEmail", "ked@zuhlke.com");
-        loginController.getLoginPage(request, new MockHttpServletResponse());
         
+        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse()));
         assertNull(session.getAttribute("applyRequest"));
         assertNull(session.getAttribute("loginUserEmail"));
     }
+	
+	@Test
+	public void shouldRedirectToLoginPageFromRegistrationForm() {
+	    MockHttpSession session = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        
+        request.setSession(session);
+        request.setRequestURI("/login");
+        request.addHeader("referer", "/register");
+        
+        assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse()));
+        assertNull(session.getAttribute("applyRequest"));
+        assertNull(session.getAttribute("loginUserEmail"));
+	}
 	
 	@Before
 	public void setup(){

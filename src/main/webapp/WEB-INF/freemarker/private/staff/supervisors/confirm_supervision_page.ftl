@@ -102,18 +102,10 @@
                                             </#list>
                                             
                                             <div class="row">
-                                                <#if !confirmSupervisionDTO.confirmedSupervision?? || confirmSupervisionDTO.confirmedSupervision>
-                                                    <label id="lbl_declinedSupervisionReason" class="plain-label grey-label">Reason</label>
-                                                <#else>
-                                                    <label id="lbl_declinedSupervisionReason" class="plain-label">Reason<em>*</em></label>
-                                                </#if>
+                                                <label id="lbl_declinedSupervisionReason" class="plain-label">Reason<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'confirmSupervision.reason'/>"></span>
                                                 <div class="field">
-                                                    <textarea id="declinedSupervisionReason" name="declinedSupervisionReason" class="max" cols="80" rows="6"
-                                                        <#if !confirmSupervisionDTO.confirmedSupervision?? || confirmSupervisionDTO.confirmedSupervision>
-                                                            disabled="disabled"
-                                                        </#if>
-                                                    >${(confirmSupervisionDTO.declinedSupervisionReason?html)!}</textarea>
+                                                    <textarea id="declinedSupervisionReason" name="declinedSupervisionReason" class="max" cols="80" rows="6">${(confirmSupervisionDTO.declinedSupervisionReason?html)!}</textarea>
                                                 </div>
                                             </div>
                                             
@@ -130,9 +122,10 @@
 
                                         <div class="row-group">
                                             <div class="row">
-                                                <p>
-                                                    <strong>Secondary Supervisor</strong>
-                                                </p>
+                                                <label id="lbl_secondarySupervisor" class="group-heading-label">Secondary Supervisor</label>
+                                            </div>
+                                            
+                                            <div class="row">
                                                 <span class="plain-label">Supervisor First Name<em>*</em></span>
                                                 <span class="hint" data-desc="<@spring.message 'confirmSupervision.secondSupervisor.firstName'/>"></span>
                                                 <div class="field">
@@ -159,10 +152,11 @@
                                         
                                         <div class="row-group">
                                             <div class="row">
-                                                <p>
-                                                    <strong>Project Description</strong>
-                                                </p>
-                                                <span class="plain-label">Project Title<em>*</em></span>
+                                                <label id="lbl_projectDescription" class="group-heading-label">Project Description</label>
+                                            </div>
+                                        
+                                            <div class="row">
+                                                <label id="lbl_projectTitle" class="plain-label">Project Title<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectTitle'/>"></span>
                                                 <div class="field">
                                                     <input type="text" value="${(confirmSupervisionDTO.projectTitle?html)!}" id="projectTitle" name="projectTitle" class="full" />
@@ -178,7 +172,7 @@
                                             </#list>
                                             
                                              <div class="row">
-                                                <span class="plain-label">Project Abstract<em>*</em></span>
+                                                <label id="lbl_projectAbstract" class="plain-label">Project Abstract<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
                                                 <div class="field">
                                                     <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6">${(confirmSupervisionDTO.projectAbstract?html)!}</textarea>
@@ -199,10 +193,11 @@
 
                                         <div class="row-group">
                                             <div class="row">
-                                                <p>
-                                                    <strong>Recommended Offer</strong>
-                                                </p>
-                                                <span class="plain-label">Provisional Start Date<em>*</em></span>
+                                                <label id="lbl_recommendedOffer" class="group-heading-label">Recommended Offer</label>
+                                            </div>
+
+                                            <div class="row">
+                                                <label id="lbl_recommendedStartDate" class="plain-label">Provisional Start Date<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerStartDate'/>"></span>
                                                 <div class="field">
                                                     <input type="text" value="${(confirmSupervisionDTO.recommendedStartDate?string('dd MMM yyyy'))!}" id="recommendedStartDate" name="recommendedStartDate" class="half date" readonly="readonly">
@@ -218,7 +213,7 @@
                                             </#list>   
                                             
                                             <div class="row">
-                                                <span class="plain-label">Recommended Offer Type<em>*</em></span>
+                                                <label id="lbl_recommendedConditionsAvailable" class="plain-label">Recommended Offer Type<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerType'/>"></span>
                                                 <div class="field">
                                                     <label><input type="radio" value="false" id="recommendedConditionsUnavailable" name="recommendedConditionsAvailable" <#if confirmSupervisionDTO.recommendedConditionsAvailable?? && !confirmSupervisionDTO.recommendedConditionsAvailable>checked="checked"</#if>> Unconditional</label>
@@ -235,18 +230,10 @@
                                             </#list>
                                             
                                              <div class="row">
-                                                <#if  !confirmSupervisionDTO.recommendedConditionsAvailable?? || !confirmSupervisionDTO.recommendedConditionsAvailable >
-                                                    <label id="lbl_recommendedConditions" class="plain-label grey-label">Recommended Conditions</label>
-                                                <#else>
-                                                    <label id="lbl_recommendedConditions" class="plain-label">Recommended Conditions<em>*</em></label>
-                                                </#if>
+                                                <label id="lbl_recommendedConditions" class="plain-label">Recommended Conditions<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
                                                 <div class="field">
-                                                    <textarea id="recommendedConditions" name="recommendedConditions" class="max" cols="80" rows="6"
-                                                        <#if  !confirmSupervisionDTO.recommendedConditionsAvailable?? || !confirmSupervisionDTO.recommendedConditionsAvailable >
-                                                            disabled="disabled"
-                                                        </#if>
-                                                    >${(confirmSupervisionDTO.recommendedConditions?html)!}</textarea>
+                                                    <textarea id="recommendedConditions" name="recommendedConditions" class="max" cols="80" rows="6">${(confirmSupervisionDTO.recommendedConditions?html)!}</textarea>
                                                 </div>
                                             </div>
                                             <@spring.bind "confirmSupervisionDTO.recommendedConditions" />

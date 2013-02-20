@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
@@ -252,35 +253,35 @@ public class ApprovalServiceTest {
             }
         }
     }
-    
+
     @Test(expected = IllegalStateException.class)
     public void shouldFailIfApplicationHasNoReferencesForSendingToPortico() {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
         applyValidSendToPorticoData(applicationForm);
-        for(Referee referee : applicationForm.getReferees()){
+        for (Referee referee : applicationForm.getReferees()) {
             referee.setSendToUCL(false);
         }
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
     }
-    
+
     @Test(expected = IllegalStateException.class)
     public void shouldFailIfApplicationHasNoQualicifacionsForSendingToPorticoAndNoExplanation() {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
         applyValidSendToPorticoData(applicationForm);
-        for(Qualification qualifications : applicationForm.getQualifications()){
+        for (Qualification qualifications : applicationForm.getQualifications()) {
             qualifications.setSendToUCL(false);
         }
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
     }
-    
+
     @Test
     public void shouldMoveToApprovalIfInApplicationWithNoQualificationsButExplanationProvided() {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
         applyValidSendToPorticoData(applicationForm);
-        for(Qualification qualifications : applicationForm.getQualifications()){
+        for (Qualification qualifications : applicationForm.getQualifications()) {
             qualifications.setSendToUCL(false);
         }
         EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
@@ -291,6 +292,54 @@ public class ApprovalServiceTest {
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
         EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock);
 
+    }
+
+    @Test
+    public void shouldConfirmSupervision() {
+        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
+
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
+
+        Date startDate = Calendar.getInstance().getTime();
+
+        ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
+        confirmSupervisionDTO.setConfirmedSupervision(true);
+        confirmSupervisionDTO.setProjectTitle("title");
+        confirmSupervisionDTO.setProjectAbstract("abstract");
+        confirmSupervisionDTO.setRecommendedStartDate(startDate);
+        confirmSupervisionDTO.setRecommendedConditionsAvailable(true);
+        confirmSupervisionDTO.setRecommendedConditions("conditions");
+
+        approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
+        
+        assertTrue(primarySupervisor.getConfirmedSupervision());
+        
+        assertEquals("title", approvalRound.getProjectTitle());
+        assertEquals("abstract", approvalRound.getProjectAbstract());
+        assertEquals(startDate, approvalRound.getRecommendedStartDate());
+        assertTrue(approvalRound.getRecommendedConditionsAvailable());
+        assertEquals("conditions", approvalRound.getRecommendedConditions());
+        
+    }
+    
+    @Test
+    public void shouldDeclineSupervision() {
+        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
+
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
+
+        ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
+        confirmSupervisionDTO.setConfirmedSupervision(false);
+        confirmSupervisionDTO.setDeclinedSupervisionReason("reason");
+
+        approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
+        
+        assertFalse(primarySupervisor.getConfirmedSupervision());
+        
+        assertEquals("reason", primarySupervisor.getDeclinedSupervisionReason());
+        
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 import com.zuehlke.pgadmissions.utils.EventFactory;
 
@@ -66,6 +68,30 @@ public class ApprovalService {
         this.supervisorDAO = supervisorDAO;
         this.programmeDetailDAO = programmeDetailDAO;
         this.uclExportService = uclExportService;
+    }
+
+    @Transactional
+    public void confirmSupervision(ApplicationForm application, ConfirmSupervisionDTO confirmSupervisionDTO) {
+        ApprovalRound approvalRound = application.getLatestApprovalRound();
+        Supervisor supervisor = approvalRound.getPrimarySupervisor();
+        Boolean confirmed = confirmSupervisionDTO.getConfirmedSupervision();
+
+        supervisor.setConfirmedSupervision(confirmed);
+        if (BooleanUtils.isTrue(confirmed)) {
+            approvalRound.setProjectDescriptionAvailable(true);
+            approvalRound.setProjectTitle(confirmSupervisionDTO.getProjectTitle());
+            approvalRound.setProjectAbstract(confirmSupervisionDTO.getProjectAbstract());
+            approvalRound.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
+            Boolean recommendedConditionsAvailable = confirmSupervisionDTO.getRecommendedConditionsAvailable();
+            approvalRound.setRecommendedConditionsAvailable(recommendedConditionsAvailable);
+            if (BooleanUtils.isTrue(recommendedConditionsAvailable)) {
+                approvalRound.setRecommendedConditions(confirmSupervisionDTO.getRecommendedConditions());
+            } else {
+                approvalRound.setRecommendedConditions(null);
+            }
+        } else if (BooleanUtils.isFalse(confirmed)) {
+            supervisor.setDeclinedSupervisionReason(confirmSupervisionDTO.getDeclinedSupervisionReason());
+        }
     }
 
     @Transactional

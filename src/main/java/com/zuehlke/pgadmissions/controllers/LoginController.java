@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,48 +39,81 @@ public class LoginController {
     }
     
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public String getLoginPage(HttpServletRequest request, HttpServletResponse response) {
-		String returnPage = LOGIN_PAGE;
+	public String getLoginPage(final HttpServletRequest request, final HttpServletResponse response) {
+		
+	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		String referrer = request.getHeader("referer");
-		HttpSession session = request.getSession();
-		DefaultSavedRequest attribute = (DefaultSavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+		if (hasUserClickedOnAlreadyRegisteredOnTheRegistrationPage(request)) {
+		    clearUserEmailInSession(request);
+            clearApplyRequestInSession(request);
+            return LOGIN_PAGE;
+		} 
 		
-		if (StringUtils.contains(referrer, "register") && StringUtils.contains(request.getRequestURI().toString(), "/login")) {
-		    returnPage = LOGIN_PAGE;
-		    clearUserEmailInSession(session);
-            clearApplyRequestInSession(session);
-		} else if (attribute != null && attribute.getRequestURL() != null && attribute.getParameterValues(ACTIVATION_CODE_URL_PARAMETER) != null) {
-		    // When a user follows a link in a notification and launches the login form: populate the email address field on the login form.
-		    String[] activationCodeValues = attribute.getParameterValues(ACTIVATION_CODE_URL_PARAMETER);
-		    if (activationCodeValues.length == 1) {
-		        String activationCode = activationCodeValues[0];
-		        RegisteredUser userByActivationCode = userService.getUserByActivationCode(activationCode);
-		        if (userByActivationCode != null) {
-		            session.setAttribute(USER_EMAIL_SESSION_PARAMETER, userByActivationCode.getEmail());
-		        }
-		    }
-		    clearApplyRequestInSession(session);
-		} else if (attribute != null && StringUtils.contains(attribute.getRequestURL(), "/apply/new")) {
-            session.setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, composeQueryString(attribute));
-            returnPage = REGISTER_USER_REDIRECT;
-            clearUserEmailInSession(session);
-		} else {
-		    clearUserEmailInSession(session);
-		    clearApplyRequestInSession(session);
-		}
+		if (doesRequestParameterIncludeAnActivationCode(request)) {
+		    setUserEmailInSession(request);
+		    clearApplyRequestInSession(request);
+	        return LOGIN_PAGE;
+		} 
 		
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		if (isAnApplyNewRequest(request)) {
+		    setApplyNewQueryStringInSession(request);
+		    clearUserEmailInSession(request);
+            return REGISTER_USER_REDIRECT;
+		} 
 		
-		return returnPage;
+		clearUserEmailInSession(request);
+		clearApplyRequestInSession(request);
+		return LOGIN_PAGE;
 	}
 	
-	private void clearUserEmailInSession(HttpSession session) {
-        session.setAttribute(USER_EMAIL_SESSION_PARAMETER, null);
+	private boolean isAnApplyNewRequest(final HttpServletRequest request) {
+	    DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
+	    return defaultSavedRequest != null && StringUtils.contains(defaultSavedRequest.getRequestURL(), "/apply/new");
+	}
+	
+	private boolean hasUserClickedOnAlreadyRegisteredOnTheRegistrationPage(final HttpServletRequest request) {
+	    return StringUtils.contains(getReferrerFromHeader(request), "register") 
+	            && StringUtils.contains(request.getRequestURI().toString(), "/login");
+	}
+	
+	private boolean doesRequestParameterIncludeAnActivationCode(final HttpServletRequest request) {
+	    DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
+	    return defaultSavedRequest != null 
+	            && defaultSavedRequest.getRequestURL() != null
+	            && defaultSavedRequest.getParameterValues(ACTIVATION_CODE_URL_PARAMETER) != null;
+	}
+	
+	private String getReferrerFromHeader(final HttpServletRequest request) {
+	    return StringUtils.trimToEmpty(request.getHeader("referer"));
+	}
+	
+	private DefaultSavedRequest getDefaultSavedRequest(final HttpServletRequest request) {
+	    return (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+	}
+	
+	private void setUserEmailInSession(final HttpServletRequest request) {
+	    DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
+	    String[] activationCodeValues = defaultSavedRequest.getParameterValues(ACTIVATION_CODE_URL_PARAMETER);
+        if (activationCodeValues.length == 1) {
+            String activationCode = activationCodeValues[0];
+            RegisteredUser userByActivationCode = userService.getUserByActivationCode(activationCode);
+            if (userByActivationCode != null) {
+                request.getSession().setAttribute(USER_EMAIL_SESSION_PARAMETER, userByActivationCode.getEmail());
+            }
+        }
+	}
+	
+	private void setApplyNewQueryStringInSession(final HttpServletRequest request) {
+	    DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
+	    request.getSession().setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, composeQueryString(defaultSavedRequest));
+	}
+	
+	private void clearUserEmailInSession(final HttpServletRequest request) {
+        request.getSession().setAttribute(USER_EMAIL_SESSION_PARAMETER, null);
     }
 	
-	private void clearApplyRequestInSession(HttpSession session) {
-	    session.setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, null);
+	private void clearApplyRequestInSession(final HttpServletRequest request) {
+	    request.getSession().setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, null);
 	}
 	
 	private String composeQueryString(DefaultSavedRequest savedRequest) {

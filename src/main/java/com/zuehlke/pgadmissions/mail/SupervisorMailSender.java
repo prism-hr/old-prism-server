@@ -17,10 +17,14 @@ import com.zuehlke.pgadmissions.utils.Environment;
 public class SupervisorMailSender extends MailSender {
 
 	private static final String SUPERVISOR_NOTIFICATION_TEMPLATE = "private/supervisors/mail/supervisor_notification_email.ftl";
+	
+	private static final String PRIMARY_SUPERVISOR_NOTIFICATION_TEMPLATE = "private/supervisors/mail/supervisor_confirm_supervision_notification_email.ftl";
+	
+	private static final String PRIMARY_SUPERVISOR_NOTIFICATION_REMINDER_TEMPLATE = "private/supervisors/mail/supervisor_confirm_supervision_notification_reminder_email.ftl";
 
-	public SupervisorMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource messageSource) {
-		super(mimeMessagePreparatorFactory, mailSender, messageSource);
-	}
+    public SupervisorMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource messageSource) {
+        super(mimeMessagePreparatorFactory, mailSender, messageSource);
+    }
 
 	Map<String, Object> createModel(Supervisor supervisor) {
 		ApplicationForm form = supervisor.getApprovalRound().getApplication();
@@ -35,12 +39,25 @@ public class SupervisorMailSender extends MailSender {
 		return model;
 	}
 
+	/**
+     * @deprecated This method is now being replaced by the {@link #sendPrimarySupervisorConfirmationNotification() sendPrimarySupervisorConfirmationNotification} method.
+	 */
+	@Deprecated
 	public void sendSupervisorNotification(Supervisor supervisor) {
 		InternetAddress toAddress = createAddress(supervisor.getUser());
 		String subject = resolveMessage("supervisor.notification", supervisor.getApprovalRound().getApplication());
-
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, SUPERVISOR_NOTIFICATION_TEMPLATE, createModel(supervisor), null));
-
 	}
 
+    public void sendPrimarySupervisorConfirmationNotification(Supervisor supervisor) {
+        InternetAddress toAddress = createAddress(supervisor.getUser());
+        String subject = resolveMessage("supervisor.primary.notification", supervisor.getApprovalRound().getApplication());
+        javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, PRIMARY_SUPERVISOR_NOTIFICATION_TEMPLATE, createModel(supervisor), null));
+    }
+
+    public void sendPrimarySupervisorConfirmationNotificationReminder(Supervisor supervisor) {
+        InternetAddress toAddress = createAddress(supervisor.getUser());
+        String subject = resolveMessage("supervisor.primary.notification.reminder", supervisor.getApprovalRound().getApplication());
+        javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, PRIMARY_SUPERVISOR_NOTIFICATION_REMINDER_TEMPLATE, createModel(supervisor), null));
+    }
 }

@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
-import org.hibernate.annotations.Type;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -13,15 +13,15 @@ public class ValidationComment extends StateChangeComment {
 	
 	private static final long serialVersionUID = 1545465975465291005L;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ValidationQuestionOptionEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name="qualified_for_phd")	
 	private ValidationQuestionOptions qualifiedForPhd;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ValidationQuestionOptionEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name="english_compentency_ok")	
 	private ValidationQuestionOptions englishCompentencyOk;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.HomeOrOverseasEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name="home_or_overseas")
 	private HomeOrOverseas homeOrOverseas;
 	

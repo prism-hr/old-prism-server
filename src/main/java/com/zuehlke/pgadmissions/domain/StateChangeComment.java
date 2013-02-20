@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
-import org.hibernate.annotations.Type;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -13,11 +13,11 @@ public class StateChangeComment extends Comment {
 
 	private static final long serialVersionUID = 7106729861627717600L;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CommentTypeEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name="comment_type")
 	private CommentType type;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name="next_status")
 	private ApplicationFormStatus nextStatus = null;
 	

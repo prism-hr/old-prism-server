@@ -5,13 +5,13 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 
@@ -47,8 +47,8 @@ public class ApplicationFormTransfer implements Serializable {
     @Column(name = "transfer_end_timepoint")
     private Date transferFinishTimepoint;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationTransferStatusEnumUserType")
-    @Column(name = "status")
+	@Column(name = "status")
+	@Enumerated(EnumType.STRING)
     private ApplicationTransferStatus status;
 
     @Column(name = "ucl_user_id_received")

@@ -3,10 +3,10 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
@@ -19,7 +19,7 @@ public class ReminderInterval {
 	
 	private Integer duration;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.DurationUnitEnumUserType")
+	@Enumerated(EnumType.STRING)
 	private DurationUnitEnum unit;
 	
 	public Integer getDuration() {

@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,8 +16,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -33,7 +33,7 @@ public class Funding implements FormSectionObject, Serializable {
 	private boolean acceptedTerms;
 	
 	@Column(name="award_type")
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.FundingTypeEnumUserType")
+	@Enumerated(EnumType.STRING)
 	private FundingType type;
 	
 	@OneToOne(fetch = FetchType.LAZY, orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })

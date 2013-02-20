@@ -3,9 +3,9 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
-
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -14,12 +14,12 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 public class StageDuration {
 	
 	@Id
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
+	@Enumerated(EnumType.STRING)
 	private ApplicationFormStatus stage;
 	
 	private Integer duration;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.DurationUnitEnumUserType")
+	@Enumerated(EnumType.STRING)
 	private DurationUnitEnum unit;
 	
 	public ApplicationFormStatus getStage() {

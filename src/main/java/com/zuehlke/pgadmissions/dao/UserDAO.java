@@ -1,8 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -63,48 +67,93 @@ public class UserDAO {
 				.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getUsersForProgram(Program program) {
-		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
-		users.addAll(getUsersInRole((Role) sessionFactory.getCurrentSession().createCriteria(Role.class)
-				.add(Restrictions.eq("authorityEnum", Authority.SUPERADMINISTRATOR)).uniqueResult()));
-
-		List<RegisteredUser> administrators = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-				.createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-		for (RegisteredUser admin : administrators) {
-			if (!listContainsId(admin, users)) {
-				users.add(admin);
-			}
-		}
-		List<RegisteredUser> approvers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichApprover")
-				.add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-		for (RegisteredUser approver : approvers) {
-			if (!listContainsId(approver, users)) {
-				users.add(approver);
-			}
-		}
-		List<RegisteredUser> reviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichReviewer")
-				.add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-		for (RegisteredUser reviewer : reviewers) {
-			if (!listContainsId(reviewer, users)) {
-				users.add(reviewer);
-			}
-		}
-		List<RegisteredUser> interviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-				.createCriteria("programsOfWhichInterviewer").add(Restrictions.eq("id", program.getId())).list();
-		for (RegisteredUser interviewer : interviewers) {
-			if (!listContainsId(interviewer, users)) {
-				users.add(interviewer);
-			}
-		}
-		List<RegisteredUser> supervisors = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-				.createCriteria("programsOfWhichSupervisor").add(Restrictions.eq("id", program.getId())).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-		for (RegisteredUser supervisor : supervisors) {
-			if (!listContainsId(supervisor, users)) {
-				users.add(supervisor);
-			}
-		}
-		return users;
+        final Map<Integer, RegisteredUser> users = new HashMap<Integer, RegisteredUser>();
+        
+        Criteria superAdminRoleCriteria = sessionFactory.getCurrentSession()
+                .createCriteria(Role.class)
+                .add(Restrictions.eq("authorityEnum", Authority.SUPERADMINISTRATOR));
+        
+        Criteria programsOfWhichAdministratorCriteria = sessionFactory.getCurrentSession()
+                .createCriteria(RegisteredUser.class)
+                .createCriteria("programsOfWhichAdministrator")
+                .add(Restrictions.eq("id", program.getId()));
+        
+        Criteria programsOfWhichApprover = sessionFactory.getCurrentSession()
+                .createCriteria(RegisteredUser.class)
+                .createCriteria("programsOfWhichApprover")
+                .add(Restrictions.eq("id", program.getId()));
+        
+        Criteria programsOfWhichReviewer = sessionFactory.getCurrentSession()
+                .createCriteria(RegisteredUser.class)
+                .createCriteria("programsOfWhichReviewer")
+                .add(Restrictions.eq("id", program.getId()));
+        
+        Criteria programsOfWhichInterviewer = sessionFactory.getCurrentSession()
+                .createCriteria(RegisteredUser.class)
+                .createCriteria("programsOfWhichInterviewer")
+                .add(Restrictions.eq("id", program.getId()));
+        
+        Criteria programsOfWhichSupervisor = sessionFactory.getCurrentSession()
+                .createCriteria(RegisteredUser.class)
+                .createCriteria("programsOfWhichSupervisor")
+                .add(Restrictions.eq("id", program.getId()));
+        
+        CollectionUtils.collect(getUsersInRole((Role) superAdminRoleCriteria.uniqueResult()), new Transformer() {
+            @Override
+            public Object transform(Object target) {
+                RegisteredUser user = (RegisteredUser) target;
+                users.put(user.getId(), user);
+                return null;
+            }
+        });
+        
+        CollectionUtils.collect(programsOfWhichAdministratorCriteria.list(), new Transformer() {
+            @Override
+            public Object transform(Object target) {
+                RegisteredUser user = (RegisteredUser) target;
+                users.put(user.getId(), user);
+                return null;
+            }
+        });
+        
+        CollectionUtils.collect(programsOfWhichApprover.list(), new Transformer() {
+            @Override
+            public Object transform(Object target) {
+                RegisteredUser user = (RegisteredUser) target;
+                users.put(user.getId(), user);
+                return null;
+            }
+        });
+        
+        CollectionUtils.collect(programsOfWhichReviewer.list(), new Transformer() {
+            @Override
+            public Object transform(Object target) {
+                RegisteredUser user = (RegisteredUser) target;
+                users.put(user.getId(), user);
+                return null;
+            }
+        });
+        
+        CollectionUtils.collect(programsOfWhichInterviewer.list(), new Transformer() {
+            @Override
+            public Object transform(Object target) {
+                RegisteredUser user = (RegisteredUser) target;
+                users.put(user.getId(), user);
+                return null;
+            }
+        });
+        
+        CollectionUtils.collect(programsOfWhichSupervisor.list(), new Transformer() {
+            @Override
+            public Object transform(Object target) {
+                RegisteredUser user = (RegisteredUser) target;
+                users.put(user.getId(), user);
+                return null;
+            }
+        });
+        
+        return new ArrayList<RegisteredUser>(users.values());
 	}
 
 	public RegisteredUser getUserByEmail(String email) {

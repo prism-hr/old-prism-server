@@ -437,10 +437,26 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean shouldOpenFirstSection() {
-        return this.programmeDetails == null && this.personalDetails == null && this.currentAddress == null//
-                && this.contactAddress == null && this.qualifications.isEmpty() && this.employmentPositions.isEmpty()//
-                && this.fundings.isEmpty() && this.referees.isEmpty() && this.personalStatement == null//
-                && this.cv == null && this.additionalInformation == null;
+        return isNull(programmeDetails, personalDetails, currentAddress, contactAddress, personalStatement, cv,
+                additionalInformation) && isEmpty(fundings, referees, employmentPositions, qualifications);
+    }
+    
+    private boolean isEmpty(List<?>... objects) {
+        for (List<?> obj : objects) {
+            if (obj.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean isNull(Object... objects) {
+        for (Object obj : objects) {
+            if (obj == null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Date getDueDate() {

@@ -118,32 +118,20 @@ public class LoginController {
 	
 	private String composeQueryString(DefaultSavedRequest savedRequest) {
 		StringBuilder sb = new StringBuilder();
-		String[] programIds = savedRequest.getParameterValues("program");
-		if (programIds != null && programIds.length > 0) {
-			sb.append("program:" + programIds[0]);
-		}
-		String[] programhomes = savedRequest.getParameterValues("programhome");
-		if (programhomes != null && programIds.length > 0) {
-			if (sb.length() > 0) {
-				sb.append("||");
-			}
-			sb.append("programhome:" + programhomes[0]);
-		}
-		String[] batchdeadlines = savedRequest.getParameterValues("programDeadline");
-		if (batchdeadlines != null && batchdeadlines.length > 0) {
-			if (sb.length() > 0) {
-				sb.append("||");
-			}
-			sb.append("bacthdeadline:" + batchdeadlines[0]);
-		}
-		String[] projects = savedRequest.getParameterValues("projectTitle");
-		if (projects != null && projects.length > 0) {
-			if (sb.length() > 0) {
-				sb.append("||");
-			}
-			sb.append("projectTitle:" + projects[0]);
-		}
-
+		composeQueryStringPart(savedRequest, "program", "program", sb);
+		composeQueryStringPart(savedRequest, "programhome", "programhome", sb);
+		composeQueryStringPart(savedRequest, "programDeadline", "bacthdeadline", sb);
+		composeQueryStringPart(savedRequest, "projectTitle", "projectTitle", sb);
 		return sb.toString();
+	}
+	
+	private void composeQueryStringPart(DefaultSavedRequest request, String parameter, String key, StringBuilder builder) {
+	    String[] parameterArr = request.getParameterValues(parameter);
+        if (parameterArr != null && parameterArr.length > 0) {
+            if (builder.length() > 0) {
+                builder.append("||");
+            }
+            builder.append(key).append(":").append(parameterArr[0]);
+        }
 	}
 }

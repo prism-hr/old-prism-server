@@ -74,10 +74,7 @@ function disableRecommendedOffer() {
     $("#lbl_recommendedConditionsAvailable").addClass("grey-label");
     $("#lbl_recommendedConditionsAvailable").html("Recommended Offer Type");
     
-    var conditionsAvailable = $("input[name='recommendedConditionsAvailable']:checked").val();
-    if(conditionsAvailable == "true"){
-    	disableConditions();
-    }
+   	disableConditions();
 }
 
 function enableRecommendedOffer() {

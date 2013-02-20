@@ -51,7 +51,8 @@
             <div class="row-group">
                 <h3>Change Password</h3>
                 <div class="row">
-                    <span class="plain-label">Current Password</span> <span class="hint" data-desc="<@spring.message 'myaccount.currentPw'/>"></span>
+                    <span class="plain-label">Current Password<em>*</em></span> 
+                    <span class="hint" data-desc="<@spring.message 'myaccount.currentPw'/>"></span>
                     <div class="field">
                         <input class="full" id="currentPassword" type="password" />
                     </div>
@@ -63,7 +64,8 @@
                 </div>
 
                 <div class="row">
-                    <span class="plain-label">New Password</span> <span class="hint" data-desc="<@spring.message 'myaccount.newPw'/>"></span>
+                    <span class="plain-label">New Password<em>*</em></span> 
+                    <span class="hint" data-desc="<@spring.message 'myaccount.newPw'/>"></span>
                     <div class="field">
                         <input class="full" id="newPassword" type="password" />
                     </div>
@@ -75,7 +77,8 @@
                 </div>
 
                 <div class="row">
-                    <span class="plain-label">Re-enter new Password</span> <span class="hint" data-desc="<@spring.message 'myaccount.confirmPw'/>"></span>
+                    <span class="plain-label">Re-enter new Password<em>*</em></span> 
+                    <span class="hint" data-desc="<@spring.message 'myaccount.confirmPw'/>"></span>
                     <div class="field">
                         <input class="full" id="confirmNewPass" type="password" />
                     </div>
@@ -105,7 +108,8 @@
 
             <div class="row-group">
                 <div class="row">
-                    <span class="plain-label">Password</span> <span class="hint" data-desc="<@spring.message 'myaccount.link.currentPw' />"></span>
+                    <span class="plain-label">Password<em>*</em></span> 
+                    <span class="hint" data-desc="<@spring.message 'myaccount.link.currentPw' />"></span>
                     <div class="field">
                         <input class="full" id="linkCurrentPassword" type="password" value="${switchAndLinkUserAccountDTO.currentPassword!}" />
                     </div>
@@ -142,24 +146,28 @@
                 </div>
 
                 <div class="row">
-                    <span class="plain-label">Email</span> <span class="hint" data-desc="<@spring.message 'myaccount.link.email' />"></span>
+                    <span class="plain-label">Email<em>*</em></span> 
+                    <span class="hint" data-desc="<@spring.message 'myaccount.link.email' />"></span>
                     <div class="field">
                         <input class="full" id="linkEmail" type="text" value="${switchAndLinkUserAccountDTO.email!}" />
                     </div>
                 </div>
-                <@spring.bind "switchAndLinkUserAccountDTO.email" /> <#list spring.status.errorMessages as error>
+                <@spring.bind "switchAndLinkUserAccountDTO.email" /> 
+                <#list spring.status.errorMessages as error>
                 <div class="field">
                     <span class="invalid">${error}</span>
                 </div>
                 </#list>
 
                 <div class="row">
-                    <span class="plain-label">Password</span> <span class="hint" data-desc="<@spring.message 'myaccount.link.password' />"></span>
+                    <span class="plain-label">Password<em>*</em></span> 
+                    <span class="hint" data-desc="<@spring.message 'myaccount.link.password' />"></span>
                     <div class="field">
                         <input class="full" id="linkPassword" type="password" value="${switchAndLinkUserAccountDTO.password!}" />
                     </div>
                 </div>
-                <@spring.bind "switchAndLinkUserAccountDTO.password" /> <#list spring.status.errorMessages as error>
+                <@spring.bind "switchAndLinkUserAccountDTO.password" /> 
+                <#list spring.status.errorMessages as error>
                 <div class="field">
                     <span class="invalid">${error}</span>
                 </div>

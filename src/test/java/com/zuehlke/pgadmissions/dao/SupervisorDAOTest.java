@@ -124,6 +124,19 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
     }
     
     @Test
+    public void shouldNotReturnPrimarySupervisorIfTheyHaveAlreadyConfirmed() {
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        Supervisor supervisor = new SupervisorBuilder().user(user).isPrimary(true).confirmedSupervision(true).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
+        application.setLatestApprovalRound(approvalRound);
+        save(application, supervisor, approvalRound);
+        flushAndClearSession();
+
+        List<Supervisor> supervisors = dao.getPrimarySupervisorsDueNotification();
+        assertFalse(listContainsSupervisor(supervisor, supervisors));
+    }
+    
+    @Test
     public void shouldReturnPrimarySupervisorIfLastNotifiedIsNull() {
         ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
         Supervisor supervisor = new SupervisorBuilder().user(user).isPrimary(true).build();

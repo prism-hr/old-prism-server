@@ -51,7 +51,7 @@ public class SupervisorMailSenderTest {
 		Map<String, Object> model = supervisorMailSender.createModel(supervisor);		
 		assertEquals(supervisor, model.get("supervisor"));
 		assertEquals(form, model.get("application"));
-		Assert.assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
+		Assert.assertEquals("bob@test.com;alice@test.com", model.get("adminsEmails"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 	}
 	

@@ -68,7 +68,7 @@ public class ApplicantMailSenderTest {
 		Map<String, Object> model = applicantMailSender.createModel(form);
 		
 		EasyMock.verify(personServiceMock);
-		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
+		assertEquals("bob@test.com;alice@test.com", model.get("adminsEmails"));
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));
 		assertEquals(registryContacts, model.get("registryContacts"));
@@ -101,7 +101,7 @@ public class ApplicantMailSenderTest {
 		Map<String, Object> model = applicantMailSender.createModel(form);
 		
 		EasyMock.verify(personServiceMock);
-		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
+		assertEquals("bob@test.com;alice@test.com", model.get("adminsEmails"));
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));
 		assertEquals(registryContacts, model.get("registryContacts"));

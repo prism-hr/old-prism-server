@@ -62,6 +62,7 @@ public class ConfirmSupervisionController {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (application == null//
                 || application.getLatestApprovalRound().getPrimarySupervisor() == null
+                || application.getLatestApprovalRound().getPrimarySupervisor().getConfirmedSupervision() != null
                 || getUser().getId() != application.getLatestApprovalRound().getPrimarySupervisor().getUser().getId()) {
             throw new ResourceNotFoundException();
         }

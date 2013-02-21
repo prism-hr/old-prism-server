@@ -110,6 +110,25 @@ public class ConfirmSupervisionControllerTest {
     }
 
     @Test(expected = ResourceNotFoundException.class)
+    public void shouldNotReturnApplicationFormIfPrimarySupervisorAlreadyConfirmed() {
+        RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().id(88).build();
+
+        Supervisor primarySupervisor = new SupervisorBuilder().id(14).user(primarySupervisorUser).isPrimary(true).confirmedSupervision(true).build();
+
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(primarySupervisor).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).latestApprovalRound(approvalRound).build();
+
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(primarySupervisorUser);
+
+        EasyMock.replay(applicationServiceMock, userServiceMock);
+
+        assertEquals(applicationForm, controller.getApplicationForm("app1"));
+
+        EasyMock.verify(applicationServiceMock, userServiceMock);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
     public void shouldNotReturnApplicationFormIfCurrentUserIsNotPrimarySupervisor() {
         RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().id(88).build();
         RegisteredUser secondarySupervisorUser = new RegisteredUserBuilder().id(89).build();
@@ -129,7 +148,7 @@ public class ConfirmSupervisionControllerTest {
 
         EasyMock.verify(applicationServiceMock, userServiceMock);
     }
-    
+
     @Test
     public void shouldReturnApplicationFormIfCurrentUserIsPrimarySupervisor() {
         RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().id(88).build();

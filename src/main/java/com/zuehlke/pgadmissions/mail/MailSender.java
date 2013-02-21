@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.mail;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
@@ -46,15 +48,11 @@ public abstract class MailSender {
     }
 
 	protected String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
-		StringBuilder adminsMails = new StringBuilder();
+		Set<String> administratorMails = new LinkedHashSet<String>();
 		for (RegisteredUser admin : administrators) {
-			if (adminsMails.length() > 0) {
-				adminsMails.append(", ");
-			}
-			adminsMails.append(admin.getEmail());
-
+			administratorMails.add(admin.getEmail());
 		}
-		return adminsMails.toString();
+		return StringUtils.join(administratorMails.toArray(new String[] {}), ";");
 	}
 
 	protected String resolveMessage(String code, Object... args) {

@@ -38,7 +38,7 @@
 			      	</p>
 			      	
 			      	<p>
-			      	<#if application.latestInterview.locationURL??>
+			      	<#if application.latestInterview.locationURL?has_content>
 				      	
 				          <!-- Button -->
 							<a style="text-decoration:none;" href="${application.latestInterview.locationURL}" title="Get Directions">

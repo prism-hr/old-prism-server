@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -89,26 +90,21 @@ public class MailService {
 	
 	@Transactional
 	public void sendWithdrawMailToAdminsReviewersInterviewersSupervisors(List<Referee> referees, ApplicationForm form) {
-	    Set<RegisteredUser> uniqueUsers = new HashSet<RegisteredUser>();
+	    final Map<Integer, RegisteredUser> uniqueUsersMap = new HashMap<Integer, RegisteredUser>();
+	    List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 	    
 	    for (Referee referee : referees) {
-            RegisteredUser user = referee.getUser();
-            if (user != null) {
-                uniqueUsers.add(user);
-            }
+            users.add(referee.getUser());
         }
 	    
-	    uniqueUsers.addAll(form.getProgram().getAdministrators());
+	    users.addAll(form.getProgram().getAdministrators());
+	    users.add(form.getApplicationAdministrator());
         
-        if (form.getApplicationAdministrator() != null) {
-            uniqueUsers.add(form.getApplicationAdministrator());
-        }
-	    
         if (form.getLatestReviewRound() != null) {
             List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
             for (Reviewer reviewer : reviewers) {
                 if (reviewer.getReview() == null) {
-                    uniqueUsers.add(reviewer.getUser());
+                    users.add(reviewer.getUser());
                 }
             }
         }
@@ -117,19 +113,30 @@ public class MailService {
             List<Interviewer> interviewers = form.getLatestInterview().getInterviewers();
             for (Interviewer interviewer : interviewers) {
                 if (interviewer.getInterviewComment() == null) {
-                    uniqueUsers.add(interviewer.getUser());
+                    users.add(interviewer.getUser());
                 }
             }
         }
         
         if (form.getLatestApprovalRound() != null) {
             for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {
-                uniqueUsers.add(supervisor.getUser());
+                users.add(supervisor.getUser());
             }
         }
         
+        CollectionUtils.collect(users, new Transformer() {
+            @Override
+            public Object transform(Object target) {
+                if (target != null) {
+                    RegisteredUser user = (RegisteredUser) target;
+                    uniqueUsersMap.put(user.getId(), user);
+                }
+                return null;
+            }
+        });
+        
         // send the emails only for the unique users
-        for (RegisteredUser user : uniqueUsers) {
+        for (RegisteredUser user : uniqueUsersMap.values()) {
             internalSendWithdraw(user, form);
         }
 	}

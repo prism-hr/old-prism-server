@@ -24,17 +24,21 @@
 			      	</br>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Our 
-				      	<#if (previousStage.displayValue() == "Validation")>
+				      	<#if (previousStage?? && previousStage.displayValue() == "Validation")>
 				      		recruitment office 
-				      	</#if> 
-				      	<#if (previousStage.displayValue() == "Review")>
+				      	<#elseif (previousStage?? && previousStage.displayValue() == "Review")>
 				      		academic review panel 
-				      	</#if> 
-				      	<#if (previousStage.displayValue() == "Interview")>
+				      	<#elseif (previousStage?? && previousStage.displayValue() == "Interview")>
 				      		interview panel 
-				      	</#if>
+				      	<#elseif (previousStage?? && previousStage.displayValue() == "Approval")>
+                            approval panel 
+				      	<#elseif (previousStage?? && previousStage.displayValue() == "Restart of approval")>
+                            approval panel
+                        <#else>
+                            panel
+                        </#if>
 				      	have completed their assessment of your Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
-						</font>				      	 
+						</font>	      	 
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We regret to inform you that your Application was unsuccessful.</font>

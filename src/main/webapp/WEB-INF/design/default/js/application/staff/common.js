@@ -5,7 +5,8 @@ function bindDatePickers(){
     dateFormat:    'dd M yy',
     changeMonth:  true,
     changeYear:    true,
-    yearRange:    '1900:c+20'
+    //yearRange:    '1900:c+20'
+    yearRange: "-20:+20"
   });
 }
 

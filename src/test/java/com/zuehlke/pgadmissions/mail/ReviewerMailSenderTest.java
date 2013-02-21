@@ -45,7 +45,7 @@ public class ReviewerMailSenderTest {
 		
 
 		Map<String, Object> model = reviewerMailSender.createModel(reviewer);
-		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
+		assertEquals("bob@test.com;alice@test.com", model.get("adminsEmails"));
 		assertEquals(reviewer, model.get("reviewer"));
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));

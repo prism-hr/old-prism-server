@@ -44,7 +44,7 @@ public class InterviewerMailSenderTest {
 		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).interview(new InterviewBuilder().id(5).application(form).build()).build();
 
 		Map<String, Object> model = interviewerMailSender.createModel(interviewer);
-		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
+		assertEquals("bob@test.com;alice@test.com", model.get("adminsEmails"));
 		assertEquals(interviewer, model.get("interviewer"));
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));

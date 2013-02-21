@@ -110,7 +110,7 @@ $(document).ready(function()
   //------------------------------------------------
 	// Date pickers and setting their date format.
   //------------------------------------------------
-  $('input.date').datepicker({ dateFormat: 'yy/mm/dd' });
+  $('input.date').datepicker({ dateFormat: 'yy/mm/dd', yearRange: "-20:+20" }); });
   
   //------------------------------------------------
 	// Sortable tables.

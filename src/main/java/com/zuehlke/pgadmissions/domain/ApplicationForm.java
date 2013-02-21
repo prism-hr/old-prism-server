@@ -230,6 +230,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "ucl_booking_ref_number")
     private String uclBookingReferenceNumber;
 
+    @Column(name = "is_editable_by_applicant")
+    private Boolean isEditableByApplicant = true;
+
     public List<Qualification> getQualifications() {
         return qualifications;
     }
@@ -272,7 +275,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean isModifiable() {
-        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN) {
+        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN
+                || !getIsEditableByApplicant()) {
             return false;
         }
         return true;
@@ -502,7 +506,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isInValidationStage() {
         return status == ApplicationFormStatus.VALIDATION;
     }
-    
+
     public boolean isInApprovalStage() {
         return status == ApplicationFormStatus.APPROVAL;
     }
@@ -810,6 +814,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.ipAddress = InetAddress.getByName(ipAddress).getAddress();
     }
 
+    public Boolean getIsEditableByApplicant() {
+        return isEditableByApplicant;
+    }
+
+    public void setIsEditableByApplicant(Boolean isEditableByApplicant) {
+        this.isEditableByApplicant = isEditableByApplicant;
+    }
+
     public RequestRestartComment getLatestsRequestRestartComment() {
         List<RequestRestartComment> requestRestartComments = new ArrayList<RequestRestartComment>();
         for (Comment comment : applicationComments) {
@@ -876,19 +888,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
         return ApplicationFormStatus.VALIDATION;
     }
-    
+
     public boolean isProgrammeStillAvailable() {
         Date maxProgrammeEndDate = null;
         Date today = new Date();
-        
+
         ProgrammeDetails details = getProgrammeDetails();
-        
+
         for (ProgramInstance instance : getProgram().getInstances()) {
             boolean isProgrammeEnabled = getProgram().isEnabled();
             boolean isInstanceEnabled = instance.getEnabled();
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            
+
             if (isProgrammeEnabled && isInstanceEnabled && sameStudyOption && sameStudyOptionCode) {
                 Date programmeEndDate = instance.getApplicationDeadline();
                 if (maxProgrammeEndDate == null) {
@@ -898,11 +910,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
                 }
             }
         }
-        
+
         if (maxProgrammeEndDate == null || maxProgrammeEndDate.before(today)) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -927,7 +939,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return result;
     }
-    
+
     public boolean isPrefferedStartDateWithinBounds() {
         ProgrammeDetails details = getProgrammeDetails();
         Date startDate = details.getStartDate();
@@ -982,7 +994,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         if (getQualificationsToSendToPortico().isEmpty() && !withMissingQualificationExplanation) {
             return false;
         }
-        
+
         return true;
     }
 }

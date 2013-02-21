@@ -80,6 +80,7 @@ public class ValidationTransitionControllerTest {
 		EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("view");
 		EasyMock.replay(stateTransitionViewResolverMock);
 		assertEquals("view", controller.getStateTransitionView(applicationForm));
+		EasyMock.verify(stateTransitionViewResolverMock);
 	}
 	
 	@Test
@@ -102,10 +103,9 @@ public class ValidationTransitionControllerTest {
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
         Date twoMonthsAgo = DateUtils.addMonths(new Date(), -2);
         
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, badgeServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), format.format(twoMonthsAgo), "projectTitle", comment, bindingResultMock, new ModelMap());
-        EasyMock.verify(commentServiceMock);
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, badgeServiceMock);
         assertEquals("private/staff/admin/state_transition", view);
 	}
 	
@@ -133,10 +133,9 @@ public class ValidationTransitionControllerTest {
             projectTitle.append("a");
         }
         
-        EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
+        EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, badgeServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), projectTitle.toString(), comment, bindingResultMock, new ModelMap());
-        EasyMock.verify(commentServiceMock);
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, badgeServiceMock);
         assertEquals("private/staff/admin/state_transition", view);
     }
 	
@@ -163,6 +162,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         
         applicationServiceMock.save(applicationForm);
+        applicationServiceMock.makeApplicationNotEditable(applicationForm);
         
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         
@@ -172,7 +172,7 @@ public class ValidationTransitionControllerTest {
         
         controller.addComment(applicationForm.getApplicationNumber(), format.format(oneMonthAgo), "projectTitle", comment, bindingResultMock, new ModelMap());
         
-        EasyMock.verify(commentServiceMock, badgeServiceMock, applicationServiceMock);
+        EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
     }
 	
     @Test
@@ -198,6 +198,7 @@ public class ValidationTransitionControllerTest {
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         badgeServiceMock.save(EasyMock.anyObject(Badge.class));
         applicationServiceMock.save(applicationForm);
+        applicationServiceMock.makeApplicationNotEditable(applicationForm);
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
         controller.addComment(applicationForm.getApplicationNumber(), format.format(twoMontshAgo), "projectTitle", comment, bindingResultMock, new ModelMap());
         EasyMock.verify(commentServiceMock);
@@ -226,9 +227,10 @@ public class ValidationTransitionControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		badgeServiceMock.save(EasyMock.anyObject(Badge.class));
 		applicationServiceMock.save(applicationForm);
+		applicationServiceMock.makeApplicationNotEditable(applicationForm);
 		EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 		controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap());
-		EasyMock.verify(commentServiceMock);
+		EasyMock.verify(userServiceMock, applicationServiceMock, commentServiceMock, bindingResultMock, badgeServiceMock);
 	}
 	
 	@Test
@@ -238,12 +240,8 @@ public class ValidationTransitionControllerTest {
         
         EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(new ArrayList<Date>());
         
-		EasyMock.expect(encryptionHelperMock.decryptToInteger("abc")).andReturn(1);
-		EasyMock.expect(encryptionHelperMock.decryptToInteger("def")).andReturn(2);
 		Document documentOne = new DocumentBuilder().id(1).build();
 		Document documentTwo = new DocumentBuilder().id(2).build();
-		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(documentOne);
-		EasyMock.expect(documentServiceMock.getDocumentById(2)).andReturn(documentTwo);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
 		controller = new ValidationTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock,
 				stateTransitionViewResolverMock, encryptionHelperMock,documentServiceMock, approvalServiceMock, stateChangeValidatorMock, 
@@ -264,7 +262,7 @@ public class ValidationTransitionControllerTest {
 
 		assertEquals("view", controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), "projectTitle", comment, bindingResultMock, new ModelMap()));
 
-		EasyMock.verify(commentServiceMock);
+		EasyMock.verify(commentServiceMock, stateTransitionViewResolverMock, encryptionHelperMock, documentServiceMock, badgeServiceMock);
 		assertEquals(2, comment.getDocuments().size());
 		assertTrue(comment.getDocuments().containsAll(Arrays.asList(documentOne, documentTwo)));
 	}
@@ -285,6 +283,7 @@ public class ValidationTransitionControllerTest {
 		EasyMock.expect(badgeServiceMock.getAllClosingDatesByProgram(program)).andReturn(Arrays.asList(new Date()));
 		EasyMock.replay(badgeServiceMock);
 		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains(pastDate));
+		EasyMock.verify(badgeServiceMock);
 	}
 	
 	public void shouldAddAPplicationFormProjectTitleIfExistAndClosingDateInPast() throws ParseException {
@@ -320,6 +319,7 @@ public class ValidationTransitionControllerTest {
 		EasyMock.expect(badgeServiceMock.getAllProjectTitlesByProgram(program)).andReturn(Arrays.asList("title 1"));
 		EasyMock.replay(badgeServiceMock);
 		assertTrue(controller.getClosingDates(applicationForm.getApplicationNumber()).contains("title"));
+		EasyMock.verify(badgeServiceMock);
 	}
 	
 	@Before

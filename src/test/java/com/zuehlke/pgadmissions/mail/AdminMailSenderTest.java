@@ -602,7 +602,7 @@ public class AdminMailSenderTest {
 				.program(new ProgramBuilder().title("prg").administrators(adminOne, adminTwo).build()).build();
 
 		InternetAddress expAddr = new InternetAddress("bob@test.com", "bob the builder");
-		String expTemplate = "private/staff/admin/mailBeta/approved_notification.ftl";
+		String expTemplate = "private/staff/admin/mail/approved_notification.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, personServiceMock) {
@@ -659,7 +659,7 @@ public class AdminMailSenderTest {
 		InternetAddress supAddr1 = new InternetAddress("bob2@test.com", "bob2 the builder");
 		InternetAddress supAddr2 = new InternetAddress("bob3@test.com", "bob3 the builder");
 
-		String expTemplate = "private/staff/admin/mailBeta/approved_notification.ftl";
+		String expTemplate = "private/staff/admin/mail/approved_notification.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, personServiceMock) {

@@ -48,7 +48,7 @@ public class RegisterController {
 	private final ApplicationQueryStringParser applicationQueryStringParser;
 	protected final EncryptionHelper encryptionHelper;
 
-	RegisterController() {
+	public RegisterController() {
 		this(null, null, null, null, null, null, null);
 	}
 
@@ -133,7 +133,7 @@ public class RegisterController {
 		return redirectView;
 	}
 
-	private String createApplicationAndReturnApplicationViewValue(RegisteredUser user, String redirectView) {
+	private String createApplicationAndReturnApplicationViewValue(final RegisteredUser user, final String redirectView) {
 		String[] params = applicationQueryStringParser.parse(user.getOriginalApplicationQueryString());		
 		Program program = programService.getProgramByCode(params[0]);
 		Date batchDeadline = null;
@@ -150,8 +150,7 @@ public class RegisterController {
 			researchHomePage = null;
 		}
 		ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, program, batchDeadline, params[3],researchHomePage);
-		redirectView = redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber();
-		return redirectView;
+		return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber();
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)

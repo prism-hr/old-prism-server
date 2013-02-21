@@ -35,7 +35,7 @@
         <#if (user.hasAdminRightsOnApplication(application) && application.isPendingApprovalRestart())>
             <option value="restartApproval">Approve</option>
         </#if>
-        <#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL') && !application.isPendingApprovalRestart()>
+        <#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL') && !application.isPendingApprovalRestart() && application.getLatestApprovalRound().getPrimarySupervisor()??>
             <#assign primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor()>
             <#if primarySupervisor?? && primarySupervisor.confirmedSupervision?? && primarySupervisor.confirmedSupervision>
                 <option value="validate">Approve</option>

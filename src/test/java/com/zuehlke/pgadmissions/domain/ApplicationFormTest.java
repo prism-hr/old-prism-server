@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
@@ -463,7 +464,6 @@ public class ApplicationFormTest {
         user1.getReferees().add(referee1);
         user2.getReferees().add(referee2);
 
-
         ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
         ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();
 
@@ -499,7 +499,7 @@ public class ApplicationFormTest {
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
                 .build();
-        
+
         assertFalse(applicationForm.isCompleteForSendingToPortico(false));
     }
 
@@ -528,7 +528,7 @@ public class ApplicationFormTest {
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).referees(referee1, referee2).comments(referenceComment1, referenceComment2)
                 .qualification(qualification1, qualification2, qualification3).build();
-        
+
         assertFalse(applicationForm.isCompleteForSendingToPortico(false));
     }
 
@@ -575,6 +575,17 @@ public class ApplicationFormTest {
     }
 
     @Test
+    public void shouldAllowApplicationInterviewerToEdit() {
+        RegisteredUser interviewerUser = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).build()).id(7).build();
+        Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).build();
+        Interview interview = new InterviewBuilder().interviewers(interviewer).build();
+        Program program = new ProgramBuilder().id(1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).program(program)
+                .latestInterview(interview).build();
+        assertTrue(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(interviewerUser));
+    }
+
+    @Test
     public void shouldNotAllowApplicantToEditAsAdministrator() {
         RegisteredUser applicant = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).id(7).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).applicant(applicant).build();
@@ -612,7 +623,7 @@ public class ApplicationFormTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REJECTED).program(program).build();
         assertFalse(applicationForm.isUserAllowedToSeeAndEditAsAdministrator(admin));
     }
-    
+
     @Test
     public void shouldNotAllowAdministratorToEditApplicationInApprovalState() {
         RegisteredUser admin = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).id(7).build();

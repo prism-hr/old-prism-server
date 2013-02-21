@@ -298,7 +298,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean isUserAllowedToSeeAndEditAsAdministrator(final RegisteredUser user) {
-        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
+        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) // 
+                || user.isInterviewerOfApplicationForm(this)
                 || user.isAdminInProgramme(getProgram());
         return hasPermissionToEdit //
                 && isSubmitted() //

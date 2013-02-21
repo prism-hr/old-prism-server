@@ -50,6 +50,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -183,9 +184,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             printLanguageQualificationAdmissionsNote = true;
         }
         
-        if (StringUtils.isNotBlank(applicationForm.getApplicant().getUclUserId())) {
-            applicant.setApplicantID(applicationForm.getApplicant().getUclUserId());
-        }
+        applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
         
         return applicant;
     }
@@ -397,8 +396,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
         
-//      TODO: ATASSTatement
-//      <v1_0:atasStatement>string</v1_0:atasStatement> // Project description
+        ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+        if (latestApprovalRound != null) {
+            applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
+        }
         
         return applicationTp;
     }

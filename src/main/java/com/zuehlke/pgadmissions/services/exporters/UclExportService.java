@@ -218,6 +218,7 @@ public class UclExportService {
             try {
                 e.getWebServiceMessage().writeTo(responseMessageBuffer);
             } catch (IOException ioex) {
+                log.warn(ioex);
                 throw new RuntimeException("Line unreachable", e);
             }
             error.setResponseCopy(responseMessageBuffer.toString());

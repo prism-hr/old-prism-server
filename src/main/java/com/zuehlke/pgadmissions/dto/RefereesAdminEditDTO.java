@@ -168,22 +168,29 @@ public class RefereesAdminEditDTO {
     }
 
     public boolean hasUserStartedTyping() {
-        boolean startedTypingReference = StringUtils.isNotBlank(comment) || referenceDocument != null || suitableForProgramme != null || suitableForUCL != null;
+        boolean startedTypingReference = StringUtils.isNotBlank(comment) || !allNull(referenceDocument, suitableForProgramme, suitableForUCL);
         boolean startedTypingRefereeData = addressLocation != null
-                && (!allBlank(firstname, lastname, addressLocation.getAddress1(), addressLocation.getAddress2(), addressLocation.getAddress3(),
-                        addressLocation.getAddress4(), addressLocation.getAddress5(), jobEmployer, jobTitle, email, phoneNumber, messenger) || addressLocation
-                        .getCountry() != null);
+                && (!allBlank(firstname, lastname, addressLocation.getAddress1(), addressLocation.getAddress2(),
+                        addressLocation.getAddress3(), addressLocation.getAddress4(), addressLocation.getAddress5(),
+                        jobEmployer, jobTitle, email, phoneNumber, messenger) || addressLocation.getCountry() != null);
         return startedTypingReference || startedTypingRefereeData;
     }
-
+    
     private boolean allBlank(String... strings) {
-        boolean allBlank = true;
         for (String string : strings) {
             if (StringUtils.isNotBlank(string)) {
-                allBlank = false;
+                return false;
             }
         }
-        return allBlank;
+        return true;
     }
-
+    
+    private boolean allNull(Object... objects) {
+        for (Object obj : objects) {
+            if (obj != null) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

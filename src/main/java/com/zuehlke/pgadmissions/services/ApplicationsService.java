@@ -65,6 +65,11 @@ public class ApplicationsService {
 		applicationFormDAO.save(applicationForm);
 		return applicationForm;
 	}
+	
+	@Transactional
+    public void makeApplicationNotEditable(ApplicationForm applicationForm) {
+        applicationForm.setIsEditableByApplicant(false);
+    }
 
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
@@ -109,4 +114,5 @@ public class ApplicationsService {
 	public List<ApplicationForm> getAllApplicationsByStatus(ApplicationFormStatus status) {
 	    return applicationFormDAO.getAllApplicationsByStatus(status);
 	}
+
 }

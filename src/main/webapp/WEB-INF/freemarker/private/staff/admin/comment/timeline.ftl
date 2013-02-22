@@ -80,20 +80,22 @@
 		           
 							<#elseif timelineObject.approvalRound??>
 							<#if timelineObject.approvalRound.supervisors?? && timelineObject.approvalRound.supervisors?size &gt; 0>
-							<ul class="status-info">
-								<li class="${timelineObject.type}">
-									<div class="box">
-										<p class="added">
-											<#assign size_users = timelineObject.approvalRound.supervisors?size>
-											<#list timelineObject.approvalRound.supervisors as supervisor>
-											<#assign index_i = supervisor_index>
-											${supervisor.user.firstName?html} ${supervisor.user.lastName?html}<#if (index_i &lt; (size_users - 1))>, </#if>
-											</#list>
-											added as supervisor<#if size_users &gt; 1>s</#if>.
-										</p>
-									</div>
-								</li>
-							</ul>
+                                <ul class="status-info">
+                                    <li class="${timelineObject.type}">
+                                        <div class="box">
+                                            <p class="added">
+                                                <#assign size_users = timelineObject.approvalRound.supervisors?size>
+                                                <#list timelineObject.approvalRound.supervisors as supervisor>
+                                                  <#assign index_i = supervisor_index>
+                                                  ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}
+                                                  <#if supervisor.isPrimary> (Primary)</#if>
+                                                  <#if (index_i &lt; (size_users - 1))>, </#if>
+                                                </#list>
+                                                added as supervisor<#if size_users &gt; 1>s</#if>.
+                                            </p>
+                                        </div>
+                                    </li>
+                                </ul>
 							</#if>
 							
 							<#elseif timelineObject.status?? && timelineObject.status == 'REJECTED'>
@@ -126,7 +128,9 @@
 			            <#elseif comment.type == 'APPROVAL'>
 			            	<#assign role = "approver"/>                
 			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART'>
-			            	<#assign role = "approver"/>                
+			            	<#assign role = "approver"/>
+		            	<#elseif comment.type = 'SUPERVISION_CONFIRMATION'>
+                            <#assign role = "approver"/>                                
 			            </#if>
 			            <li>                          
 			              <div class="box">
@@ -157,7 +161,9 @@
 			                <#elseif comment.type == 'REVIEW'>
 			                	<#include "timeline_snippets/review_comment.ftl"/>
 			                <#elseif comment.type == 'INTERVIEW'>
-			                	<#include "timeline_snippets/interview_comment.ftl"/> 				                	                 
+			                	<#include "timeline_snippets/interview_comment.ftl"/>
+                            <#elseif comment.type == 'SUPERVISION_CONFIRMATION'>
+                                <#include "timeline_snippets/supervision_confirmation_comment.ftl"/>    				                	                 
 			                </#if>
 			              </div>
 			            </li>

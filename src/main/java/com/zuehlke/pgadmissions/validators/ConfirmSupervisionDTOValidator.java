@@ -26,24 +26,23 @@ public class ConfirmSupervisionDTOValidator extends AbstractValidator {
 
         if (BooleanUtils.isFalse(dto.getConfirmedSupervision())) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "declinedSupervisionReason", "text.field.empty");
-        }
+        } 
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectTitle", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectAbstract", "text.field.empty");
+        if (BooleanUtils.isTrue(dto.getConfirmedSupervision())) {
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectTitle", "text.field.empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectAbstract", "text.field.empty");
+        
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedStartDate", "text.field.empty");
+            Date startDate = dto.getRecommendedStartDate();
+            Date today = new Date();
+            if (startDate != null && !startDate.after(today)) {
+                errors.rejectValue("recommendedStartDate", "date.field.notfuture");
+            }
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditionsAvailable", "dropdown.radio.select.none");
 
-        // recommended offer validation
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedStartDate", "text.field.empty");
-        Date startDate = dto.getRecommendedStartDate();
-        Date today = new Date();
-        if (startDate != null && !startDate.after(today)) {
-            errors.rejectValue("recommendedStartDate", "date.field.notfuture");
-        }
-
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditionsAvailable", "dropdown.radio.select.none");
-
-        if (BooleanUtils.isTrue(dto.getRecommendedConditionsAvailable())) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditions", "text.field.empty");
+            if (BooleanUtils.isTrue(dto.getRecommendedConditionsAvailable())) {
+                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditions", "text.field.empty");
+            }
         }
     }
-
 }

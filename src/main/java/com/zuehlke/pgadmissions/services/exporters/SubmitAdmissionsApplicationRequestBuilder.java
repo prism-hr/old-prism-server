@@ -401,6 +401,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
         }
         
+        if (latestApprovalRound != null) {
+            applicationTp.setDepartmentalOfferConditions(StringUtils.trimToNull(latestApprovalRound.getRecommendedConditions()));
+        }
+
         return applicationTp;
     }
 

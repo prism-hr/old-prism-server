@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -99,57 +99,51 @@ public class UserDAO {
                 .createCriteria("programsOfWhichSupervisor")
                 .add(Restrictions.eq("id", program.getId()));
         
-        CollectionUtils.collect(getUsersInRole((Role) superAdminRoleCriteria.uniqueResult()), new Transformer() {
+        CollectionUtils.forAllDo(getUsersInRole((Role) superAdminRoleCriteria.uniqueResult()), new Closure() {
             @Override
-            public Object transform(Object target) {
+            public void execute(Object target) {
                 RegisteredUser user = (RegisteredUser) target;
                 users.put(user.getId(), user);
-                return null;
+            }
+        }); 
+        
+        CollectionUtils.forAllDo(programsOfWhichAdministratorCriteria.list(), new Closure() {
+            @Override
+            public void execute(Object target) {
+                RegisteredUser user = (RegisteredUser) target;
+                users.put(user.getId(), user);
             }
         });
         
-        CollectionUtils.collect(programsOfWhichAdministratorCriteria.list(), new Transformer() {
+        CollectionUtils.forAllDo(programsOfWhichApprover.list(), new Closure() {
             @Override
-            public Object transform(Object target) {
+            public void execute(Object target) {
                 RegisteredUser user = (RegisteredUser) target;
                 users.put(user.getId(), user);
-                return null;
             }
         });
         
-        CollectionUtils.collect(programsOfWhichApprover.list(), new Transformer() {
+        CollectionUtils.forAllDo(programsOfWhichReviewer.list(), new Closure() {
             @Override
-            public Object transform(Object target) {
+            public void execute(Object target) {
                 RegisteredUser user = (RegisteredUser) target;
                 users.put(user.getId(), user);
-                return null;
             }
         });
         
-        CollectionUtils.collect(programsOfWhichReviewer.list(), new Transformer() {
+        CollectionUtils.forAllDo(programsOfWhichInterviewer.list(), new Closure() {
             @Override
-            public Object transform(Object target) {
+            public void execute(Object target) {
                 RegisteredUser user = (RegisteredUser) target;
                 users.put(user.getId(), user);
-                return null;
             }
         });
         
-        CollectionUtils.collect(programsOfWhichInterviewer.list(), new Transformer() {
+        CollectionUtils.forAllDo(programsOfWhichSupervisor.list(), new Closure() {
             @Override
-            public Object transform(Object target) {
+            public void execute(Object target) {
                 RegisteredUser user = (RegisteredUser) target;
                 users.put(user.getId(), user);
-                return null;
-            }
-        });
-        
-        CollectionUtils.collect(programsOfWhichSupervisor.list(), new Transformer() {
-            @Override
-            public Object transform(Object target) {
-                RegisteredUser user = (RegisteredUser) target;
-                users.put(user.getId(), user);
-                return null;
             }
         });
         

@@ -65,6 +65,10 @@ public class ApprovalRound implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
+    @Column(name = "last_updated")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date lastUpdated;
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -109,7 +113,7 @@ public class ApprovalRound implements Serializable {
             }
         }
     }
-    
+
     public Supervisor getPrimarySupervisor() {
         for (Supervisor supervisor : supervisors) {
             if (BooleanUtils.isTrue(supervisor.getIsPrimary())) {
@@ -118,7 +122,7 @@ public class ApprovalRound implements Serializable {
         }
         return null;
     }
-    
+
     public Supervisor getSecondarySupervisor() {
         for (Supervisor supervisor : supervisors) {
             if (BooleanUtils.isNotTrue(supervisor.getIsPrimary())) {
@@ -167,13 +171,21 @@ public class ApprovalRound implements Serializable {
     public void setRecommendedConditionsAvailable(Boolean recommendedConditionsAvailable) {
         this.recommendedConditionsAvailable = recommendedConditionsAvailable;
     }
-    
+
     public String getRecommendedConditions() {
         return recommendedConditions;
     }
 
     public void setRecommendedConditions(String recommendedConditions) {
         this.recommendedConditions = recommendedConditions;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
 }

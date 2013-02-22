@@ -66,6 +66,25 @@ public class ProgrammeDetailsValidatorTest {
 	public void shouldSupportProgrammeDetails() {
 		assertTrue(programmeDetailsValidator.supports(ProgrammeDetails.class));
 	}
+	
+	@Test
+	public void shouldRejectIfSupervisorsHaveTheSameEmailAddress() {
+	    SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder()
+            .firstname("Mark")
+            .lastname("Johnson")
+            .email("mark@gmail.com")
+            .aware(true)
+            .build();
+        programmeDetail.getSuggestedSupervisors().add(suggestedSupervisor);
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
+        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programInstanceDAOMock);
+        programmeDetailsValidator.validate(programmeDetail, mappingResult);
+        EasyMock.verify(programInstanceDAOMock);
+
+        Assert.assertEquals(2, mappingResult.getErrorCount());
+        Assert.assertEquals("suggestedSupervisors.duplicate.email", mappingResult.getFieldError("suggestedSupervisors").getCode());
+	}
 
 	@Test
 	public void shouldRejectIfProgrammeNameIsEmpty() {

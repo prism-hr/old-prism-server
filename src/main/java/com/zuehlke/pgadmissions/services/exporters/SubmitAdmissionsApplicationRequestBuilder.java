@@ -401,8 +401,12 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
         }
         
-        if (latestApprovalRound != null) {
-            applicationTp.setDepartmentalOfferConditions(StringUtils.trimToNull(latestApprovalRound.getRecommendedConditions()));
+        if (latestApprovalRound != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+            if (StringUtils.isNotBlank(latestApprovalRound.getRecommendedConditions())) {
+                applicationTp.setDepartmentalOfferConditions("Conditional Offer: " + latestApprovalRound.getRecommendedConditions());
+            } else {
+                applicationTp.setDepartmentalOfferConditions("Unconditional Offer: " + latestApprovalRound.getRecommendedConditions());
+            }
         }
 
         return applicationTp;

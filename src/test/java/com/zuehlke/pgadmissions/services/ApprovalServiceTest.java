@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -14,6 +16,7 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +38,9 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
+import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
@@ -56,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
@@ -296,6 +302,7 @@ public class ApprovalServiceTest {
 
     @Test
     public void shouldConfirmSupervision() {
+        RegisteredUser currentUser = new RegisteredUserBuilder().id(2).build();
         Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
 
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor).build();
@@ -310,16 +317,29 @@ public class ApprovalServiceTest {
         confirmSupervisionDTO.setRecommendedStartDate(startDate);
         confirmSupervisionDTO.setRecommendedConditionsAvailable(true);
         confirmSupervisionDTO.setRecommendedConditions("conditions");
-
+        
+        Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
+        commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        
+        EasyMock.replay(commentDAOMock, userServiceMock);
         approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
+        EasyMock.verify(commentDAOMock, userServiceMock);
         
         assertTrue(primarySupervisor.getConfirmedSupervision());
+        SupervisionConfirmationComment comment = supervisionConfirmationCommentcapture.getValue();
         
-        assertEquals("title", approvalRound.getProjectTitle());
-        assertEquals("abstract", approvalRound.getProjectAbstract());
-        assertEquals(startDate, approvalRound.getRecommendedStartDate());
-        assertTrue(approvalRound.getRecommendedConditionsAvailable());
-        assertEquals("conditions", approvalRound.getRecommendedConditions());
+        assertSame(applicationForm, comment.getApplication());
+        assertEquals("", comment.getComment());
+        assertNotNull(comment.getDate());
+        assertEquals("abstract", comment.getProjectAbstract());
+        assertEquals("title", comment.getProjectTitle());
+        assertEquals("conditions", comment.getRecommendedConditions());
+        assertTrue(comment.getRecommendedConditionsAvailable());
+        assertEquals(startDate, comment.getRecommendedStartDate());
+        assertSame(primarySupervisor, comment.getSupervisor());
+        assertEquals(CommentType.SUPERVISION_CONFIRMATION, comment.getType());
+        assertSame(currentUser, comment.getUser());
     }
     
     @Test
@@ -334,12 +354,27 @@ public class ApprovalServiceTest {
         confirmSupervisionDTO.setConfirmedSupervision(false);
         confirmSupervisionDTO.setDeclinedSupervisionReason("reason");
 
+        commentDAOMock.save(EasyMock.isA(RequestRestartComment.class));
+        Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
+        commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+
+        EasyMock.replay(commentDAOMock, userServiceMock);
         approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
+        EasyMock.verify(commentDAOMock, userServiceMock);
         
         assertFalse(primarySupervisor.getConfirmedSupervision());
         assertEquals("reason", primarySupervisor.getDeclinedSupervisionReason());
         assertTrue(applicationForm.isPendingApprovalRestart());
         assertEquals(user, applicationForm.getApproverRequestedRestart());
+        
+        SupervisionConfirmationComment comment = supervisionConfirmationCommentcapture.getValue();
+        assertSame(applicationForm, comment.getApplication());
+        assertEquals("", comment.getComment());
+        assertNotNull(comment.getDate());
+        assertSame(primarySupervisor, comment.getSupervisor());
+        assertEquals(CommentType.SUPERVISION_CONFIRMATION, comment.getType());
+        assertSame(user, comment.getUser());
     }
 
     @Test

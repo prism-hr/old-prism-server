@@ -100,7 +100,11 @@ public class Comment implements Comparable<Comment>, Serializable {
 
 	@Override
 	public int compareTo(Comment otherComment) {
-		return otherComment.getDate().compareTo(this.date);
+		int dateComparison = otherComment.getDate().compareTo(this.date);
+		if(dateComparison != 0){
+		    return dateComparison;
+		}
+		return otherComment.getId().compareTo(id);
 	}
 
 	public List<Document> getDocuments() {

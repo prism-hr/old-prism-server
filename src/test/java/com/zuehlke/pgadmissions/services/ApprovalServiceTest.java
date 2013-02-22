@@ -320,12 +320,12 @@ public class ApprovalServiceTest {
         assertEquals(startDate, approvalRound.getRecommendedStartDate());
         assertTrue(approvalRound.getRecommendedConditionsAvailable());
         assertEquals("conditions", approvalRound.getRecommendedConditions());
-        
     }
     
     @Test
-    public void shouldDeclineSupervision() {
-        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
+    public void shouldDeclineSupervisionAndRestartApprovalRound() {
+        RegisteredUser user = new RegisteredUserBuilder().firstName("John Paul").lastName("Jones").build();
+        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).user(user).build();
 
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
@@ -337,9 +337,9 @@ public class ApprovalServiceTest {
         approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
         
         assertFalse(primarySupervisor.getConfirmedSupervision());
-        
         assertEquals("reason", primarySupervisor.getDeclinedSupervisionReason());
-        
+        assertTrue(applicationForm.isPendingApprovalRestart());
+        assertEquals(user, applicationForm.getApproverRequestedRestart());
     }
 
     @Test

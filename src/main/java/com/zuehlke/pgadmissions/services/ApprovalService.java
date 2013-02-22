@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -91,6 +92,12 @@ public class ApprovalService {
             }
         } else if (BooleanUtils.isFalse(confirmed)) {
             supervisor.setDeclinedSupervisionReason(confirmSupervisionDTO.getDeclinedSupervisionReason());
+            RequestRestartComment restartComment = new RequestRestartComment();
+            restartComment.setApplication(application);
+            restartComment.setDate(new Date());
+            restartComment.setUser(supervisor.getUser());
+            restartComment.setComment(String.format("%s %s was unable to confirm the supervision arrangements that were proposed.", supervisor.getUser().getFirstName(), supervisor.getUser().getLastName()));
+            restartApprovalStage(application, supervisor.getUser(), restartComment);
         }
     }
 
@@ -157,6 +164,11 @@ public class ApprovalService {
         if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
             throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", application.getApplicationNumber()));
         }
+        restartApprovalStage(application, approver, comment);
+    }
+    
+    @Transactional
+    public void restartApprovalStage(ApplicationForm application, RegisteredUser approver, Comment comment) {
         commentDAO.save(comment);
         application.setPendingApprovalRestart(true);
         application.setApproverRequestedRestart(approver);

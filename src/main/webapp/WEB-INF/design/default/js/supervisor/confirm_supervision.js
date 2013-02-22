@@ -1,23 +1,10 @@
 $(document).ready(function() {
    
-    bindDatePicker('#recommendedStartDate');
-   
     // -------------------------------------------------------------------------------
     // Declined supervision reason
     // -------------------------------------------------------------------------------
     $("input[name='confirmedSupervision']").bind('change', function() {
-        var selected_radio = $("input[name='confirmedSupervision']:checked").val();
-        if (selected_radio == 'false')   {
-        	enableDeclinedSupervisionReason();
-        	
-        	disableProjectDescription();
-        	disableRecommendedOffer();
-        } else {
-        	disableDeclinedSupervisionReason();
-        	
-        	enableProjectDescription();
-        	enableRecommendedOffer();
-        }
+        confirmedSupervisionChange();
     });
     
     // -------------------------------------------------------------------------------
@@ -32,11 +19,28 @@ $(document).ready(function() {
         }
     });
     
-    disableDeclinedSupervisionReason();
-	disableProjectDescription();
-	disableRecommendedOffer();
+	bindDatePicker('#recommendedStartDate');
+    confirmedSupervisionChange();
+    recomendedConditionsChange();
     
 });
+
+function confirmedSupervisionChange() {
+    var selected_radio = $("input[name='confirmedSupervision']:checked").val();
+    if (selected_radio == 'false')   {
+        enableDeclinedSupervisionReason();
+        disableProjectDescription();
+        disableRecommendedOffer();
+    } else if (selected_radio == 'true')   {
+        disableDeclinedSupervisionReason();
+        enableProjectDescription();
+        enableRecommendedOffer();
+    } else {
+        disableDeclinedSupervisionReason();
+        disableProjectDescription();
+        disableRecommendedOffer();
+    }
+}
 
 function disableProjectDescription() {
 	$("#lbl_projectDescription").addClass("grey-label");
@@ -88,9 +92,15 @@ function enableRecommendedOffer() {
     $("#lbl_recommendedConditionsAvailable").removeClass("grey-label");
     $("#lbl_recommendedConditionsAvailable").html("Recommended Offer Type<em>*</em>");
     
+    recomendedConditionsChange();
+}
+
+function recomendedConditionsChange() {
     var conditionsAvailable = $("input[name='recommendedConditionsAvailable']:checked").val();
     if(conditionsAvailable == "true"){
-    	enableConditions();
+        enableConditions();
+    } else {
+        disableConditions();
     }
 }
 

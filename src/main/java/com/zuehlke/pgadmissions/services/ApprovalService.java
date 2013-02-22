@@ -168,7 +168,7 @@ public class ApprovalService {
     }
     
     @Transactional
-    public void restartApprovalStage(ApplicationForm application, RegisteredUser approver, Comment comment) {
+    private void restartApprovalStage(ApplicationForm application, RegisteredUser approver, Comment comment) {
         commentDAO.save(comment);
         application.setPendingApprovalRestart(true);
         application.setApproverRequestedRestart(approver);

@@ -141,9 +141,9 @@
             
             <div class="row">
                 <#if  !approvalRound.projectDescriptionAvailable?? || !approvalRound.projectDescriptionAvailable >
-                    <label id="lbl_projectAbstract" class="plain-label grey-label">Project Abstract</label>
+                    <label id="lbl_projectAbstract" class="plain-label grey-label">Project Abstract (ATAS)</label>
                 <#else>
-                    <label id="lbl_projectAbstract" class="plain-label">Project Abstract<em>*</em></label>
+                    <label id="lbl_projectAbstract" class="plain-label">Project Abstract (ATAS)<em>*</em></label>
                 </#if>
                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
                 <div class="field">

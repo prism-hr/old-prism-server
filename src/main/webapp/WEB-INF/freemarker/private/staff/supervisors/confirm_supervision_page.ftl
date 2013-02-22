@@ -172,7 +172,7 @@
                                             </#list>
                                             
                                              <div class="row">
-                                                <label id="lbl_projectAbstract" class="plain-label">Project Abstract<em>*</em></label>
+                                                <label id="lbl_projectAbstract" class="plain-label">Project Abstract (ATAS)<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
                                                 <div class="field">
                                                     <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6">${(confirmSupervisionDTO.projectAbstract?html)!}</textarea>

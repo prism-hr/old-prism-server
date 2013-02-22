@@ -578,6 +578,7 @@ public class ApprovalControllerTest {
         EasyMock.expectLastCall().once();
         
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(12);
+        EasyMock.expect(encryptionHelperMock.encrypt(12)).andReturn("refereeId");
         EasyMock.expect(refereeServiceMock.getRefereeById(12)).andReturn(referee);
 
         EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(referenceComment);
@@ -615,10 +616,11 @@ public class ApprovalControllerTest {
         BindingResult result = new MapBindingResult(Collections.emptyMap(), "");
         Model model = new ExtendedModelMap();
         
-        Referee referee = new RefereeBuilder().application(applicationForm).id(8).toReferee();
+        Referee referee = new RefereeBuilder().application(applicationForm).id(12).toReferee();
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(12);
+        EasyMock.expect(encryptionHelperMock.encrypt(12)).andReturn("refereeId");
         EasyMock.expect(refereeServiceMock.getRefereeById(12)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expectLastCall();

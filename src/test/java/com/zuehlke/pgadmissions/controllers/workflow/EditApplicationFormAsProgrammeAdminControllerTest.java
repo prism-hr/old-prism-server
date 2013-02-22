@@ -103,6 +103,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("refereeId");
         EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expectLastCall();
@@ -235,6 +236,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
+        EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("refereeId");
         EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expectLastCall();

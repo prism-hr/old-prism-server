@@ -171,6 +171,9 @@ public class EditApplicationFormAsProgrammeAdminController {
             Referee referee = newComment.getReferee();
             applicationService.refresh(applicationForm);
             refereeService.refresh(referee);
+            
+            String newRefereeId = encryptionHelper.encrypt(referee.getId());
+            model.addAttribute("editedRefereeId", newRefereeId);
         }
 
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;

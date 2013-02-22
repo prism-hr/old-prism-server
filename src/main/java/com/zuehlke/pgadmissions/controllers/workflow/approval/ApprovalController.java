@@ -322,6 +322,9 @@ public class ApprovalController {
             Referee referee = newComment.getReferee();
             applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
+            
+            String newRefereeId = encryptionHelper.encrypt(referee.getId());
+            model.addAttribute("editedRefereeId", newRefereeId);
 
             // update referees send to Portico in order to validate it
             if (refereesSendToPortico != null && !refereesSendToPortico.contains(referee.getId())) {

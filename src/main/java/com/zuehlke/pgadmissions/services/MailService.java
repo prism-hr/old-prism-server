@@ -8,8 +8,8 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -124,14 +124,13 @@ public class MailService {
             }
         }
         
-        CollectionUtils.collect(users, new Transformer() {
+        CollectionUtils.forAllDo(users, new Closure() {
             @Override
-            public Object transform(Object target) {
+            public void execute(Object target) {
                 if (target != null) {
                     RegisteredUser user = (RegisteredUser) target;
                     uniqueUsersMap.put(user.getId(), user);
                 }
-                return null;
             }
         });
         

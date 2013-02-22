@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.validators;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -67,17 +69,27 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
             errors.rejectValue("startDate", "date.field.notfuture");
         }
 		
-		List<SuggestedSupervisor> supervisors = programmeDetail.getSuggestedSupervisors();
-		for (int i = 0; i < supervisors.size(); i++) {
-			if (StringUtils.isBlank(supervisors.get(i).getFirstname())) {
-				errors.rejectValue("suggestedSupervisors", "text.field.empty");
-			}
-			if (StringUtils.isBlank(supervisors.get(i).getLastname())) {
-				errors.rejectValue("suggestedSupervisors", "text.field.empty");
-			}
-			if (StringUtils.isBlank(supervisors.get(i).getEmail())) {
-                errors.rejectValue("suggestedSupervisors", "text.field.empty");
-            }
+		Set<String> supervisorEmails = new HashSet<String>();
+		for (SuggestedSupervisor supervisor : programmeDetail.getSuggestedSupervisors()) {
+		    if (StringUtils.isBlank(supervisor.getFirstname())) {
+		        errors.rejectValue("suggestedSupervisors", "text.field.empty");
+		    }
+		    
+		    if (StringUtils.isBlank(supervisor.getLastname())) {
+		        errors.rejectValue("suggestedSupervisors", "text.field.empty");
+		    }
+		    
+		    if (StringUtils.isBlank(supervisor.getEmail())) {
+		        errors.rejectValue("suggestedSupervisors", "text.field.empty");
+		    }
+		    
+		    if (StringUtils.isNotBlank(supervisor.getEmail())) {
+		        if (supervisorEmails.contains(supervisor.getEmail())) {
+		            errors.rejectValue("suggestedSupervisors", "suggestedSupervisors.duplicate.email");
+		        } else {
+		            supervisorEmails.add(supervisor.getEmail());
+		        }
+		    }
 		}
 	}
 }

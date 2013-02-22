@@ -31,7 +31,7 @@ public class MailSenderTest {
         EasyMock.expect(applicationFormMock.getApplicant()).andReturn(userMock);
         EasyMock.expect(applicationFormMock.getProgram()).andReturn(programMock);
         EasyMock.expect(userMock.getFirstName()).andReturn("Patricio Rodrigo");
-        EasyMock.expect(userMock.getLastName()).andReturn("Estévez Soto");
+        EasyMock.expect(userMock.getLastName()).andReturn("Est\u00E9vez Soto");
         EasyMock.expect(applicationFormMock.getApplicationNumber()).andReturn("ABC-2013-00001");
         EasyMock.expect(programMock.getTitle()).andReturn("MRES");
         MailSender sender = new MailSender(null, null, messageSource) {
@@ -40,7 +40,7 @@ public class MailSenderTest {
         EasyMock.replay(userMock, applicationFormMock, programMock);
         
         Assert.assertEquals(
-                "Patricio Rodrigo Estévez Soto Application ABC-2013-00001 for UCL MRES - Update Notification",
+                "Patricio Rodrigo Est\u00E9vez Soto Application ABC-2013-00001 for UCL MRES - Update Notification",
                 sender.resolveMessage("application.update", applicationFormMock));
         
         EasyMock.verify(userMock, applicationFormMock, programMock);

@@ -109,8 +109,8 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with no match at ‘tran’ - replace the real name and email with some ridiculous fictitious values. 
-    // * Withdrawn application with no match at ‘tran’ resent - resend the one above with the user identity returned by the web service.
+    // * Withdrawn application with no match at 'tran' - replace the real name and email with some ridiculous fictitious values. 
+    // * Withdrawn application with no match at 'tran' resent - resend the one above with the user identity returned by the web service.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -119,7 +119,7 @@ public class PorticoWebServiceIT {
         withdrawnApplicationWithNoMatchAtTRANResent();
     }
     private void withdrawnApplicationWithNoMatchAtTRAN() {
-        csvEntries.add("Withdrawn application with no match at ‘tran’");
+        csvEntries.add("Withdrawn application with no match at 'tran'");
         randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
@@ -135,7 +135,7 @@ public class PorticoWebServiceIT {
         });
     }
     private void withdrawnApplicationWithNoMatchAtTRANResent() {
-        csvEntries.add("Withdrawn application with no match at ‘tran’ resent");
+        csvEntries.add("Withdrawn application with no match at 'tran' resent");
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
@@ -152,13 +152,13 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with match at ‘tran’ and no active user identity (MUA) - 
+    // * Withdrawn application with match at 'tran' and no active user identity (MUA) - 
     //   replace corresponding fields (except IPR code) with G in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void withdrawnApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() {
-        csvEntries.add("Withdrawn application with match at ‘tran’ and no active user identity (MUA)");
+        csvEntries.add("Withdrawn application with match at 'tran' and no active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
@@ -179,13 +179,13 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Withdrawn application with match at ‘tran’ and active user identity (MUA) - replace corresponding 
+    // * Withdrawn application with match at 'tran' and active user identity (MUA) - replace corresponding 
     //   fields (except IPR code) with D in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void withdrawnApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() {
-        csvEntries.add("Withdrawn application with match at ‘tran’ and active user identity (MUA)");
+        csvEntries.add("Withdrawn application with match at 'tran' and active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
@@ -274,8 +274,8 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Rejected application with no match at ‘tran’ - replace the real name and email with some ridiculous fictitious values.
-    // * Rejected application with no match at ‘tran’ resent - resend the one above with the user identity returned by the web service.
+    // * Rejected application with no match at 'tran' - replace the real name and email with some ridiculous fictitious values.
+    // * Rejected application with no match at 'tran' resent - resend the one above with the user identity returned by the web service.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -284,7 +284,7 @@ public class PorticoWebServiceIT {
         rejectedApplicationWithNoMatchAtTRANResent();
     }
     private void rejectedApplicationWithNoMatchAtTRAN() {
-        csvEntries.add("Rejected application with no match at ‘tran’");
+        csvEntries.add("Rejected application with no match at 'tran'");
         randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
@@ -301,7 +301,7 @@ public class PorticoWebServiceIT {
         });
     }
     private void rejectedApplicationWithNoMatchAtTRANResent() {
-        csvEntries.add("Rejected application with no match at ‘tran’ resent");
+        csvEntries.add("Rejected application with no match at 'tran' resent");
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
@@ -319,13 +319,13 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Rejected application with match at ‘tran’ and no active user identity (MUA) - 
+    // * Rejected application with match at 'tran' and no active user identity (MUA) - 
     //   replace corresponding fields (except IPR code) with H in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void rejectedApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() {
-        csvEntries.add("Rejected application with match at ‘tran’ and no active user identity (MUA)");
+        csvEntries.add("Rejected application with match at 'tran' and no active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
@@ -350,13 +350,13 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    // * Rejected application with match at ‘tran’ and active user identity (MUA) - 
+    // * Rejected application with match at 'tran' and active user identity (MUA) - 
     //   replace corresponding fields (except IPR code) with E in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void rejectedApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() {
-        csvEntries.add("Rejected application with match at ‘tran’ and active user identity (MUA)");
+        csvEntries.add("Rejected application with match at 'tran' and active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
@@ -448,8 +448,8 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Approved application with no match at ‘tran’ - replace the real name and email with some ridiculous fictitious values.
-    // * Approved application with no match at ‘tran’ resent - resend the one above with the user identity returned by the web service.
+    // * Approved application with no match at 'tran' - replace the real name and email with some ridiculous fictitious values.
+    // * Approved application with no match at 'tran' resent - resend the one above with the user identity returned by the web service.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
@@ -458,7 +458,7 @@ public class PorticoWebServiceIT {
         approvedApplicationWithNoMatchAtTRANResent();
     }
     private void approvedApplicationWithNoMatchAtTRAN() {
-        csvEntries.add("Approved application with no match at ‘tran’");
+        csvEntries.add("Approved application with no match at 'tran'");
         randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
@@ -475,7 +475,7 @@ public class PorticoWebServiceIT {
         });
     }
     private void approvedApplicationWithNoMatchAtTRANResent() {
-        csvEntries.add("Approved application with no match at ‘tran’ resent");
+        csvEntries.add("Approved application with no match at 'tran' resent");
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
@@ -493,13 +493,13 @@ public class PorticoWebServiceIT {
     }
 
     // ----------------------------------------------------------------------------------
-    //  * Approved application with match at ‘tran’ and no active user identity (MUA) -  
+    //  * Approved application with match at 'tran' and no active user identity (MUA) -  
     //    replace corresponding fields (except IPR code) with I in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void approvedApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() {
-        csvEntries.add("Approved application with match at ‘tran’ and no active user identity (MUA)");
+        csvEntries.add("Approved application with match at 'tran' and no active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override
@@ -522,13 +522,13 @@ public class PorticoWebServiceIT {
     }
     
     // ----------------------------------------------------------------------------------
-    // * Approved application with match at ‘tran’ and active user identity (MUA) - 
+    // * Approved application with match at 'tran' and active user identity (MUA) - 
     //   replace corresponding fields (except IPR code) with F in spreadsheet.
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
     public void approvedApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() {
-        csvEntries.add("Approved application with match at ‘tran’ and active user identity (MUA)");
+        csvEntries.add("Approved application with match at 'tran' and active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         uclExportService.sendToPortico(randomApplicationForm, new AbstractPorticoITTransferListener() {
             @Override

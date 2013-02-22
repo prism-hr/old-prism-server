@@ -65,10 +65,6 @@ public class ApprovalRound implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
-    @Column(name = "last_updated")
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date lastUpdated;
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -178,14 +174,6 @@ public class ApprovalRound implements Serializable {
 
     public void setRecommendedConditions(String recommendedConditions) {
         this.recommendedConditions = recommendedConditions;
-    }
-
-    public Date getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
     }
 
 }

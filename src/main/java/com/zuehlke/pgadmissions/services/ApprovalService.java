@@ -92,7 +92,6 @@ public class ApprovalService {
         } else if (BooleanUtils.isFalse(confirmed)) {
             supervisor.setDeclinedSupervisionReason(confirmSupervisionDTO.getDeclinedSupervisionReason());
         }
-        approvalRound.setLastUpdated(new Date());
     }
 
     @Transactional

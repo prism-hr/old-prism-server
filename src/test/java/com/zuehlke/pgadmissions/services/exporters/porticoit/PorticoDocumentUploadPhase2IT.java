@@ -123,7 +123,7 @@ public class PorticoDocumentUploadPhase2IT {
                 
                 Marshaller marshaller = webServiceTemplate.getMarshaller();
                 try {
-                    marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
+                    marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getCourseApplication().getExternalApplicationID() + ".txt")));
                 } catch (Exception e) {
                     Assert.fail(String.format("Could not marshall request correctly [reason=%s]", e.getMessage()));
                 }
@@ -188,7 +188,7 @@ public class PorticoDocumentUploadPhase2IT {
                 
                 Marshaller marshaller = webServiceTemplate.getMarshaller();
                 try {
-                    marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
+                    marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getCourseApplication().getExternalApplicationID() + ".txt")));
                 } catch (Exception e) {
                     Assert.fail(String.format("Could not marshall request correctly [reason=%s]", e.getMessage()));
                 }
@@ -226,7 +226,7 @@ public class PorticoDocumentUploadPhase2IT {
                 
                 Marshaller marshaller = webServiceTemplate.getMarshaller();
                 try {
-                    marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
+                    marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getCourseApplication().getExternalApplicationID() + ".txt")));
                 } catch (Exception e) {
                     Assert.fail(String.format("Could not marshall request correctly [reason=%s]", e.getMessage()));
                 }
@@ -271,7 +271,7 @@ public class PorticoDocumentUploadPhase2IT {
                 
                 Marshaller marshaller = webServiceTemplate.getMarshaller();
                 try {
-                    marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
+                    marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getCourseApplication().getExternalApplicationID() + ".txt")));
                 } catch (Exception e) {
                     Assert.fail(String.format("Could not marshall request correctly [reason=%s]", e.getMessage()));
                 }
@@ -303,7 +303,7 @@ public class PorticoDocumentUploadPhase2IT {
                 
                 Marshaller marshaller = webServiceTemplate.getMarshaller();
                 try {
-                    marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
+                    marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getCourseApplication().getExternalApplicationID() + ".txt")));
                 } catch (Exception e) {
                     Assert.fail(String.format("Could not marshall request correctly [reason=%s]", e.getMessage()));
                 }
@@ -316,7 +316,7 @@ public class PorticoDocumentUploadPhase2IT {
         public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {
-                marshaller.marshal(request, new StreamResult(new File("request_" + applicationForm.getApplicationNumber() + ".txt")));
+                marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getCourseApplication().getExternalApplicationID() + ".txt")));
             } catch (Exception e) {
                 Assert.fail(String.format("Could not marshall request correctly [reason=%s]", e.getMessage()));
             }

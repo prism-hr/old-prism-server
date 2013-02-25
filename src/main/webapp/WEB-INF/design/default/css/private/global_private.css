@@ -843,6 +843,7 @@ span.icon-role.interviewer { background-image: url(../../images/role_interviewer
 span.icon-role.approver { background-image: url(../../images/role_approver.png); }
 span.icon-role.applicant { background-image: url(../../images/role_applicant.png); }
 span.icon-role.referee { background-image: url(../../images/role_referee.png); }
+span.icon-role.supervisor { background-image: url(../../images/role_supervisor.png); }
 
 
 button span.icon-up, button span.icon-down {

@@ -130,43 +130,48 @@
 			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART'>
 			            	<#assign role = "approver"/>
 		            	<#elseif comment.type = 'SUPERVISION_CONFIRMATION'>
-                            <#assign role = "approver"/>                                
+                            <#assign role = "supervisor"/>                                
 			            </#if>
-			            <li>                          
-			              <div class="box">
-			                <div class="title">
-			                  <span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
-			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
-			                  <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
-			                </div>
-			                <#if comment.type == 'REQUEST_RESTART'>
-												<p><em>${(comment.comment?html)!}</em></p>
-												<p class="restart"><span></span>Restart of approval stage requested.</p>
-			                <#elseif comment.comment?starts_with("Referred to")>
-												<p class="referral"><span></span><em>${(comment.comment?html)!}</em></p>
-			                <#elseif comment.comment?starts_with("Delegated Application")>
-												<p class="delegate"><span></span><em>${(comment.comment?html)!}</em></p>
-											<#elseif comment.comment?length &gt; 0>
-												<p><em>${(comment.comment?html)!}</em></p>
-											</#if>
-							<#if comment.documents?? && comment.documents?size &gt; 0>
-				                <ul class="uploads">                
-				                <#list comment.documents as document>
-				                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
-				                </#list>
-				                </ul>
-							</#if>
-			                <#if comment.type == 'VALIDATION'>                                                    
-			                	<#include "timeline_snippets/validation_comment.ftl"/>
-			                <#elseif comment.type == 'REVIEW'>
-			                	<#include "timeline_snippets/review_comment.ftl"/>
-			                <#elseif comment.type == 'INTERVIEW'>
-			                	<#include "timeline_snippets/interview_comment.ftl"/>
-                            <#elseif comment.type == 'SUPERVISION_CONFIRMATION'>
-                                <#include "timeline_snippets/supervision_confirmation_comment.ftl"/>    				                	                 
-			                </#if>
-			              </div>
-			            </li>
+			            
+			            <#if comment.type == 'SUPERVISION_CONFIRMATION'>
+			                <#include "timeline_snippets/supervision_confirmation_comment.ftl"/>
+			            <#else>
+			            
+    			            <li>                          
+    			              <div class="box">
+    			                <div class="title">
+    			                  <span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
+    			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+    			                  <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
+    			                </div>
+    			                <#if comment.type == 'REQUEST_RESTART'>
+    												<p><em>${(comment.comment?html)!}</em></p>
+    												<p class="restart"><span></span>Restart of approval stage requested.</p>
+    			                <#elseif comment.comment?starts_with("Referred to")>
+    												<p class="referral"><span></span><em>${(comment.comment?html)!}</em></p>
+    			                <#elseif comment.comment?starts_with("Delegated Application")>
+    												<p class="delegate"><span></span><em>${(comment.comment?html)!}</em></p>
+    											<#elseif comment.comment?length &gt; 0>
+    												<p><em>${(comment.comment?html)!}</em></p>
+    											</#if>
+    							<#if comment.documents?? && comment.documents?size &gt; 0>
+    				                <ul class="uploads">                
+    				                <#list comment.documents as document>
+    				                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
+    				                </#list>
+    				                </ul>
+    							</#if>
+    			                <#if comment.type == 'VALIDATION'>                                                    
+    			                	<#include "timeline_snippets/validation_comment.ftl"/>
+    			                <#elseif comment.type == 'REVIEW'>
+    			                	<#include "timeline_snippets/review_comment.ftl"/>
+    			                <#elseif comment.type == 'INTERVIEW'>
+    			                	<#include "timeline_snippets/interview_comment.ftl"/>
+    			                </#if>
+    			              </div>
+    			            </li>
+    			            
+			            </#if>
 		            </#list>                       
 		          </ul>
 		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)> 

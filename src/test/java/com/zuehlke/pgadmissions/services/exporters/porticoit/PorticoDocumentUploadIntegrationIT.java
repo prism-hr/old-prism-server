@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -92,6 +94,8 @@ public class PorticoDocumentUploadIntegrationIT {
     private Resource validPdf; 
 
     private Resource damagedPdf; 
+    
+    private static Set<String> USED_APPLICATION_NUMBERS = new HashSet<String>();
     
     @Before
     public void prepare() throws IOException {
@@ -1795,7 +1799,9 @@ public class PorticoDocumentUploadIntegrationIT {
             if (numberOfReferees == 2) {
                 foundEnoughDataForReferees = true;
             }
-        } while (!(foundEnoughDataForQualifications && foundEnoughDataForReferees));
+        } while (!(foundEnoughDataForQualifications && foundEnoughDataForReferees && !USED_APPLICATION_NUMBERS.contains(applicationForm.getApplicationNumber())));
+        
+        USED_APPLICATION_NUMBERS.add(applicationForm.getApplicationNumber());
         
         csvEntries.add(applicationForm.getApplicationNumber());
         csvEntries.add(applicationForm.getApplicant().getLastName());

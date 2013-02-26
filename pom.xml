@@ -21,6 +21,10 @@
             <url>http://nexus.zuehlke.com/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    
+    <scm>
+        <connection>scm:hg:https://pgbuild:pgbuild@repo.zuehlke.com/hg/pgadmissions/portico-validation</connection>
+    </scm>
 
     <dependencies>
         <dependency>

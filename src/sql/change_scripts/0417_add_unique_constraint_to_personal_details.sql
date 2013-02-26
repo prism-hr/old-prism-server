@@ -1,0 +1,3 @@
+ALTER TABLE APPLICATION_FORM_PERSONAL_DETAIL 
+ADD UNIQUE INDEX application_form_id_UNIQUE (application_form_id ASC)
+;

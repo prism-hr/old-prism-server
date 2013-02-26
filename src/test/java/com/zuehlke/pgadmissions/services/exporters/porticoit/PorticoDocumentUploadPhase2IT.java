@@ -54,7 +54,7 @@ public class PorticoDocumentUploadPhase2IT {
     private static final String TEST_REPORT_FILENAME = "PorticoDocumentUploadPhase2IT.csv";
 
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
     
     @Autowired
     private WebServiceTemplate webServiceTemplate;

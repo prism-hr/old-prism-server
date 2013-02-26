@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
-import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class RefereeService {

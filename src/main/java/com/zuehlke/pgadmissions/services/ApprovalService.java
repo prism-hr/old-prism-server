@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
-import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class ApprovalService {

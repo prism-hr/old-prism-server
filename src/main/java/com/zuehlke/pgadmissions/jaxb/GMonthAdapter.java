@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services.exporters;
+package com.zuehlke.pgadmissions.jaxb;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

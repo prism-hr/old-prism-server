@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
+import com.zuehlke.pgadmissions.jaxb.GMonthAdapter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWebServiceContext.xml")

@@ -126,7 +126,7 @@
 			            <#elseif comment.type == 'INTERVIEW'>
 			            	<#assign role = "interviewer"/>    
 			            <#elseif comment.type == 'APPROVAL'>
-			            	<#assign role = "approver"/>                
+			            	<#assign role = "administrator"/>                
 			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART'>
 			            	<#assign role = "approver"/>
 		            	<#elseif comment.type = 'SUPERVISION_CONFIRMATION'>
@@ -135,8 +135,10 @@
 			            
 			            <#if comment.type == 'SUPERVISION_CONFIRMATION'>
 			                <#include "timeline_snippets/supervision_confirmation_comment.ftl"/>
-			            <#else>
-			            
+			            <#elseif comment.type == 'APPROVAL'>
+			                <#include "timeline_snippets/approval_comment.ftl"/>
+		                <#else>
+			                
     			            <li>                          
     			              <div class="box">
     			                <div class="title">

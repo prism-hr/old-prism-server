@@ -12,6 +12,7 @@ import java.util.zip.ZipOutputStream;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
+import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,6 +37,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicati
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoAttachmentsZipCreator;
@@ -51,6 +53,9 @@ public class PorticoDocumentUploadPhase2IT {
 
     private static final String TEST_REPORT_FILENAME = "PorticoDocumentUploadPhase2IT.csv";
 
+    @Autowired
+    SessionFactory sessionFactory;
+    
     @Autowired
     private WebServiceTemplate webServiceTemplate;
     
@@ -70,7 +75,6 @@ public class PorticoDocumentUploadPhase2IT {
     private ApplicationForm applicationForm;
 
     private Resource damagedPdf; 
-    
     
     @Before
     public void prepare() throws IOException {
@@ -93,6 +97,7 @@ public class PorticoDocumentUploadPhase2IT {
     public void missingResearchProposal1ApplicationFilenameForValidResearchProposal() {
         csvEntries.add("Missing researchProposal.1.applicationFilename for valid research proposal document in the document upload package.");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCIVSGEO01-2012-000111");
+        addReferres(applicationForm);
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
@@ -110,7 +115,7 @@ public class PorticoDocumentUploadPhase2IT {
         uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
-                request.getApplication().getCourseApplication().setExternalApplicationID("RRDCIVSGEO01-2015-000111");
+                request.getApplication().getCourseApplication().setExternalApplicationID("RRDCIVSGEO01-2016-000111");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
                 request.getApplication().getCourseApplication().setAtasStatement("ATAS STATEMENT");
@@ -139,6 +144,7 @@ public class PorticoDocumentUploadPhase2IT {
     public void missingtranscript2applicationFilename() {
         csvEntries.add("Missing transcript.2.applicationFilename with valid corresponding document in the upload package.");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000329");
+        addReferres(applicationForm);
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -175,7 +181,7 @@ public class PorticoDocumentUploadPhase2IT {
         uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
-                request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2015-000329");
+                request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2016-000329");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
                 request.getApplication().getCourseApplication().setAtasStatement("ATAS STATEMENT");
@@ -204,6 +210,7 @@ public class PorticoDocumentUploadPhase2IT {
     public void noEnglishLanguageTestCertificate1InDocumentUpload() {
         csvEntries.add("No englishLanguageTestCertificate.1 in document upload.");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000329");
+        addReferres(applicationForm);
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -213,7 +220,7 @@ public class PorticoDocumentUploadPhase2IT {
         uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
-                request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2015-000329-1");
+                request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2016-000329-1");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
                 request.getApplication().getCourseApplication().setAtasStatement("ATAS STATEMENT");
@@ -242,6 +249,7 @@ public class PorticoDocumentUploadPhase2IT {
     public void corruptedApplicationForm1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() {
         csvEntries.add("Corrupted applicationForm.1 in document upload with valid corresponding entry in document upload contents file (optional document).");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDSECSING01-2012-000202");
+        addReferres(applicationForm);
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
             @Override
             protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
@@ -258,7 +266,7 @@ public class PorticoDocumentUploadPhase2IT {
         uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
-                request.getApplication().getCourseApplication().setExternalApplicationID("RRDSECSING01-2015-000202");
+                request.getApplication().getCourseApplication().setExternalApplicationID("RRDSECSING01-2016-000202");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
                 request.getApplication().getCourseApplication().setAtasStatement("ATAS STATEMENT");
@@ -287,10 +295,11 @@ public class PorticoDocumentUploadPhase2IT {
     public void validApplicationFormWithBogusInstitutionCode() {
         csvEntries.add("Bogus institution code");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000282");
+        addReferres(applicationForm);
         uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
             @Override
             public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
-                request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2015-000282");
+                request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2016-000282");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
                 request.getApplication().getCourseApplication().setAtasStatement("ATAS STATEMENT");
@@ -309,6 +318,22 @@ public class PorticoDocumentUploadPhase2IT {
                 }
             }
         });
+    }
+    
+    private void addReferres(ApplicationForm form) {
+        int numberOfReferences = 0;
+        for (Referee referee : form.getReferees()) {
+            if (referee.getReference() != null) {
+                referee.setSendToUCL(true);
+                numberOfReferences++;
+            }
+            
+            if (numberOfReferences == 2) {
+                break;
+            }
+        }
+        applicationsService.save(form);
+        sessionFactory.getCurrentSession().refresh(form);
     }
     
     private class CsvTransferListener implements TransferListener {

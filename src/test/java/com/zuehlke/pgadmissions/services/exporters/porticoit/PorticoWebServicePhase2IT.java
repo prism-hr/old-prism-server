@@ -21,6 +21,7 @@ import org.springframework.oxm.Marshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -71,6 +72,7 @@ public class PorticoWebServicePhase2IT {
     }
     
     @Test
+    @Transactional
     public void sendApplications() {
         List<String> applications = new ArrayList<String>(Arrays.asList(
                 "RRDEENSING01-2013-000087",  "RRDEENSING01-2013-000088", "RRDEENSING01-2013-000089",
@@ -82,21 +84,17 @@ public class PorticoWebServicePhase2IT {
         for (String appNumber : applications) {
             ApplicationForm form = applicationsService.getApplicationByApplicationNumber(appNumber);
             selectReferres(form);
-            uclExportService.sendToPortico(form, new CsvTransferListener());
+            try {
+                uclExportService.sendToPortico(form, new CsvTransferListener());
+            } catch (Exception e) {
+                // do nothing
+            }
         }
     }
     
     private void selectReferres(ApplicationForm form) {
-        int numberOfReferences = 0;
         for (Referee referee : form.getReferees()) {
-            if (referee.getReference() != null) {
-                referee.setSendToUCL(true);
-                numberOfReferences++;
-            }
-            
-            if (numberOfReferences == 2) {
-                break;
-            }
+            referee.setSendToUCL(true);
         }
         applicationsService.save(form);
         sessionFactory.getCurrentSession().refresh(form);

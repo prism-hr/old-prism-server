@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -75,9 +77,43 @@ public class ApprovalService {
 
     @Transactional
     public void confirmSupervision(ApplicationForm application, ConfirmSupervisionDTO confirmSupervisionDTO) {
-        Supervisor supervisor = application.getLatestApprovalRound().getPrimarySupervisor();
+        ApprovalRound approvalRound = application.getLatestApprovalRound();
+        Supervisor supervisor = approvalRound.getPrimarySupervisor();
         Boolean confirmed = confirmSupervisionDTO.getConfirmedSupervision();
 
+        supervisor.setConfirmedSupervision(confirmed);
+
+        if (BooleanUtils.isTrue(confirmed)) {
+            approvalRound.setProjectDescriptionAvailable(true);
+            approvalRound.setProjectTitle(confirmSupervisionDTO.getProjectTitle());
+            approvalRound.setProjectAbstract(confirmSupervisionDTO.getProjectAbstract());
+            approvalRound.setRecommendedConditionsAvailable(confirmSupervisionDTO.getRecommendedConditionsAvailable());
+            approvalRound.setRecommendedConditions(confirmSupervisionDTO.getRecommendedConditions());
+            approvalRound.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
+        }
+
+        if (BooleanUtils.isFalse(confirmed)) {
+            supervisor.setDeclinedSupervisionReason(confirmSupervisionDTO.getDeclinedSupervisionReason());
+            RequestRestartComment restartComment = createRequestRestartComment(application, supervisor);
+            restartApprovalStage(application, supervisor.getUser(), restartComment);
+        }
+
+        SupervisionConfirmationComment supervisionConfirmationComment = createSupervisionConfirmationComment(confirmSupervisionDTO, application, supervisor);
+        commentDAO.save(supervisionConfirmationComment);
+    }
+
+    private RequestRestartComment createRequestRestartComment(ApplicationForm application, Supervisor supervisor) {
+        RequestRestartComment restartComment = new RequestRestartComment();
+        restartComment.setApplication(application);
+        restartComment.setDate(new Date());
+        restartComment.setUser(supervisor.getUser());
+        restartComment.setComment(String.format("%s %s was unable to confirm the supervision arrangements that were proposed.", supervisor.getUser()
+                .getFirstName(), supervisor.getUser().getLastName()));
+        return restartComment;
+    }
+
+    private SupervisionConfirmationComment createSupervisionConfirmationComment(ConfirmSupervisionDTO confirmSupervisionDTO, ApplicationForm application,
+            Supervisor supervisor) {
         SupervisionConfirmationComment supervisionConfirmationComment = new SupervisionConfirmationComment();
         supervisionConfirmationComment.setApplication(application);
         supervisionConfirmationComment.setDate(new Date());
@@ -85,9 +121,8 @@ public class ApprovalService {
         supervisionConfirmationComment.setType(CommentType.SUPERVISION_CONFIRMATION);
         supervisionConfirmationComment.setUser(userService.getCurrentUser());
         supervisionConfirmationComment.setComment("");
-        
-        supervisor.setConfirmedSupervision(confirmed);
-        if (BooleanUtils.isTrue(confirmed)) {
+
+        if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             supervisionConfirmationComment.setProjectTitle(confirmSupervisionDTO.getProjectTitle());
             supervisionConfirmationComment.setProjectAbstract(confirmSupervisionDTO.getProjectAbstract());
             supervisionConfirmationComment.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
@@ -98,17 +133,9 @@ public class ApprovalService {
             } else {
                 supervisionConfirmationComment.setRecommendedConditions(null);
             }
-        } else if (BooleanUtils.isFalse(confirmed)) {
-            supervisor.setDeclinedSupervisionReason(confirmSupervisionDTO.getDeclinedSupervisionReason());
-            RequestRestartComment restartComment = new RequestRestartComment();
-            restartComment.setApplication(application);
-            restartComment.setDate(new Date());
-            restartComment.setUser(supervisor.getUser());
-            restartComment.setComment(String.format("%s %s was unable to confirm the supervision arrangements that were proposed.", supervisor.getUser().getFirstName(), supervisor.getUser().getLastName()));
-            restartApprovalStage(application, supervisor.getUser(), restartComment);
         }
-        
-        commentDAO.save(supervisionConfirmationComment);
+
+        return supervisionConfirmationComment;
     }
 
     @Transactional
@@ -130,6 +157,20 @@ public class ApprovalService {
         resetNotificationRecords(application);
 
         applicationDAO.save(application);
+
+        ApprovalComment approvalComment = new ApprovalComment();
+        approvalComment.setApplication(application);
+        approvalComment.setComment("");
+        approvalComment.setType(CommentType.APPROVAL);
+        approvalComment.setProjectAbstract(approvalRound.getProjectAbstract());
+        approvalComment.setProjectDescriptionAvailable(approvalRound.getProjectDescriptionAvailable());
+        approvalComment.setProjectTitle(approvalRound.getProjectTitle());
+        approvalComment.setRecommendedConditions(approvalRound.getRecommendedConditions());
+        approvalComment.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
+        approvalComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
+        approvalComment.setUser(userService.getCurrentUser());
+
+        commentDAO.save(approvalComment);
     }
 
     private void copyLastNotifiedForRepeatSupervisors(ApplicationForm application, ApprovalRound approvalRound) {
@@ -176,7 +217,7 @@ public class ApprovalService {
         }
         restartApprovalStage(application, approver, comment);
     }
-    
+
     @Transactional
     private void restartApprovalStage(ApplicationForm application, RegisteredUser approver, Comment comment) {
         commentDAO.save(comment);

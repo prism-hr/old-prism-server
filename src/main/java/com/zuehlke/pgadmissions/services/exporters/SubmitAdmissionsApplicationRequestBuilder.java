@@ -521,15 +521,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 InstitutionTp institutionTp = xmlFactory.createInstitutionTp();
 
                 institutionTp.setCode(qualification.getQualificationInstitutionCode());
-                if ("OTHER".equalsIgnoreCase(qualification.getQualificationInstitutionCode())) {
-                    institutionTp.setName(qualification.getQualificationInstitution());
-                }
-
-                if (qualification.getQualificationInstitutionCode().length() < 6) {
-                    institutionTp.setCode("OTHER");
-                    institutionTp.setName(qualification.getQualificationInstitution());
-                }
-
+                institutionTp.setName(qualification.getQualificationInstitution());
+                
                 CountryTp countryTp = xmlFactory.createCountryTp();
                 countryTp.setCode(qualification.getInstitutionCountry().getCode());
                 countryTp.setName(qualification.getInstitutionCountry().getName());

@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Assert;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Marshaller;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -41,6 +43,8 @@ import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 @Ignore
 public class PorticoWebServicePhase2IT {
 
+    private static final Logger LOG = Logger.getLogger(PorticoWebServicePhase2IT.class);
+    
     private static final String TEST_REPORT_FILENAME = "PorticoWebServicePhase2IT.csv";
     
     @Autowired
@@ -69,11 +73,13 @@ public class PorticoWebServicePhase2IT {
     public void finish() throws IOException {
         writer.writeNext(csvEntries.toArray(new String[]{}));
         writer.close();
+        csvEntries.clear();
     }
     
     @Test
+    @DirtiesContext
     @Transactional
-    public void sendApplications() {
+    public void sendApplications() throws IOException {
         List<String> applications = new ArrayList<String>(Arrays.asList(
                 "RRDEENSING01-2013-000087",  "RRDEENSING01-2013-000088", "RRDEENSING01-2013-000089",
                 "TMRCOMSWEB01-2013-000010", "TMRCOMSWEB01-2013-000011", "TMRCOMSWEB01-2013-000012", 
@@ -87,7 +93,9 @@ public class PorticoWebServicePhase2IT {
             try {
                 uclExportService.sendToPortico(form, new CsvTransferListener());
             } catch (Exception e) {
-                // do nothing
+                LOG.error(e);
+            } finally {
+                finish();
             }
         }
     }
@@ -103,6 +111,7 @@ public class PorticoWebServicePhase2IT {
     private class CsvTransferListener implements TransferListener {
         @Override
         public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+            request.getApplication().getCourseApplication().setExternalApplicationID(request.getApplication().getCourseApplication().getExternalApplicationID() + "-1");
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {
                 marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getCourseApplication().getExternalApplicationID() + ".txt")));

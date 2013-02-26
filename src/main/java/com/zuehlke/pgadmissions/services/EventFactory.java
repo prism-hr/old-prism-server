@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.utils;
+package com.zuehlke.pgadmissions.services;
 
 import java.util.Date;
 
@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class EventFactory {

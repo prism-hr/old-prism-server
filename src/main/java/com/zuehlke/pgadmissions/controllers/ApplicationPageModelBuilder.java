@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.utils;
+package com.zuehlke.pgadmissions.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
+import com.zuehlke.pgadmissions.utils.AddressUtils;
 
 @Component
 public class ApplicationPageModelBuilder {

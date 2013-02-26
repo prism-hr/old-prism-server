@@ -118,11 +118,7 @@ function clearRefereeForm(form) {
     	var $container  = $(this).parent('div.field');
     	$deleteButton = $container.find('a.button-delete');
 
-    	// TODO deleting on the server is not working
-    	// for some reason $hidden.val() returns empty string even if the value is set
     	var $hidden  = $container.find('input.file');
-    	deleteUploadedFile($hidden);
-    	
     	$container.find('span a').each(function()
 		{
 			$(this).remove();

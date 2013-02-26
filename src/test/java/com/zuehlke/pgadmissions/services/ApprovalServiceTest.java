@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -187,7 +188,7 @@ public class ApprovalServiceTest {
         assertEquals(1, applicationForm.getEvents().size());
         assertEquals(event, applicationForm.getEvents().get(0));
         assertFalse(applicationForm.isPendingApprovalRestart());
-        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock);
+        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
         assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION));
         assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER));
         assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION));
@@ -214,15 +215,54 @@ public class ApprovalServiceTest {
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(newApprovalRound);
         applicationFormDAOMock.save(applicationForm);
+
+        commentDAOMock.save(EasyMock.isA(ApprovalComment.class));
         StateChangeEvent event = new ApprovalStateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(newApprovalRound)).andReturn(event);
-        EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
+        EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, commentDAOMock);
 
         approvalService.moveApplicationToApproval(applicationForm, newApprovalRound);
-        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock);
+        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, commentDAOMock);
         assertNull(nonRepeatUserSupervisor.getLastNotified());
         assertEquals(lastNotified, repeatSupervisorNew.getLastNotified());
+        assertSame(newApprovalRound, applicationForm.getLatestApprovalRound());
 
+    }
+
+    @Test
+    public void shouldMoveToApprovaAndApplyApprovalComment() {
+        Date date = new Date();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).projectAbstract("abstract").projectTitle("title").projectDescriptionAvailable(true)
+                .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(date).build();
+        RegisteredUser user = new RegisteredUserBuilder().id(8).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
+        applyValidSendToPorticoData(applicationForm);
+        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
+                new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
+        approvalRoundDAOMock.save(approvalRound);
+        applicationFormDAOMock.save(applicationForm);
+         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+
+        Capture<ApprovalComment> approvalCommentCapture = new Capture<ApprovalComment>();
+        commentDAOMock.save(EasyMock.capture(approvalCommentCapture));
+
+        EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, userServiceMock);
+        approvalService.moveApplicationToApproval(applicationForm, approvalRound);
+        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, userServiceMock);
+
+        ApprovalComment approvalComment = approvalCommentCapture.getValue();
+
+        assertTrue(approvalComment.getProjectDescriptionAvailable());
+        assertEquals("abstract", approvalComment.getProjectAbstract());
+        assertEquals("title", approvalComment.getProjectTitle());
+        assertEquals("conditions", approvalComment.getRecommendedConditions());
+        assertTrue(approvalComment.getRecommendedConditionsAvailable());
+        assertEquals(date, approvalComment.getRecommendedStartDate());
+        assertEquals("", approvalComment.getComment());
+        assertEquals(CommentType.APPROVAL, approvalComment.getType());
+        assertSame(applicationForm, approvalComment.getApplication());
+        assertSame(user, approvalComment.getUser());
+        
     }
 
     @Test
@@ -234,9 +274,10 @@ public class ApprovalServiceTest {
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
         applicationFormDAOMock.save(applicationForm);
-        EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock);
+        commentDAOMock.save(EasyMock.isA(ApprovalComment.class));
+        EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock);
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock);
+        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock);
 
     }
 
@@ -294,9 +335,10 @@ public class ApprovalServiceTest {
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
         applicationFormDAOMock.save(applicationForm);
-        EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock);
+        commentDAOMock.save(EasyMock.isA(ApprovalComment.class));
+        EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock);
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock);
+        EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock);
 
     }
 
@@ -317,18 +359,19 @@ public class ApprovalServiceTest {
         confirmSupervisionDTO.setRecommendedStartDate(startDate);
         confirmSupervisionDTO.setRecommendedConditionsAvailable(true);
         confirmSupervisionDTO.setRecommendedConditions("conditions");
-        
+
         Capture<SupervisionConfirmationComment> supervisionConfirmationCommentcapture = new Capture<SupervisionConfirmationComment>();
         commentDAOMock.save(EasyMock.capture(supervisionConfirmationCommentcapture));
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        
+
         EasyMock.replay(commentDAOMock, userServiceMock);
         approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
         EasyMock.verify(commentDAOMock, userServiceMock);
-        
+
         assertTrue(primarySupervisor.getConfirmedSupervision());
         SupervisionConfirmationComment comment = supervisionConfirmationCommentcapture.getValue();
-        
+
+        // assert comment
         assertSame(applicationForm, comment.getApplication());
         assertEquals("", comment.getComment());
         assertNotNull(comment.getDate());
@@ -340,14 +383,23 @@ public class ApprovalServiceTest {
         assertSame(primarySupervisor, comment.getSupervisor());
         assertEquals(CommentType.SUPERVISION_CONFIRMATION, comment.getType());
         assertSame(currentUser, comment.getUser());
+
+        // assert ApprovalRound
+        assertTrue(approvalRound.getProjectDescriptionAvailable());
+        assertEquals("abstract", approvalRound.getProjectAbstract());
+        assertEquals("title", approvalRound.getProjectTitle());
+        assertEquals("conditions", approvalRound.getRecommendedConditions());
+        assertTrue(approvalRound.getRecommendedConditionsAvailable());
+        assertEquals(startDate, approvalRound.getRecommendedStartDate());
     }
-    
+
     @Test
     public void shouldDeclineSupervisionAndRestartApprovalRound() {
         RegisteredUser user = new RegisteredUserBuilder().firstName("John Paul").lastName("Jones").build();
         Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).user(user).build();
 
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").supervisors(primarySupervisor).build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").projectDescriptionAvailable(false)
+                .supervisors(primarySupervisor).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
 
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
@@ -362,12 +414,12 @@ public class ApprovalServiceTest {
         EasyMock.replay(commentDAOMock, userServiceMock);
         approvalService.confirmSupervision(applicationForm, confirmSupervisionDTO);
         EasyMock.verify(commentDAOMock, userServiceMock);
-        
+
         assertFalse(primarySupervisor.getConfirmedSupervision());
         assertEquals("reason", primarySupervisor.getDeclinedSupervisionReason());
         assertTrue(applicationForm.isPendingApprovalRestart());
         assertEquals(user, applicationForm.getApproverRequestedRestart());
-        
+
         SupervisionConfirmationComment comment = supervisionConfirmationCommentcapture.getValue();
         assertSame(applicationForm, comment.getApplication());
         assertEquals("", comment.getComment());
@@ -375,6 +427,8 @@ public class ApprovalServiceTest {
         assertSame(primarySupervisor, comment.getSupervisor());
         assertEquals(CommentType.SUPERVISION_CONFIRMATION, comment.getType());
         assertSame(user, comment.getUser());
+
+        assertFalse(approvalRound.getProjectDescriptionAvailable());
     }
 
     @Test

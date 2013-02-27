@@ -20,7 +20,7 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:hg:https://pgbuild:pgbuild@repo.zuehlke.com/hg/pgadmissions/</connection>
+        <connection>scm:hg:https://repo.zuehlke.com/hg/pgadmissions</connection>
     </scm>
 
     <dependencies>

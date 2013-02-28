@@ -564,7 +564,7 @@ public class UserServiceTest {
 			
 		};
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("newpass")).andReturn("encryptednewpass");
-		RegisteredUser userOne = new RegisteredUserBuilder().firstName("a").lastName("o").email("two").password("12").newPassword("newpass").build();
+		RegisteredUser userOne = new RegisteredUserBuilder().firstName("a").firstName2("a2").firstName3("a3").lastName("o").email("two").password("12").newPassword("newpass").build();
 		
 		
 		EasyMock.replay(encryptionUtilsMock);
@@ -574,6 +574,8 @@ public class UserServiceTest {
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
 		assertEquals("a", currentUser.getFirstName());
+		assertEquals("a2", currentUser.getFirstName2());
+		assertEquals("a3", currentUser.getFirstName3());
 		assertEquals("o", currentUser.getLastName());
 		assertEquals("encryptednewpass", currentUser.getPassword());
 	}

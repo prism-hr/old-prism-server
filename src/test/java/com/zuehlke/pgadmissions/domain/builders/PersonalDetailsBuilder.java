@@ -21,10 +21,7 @@ public class PersonalDetailsBuilder {
 
 	private Integer id;
 	private Title title;
-	private String firstName;
-	private String lastName;
 	private Gender gender;
-	private String email;
 	private Date dateOfBirth;
 	private Country country;
 	private Domicile residenceCountry;
@@ -104,23 +101,8 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 
-	public PersonalDetailsBuilder firstName(String firstName) {
-		this.firstName = firstName;
-		return this;
-	}
-
-	public PersonalDetailsBuilder lastName(String lastName) {
-		this.lastName = lastName;
-		return this;
-	}
-
 	public PersonalDetailsBuilder gender(Gender gender) {
 		this.gender = gender;
-		return this;
-	}
-
-	public PersonalDetailsBuilder email(String email) {
-		this.email = email;
 		return this;
 	}
 
@@ -161,10 +143,7 @@ public class PersonalDetailsBuilder {
 		personalDetails.setApplication(applicationForm);
 		personalDetails.setCountry(country);
 		personalDetails.setDateOfBirth(dateOfBirth);
-		personalDetails.setEmail(email);
-		personalDetails.setFirstName(firstName);
 		personalDetails.setGender(gender);
-		personalDetails.setLastName(lastName);
 		personalDetails.setResidenceCountry(residenceCountry);
 		personalDetails.setEthnicity(ethnicity);
 		personalDetails.setDisability(disability);

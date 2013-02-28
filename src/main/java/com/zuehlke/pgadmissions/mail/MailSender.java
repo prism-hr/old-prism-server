@@ -86,7 +86,16 @@ public abstract class MailSender {
 
 	protected final InternetAddress createAddress(RegisteredUser user) {
 		try {
-			return new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
+	        StringBuilder userNameBuilder = new StringBuilder(user.getFirstName());
+	        if(user.getFirstName2() != null){
+	            userNameBuilder.append(" " + user.getFirstName2());
+	        }
+	        if(user.getFirstName3() != null){
+	            userNameBuilder.append(" " + user.getFirstName3());
+	        }
+	        userNameBuilder.append(" " + user.getLastName());
+		    
+			return new InternetAddress(user.getEmail(), userNameBuilder.toString());
 		} catch (UnsupportedEncodingException uee) {// this shouldn't happen...
 			throw new RuntimeException(uee);
 		}

@@ -72,15 +72,31 @@
             </#list>
             
             <div class="row">
-                <label class="plain-label grey-label">First Name<em class="grey-label">*</em></label>
+                <label class="plain-label grey-label">First Name</label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.firstname'/>"></span>
                 <div class="field">                     
                     <input class="full" readonly="readonly" type="text" value="${(user.firstName?html)!}" name="firstName" id="firstName" disabled="disabled"/>             
                 </div>
             </div>
+            
+            <div class="row">
+                <label class="plain-label grey-label">First Name 2</label>
+                <span class="hint" data-desc="<@spring.message 'personalDetails.firstname2'/>"></span>
+                <div class="field">                     
+                    <input class="full" readonly="readonly" type="text" value="${(user.firstName2?html)!}" name="firstName2" id="firstName2" disabled="disabled"/>             
+                </div>
+            </div>
+            
+            <div class="row">
+                <label class="plain-label grey-label">First Name 3</label>
+                <span class="hint" data-desc="<@spring.message 'personalDetails.firstname3'/>"></span>
+                <div class="field">                     
+                    <input class="full" readonly="readonly" type="text" value="${(user.firstName3?html)!}" name="firstName3" id="firstName3" disabled="disabled"/>             
+                </div>
+            </div>
              
             <div class="row">
-                <label class="plain-label grey-label">Last Name<em class="grey-label">*</em></label>
+                <label class="plain-label grey-label">Last Name</label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.lastname'/>"></span>
                 <div class="field">
                     <input class="full" readonly="readonly" type="text" value="${(user.lastName?html)!}" name="lastName" id="lastName" disabled="disabled"/>           
@@ -421,7 +437,7 @@
             </div>
             
             <div class="row">
-                <span class="plain-label grey-label">Email<em class="grey-label">*</em></span>
+                <span class="plain-label grey-label">Email</span>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.email'/>"></span> 
                 <div class="field">
                         <input class="full" readonly="readonly" type="email" value="${(user.email?html)!}"  

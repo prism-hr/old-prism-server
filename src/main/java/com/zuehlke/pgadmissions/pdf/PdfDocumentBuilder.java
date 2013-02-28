@@ -262,7 +262,9 @@ public class PdfDocumentBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(100f);
         table.addCell(newTableCell("Applicant", smallBoldFont));
-        table.addCell(newTableCell(application.getApplicant().getFirstName() + " " + application.getApplicant().getLastName(), smallFont));
+        
+        
+        table.addCell(newTableCell(application.getApplicant().getDisplayName(), smallFont));
         table.addCell(newTableCell("Programme", smallBoldFont));
         table.addCell(newTableCell(application.getProgram().getTitle() , smallFont));
         table.addCell(newTableCell("Application Number", smallBoldFont));
@@ -418,10 +420,16 @@ public class PdfDocumentBuilder {
         }
         
         table.addCell(newTableCell("First Name", smallBoldFont));
-        table.addCell(newTableCell(application.getPersonalDetails().getFirstName(), smallFont));
+        table.addCell(newTableCell(application.getApplicant().getFirstName(), smallFont));
+        
+        table.addCell(newTableCell("First Name 2", smallBoldFont));
+        table.addCell(newTableCell(application.getApplicant().getFirstName2(), smallFont));
+        
+        table.addCell(newTableCell("First Name 3", smallBoldFont));
+        table.addCell(newTableCell(application.getApplicant().getFirstName3(), smallFont));
 
         table.addCell(newTableCell("Last Name", smallBoldFont));
-        table.addCell(newTableCell(application.getPersonalDetails().getLastName(), smallFont));
+        table.addCell(newTableCell(application.getApplicant().getLastName(), smallFont));
 
         table.addCell(newTableCell("Gender", smallBoldFont));
         if (application.getPersonalDetails().getGender() == null) {
@@ -539,7 +547,7 @@ public class PdfDocumentBuilder {
         }
 
         table.addCell(newTableCell("Email", smallBoldFont));
-        table.addCell(newTableCell(application.getPersonalDetails().getEmail(), smallFont));
+        table.addCell(newTableCell(application.getApplicant().getEmail(), smallFont));
 
         table.addCell(newTableCell("Telephone", smallBoldFont));
         table.addCell(newTableCell(application.getPersonalDetails().getPhoneNumber(), smallFont));

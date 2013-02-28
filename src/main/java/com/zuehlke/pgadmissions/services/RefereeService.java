@@ -110,7 +110,7 @@ public class RefereeService {
                 model.put("application", form);
                 model.put("referee", referee);
                 model.put("host", Environment.getInstance().getApplicationHostName());
-                InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
+                InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getDisplayName());
 
                 mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
                         "private/staff/admin/mail/reference_submit_confirmation.ftl", model, null));
@@ -132,7 +132,7 @@ public class RefereeService {
             model.put("referee", referee);
             model.put("application", form);
             model.put("host", Environment.getInstance().getApplicationHostName());
-            InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
+            InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getDisplayName());
 
             String subject = resolveMessage("reference.provided.applicant", form);
 

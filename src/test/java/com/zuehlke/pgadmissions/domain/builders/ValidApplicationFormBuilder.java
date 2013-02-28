@@ -108,7 +108,7 @@ public class ValidApplicationFormBuilder {
     
     public ApplicationForm build() {
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
-        user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).firstName("Kevin").lastName("Denver").username("denk@zhaw.ch").enabled(true).build();
+        user = new RegisteredUserBuilder().id(Integer.MAX_VALUE).firstName("Kevin").lastName("Denver").username("denk@zhaw.ch").email("ked@zuhlke.com").enabled(true).build();
         cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
         referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
         personalStatement = getRandomDocument(DocumentType.PERSONAL_STATEMENT, "My Personal Statement (v1.0).pdf", user);
@@ -146,11 +146,8 @@ public class ValidApplicationFormBuilder {
             .country(country)
             .dateOfBirth(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -28))
             .disability(disability)
-            .email("ked@zuhlke.com")
             .englishFirstLanguage(true)
             .ethnicity(ethnicity)
-            .firstName("Kevin")
-            .lastName("Denver")
             .gender(Gender.MALE)
             .requiresVisa(true)
             .passportInformation(new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver").passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20)).passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())

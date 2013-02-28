@@ -49,7 +49,7 @@ public class RefereeController {
 	private final EncryptionHelper encryptionHelper;
 	private final UserService userService;
 
-	RefereeController() {
+	public RefereeController() {
 		this(null, null, null, null, null, null, null, null);
 	}
 

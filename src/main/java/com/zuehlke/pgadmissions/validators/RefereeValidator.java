@@ -49,11 +49,19 @@ public class RefereeValidator extends FormSectionObjectValidator implements Vali
 		if (referee.getAddressLocation() != null && StringUtils.isBlank(referee.getAddressLocation().getAddress1())) {
 			errors.rejectValue("addressLocation.address1", "text.field.empty");
 		}
+		
 		if (referee.getAddressLocation() != null && StringUtils.isBlank(referee.getAddressLocation().getAddress3())) {
 			errors.rejectValue("addressLocation.address3", "text.field.empty");
 		}
+		
 		if (referee.getAddressLocation() != null && referee.getAddressLocation().getCountry()==null) {
 			errors.rejectValue("addressLocation.country", "text.field.empty");
+		}
+		
+		for (Referee existingReferee : referee.getApplication().getReferees()) {
+		    if (referee.getId() == null && StringUtils.equalsIgnoreCase(existingReferee.getEmail(), referee.getEmail())) {
+		        errors.rejectValue("email", "assignReferee.duplicate.email");
+		    }
 		}
 	}
 }

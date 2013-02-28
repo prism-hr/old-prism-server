@@ -148,4 +148,13 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("phoneNumber").getCode());
 	}
+	
+	@Test
+	public void shouldRejectDuplicateReferees() {
+	    referee.getApplication().getReferees().add(referee);
+	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
+        refereeValidator.validate(referee, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("assignReferee.duplicate.email", mappingResult.getFieldError("email").getCode());
+	}
 }

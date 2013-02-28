@@ -44,11 +44,11 @@ public class ApprovalRoundValidator extends AbstractValidator {
 
         
         // project description validation
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectDescriptionAvailable", "dropdown.radio.select.none");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectDescriptionAvailable", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         if (BooleanUtils.isTrue(approvalRound.getProjectDescriptionAvailable())) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectTitle", "text.field.empty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectAbstract", "text.field.empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectTitle", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectAbstract", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
         String projectAbstract = approvalRound.getProjectAbstract();
@@ -60,17 +60,17 @@ public class ApprovalRoundValidator extends AbstractValidator {
         }
 
         // recommended offer validation
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedStartDate", "text.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedStartDate", EMPTY_FIELD_ERROR_MESSAGE);
         Date startDate = approvalRound.getRecommendedStartDate();
         Date today = new Date();
         if (startDate != null && !startDate.after(today)) {
             errors.rejectValue("recommendedStartDate", "date.field.notfuture");
         }
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditionsAvailable", "dropdown.radio.select.none");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditionsAvailable", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         if (BooleanUtils.isTrue(approvalRound.getRecommendedConditionsAvailable())) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditions", "text.field.empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditions", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
     }

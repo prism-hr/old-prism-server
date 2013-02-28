@@ -22,26 +22,26 @@ public class ConfirmSupervisionDTOValidator extends AbstractValidator {
 
         ConfirmSupervisionDTO dto = (ConfirmSupervisionDTO) target;
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmedSupervision", "dropdown.radio.select.none");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmedSupervision", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         if (BooleanUtils.isFalse(dto.getConfirmedSupervision())) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "declinedSupervisionReason", "text.field.empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "declinedSupervisionReason", EMPTY_FIELD_ERROR_MESSAGE);
         } 
 
         if (BooleanUtils.isTrue(dto.getConfirmedSupervision())) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectTitle", "text.field.empty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectAbstract", "text.field.empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectTitle", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectAbstract", EMPTY_FIELD_ERROR_MESSAGE);
         
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedStartDate", "text.field.empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedStartDate", EMPTY_FIELD_ERROR_MESSAGE);
             Date startDate = dto.getRecommendedStartDate();
             Date today = new Date();
             if (startDate != null && !startDate.after(today)) {
                 errors.rejectValue("recommendedStartDate", "date.field.notfuture");
             }
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditionsAvailable", "dropdown.radio.select.none");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditionsAvailable", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
             if (BooleanUtils.isTrue(dto.getRecommendedConditionsAvailable())) {
-                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditions", "text.field.empty");
+                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recommendedConditions", EMPTY_FIELD_ERROR_MESSAGE);
             }
         }
     }

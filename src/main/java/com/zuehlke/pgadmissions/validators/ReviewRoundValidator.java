@@ -19,7 +19,7 @@ public class ReviewRoundValidator extends AbstractValidator {
 		ReviewRound reviewRound = (ReviewRound) target;
 
 		if (reviewRound.getReviewers().isEmpty()) {
-			errors.rejectValue("reviewers", "dropdown.radio.select.none");
+			errors.rejectValue("reviewers", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		}
 
 	}

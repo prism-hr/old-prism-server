@@ -25,11 +25,11 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 		super.addExtraValidation(target, errors);
 		
 		Date today = new Date();
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerAddress", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "remit", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "employerAddress", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "remit", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", EMPTY_FIELD_ERROR_MESSAGE);
 		EmploymentPosition position = (EmploymentPosition) target;
 		
 		String startDate = position.getStartDate() == null ? "" : position.getStartDate().toString();
@@ -44,19 +44,19 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 			errors.rejectValue("startDate", "position.position_startDate.notvalid");
 		}
 		if (!position.isCurrent()  && StringUtils.isBlank(endDate)){
-			errors.rejectValue("endDate", "text.field.empty");
+			errors.rejectValue("endDate", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		if (position.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
 		    errors.reject("");
 		}
 		if (position.getEmployerAddress() != null && StringUtils.isBlank(position.getEmployerAddress().getAddress1())) {
-			errors.rejectValue("employerAddress.address1", "text.field.empty");
+			errors.rejectValue("employerAddress.address1", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		if (position.getEmployerAddress() != null && StringUtils.isBlank(position.getEmployerAddress().getAddress3())) {
-			errors.rejectValue("employerAddress.address3", "text.field.empty");
+			errors.rejectValue("employerAddress.address3", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		if (position.getEmployerAddress() != null && position.getEmployerAddress().getCountry()==null) {
-			errors.rejectValue("employerAddress.country", "text.field.empty");
+			errors.rejectValue("employerAddress.country", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 	}
 }

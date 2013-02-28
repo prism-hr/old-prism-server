@@ -19,9 +19,9 @@ public class UpdateUserRolesDTOValidator extends AbstractValidator {
 	public void addExtraValidation(Object target, Errors errors) {
 		UpdateUserRolesDTO userDTO = (UpdateUserRolesDTO) target;
 		if( !(userDTO.getSelectedAuthorities().length == 1 && userDTO.getSelectedAuthorities()[0] == Authority.SUPERADMINISTRATOR)){
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", "dropdown.radio.select.none");		
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", EMPTY_DROPDOWN_ERROR_MESSAGE);		
 		}
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedUser", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedUser", EMPTY_DROPDOWN_ERROR_MESSAGE);
 	}
 
 }

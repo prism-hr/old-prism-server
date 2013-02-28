@@ -18,11 +18,11 @@ public class AddressSectionDTOValidator extends FormSectionObjectValidator imple
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
 		super.addExtraValidation(target, errors);		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress1", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress3", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressCountry", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress1", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress3", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressCountry", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress1", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress3", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress1", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress3", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
 	}
 }

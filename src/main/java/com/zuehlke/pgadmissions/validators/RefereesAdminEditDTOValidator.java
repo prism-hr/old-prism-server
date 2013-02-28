@@ -30,31 +30,31 @@ public class RefereesAdminEditDTOValidator extends AbstractValidator {
         RefereesAdminEditDTO dto = (RefereesAdminEditDTO) target;
 
         // validate reference
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
-        ValidationUtils.rejectIfEmpty(errors, "suitableForUCL", "dropdown.radio.select.none");
-        ValidationUtils.rejectIfEmpty(errors, "suitableForProgramme", "dropdown.radio.select.none");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmpty(errors, "suitableForUCL", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmpty(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         // validate referee
         if (BooleanUtils.isTrue(dto.getContainsRefereeData())) {
             if (userService.getCurrentUser().getEmail().equals(dto.getEmail())) {
                 errors.rejectValue("email", "text.email.notyourself");
             }
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLocation", "text.field.empty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobEmployer", "text.field.empty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobTitle", "text.field.empty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", "text.field.empty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", "text.field.empty");
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "text.field.empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLocation", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobEmployer", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobTitle", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", EMPTY_FIELD_ERROR_MESSAGE);
 
             if (dto.getAddressLocation() != null && StringUtils.isBlank(dto.getAddressLocation().getAddress1())) {
-                errors.rejectValue("addressLocation.address1", "text.field.empty");
+                errors.rejectValue("addressLocation.address1", EMPTY_FIELD_ERROR_MESSAGE);
             }
             if (dto.getAddressLocation() != null && StringUtils.isBlank(dto.getAddressLocation().getAddress3())) {
-                errors.rejectValue("addressLocation.address3", "text.field.empty");
+                errors.rejectValue("addressLocation.address3", EMPTY_FIELD_ERROR_MESSAGE);
             }
             if (dto.getAddressLocation() != null && dto.getAddressLocation().getCountry() == null) {
-                errors.rejectValue("addressLocation.country", "text.field.empty");
+                errors.rejectValue("addressLocation.country", EMPTY_FIELD_ERROR_MESSAGE);
             }
         }
     }

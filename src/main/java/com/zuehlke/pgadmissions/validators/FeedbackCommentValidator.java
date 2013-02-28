@@ -23,36 +23,36 @@ public class FeedbackCommentValidator extends AbstractValidator {
 			ReviewComment comment = (ReviewComment) target;
 			if(!comment.isDecline() ){
 				if(comment.getSuitableCandidateForUcl() == null ){
-					errors.rejectValue("suitableCandidateForUcl", "dropdown.radio.select.none");
+					errors.rejectValue("suitableCandidateForUcl", EMPTY_DROPDOWN_ERROR_MESSAGE);
 				}
 				if(comment.getSuitableCandidateForProgramme() == null ){
-					errors.rejectValue("suitableCandidateForProgramme", "dropdown.radio.select.none");
+					errors.rejectValue("suitableCandidateForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
 				}
 				if(comment.getWillingToInterview() == null){
-					errors.rejectValue("willingToInterview", "dropdown.radio.select.none");
+					errors.rejectValue("willingToInterview", EMPTY_DROPDOWN_ERROR_MESSAGE);
 				}
-				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
+				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
 			}
 		}
 		else if (target instanceof InterviewComment) {
 			InterviewComment comment = (InterviewComment) target;
 			if(!comment.isDecline() ){
 				if(comment.getSuitableCandidateForUcl() == null ){
-					errors.rejectValue("suitableCandidateForUcl", "dropdown.radio.select.none");
+					errors.rejectValue("suitableCandidateForUcl", EMPTY_DROPDOWN_ERROR_MESSAGE);
 				}
 				if(comment.getSuitableCandidateForProgramme() == null ){
-					errors.rejectValue("suitableCandidateForProgramme", "dropdown.radio.select.none");
+					errors.rejectValue("suitableCandidateForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
 				}
 				if(comment.getWillingToSupervise() == null){
-					errors.rejectValue("willingToSupervise", "dropdown.radio.select.none");
+					errors.rejectValue("willingToSupervise", EMPTY_DROPDOWN_ERROR_MESSAGE);
 				}
-				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
+				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
 			}
 		}
 		else if (target instanceof ReferenceComment) {
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", "dropdown.radio.select.none");
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", "dropdown.radio.select.none");
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		}
 		
 		

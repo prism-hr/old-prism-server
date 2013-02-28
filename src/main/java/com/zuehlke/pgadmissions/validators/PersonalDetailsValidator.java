@@ -47,18 +47,18 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		}
 		
 		Date today = new Date();
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", EMPTY_FIELD_ERROR_MESSAGE);
 		
 		validateCandidateNationalities(target, errors);
 		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", EMPTY_FIELD_ERROR_MESSAGE);
 		String dob = personalDetail.getDateOfBirth() == null ? "": personalDetail.getDateOfBirth().toString();
 		if (StringUtils.isNotBlank(dob) && personalDetail.getDateOfBirth().after(today)) {
 			errors.rejectValue("dateOfBirth", "date.field.notpast");
@@ -72,12 +72,12 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
             }
         }
 		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "disability", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ethnicity", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "disability", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ethnicity", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		
 		if (BooleanUtils.isTrue(personalDetail.getPassportAvailable()) && BooleanUtils.isTrue(personalDetail.getRequiresVisa())) {
 		    try {
@@ -90,7 +90,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 		
 		if (BooleanUtils.isTrue(personalDetail.getLanguageQualificationAvailable())) {
 		    if (personalDetail.getLanguageQualifications().isEmpty()) {
-		        errors.rejectValue("languageQualifications", "text.field.empty");
+		        errors.rejectValue("languageQualifications", EMPTY_FIELD_ERROR_MESSAGE);
 		    } else {
 	            for (int idx = 0; idx < personalDetail.getLanguageQualifications().size(); idx++) {
 	                errors.pushNestedPath(String.format("languageQualifications[%s]", idx));
@@ -103,7 +103,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 
 	private void validateCandidateNationalities(Object target, Errors errors) {
 		if(((PersonalDetails)target).getCandidateNationalities().isEmpty()){
-			errors.rejectValue("candidateNationalities", "dropdown.radio.select.none");
+			errors.rejectValue("candidateNationalities", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		}
 	}
 }

@@ -36,9 +36,9 @@ public class SwitchAndLinkUserAccountDTOValidator extends AbstractValidator {
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentPassword", "text.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentPassword", EMPTY_FIELD_ERROR_MESSAGE);
         
         SwitchAndLinkUserAccountDTO userDTO = (SwitchAndLinkUserAccountDTO) target;
         RegisteredUser currentAccount = userService.getCurrentUser();

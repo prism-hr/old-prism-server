@@ -23,7 +23,7 @@ public class BadgeValidator extends AbstractValidator {
         Badge badge = (Badge) target;
 
         if (badge.getProgram() == null) {
-            errors.rejectValue("program", "dropdown.radio.select.none");
+            errors.rejectValue("program", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
         
         if (StringUtils.isNotBlank(badge.getProgrammeHomepage()) && !GenericValidator.isUrl(badge.getProgrammeHomepage())) {

@@ -16,10 +16,10 @@ public class PassportInformationValidator extends AbstractValidator {
     public void validate(final Object target, final Errors errors) {
         PassportInformation passportInformation = (PassportInformation) target;
         
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportNumber", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nameOnPassport", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportIssueDate", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportExpiryDate", "text.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportNumber", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nameOnPassport", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportIssueDate", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportExpiryDate", EMPTY_FIELD_ERROR_MESSAGE);
 
         if (passportInformation != null) {
             Date passportExpiryDate = passportInformation.getPassportExpiryDate();

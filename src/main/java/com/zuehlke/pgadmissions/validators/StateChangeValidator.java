@@ -20,25 +20,25 @@ public class StateChangeValidator extends AbstractValidator {
 	public void addExtraValidation(Object target, Errors errors) {
 		if (target instanceof ValidationComment) {
 			ValidationComment comment = (ValidationComment) target;
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
 			if(comment.getQualifiedForPhd() == null ){
-				errors.rejectValue("qualifiedForPhd", "dropdown.radio.select.none");
+				errors.rejectValue("qualifiedForPhd", EMPTY_DROPDOWN_ERROR_MESSAGE);
 			}
 			if(comment.getEnglishCompentencyOk() == null ){
-				errors.rejectValue("englishCompentencyOk", "dropdown.radio.select.none");
+				errors.rejectValue("englishCompentencyOk", EMPTY_DROPDOWN_ERROR_MESSAGE);
 			}
 			if(comment.getHomeOrOverseas() == null ){
-				errors.rejectValue("homeOrOverseas", "dropdown.radio.select.none");
+				errors.rejectValue("homeOrOverseas", EMPTY_DROPDOWN_ERROR_MESSAGE);
 			}
 			if(comment.getNextStatus() == null ){
-				errors.rejectValue("nextStatus", "dropdown.radio.select.none");
+				errors.rejectValue("nextStatus", EMPTY_DROPDOWN_ERROR_MESSAGE);
 			}
 		}
 		else if (target instanceof StateChangeComment) {
 			StateChangeComment comment = (StateChangeComment) target;
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
 			if(comment.getNextStatus() == null ){
-				errors.rejectValue("nextStatus", "dropdown.radio.select.none");
+				errors.rejectValue("nextStatus", EMPTY_DROPDOWN_ERROR_MESSAGE);
 			}
 			
 		}

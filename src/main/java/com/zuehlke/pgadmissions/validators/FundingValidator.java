@@ -22,10 +22,10 @@ public class FundingValidator extends FormSectionObjectValidator implements Vali
 		super.addExtraValidation(target, errors);
 		
 		Date today = new Date();
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "type", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "value", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "awardDate", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "type", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "value", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "awardDate", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "document", "file.upload.empty");
 		Funding fund = (Funding) target;
 		

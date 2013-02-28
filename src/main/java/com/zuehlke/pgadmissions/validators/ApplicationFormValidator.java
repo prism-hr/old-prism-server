@@ -61,7 +61,7 @@ public class ApplicationFormValidator extends AbstractValidator {
 			errors.rejectValue("referees", "user.referees.notvalid");
 		}
 		if (applicationForm.getAcceptedTermsOnSubmission() == CheckedStatus.NO) {
-			errors.rejectValue("acceptedTermsOnSubmission", "text.field.empty");
+			errors.rejectValue("acceptedTermsOnSubmission", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		if (programmeDetails != null && programmeDetails.getStudyOption() != null) {
 			List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(applicationForm.getProgram(), programmeDetails.getStudyOption());

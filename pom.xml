@@ -464,7 +464,7 @@
             </properties>
         </profile>
         <profile>
-            <id>jenkins</id>
+            <id>sit</id>
             <properties>
                 <sql.host>192.168.11.115</sql.host>
                 <sql.db>pgadmissions_prod</sql.db>

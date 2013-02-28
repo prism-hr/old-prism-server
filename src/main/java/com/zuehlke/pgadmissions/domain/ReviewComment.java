@@ -2,11 +2,11 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -35,7 +35,7 @@ public class ReviewComment extends Comment {
 	@Column(name = "admins_notified")
 	private boolean adminsNotified;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CommentTypeEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name="comment_type")
 	private CommentType type;
 

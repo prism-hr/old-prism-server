@@ -29,15 +29,15 @@ public class PageModel {
 	}
 
 	private void setUserRoles(RegisteredUser user) {
-		StringBuilder userRoles = new StringBuilder();
+		StringBuilder userRolesStrBuilder = new StringBuilder();
 		Collection<Role> authorities = user.getAuthorities();
 		if (user != null && authorities != null) {
 			for (Role role : authorities) {
-				userRoles.append(role.getAuthority());
-				userRoles.append(";");
+				userRolesStrBuilder.append(role.getAuthority());
+				userRolesStrBuilder.append(";");
 			}
 		}
-		this.userRoles = userRoles.toString();
+		this.userRoles = userRolesStrBuilder.toString();
 	}
 
 	public String getUserRoles() {

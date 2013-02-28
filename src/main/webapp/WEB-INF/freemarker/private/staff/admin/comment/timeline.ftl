@@ -80,20 +80,22 @@
 		           
 							<#elseif timelineObject.approvalRound??>
 							<#if timelineObject.approvalRound.supervisors?? && timelineObject.approvalRound.supervisors?size &gt; 0>
-							<ul class="status-info">
-								<li class="${timelineObject.type}">
-									<div class="box">
-										<p class="added">
-											<#assign size_users = timelineObject.approvalRound.supervisors?size>
-											<#list timelineObject.approvalRound.supervisors as supervisor>
-											<#assign index_i = supervisor_index>
-											${supervisor.user.firstName?html} ${supervisor.user.lastName?html}<#if (index_i &lt; (size_users - 1))>, </#if>
-											</#list>
-											added as supervisor<#if size_users &gt; 1>s</#if>.
-										</p>
-									</div>
-								</li>
-							</ul>
+                                <ul class="status-info">
+                                    <li class="${timelineObject.type}">
+                                        <div class="box">
+                                            <p class="added">
+                                                <#assign size_users = timelineObject.approvalRound.supervisors?size>
+                                                <#list timelineObject.approvalRound.supervisors as supervisor>
+                                                  <#assign index_i = supervisor_index>
+                                                  ${supervisor.user.firstName?html} ${supervisor.user.lastName?html}
+                                                  <#if supervisor.isPrimary> (Primary)</#if>
+                                                  <#if (index_i &lt; (size_users - 1))>, </#if>
+                                                </#list>
+                                                added as supervisor<#if size_users &gt; 1>s</#if>.
+                                            </p>
+                                        </div>
+                                    </li>
+                                </ul>
 							</#if>
 							
 							<#elseif timelineObject.status?? && timelineObject.status == 'REJECTED'>
@@ -124,43 +126,54 @@
 			            <#elseif comment.type == 'INTERVIEW'>
 			            	<#assign role = "interviewer"/>    
 			            <#elseif comment.type == 'APPROVAL'>
-			            	<#assign role = "approver"/>                
+			            	<#assign role = "administrator"/>                
 			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART'>
-			            	<#assign role = "approver"/>                
+			            	<#assign role = "approver"/>
+		            	<#elseif comment.type = 'SUPERVISION_CONFIRMATION'>
+                            <#assign role = "supervisor"/>                                
 			            </#if>
-			            <li>                          
-			              <div class="box">
-			                <div class="title">
-			                  <span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
-			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
-			                  <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
-			                </div>
-			                <#if comment.type == 'REQUEST_RESTART'>
-												<p><em>${(comment.comment?html)!}</em></p>
-												<p class="restart"><span></span>Restart of approval stage requested.</p>
-			                <#elseif comment.comment?starts_with("Referred to")>
-												<p class="referral"><span></span><em>${(comment.comment?html)!}</em></p>
-			                <#elseif comment.comment?starts_with("Delegated Application")>
-												<p class="delegate"><span></span><em>${(comment.comment?html)!}</em></p>
-											<#elseif comment.comment?length &gt; 0>
-												<p><em>${(comment.comment?html)!}</em></p>
-											</#if>
-							<#if comment.documents?? && comment.documents?size &gt; 0>
-				                <ul class="uploads">                
-				                <#list comment.documents as document>
-				                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
-				                </#list>
-				                </ul>
-							</#if>
-			                <#if comment.type == 'VALIDATION'>                                                    
-			                	<#include "timeline_snippets/validation_comment.ftl"/>
-			                <#elseif comment.type == 'REVIEW'>
-			                	<#include "timeline_snippets/review_comment.ftl"/>
-			                <#elseif comment.type == 'INTERVIEW'>
-			                	<#include "timeline_snippets/interview_comment.ftl"/> 				                	                 
-			                </#if>
-			              </div>
-			            </li>
+			            
+			            <#if comment.type == 'SUPERVISION_CONFIRMATION'>
+			                <#include "timeline_snippets/supervision_confirmation_comment.ftl"/>
+			            <#elseif comment.type == 'APPROVAL'>
+			                <#include "timeline_snippets/approval_comment.ftl"/>
+		                <#else>
+			                
+    			            <li>                          
+    			              <div class="box">
+    			                <div class="title">
+    			                  <span class="icon-role ${role}" data-desc="${role?cap_first}"></span>
+    			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+    			                  <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
+    			                </div>
+    			                <#if comment.type == 'REQUEST_RESTART'>
+    												<p><em>${(comment.comment?html)!}</em></p>
+    												<p class="restart"><span></span>Restart of approval stage requested.</p>
+    			                <#elseif comment.comment?starts_with("Referred to")>
+    												<p class="referral"><span></span><em>${(comment.comment?html)!}</em></p>
+    			                <#elseif comment.comment?starts_with("Delegated Application")>
+    												<p class="delegate"><span></span><em>${(comment.comment?html)!}</em></p>
+    											<#elseif comment.comment?length &gt; 0>
+    												<p><em>${(comment.comment?html)!}</em></p>
+    											</#if>
+    							<#if comment.documents?? && comment.documents?size &gt; 0>
+    				                <ul class="uploads">                
+    				                <#list comment.documents as document>
+    				                	<li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
+    				                </#list>
+    				                </ul>
+    							</#if>
+    			                <#if comment.type == 'VALIDATION'>                                                    
+    			                	<#include "timeline_snippets/validation_comment.ftl"/>
+    			                <#elseif comment.type == 'REVIEW'>
+    			                	<#include "timeline_snippets/review_comment.ftl"/>
+    			                <#elseif comment.type == 'INTERVIEW'>
+    			                	<#include "timeline_snippets/interview_comment.ftl"/>
+    			                </#if>
+    			              </div>
+    			            </li>
+    			            
+			            </#if>
 		            </#list>                       
 		          </ul>
 		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || timelineObject.referee.user == user)> 

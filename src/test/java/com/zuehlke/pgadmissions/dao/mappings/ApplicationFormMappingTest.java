@@ -16,7 +16,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
@@ -159,10 +158,11 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProgram(program);
 		application.setApplicant(user);
 		
-		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-
-		Address addressOne = new AddressBuilder().country(countriesDAO.getAllCountries().get(0)).address1("london").build();
-		Address addressTwo = new AddressBuilder().country(countriesDAO.getAllCountries().get(0)).address1("london").build();
+		Country build = new CountryBuilder().name("AA").code("AA").enabled(true).build();
+		save(build);
+		
+		Address addressOne = new AddressBuilder().country(build).address1("london").build();
+		Address addressTwo = new AddressBuilder().country(build).address1("london").build();
 
 		application.setCurrentAddress(addressOne);
 		application.setContactAddress(addressTwo);

@@ -4,11 +4,12 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -22,7 +23,7 @@ public class Role implements GrantedAuthority, Serializable {
 	@GeneratedValue
 	private Integer id;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AuthorityEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name = "authority")
 	private Authority authorityEnum;
 

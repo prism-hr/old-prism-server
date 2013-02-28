@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
-import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class RejectService {

@@ -28,7 +28,6 @@ public class ApproverAdminMailSenderTest {
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private ApproverAdminMailSender approverMailSender;
 	private MessageSource msgSourceMock;
-	private ApplicationsService applicationsServiceMock;
 
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
@@ -61,7 +60,7 @@ public class ApproverAdminMailSenderTest {
 		String expTemplate = "private/approvers/mail/approval_notification_email.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, applicationsServiceMock) {
+		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
 			@Override
 			Map<String, Object> createModel(RegisteredUser approver, ApplicationForm application) {
 				return model;
@@ -91,7 +90,6 @@ public class ApproverAdminMailSenderTest {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, applicationsServiceMock);
+		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 	}
 }

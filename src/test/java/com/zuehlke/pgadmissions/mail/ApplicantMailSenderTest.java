@@ -31,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -40,7 +39,6 @@ public class ApplicantMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private ApplicantMailSender applicantMailSender;
-	private ApplicationsService applicationServiceMock;
 	private MessageSource msgSourceMock;
 	private ConfigurationService personServiceMock;
 
@@ -48,11 +46,9 @@ public class ApplicantMailSenderTest {
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		personServiceMock = EasyMock.createMock(ConfigurationService.class);
-		
-		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,applicationServiceMock, msgSourceMock, personServiceMock);
+		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, personServiceMock);
 	}
 
 	@Test
@@ -67,12 +63,12 @@ public class ApplicantMailSenderTest {
 		List<Person> registryContacts = new ArrayList<Person>();
 		registryContacts.add(new PersonBuilder().id(123).build());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
-		EasyMock.replay(applicationServiceMock, personServiceMock);
+		EasyMock.replay(personServiceMock);
 
 		Map<String, Object> model = applicantMailSender.createModel(form);
 		
-		EasyMock.verify(applicationServiceMock, personServiceMock);
-		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
+		EasyMock.verify(personServiceMock);
+		assertEquals("bob@test.com;alice@test.com", model.get("adminsEmails"));
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));
 		assertEquals(registryContacts, model.get("registryContacts"));
@@ -100,12 +96,12 @@ public class ApplicantMailSenderTest {
 		List<Person> registryContacts = new ArrayList<Person>();
 		registryContacts.add(new PersonBuilder().id(123).build());
 		EasyMock.expect(personServiceMock.getAllRegistryUsers()).andReturn(registryContacts);
-		EasyMock.replay(applicationServiceMock, personServiceMock);
+		EasyMock.replay(personServiceMock);
 		
 		Map<String, Object> model = applicantMailSender.createModel(form);
 		
-		EasyMock.verify(applicationServiceMock, personServiceMock);
-		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
+		EasyMock.verify(personServiceMock);
+		assertEquals("bob@test.com;alice@test.com", model.get("adminsEmails"));
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));
 		assertEquals(registryContacts, model.get("registryContacts"));
@@ -118,7 +114,7 @@ public class ApplicantMailSenderTest {
 	@Test
 	public void shouldSendMovedToReviewNotificationToApplicant() throws UnsupportedEncodingException {
 		final Map<String, Object> model = new HashMap<String, Object>();
-		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock, msgSourceMock, personServiceMock) {
+		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, personServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(ApplicationForm application) {
@@ -144,10 +140,10 @@ public class ApplicantMailSenderTest {
 						"private/pgStudents/mail/moved_to_review_notification.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
-		EasyMock.replay(applicationServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 		applicantMailSender.sendMailsForApplication(form, "message.code", "private/pgStudents/mail/moved_to_review_notification.ftl", null);
 
-		EasyMock.verify(applicationServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 	}
 }

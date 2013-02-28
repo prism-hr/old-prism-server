@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,15 +18,18 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
@@ -47,6 +51,10 @@ public class ApplicationFormDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(application);
 	}
 
+    public void refresh(ApplicationForm applicationForm){
+        sessionFactory.getCurrentSession().refresh(applicationForm);
+    }
+	
 	public ApplicationForm get(Integer id) {
 		return (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 	}
@@ -186,10 +194,17 @@ public class ApplicationFormDAO {
 		DetachedCriteria appronalNotificationCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", NotificationType.APPROVAL_NOTIFICATION))
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+		
+		DetachedCriteria confirmedSupervisorCriteria = DetachedCriteria.forClass(ApprovalRound.class, "approvalRound")
+                .createAlias("supervisors", "s", JoinType.INNER_JOIN)
+		        .add(Property.forName("applicationForm.latestApprovalRound").eqProperty("approvalRound.id"))
+		        .add(Restrictions.eq("s.isPrimary", true))
+		        .add(Restrictions.eq("s.confirmedSupervision", true));
 
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
 				.add(Subqueries.notExists(appronalNotificationCriteria.setProjection(Projections.property("notificationRecord.id"))))
+				.add(Subqueries.exists(confirmedSupervisorCriteria.setProjection(Projections.property("approvalRound.id"))))
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
@@ -269,8 +284,7 @@ public class ApplicationFormDAO {
 
     @SuppressWarnings("unchecked")
     public List<ApplicationForm> getAllApplicationsByStatus(ApplicationFormStatus status) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)	            
-                .add(Restrictions.eq("status", status))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", status))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 }

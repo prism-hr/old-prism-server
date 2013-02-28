@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
-import org.hibernate.annotations.Type;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
@@ -12,10 +12,9 @@ public class StateChangeEvent extends Event {
 
 	private static final long serialVersionUID = 3927731824429659338L;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name = "new_status")
 	private ApplicationFormStatus newStatus;
-
 
 	public ApplicationFormStatus getNewStatus() {
 		return newStatus;

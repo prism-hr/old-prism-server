@@ -13,7 +13,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.owasp.esapi.ESAPI;
 
@@ -51,6 +50,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -63,33 +63,37 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
 public class SubmitAdmissionsApplicationRequestBuilder {
 
-    private final Logger log = Logger.getLogger(SubmitAdmissionsApplicationRequestBuilder.class);
-
     private static final String IP_ADDRESS_NOT_PROVIDED_VALUE = "127.0.0.1";
 
     private static final String NOT_PROVIDED_VALUE = "NOT PROVIDED";
 
-    private static final String ADDRESS_LINE3_EMPTY_VALUE = "-";
+    private static final String ADDRESS_LINE_EMPTY_VALUE = "-";
 
     private static final String INSTITUTION_OTHER_CODE = "OTHER";
 
     private static final String REFER_TO_ATTACHED_DOCUMENT = "Refer to attached document.";
 
-    private final static String SOURCE_IDENTIFIER = "PRISM";
+    private static final String SOURCE_IDENTIFIER = "PRISM";
 
-    private final static String PHONE_NUMBER_NOT_PROVIDED_VALUE = "+44 (0) 0000 000 000";
+    private static final String PHONE_NUMBER_NOT_PROVIDED_VALUE = "+44 (0) 0000 000 000";
 
+    private static final String LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE = 
+            "Application predates mandatory language qualification. Please check qualifications for potential language certificates.";
+    
     private final ObjectFactory xmlFactory;
 
     protected final DatatypeFactory datatypeFactory;
 
     private ApplicationForm applicationForm;
 
+    private boolean printLanguageQualificationAdmissionsNote = false;
+    
     private static class NoActiveProgrameInstanceFoundException extends RuntimeException {
         private final ProgrammeOccurrenceTp occurrenceTp;
         private static final long serialVersionUID = 8359986556018188704L;
@@ -137,6 +141,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     }
 
     public SubmitAdmissionsApplicationRequest build() {
+        printLanguageQualificationAdmissionsNote = false;
         SubmitAdmissionsApplicationRequest request = xmlFactory.createSubmitAdmissionsApplicationRequest();
         request.setApplication(buildApplication());
         return request;
@@ -167,18 +172,20 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicant.setEthnicity(buildEthnicity());
         applicant.setHomeAddress(buildHomeAddress());
         applicant.setCorrespondenceAddress(buildCorrespondenceAddress());
-        applicant.setCriminalConvictionDetails(applicationForm.getAdditionalInformation().getConvictionsText());
+        applicant.setCriminalConvictionDetails(cleanString(applicationForm.getAdditionalInformation().getConvictionsText()));
         applicant.setCriminalConvictions(applicationForm.getAdditionalInformation().getConvictions());
         applicant.setQualificationList(buildQualificationDetails());
         applicant.setEmployerList(buildEmployer());
-        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails()
-                .getEnglishFirstLanguage()));
+
+        applicant.setEnglishIsFirstLanguage(BooleanUtils.toBoolean(applicationForm.getPersonalDetails().getEnglishFirstLanguage()));
         applicant.setEnglishLanguageQualificationList(buildEnglishLanguageQualification());
-
-        if (StringUtils.isNotBlank(applicationForm.getApplicant().getUclUserId())) {
-            applicant.setApplicantID(applicationForm.getApplicant().getUclUserId());
+        
+        if (BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getEnglishFirstLanguage()) && BooleanUtils.isNotTrue(applicationForm.getPersonalDetails().getLanguageQualificationAvailable())) {
+            printLanguageQualificationAdmissionsNote = true;
         }
-
+        
+        applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
+        
         return applicant;
     }
 
@@ -291,12 +298,18 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setPostCode(currentAddress.getAddress5());
         addressTp.setCountry(currentAddress.getCountry().getCode());
 
-        // addressLine3 is mandatory but PRISM did not collect addresses in this
-        // format before
-        if (StringUtils.isBlank(currentAddress.getAddress3())) {
-            addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);
+        // postCode is mandatory but but PRISM did not collect addresses
+        // in this format before.
+        if (StringUtils.isBlank(addressTp.getPostCode())) {
+            addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
         }
 
+        // addressLine3 is mandatory but PRISM did not collect addresses
+        // in this format before.
+        if (StringUtils.isBlank(addressTp.getAddressLine3())) {
+            addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
+        }
+        
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(personalDetails.getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(personalDetails.getPhoneNumber()));
@@ -314,12 +327,18 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setPostCode(contactAddress.getAddress5());
         addressTp.setCountry(contactAddress.getCountry().getCode());
 
-        // addressLine3 is mandatory but PRISM did not collect addresses in this
-        // format before
-        if (StringUtils.isBlank(contactAddress.getAddress3())) {
-            addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);
+        // postCode is mandatory but but PRISM did not collect addresses
+        // in this format before.
+        if (StringUtils.isBlank(addressTp.getPostCode())) {
+            addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
         }
 
+        // addressLine3 is mandatory but PRISM did not collect addresses
+        // in this format before.
+        if (StringUtils.isBlank(addressTp.getAddressLine3())) {
+            addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
+        }
+        
         contactDtlsTp.setAddressDtls(addressTp);
         contactDtlsTp.setEmail(applicationForm.getPersonalDetails().getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(applicationForm.getPersonalDetails().getPhoneNumber()));
@@ -329,7 +348,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private CourseApplicationTp buildCourseApplication() {
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
-        applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
         if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
             // Which supervisor to pick if there are multiple
@@ -341,6 +359,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
         applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
+        applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
         
         if (StringUtils.isBlank(applicationForm.getIpAddressAsString())) {
             applicationTp.setIpAddress(IP_ADDRESS_NOT_PROVIDED_VALUE);
@@ -368,14 +387,28 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         try {
             applicationTp.setProgramme(buildProgrammeOccurence());
         } catch (NoActiveProgrameInstanceFoundException exp) {
-            throw new IllegalArgumentException("NoActiveProgrameInstanceFound", exp);
+            throw new IllegalArgumentException(exp.getMessage(), exp);
         } catch (NoIdentifierForProgrameInstanceFoundException exp) {
-            throw new IllegalArgumentException("NoIdentifierForProgrameInstanceFound", exp);
+            throw new IllegalArgumentException(exp.getMessage(), exp);
         }
         
-//      TODO: ATASSTatement
-//      <v1_0:atasStatement>string</v1_0:atasStatement> // Project description
+        if (printLanguageQualificationAdmissionsNote && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+            applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
+        }
         
+        ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
+        if (latestApprovalRound != null) {
+            applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
+        }
+        
+        if (latestApprovalRound != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+            if (StringUtils.isNotBlank(latestApprovalRound.getRecommendedConditions())) {
+                applicationTp.setDepartmentalOfferConditions("Conditional Offer: " + latestApprovalRound.getRecommendedConditions());
+            } else {
+                applicationTp.setDepartmentalOfferConditions("Unconditional Offer: " + latestApprovalRound.getRecommendedConditions());
+            }
+        }
+
         return applicationTp;
     }
 
@@ -488,15 +521,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 InstitutionTp institutionTp = xmlFactory.createInstitutionTp();
 
                 institutionTp.setCode(qualification.getQualificationInstitutionCode());
-                if ("OTHER".equalsIgnoreCase(qualification.getQualificationInstitutionCode())) {
-                    institutionTp.setName(qualification.getQualificationInstitution());
-                }
-
-                if (qualification.getQualificationInstitutionCode().length() < 6) {
-                    institutionTp.setCode("OTHER");
-                    institutionTp.setName(qualification.getQualificationInstitution());
-                }
-
+                institutionTp.setName(qualification.getQualificationInstitution());
+                
                 CountryTp countryTp = xmlFactory.createCountryTp();
                 countryTp.setCode(qualification.getInstitutionCountry().getCode());
                 countryTp.setName(qualification.getInstitutionCountry().getName());
@@ -541,7 +567,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 AppointmentTp appointmentTp = xmlFactory.createAppointmentTp();
 
                 appointmentTp.setJobTitle(employmentPosition.getPosition());
-                appointmentTp.setResponsibilities(employmentPosition.getRemit());
+                appointmentTp.setResponsibilities(cleanString(employmentPosition.getRemit()));
                 appointmentTp.setStartDate(buildXmlDate(employmentPosition.getStartDate()));
                 appointmentTp.setEndDate(buildXmlDate(employmentPosition.getEndDate()));
 
@@ -558,7 +584,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private RefereeListTp buildReferee() {
         RefereeListTp resultList = xmlFactory.createRefereeListTp();
         for (Referee referee : applicationForm.getReferees()) {
-            if (BooleanUtils.isFalse(referee.getSendToUCL())) {
+            if (BooleanUtils.isNotTrue(referee.getSendToUCL())) {
                 continue;
             }
 
@@ -590,10 +616,16 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             addressTp.setPostCode(referee.getAddressLocation().getAddress5());
             addressTp.setCountry(referee.getAddressLocation().getCountry().getCode());
 
+            // postCode is mandatory but but PRISM did not collect addresses
+            // in this format before.
+            if (StringUtils.isBlank(addressTp.getPostCode())) {
+                addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
+            }
+
             // addressLine3 is mandatory but PRISM did not collect addresses
             // in this format before.
-            if (StringUtils.isBlank(referee.getAddressLocation().getAddress3())) {
-                addressTp.setAddressLine3(ADDRESS_LINE3_EMPTY_VALUE);
+            if (StringUtils.isBlank(addressTp.getAddressLine3())) {
+                addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
             }
 
             contactDtlsTp.setAddressDtls(addressTp);
@@ -631,37 +663,45 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                         languageQualifications.getQualificationType()));
             }
 
+            // The web service does not allow scores in the format "6.0" it only accepts "6" and the like.
             EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
-            overallScoreTp.setScore(String.valueOf(languageQualifications.getOverallScore()));
+            overallScoreTp.setScore(languageQualifications.getOverallScore().replace(".0", ""));
 
             EnglishLanguageScoreTp readingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             readingScoreTp.setName(LanguageBandScoreTp.READING);
-            readingScoreTp.setScore(String.valueOf(languageQualifications.getReadingScore()));
+            readingScoreTp.setScore(languageQualifications.getReadingScore().replace(".0", ""));
 
             EnglishLanguageScoreTp writingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             writingScoreTp.setName(LanguageBandScoreTp.WRITING);
-            writingScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
+            writingScoreTp.setScore(languageQualifications.getWritingScore().replace(".0", ""));
 
-            EnglishLanguageScoreTp essayScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-            essayScoreTp.setName(LanguageBandScoreTp.ESSAY);
-            essayScoreTp.setScore(String.valueOf(languageQualifications.getWritingScore()));
-
-            EnglishLanguageScoreTp speakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-            speakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
-            speakingScoreTp.setScore(String.valueOf(languageQualifications.getSpeakingScore()));
+            EnglishLanguageScoreTp essayOrSpeakingScoreTp = null;
+            if (StringUtils.equalsIgnoreCase("TOEFL_PAPER", englishLanguageTp.getMethod())) {
+                essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+                essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.ESSAY);
+                essayOrSpeakingScoreTp.setScore(languageQualifications.getWritingScore().replace(".0", ""));
+            } else {
+                essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+                essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
+                essayOrSpeakingScoreTp.setScore(languageQualifications.getSpeakingScore().replace(".0", ""));
+            }
 
             EnglishLanguageScoreTp listeningScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
-            listeningScoreTp.setScore(String.valueOf(languageQualifications.getListeningScore()));
+            listeningScoreTp.setScore(languageQualifications.getListeningScore().replace(".0", ""));
 
-            englishLanguageTp.getLanguageScore().addAll(
-                    Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayScoreTp, speakingScoreTp,
-                            listeningScoreTp));
-
+            englishLanguageTp.getLanguageScore().addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp, listeningScoreTp));
             englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);
         }
         return englishLanguageQualificationDetailsTp;
+    }
+    
+    private String cleanString(String text) {
+        if (text != null) {
+            return text.replaceAll("[^\\x20-\\x7F|\\x80-\\xFD|\\n|\\r]", "");
+        }
+        return null;
     }
 
     private String cleanPhoneNumber(String number) {

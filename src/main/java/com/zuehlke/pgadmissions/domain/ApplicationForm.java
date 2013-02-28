@@ -11,6 +11,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -31,7 +33,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.bouncycastle.util.Arrays;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -84,7 +85,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "application_form_id")
     private List<Event> events = new ArrayList<Event>();
 
-    @Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
+    @Enumerated(EnumType.STRING)
     private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
@@ -107,8 +108,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "due_date")
     private Date dueDate;
 
-    @Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
     @Column(name = "accepted_terms")
+    @Enumerated(EnumType.STRING)
     private CheckedStatus acceptedTermsOnSubmission;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -229,6 +230,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "ucl_booking_ref_number")
     private String uclBookingReferenceNumber;
 
+    @Column(name = "is_editable_by_applicant")
+    private Boolean isEditableByApplicant = true;
+
     public List<Qualification> getQualifications() {
         return qualifications;
     }
@@ -271,7 +275,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean isModifiable() {
-        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN) {
+        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN
+                || !getIsEditableByApplicant()) {
             return false;
         }
         return true;
@@ -293,11 +298,13 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean isUserAllowedToSeeAndEditAsAdministrator(final RegisteredUser user) {
-        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
+        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) // 
+                || user.isInterviewerOfApplicationForm(this)
                 || user.isAdminInProgramme(getProgram());
         return hasPermissionToEdit //
                 && isSubmitted() //
                 && !isInValidationStage() //
+                && !isInApprovalStage() //
                 && !isDecided() //
                 && !isWithdrawn();
     }
@@ -435,10 +442,26 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean shouldOpenFirstSection() {
-        return this.programmeDetails == null && this.personalDetails == null && this.currentAddress == null//
-                && this.contactAddress == null && this.qualifications.isEmpty() && this.employmentPositions.isEmpty()//
-                && this.fundings.isEmpty() && this.referees.isEmpty() && this.personalStatement == null//
-                && this.cv == null && this.additionalInformation == null;
+        return isNull(programmeDetails, personalDetails, currentAddress, contactAddress, personalStatement, cv,
+                additionalInformation) && isEmpty(fundings, referees, employmentPositions, qualifications);
+    }
+    
+    private boolean isEmpty(List<?>... objects) {
+        for (List<?> obj : objects) {
+            if (obj.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean isNull(Object... objects) {
+        for (Object obj : objects) {
+            if (obj == null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Date getDueDate() {
@@ -483,6 +506,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isInValidationStage() {
         return status == ApplicationFormStatus.VALIDATION;
+    }
+
+    public boolean isInApprovalStage() {
+        return status == ApplicationFormStatus.APPROVAL;
     }
 
     public List<NotificationRecord> getNotificationRecords() {
@@ -788,6 +815,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.ipAddress = InetAddress.getByName(ipAddress).getAddress();
     }
 
+    public Boolean getIsEditableByApplicant() {
+        return isEditableByApplicant;
+    }
+
+    public void setIsEditableByApplicant(Boolean isEditableByApplicant) {
+        this.isEditableByApplicant = isEditableByApplicant;
+    }
+
     public RequestRestartComment getLatestsRequestRestartComment() {
         List<RequestRestartComment> requestRestartComments = new ArrayList<RequestRestartComment>();
         for (Comment comment : applicationComments) {
@@ -854,19 +889,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
         return ApplicationFormStatus.VALIDATION;
     }
-    
+
     public boolean isProgrammeStillAvailable() {
         Date maxProgrammeEndDate = null;
         Date today = new Date();
-        
+
         ProgrammeDetails details = getProgrammeDetails();
-        
+
         for (ProgramInstance instance : getProgram().getInstances()) {
             boolean isProgrammeEnabled = getProgram().isEnabled();
             boolean isInstanceEnabled = instance.getEnabled();
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            
+
             if (isProgrammeEnabled && isInstanceEnabled && sameStudyOption && sameStudyOptionCode) {
                 Date programmeEndDate = instance.getApplicationDeadline();
                 if (maxProgrammeEndDate == null) {
@@ -876,11 +911,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
                 }
             }
         }
-        
+
         if (maxProgrammeEndDate == null || maxProgrammeEndDate.before(today)) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -905,7 +940,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return result;
     }
-    
+
     public boolean isPrefferedStartDateWithinBounds() {
         ProgrammeDetails details = getProgrammeDetails();
         Date startDate = details.getStartDate();
@@ -945,7 +980,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return result;
     }
 
-    public boolean isCompleteForSendingToPortico() {
+    public boolean isCompleteForSendingToPortico(boolean withMissingQualificationExplanation) {
         int exactNumberOfReferences = 2;
         int maxNumberOfQualifications = 2;
 
@@ -954,6 +989,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
 
         if (getQualificationsToSendToPortico().size() > maxNumberOfQualifications) {
+            return false;
+        }
+
+        if (getQualificationsToSendToPortico().isEmpty() && !withMissingQualificationExplanation) {
             return false;
         }
 

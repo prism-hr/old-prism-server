@@ -22,7 +22,7 @@
  </div>
 
  <div class="row">
-    <label class="plain-label">Email<em>*</em></label>
+    <label class="plain-label">Reviewer Email<em>*</em></label>
 	<span class="hint" data-desc="<@spring.message 'assignReviewer.email'/>"></span>
     <div class="field">
       <input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail" value="${(reviewer.email?html)!}"/>                                               

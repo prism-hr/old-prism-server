@@ -6,14 +6,10 @@ import java.util.Date;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ws.WebServiceMessage;
@@ -34,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlin
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.mail.DataExportMailSender;
-import com.zuehlke.pgadmissions.utils.PausableHibernateCompatibleSequentialTaskExecutor;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
 /**
@@ -45,11 +40,7 @@ import com.zuehlke.pgadmissions.utils.StacktraceDump;
 @Service
 public class UclExportService {
     private static final Logger log = Logger.getLogger(UclExportService.class);
-
-    private final PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutor;
     
-    private final PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutor;
-
     private final WebServiceTemplate webServiceTemplate;
 
     private final ApplicationFormTransferDAO applicationFormTransferDAO;
@@ -60,40 +51,28 @@ public class UclExportService {
 
     private final int consecutiveSoapFaultsLimit;
 
-    private final int queuePausingDelayInCaseOfNetworkProblemsDiscovered;
+    private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
-    private final SftpAttachmentsSendingService sftpAttachmentsSendingService;
-
-    private final TaskScheduler scheduler;
-    
     private final DataExportMailSender dataExportMailSender;
-
+    
     public UclExportService() {
-        this(null, null, null, null, null, 0, 0, null, null, null);
+        this(null, null, null, 0, null, null);
     }
     
     @Autowired
     public UclExportService(
-            @Qualifier("webservice-calling-queue-executor") PausableHibernateCompatibleSequentialTaskExecutor webserviceCallingQueueExecutor,
-            @Qualifier("sftp-calling-queue-executor") PausableHibernateCompatibleSequentialTaskExecutor sftpCallingQueueExecutor,
             WebServiceTemplate webServiceTemplate, 
             ApplicationFormTransferDAO applicationFormTransferDAO,
             ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO, 
             @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}") int consecutiveSoapFaultsLimit,
-            @Value("${xml.data.export.queue_pausing_delay_in_case_of_network_problem}") int queuePausingDelayInCaseOfNetworkProblemsDiscovered,
-            SftpAttachmentsSendingService sftpAttachmentsSendingService, 
-            @Qualifier("ucl-export-service-scheduler") TaskScheduler scheduler,
+            SftpAttachmentsSendingService sftpAttachmentsSendingService,
             DataExportMailSender dataExportMailSender) {
         super();
-        this.webserviceCallingQueueExecutor = webserviceCallingQueueExecutor;
-        this.sftpCallingQueueExecutor = sftpCallingQueueExecutor;
         this.webServiceTemplate = webServiceTemplate;
         this.applicationFormTransferDAO = applicationFormTransferDAO;
         this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;
         this.consecutiveSoapFaultsLimit = consecutiveSoapFaultsLimit;
-        this.queuePausingDelayInCaseOfNetworkProblemsDiscovered = queuePausingDelayInCaseOfNetworkProblemsDiscovered;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
-        this.scheduler = scheduler;
         this.dataExportMailSender = dataExportMailSender;
     }
 
@@ -127,13 +106,9 @@ public class UclExportService {
 
         ApplicationFormTransfer transfer = this.createPersistentQueueItem(applicationForm);
         
-        // TODO: This used to use that asynchronous blocking queue but that just does not work properly
-        //webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
         transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(transfer.getId(), listener);
         
-        this.triggerQueued(listener);
-        
-        log.info(String.format("Succecfully sent application form %s to PORTICO (transfer-id=%d)", applicationForm.getApplicationNumber(), transfer.getId()));
+        log.info(String.format("Successfully sent application form %s to PORTICO (transfer-id=%d)", applicationForm.getApplicationNumber(), transfer.getId()));
         
         return transfer.getId();
     }
@@ -143,23 +118,24 @@ public class UclExportService {
      * This is supposed to be invoked at system startup and is crucial to system crash recovery.
      */
     public void systemStartupSendingQueuesRecovery() {
-        // allowing system to start smoothly before working on the queues.
-        //this.pauseWsQueueForMinutes(1);
-        //this.pauseSftpQueueForMinutes(1);
-        
+
         log.info("Re-initialising the queues for ucl-export processing");
         
         for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForWebserviceCall()) {
-            // TODO: This used to use that asynchronous blocking queue but that just does not work properly
-            //webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationFormTransfer.getApplicationForm().getId(), applicationFormTransfer.getId(), new DeafListener()));
             transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(), new DeafListener());
         }
         
         for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForAttachmentsSending()) {
-            // TODO: This used to use that asynchronous blocking queue but that just does not work properly
-            //sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationFormTransfer.getApplicationForm().getId(), applicationFormTransfer.getId(), new DeafListener()));
             transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(), new DeafListener());
         }
+    }
+    
+    public void setPorticoAttachmentsZipCreator(PorticoAttachmentsZipCreator zipCreator) {
+        sftpAttachmentsSendingService.setPorticoAttachmentsZipCreator(zipCreator);
+    }
+    
+    public void setSftpAttachmentsSendingService(SftpAttachmentsSendingService sendingService) {
+        sftpAttachmentsSendingService = sendingService;
     }
 
     //ooooooooooooooooooooooooooooooo PRIVATE oooooooooooooooooooooooooooooooo
@@ -176,9 +152,6 @@ public class UclExportService {
 
     @Transactional
     public void transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
-        this.triggerTransferStarted(listener);
-
-        //retrieve AppliationForm and ApplicationFormTransfer instances from the db
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
         ApplicationForm applicationForm  = transfer.getApplicationForm();
 
@@ -193,19 +166,18 @@ public class UclExportService {
             }
         };
 
-        //build webservice request
         request = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory()).applicationForm(applicationForm).build();
-        listener.sendingSubmitAdmissionsApplicantRequest(request);
+        listener.webServiceCallStarted(request);
         
         try  {
             //call webservice
             log.info(String.format("Calling marshalSendAndReceive for transfer %d (%s)", transferId,  applicationForm.getApplicationNumber()));
+            
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
+            
             log.info(String.format("Successfully returned from webservice call for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
-            log.info(String
-                    .format("Received web service response [transferId=%d, applicationNumber=%s, applicantID=%s, applicationID=%s]",
-                            transferId, applicationForm.getApplicationNumber(), response.getReference()
-                                    .getApplicantID(), response.getReference().getApplicationID()));
+            
+            log.info(String.format("Received web service response [transferId=%d, applicationNumber=%s, applicantID=%s, applicationID=%s]", transferId, applicationForm.getApplicationNumber(), response.getReference().getApplicantID(), response.getReference().getApplicationID()));
         } catch (WebServiceIOException e) {
             logAndSendEmailToSuperadministrator(String.format(
                     "WebServiceTransportException during webservice call for transfer [transferId=%d, applicationNumber=%s]", transferId,
@@ -223,15 +195,7 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
             applicationFormTransferErrorDAO.save(error);
 
-            //pause the queue for some time
-            //this.pauseWsQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
-
-            //inform the listener
-            this.triggerTransferFailed(listener, error);
-
-            //Schedule the same transfer again
-            // TODO: This used to use that asynchronous blocking queue but that just does not work properly
-            //webserviceCallingQueueExecutor.execute(new Phase1Task(this, applicationForm.getId(),  transfer.getId(), listener));
+            listener.webServiceCallFailed(error);
 
             return;
 
@@ -254,13 +218,13 @@ public class UclExportService {
             try {
                 e.getWebServiceMessage().writeTo(responseMessageBuffer);
             } catch (IOException ioex) {
-                throw new RuntimeException("Line unreachable", e);//writing to in-memory buffer should not fail
+                log.warn(ioex);
+                throw new RuntimeException("Line unreachable", e);
             }
             error.setResponseCopy(responseMessageBuffer.toString());
             applicationFormTransferErrorDAO.save(error);
 
-            //inform the listener
-            this.triggerTransferFailed(listener, error);
+            listener.webServiceCallFailed(error);
 
             //update transfer status
             transfer.setStatus(ApplicationTransferStatus.REJECTED_BY_WEBSERVICE);
@@ -269,7 +233,6 @@ public class UclExportService {
             //we count soap-fault situations;  if faults are repeating - we will eventually stop the queue and issue an email alert to administrators
             numberOfConsecutiveSoapFaults++;
             if (numberOfConsecutiveSoapFaults > consecutiveSoapFaultsLimit) {
-                //webserviceCallingQueueExecutor.pause();
                 logAndSendEmailToSuperadministrator(String.format(
                         "Could not transfer application even after %d retries [transferId=%d, applicationNumber=%s]", numberOfConsecutiveSoapFaults, transferId,
                         applicationForm.getApplicationNumber()), Level.ERROR, e);
@@ -284,9 +247,9 @@ public class UclExportService {
         transfer.setUclUserIdReceived(response.getReference().getApplicantID());
         transfer.setUclBookingReferenceReceived(response.getReference().getApplicationID());
         applicationForm.setUclBookingReferenceNumber(response.getReference().getApplicationID());
-        if (applicationForm.getApplicant().getUclUserId() == null)
+        if (applicationForm.getApplicant().getUclUserId() == null) {
             applicationForm.getApplicant().setUclUserId(response.getReference().getApplicantID());
-        else {
+        } else {
             if (! applicationForm.getApplicant().getUclUserId().equals(response.getReference().getApplicantID())) {
                 throw new RuntimeException("User code received from PORTICO do not mach with our PRISM user id: PRISM_ID=" +
                     applicationForm.getApplicant().getUclUserId() + " PORTICO_ID=" + response.getReference().getApplicantID());
@@ -296,32 +259,31 @@ public class UclExportService {
         //update transfer status in the database
         transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING);
 
+        listener.webServiceCallCompleted(response);
+        
         //schedule phase 2 (sftp)
-        // TODO: This used to use that asynchronous blocking queue but that just does not work properly
-        //sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(), transferId, listener));
         transactionallyExecuteSftpTransferAndUpdatePersistentQueue(transferId, listener);
-
-        //inform the listener
-        this.triggerWebserviceCallCompleted(listener);
     }
 
     @Transactional
     public void transactionallyExecuteSftpTransferAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
-        this.triggerAttachmentsSftpTransmissionStarted(listener);
-
-        //retrieve AppliationForm and ApplicationFormTransfer instances from the db
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
         ApplicationForm applicationForm  = transfer.getApplicationForm();
 
-        this.triggerAttachmentsSftpTransmissionStarted(listener);
+        listener.sftpTransferStarted();
 
         //pack attachments and send them over sftp
         try {
             log.info(String.format("Calling sendApplicationFormDocuments for transfer %d (%s)", transferId,  applicationForm.getApplicationNumber()));
-            sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm, listener);
+            
+            String zipFileName = sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm, listener);
+            
             transfer.setStatus(ApplicationTransferStatus.COMPLETED);
+            
             transfer.setTransferFinishTimepoint(new Date());
-            this.triggerTransferCompleted(listener, transfer.getUclUserIdReceived(), transfer.getUclBookingReferenceReceived());
+            
+            listener.sftpTransferCompleted(zipFileName, transfer.getUclUserIdReceived(), transfer.getUclBookingReferenceReceived());
+            
             log.info(String.format("Transfer of documents completed for transfer %d (%s)", transferId,  applicationForm.getApplicationNumber()));
         } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -332,8 +294,8 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY);
             applicationFormTransferErrorDAO.save(error);
 
-            //inform the listener
-            this.triggerTransferFailed(listener, error);
+            listener.sftpTransferFailed(error);
+
             transfer.setStatus(ApplicationTransferStatus.CANCELLED);
             
             logAndSendEmailToSuperadministrator(String.format(
@@ -349,15 +311,7 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION);
             applicationFormTransferErrorDAO.save(error);
             
-            //pause the queue
-            //sftpCallingQueueExecutor.pause();
-            
-            //inform the listener
-            this.triggerTransferFailed(listener, error);
-
-            //Schedule the same transfer again
-            // TODO: This used to use that asynchronous blocking queue but that just does not work properly
-            //sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(),  transfer.getId(), listener));
+            listener.sftpTransferFailed(error);
 
             logAndSendEmailToSuperadministrator(String.format(
                     "LocallyDefinedSshConfigurationIsWrong for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -372,15 +326,8 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
             applicationFormTransferErrorDAO.save(error);
             
-            // pause
-            //this.pauseSftpQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
-            
-            //inform the listener
-            this.triggerTransferFailed(listener, error);
+            listener.sftpTransferFailed(error);
 
-            //Schedule the same transfer again
-            //sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(),  transfer.getId(), listener));
-            
             logAndSendEmailToSuperadministrator(String.format(
                     "CouldNotOpenSshConnectionToRemoteHost for application [transferId=%d, applicationNumber=%s]", transferId,
                     applicationForm.getApplicationNumber()), Level.WARN, couldNotOpenSshConnectionToRemoteHost);
@@ -394,15 +341,7 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION);
             applicationFormTransferErrorDAO.save(error);
 
-            //pause the queue
-            //sftpCallingQueueExecutor.pause();
-            
-            //inform the listener
-            this.triggerTransferFailed(listener, error);
-
-            //Schedule the same transfer again
-            // TODO: This used to use that asynchronous blocking queue but that just does not work properly
-            //sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(),  transfer.getId(), listener));
+            listener.sftpTransferFailed(error);
 
             logAndSendEmailToSuperadministrator(String.format(
                     "SftpTargetDirectoryNotAccessible for application [transferId=%d, applicationNumber=%s]", transferId,
@@ -417,16 +356,8 @@ public class UclExportService {
             error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
             applicationFormTransferErrorDAO.save(error);
             
-            // pause
-            //this.pauseSftpQueueForMinutes(queuePausingDelayInCaseOfNetworkProblemsDiscovered);
-            
-            //inform the listener
-            this.triggerTransferFailed(listener, error);
+            listener.sftpTransferFailed(error);
 
-            //Schedule the same transfer again
-            // TODO: This used to use that asynchronous blocking queue but that just does not work properly
-            //sftpCallingQueueExecutor.execute(new Phase2Task(this, applicationForm.getId(),  transfer.getId(), listener));
-            
             logAndSendEmailToSuperadministrator(String.format(
                     "SftpTransmissionFailedOrProtocolError for application [transferId=%d, applicationNumber=%s]", transferId,
                     applicationForm.getApplicationNumber()), Level.WARN, sftpTransmissionFailedOrProtocolError);
@@ -436,92 +367,5 @@ public class UclExportService {
     private void logAndSendEmailToSuperadministrator(final String message, final Level logLevel, final Exception exception) {
         log.log(logLevel, message, exception);
         dataExportMailSender.sendErrorMessage(message, exception);
-    }
-
-    protected void pauseWsQueueForMinutes(int minutes) {
-        log.info("Pausing WebService queue for " + minutes + " minutes");
-        webserviceCallingQueueExecutor.pause();
-        scheduler.schedule(new Runnable() {
-            @Override
-            public void run() {
-                log.info("Resuming WebService queue");
-                webserviceCallingQueueExecutor.resume();
-            }
-        }, DateUtils.addMinutes(new Date(), minutes));
-    }
-    
-    protected void pauseSftpQueueForMinutes(int minutes) {
-        log.info("Pausing SFTP queue for " + minutes + " minutes");
-        sftpCallingQueueExecutor.pause();
-        scheduler.schedule(new Runnable() {
-            @Override
-            public void run() {
-                log.info("Resuming SFTP queue");
-                sftpCallingQueueExecutor.resume();
-            }
-        }, DateUtils.addMinutes(new Date(), minutes));
-    }
-
-    @Async
-    void triggerQueued(TransferListener listener) {
-        try {
-            listener.queued();
-        } catch (RuntimeException e) {
-            e.printStackTrace();//there is nothing better we can do with this exeption
-        }
-    }
-
-    @Async
-    void triggerTransferStarted(TransferListener listener) {
-        try {
-            listener.transferStarted();
-        } catch (RuntimeException e) {
-            e.printStackTrace();//there is nothing better we can do with this exeption
-        }
-    }
-
-    @Async
-    void triggerWebserviceCallCompleted(TransferListener listener) {
-        try {
-            listener.webserviceCallCompleted();
-        } catch (RuntimeException e) {
-            e.printStackTrace();//there is nothing better we can do with this exeption
-        }
-    }
-
-    @Async
-    void triggerSshConnectionEstablished(TransferListener listener) {
-        try {
-            listener.sshConnectionEstablished();
-        } catch (RuntimeException e) {
-            e.printStackTrace();//there is nothing better we can do with this exeption
-        }
-    }
-
-    @Async
-    void triggerAttachmentsSftpTransmissionStarted(TransferListener listener) {
-        try {
-            listener.attachmentsSftpTransmissionStarted();
-        } catch (RuntimeException e) {
-            e.printStackTrace();//there is nothing better we can do with this exeption
-        }
-    }
-
-    @Async
-    void triggerTransferCompleted(TransferListener listener, String uclUserId, String uclBookingReferenceNumber) {
-        try {
-            listener.transferCompleted(uclUserId, uclBookingReferenceNumber);
-        } catch (RuntimeException e) {
-            e.printStackTrace();//there is nothing better we can do with this exeption
-        }
-    }
-
-    @Async
-    void triggerTransferFailed(TransferListener listener, ApplicationFormTransferError error) {
-        try {
-            listener.transferFailed(error);
-        } catch (RuntimeException e) {
-            e.printStackTrace();//there is nothing better we can do with this exeption
-        }
     }
 }

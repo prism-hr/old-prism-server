@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
@@ -597,6 +598,16 @@ public class PersonalDetailsValidatorTest {
     }
     
     @Test
+    public void shouldRejectLanguageQualificationIfNoDocument() {
+        personalDetails.getLanguageQualifications().get(0).setLanguageQualificationDocument(null);
+        
+        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
+        personalDetailValidator.validate(personalDetails, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("file.upload.empty", mappingResult.getFieldError("languageQualifications[0].languageQualificationDocument").getCode());
+    }
+    
+    @Test
     public void shouldAcceptToeflLanguageQualificationIfOverallScoreIsBetween0And120() {
         personalDetails.getLanguageQualifications().get(0).setQualificationType(LanguageQualificationEnum.TOEFL);
         personalDetails.getLanguageQualifications().get(0).setOverallScore("80");
@@ -764,7 +775,8 @@ public class PersonalDetailsValidatorTest {
                         new LanguageQualificationBuilder().id(1).dateOfExamination(new Date()).examTakenOnline(false)
                                 .languageQualification(LanguageQualificationEnum.OTHER)
                                 .otherQualificationTypeName("foobar").listeningScore("1").overallScore("1")
-                                .readingScore("1").writingScore("1").speakingScore("1").build())
+                                .readingScore("1").writingScore("1").speakingScore("1")
+                                .languageQualificationDocument(new DocumentBuilder().build()).build())
 				.build();
 		
 		passportInformationValidator = new PassportInformationValidator();

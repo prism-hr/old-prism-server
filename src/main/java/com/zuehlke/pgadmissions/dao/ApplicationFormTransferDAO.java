@@ -32,6 +32,12 @@ public class ApplicationFormTransferDAO {
         return (ApplicationFormTransfer) sessionFactory.getCurrentSession().get(ApplicationFormTransfer.class, id);
     }
     
+    public ApplicationFormTransfer getByReceivedBookingReferenceNumber(String bookingReferenceNumber) {
+        return (ApplicationFormTransfer) sessionFactory.getCurrentSession()
+                .createCriteria(ApplicationFormTransfer.class)
+                .add(Restrictions.eq("uclBookingReferenceReceived", bookingReferenceNumber)).uniqueResult();
+    }
+    
     @SuppressWarnings("unchecked")
     public List<ApplicationFormTransfer> getAllTransfersWaitingForWebserviceCall() {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).
@@ -43,5 +49,4 @@ public class ApplicationFormTransferDAO {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).
             add(Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING)).list();
     }
-
 }

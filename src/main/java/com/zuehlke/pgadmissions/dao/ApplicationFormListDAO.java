@@ -96,7 +96,7 @@ public class ApplicationFormListDAO {
         return criteria.list();
     }
 
-    private Criteria setSearchCriteria(SearchCategory searchCategory, String term, Criteria criteria) {
+    private Criteria setSearchCriteria(final SearchCategory searchCategory, final String term, final Criteria criteria) {
         if (searchCategory != null && StringUtils.isNotBlank(term)) {
             switch (searchCategory) {
             case APPLICANT_NAME:
@@ -119,7 +119,7 @@ public class ApplicationFormListDAO {
                 if (status != null) {
                     criteria.add(Restrictions.eq("status", status));
                 } else {
-                    criteria = null;
+                    return null;
                 }
                 break;
             case APPLICATION_DATE:

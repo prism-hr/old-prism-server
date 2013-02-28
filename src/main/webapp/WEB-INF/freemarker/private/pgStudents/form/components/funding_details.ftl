@@ -19,11 +19,11 @@
     <table class="existing">
       
       <colgroup>
-        <col style="width: 30px" />
+        <col style="width: 40px" />
         <col />
-        <col style="width: 150px" />
-   		<col style="width: 30px" />
-		<col style="width: 30px" />
+        <col style="width: 90px" />
+        <col style="width: 30px" />
+        <col style="width: 30px" />
       </colgroup>
             
       <thead>
@@ -32,7 +32,7 @@
           <th>Funding</th>
           <th>Awarded</th>
           <th>&nbsp;</th>
-           <th>&nbsp;</th>
+          <th id="last-col">&nbsp;</th>
         </tr>
       </thead>
 

@@ -6,14 +6,14 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -36,7 +36,7 @@ public class LanguageQualification implements Serializable {
     private PersonalDetails personalDetails = null;
     
     @Column(name = "qualification_type")
-    @Type(type = "com.zuehlke.pgadmissions.dao.custom.LanguageQualificationEnumUserType")
+    @Enumerated(EnumType.STRING)
     LanguageQualificationEnum qualificationType;
     
     @Column(name = "other_qualification_type_name")

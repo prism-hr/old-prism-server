@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.mail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
@@ -32,29 +34,36 @@ public class NewUserMailSender extends MailSender {
 	}
 
 	private String constructRolesString(RegisteredUser user) {
-		StringBuilder sb = new StringBuilder();
-		String programTitle = null;
-		for (int i = 0; i < user.getPendingRoleNotifications().size(); i++) {
-			if (i > 0 && i < user.getPendingRoleNotifications().size() - 1) {
-				sb.append(", ");
-			}
-			if (user.getPendingRoleNotifications().size() > 1 && i == (user.getPendingRoleNotifications().size() - 1)) {
-				sb.append(" and ");
-			}
-			PendingRoleNotification pendingRoleNotification = user.getPendingRoleNotifications().get(i);
-			Authority authority = pendingRoleNotification.getRole().getAuthorityEnum();
-			if (authority != Authority.SUPERADMINISTRATOR && programTitle == null) {
-				programTitle = pendingRoleNotification.getProgram().getTitle();
-			}
-			if (authority == Authority.REVIEWER || authority == Authority.INTERVIEWER || authority == Authority.SUPERVISOR) {
-				sb.append("Default ");
-			}
-			sb.append(StringUtils.capitalize(authority.toString().toLowerCase()));
-		}
-		if(programTitle != null){
-			sb.append(" for " + programTitle);
-		}
-		return sb.toString();
+	    List<String> rolesList = new ArrayList<String>();
+	    String programTitle = null;
+
+	    for (PendingRoleNotification roleNotification : user.getPendingRoleNotifications()) {
+	        Authority authority = roleNotification.getRole().getAuthorityEnum();
+	        String roleAsString = StringUtils.capitalize(authority.toString().toLowerCase());
+	        
+	        if (authority != Authority.SUPERADMINISTRATOR && StringUtils.isBlank(programTitle)) {
+                programTitle = roleNotification.getProgram().getTitle();
+            }
+	        
+	        switch (authority) {
+            case INTERVIEWER:
+            case REVIEWER:
+            case SUPERVISOR:
+                rolesList.add("Default " + roleAsString);
+                break;
+            default:
+                rolesList.add(roleAsString);
+                break;
+            }
+	    }
+	    
+	    StringBuilder messageBuilder = new StringBuilder(StringUtils.join(rolesList.toArray(new String[]{}), ", ", 0, rolesList.size() - 1));
+	    messageBuilder.append(" and " ).append(rolesList.get(rolesList.size() - 1));
+	    if (StringUtils.isNotBlank(programTitle)) {
+            messageBuilder.append(" for ").append(programTitle);
+        }
+	    
+	    return messageBuilder.toString();
 	}
 
 	public void sendNewUserNotificationAsReminder(RegisteredUser user) {

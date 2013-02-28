@@ -1,14 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.collections.Closure;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -30,22 +31,18 @@ public class MailService {
 
 	private final JavaMailSender mailsender;
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
-	private final ApplicationsService applicationsService;
 
 	private final Logger log = Logger.getLogger(MailService.class);
 	private final MessageSource msgSource;
 
 	public MailService() {
-		this(null, null, null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender,//
-			ApplicationsService applicationsService, MessageSource msgSource) {
-
+	public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, MessageSource msgSource) {
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
-		this.applicationsService = applicationsService;
 		this.msgSource = msgSource;
 	}
 
@@ -93,26 +90,21 @@ public class MailService {
 	
 	@Transactional
 	public void sendWithdrawMailToAdminsReviewersInterviewersSupervisors(List<Referee> referees, ApplicationForm form) {
-	    Set<RegisteredUser> uniqueUsers = new HashSet<RegisteredUser>();
+	    final Map<Integer, RegisteredUser> uniqueUsersMap = new HashMap<Integer, RegisteredUser>();
+	    List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 	    
 	    for (Referee referee : referees) {
-            RegisteredUser user = referee.getUser();
-            if (user != null) {
-                uniqueUsers.add(user);
-            }
+            users.add(referee.getUser());
         }
 	    
-	    uniqueUsers.addAll(form.getProgram().getAdministrators());
+	    users.addAll(form.getProgram().getAdministrators());
+	    users.add(form.getApplicationAdministrator());
         
-        if (form.getApplicationAdministrator() != null) {
-            uniqueUsers.add(form.getApplicationAdministrator());
-        }
-	    
         if (form.getLatestReviewRound() != null) {
             List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
             for (Reviewer reviewer : reviewers) {
                 if (reviewer.getReview() == null) {
-                    uniqueUsers.add(reviewer.getUser());
+                    users.add(reviewer.getUser());
                 }
             }
         }
@@ -121,19 +113,29 @@ public class MailService {
             List<Interviewer> interviewers = form.getLatestInterview().getInterviewers();
             for (Interviewer interviewer : interviewers) {
                 if (interviewer.getInterviewComment() == null) {
-                    uniqueUsers.add(interviewer.getUser());
+                    users.add(interviewer.getUser());
                 }
             }
         }
         
         if (form.getLatestApprovalRound() != null) {
             for (Supervisor supervisor : form.getLatestApprovalRound().getSupervisors()) {
-                uniqueUsers.add(supervisor.getUser());
+                users.add(supervisor.getUser());
             }
         }
         
+        CollectionUtils.forAllDo(users, new Closure() {
+            @Override
+            public void execute(Object target) {
+                if (target != null) {
+                    RegisteredUser user = (RegisteredUser) target;
+                    uniqueUsersMap.put(user.getId(), user);
+                }
+            }
+        });
+        
         // send the emails only for the unique users
-        for (RegisteredUser user : uniqueUsers) {
+        for (RegisteredUser user : uniqueUsersMap.values()) {
             internalSendWithdraw(user, form);
         }
 	}

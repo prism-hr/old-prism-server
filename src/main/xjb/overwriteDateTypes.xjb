@@ -13,7 +13,7 @@
 <!--             parseMethod="org.joda.time.DateTime.parse" printMethod="java.lang.String.valueOf" /> -->
         <jaxb:javaType xmlns="http://java.sun.com/xml/ns/jaxb"
             name="org.joda.time.DateTime" xmlType="xs:gMonth"
-            parseMethod="com.zuehlke.pgadmissions.services.exporters.GMonthAdapter.parse" 
-            printMethod="com.zuehlke.pgadmissions.services.exporters.GMonthAdapter.print" />
+            parseMethod="com.zuehlke.pgadmissions.jaxb.GMonthAdapter.parse" 
+            printMethod="com.zuehlke.pgadmissions.jaxb.GMonthAdapter.print" />
     </jaxb:globalBindings>
 </jaxb:bindings>

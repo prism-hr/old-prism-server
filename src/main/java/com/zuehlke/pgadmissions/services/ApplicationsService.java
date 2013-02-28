@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
@@ -20,13 +21,13 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 @Service("applicationsService")
 public class ApplicationsService {
 	
-    public final static int APPLICATION_BLOCK_SIZE = 50;
+    public static final int APPLICATION_BLOCK_SIZE = 50;
     
 	private final ApplicationFormDAO applicationFormDAO;
 	
 	private final ApplicationFormListDAO applicationFormListDAO; 
 
-	ApplicationsService() {
+	public ApplicationsService() {
 		this(null, null);
 	}
 
@@ -47,7 +48,6 @@ public class ApplicationsService {
 	@Transactional
 	public void save(ApplicationForm application) {
 		applicationFormDAO.save(application);
-
 	}
 
 	@Transactional
@@ -65,6 +65,11 @@ public class ApplicationsService {
 		applicationFormDAO.save(applicationForm);
 		return applicationForm;
 	}
+	
+	@Transactional
+    public void makeApplicationNotEditable(ApplicationForm applicationForm) {
+        applicationForm.setIsEditableByApplicant(false);
+    }
 
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
@@ -87,6 +92,11 @@ public class ApplicationsService {
         }
 		return applicationFormListDAO.getVisibleApplications(user, searchCategory, term, sortCategory, sortOrder, pageCount, APPLICATION_BLOCK_SIZE);
 	}
+	
+    @Transactional
+    public void refresh(ApplicationForm applicationForm) {
+        applicationFormDAO.refresh(applicationForm);
+    }
 
 	@Transactional
 	public List<ApplicationForm> getApplicationsDueRegistryNotification() {
@@ -100,4 +110,9 @@ public class ApplicationsService {
 	public List<ApplicationForm> getApplicationsDueApprovalRestartRequestReminder() {
 		return applicationFormDAO.getApplicationDueApprovalRestartRequestReminder();
 	}
+	
+	public List<ApplicationForm> getAllApplicationsByStatus(ApplicationFormStatus status) {
+	    return applicationFormDAO.getAllApplicationsByStatus(status);
+	}
+
 }

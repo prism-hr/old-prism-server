@@ -7,7 +7,6 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,24 +63,6 @@ public class PersonalDetailsValidatorTest {
     }
 	
 	@Test
-	public void shouldRejectIfFirstNameIsEmpty() {
-		personalDetails.setFirstName(null);
-		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("firstName").getCode());
-	}
-	
-	@Test
-    public void shouldRejectIfFirstNameIsLongerThan30() {
-        personalDetails.setFirstName("1234567890123456789012345678901234567890");
-        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-        personalDetailValidator.validate(personalDetails, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 30 characters are allowed.", mappingResult.getFieldError("firstName").getDefaultMessage());
-    }
-	
-	@Test
     public void shouldRejectIfPhoneNumberIsLongerThan35() {
         personalDetails.setPhoneNumber("1234567890123456789012345678901234567890");
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
@@ -99,74 +80,8 @@ public class PersonalDetailsValidatorTest {
         Assert.assertEquals("You must enter telephone numbers in the following format +44 (0) 123 123 1234.", mappingResult.getFieldError("phoneNumber").getDefaultMessage());
     }	
 	
-	@Test
-    public void shouldRejectIfFirstNameContainsInvalidCharacters() {
-	    String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
-        personalDetails.setFirstName(chineseName);
-        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-        personalDetailValidator.validate(personalDetails, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("firstName").getDefaultMessage());
-    }
 
-	@Test
-	public void shouldRejectIfLasttNameIsEmpty() {
-		personalDetails.setLastName(null);
-		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("lastName").getCode());
-	}
 	
-    @Test
-    public void shouldRejectIfLasttNameIsLongerThan40() {
-        personalDetails.setLastName("12345678901234567890123456789012345678900123456789001234567890");
-        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-        personalDetailValidator.validate(personalDetails, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 40 characters are allowed.", mappingResult.getFieldError("lastName").getDefaultMessage());
-    }
-    
-    @Test
-    public void shouldRejectIfLastNameContainsInvalidCharacters() {
-        String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
-        personalDetails.setLastName(chineseName);
-        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-        personalDetailValidator.validate(personalDetails, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("lastName").getDefaultMessage());
-    }
-
-	@Test
-	public void shouldRejectIfEmailIsEmpty() {
-		personalDetails.setEmail(null);
-		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("email").getCode());
-	}
-	
-	@Test
-	public void shouldRejectIfEmailNotValidEmail() {
-		personalDetails.setEmail("rerewrew");
-		BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("You must enter a valid email address.", mappingResult.getFieldError("email").getDefaultMessage());
-	}
-	
-	@Test
-    public void shouldRejectIfEmailIsLongerThan255Characters() {
-	    StringBuilder builder = new StringBuilder();
-	    for (int i = 0; i < 300; i++) {
-            builder.append("a");
-        }
-        personalDetails.setEmail(builder.append("@1.com").toString());
-        BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
-        personalDetailValidator.validate(personalDetails, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 255 characters are allowed.", mappingResult.getFieldError("email").getDefaultMessage());
-    }
 
 	@Test
 	public void shouldRejectIfGenderisNull() {
@@ -754,9 +669,7 @@ public class PersonalDetailsValidatorTest {
 				.applicationForm(new ApplicationFormBuilder().id(2).build())
 				.country(new CountryBuilder().build())
 				.dateOfBirth(DateUtils.addYears(new Date(), -28))
-				.email("email@test.com")
-				.firstName("bob")
-				.gender(Gender.INDETERMINATE_GENDER).lastName("smith")
+				.gender(Gender.INDETERMINATE_GENDER)
 				.title(Title.PROFESSOR)
 				.residenceDomicile(new DomicileBuilder().build())
 				.phoneNumber("+44 (0) 20 7911 5000")

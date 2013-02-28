@@ -61,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -199,8 +200,11 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private NameTp buildFullName() {
         NameTp nameTp = xmlFactory.createNameTp();
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        nameTp.setSurname(personalDetails.getLastName());
-        nameTp.setForename1(personalDetails.getFirstName());
+        RegisteredUser applicant = applicationForm.getApplicant();
+        nameTp.setSurname(applicant.getLastName());
+        nameTp.setForename1(applicant.getFirstName());
+        nameTp.setForename2(applicant.getFirstName2());
+        nameTp.setForename3(applicant.getFirstName3());
         nameTp.setTitle(personalDetails.getTitle().getDisplayValue());
         return nameTp;
     }
@@ -311,7 +315,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         }
         
         contactDtlsTp.setAddressDtls(addressTp);
-        contactDtlsTp.setEmail(personalDetails.getEmail());
+        contactDtlsTp.setEmail(applicationForm.getApplicant().getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(personalDetails.getPhoneNumber()));
         return contactDtlsTp;
     }
@@ -340,7 +344,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         }
         
         contactDtlsTp.setAddressDtls(addressTp);
-        contactDtlsTp.setEmail(applicationForm.getPersonalDetails().getEmail());
+        contactDtlsTp.setEmail(applicationForm.getApplicant().getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(applicationForm.getPersonalDetails().getPhoneNumber()));
         return contactDtlsTp;
     }

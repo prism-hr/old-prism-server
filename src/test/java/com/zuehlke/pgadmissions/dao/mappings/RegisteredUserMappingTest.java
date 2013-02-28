@@ -45,7 +45,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadUserWithSimpleValues() throws Exception {
 
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").firstName2("bob").firstName3("Claudio").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).originalApplicationQueryString("?hi&hello").build();
 
 		assertNull(user.getId());
@@ -65,6 +65,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(user.getPassword(), reloadedUser.getPassword());
 		assertEquals(user.getUsername(), reloadedUser.getUsername());
 		assertEquals(user.getFirstName(), reloadedUser.getFirstName());
+		assertEquals(user.getFirstName2(), reloadedUser.getFirstName2());
+		assertEquals(user.getFirstName3(), reloadedUser.getFirstName3());
 		assertEquals(user.getLastName(), reloadedUser.getLastName());
 		assertEquals(user.getEmail(), reloadedUser.getEmail());
 		assertEquals("?hi&hello", reloadedUser.getOriginalApplicationQueryString());

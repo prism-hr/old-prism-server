@@ -38,6 +38,8 @@ $(document).ready(function() {
         var postData ={ 
                 email : $('#email').val(),
                 firstName : $('#firstName').val(),
+                firstName2 : $('#firstName2').val(),
+                firstName3 : $('#firstName3').val(),
                 lastName : $('#lastName').val(),
                 password : $('#currentPassword').val(),
                 newPassword : $('#newPassword').val(),

@@ -12,11 +12,35 @@
 
             <div class="row-group">
                 <div class="row">
-                    <span id="email-lbl" class="plain-label">First Name</span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
+                    <span id="firstName-lbl" class="plain-label">First Name</span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
                     <div class="field">
                         <input class="full" type="text" id="firstName" value="${updatedUser.firstName}" />
                     </div>
                     <@spring.bind "updatedUser.firstName" /> <#list spring.status.errorMessages as error>
+                    <div class="field">
+                        <span class="invalid">${error}</span>
+                    </div>
+                    </#list>
+                </div>
+                
+                <div class="row">
+                    <span id="firstName2-lbl" class="plain-label">First Name 2</span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
+                    <div class="field">
+                        <input class="full" type="text" id="firstName2" value="${(updatedUser.firstName2?html)!}" />
+                    </div>
+                    <@spring.bind "updatedUser.firstName2" /> <#list spring.status.errorMessages as error>
+                    <div class="field">
+                        <span class="invalid">${error}</span>
+                    </div>
+                    </#list>
+                </div>
+                
+                <div class="row">
+                    <span id="firstName3-lbl" class="plain-label">First Name 3</span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
+                    <div class="field">
+                        <input class="full" type="text" id="firstName3" value="${(updatedUser.firstName3?html)!}" />
+                    </div>
+                    <@spring.bind "updatedUser.firstName3" /> <#list spring.status.errorMessages as error>
                     <div class="field">
                         <span class="invalid">${error}</span>
                     </div>

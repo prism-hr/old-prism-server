@@ -266,6 +266,8 @@ public class UserService {
 	public void updateCurrentUser(RegisteredUser user) {
 		RegisteredUser currentUser = getCurrentUser();
 		currentUser.setFirstName(user.getFirstName());
+		currentUser.setFirstName2(user.getFirstName2());
+		currentUser.setFirstName3(user.getFirstName3());
 		currentUser.setLastName(user.getLastName());
 		currentUser.setEmail(user.getEmail());
 		if (StringUtils.isNotBlank(user.getNewPassword())) {
@@ -373,7 +375,7 @@ public class UserService {
  
 	private InternetAddress createUserAddress(RegisteredUser user) {
 		try {
-			return new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
+			return new InternetAddress(user.getEmail(), user.getDisplayName());
 		} catch (UnsupportedEncodingException e) { // this shouldn't happen...
 			throw new RuntimeException(e);
 		}

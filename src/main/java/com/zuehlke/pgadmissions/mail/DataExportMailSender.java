@@ -76,7 +76,7 @@ public class DataExportMailSender {
     private void internalSendMail(final String subjectCode, final String message, final RegisteredUser user,
             final String template) throws UnsupportedEncodingException {
         
-        InternetAddress toAddress = new InternetAddress(user.getEmail(), user.getDisplayName());
+        InternetAddress toAddress = new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
         String subject = messageSource.getMessage(subjectCode, null, null);
         mailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, template, createModel(user, message), null));
     }

@@ -134,7 +134,7 @@ public class RegistrationService {
 	public void sendConfirmationEmail(RegisteredUser newUser) {
 		try {
 			Map<String, Object> model = populateModelForRegistrationConfirmation(newUser);
-			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getDisplayName());
+			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
 			String subject = msgSource.getMessage("registration.confirmation", null, null);
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, "private/pgStudents/mail/registration_confirmation.ftl", model, null));
 		} catch (Exception e) {

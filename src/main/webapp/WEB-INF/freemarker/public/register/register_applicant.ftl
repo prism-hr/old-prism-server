@@ -62,7 +62,7 @@
 		      		<p>&gt; Register Today...</p>
 		            <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
 		            
-		            <input id="firstName" type="text" name="firstName" value='${(pendingUser.firstName?html)!"First Name"}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+		            <input id="firstName" type="text" name="firstName" value='${(pendingUser.firstName?html)!"First Forename"}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 		            <@spring.bind "pendingUser.firstName" /> 
               		<#list spring.status.errorMessages as error>		                                		
                     	<span class="invalid">${error}</span>                    		
@@ -73,7 +73,7 @@
                             <input id="firstName2" type="text" name="firstName2" value='${pendingUser.firstName2!}' disabled="disabled" />
                         </#if>
                     <#else>
-                        <input id="firstName2" type="text" name="firstName2" value='${(pendingUser.firstName2?html)!"First Name 2"}' />
+                        <input id="firstName2" type="text" name="firstName2" value='${(pendingUser.firstName2?html)!"Second Forename (optional)"}' />
                     </#if>
                     
                     <@spring.bind "pendingUser.firstName2" /> 
@@ -86,7 +86,7 @@
                             <input id="firstName3" type="text" name="firstName3" value='${pendingUser.firstName3!}' disabled="disabled" />
                         </#if>
                     <#else>
-                        <input id="firstName3" type="text" name="firstName3" value='${(pendingUser.firstName3?html)!"First Name 3"}' />
+                        <input id="firstName3" type="text" name="firstName3" value='${(pendingUser.firstName3?html)!"Third Forename (optional)"}' />
                     </#if>
                     
                     <#list spring.status.errorMessages as error>                                                

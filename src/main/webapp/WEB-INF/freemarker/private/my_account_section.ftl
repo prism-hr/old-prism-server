@@ -12,9 +12,9 @@
 
             <div class="row-group">
                 <div class="row">
-                    <span id="firstName-lbl" class="plain-label">First Name</span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
+                    <span id="firstName-lbl" class="plain-label">First Names<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
                     <div class="field">
-                        <input class="full" type="text" id="firstName" value="${updatedUser.firstName}" />
+                        <input class="full" type="text" id="firstName" value="${(updatedUser.firstName?html)!}" />
                     </div>
                     <@spring.bind "updatedUser.firstName" /> <#list spring.status.errorMessages as error>
                     <div class="field">
@@ -24,7 +24,7 @@
                 </div>
                 
                 <div class="row">
-                    <span id="firstName2-lbl" class="plain-label">First Name 2</span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
+                    <span class="plain-label"></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
                     <div class="field">
                         <input class="full" type="text" id="firstName2" value="${(updatedUser.firstName2?html)!}" />
                     </div>
@@ -36,7 +36,7 @@
                 </div>
                 
                 <div class="row">
-                    <span id="firstName3-lbl" class="plain-label">First Name 3</span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
+                    <span class="plain-label"></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
                     <div class="field">
                         <input class="full" type="text" id="firstName3" value="${(updatedUser.firstName3?html)!}" />
                     </div>
@@ -48,9 +48,9 @@
                 </div>
 
                 <div class="row">
-                    <span id="email-lbl" class="plain-label">Last Name</span> <span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
+                    <span id="email-lbl" class="plain-label">Last Name<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
                     <div class="field">
-                        <input class="full" type="text" id="lastName" value="${updatedUser.lastName}" />
+                        <input class="full" type="text" id="lastName" value="${(updatedUser.lastName?html)!}" />
                     </div>
                     <@spring.bind "updatedUser.lastName" /> <#list spring.status.errorMessages as error>
                     <div class="field">
@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="row">
-                    <span id="email-lbl" class="plain-label">Email</span> <span class="hint" data-desc="<@spring.message 'myaccount.email'/>"></span>
+                    <span id="email-lbl" class="plain-label">Email<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.email'/>"></span>
                     <div class="field">
                         <input class="full" type="text" id="email" value="${updatedUser.email}" />
                     </div>

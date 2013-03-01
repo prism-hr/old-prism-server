@@ -229,7 +229,7 @@ public class MailService {
 
     private InternetAddress createAddress(RegisteredUser user) {
         try {
-            return new InternetAddress(user.getEmail(), user.getDisplayName());
+            return new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
         } catch (UnsupportedEncodingException uee) {// this shouldn't happen...
             throw new RuntimeException(uee);
         }

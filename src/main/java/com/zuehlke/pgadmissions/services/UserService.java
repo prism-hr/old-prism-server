@@ -375,7 +375,7 @@ public class UserService {
  
 	private InternetAddress createUserAddress(RegisteredUser user) {
 		try {
-			return new InternetAddress(user.getEmail(), user.getDisplayName());
+			return new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
 		} catch (UnsupportedEncodingException e) { // this shouldn't happen...
 			throw new RuntimeException(e);
 		}

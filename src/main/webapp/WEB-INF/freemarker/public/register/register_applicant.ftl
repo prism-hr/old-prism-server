@@ -62,25 +62,38 @@
 		      		<p>&gt; Register Today...</p>
 		            <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
 		            
-		            <#if RequestParameters.activationCode?has_content>
-                    <div id="firstName_tooltip_input" name="firstName_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
-                    </#if>
-		            <input id="firstName" type="text" name="firstName" value="<#if pendingUser.firstName?? && pendingUser.firstName?length &gt; 0>${pendingUser.firstName!"First Name"}<#else>First Name</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
-		            <#if RequestParameters.activationCode?has_content>
-                    </div>
-                    </#if>
+		            <input id="firstName" type="text" name="firstName" value='${(pendingUser.firstName?html)!"First Name"}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 		            <@spring.bind "pendingUser.firstName" /> 
               		<#list spring.status.errorMessages as error>		                                		
                     	<span class="invalid">${error}</span>                    		
                     </#list>
-		            
-		            <#if RequestParameters.activationCode?has_content>
-                    <div id="lastName_tooltip_input" name="lastName_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
-                    </#if>
-		            <input id="lastName" type="text" name="lastName" value="<#if pendingUser.lastName?? && pendingUser.lastName?length &gt; 0>${pendingUser.lastName!"Last Name"}<#else>Last Name</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+                    
                     <#if RequestParameters.activationCode?has_content>
-                    </div>
+                        <#if pendingUser.firstName2??> 
+                            <input id="firstName2" type="text" name="firstName2" value='${pendingUser.firstName2!}' disabled="disabled" />
+                        </#if>
+                    <#else>
+                        <input id="firstName2" type="text" name="firstName2" value='${(pendingUser.firstName2?html)!"First Name 2"}' />
                     </#if>
+                    
+                    <@spring.bind "pendingUser.firstName2" /> 
+                    <#list spring.status.errorMessages as error>                                                
+                        <span class="invalid">${error}</span>                           
+                    </#list>
+                    
+                    <#if RequestParameters.activationCode?has_content>
+                        <#if pendingUser.firstName3??> 
+                            <input id="firstName3" type="text" name="firstName3" value='${pendingUser.firstName3!}' disabled="disabled" />
+                        </#if>
+                    <#else>
+                        <input id="firstName3" type="text" name="firstName3" value='${(pendingUser.firstName3?html)!"First Name 3"}' />
+                    </#if>
+                    
+                    <#list spring.status.errorMessages as error>                                                
+                        <span class="invalid">${error}</span>                           
+                    </#list>
+		            
+		            <input id="lastName" type="text" name="lastName" value='${(pendingUser.lastName?html)!"Last Name"}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
                     <@spring.bind "pendingUser.lastName" /> 
                     <#list spring.status.errorMessages as error>		                                		
                         <span class="invalid">${error}</span>                    		
@@ -89,7 +102,7 @@
 		            <#if RequestParameters.activationCode?has_content>
 		            <div id="email_tooltip_input" name="email_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
 		            </#if>
-		            <input id="email" type="text" name="email" value="<#if pendingUser.email?? && pendingUser.email?length &gt; 0>${pendingUser.email!"Email Address"}<#else>Email Address</#if>" <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+		            <input id="email" type="text" name="email" value='${(pendingUser.email?html)!"Email Address"}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 		            <#if RequestParameters.activationCode?has_content>
                     </div>
                     </#if>

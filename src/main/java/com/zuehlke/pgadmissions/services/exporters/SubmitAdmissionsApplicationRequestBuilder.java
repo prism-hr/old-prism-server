@@ -94,6 +94,8 @@ public class SubmitAdmissionsApplicationRequestBuilder {
     private ApplicationForm applicationForm;
 
     private boolean printLanguageQualificationAdmissionsNote = false;
+
+    private Boolean isOverseasStudent;
     
     private static class NoActiveProgrameInstanceFoundException extends RuntimeException {
         private final ProgrammeOccurrenceTp occurrenceTp;
@@ -138,6 +140,11 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     public SubmitAdmissionsApplicationRequestBuilder applicationForm(final ApplicationForm applicationForm) {
         this.applicationForm = applicationForm;
+        return this;
+    }
+    
+    public SubmitAdmissionsApplicationRequestBuilder isOverseasStudent(Boolean isOverseasStudent) {
+        this.isOverseasStudent = isOverseasStudent;
         return this;
     }
 
@@ -402,14 +409,15 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
         if (latestApprovalRound != null) {
+            if(this.isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getAtasRequired()))
             applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
         }
         
         if (latestApprovalRound != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
-            if (StringUtils.isNotBlank(latestApprovalRound.getRecommendedConditions())) {
+            if (BooleanUtils.isTrue(latestApprovalRound.getRecommendedConditionsAvailable())) {
                 applicationTp.setDepartmentalOfferConditions("Conditional Offer: " + latestApprovalRound.getRecommendedConditions());
             } else {
-                applicationTp.setDepartmentalOfferConditions("Unconditional Offer: " + latestApprovalRound.getRecommendedConditions());
+                applicationTp.setDepartmentalOfferConditions("Unconditional Offer");
             }
         }
 
@@ -740,4 +748,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         }
         return null;
     }
+
+
+    
 }

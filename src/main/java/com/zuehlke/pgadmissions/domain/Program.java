@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,57 +19,60 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 @Entity(name = "PROGRAM")
 public class Program implements Serializable {
 
-	private static final long serialVersionUID = -9073611033741317582L;
+    private static final long serialVersionUID = -9073611033741317582L;
 
     @Id
     @GeneratedValue
     private Integer id;
-	
-	private String code;
 
-	private String title;
-	
-	private boolean enabled;
+    private String code;
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichApprover")
-	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
+    private String title;
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichAdministrator")
-	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
+    private boolean enabled;
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichReviewer")
-	private List<RegisteredUser> programReviewers = new ArrayList<RegisteredUser>();
-	
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichInterviewer")
-	private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
+    @Column(name = "atas_required")
+    private Boolean atasRequired;
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichSupervisor")
-	private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
-	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
-	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
-	
-	@OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichApprover")
+    private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichAdministrator")
+    private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichReviewer")
+    private List<RegisteredUser> programReviewers = new ArrayList<RegisteredUser>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichInterviewer")
+    private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichSupervisor")
+    private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
+    private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
+
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "BADGE", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
     private List<Badge> badges = new ArrayList<Badge>();
-	
-	public Integer getId() {
-		return id;
-	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public List<Badge> getBadges() {
+    public String getCode() {
+        return code;
+    }
+
+    public List<Badge> getBadges() {
         return badges;
     }
 
@@ -77,88 +81,88 @@ public class Program implements Serializable {
     }
 
     public String getTitle() {
-		return title;
-	}
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public List<RegisteredUser> getApprovers() {
-		return approvers;
-	}
+    public List<RegisteredUser> getApprovers() {
+        return approvers;
+    }
 
-	public void setApprovers(List<RegisteredUser> approvers) {
-		this.approvers.clear();
-		this.approvers.addAll(approvers);
-	}
+    public void setApprovers(List<RegisteredUser> approvers) {
+        this.approvers.clear();
+        this.approvers.addAll(approvers);
+    }
 
-	public List<RegisteredUser> getAdministrators() {
-		return administrators;
-	}
+    public List<RegisteredUser> getAdministrators() {
+        return administrators;
+    }
 
-	public void setAdministrators(List<RegisteredUser> administrators) {
-		this.administrators.clear();
-		this.administrators.addAll(administrators);
+    public void setAdministrators(List<RegisteredUser> administrators) {
+        this.administrators.clear();
+        this.administrators.addAll(administrators);
 
-	}
+    }
 
-	public List<RegisteredUser> getProgramReviewers() {
-		return programReviewers;
-	}
+    public List<RegisteredUser> getProgramReviewers() {
+        return programReviewers;
+    }
 
-	public void setProgramReviewers(List<RegisteredUser> reviewers) {
-		this.programReviewers.clear();
-		this.programReviewers.addAll(reviewers);
-	}
+    public void setProgramReviewers(List<RegisteredUser> reviewers) {
+        this.programReviewers.clear();
+        this.programReviewers.addAll(reviewers);
+    }
 
-	public boolean isApprover(RegisteredUser user) {
-		return checkUserRole(user, Authority.APPROVER, approvers);
-	}
+    public boolean isApprover(RegisteredUser user) {
+        return checkUserRole(user, Authority.APPROVER, approvers);
+    }
 
-	public boolean isAdministrator(RegisteredUser user) {
-		return checkUserRole(user, Authority.ADMINISTRATOR, administrators);
-	}
+    public boolean isAdministrator(RegisteredUser user) {
+        return checkUserRole(user, Authority.ADMINISTRATOR, administrators);
+    }
 
-	private boolean checkUserRole(RegisteredUser user, Authority authority, Iterable<RegisteredUser> lookup) {
-		if (!user.isInRole(authority)) {
-			return false;
-		}
-		for (RegisteredUser lookupUser : lookup) {
-			if (lookupUser.getId().equals(user.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean isInterviewerOfProgram(RegisteredUser interviewer) {
-		return listContainsId(interviewer, interviewers);
-	}
+    private boolean checkUserRole(RegisteredUser user, Authority authority, Iterable<RegisteredUser> lookup) {
+        if (!user.isInRole(authority)) {
+            return false;
+        }
+        for (RegisteredUser lookupUser : lookup) {
+            if (lookupUser.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public List<ProgramInstance> getInstances() {
-		return instances;
-	}
+    public boolean isInterviewerOfProgram(RegisteredUser interviewer) {
+        return listContainsId(interviewer, interviewers);
+    }
 
-	public void setInstances(List<ProgramInstance> instances) {
-		this.instances = instances;
-	}
+    public List<ProgramInstance> getInstances() {
+        return instances;
+    }
 
-	public List<RegisteredUser> getInterviewers() {
-		return interviewers;
-	}
+    public void setInstances(List<ProgramInstance> instances) {
+        this.instances = instances;
+    }
 
-	public void setInterviewers(List<RegisteredUser> interviewers) {
-		this.interviewers = interviewers;
-	}
+    public List<RegisteredUser> getInterviewers() {
+        return interviewers;
+    }
 
-	public List<RegisteredUser> getSupervisors() {
-		return supervisors;
-	}
+    public void setInterviewers(List<RegisteredUser> interviewers) {
+        this.interviewers = interviewers;
+    }
 
-	public void setSupervisors(List<RegisteredUser> supervisors) {
-		this.supervisors = supervisors;
-	}
+    public List<RegisteredUser> getSupervisors() {
+        return supervisors;
+    }
+
+    public void setSupervisors(List<RegisteredUser> supervisors) {
+        this.supervisors = supervisors;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -167,7 +171,15 @@ public class Program implements Serializable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    
+
+    public Boolean getAtasRequired() {
+        return atasRequired;
+    }
+
+    public void setAtasRequired(Boolean atasRequired) {
+        this.atasRequired = atasRequired;
+    }
+
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {
             if (entry.getId().equals(user.getId())) {
@@ -175,5 +187,5 @@ public class Program implements Serializable {
             }
         }
         return false;
-    }   
+    }
 }

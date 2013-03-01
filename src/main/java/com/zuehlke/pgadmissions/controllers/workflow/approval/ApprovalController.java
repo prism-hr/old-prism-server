@@ -202,6 +202,8 @@ public class ApprovalController {
                 approvalRound.getSupervisors().add(supervisor);
             }
         }
+        Date startDate = applicationForm.getProgrammeDetails().getStartDate();
+        approvalRound.setRecommendedStartDate(startDate); 
         return approvalRound;
     }
 

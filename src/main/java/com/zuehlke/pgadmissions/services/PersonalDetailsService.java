@@ -9,11 +9,12 @@ import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 
 @Service
+@Transactional
 public class PersonalDetailsService {
 
     private final PersonalDetailDAO personalDetailDAO;
 
-    PersonalDetailsService() {
+    public PersonalDetailsService() {
         this(null);
     }
 
@@ -22,7 +23,6 @@ public class PersonalDetailsService {
         this.personalDetailDAO = personalDetailDAO;
     }
 
-    @Transactional
     public void save(PersonalDetails personalDetails) {
         if (BooleanUtils.isNotTrue(personalDetails.getPassportAvailable()) || BooleanUtils.isNotTrue(personalDetails.getRequiresVisa())) {
             personalDetails.setPassportAvailable(false);

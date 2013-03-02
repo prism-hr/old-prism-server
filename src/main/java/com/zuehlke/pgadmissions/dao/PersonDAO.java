@@ -14,7 +14,7 @@ public class PersonDAO {
 
 	private final SessionFactory sessionFactory;
 
-	PersonDAO() {
+	public PersonDAO() {
 		this(null);
 	}
 
@@ -38,7 +38,5 @@ public class PersonDAO {
 
 	public void delete(Person person) {
 		sessionFactory.getCurrentSession().delete(person);
-
 	}
-
 }

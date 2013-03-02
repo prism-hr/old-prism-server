@@ -4,9 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -14,13 +15,19 @@ import com.zuehlke.pgadmissions.mail.RefereeMailSender;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
 public class RefereeNotificationTask extends TimerTask {
-	private final Logger log = Logger.getLogger(RefereeNotificationTask.class);
+    
+    private final Logger log = LoggerFactory.getLogger(RefereeNotificationTask.class);
+    
 	private final SessionFactory sessionFactory;
+	
 	private final RefereeMailSender refereeMailService;
+	
 	private final RefereeDAO refereeDAO;
+	
 	private final RefereeService refereeService;
 
-	public RefereeNotificationTask(SessionFactory sessionFactory, RefereeMailSender refereeMailService, RefereeDAO refereeDAO, RefereeService refereeService) {
+    public RefereeNotificationTask(SessionFactory sessionFactory, RefereeMailSender refereeMailService,
+            RefereeDAO refereeDAO, RefereeService refereeService) {
 		this.sessionFactory = sessionFactory;
 		this.refereeMailService = refereeMailService;
 		this.refereeDAO = refereeDAO;

@@ -4,9 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -16,16 +17,26 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
 public class RegisteredUserReminderTimerTask extends TimerTask {
-	private final Logger log = Logger.getLogger(RegisteredUserReminderTimerTask.class);
-	private final SessionFactory sessionFactory;
-	private final ApplicationFormDAO applicationFormDAO;
-	private final AdminMailSender adminMailSender;
-	private final NotificationType notificationType;
-	private final ApplicationFormStatus status;
-	private final String subjectCode;
-	private final String emailTemplate;
-	private final String firstSubjectCode;
-	private final String firstEmailTemplate;
+    
+    private final Logger log = LoggerFactory.getLogger(RegisteredUserReminderTimerTask.class);
+	
+    private final SessionFactory sessionFactory;
+	
+    private final ApplicationFormDAO applicationFormDAO;
+	
+    private final AdminMailSender adminMailSender;
+	
+    private final NotificationType notificationType;
+	
+    private final ApplicationFormStatus status;
+	
+    private final String subjectCode;
+	
+    private final String emailTemplate;
+	
+    private final String firstSubjectCode;
+	
+    private final String firstEmailTemplate;
 
 	public RegisteredUserReminderTimerTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, AdminMailSender adminMailSender,
 			NotificationType notificationType, ApplicationFormStatus status, String fisrtSubjectCode, String firstEmailTemplate,

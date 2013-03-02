@@ -13,24 +13,15 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
         http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd">
 
-    <import resource="schedules/Spring-Scheduler.xml" />
-    
-    <import resource="uclIntegrationContext.xml" />
-    
-<!--     <import resource="profilingContext.xml"/> -->
-
-    <import resource="dwrContext.xml" />
-    
     <mvc:interceptors>
         <bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor" />
         <bean class="com.zuehlke.pgadmissions.interceptors.EncryptionKeyInterceptor" />
+        <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
+            <property name="sessionFactory" ref="sessionFactory" />
+        </bean>
     </mvc:interceptors>
     
     <mvc:resources mapping="/design/**" location="/WEB-INF/design/" />
-
-    <context:annotation-config id="springConfig" />
-
-    <bean id="simplerHandlerMapping" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 
     <!-- JSR-303 support will be detected on classpath and enabled automatically -->
     <mvc:annotation-driven />
@@ -92,50 +83,11 @@
     <bean id="themeResolver" class="org.springframework.web.servlet.theme.FixedThemeResolver">
         <property name="defaultThemeName" value="default" />
     </bean>
-
-    <!-- Mail configuration -->
-    <bean id="mailSender" class="${email.sender}">
-        <property name="host">
-            <value>${email.server}</value>
-        </property>
-        <property name="port">
-            <value>${email.port}</value>
-        </property>
-        <property name="protocol">
-            <value>smtp</value>
-        </property>
-        <property name="username">
-            <value>${email.username}</value>
-        </property>
-        <property name="password">
-            <value>${email.password}</value>
-        </property>
-        <property name="javaMailProperties">
-            <props>
-                <prop key="mail.smtp.auth">true</prop>
-                <prop key="mail.smtp.starttls.enable">true</prop>
-                <prop key="mail.smtp.quitwait">false</prop>
-                <prop key="mail.smtp.connectiontimeout">20000</prop>
-                <prop key="mail.smtp.timeout">20000</prop>
-                <prop key="mail.debug">true</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="mailService" class="com.zuehlke.pgadmissions.services.MailService" />
-
-    <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
-
+    
     <mvc:view-controller path="/register/complete" view-name="public/register/registration_complete" />
-
     <mvc:view-controller path="/addReferences/referenceuploaded" view-name="private/referees/upload_success" />
-
     <mvc:view-controller path="/error" view-name="public/error/error" />
-
     <mvc:view-controller path="/404" view-name="public/error/404" />
-
     <mvc:view-controller path="/400" view-name="public/error/400" />
-
-    <context:component-scan base-package="com.zuehlke.pgadmissions" />
 
 </beans>

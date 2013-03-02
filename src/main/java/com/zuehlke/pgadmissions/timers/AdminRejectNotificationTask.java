@@ -4,10 +4,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -15,9 +16,13 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
 public class AdminRejectNotificationTask extends TimerTask {
-	private final Logger log = Logger.getLogger(AdminRejectNotificationTask.class);
+	
+    private final Logger log = LoggerFactory.getLogger(AdminRejectNotificationTask.class);
+	
 	private final SessionFactory sessionFactory;
+	
 	private final AdminMailSender adminMailSender;
+	
 	private final ApplicationFormDAO applicationDAO;
 
 	public AdminRejectNotificationTask(SessionFactory sessionFactory, AdminMailSender adminMailSender, ApplicationFormDAO applicationDAO) {

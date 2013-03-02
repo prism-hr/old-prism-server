@@ -4,21 +4,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.mail.ReviewerMailSender;
 
 public class ReviewerNotificationTask extends TimerTask {
-	private final Logger log = Logger.getLogger(ReviewerNotificationTask.class);
+    
+    private final Logger log = LoggerFactory.getLogger(ReviewerNotificationTask.class);
+    
 	private final SessionFactory sessionFactory;
+	
 	private final ReviewerMailSender reviewerMailSender;
+	
 	private final ReviewerDAO reviewerDAO;
 
-	public ReviewerNotificationTask(SessionFactory sessionFactory, ReviewerMailSender reviewerMailSender, ReviewerDAO reviewerDAO) {
+    public ReviewerNotificationTask(SessionFactory sessionFactory, ReviewerMailSender reviewerMailSender,
+            ReviewerDAO reviewerDAO) {
 		this.sessionFactory = sessionFactory;
 		this.reviewerMailSender = reviewerMailSender;
 		this.reviewerDAO = reviewerDAO;

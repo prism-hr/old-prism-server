@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
@@ -51,6 +50,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.DisabilityService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EthnicityService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
@@ -79,35 +79,27 @@ public class PersonalDetailsController {
     private final PersonalDetailsValidator personalDetailsValidator;
     private final PersonalDetailsService personalDetailsService;
     private final UserService userService;
-    private final DomicileDAO domicileDAO;
+    private final DomicileService domicileService;
     private final DomicilePropertyEditor domicilePropertyEditor;
     private final DocumentPropertyEditor documentPropertyEditor;
     private final DocumentService documentService;
     private final EncryptionHelper encryptionHelper;
     
-    PersonalDetailsController() {
+    public PersonalDetailsController() {
         this(null, null, null, null, null, null, null, null, null, 
                 null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public PersonalDetailsController(
-            ApplicationsService applicationsService,
-            UserService userService,
-            ApplicationFormPropertyEditor applicationFormPropertyEditor,
-            DatePropertyEditor datePropertyEditor,
-            CountryService countryService,
-            EthnicityService ethnicityService,
-            DisabilityService disabilityService,
-            LanguageService languageService,
-            LanguagePropertyEditor languagePropertyEditor,
-            CountryPropertyEditor countryPropertyEditor,
-            DisabilityPropertyEditor disabilityPropertyEditor, EthnicityPropertyEditor ethnicityPropertyEditor,
-            PersonalDetailsValidator personalDetailsValidator, PersonalDetailsService personalDetailsService,
-            DomicileDAO domicileDAO, DomicilePropertyEditor domicilePropertyEditor,
-            DocumentPropertyEditor documentPropertyEditor,
-            DocumentService documentService,
-            EncryptionHelper encryptionHelper) {
+    public PersonalDetailsController(ApplicationsService applicationsService, UserService userService,
+            ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor,
+            CountryService countryService, EthnicityService ethnicityService, DisabilityService disabilityService,
+            LanguageService languageService, LanguagePropertyEditor languagePropertyEditor,
+            CountryPropertyEditor countryPropertyEditor, DisabilityPropertyEditor disabilityPropertyEditor,
+            EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator,
+            PersonalDetailsService personalDetailsService, DomicileService domicileService,
+            DomicilePropertyEditor domicilePropertyEditor, DocumentPropertyEditor documentPropertyEditor,
+            DocumentService documentService, EncryptionHelper encryptionHelper) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -122,7 +114,7 @@ public class PersonalDetailsController {
         this.disabilityPropertyEditor = disabilityPropertyEditor;
         this.personalDetailsValidator = personalDetailsValidator;
         this.personalDetailsService = personalDetailsService;
-        this.domicileDAO = domicileDAO;
+        this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
         this.documentPropertyEditor = documentPropertyEditor;
         this.documentService = documentService;
@@ -252,7 +244,7 @@ public class PersonalDetailsController {
 
     @ModelAttribute("domiciles")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileDAO.getAllEnabledDomiciles();
+        return domicileService.getAllEnabledDomiciles();
     }
 
     @ModelAttribute("genders")

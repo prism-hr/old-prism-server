@@ -14,7 +14,7 @@ public class ProgramPropertyEditor extends PropertyEditorSupport {
 
 	private final ProgramsService programsService;
 
-	ProgramPropertyEditor() {
+	public ProgramPropertyEditor() {
 		this(null);
 	}
 

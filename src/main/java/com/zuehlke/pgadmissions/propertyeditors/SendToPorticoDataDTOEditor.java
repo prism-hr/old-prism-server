@@ -21,7 +21,7 @@ public class SendToPorticoDataDTOEditor extends PropertyEditorSupport {
 
     private final EncryptionHelper encryptionHelper;
 
-    SendToPorticoDataDTOEditor() {
+    public SendToPorticoDataDTOEditor() {
         this(null);
     }
 

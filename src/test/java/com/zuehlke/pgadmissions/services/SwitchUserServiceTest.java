@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.security;
+package com.zuehlke.pgadmissions.services;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -20,10 +20,11 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.SwitchUserService;
 
-public class PgAdmissionSwitchUserAuthenticationProviderTest {
+public class SwitchUserServiceTest {
     
-    private PgAdmissionSwitchUserAuthenticationProvider authenticationProvider;
+    private SwitchUserService authenticationProvider;
     
     private RegisteredUser user1;
     
@@ -35,7 +36,7 @@ public class PgAdmissionSwitchUserAuthenticationProviderTest {
     
     @Before
     public void setup() {
-        authenticationProvider = new PgAdmissionSwitchUserAuthenticationProvider();
+        authenticationProvider = new SwitchUserService();
         
         role1 = new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).build();
         
@@ -51,11 +52,6 @@ public class PgAdmissionSwitchUserAuthenticationProviderTest {
         user1.getLinkedAccounts().add(user2);
     }
     
-    @Test
-    public void shouldSupportUsernamePasswordAuthenticationToken() {
-        Assert.assertTrue(authenticationProvider.supports(UsernamePasswordAuthenticationToken.class));
-    }
-
     @Test
     public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
         UsernamePasswordAuthenticationToken preProcessAuthenticationToken = new UsernamePasswordAuthenticationToken(user1, user2);

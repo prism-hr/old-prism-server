@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -8,15 +10,15 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.RoleService;
 
 public class UserFactoryTest {
 
-	private RoleDAO roleDAOMock;
+	private RoleService roleServiceMock;
 	private UserFactory userFactory;
 	private EncryptionUtils encryptionUtilsMock;
 	
@@ -28,12 +30,12 @@ public class UserFactoryTest {
 		Authority[] authorities = new Authority[]{Authority.REFEREE, Authority.APPLICANT};
 		
 		Role refereeRole = new RoleBuilder().id(1).build();
-		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REFEREE)).andReturn(refereeRole);
+		EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.REFEREE)).andReturn(refereeRole);
 		Role applicantRole = new RoleBuilder().id(2).build();
-		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(applicantRole);
+		EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(applicantRole);
 		
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("activationCode");
-		EasyMock.replay(roleDAOMock, encryptionUtilsMock);
+		EasyMock.replay(roleServiceMock, encryptionUtilsMock);
 		
 		RegisteredUser newUser = userFactory.createNewUserInRoles(firstname,lastname, email, authorities);
 		assertEquals("bob", newUser.getFirstName());
@@ -50,9 +52,8 @@ public class UserFactoryTest {
 	}
 	@Before
 	public void setUp(){		
-		roleDAOMock = EasyMock.createMock(RoleDAO.class);
+		roleServiceMock = EasyMock.createMock(RoleService.class);
 		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
-		userFactory = new UserFactory(roleDAOMock, encryptionUtilsMock);
-		
+		userFactory = new UserFactory(roleServiceMock, encryptionUtilsMock);
 	}
 }

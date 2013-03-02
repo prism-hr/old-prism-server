@@ -21,7 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
@@ -60,6 +59,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.DisabilityService;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EthnicityService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
@@ -87,7 +87,7 @@ public class PersonalDetailsControllerTest {
     private DisabilityPropertyEditor disabilityPropertyEditorMock;
     private LanguagePropertyEditor languagePropertyEditorMopck;
     private UserService userServiceMock;
-    private DomicileDAO domicileDAOMock;
+    private DomicileService domicileServiceMock;
     private DomicilePropertyEditor domicilePropertyEditorMock;
 
     private Model modelMock;
@@ -366,7 +366,7 @@ public class PersonalDetailsControllerTest {
         disabilityPropertyEditorMock = EasyMock.createMock(DisabilityPropertyEditor.class);
         languagePropertyEditorMopck = EasyMock.createMock(LanguagePropertyEditor.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-        domicileDAOMock = EasyMock.createMock(DomicileDAO.class);
+        domicileServiceMock = EasyMock.createMock(DomicileService.class);
         domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
 
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
@@ -378,7 +378,7 @@ public class PersonalDetailsControllerTest {
 
         controller = new PersonalDetailsController(applicationsServiceMock, userServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
                 countryServiceMock, ethnicityServiceMock, disabilityServiceMock, languageServiceMok, languagePropertyEditorMopck, countryPropertyEditorMock,
-                disabilityPropertyEditorMock, ethnicityPropertyEditorMock, personalDetailsValidatorMock, personalDetailsServiceMock, domicileDAOMock,
+                disabilityPropertyEditorMock, ethnicityPropertyEditorMock, personalDetailsValidatorMock, personalDetailsServiceMock, domicileServiceMock,
                 domicilePropertyEditorMock, documentPropertyEditorMock, documentServiceMock, encryptionHelperMock);
 
         currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();

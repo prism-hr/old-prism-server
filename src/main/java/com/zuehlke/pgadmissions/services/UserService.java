@@ -9,7 +9,8 @@ import java.util.Map;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -32,13 +33,14 @@ import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.UserFactory;
 
 @Service("userService")
+@Transactional
 public class UserService {
 
 	private final UserDAO userDAO;
 	private final RoleDAO roleDAO;
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final JavaMailSender mailsender;
-	private final Logger log = Logger.getLogger(UserService.class);
+	private final Logger log = LoggerFactory.getLogger(UserService.class);
 	private final UserFactory userFactory;
 	private final MessageSource msgSource;
 	private final EncryptionUtils encryptionUtils;
@@ -67,7 +69,6 @@ public class UserService {
 		return userDAO.getUsersInRole(roleDAO.getRoleByAuthority(auth));
 	}
 
-	@Transactional
 	public void save(RegisteredUser user) {
 		userDAO.save(user);
 	}
@@ -109,7 +110,6 @@ public class UserService {
 		user.getRoles().add(roleDAO.getRoleByAuthority(authority));
 	}
 
-	@Transactional
 	public void updateUserWithNewRoles(RegisteredUser selectedUser, Program selectedProgram, Authority... newAuthorities) {
 		//Please note:
 		//it is a deliberate decision to never remove people from SUPERADMIN role.
@@ -134,7 +134,6 @@ public class UserService {
 			selectedUser.getProgramsOfWhichSupervisor().remove(selectedProgram);
 		}
 	}
-
 
 	private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
 		if (newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
@@ -188,7 +187,6 @@ public class UserService {
 		return Arrays.asList(newAuthorities).contains(authority);
 	}
 	
-	@Transactional
 	public RegisteredUser createNewUserInRole(String firstName, String lastName, String email, Authority authority, DirectURLsEnum directURL, ApplicationForm application)  {
 		RegisteredUser newUser = userDAO.getUserByEmail(email);
 		if (newUser != null) {
@@ -207,7 +205,6 @@ public class UserService {
 		userDAO.save(newUser);
 	}
 
-	@Transactional
 	public RegisteredUser createNewUserForProgramme(String firstName, String lastName, String email, Program program, Authority... authorities) {
 		RegisteredUser newUser = userDAO.getUserByEmail(email);
 		if (newUser != null) {
@@ -241,28 +238,23 @@ public class UserService {
 		return newUser;
 	}
 
-	@Transactional
 	public List<RegisteredUser> getAllPreviousInterviewersOfProgram(Program program) {
 		return userDAO.getAllPreviousInterviewersOfProgram(program);
 	}
 
-	@Transactional
 	public List<RegisteredUser> getAllPreviousReviewersOfProgram(Program program) {
 		return userDAO.getAllPreviousReviewersOfProgram(program);
 	}
 
-	@Transactional
 	public List<RegisteredUser> getAllPreviousSupervisorsOfProgram(
 			Program program) {
 		return userDAO.getAllPreviousSupervisorsOfProgram(program);
 	}
 
-	@Transactional
 	public List<RegisteredUser> getReviewersWillingToInterview(ApplicationForm applicationForm) {
 		return userDAO.getReviewersWillingToInterview(applicationForm);
 	}
 
-	@Transactional
 	public void updateCurrentUser(RegisteredUser user) {
 		RegisteredUser currentUser = getCurrentUser();
 		currentUser.setFirstName(user.getFirstName());
@@ -277,7 +269,6 @@ public class UserService {
 		save(currentUser);
 	}
 
-	@Transactional
 	public void resetPassword(String email) {
 		RegisteredUser storedUser = userDAO.getUserByEmail(email);
 		if (storedUser == null) { // user-mail not found -> ignore
@@ -304,7 +295,6 @@ public class UserService {
 		}
 	}
 	
-    @Transactional
     public void linkAccounts(String secondAccountEmail) throws LinkAccountsException {
         RegisteredUser secondAccount = getUserByEmail(secondAccountEmail);
         RegisteredUser currentAccount = getCurrentUser();
@@ -348,7 +338,6 @@ public class UserService {
         }
     }
     
-    @Transactional
     public void deleteLinkedAccount(String accountToDeleteEmail) {
         RegisteredUser currentAccount = getCurrentUser();
         RegisteredUser accountToDelete = getUserByEmail(accountToDeleteEmail);

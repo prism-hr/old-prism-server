@@ -5,19 +5,19 @@ import java.beans.PropertyEditorSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.dao.SourcesOfInterestDAO;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
 
 @Component
 public class SourcesOfInterestPropertyEditor extends PropertyEditorSupport {
 
-    private final SourcesOfInterestDAO sourcesOfInterestDAO;
+    private final SourcesOfInterestService service;
     private final EncryptionHelper encryptionHelper;
     
     @Autowired
-    public SourcesOfInterestPropertyEditor(SourcesOfInterestDAO dao,  EncryptionHelper encryptionHelper) {
-        this.sourcesOfInterestDAO = dao;
+    public SourcesOfInterestPropertyEditor(SourcesOfInterestService service,  EncryptionHelper encryptionHelper) {
+        this.service = service;
         this.encryptionHelper = encryptionHelper;
     }
     
@@ -31,7 +31,7 @@ public class SourcesOfInterestPropertyEditor extends PropertyEditorSupport {
             setValue(null);
             return;
         }
-        setValue(sourcesOfInterestDAO.getSourcesOfInterestById(encryptionHelper.decryptToInteger(strId)));
+        setValue(service.getSourcesOfInterestById(encryptionHelper.decryptToInteger(strId)));
     }
 
     @Override

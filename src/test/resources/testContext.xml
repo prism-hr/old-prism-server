@@ -8,7 +8,7 @@
 
 	<import resource="testHibernateContext.xml" />
     
-    <import resource="../../src/main/webapp/WEB-INF/spring/applicationContext.xml" /> 
+    <import resource="../../src/main/webapp/WEB-INF/spring/application-context.xml" /> 
      
     <bean id="defaultTransactionTemplate" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
         <constructor-arg value="org.springframework.transaction.support.TransactionTemplate" />

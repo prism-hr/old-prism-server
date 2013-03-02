@@ -4,21 +4,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.mail.InterviewerMailSender;
 
 public class InterviewerReminderTask extends TimerTask {
-	private final Logger log = Logger.getLogger(InterviewerReminderTask.class);
-	private final SessionFactory sessionFactory;
-	private final InterviewerMailSender interviewerMailSender;
-	private final InterviewerDAO interviewerDAO;
+	
+    private final Logger log = LoggerFactory.getLogger(InterviewerReminderTask.class);
+	
+    private final SessionFactory sessionFactory;
+	
+    private final InterviewerMailSender interviewerMailSender;
+	
+    private final InterviewerDAO interviewerDAO;
 
-	public InterviewerReminderTask(SessionFactory sessionFactory, InterviewerMailSender interviewerMailSender, InterviewerDAO interviewerDAO) {
+    public InterviewerReminderTask(SessionFactory sessionFactory, InterviewerMailSender interviewerMailSender,
+            InterviewerDAO interviewerDAO) {
 		this.sessionFactory = sessionFactory;
 		this.interviewerMailSender = interviewerMailSender;
 		this.interviewerDAO = interviewerDAO;

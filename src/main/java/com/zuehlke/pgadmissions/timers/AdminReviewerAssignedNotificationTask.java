@@ -4,9 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -14,9 +15,13 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
 public class AdminReviewerAssignedNotificationTask extends TimerTask {
-	private final Logger log = Logger.getLogger(AdminReviewerAssignedNotificationTask.class);
+	
+    private final Logger log = LoggerFactory.getLogger(AdminReviewerAssignedNotificationTask.class);
+	
 	private final SessionFactory sessionFactory;
+	
 	private final AdminMailSender adminMailSender;
+	
 	private final ReviewerDAO reviewerDAO;
 
 	public AdminReviewerAssignedNotificationTask(SessionFactory sessionFactory, AdminMailSender adminMailSender, ReviewerDAO reviewerDAO) {

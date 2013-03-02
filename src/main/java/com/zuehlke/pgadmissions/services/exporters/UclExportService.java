@@ -38,10 +38,10 @@ import com.zuehlke.pgadmissions.utils.StacktraceDump;
 /**
  * This is UCL data export service. Used for situations where we push data to UCL system (PORTICO).
  */
-
 @Service
 public class UclExportService {
-    private static final Logger log = LoggerFactory.getLogger(UclExportService.class);
+    
+    private final Logger log = LoggerFactory.getLogger(UclExportService.class);
 
     private final WebServiceTemplate webServiceTemplate;
 

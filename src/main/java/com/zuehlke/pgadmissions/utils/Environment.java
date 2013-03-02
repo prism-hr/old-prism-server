@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Environment {
 
-    private Logger log = Logger.getLogger(Environment.class);
+    private final Logger log = LoggerFactory.getLogger(Environment.class);
     
 	private static Environment instance;
 	
@@ -32,12 +33,12 @@ public final class Environment {
 			admissionsOfferServieLevel = environmentProperties.getProperty("admissions.servicelevel.offer");
 			admissionsValidationServiceLevel = environmentProperties.getProperty("admissions.servicelevel.validation");
 		} catch (IOException e) {
-			log.error(e);
+			log.error(e.getMessage(), e);
 		} finally {
 			try {
 				in.close();				
 			} catch (Exception e) {
-				// ignore
+			    log.error(e.getMessage(), e);
 			}
 		}
 	}

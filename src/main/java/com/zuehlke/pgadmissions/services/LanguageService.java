@@ -4,16 +4,18 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.domain.Language;
 
 @Service
+@Transactional
 public class LanguageService {
 
 	private final LanguageDAO languageDAO;
 	
-	LanguageService(){
+	public LanguageService(){
 		this(null);
 	}
 	
@@ -30,7 +32,6 @@ public class LanguageService {
 		return languageDAO.getAllLanguages();
 	}
 	
-
 	public Language getLanguageById(Integer id) {
 		return languageDAO.getLanguageById(id);
 	}

@@ -3,7 +3,8 @@ package com.zuehlke.pgadmissions.controllers;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.SwitchAndLinkUserAccountDTO;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
-import com.zuehlke.pgadmissions.security.PgAdmissionSwitchUserAuthenticationProvider;
+import com.zuehlke.pgadmissions.services.SwitchUserService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AccountValidator;
 import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
@@ -33,7 +34,7 @@ import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
 @RequestMapping("/myAccount")
 public class AccountController {
 
-    private final Logger logger = Logger.getLogger(AccountController.class);
+    private final Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     private static final String ACCOUNT_SECTION = "/private/my_account_section";
 
@@ -43,21 +44,23 @@ public class AccountController {
 
     private final AccountValidator accountValidator;
 
-    private final PgAdmissionSwitchUserAuthenticationProvider authenticationProvider;
+    private final SwitchUserService switchUserService;
 
     private final SwitchAndLinkUserAccountDTOValidator switchAndLinkAccountDTOValidator;
 
-    AccountController() {
+    public AccountController() {
         this(null, null, null, null);
     }
 
     @Autowired
-    public AccountController(UserService userService, AccountValidator accountValidator, SwitchAndLinkUserAccountDTOValidator validator,
-            PgAdmissionSwitchUserAuthenticationProvider authenticationProvider) {
+    public AccountController(UserService userService,
+            AccountValidator accountValidator,
+            SwitchAndLinkUserAccountDTOValidator validator,
+            SwitchUserService switchUserService) {
         this.userService = userService;
         this.accountValidator = accountValidator;
         this.switchAndLinkAccountDTOValidator = validator;
-        this.authenticationProvider = authenticationProvider;
+        this.switchUserService = switchUserService;
     }
 
     @InitBinder(value = "updatedUser")
@@ -140,12 +143,12 @@ public class AccountController {
             RegisteredUser currentAccount = userService.getCurrentUser();
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentAccount, desiredAccount);
             token.setDetails(new WebAuthenticationDetails(request));
-            Authentication authentication = authenticationProvider.authenticate(token);
+            Authentication authentication = switchUserService.authenticate(token);
             logger.info(String.format("User [%s] is switching to [%s]", currentAccount.getEmail(), desiredAccount.getEmail()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return "OK";
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return "NOK";
     }
@@ -157,7 +160,7 @@ public class AccountController {
             userService.deleteLinkedAccount(email);
             return "OK";
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return "NOK";
     }

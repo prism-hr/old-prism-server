@@ -14,11 +14,12 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 @Component
 public class MoveToReviewReviewerPropertyEditor extends PropertyEditorSupport {
-	private final UserService userService;
+	
+    private final UserService userService;
 	private final ApplicationsService applicationsService;
 	private final EncryptionHelper encryptionHelper;
 
-	MoveToReviewReviewerPropertyEditor() {
+	public MoveToReviewReviewerPropertyEditor() {
 		this(null, null, null);
 	}
 

@@ -8,11 +8,12 @@ import com.zuehlke.pgadmissions.dao.LanguageQualificationDAO;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 
 @Service
+@Transactional
 public class LanguageQualificationService {
 
     private final LanguageQualificationDAO languageQualificationDAO;
 
-    LanguageQualificationService() {
+    public LanguageQualificationService() {
         this(null);
     }
 
@@ -21,22 +22,18 @@ public class LanguageQualificationService {
         this.languageQualificationDAO = languageQualificationDAO;
     }
     
-    @Transactional
     public LanguageQualification getLanguageQualificationById(Integer id) {
         return languageQualificationDAO.getLanguageQualificationById(id);
     }
     
-    @Transactional
     public LanguageQualification getLanguageQualificationByEncryptedId(String id) {
         return languageQualificationDAO.getLanguageQualificationByEncryptedId(id);
     }
 
-    @Transactional
     public void save(LanguageQualification languageQualification) {
         languageQualificationDAO.save(languageQualification);
     }
     
-    @Transactional
     public void deleteAttachedDocument(LanguageQualification languageQualification) {
         languageQualificationDAO.deleteAttachedDocument(languageQualification);
     }

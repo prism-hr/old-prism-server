@@ -10,11 +10,10 @@
 
     <properties>
         <spring.version>3.1.0.RELEASE</spring.version>
-        <hibernate.version>4.1.7.Final</hibernate.version>
+        <hibernate.version>4.1.9.Final</hibernate.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!--  -->
     <distributionManagement>
         <repository>
             <id>C12545-2</id>
@@ -30,24 +29,9 @@
     
         <!-- Hibernate -->
         <dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.1.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.22</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -91,6 +75,11 @@
             <artifactId>spring-security-taglibs</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
         
         <!-- Freemarker -->
         <dependency>
@@ -104,20 +93,17 @@
             <version>2.3.14</version>
         </dependency>
         
-        <!-- DWR -->
-        <dependency>
-            <groupId>org.directwebremoting</groupId>
-            <artifactId>dwr</artifactId>
-            <version>3.0.RC2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/dwr.jar</systemPath>
-        </dependency>
-        
-        <!--  Validation -->
+        <!-- Validation -->
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
             <version>2.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <!-- WebService & Portico SFTP upload -->
@@ -130,11 +116,6 @@
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-oxm</artifactId>
             <version>1.5.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ws</groupId>
-            <artifactId>spring-ws-security</artifactId>
-            <version>2.1.0.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>com.jcraft</groupId>
@@ -212,6 +193,13 @@
             <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-javaee-6.0</artifactId>
+            <version>3.0.2.Final</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
         
         <!-- Commons -->
         <dependency>
@@ -257,17 +245,18 @@
     
         <!-- Logging -->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.2</version>
         </dependency>
+                
+        <!-- Testing -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-    
-        <!-- Testing -->
+            <version>1.7.2</version>
+            <scope>test</scope>
+        </dependency>    
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
@@ -304,27 +293,18 @@
             <scope>test</scope>
             <version>${spring.version}</version>
         </dependency>
-    
-        <!-- Testing with Cucumber -->
-        <!--
         <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
             <scope>test</scope>
-            <version>1.0.0.RC14</version>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>1.0.0.RC14</version>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.22</version>
             <scope>test</scope>
-            <version>1.0.0.RC14</version>
         </dependency>
-        -->
     </dependencies>
 
     <build>
@@ -592,6 +572,7 @@
                 </plugins>
             </build>
         </profile>
+        
         <profile>
             <id>ci</id>
             <properties>
@@ -620,6 +601,7 @@
                 </plugins>
             </build>
         </profile>
+        
         <profile>
             <id>ucl-test</id>
             <properties>

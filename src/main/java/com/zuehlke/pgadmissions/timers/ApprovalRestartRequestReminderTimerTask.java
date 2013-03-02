@@ -4,9 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
@@ -16,13 +17,16 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ApprovalRestartRequestReminderTimerTask extends TimerTask {
 
-	private final Logger log = Logger.getLogger(ApprovalRestartRequestNotificationTimerTask.class);
+    private final Logger log = LoggerFactory.getLogger(ApprovalRestartRequestReminderTimerTask.class);
+	
 	private final ApprovalRestartRequestMailSender mailSender;
+	
 	private final SessionFactory sessionFactory;
+	
 	private final ApplicationsService applicationsService;
 
-	public ApprovalRestartRequestReminderTimerTask(SessionFactory sessionFactory, ApprovalRestartRequestMailSender mailSender,
-			ApplicationsService applicationsService) {
+    public ApprovalRestartRequestReminderTimerTask(SessionFactory sessionFactory,
+            ApprovalRestartRequestMailSender mailSender, ApplicationsService applicationsService) {
 		this.sessionFactory = sessionFactory;
 		this.mailSender = mailSender;
 		this.applicationsService = applicationsService;

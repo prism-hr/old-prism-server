@@ -4,10 +4,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -16,12 +17,17 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.ApproverAdminMailSender;
 
 public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
-	private final Logger log = Logger.getLogger(ApproverAndAdminApprovalNotificationTask.class);
-	private final SessionFactory sessionFactory;
-	private final ApproverAdminMailSender approverMailSender;
-	private final ApplicationFormDAO applicationDAO;
+    
+    private final Logger log = LoggerFactory.getLogger(ApproverAndAdminApprovalNotificationTask.class);
+	
+    private final SessionFactory sessionFactory;
+	
+    private final ApproverAdminMailSender approverMailSender;
+	
+    private final ApplicationFormDAO applicationDAO;
 
-	public ApproverAndAdminApprovalNotificationTask(SessionFactory sessionFactory, ApproverAdminMailSender approverMailSender, ApplicationFormDAO applicationDAO) {
+    public ApproverAndAdminApprovalNotificationTask(SessionFactory sessionFactory,
+            ApproverAdminMailSender approverMailSender, ApplicationFormDAO applicationDAO) {
 		this.sessionFactory = sessionFactory;
 		this.approverMailSender = approverMailSender;
 		this.applicationDAO = applicationDAO;

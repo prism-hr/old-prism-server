@@ -20,7 +20,7 @@ public class SupervisorPropertyEditor extends PropertyEditorSupport {
 	private final ApplicationsService applicationsService;
 	private final EncryptionHelper encryptionHelper;
 
-	SupervisorPropertyEditor() {
+	public SupervisorPropertyEditor() {
 		this(null, null, null);
 	}
 

@@ -1,30 +1,30 @@
 package com.zuehlke.pgadmissions.propertyeditors;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.PersonService;
 
 public class PersonPropertyEditorTest {
 	private PersonPropertyEditor editor;
 	private EncryptionHelper encryptionHelperMock;
-	private PersonDAO personDAOMock;
+	private PersonService personServiceMock;
 
 	@Test
 	public void shouldParseAndSetAsValue() {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(234);
 		EasyMock.replay(encryptionHelperMock);
 		Person existingPerson = new PersonBuilder().id(234).build();
-		EasyMock.expect(personDAOMock.getPersonWithId(234)).andReturn(existingPerson);
-		EasyMock.replay(personDAOMock);
+		EasyMock.expect(personServiceMock.getPersonWithId(234)).andReturn(existingPerson);
+		EasyMock.replay(personServiceMock);
 		editor.setAsText("{\"id\": \"enc\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" }");
 		
 		EasyMock.verify(encryptionHelperMock);
@@ -80,7 +80,7 @@ public class PersonPropertyEditorTest {
 	@Before
 	public void setup() {
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-		personDAOMock = EasyMock.createMock(PersonDAO.class);
-		editor = new PersonPropertyEditor(encryptionHelperMock, personDAOMock);
+		personServiceMock = EasyMock.createMock(PersonService.class);
+		editor = new PersonPropertyEditor(encryptionHelperMock, personServiceMock);
 	}
 }

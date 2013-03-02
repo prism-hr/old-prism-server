@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.performance;
 
-import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class TimeExecutionProfiler {
 
-    private static final Logger logger = Logger.getLogger(TimeExecutionProfiler.class);
+    private final Logger logger = LoggerFactory.getLogger(TimeExecutionProfiler.class);
 
     @Around("com.zuehlke.pgadmissions.performance.SystemArchitecture.businessController()")
     public Object profileControlers(ProceedingJoinPoint pjp) throws Throwable {

@@ -3,9 +3,10 @@ package com.zuehlke.pgadmissions.timers;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -19,12 +20,18 @@ import com.zuehlke.pgadmissions.utils.CommentFactory;
 
 public class RegistryNotificationTimerTask extends TimerTask {
 
-	private final Logger log = Logger.getLogger(RegistryNotificationTimerTask.class);
+    private final Logger log = LoggerFactory.getLogger(RegistryNotificationTimerTask.class);
+    
 	private final RegistryMailSender registryMailSender;
+	
 	private final SessionFactory sessionFactory;
+	
 	private final ApplicationsService applicationsService;
+	
 	private final ConfigurationService configurationService;
+	
 	private final CommentFactory commentFactory;
+	
 	private final CommentService commentService;
 
 	public RegistryNotificationTimerTask() {

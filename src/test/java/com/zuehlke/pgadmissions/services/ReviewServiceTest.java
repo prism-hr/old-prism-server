@@ -17,7 +17,6 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
-import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -42,7 +41,7 @@ public class ReviewServiceTest {
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ReviewRoundDAO reviewRoundDAOMock;
 	private ReviewerDAO reviewerDAO;
-	private StageDurationDAO stageDurationDAOMock;
+	private StageDurationService stageDurationDAOMock;
 	private ReviewRound reviewRound;
 	private Reviewer reviewer;
 	private EventFactory eventFactoryMock;
@@ -54,7 +53,7 @@ public class ReviewServiceTest {
 		reviewerDAO = EasyMock.createMock(ReviewerDAO.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		reviewRoundDAOMock = EasyMock.createMock(ReviewRoundDAO.class);
-		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
+		stageDurationDAOMock = EasyMock.createMock(StageDurationService.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
 		reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock, eventFactoryMock, reviewerDAO){
 			@Override

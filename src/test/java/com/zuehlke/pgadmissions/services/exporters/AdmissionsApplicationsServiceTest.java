@@ -13,7 +13,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -44,8 +43,6 @@ import com.zuehlke.pgadmissions.jaxb.GMonthAdapter;
 @ContextConfiguration("/testWebServiceContext.xml")
 public class AdmissionsApplicationsServiceTest {
 
-    private final Logger logger = Logger.getLogger(AdmissionsApplicationsServiceTest.class);
-    
     @Autowired
     private WebServiceTemplate webServiceTemplate;
     
@@ -75,8 +72,6 @@ public class AdmissionsApplicationsServiceTest {
         StringWriter st = new StringWriter(); 
         Marshaller marshaller = webServiceTemplate.getMarshaller();
         marshaller.marshal(admissionsApplicationRequest, new StreamResult(st));
-        
-        logger.info(String.format("Marshalled : %s", st.toString()));
         
         assertTrue(StringUtils.contains(st.toString(), GMonthAdapter.print(firstDayOfMonth)));
     }

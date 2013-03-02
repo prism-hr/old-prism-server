@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,6 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
-import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
@@ -34,13 +32,14 @@ import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 
 @Service
+@Transactional
 public class ApprovalService {
 
     private final ApplicationFormDAO applicationDAO;
 
     private final ApprovalRoundDAO approvalRoundDAO;
 
-    private final StageDurationDAO stageDurationDAO;
+    private final StageDurationService stageDurationService;
 
     private final EventFactory eventFactory;
 
@@ -54,18 +53,18 @@ public class ApprovalService {
 
     private final SupervisorDAO supervisorDAO;
 
-    ApprovalService() {
+    public ApprovalService() {
         this(null, null, null, null, null, null, null, null, null);
     }
 
-    @Autowired
-    public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO,
-            EventFactory eventFactory, CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO,
+    public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO,
+            ApprovalRoundDAO approvalRoundDAO, StageDurationService stageDurationService, EventFactory eventFactory,
+            CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO,
             UclExportService uclExportService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;
-        this.stageDurationDAO = stageDurationDAO;
+        this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
@@ -73,7 +72,6 @@ public class ApprovalService {
         this.uclExportService = uclExportService;
     }
 
-    @Transactional
     public void confirmSupervision(ApplicationForm application, ConfirmSupervisionDTO confirmSupervisionDTO) {
         ApprovalRound approvalRound = application.getLatestApprovalRound();
         Supervisor supervisor = approvalRound.getPrimarySupervisor();
@@ -136,7 +134,6 @@ public class ApprovalService {
         return supervisionConfirmationComment;
     }
 
-    @Transactional
     public void moveApplicationToApproval(ApplicationForm application, ApprovalRound approvalRound) {
         checkApplicationStatus(application);
         checkSendToPorticoStatus(application, approvalRound);
@@ -145,7 +142,7 @@ public class ApprovalService {
 
         approvalRound.setApplication(application);
         approvalRoundDAO.save(approvalRound);
-        StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
+        StageDuration approveStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.APPROVAL);
         application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
 
         application.getEvents().add(eventFactory.createEvent(approvalRound));
@@ -201,7 +198,6 @@ public class ApprovalService {
         }
     }
 
-    @Transactional
     public void requestApprovalRestart(ApplicationForm application, RegisteredUser approver, Comment comment) {
         if (!approver.isInRole(Authority.APPROVER)) {
             throw new IllegalArgumentException(String.format("User %s is not an approver!", approver.getUsername()));
@@ -216,7 +212,6 @@ public class ApprovalService {
         restartApprovalStage(application, approver, comment);
     }
 
-    @Transactional
     private void restartApprovalStage(ApplicationForm application, RegisteredUser approver, Comment comment) {
         commentDAO.save(comment);
         application.setPendingApprovalRestart(true);
@@ -244,12 +239,10 @@ public class ApprovalService {
         }
     }
 
-    @Transactional
     public void save(ApprovalRound approvalRound) {
         approvalRoundDAO.save(approvalRound);
     }
 
-    @Transactional
     public boolean moveToApproved(ApplicationForm application) {
         if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
             throw new IllegalStateException();
@@ -273,7 +266,6 @@ public class ApprovalService {
         return true;
     }
 
-    @Transactional
     public void addSupervisorInPreviousApprovalRound(ApplicationForm applicationForm, RegisteredUser newUser) {
         Supervisor supervisor = newSupervisor();
         supervisor.setUser(newUser);

@@ -1,3 +1,16 @@
+ _____  ____                              
+/\___ \/\  _`\                            
+\/__/\ \ \ \L\ \    ___     ____    ____  
+   _\ \ \ \  _ <'  / __`\  /',__\  /',__\ 
+  /\ \_\ \ \ \L\ \/\ \L\ \/\__, `\/\__, `\
+  \ \____/\ \____/\ \____/\/\____/\/\____/
+   \/___/  \/___/  \/___/  \/___/  \/___/ 
+                                          
+   Installation Guide
+
+
+TODO: FINISH THIS GUIDE!
+
 Unzip this to $JBOSS_HOME/modules to install the MySQL connector as a module
 
 cd into JBOSS_HOME

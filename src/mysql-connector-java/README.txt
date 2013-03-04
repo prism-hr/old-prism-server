@@ -1,0 +1,1 @@
+Unzip this to $JBOSS_HOME/modules to install the MySQL connector as a module

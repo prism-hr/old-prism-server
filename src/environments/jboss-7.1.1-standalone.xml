@@ -105,10 +105,9 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-                <datasource jta="false" jndi-name="java:jboss/datasources/pgadmissions" pool-name="pgadmissions-mysql" enabled="true" use-ccm="false">
+                <datasource jta="true" jndi-name="java:jboss/datasources/pgadmissions" pool-name="pgadmissions-mysql" enabled="true" use-java-context="true" use-ccm="true">
                     <connection-url>jdbc:mysql://localhost/pgadmissions?zeroDateTimeBehavior=convertToNull</connection-url>
-                    <driver-class>com.mysql.jdbc.Driver</driver-class>
-                    <driver>mysql-connector-java-5.1.22.jar</driver>
+                    <driver>mysql</driver>
                     <pool>
                         <min-pool-size>5</min-pool-size>
                         <max-pool-size>20</max-pool-size>
@@ -128,6 +127,10 @@
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
+                    </driver>
+                    <driver name="mysql" module="com.mysql.jdbc">
+                        <driver-class>com.mysql.jdbc.Driver</driver-class>
+                        <xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource</xa-datasource-class> 
                     </driver>
                 </drivers>
             </datasources>

@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,101 +34,104 @@ import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
 public class AccountController {
 
     private final Logger logger = Logger.getLogger(AccountController.class);
-    
-	private static final String ACCOUNT_SECTION = "/private/my_account_section";
 
-	private static final String ACCOUNT_PAGE_VIEW_NAME = "/private/my_account";
+    private static final String ACCOUNT_SECTION = "/private/my_account_section";
 
-	private final UserService userService;
-	
-	private final AccountValidator accountValidator;
+    private static final String ACCOUNT_PAGE_VIEW_NAME = "/private/my_account";
 
-	private final PgAdmissionSwitchUserAuthenticationProvider authenticationProvider;
-	    
-	private final SwitchAndLinkUserAccountDTOValidator switchAndLinkAccountDTOValidator;
+    private final UserService userService;
 
-	AccountController() {
-		this(null, null, null, null);
-	}
+    private final AccountValidator accountValidator;
 
-	@Autowired
-	public AccountController(UserService userService, AccountValidator accountValidator, 
-	        SwitchAndLinkUserAccountDTOValidator validator, 
-	        PgAdmissionSwitchUserAuthenticationProvider authenticationProvider) {
-		this.userService = userService;
-		this.accountValidator = accountValidator;
+    private final PgAdmissionSwitchUserAuthenticationProvider authenticationProvider;
+
+    private final SwitchAndLinkUserAccountDTOValidator switchAndLinkAccountDTOValidator;
+
+    AccountController() {
+        this(null, null, null, null);
+    }
+
+    @Autowired
+    public AccountController(UserService userService, AccountValidator accountValidator, SwitchAndLinkUserAccountDTOValidator validator,
+            PgAdmissionSwitchUserAuthenticationProvider authenticationProvider) {
+        this.userService = userService;
+        this.accountValidator = accountValidator;
         this.switchAndLinkAccountDTOValidator = validator;
         this.authenticationProvider = authenticationProvider;
-	}
-	
-	@InitBinder(value="updatedUser")
-	public void registerValidator(WebDataBinder binder) {
-		binder.setValidator(accountValidator);
-	}
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getMyAccountPage() {
-		return ACCOUNT_PAGE_VIEW_NAME;
-	}
-	
-	@RequestMapping(value="/submit", method = RequestMethod.POST)
-	public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") RegisteredUser user, BindingResult bindingResult) {
-		if(bindingResult.hasErrors()){
-			return ACCOUNT_SECTION;
-		}
-		userService.updateCurrentUser(user);
-		return "/private/common/ajax_OK";
-	}
+    @InitBinder(value = "updatedUser")
+    public void registerValidator(WebDataBinder binder) {
+        binder.setValidator(accountValidator);
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
 
-	@ModelAttribute(value="updatedUser")
-	public RegisteredUser getUpdatedUser() {
-		RegisteredUser registeredUser = new RegisteredUser();		
-		RegisteredUser currentUser = getUser();
-		registeredUser.setFirstName(currentUser.getFirstName());
-		registeredUser.setLastName(currentUser.getLastName());
-		registeredUser.setEmail(currentUser.getEmail());
-		registeredUser.setPassword(currentUser.getPassword());
-		return registeredUser;
-	}
-	
-	@ModelAttribute(value="user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+    @RequestMapping(method = RequestMethod.GET)
+    public String getMyAccountPage() {
+        return ACCOUNT_PAGE_VIEW_NAME;
+    }
 
-	@RequestMapping(method = RequestMethod.GET, value="/section")
-	public String getMyAccountSection() {
-		return ACCOUNT_SECTION;
-	}
+    @RequestMapping(value = "/submit", method = RequestMethod.POST)
+    public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") RegisteredUser user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ACCOUNT_SECTION;
+        }
+        userService.updateCurrentUser(user);
+        return "/private/common/ajax_OK";
+    }
 
-	// Link Accounts
-	
-	@ModelAttribute("switchAndLinkUserAccountDTO")
+    @ModelAttribute(value = "updatedUser")
+    public RegisteredUser getUpdatedUser() {
+        RegisteredUser registeredUser = new RegisteredUser();
+        RegisteredUser currentUser = getUser();
+        registeredUser.setFirstName(currentUser.getFirstName());
+        registeredUser.setFirstName2(currentUser.getFirstName2());
+        registeredUser.setFirstName3(currentUser.getFirstName3());
+        registeredUser.setLastName(currentUser.getLastName());
+        registeredUser.setEmail(currentUser.getEmail());
+        registeredUser.setPassword(currentUser.getPassword());
+        return registeredUser;
+    }
+
+    @ModelAttribute(value = "user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/section")
+    public String getMyAccountSection() {
+        return ACCOUNT_SECTION;
+    }
+
+    // Link Accounts
+
+    @ModelAttribute("switchAndLinkUserAccountDTO")
     public SwitchAndLinkUserAccountDTO getSwitchAndLinkUserAccountDTO() {
         return new SwitchAndLinkUserAccountDTO();
     }
-    
+
     @InitBinder(value = "switchAndLinkUserAccountDTO")
     public void registerSwitchValidator(WebDataBinder binder) {
         binder.setValidator(switchAndLinkAccountDTOValidator);
     }
-    
+
     @RequestMapping(value = "/link", method = RequestMethod.POST)
-    public String linkAccounts(@Valid @ModelAttribute("switchAndLinkUserAccountDTO") SwitchAndLinkUserAccountDTO userDTO, BindingResult result, ModelMap modelMap) {
+    public String linkAccounts(@Valid @ModelAttribute("switchAndLinkUserAccountDTO") SwitchAndLinkUserAccountDTO userDTO, BindingResult result,
+            ModelMap modelMap) {
         if (result.hasErrors()) {
             return ACCOUNT_SECTION;
         }
-        
+
         try {
             userService.linkAccounts(userDTO.getEmail());
         } catch (LinkAccountsException e) {
             result.rejectValue("email", "account.not.enabled");
             return ACCOUNT_SECTION;
         }
-             
+
         return "/private/common/ajax_OK";
     }
-    
+
     @RequestMapping(value = "/switch", method = RequestMethod.POST)
     @ResponseBody
     public String switchAccounts(@RequestParam String email, HttpServletRequest request) {
@@ -145,7 +149,7 @@ public class AccountController {
         }
         return "NOK";
     }
-    
+
     @RequestMapping(value = "/deleteLinkedAccount", method = RequestMethod.POST)
     @ResponseBody
     public String deleteLinkedAccount(@RequestParam String email) {

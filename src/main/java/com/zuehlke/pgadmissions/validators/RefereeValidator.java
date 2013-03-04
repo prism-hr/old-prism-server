@@ -38,22 +38,30 @@ public class RefereeValidator extends FormSectionObjectValidator implements Vali
 		if (userService.getCurrentUser().getEmail().equals(referee.getEmail())) {
 			errors.rejectValue("email", "text.email.notyourself");
 		}
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLocation", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobEmployer", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobTitle", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLocation", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobEmployer", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobTitle", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", EMPTY_FIELD_ERROR_MESSAGE);
 		
 		if (referee.getAddressLocation() != null && StringUtils.isBlank(referee.getAddressLocation().getAddress1())) {
-			errors.rejectValue("addressLocation.address1", "text.field.empty");
+			errors.rejectValue("addressLocation.address1", EMPTY_FIELD_ERROR_MESSAGE);
 		}
+		
 		if (referee.getAddressLocation() != null && StringUtils.isBlank(referee.getAddressLocation().getAddress3())) {
-			errors.rejectValue("addressLocation.address3", "text.field.empty");
+			errors.rejectValue("addressLocation.address3", EMPTY_FIELD_ERROR_MESSAGE);
 		}
+		
 		if (referee.getAddressLocation() != null && referee.getAddressLocation().getCountry()==null) {
-			errors.rejectValue("addressLocation.country", "text.field.empty");
+			errors.rejectValue("addressLocation.country", EMPTY_FIELD_ERROR_MESSAGE);
+		}
+		
+		for (Referee existingReferee : referee.getApplication().getReferees()) {
+		    if (referee.getId() == null && StringUtils.equalsIgnoreCase(existingReferee.getEmail(), referee.getEmail())) {
+		        errors.rejectValue("email", "assignReferee.duplicate.email");
+		    }
 		}
 	}
 }

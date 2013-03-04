@@ -8,6 +8,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -25,7 +27,6 @@ import javax.validation.Valid;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -34,273 +35,239 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
 public class PersonalDetails implements FormSectionObject, Serializable {
 
-	private static final long serialVersionUID = 6549850558507667533L;
+    private static final long serialVersionUID = 6549850558507667533L;
 
     @Id
     @GeneratedValue
     private Integer id;
-	
-	@Transient
-	private boolean acceptedTerms;
-	
-	@Column(name = "skype")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
-	private String messenger;
-	
-	@Column(name = "phone")
-	@ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
-	private String phoneNumber;
-	
-	@Column(name = "english_first_language")
-	private Boolean englishFirstLanguage;
-	
-	@Column(name = "language_qualification_available")
-	private Boolean languageQualificationAvailable;
-	
-	@Valid
-	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE, javax.persistence.CascadeType.MERGE }, orphanRemoval = true)
+
+    @Transient
+    private boolean acceptedTerms;
+
+    @Column(name = "skype")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
+    private String messenger;
+
+    @Column(name = "phone")
+    @ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
+    private String phoneNumber;
+
+    @Column(name = "english_first_language")
+    private Boolean englishFirstLanguage;
+
+    @Column(name = "language_qualification_available")
+    private Boolean languageQualificationAvailable;
+
+    @Valid
+    @OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE,
+            javax.persistence.CascadeType.MERGE }, orphanRemoval = true)
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "application_form_personal_detail_id")
-	private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
-	
-	@Column(name = "requires_visa")
-	private Boolean requiresVisa;
-	
-	@Column(name = "passport_available")
-	private Boolean passportAvailable;
-	
-	@Valid
-	@OneToOne(orphanRemoval = true, mappedBy = "personalDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private PassportInformation passportInformation;
-	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_language_id") })
-	private List<Language> candidateNationalities = new ArrayList<Language>();
-	
-	@Column(name = "title")
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.TitleEnumUserType")
+    @JoinColumn(name = "application_form_personal_detail_id")
+    private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
+
+    @Column(name = "requires_visa")
+    private Boolean requiresVisa;
+
+    @Column(name = "passport_available")
+    private Boolean passportAvailable;
+
+    @Valid
+    @OneToOne(orphanRemoval = true, mappedBy = "personalDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private PassportInformation passportInformation;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_language_id") })
+    private List<Language> candidateNationalities = new ArrayList<Language>();
+
+    @Column(name = "title")
+    @Enumerated(EnumType.STRING)
     private Title title;
 
-    @Column(name = "first_name")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-	private String firstName;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-	@Column(name = "last_name")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
-	private String lastName;
+    @Column(name = "date_of_birth")
+    @Temporal(TemporalType.DATE)
+    private Date dateOfBirth;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.GenderEnumUserType")
-	private Gender gender;
-	
-	@ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
-	private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
+    private Country country;
 
-	@Column(name = "date_of_birth")
-	@Temporal(TemporalType.DATE)
-	private Date dateOfBirth;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ethnicity_id")
+    private Ethnicity ethnicity;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "country_id")
-	private Country country;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "disability_id")
+    private Disability disability;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ethnicity_id")
-	private Ethnicity ethnicity;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "disability_id")
-	private Disability disability;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "domicile_id")
-	private Domicile residenceCountry;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "domicile_id")
+    private Domicile residenceCountry;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_form_id")
-	private ApplicationForm application = null;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_form_id")
+    private ApplicationForm application = null;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Title getTitle() {
-	    return title;
-	}
+    public Title getTitle() {
+        return title;
+    }
 
-	public void setTitle(Title title) {
-	    this.title = title;
-	}
+    public void setTitle(Title title) {
+        this.title = title;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public Gender getGender() {
+        return gender;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
 
-	public Gender getGender() {
-		return gender;
-	}
+    public Domicile getResidenceCountry() {
+        return residenceCountry;
+    }
 
-	public void setGender(Gender gender) {
-		this.gender = gender;
-	}
+    public void setResidenceCountry(Domicile residenceCountry) {
+        this.residenceCountry = residenceCountry;
+    }
 
-	public Date getDateOfBirth() {
-		return dateOfBirth;
-	}
+    public ApplicationForm getApplication() {
+        return application;
+    }
 
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
+    public void setApplication(ApplicationForm application) {
+        this.application = application;
+    }
 
-	public Domicile getResidenceCountry() {
-		return residenceCountry;
-	}
+    public Country getCountry() {
+        return country;
+    }
 
-	public void setResidenceCountry(Domicile residenceCountry) {
-		this.residenceCountry = residenceCountry;
-	}
+    public void setCountry(Country country) {
+        this.country = country;
+    }
 
-	public ApplicationForm getApplication() {
-		return application;
-	}
+    public void setEthnicity(Ethnicity eth) {
+        this.ethnicity = eth;
+    }
 
-	public void setApplication(ApplicationForm application) {
-		this.application = application;
-	}
+    public Ethnicity getEthnicity() {
+        return ethnicity;
+    }
 
-	public Country getCountry() {
-		return country;
-	}
+    public void setDisability(Disability disability) {
+        this.disability = disability;
+    }
 
-	public void setCountry(Country country) {
-		this.country = country;
-	}
+    public Disability getDisability() {
+        return disability;
+    }
 
-	public void setEthnicity(Ethnicity eth) {
-		this.ethnicity = eth;
-	}
+    public List<Language> getCandidateNationalities() {
+        return candidateNationalities;
+    }
 
-	public Ethnicity getEthnicity() {
-		return ethnicity;
-	}
+    public void setCandidateNationalities(List<Language> candiateNationalities) {
+        this.candidateNationalities.clear();
+        for (Language nationality : candiateNationalities) {
+            if (nationality != null) {
+                this.candidateNationalities.add(nationality);
+            }
+        }
+    }
 
-	public void setDisability(Disability disability) {
-		this.disability = disability;
-	}
-	
-	public Disability getDisability() {
-		return disability;
-	}
+    public String getMessenger() {
+        return messenger;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setMessenger(String messenger) {
+        if (StringUtils.isBlank(messenger)) {
+            this.messenger = null;
+        }
+        this.messenger = messenger;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	public List<Language> getCandidateNationalities() {
-		return candidateNationalities;
-	}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	public void setCandidateNationalities(List<Language> candiateNationalities) {
-		this.candidateNationalities.clear();
-		for (Language nationality : candiateNationalities) {
-			if (nationality != null) {
-				this.candidateNationalities.add(nationality);
-			}
-		}
-	}
+    // convenience metod for Freemarker
+    public boolean isEnglishFirstLanguageSet() {
+        return (englishFirstLanguage != null);
+    }
 
-	public String getMessenger() {
-		return messenger;
-	}
+    public Boolean getEnglishFirstLanguage() {
+        return englishFirstLanguage;
+    }
 
-	public void setMessenger(String messenger) {
-		if (StringUtils.isBlank(messenger)) {
-			this.messenger = null;
-		}
-		this.messenger = messenger;
-	}
+    public void setEnglishFirstLanguage(Boolean englishFirstLanguage) {
+        this.englishFirstLanguage = englishFirstLanguage;
+    }
 
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
+    // convenience metod for Freemarker
+    public boolean isRequiresVisaSet() {
+        return (requiresVisa != null);
+    }
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-	
-	//convenience metod for Freemarker	
-	public boolean isEnglishFirstLanguageSet() {
-		return (englishFirstLanguage != null);
-	}	
-	
-	public Boolean getEnglishFirstLanguage() {
-		return englishFirstLanguage;
-	}
-
-	public void setEnglishFirstLanguage(Boolean englishFirstLanguage) {
-		this.englishFirstLanguage = englishFirstLanguage;
-	}
-	
-	//convenience metod for Freemarker
-	public boolean isRequiresVisaSet() {
-		return (requiresVisa != null);
-	}
-	
-	//convenience metod for Freemarker
+    // convenience metod for Freemarker
     public boolean isLanguageQualificationAvailableSet() {
         return (languageQualificationAvailable != null);
     }
-    
-    //convenience metod for Freemarker
+
+    // convenience metod for Freemarker
     public boolean isPassportAvailableSet() {
         return (passportAvailable != null);
     }
-	
-	public Boolean getRequiresVisa() {
-		return requiresVisa;
-	}
 
-	public void setRequiresVisa(Boolean requiresVisa) {
-		this.requiresVisa = requiresVisa;
-		if (BooleanUtils.isFalse(requiresVisa)) {
-		    this.passportInformation = null;
-		}
-	}
-	
-	public Boolean getPassportAvailable() {
-	    return passportAvailable;
-	}
+    public Boolean getRequiresVisa() {
+        return requiresVisa;
+    }
 
-	public void setPassportAvailable(Boolean passportAvailable) {
-	    this.passportAvailable = passportAvailable;
-	}
+    public void setRequiresVisa(Boolean requiresVisa) {
+        this.requiresVisa = requiresVisa;
+        if (BooleanUtils.isNotTrue(requiresVisa)) {
+            this.passportInformation = null;
+        }
+    }
 
-	public boolean isAcceptedTerms() {
-		return acceptedTerms;
-	}
+    public Boolean getPassportAvailable() {
+        return passportAvailable;
+    }
 
-	public void setAcceptedTerms(boolean acceptedTerms) {
-		this.acceptedTerms = acceptedTerms;
-	}
+    public void setPassportAvailable(Boolean passportAvailable) {
+        this.passportAvailable = passportAvailable;
+    }
+
+    public boolean isAcceptedTerms() {
+        return acceptedTerms;
+    }
+
+    public void setAcceptedTerms(boolean acceptedTerms) {
+        this.acceptedTerms = acceptedTerms;
+    }
 
     public Boolean getLanguageQualificationAvailable() {
         return languageQualificationAvailable;
@@ -308,7 +275,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
     public void setLanguageQualificationAvailable(Boolean languageQualificationAvailable) {
         this.languageQualificationAvailable = languageQualificationAvailable;
-        if (BooleanUtils.isFalse(languageQualificationAvailable)) {
+        if (BooleanUtils.isNotTrue(languageQualificationAvailable)) {
             this.languageQualifications = new ArrayList<LanguageQualification>();
         }
     }
@@ -331,7 +298,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     public void setLanguageQualifications(List<LanguageQualification> languageQualifications) {
         this.languageQualifications = languageQualifications;
     }
-    
+
     public void addLanguageQualification(LanguageQualification languageQualification) {
         if (languageQualification != null && languageQualification.getPersonalDetails() == null) {
             languageQualification.setPersonalDetails(this);
@@ -340,14 +307,13 @@ public class PersonalDetails implements FormSectionObject, Serializable {
             this.languageQualifications.add(languageQualification);
         }
     }
-    
+
     public List<LanguageQualification> getLanguageQualificationToSend() {
         List<LanguageQualification> result = new ArrayList<LanguageQualification>(1);
         for (LanguageQualification languageQualification : languageQualifications) {
             if (BooleanUtils.isTrue(languageQualification.getSendToUCL())) {
-                Validate.notNull(languageQualification.getLanguageQualificationDocument(),
-                        "LanguageQualification with id: " + languageQualification.getId()
-                                + " is marked for sending to UCL but has no document assosiated with it.");
+                Validate.notNull(languageQualification.getLanguageQualificationDocument(), "LanguageQualification with id: " + languageQualification.getId()
+                        + " is marked for sending to UCL but has no document assosiated with it.");
                 result.add(languageQualification);
             }
         }

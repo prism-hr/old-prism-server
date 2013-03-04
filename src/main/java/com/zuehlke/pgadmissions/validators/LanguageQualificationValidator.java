@@ -16,14 +16,15 @@ public class LanguageQualificationValidator extends AbstractValidator {
 
     @Override
     protected void addExtraValidation(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "dropdown.radio.select.none");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfExamination", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "overallScore", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "readingScore", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "writingScore", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "speakingScore", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "listeningScore", "text.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examTakenOnline", "text.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfExamination", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "overallScore", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "readingScore", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "writingScore", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "speakingScore", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "listeningScore", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examTakenOnline", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "languageQualificationDocument", "file.upload.empty");
         
         LanguageQualification qualification = (LanguageQualification) target;
         if (qualification == null) {
@@ -36,7 +37,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
         }
         
         if (qualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "otherQualificationTypeName", "text.field.empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "otherQualificationTypeName", EMPTY_FIELD_ERROR_MESSAGE);
         }
         
         if (qualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {

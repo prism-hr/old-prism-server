@@ -19,8 +19,8 @@ public class NewUserByAdminValidator extends AbstractValidator {
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", EMPTY_FIELD_ERROR_MESSAGE);
 	}
 }

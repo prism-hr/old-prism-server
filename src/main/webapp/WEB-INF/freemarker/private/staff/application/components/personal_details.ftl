@@ -34,12 +34,22 @@
     
       <div class="admin_row">
         <label class="admin_row_label">First Name</label>
-        <div class="field">${(applicationForm.personalDetails.firstName?html)!"Not Provided"}</div>
+        <div class="field">${(applicationForm.applicant.firstName?html)!"Not Provided"}</div>
+      </div>
+      
+      <div class="admin_row">
+        <label class="admin_row_label">First Name 2</label>
+        <div class="field">${(applicationForm.applicant.firstName2?html)!"Not Provided"}</div>
+      </div>
+      
+      <div class="admin_row">
+        <label class="admin_row_label">First Name 3</label>
+        <div class="field">${(applicationForm.applicant.firstName3?html)!"Not Provided"}</div>
       </div>
       
       <div class="admin_row">
         <label class="admin_row_label">Last Name</label>
-        <div class="field">${(applicationForm.personalDetails.lastName?html)!"Not Provided"}</div>
+        <div class="field">${(applicationForm.applicant.lastName?html)!"Not Provided"}</div>
       </div>
       
       <div class="admin_row">

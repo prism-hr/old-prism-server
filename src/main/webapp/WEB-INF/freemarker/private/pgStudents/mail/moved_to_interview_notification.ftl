@@ -38,7 +38,7 @@
 			      	</p>
 			      	
 			      	<p>
-			      	<#if application.latestInterview.locationURL??>
+			      	<#if application.latestInterview.locationURL?has_content>
 				      	
 				          <!-- Button -->
 							<a style="text-decoration:none;" href="${application.latestInterview.locationURL}" title="Get Directions">
@@ -55,7 +55,7 @@
 
 				      
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to attend.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto:${adminsEmails}">e-mail</a> if you are unable to attend.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Yours sincerely,<br />UCL Prism</font>

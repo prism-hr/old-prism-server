@@ -32,6 +32,12 @@ public class ESAPIRegularExpressionTest {
     }
     
     @Test
+    public void shouldAllowCarriageReturn() {
+        assertTrue(ESAPI.validator().isValidInput("Input", "\nDenver", "ExtendedAscii", 30, false));
+        assertTrue(ESAPI.validator().isValidInput("Input", "\r\nDenver", "ExtendedAscii", 30, false));
+    }
+    
+    @Test
     public void shouldDisallowNonExtendedAscii() {
         String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
         String russianName = StringEscapeUtils.unescapeJava("\\u0410\\u0444\\u0430\\u043d\\u0430\\u0441\\u0438\\u0439");

@@ -40,12 +40,13 @@ public class ImportService {
 		public int compare(ProgramInstanceInterface o1, ProgramInstanceInterface o2) {
 			int compareResult = codeComparator.compare(o1, o2);
 			if (compareResult == 0) {
-				if(o1.getIdentifier() == null)
+				if(o1.getIdentifier() == null) {
 					compareResult = -1;
-				else if(o2.getIdentifier() == null)
+				} else if(o2.getIdentifier() == null) {
 					compareResult = 1;
-				else
+				} else {
 					compareResult = o1.getIdentifier().compareTo(o2.getIdentifier());
+				}
 			}
 			if (compareResult == 0) {
 				compareResult = o1.getStudyOptionCode().compareTo(o2.getStudyOptionCode());
@@ -66,8 +67,8 @@ public class ImportService {
 		}
 	}
 
-	public final static CodeComparator codeComparator = new CodeComparator();
-	private final static ProgramComparator programComparator = new ProgramComparator();
+	public static final CodeComparator codeComparator = new CodeComparator();
+	private static final ProgramComparator programComparator = new ProgramComparator();
 
 	// Requires RandomAccess lists to run fast
 	@SuppressWarnings({ "unchecked", "rawtypes" })

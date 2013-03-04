@@ -19,18 +19,16 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class AdminMailSender extends StateChangeMailSender {
 
-	private final ApplicationsService applicationService;
 	private final ConfigurationService personService;
 
-	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ApplicationsService applicationService, MessageSource msgSource, ConfigurationService personService) {
+    public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,
+            MessageSource msgSource, ConfigurationService personService) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
-		this.applicationService = applicationService;
 		this.personService = personService;
 	}
 
@@ -167,13 +165,13 @@ public class AdminMailSender extends StateChangeMailSender {
 		administrators.remove(approver);
 		administrators = removeUsersThatHaveAlreadyBeenNotified(administrators, alreadyNotifiedUsers);
 		if (!administrators.isEmpty()) {
-			internalSend(application, administrators, "approved.notification", "private/staff/admin/mailBeta/approved_notification.ftl", model, true);
+			internalSend(application, administrators, "approved.notification", "private/staff/admin/mail/approved_notification.ftl", model, true);
 		}
 
 		List<RegisteredUser> supervisorUsers = getSupervisorUsers(application);
 		supervisorUsers = removeUsersThatHaveAlreadyBeenNotified(supervisorUsers, alreadyNotifiedUsers);
 		if (!supervisorUsers.isEmpty()) {
-			internalSend(application, supervisorUsers, "approved.notification", "private/staff/admin/mailBeta/approved_notification.ftl", model, false);
+			internalSend(application, supervisorUsers, "approved.notification", "private/staff/admin/mail/approved_notification.ftl", model, false);
 		}
 	}
 

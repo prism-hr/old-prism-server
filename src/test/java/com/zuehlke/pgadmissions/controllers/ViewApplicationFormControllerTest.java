@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 
 public class ViewApplicationFormControllerTest {
 

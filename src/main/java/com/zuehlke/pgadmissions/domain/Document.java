@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.bouncycastle.util.Arrays;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
@@ -46,7 +49,7 @@ public class Document implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateUploaded;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.DocumentTypeEnumUserType")
+	@Enumerated(EnumType.STRING)
 	@Column(name = "document_type")	
 	private DocumentType type;
 
@@ -81,7 +84,9 @@ public class Document implements Serializable {
 	}
 
 	public void setContent(byte[] content) {
-		this.content = content;
+	    if (content != null) {
+	        this.content = Arrays.copyOf(content, content.length);
+	    }
 	}
 
 	public String getContentType() {

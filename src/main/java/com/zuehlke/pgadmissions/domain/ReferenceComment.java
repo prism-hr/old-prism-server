@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -13,7 +15,6 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -38,7 +39,7 @@ public class ReferenceComment extends Comment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdated;
 
-    @Type(type = "com.zuehlke.pgadmissions.dao.custom.CommentTypeEnumUserType")
+    @Enumerated(EnumType.STRING)
     @Column(name = "comment_type")
     private CommentType type;
 

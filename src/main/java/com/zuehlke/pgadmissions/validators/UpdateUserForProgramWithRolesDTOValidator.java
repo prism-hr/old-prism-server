@@ -16,7 +16,7 @@ public class UpdateUserForProgramWithRolesDTOValidator extends AbstractValidator
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedUser", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedUser", EMPTY_DROPDOWN_ERROR_MESSAGE);
 	}
 }

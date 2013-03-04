@@ -625,7 +625,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).supervisors(new SupervisorBuilder().user(user).build()).build();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).supervisors(new SupervisorBuilder().user(user).isPrimary(false).build()).build();
 		save(user, applicationForm, approvalRound);
 		flushAndClearSession();
 		

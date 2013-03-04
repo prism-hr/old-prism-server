@@ -35,7 +35,7 @@ $(document).ready(function()
 		dateFormat: 'dd M yy',
 		changeMonth: true,
 		changeYear: true,
-		yearRange: '1900:c+20',
+		yearRange: '1900:+20',
 		beforeShowDay: function(date) {
 			for (var i = 0; i < selectedDates.length; i++) {
 	            if (new Date(selectedDates[i]).toString() == date.toString()) {

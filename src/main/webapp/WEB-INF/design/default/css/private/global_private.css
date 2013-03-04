@@ -246,7 +246,7 @@ section.form-rows div.section-info-bar {
 	padding: 10px 10px 10px 35px;
 }
 
-section.folding form > div.section-error-bar {
+section.folding div.section-error-bar {
 	background: #FFF;
   border: 1px solid red;
 	color: red;
@@ -255,9 +255,9 @@ section.folding form > div.section-error-bar {
   padding: 10px 10px 10px 40px;
 	position: relative;
 }
-section.folding form > div.section-error-bar .row { background: none; margin-bottom: 0; padding-left: 30px; }
-section.folding form > div.section-error-bar .invalid-info-text { margin: 0; padding: 0; }
-section.folding form > div.section-error-bar .error-hint { margin: 0 0 0 -30px; }
+section.folding div.section-error-bar .row { background: none; margin-bottom: 0; padding-left: 30px; }
+section.folding div.section-error-bar .invalid-info-text { margin: 0; padding: 0; }
+section.folding div.section-error-bar .error-hint { margin: 0 0 0 -30px; }
 
 /* Section headers. */
 section.form-rows h2 {
@@ -843,6 +843,7 @@ span.icon-role.interviewer { background-image: url(../../images/role_interviewer
 span.icon-role.approver { background-image: url(../../images/role_approver.png); }
 span.icon-role.applicant { background-image: url(../../images/role_applicant.png); }
 span.icon-role.referee { background-image: url(../../images/role_referee.png); }
+span.icon-role.supervisor { background-image: url(../../images/role_supervisor.png); }
 
 
 button span.icon-up, button span.icon-down {

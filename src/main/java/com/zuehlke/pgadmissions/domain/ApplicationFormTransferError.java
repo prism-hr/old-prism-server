@@ -5,13 +5,13 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
@@ -51,13 +51,13 @@ public class ApplicationFormTransferError implements Serializable {
     private String responseCopy;
 
     /** Type of the problem as recognized by PRISM. */
-    @Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormTransferErrorTypeEnumUserType")
+    @Enumerated(EnumType.STRING)
     @Column(name = "problem_classification")
     private ApplicationFormTransferErrorType problemClassification;
 
     /** Decision (programatically) made by PRISM on how to handle the situation. */
-    @Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormTransferErrorHandlingDecisionEnumUserType")
     @Column(name = "error_handling_strategy")
+    @Enumerated(EnumType.STRING)
     private ApplicationFormTransferErrorHandlingDecision errorHandlingStrategy;
 
     public Long getId() {

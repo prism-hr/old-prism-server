@@ -22,7 +22,8 @@ public class DataImporterMailSender extends MailSender {
 	private final UserService userService;
 	private final SessionFactory sessionFactory;
 
-	public DataImporterMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource, UserService userService, SessionFactory sessionFactory) {
+    public DataImporterMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,
+            MessageSource msgSource, UserService userService, SessionFactory sessionFactory) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
 		this.userService = userService;
 		this.sessionFactory = sessionFactory;

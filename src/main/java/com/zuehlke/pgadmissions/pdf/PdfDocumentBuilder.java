@@ -37,6 +37,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Language;
@@ -54,6 +55,8 @@ import com.zuehlke.pgadmissions.exceptions.PDFException;
 @Component
 public class PdfDocumentBuilder {
     
+    private static final String NOT_PROVIDED = "Not Provided";
+
     private static final Logger LOG = Logger.getLogger(PdfDocumentBuilder.class);
     
     private static Font boldFont = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
@@ -78,11 +81,19 @@ public class PdfDocumentBuilder {
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
             writer.setCloseStream(false); // otherwise we're loosing our ZipOutputstream for calling zos.closeEntry();
             document.open();
+            
+            PdfPTable table = new PdfPTable(1);
+            table.setWidthPercentage(100f);
+            table.addCell(newGrayTableCell("Referee Comment", boldFont));
+            document.add(table);
+            document.add(new Paragraph(" "));
+            
             if (referenceComment.getReferee() != null && BooleanUtils.isTrue(referenceComment.getReferee().isDeclined())) {
-                document.add(new Paragraph("Referee comment:\n Declined to provide a reference."));
+                document.add(new Paragraph("Comment:\nDeclined to provide a reference."));
             } else {
-                document.add(new Paragraph("Referee comment:\n" + referenceComment.getComment()));
+                document.add(new Paragraph("Comment:\n" + referenceComment.getComment()));
             }
+            
             PdfContentByte cb = writer.getDirectContent();
             for (com.zuehlke.pgadmissions.domain.Document in : referenceComment.getDocuments()) {
                 PdfReader reader = new PdfReader(in.getContent());
@@ -134,6 +145,36 @@ public class PdfDocumentBuilder {
         }
     }
     
+    public byte[] buildTranscript1FromApprovalRoundComment(ApplicationForm application) {
+        try{
+            Document document = new Document(PageSize.A4, 50, 50, 100, 50);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PdfWriter.getInstance(document, baos);
+            document.open();
+            
+            PdfPTable table = new PdfPTable(1);
+            table.setWidthPercentage(100f);
+            table.addCell(newGrayTableCell("No Transcripts Provided", boldFont));
+            document.add(table);
+            document.add(new Paragraph(" "));
+            
+            ApprovalRound latestApprovalRound = application.getLatestApprovalRound();
+            if (latestApprovalRound != null) {
+                if (StringUtils.isBlank(latestApprovalRound.getMissingQualificationExplanation())) {
+                    document.add(new Paragraph(String.format("Approval Round Comment:\n%s", latestApprovalRound.getMissingQualificationExplanation())));
+                } else {
+                    document.add(new Paragraph(String.format("Approval Round Comment:\n%s", NOT_PROVIDED)));
+                }
+            } else {
+                document.add(new Paragraph(String.format("Approval Round Comment:\n%s", NOT_PROVIDED)));
+            }
+            document.close();
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new PDFException(e);
+        }
+    }
+    
     private void buildDocument(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
         buildDocument(application, document, writer, true);
     }
@@ -149,8 +190,10 @@ public class PdfDocumentBuilder {
             submittedDateHeader = new Chunk("", smallerFont);
         }
 
-        headerEvent = new HeaderEvent(new Chunk(application.getProgram().getTitle(), smallerFont), new Chunk(
-                application.getApplicationNumber(), smallerFont), submittedDateHeader);
+        headerEvent = new HeaderEvent(
+                new Chunk(application.getProgram().getTitle(), smallerFont), 
+                new Chunk(application.getApplicationNumber(), smallerFont), 
+                submittedDateHeader);
         
         writer.setPageEvent(headerEvent);
         
@@ -166,7 +209,7 @@ public class PdfDocumentBuilder {
 
         addSectionSeparators(document);
 
-        addQualificationSection(application, document, writer);
+        addQualificationSection(application, document);
 
         addSectionSeparators(document);
 
@@ -174,14 +217,15 @@ public class PdfDocumentBuilder {
 
         addSectionSeparators(document);
 
-        addFundingSection(application, document, writer);
+        addFundingSection(application, document);
 
         addSectionSeparators(document);
 
-        if (SecurityContextHolder.getContext().getAuthentication() != null
-                && ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails())
-                        .hasAdminRightsOnApplication(application)) {
-            addReferencesSection(application, document);
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (currentUser.hasAdminRightsOnApplication(application)) {
+                addReferencesSection(application, document);
+            }
         }
 
         addSectionSeparators(document);
@@ -212,13 +256,15 @@ public class PdfDocumentBuilder {
 
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("APPLICATION", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("APPLICATION", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
         table = new PdfPTable(2);
         table.setWidthPercentage(100f);
         table.addCell(newTableCell("Applicant", smallBoldFont));
-        table.addCell(newTableCell(application.getApplicant().getFirstName() + " " + application.getApplicant().getLastName(), smallFont));
+        
+        
+        table.addCell(newTableCell(application.getApplicant().getDisplayName(), smallFont));
         table.addCell(newTableCell("Programme", smallBoldFont));
         table.addCell(newTableCell(application.getProgram().getTitle() , smallFont));
         table.addCell(newTableCell("Application Number", smallBoldFont));
@@ -239,7 +285,7 @@ public class PdfDocumentBuilder {
     private void addProgrammeSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("PROGRAMME", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("PROGRAMME", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -252,28 +298,28 @@ public class PdfDocumentBuilder {
         if (application.getProgrammeDetails().getStudyOption() != null) {
             table.addCell(newTableCell(application.getProgrammeDetails().getStudyOption(), smallFont));
         } else {
-            table.addCell(newTableCell("Not Provided", smallGrayFont));
+            table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
         }
 
         table.addCell(newTableCell("Project", smallBoldFont));
         if (!StringUtils.isBlank(application.getProgrammeDetails().getProjectName())) {
             table.addCell(newTableCell(application.getProgrammeDetails().getProjectName(), smallFont));
         } else {
-            table.addCell(newTableCell("Not Provided", smallGrayFont));
+            table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
         }
 
         table.addCell(newTableCell("Start Date", smallBoldFont));
         if (application.getProgrammeDetails().getStartDate() != null) {
             table.addCell(newTableCell(simpleDateFormat.format(application.getProgrammeDetails().getStartDate()), smallFont));
         } else {
-            table.addCell(newTableCell("Not Provided", smallGrayFont));
+            table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
         }
 
         table.addCell(newTableCell("How did you find us?", smallBoldFont));
         if (application.getProgrammeDetails().getSourcesOfInterest() != null) {
             table.addCell(newTableCell(application.getProgrammeDetails().getSourcesOfInterest().getName(), smallFont));
         } else {
-            table.addCell(newTableCell("Not Provided", smallGrayFont));
+            table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
         }
         
         if (application.getProgrammeDetails().getSourcesOfInterest() != null && application.getProgrammeDetails().getSourcesOfInterest().isFreeText()) {
@@ -288,7 +334,7 @@ public class PdfDocumentBuilder {
             table = new PdfPTable(2);
             table.setWidthPercentage(100f);
             table.addCell(newTableCell("Supervisor", smallBoldFont));
-            table.addCell(newTableCell("Not Provided", smallGrayFont));
+            table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
             document.add(table);
             document.add(new Paragraph(" "));
         } else {
@@ -329,7 +375,7 @@ public class PdfDocumentBuilder {
         if (StringUtils.isNotBlank(content)) {
             cell = new PdfPCell(new Phrase(content, font));
         } else {
-            cell = new PdfPCell(new Phrase("Not Provided", smallGrayFont));
+            cell = new PdfPCell(new Phrase(NOT_PROVIDED, smallGrayFont));
         }
         cell.setPaddingBottom(5);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -337,20 +383,18 @@ public class PdfDocumentBuilder {
         return cell;
     }
 
-    private PdfPCell newTableCell(String content, Font font, BaseColor backgrounColor) {
-
+    private PdfPCell newGrayTableCell(String content, Font font) {
         PdfPCell c1 = newTableCell(content, font);
         c1.setBackgroundColor(grayColor);
         return c1;
     }
 
     private PdfPCell newTableCell(String content, Font font, Integer appendixNumber) {
-
         PdfPCell cell = null;
         if (StringUtils.isNotBlank(content)) {
             cell = new PdfPCell(new Phrase(new Chunk(content, font).setLocalGoto(appendixNumber.toString())));
         } else {
-            cell = new PdfPCell(new Phrase("Not Provided", smallGrayFont));
+            cell = new PdfPCell(new Phrase(NOT_PROVIDED, smallGrayFont));
         }
         cell.setPaddingBottom(5);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -361,7 +405,7 @@ public class PdfDocumentBuilder {
     private void addPersonalDetailsSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("PERSONAL DETAILS", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("PERSONAL DETAILS", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -376,10 +420,16 @@ public class PdfDocumentBuilder {
         }
         
         table.addCell(newTableCell("First Name", smallBoldFont));
-        table.addCell(newTableCell(application.getPersonalDetails().getFirstName(), smallFont));
+        table.addCell(newTableCell(application.getApplicant().getFirstName(), smallFont));
+        
+        table.addCell(newTableCell("First Name 2", smallBoldFont));
+        table.addCell(newTableCell(application.getApplicant().getFirstName2(), smallFont));
+        
+        table.addCell(newTableCell("First Name 3", smallBoldFont));
+        table.addCell(newTableCell(application.getApplicant().getFirstName3(), smallFont));
 
         table.addCell(newTableCell("Last Name", smallBoldFont));
-        table.addCell(newTableCell(application.getPersonalDetails().getLastName(), smallFont));
+        table.addCell(newTableCell(application.getApplicant().getLastName(), smallFont));
 
         table.addCell(newTableCell("Gender", smallBoldFont));
         if (application.getPersonalDetails().getGender() == null) {
@@ -462,7 +512,7 @@ public class PdfDocumentBuilder {
             }
         }
         
-        if (application.getPersonalDetails().getRequiresVisa() != null && application.getPersonalDetails().getRequiresVisa()) {
+        if (BooleanUtils.isTrue(application.getPersonalDetails().getRequiresVisa())) {
             PassportInformation passportInformation = application.getPersonalDetails().getPassportInformation();
             if (passportInformation != null) {
                 table.addCell(newTableCell("Passport Number", smallBoldFont));
@@ -497,7 +547,7 @@ public class PdfDocumentBuilder {
         }
 
         table.addCell(newTableCell("Email", smallBoldFont));
-        table.addCell(newTableCell(application.getPersonalDetails().getEmail(), smallFont));
+        table.addCell(newTableCell(application.getApplicant().getEmail(), smallFont));
 
         table.addCell(newTableCell("Telephone", smallBoldFont));
         table.addCell(newTableCell(application.getPersonalDetails().getPhoneNumber(), smallFont));
@@ -562,26 +612,27 @@ public class PdfDocumentBuilder {
                     table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
                     bookmarkMap.put(appendixCounter++, qualification.getLanguageQualificationDocument());
                 } else {
-                    table.addCell(newTableCell("Not Provided", smallGrayFont));
+                    table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
                 }
             }
         }
         
-        if (SecurityContextHolder.getContext().getAuthentication() != null && ( 
-                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).isInRole(Authority.SUPERADMINISTRATOR) ||
-                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).getId().equals(application.getApplicant().getId()))) {
-            table.addCell(newTableCell("Ethnicity", smallBoldFont));
-            if (application.getPersonalDetails().getEthnicity() == null) {
-                table.addCell(newTableCell("Not Provided", smallGrayFont));
-            } else {
-                table.addCell(newTableCell(application.getPersonalDetails().getEthnicity().getName(), smallFont));                
-            }
-            
-            table.addCell(newTableCell("Disability", smallBoldFont));
-            if (application.getPersonalDetails().getDisability() == null) {
-                table.addCell(newTableCell("Not Provided", smallGrayFont));
-            } else {
-                table.addCell(newTableCell(application.getPersonalDetails().getDisability().getName(), smallFont));                
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.getId().equals(application.getApplicant().getId())) {
+                table.addCell(newTableCell("Ethnicity", smallBoldFont));
+                if (application.getPersonalDetails().getEthnicity() == null) {
+                    table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
+                } else {
+                    table.addCell(newTableCell(application.getPersonalDetails().getEthnicity().getName(), smallFont));                
+                }
+                
+                table.addCell(newTableCell("Disability", smallBoldFont));
+                if (application.getPersonalDetails().getDisability() == null) {
+                    table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
+                } else {
+                    table.addCell(newTableCell(application.getPersonalDetails().getDisability().getName(), smallFont));                
+                }
             }
         }
         document.add(table);
@@ -590,7 +641,7 @@ public class PdfDocumentBuilder {
     private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("ADDRESS", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("ADDRESS", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
         table = new PdfPTable(2);
@@ -626,10 +677,10 @@ public class PdfDocumentBuilder {
         document.add(table);
     }
 
-    private void addQualificationSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
+    private void addQualificationSection(ApplicationForm application, Document document) throws DocumentException, IOException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("QUALIFICATIONS", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("QUALIFICATIONS", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -657,7 +708,7 @@ public class PdfDocumentBuilder {
                 if (StringUtils.isNotBlank(qualification.getOtherQualificationInstitution())) {
                     table.addCell(newTableCell(qualification.getOtherQualificationInstitution(), smallFont));                    
                 } else {
-                    table.addCell(newTableCell("Not Provided", smallGrayFont));                    
+                    table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));                    
                 }
 
                 table.addCell(newTableCell("Qualification Type", smallBoldFont));
@@ -691,7 +742,7 @@ public class PdfDocumentBuilder {
 
                 table.addCell(newTableCell("Award Date", smallBoldFont));
                 if (qualification.getQualificationAwardDate() == null) {
-                    table.addCell(newTableCell("Not Provided", smallGrayFont));
+                    table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
                 } else {
                     table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationAwardDate()), smallFont));
                 }
@@ -701,7 +752,7 @@ public class PdfDocumentBuilder {
                     table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
                     bookmarkMap.put(appendixCounter++, qualification.getProofOfAward());
                 } else {
-                    table.addCell(newTableCell("Not Provided", smallGrayFont));
+                    table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
                 }
 
                 document.add(table);
@@ -713,7 +764,7 @@ public class PdfDocumentBuilder {
     private void addEmploymentSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("EMPLOYMENT", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("EMPLOYMENT", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -770,10 +821,10 @@ public class PdfDocumentBuilder {
         }
     }
 
-    private void addFundingSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
+    private void addFundingSection(ApplicationForm application, Document document) throws DocumentException, IOException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("FUNDING", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("FUNDING", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -815,10 +866,9 @@ public class PdfDocumentBuilder {
     }
 
     private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {
-
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("REFERENCES", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("REFERENCES", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -863,14 +913,16 @@ public class PdfDocumentBuilder {
                 table.addCell(newTableCell("Skype", smallBoldFont));
                 table.addCell(newTableCell(referee.getMessenger(), smallFont));
 
-                RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-                if (!currentUser.isInRole(Authority.APPLICANT) && currentUser.hasAdminRightsOnApplication(application)) {
-                    table.addCell(newTableCell("Reference", smallBoldFont));
-                    if (referee.getReference() != null) {
-                        table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
-                        bookmarkMap.put(appendixCounter++, referee.getReference());
-                    } else {
-                        table.addCell(newTableCell(null, smallFont));
+                if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                    RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+                    if (!currentUser.isInRole(Authority.APPLICANT) && currentUser.hasAdminRightsOnApplication(application)) {
+                        table.addCell(newTableCell("Reference", smallBoldFont));
+                        if (referee.getReference() != null) {
+                            table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
+                            bookmarkMap.put(appendixCounter++, referee.getReference());
+                        } else {
+                            table.addCell(newTableCell(null, smallFont));
+                        }
                     }
                 }
                 document.add(table);
@@ -882,7 +934,7 @@ public class PdfDocumentBuilder {
     private void addDocumentsSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("DOCUMENTS", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("DOCUMENTS", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -912,7 +964,7 @@ public class PdfDocumentBuilder {
     private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100f);
-        table.addCell(newTableCell("ADDITIONAL INFORMATION", boldFont, BaseColor.GRAY));
+        table.addCell(newGrayTableCell("ADDITIONAL INFORMATION", boldFont));
         document.add(table);
         document.add(new Paragraph(" "));
 
@@ -923,20 +975,19 @@ public class PdfDocumentBuilder {
         table.setWidthPercentage(100f);
         table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", smallBoldFont));
         if (application.getAdditionalInformation().getConvictions() == null) {
-            table.addCell(newTableCell(null, smallFont));
+            table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
+        } else if (BooleanUtils.isTrue(application.getAdditionalInformation().getConvictions())) {
+            table.addCell(newTableCell("Yes", smallFont));
         } else {
-            if (BooleanUtils.isTrue(application.getAdditionalInformation().getConvictions())) {
-                table.addCell(newTableCell("Yes", smallFont));
-            } else {
-                table.addCell(newTableCell("No", smallFont));
-            }
+            table.addCell(newTableCell("No", smallFont));
         }
-        
-        if (SecurityContextHolder.getContext().getAuthentication() != null && ( 
-                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).isInRole(Authority.SUPERADMINISTRATOR) ||
-                ((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).getId().equals(application.getApplicant().getId()))) {
-            table.addCell(newTableCell("Description", smallBoldFont));
-            table.addCell(newTableCell(application.getAdditionalInformation().getConvictionsText(), smallFont));
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.getId().equals(application.getApplicant().getId())) {
+                table.addCell(newTableCell("Description", smallBoldFont));
+                table.addCell(newTableCell(application.getAdditionalInformation().getConvictionsText(), smallFont));
+            }
         }
         document.add(table);
     }
@@ -973,7 +1024,7 @@ public class PdfDocumentBuilder {
                         LOG.warn(String.format("Error in generating pdf while appending supporting document %s for %s", application.getApplicationNumber(), doc.getFileName()), e);
                     }
                 }
-            } else if( obj instanceof ReferenceComment) {
+            } else if (obj instanceof ReferenceComment) {
                 ReferenceComment reference = (ReferenceComment) obj;
                 document.add(new Chunk("APPENDIX (" + integer + ")").setLocalDestination(integer.toString()));
                 
@@ -984,7 +1035,7 @@ public class PdfDocumentBuilder {
                 document.add(new Paragraph(" "));
                 PdfPTable table = new PdfPTable(1);
                 table.setWidthPercentage(100f);
-                table.addCell(newTableCell("REFERENCE", boldFont, BaseColor.GRAY));
+                table.addCell(newGrayTableCell("REFERENCE", boldFont));
                 document.add(table);
                 document.add(new Paragraph(" "));
                 table = new PdfPTable(2);
@@ -1010,7 +1061,8 @@ public class PdfDocumentBuilder {
                     try {
                         readPdf(document, refDocument, writer);
                     } catch (Exception e) {
-                        LOG.warn(String.format("Error in generating pdf while appending supporting document %s for %s", application.getApplicationNumber(), refDocument.getFileName()), e);
+                        LOG.warn(String.format("Error in generating pdf while appending supporting document %s for %s",
+                                application.getApplicationNumber(), refDocument.getFileName()), e);
                     }
                 }
             }
@@ -1031,7 +1083,6 @@ public class PdfDocumentBuilder {
     }
 
     private class HeaderEvent extends PdfPageEventHelper {
-
         private final Chunk programmeHeader;
         private final Chunk applicationHeader;
         private final Chunk submittedDateHeader;

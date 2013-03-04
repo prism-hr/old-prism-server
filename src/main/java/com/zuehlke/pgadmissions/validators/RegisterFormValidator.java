@@ -31,10 +31,10 @@ public class RegisterFormValidator extends AbstractValidator {
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", EMPTY_FIELD_ERROR_MESSAGE);
 		RegisteredUser record = (RegisteredUser) target;
 		if(record.getConfirmPassword()!=null && record.getPassword() !=null && !record.getConfirmPassword().equals(record.getPassword())){
 			errors.rejectValue("password", "user.passwords.notmatch");

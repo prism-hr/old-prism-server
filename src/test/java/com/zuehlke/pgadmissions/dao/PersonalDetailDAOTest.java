@@ -49,7 +49,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetPersonalDetailsById() throws ParseException {
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceDomicile(domicile)
+				.title(Title.MR).gender(Gender.MALE).residenceDomicile(domicile)
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
 				.applicationForm(applicationForm).build();
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -66,7 +66,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
-				.email("email").firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname").residenceDomicile(domicile)
+				.title(Title.MR).gender(Gender.MALE).residenceDomicile(domicile)
 				.applicationForm(applicationForm)
 				.ethnicity(ethnicity).disability(disability).build();
 		personalDetailDAO.save(personalDetails);
@@ -96,8 +96,8 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country)//
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))//
-				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").email("email")//
-				.firstName("firstName").title(Title.MR).gender(Gender.MALE).lastName("lastname")//
+				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")//
+				.title(Title.MR).gender(Gender.MALE)//
 				.residenceDomicile(domicile).ethnicity(eth).disability(dis).applicationForm(applicationForm).build();
 
 		personalDetailDAO.save(personalDetails);

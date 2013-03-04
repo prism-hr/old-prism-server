@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 
 import freemarker.template.TemplateException;
@@ -33,8 +32,6 @@ import freemarker.template.TemplateException;
 @ContextConfiguration("/testMailContext.xml")
 public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithFreemarkerSupport {
 
-    private ApplicationsService applicationsServiceMock;
-    
     private ConfigurationService personServiceMock;
     
     private AdminMailSender adminMailSender;
@@ -101,7 +98,6 @@ public class AdminMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithF
     public void setup() throws IOException, TemplateException {
         fakeLoggingMailSender = new FakeLoggingMailSender();
         personServiceMock = EasyMock.createMock(ConfigurationService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-        adminMailSender = new AdminMailSender(mimeMessagePreparatorFactory, fakeLoggingMailSender, applicationsServiceMock, messageSource, personServiceMock);
+        adminMailSender = new AdminMailSender(mimeMessagePreparatorFactory, fakeLoggingMailSender, messageSource, personServiceMock);
     }
 }

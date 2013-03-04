@@ -524,8 +524,8 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(otherProgram).applicant(user)
                 .status(ApplicationFormStatus.APPROVED).build();
-        Supervisor supervisorOne = new SupervisorBuilder().user(supervisorUser).build();
-        Supervisor supervisorTwo = new SupervisorBuilder().user(supervisorUser).build();
+        Supervisor supervisorOne = new SupervisorBuilder().user(supervisorUser).isPrimary(false).build();
+        Supervisor supervisorTwo = new SupervisorBuilder().user(supervisorUser).isPrimary(false).build();
 
         ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().supervisors(supervisorOne)
                 .application(applicationFormOne).build();
@@ -535,8 +535,7 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         applicationFormOne.setLatestApprovalRound(approvalRoundOne);
         applicationFormTwo.setLatestApprovalRound(approvalRoundTwo);
 
-        save(applicationFormOne, applicationFormTwo, supervisorUser, supervisorOne, supervisorTwo, approvalRoundOne,
-                approvalRoundTwo);
+        save(applicationFormOne, applicationFormTwo, supervisorUser, supervisorOne, supervisorTwo, approvalRoundOne, approvalRoundTwo);
 
         flushAndClearSession();
 
@@ -558,10 +557,9 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
                 .status(ApplicationFormStatus.REJECTED).build();
 
-        Supervisor supervisor = new SupervisorBuilder().user(supervisorUser).build();
+        Supervisor supervisor = new SupervisorBuilder().user(supervisorUser).isPrimary(false).build();
 
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application)
-                .build();
+        ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();
 
         applicationForm.setLatestApprovalRound(approvalRound);
 

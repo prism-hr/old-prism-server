@@ -56,14 +56,12 @@ public class MoveToReviewReviewerPropertyEditor extends PropertyEditorSupport {
 			throw new IllegalArgumentException("no such applications: " + split[0]);
 		}
 
-		setValue(createNewReviewer(user, applicationForm));
+		setValue(createNewReviewer(user));
 	}
 
-	private Reviewer createNewReviewer(RegisteredUser user, ApplicationForm applicationForm) {
-
+	private Reviewer createNewReviewer(RegisteredUser user) {
 		Reviewer reviewer = new Reviewer();
 		reviewer.setUser(user);
 		return reviewer;
-	
-}
+	}
 }

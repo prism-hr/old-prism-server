@@ -17,7 +17,7 @@ public class RejectionValidator extends AbstractValidator {
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
 	
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "rejectionReason", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "rejectionReason", EMPTY_DROPDOWN_ERROR_MESSAGE);
 	}
 
 }

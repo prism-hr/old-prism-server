@@ -23,13 +23,13 @@ public class UserDTOValidator extends AbstractValidator {
 	public void addExtraValidation(Object target, Errors errors) {
 		UserDTO user = (UserDTO) target;
 		if (!(user.getSelectedAuthorities().length == 1 && user.getSelectedAuthorities()[0] == Authority.SUPERADMINISTRATOR)) {
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", "dropdown.radio.select.none");
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		}
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "text.field.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);
 
 		if (user.getSelectedAuthorities() == null || user.getSelectedAuthorities().length == 0) {
-			errors.rejectValue("selectedAuthorities", "dropdown.radio.select.none");
+			errors.rejectValue("selectedAuthorities", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		}
 		
 		if (!EmailValidator.getInstance().isValid(user.getEmail())) {

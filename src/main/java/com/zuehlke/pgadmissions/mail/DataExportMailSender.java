@@ -38,15 +38,15 @@ public class DataExportMailSender {
     }
     
     @Autowired
-    public DataExportMailSender(final UserService userService, final JavaMailSender mailSender,
-            final MessageSource messageSource, final MimeMessagePreparatorFactory mimeMessagePreparatorFactory) {
+    public DataExportMailSender(final MimeMessagePreparatorFactory mimeMessagePreparatorFactory, 
+            final JavaMailSender mailSender, final MessageSource messageSource, final UserService userService) {
         this.userService = userService;
         this.mailSender = mailSender;
         this.messageSource = messageSource;
         this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
     }
     
-    private Map<String, Object> createModel(final RegisteredUser user, final String message) {
+    Map<String, Object> createModel(final RegisteredUser user, final String message) {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("user", user);
         model.put("message", message);
@@ -75,6 +75,7 @@ public class DataExportMailSender {
 
     private void internalSendMail(final String subjectCode, final String message, final RegisteredUser user,
             final String template) throws UnsupportedEncodingException {
+        
         InternetAddress toAddress = new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
         String subject = messageSource.getMessage(subjectCode, null, null);
         mailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, template, createModel(user, message), null));

@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.validators;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -39,15 +41,15 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 	public void addExtraValidation(final Object target, final Errors errors) {
 		super.addExtraValidation(target, errors);
 		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterest", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterest", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
 		ProgrammeDetails programmeDetail = (ProgrammeDetails) target;
 
 		if (programmeDetail.getSourcesOfInterest() != null && programmeDetail.getSourcesOfInterest().isFreeText()) {
-		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterestText", "text.field.empty");
+		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterestText", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		
 		List<ProgramInstance> programInstances = programInstaceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(programmeDetail.getApplication().getProgram(), programmeDetail.getStudyOption());
@@ -67,17 +69,27 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
             errors.rejectValue("startDate", "date.field.notfuture");
         }
 		
-		List<SuggestedSupervisor> supervisors = programmeDetail.getSuggestedSupervisors();
-		for (int i = 0; i < supervisors.size(); i++) {
-			if (StringUtils.isBlank(supervisors.get(i).getFirstname())) {
-				errors.rejectValue("suggestedSupervisors", "text.field.empty");
-			}
-			if (StringUtils.isBlank(supervisors.get(i).getLastname())) {
-				errors.rejectValue("suggestedSupervisors", "text.field.empty");
-			}
-			if (StringUtils.isBlank(supervisors.get(i).getEmail())) {
-                errors.rejectValue("suggestedSupervisors", "text.field.empty");
-            }
+		Set<String> supervisorEmails = new HashSet<String>();
+		for (SuggestedSupervisor supervisor : programmeDetail.getSuggestedSupervisors()) {
+		    if (StringUtils.isBlank(supervisor.getFirstname())) {
+		        errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
+		    }
+		    
+		    if (StringUtils.isBlank(supervisor.getLastname())) {
+		        errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
+		    }
+		    
+		    if (StringUtils.isBlank(supervisor.getEmail())) {
+		        errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
+		    }
+		    
+		    if (StringUtils.isNotBlank(supervisor.getEmail())) {
+		        if (supervisorEmails.contains(supervisor.getEmail())) {
+		            errors.rejectValue("suggestedSupervisors", "suggestedSupervisors.duplicate.email");
+		        } else {
+		            supervisorEmails.add(supervisor.getEmail());
+		        }
+		    }
 		}
 	}
 }

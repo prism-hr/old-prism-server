@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class ReviewService {
@@ -104,8 +103,6 @@ public class ReviewService {
 	}
 
 	public ReviewRound newReviewRound() {
-		ReviewRound reviewRound = new ReviewRound();
-		return reviewRound;
+		return new ReviewRound();
 	}
-
 }

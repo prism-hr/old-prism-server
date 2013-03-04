@@ -20,32 +20,30 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Component
 public class RegistryMailSender extends MailSender {
+	
+    private final PdfDocumentBuilder pdfDocumentBuilder;
 
-
-	private final PdfDocumentBuilder pdfDocumentBuilder;
 	private final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory;
 
-	RegistryMailSender() {
-		this(null, null, null, null,  null, null);
+	public RegistryMailSender() {
+		this(null, null, null, null,  null);
 	}
 
 	@Autowired
-	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, 
-			UserService userService, MessageSource msgSource, PdfDocumentBuilder pdfDocumentBuilder,
-			PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory) {
+    public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,
+            MessageSource msgSource, PdfDocumentBuilder pdfDocumentBuilder,
+            PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
-
 		this.pdfDocumentBuilder = pdfDocumentBuilder;
 		this.pdfAttachmentInputSourceFactory = pdfAttachmentInputSourceFactory;
 	}
 
-	public void sendApplicationToRegistryContacts(ApplicationForm applicationForm, List<Person> registryContacts) throws MalformedURLException, DocumentException, IOException {
-	
+    public void sendApplicationToRegistryContacts(ApplicationForm applicationForm, List<Person> registryContacts)
+            throws MalformedURLException, DocumentException, IOException {
 		InternetAddress[] toAddresses = new InternetAddress[registryContacts.size()];
 		int counter = 0;
 		for (Person registryUser : registryContacts) {
@@ -92,5 +90,4 @@ public class RegistryMailSender extends MailSender {
 		}
 		return sb.toString();
 	}
-
 }

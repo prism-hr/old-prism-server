@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -21,8 +22,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
-
-import cucumber.annotation.After;
 
 public class PrintControllerTest {
 

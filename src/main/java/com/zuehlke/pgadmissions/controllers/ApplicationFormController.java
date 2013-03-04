@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -79,18 +79,16 @@ public class ApplicationFormController {
 
 	private Date parseBatchDeadline(String programDeadline) {
 		Date batchDeadline = null;
-		if(StringUtils.isBlank(programDeadline)){
-			return null;
-		}
+        if (StringUtils.isBlank(programDeadline)) {
+            return null;
+        }
+
 		try {
-			batchDeadline = new SimpleDateFormat("dd MMM yyyy").parse(programDeadline);
-		} catch (ParseException ignore) {
-			try {
-				batchDeadline = new SimpleDateFormat("dd-MMM-yyyy").parse(programDeadline);
-			} catch (ParseException e) {
-				throw new InvalidParameterFormatException(e);			
-			}
+		    batchDeadline = DateUtils.parseDate(programDeadline, new String[] {"dd MMM yyyy", "dd-MMM-yyyy"});
+		} catch (ParseException e) {
+			throw new InvalidParameterFormatException(e);			
 		}
+		
 		return batchDeadline;
 	}
 

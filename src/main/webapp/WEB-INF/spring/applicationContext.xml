@@ -18,6 +18,8 @@
     <import resource="uclIntegrationContext.xml" />
     
 <!--     <import resource="profilingContext.xml"/> -->
+
+    <import resource="dwrContext.xml" />
     
     <mvc:interceptors>
         <bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor" />
@@ -61,8 +63,6 @@
         </property>
     </bean>
 
-    <import resource="dwrContext.xml" />
-
     <!-- freemarker config -->
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
@@ -93,12 +93,8 @@
         <property name="defaultThemeName" value="default" />
     </bean>
 
-    <import resource="hibernateEntities.xml" />
-
-<!--     Mail configuration -->
-<!-- Use this bean if you want to debug outgoing email messages locally on your development machine. -->
-<!--     <bean id="mailSender"  class="com.zuehlke.pgadmissions.mail.FakeLoggingMailSender"> -->
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    <!-- Mail configuration -->
+    <bean id="mailSender" class="${email.sender}">
         <property name="host">
             <value>${email.server}</value>
         </property>

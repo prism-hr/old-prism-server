@@ -5,8 +5,11 @@ import java.io.StringWriter;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
-public class StacktraceDump {
+public final class StacktraceDump {
 
+    private StacktraceDump() {
+    }
+    
      public static String forException(Throwable t) {
         StringWriter buf = new StringWriter(5000);
         PrintWriter pw = new PrintWriter(buf);

@@ -17,9 +17,9 @@ public class ReferenceValidator extends AbstractValidator {
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "documents", "file.upload.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "text.field.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", "dropdown.radio.select.none");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", "dropdown.radio.select.none");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForUCL", EMPTY_DROPDOWN_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableForProgramme", EMPTY_DROPDOWN_ERROR_MESSAGE);
 	}
 
 }

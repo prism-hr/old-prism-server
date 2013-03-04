@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 
 @Controller
 @RequestMapping(value = { "applicationinternal" })

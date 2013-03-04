@@ -10,7 +10,7 @@ public  abstract class FormSectionObjectValidator extends AbstractValidator {
     @Override
     public void addExtraValidation(final Object target, final Errors errors) {
 		if(ApplicationFormStatus.UNSUBMITTED != ((FormSectionObject)target).getApplication().getStatus() && !((FormSectionObject)target).isAcceptedTerms()) {
-			errors.rejectValue("acceptedTerms", "text.field.empty");
+			errors.rejectValue("acceptedTerms", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 	};
 }

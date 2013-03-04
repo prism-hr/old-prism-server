@@ -16,6 +16,10 @@ import org.springframework.validation.Errors;
 
 public abstract class AbstractValidator implements org.springframework.validation.Validator, ApplicationContextAware, ConstraintValidatorFactory {
 
+    protected static final String EMPTY_FIELD_ERROR_MESSAGE = "text.field.empty";
+    
+    protected static final String EMPTY_DROPDOWN_ERROR_MESSAGE = "dropdown.radio.select.none";
+    
     @Autowired
     private Validator validator;
 

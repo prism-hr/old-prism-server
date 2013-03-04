@@ -23,12 +23,12 @@ public class AdditionalInformationValidator extends FormSectionObjectValidator i
 
 		Boolean hasConvictions = info.getConvictions();
 		if (hasConvictions == null) {
-			errors.rejectValue("convictions", "dropdown.radio.select.none");
+			errors.rejectValue("convictions", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		} else {
 			if (hasConvictions) {
 				String convictionsText = info.getConvictionsText();
 				if (convictionsText == null || !StringUtils.hasText(convictionsText)) {
-					errors.rejectValue("convictionsText", "text.field.empty");
+					errors.rejectValue("convictionsText", EMPTY_FIELD_ERROR_MESSAGE);
 				}
 			} 
 		}

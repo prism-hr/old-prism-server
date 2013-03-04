@@ -61,7 +61,6 @@ public class MimeMessagePreparatorFactory {
 	}
 
 	class ProductionMessagePreparator implements MimeMessagePreparator {
-	    
 		protected InternetAddress[] toAddresses;
 		protected InternetAddress[] ccAddresses;
 		private final String subject;
@@ -70,15 +69,22 @@ public class MimeMessagePreparatorFactory {
 		private final InternetAddress replyToAddress;
 		private final PdfAttachmentInputSource[] attachments;
 
-		public ProductionMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
-				String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, PdfAttachmentInputSource... attachments) {
-			this.toAddresses = toAddresses;
-			this.ccAddresses = ccAddresses;
-			this.subject = subject;
+        public ProductionMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,
+                String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress,
+                PdfAttachmentInputSource... attachments) {
+            this.subject = subject;
 			this.templatename = templatename;
 			this.model = model;
 			this.replyToAddress = replyToAddress;
 			this.attachments = attachments;
+			
+			if (toAddresses != null) {
+			    this.toAddresses = Arrays.copyOf(toAddresses, toAddresses.length);
+			}
+			
+	         if (ccAddresses != null) {
+	                this.ccAddresses = Arrays.copyOf(ccAddresses, ccAddresses.length);
+	         }
 		}
 
 		protected String getSubject() {

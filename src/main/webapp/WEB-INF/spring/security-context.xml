@@ -10,7 +10,7 @@
         <logout logout-url="/j_spring_security_logout" />
         <intercept-url pattern="/reportDocumentUploadFailure" access="permitAll" />
         
-        <intercept-url pattern="/doSend" access="permitAll" />
+        <intercept-url pattern="/doSend/**" access="permitAll" />
         
         
         <intercept-url pattern="/login" access="permitAll" />

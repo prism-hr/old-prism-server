@@ -21,7 +21,13 @@ public class JmsSender {
     }
     
     @Transactional
-    public void doSend() {
-        template.convertAndSend(mailQueue, "Hello World");
+    public void doSend(int type) {
+    	//template.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
+    	if (type  == 1) {
+    		template.convertAndSend(mailQueue, "Hello World");
+    	}
+    	else {
+    		template.convertAndSend(mailQueue, "This has to go through");
+    	}
     }
 }

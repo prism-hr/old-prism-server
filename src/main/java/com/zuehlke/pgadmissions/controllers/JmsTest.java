@@ -19,10 +19,17 @@ public class JmsTest {
     public JmsTest() {
     }
     
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value="1", method = RequestMethod.GET)
     @ResponseBody
-    public String doSend() {
-        jmsSender.doSend();
-        return "OK";
+    public String doSend1() {
+        jmsSender.doSend(1);
+        return "OK1";
+    }
+
+    @RequestMapping(value="2", method = RequestMethod.GET)
+    @ResponseBody
+    public String doSend2() {
+    	jmsSender.doSend(2);
+    	return "OK1";
     }
 }

@@ -338,6 +338,12 @@
                         <address-full-policy>BLOCK</address-full-policy>
                         <message-counter-history-day-limit>10</message-counter-history-day-limit>
                     </address-setting>
+                    <address-setting match="pgadmissions-portico">
+                        <!-- 15min -->
+                        <redelivery-delay>900000</redelivery-delay>
+                        <dead-letter-address>jms.queue.DLQ</dead-letter-address>
+                        <max-delivery-attempts>4</max-delivery-attempts>
+                    </address-setting>                    
                 </address-settings>
 
                 <jms-connection-factories>

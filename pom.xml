@@ -14,7 +14,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!--  -->
     <distributionManagement>
         <repository>
             <id>C12545-2</id>
@@ -304,27 +303,6 @@
             <scope>test</scope>
             <version>${spring.version}</version>
         </dependency>
-    
-        <!-- Testing with Cucumber -->
-        <!--
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <scope>test</scope>
-            <version>1.0.0.RC14</version>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>1.0.0.RC14</version>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <scope>test</scope>
-            <version>1.0.0.RC14</version>
-        </dependency>
-        -->
     </dependencies>
 
     <build>
@@ -592,6 +570,7 @@
                 </plugins>
             </build>
         </profile>
+        
         <profile>
             <id>ci</id>
             <properties>
@@ -620,6 +599,7 @@
                 </plugins>
             </build>
         </profile>
+        
         <profile>
             <id>ucl-test</id>
             <properties>

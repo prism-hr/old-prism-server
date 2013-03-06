@@ -20,7 +20,7 @@ public class AssignReviewersReviewerPropertyEditor extends PropertyEditorSupport
 	private final ApplicationsService applicationsService;
 	private final EncryptionHelper encryptionHelper;
 
-	AssignReviewersReviewerPropertyEditor() {
+	public AssignReviewersReviewerPropertyEditor() {
 		this(null, null, null);
 	}
 

@@ -2,11 +2,13 @@ package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.hibernate.ObjectNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -118,7 +120,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 	}
 
-	@Test
+	@Test(expected = ObjectNotFoundException.class)
 	public void shouldDeleteFundingProofOfAward() throws ParseException {
 		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).type(DocumentType.SUPPORTING_FUNDING).build();
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
@@ -136,8 +138,8 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 		Integer id = document.getId();
 		dao.deleteDocument(document);
-		flushAndClearSession();
-		assertNull(sessionFactory.getCurrentSession().get(Document.class, id));
+		
+		sessionFactory.getCurrentSession().get(Document.class, id);
 	}
 
 	@Test
@@ -153,6 +155,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		Integer id = document.getId();
 		dao.deleteDocument(document);
 		flushAndClearSession();
+		
 		assertNull(sessionFactory.getCurrentSession().get(Document.class, id));
 	}
 
@@ -198,9 +201,16 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 		Integer id = document.getId();
 		dao.deleteDocument(document);
-		flushAndClearSession();
-		assertNull(sessionFactory.getCurrentSession().get(Document.class, id));
+
+		try {
+		    sessionFactory.getCurrentSession().get(Document.class, id);
+		    fail("Should have thrown an ObjectNotFoundException");
+		} catch (ObjectNotFoundException e) {
+		    // do nothing
+		}
+		
 		languageQualification = (LanguageQualification) sessionFactory.getCurrentSession().get(LanguageQualification.class, languageQualification.getId());
+		
 		assertNull(languageQualification.getLanguageQualificationDocument());
 	}
 

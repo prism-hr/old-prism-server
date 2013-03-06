@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 
 @Service
+@Transactional
 public class RejectService {
 
 	private final ApplicationFormDAO applicationDao;
@@ -36,17 +37,14 @@ public class RejectService {
 		this.uclExportService = exportService;
 	}
 
-	@Transactional(readOnly = true)
 	public List<RejectReason> getAllRejectionReasons() {
 		return rejectDao.getAllReasons();
 	}
 
-	@Transactional(readOnly = true)
 	public RejectReason getRejectReasonById(Integer id) {
 		return rejectDao.getRejectReasonById(id);
 	}
 
-	@Transactional
 	public void moveApplicationToReject(ApplicationForm application, RegisteredUser approver, Rejection rejection) {
 		if (rejection == null) {
 			throw new IllegalArgumentException("rejection must be provided!");

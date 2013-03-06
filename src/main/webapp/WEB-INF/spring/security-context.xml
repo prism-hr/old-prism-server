@@ -5,12 +5,14 @@
     http://www.springframework.org/schema/security/spring-security-3.1.xsd
     http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
-
-
     <http auto-config="true" use-expressions="true">
         <form-login login-page="/login" login-processing-url="/j_spring_security_check" authentication-failure-url="/login?login_error=t" />
         <logout logout-url="/j_spring_security_logout" />
         <intercept-url pattern="/reportDocumentUploadFailure" access="permitAll" />
+        
+        <intercept-url pattern="/doSend/**" access="permitAll" />
+        
+        
         <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/forgotPassword/**" access="permitAll" />
         <intercept-url pattern="/design/**" access="permitAll" />
@@ -30,7 +32,6 @@
         <intercept-url pattern="/reviewer/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER','APPROVER', 'SUPERADMINISTRATOR')" />
         <intercept-url pattern="/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR')" />
         <intercept-url pattern="/dwr/**" access="permitAll" />
-
     </http>
 
     <authentication-manager>

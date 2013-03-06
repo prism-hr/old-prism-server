@@ -16,7 +16,7 @@ public class CountriesDAO {
 
 	private final SessionFactory sessionFactory;
 
-	CountriesDAO() {
+	public CountriesDAO() {
 		this(null);
 	}
 

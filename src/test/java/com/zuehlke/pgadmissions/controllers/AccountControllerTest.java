@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.security.PgAdmissionSwitchUserAuthenticationProvider;
+import com.zuehlke.pgadmissions.services.SwitchUserService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AccountValidator;
 import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
@@ -39,7 +39,7 @@ public class AccountControllerTest {
     private AccountController accountController;
     private UserService userServiceMock;
     private RegisteredUser student;
-    private PgAdmissionSwitchUserAuthenticationProvider authenticationProviderMock;
+    private SwitchUserService switchUserService;
     private SwitchAndLinkUserAccountDTOValidator switchAndLinkAccountDTOValidatorMock;
 
     private AccountValidator accountValidatorMock;
@@ -121,18 +121,18 @@ public class AccountControllerTest {
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentAccount, desiredAccount);
         token.setDetails(new WebAuthenticationDetails(requestMock));
-        EasyMock.expect(authenticationProviderMock.authenticate(EasyMock.anyObject(UsernamePasswordAuthenticationToken.class))).andReturn(token);
+        EasyMock.expect(switchUserService.authenticate(EasyMock.anyObject(UsernamePasswordAuthenticationToken.class))).andReturn(token);
 
         EasyMock.expect(SecurityContextHolder.getContext()).andReturn(mockSecurityContext);
 
         mockSecurityContext.setAuthentication(token);
 
         PowerMock.replay(SecurityContextHolder.class);
-        EasyMock.replay(userServiceMock, mockSecurityContextHolder, mockSecurityContext, authenticationProviderMock);
+        EasyMock.replay(userServiceMock, mockSecurityContextHolder, mockSecurityContext, switchUserService);
 
         assertEquals("OK", accountController.switchAccounts(desiredAccount.getEmail(), requestMock));
 
-        EasyMock.verify(userServiceMock, mockSecurityContextHolder, mockSecurityContext, authenticationProviderMock);
+        EasyMock.verify(userServiceMock, mockSecurityContextHolder, mockSecurityContext, switchUserService);
         PowerMock.verifyAll();
     }
 
@@ -141,8 +141,8 @@ public class AccountControllerTest {
         userServiceMock = EasyMock.createMock(UserService.class);
         accountValidatorMock = EasyMock.createMock(AccountValidator.class);
         switchAndLinkAccountDTOValidatorMock = EasyMock.createMock(SwitchAndLinkUserAccountDTOValidator.class);
-        authenticationProviderMock = EasyMock.createMock(PgAdmissionSwitchUserAuthenticationProvider.class);
-        accountController = new AccountController(userServiceMock, accountValidatorMock, switchAndLinkAccountDTOValidatorMock, authenticationProviderMock);
+        switchUserService = EasyMock.createMock(SwitchUserService.class);
+        accountController = new AccountController(userServiceMock, accountValidatorMock, switchAndLinkAccountDTOValidatorMock, switchUserService);
         bindingResultMock = EasyMock.createMock(BindingResult.class);
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").password("password").firstName("mark").firstName2("bob")

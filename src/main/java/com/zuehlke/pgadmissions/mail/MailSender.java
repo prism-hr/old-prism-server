@@ -10,7 +10,8 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -21,10 +22,13 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public abstract class MailSender {
 
-    private final Logger log = Logger.getLogger(MailSender.class);
-	protected final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
-	protected final JavaMailSender javaMailSender;
-	private final MessageSource messageSource;
+    private final Logger log = LoggerFactory.getLogger(MailSender.class);
+	
+    protected final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
+	
+    protected final JavaMailSender javaMailSender;
+	
+    private final MessageSource messageSource;
 	
 	public MailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource messageSource) {
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;

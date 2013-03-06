@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-
 import com.zuehlke.pgadmissions.services.CountryService;
 
 @Component
@@ -17,7 +16,7 @@ public class CountryPropertyEditor extends PropertyEditorSupport {
 	private final CountryService countryService;
 	private final EncryptionHelper encryptionHelper;
 
-	CountryPropertyEditor(){
+	public CountryPropertyEditor(){
 		this(null, null);
 	}
 	

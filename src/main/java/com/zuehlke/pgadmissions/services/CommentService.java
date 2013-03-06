@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Service
+@Transactional
 public class CommentService {
 
     private final CommentDAO commentDAO;
@@ -30,7 +31,6 @@ public class CommentService {
         this.commentDAO = commentDAO;
     }
 
-    @Transactional
     public void save(Comment comment) {
         commentDAO.save(comment);
     }
@@ -39,22 +39,18 @@ public class CommentService {
         return commentDAO.get(id);
     }
 
-    @Transactional
     public List<ReviewComment> getReviewCommentsDueNotification() {
         return commentDAO.getReviewCommentsDueNotification();
     }
 
-    @Transactional
     public List<InterviewComment> getInterviewCommentsDueNotification() {
         return commentDAO.getInterviewCommentsDueNotification();
     }
 
-    @Transactional
     public List<Comment> getAllComments() {
         return commentDAO.getAllComments();
     }
 
-    @Transactional
     public void declineReview(RegisteredUser user, ApplicationForm application) {
         Reviewer currentReviewer = user.getReviewerForCurrentUserFromLatestReviewRound(application);
         if (!commentDAO.getReviewCommentsForReviewerAndApplication(currentReviewer, application).isEmpty()) {
@@ -73,7 +69,6 @@ public class CommentService {
         save(reviewComment);
     }
 
-    @Transactional
     public void createDelegateComment(RegisteredUser user, ApplicationForm application) {
         Comment comment = getNewGenericComment();
         comment.setApplication(application);
@@ -91,5 +86,4 @@ public class CommentService {
     public ReviewComment getNewReviewComment() {
         return new ReviewComment();
     }
-
 }

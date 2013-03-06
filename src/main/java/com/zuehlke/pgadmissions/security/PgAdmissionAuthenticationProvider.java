@@ -2,7 +2,8 @@ package com.zuehlke.pgadmissions.security;
 
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,7 +21,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class PgAdmissionAuthenticationProvider implements AuthenticationProvider {
 
-    private Logger log = Logger.getLogger(PgAdmissionAuthenticationProvider.class);
+    private Logger log = LoggerFactory.getLogger(PgAdmissionAuthenticationProvider.class);
     
 	private final UserDetailsService userDetailsService;
 	
@@ -30,6 +31,29 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 		this.userDetailsService = userDetailsService;
 		this.encryptionUtils = encryptionUtils;
 	}
+	
+//	@Override
+//    public Authentication authenticate(final Authentication preProcessToken) throws AuthenticationException {
+//        return defaultTransactionTemplate.execute(new TransactionCallback<UsernamePasswordAuthenticationToken>() {
+//            @Override
+//            public UsernamePasswordAuthenticationToken doInTransaction(TransactionStatus status) {
+//                UsernamePasswordAuthenticationToken authentication = null;
+//                if (preProcessToken.getPrincipal() == null || preProcessToken.getCredentials() == null) {
+//                    throw new BadCredentialsException("missing username or password");
+//                }
+//                UserDetails user;
+//                try {
+//                    user = findAndValidateUser(preProcessToken);
+//                    authentication = new UsernamePasswordAuthenticationToken(preProcessToken.getPrincipal(),
+//                            preProcessToken.getCredentials(), user.getAuthorities());
+//                    authentication.setDetails(user);
+//                } catch (NoSuchAlgorithmException e) {      
+//                    log.error(e.getMessage(), e);
+//                }
+//                return authentication;
+//            }
+//        });
+//    }
 
 	@Override
 	@Transactional

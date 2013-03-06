@@ -36,7 +36,7 @@ public class InterviewCommentController {
 	private final CommentService commentService;
 	private final DocumentPropertyEditor documentPropertyEditor;
 
-	InterviewCommentController() {
+	public InterviewCommentController() {
 		this(null, null, null, null, null);
 	}
 

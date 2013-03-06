@@ -11,9 +11,10 @@ public class ApprovalRoundDAO {
 
 	private final SessionFactory sessionFactory;
 
-	ApprovalRoundDAO(){
+	public ApprovalRoundDAO(){
 		this(null);
 	}
+	
 	@Autowired
 	public ApprovalRoundDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;

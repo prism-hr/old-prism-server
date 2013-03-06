@@ -9,20 +9,20 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.PersonService;
 
 @Component
 public class PersonPropertyEditor extends PropertyEditorSupport {
 
 	private EncryptionHelper encryptionHelper;
-	private final PersonDAO personDAO;
+	private final PersonService personService;
 
 	@Autowired
-	public PersonPropertyEditor(EncryptionHelper encryptionHelper, PersonDAO personDAO) {
+	public PersonPropertyEditor(EncryptionHelper encryptionHelper, PersonService personService) {
 		this.encryptionHelper = encryptionHelper;
-		this.personDAO = personDAO;
+		this.personService = personService;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -38,7 +38,7 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 			Map<String, Object> properties = objectMapper.readValue(jsonStirng, Map.class);
 			Person registryUser = null;
 			if (StringUtils.isNotBlank((String) properties.get("id"))) {
-				registryUser = personDAO.getPersonWithId(encryptionHelper.decryptToInteger((String) properties.get("id")));
+				registryUser = personService.getPersonWithId(encryptionHelper.decryptToInteger((String) properties.get("id")));
 			}else{
 				registryUser = new Person();	
 			}
@@ -60,6 +60,5 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 		Person person = (Person) getValue();
 		return "{\"id\": \"" + encryptionHelper.encrypt(person.getId()) + "\",\"firstname\": \"" + person.getFirstname() + "\",\"lastname\": \""
 				+ person.getLastname() + "\",\"email\": \"" + person.getEmail() + "\"}";
-
 	}
 }

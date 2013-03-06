@@ -12,9 +12,8 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 public class ApplicationFormPropertyEditor extends PropertyEditorSupport {
 
 	private final ApplicationsService applicationsService;
-	
 
-	ApplicationFormPropertyEditor() {
+	public ApplicationFormPropertyEditor() {
 		this(null);
 	}
 	
@@ -30,7 +29,6 @@ public class ApplicationFormPropertyEditor extends PropertyEditorSupport {
 			return;
 		}
 		setValue(applicationsService.getApplicationByApplicationNumber(strId));
-
 	}
 
 	@Override

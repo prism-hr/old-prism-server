@@ -10,7 +10,8 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -32,7 +33,7 @@ public class MailService {
     private final JavaMailSender mailsender;
     private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 
-    private final Logger log = Logger.getLogger(MailService.class);
+    private final Logger log = LoggerFactory.getLogger(MailService.class);
     private final MessageSource msgSource;
 
     public MailService() {

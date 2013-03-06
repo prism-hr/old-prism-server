@@ -20,7 +20,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
-import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -37,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
+import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
@@ -50,7 +50,7 @@ public class SubmitApplicationFormControllerTest {
 
 	private ApplicationFormValidator applicationFormValidatorMock;
 
-	private StageDurationDAO stageDurationDAOMock;
+	private StageDurationService stageDurationServiceMock;
 
 	private EventFactory eventFactoryMock;
 
@@ -163,13 +163,13 @@ public class SubmitApplicationFormControllerTest {
 		StageDuration stageDuration = new StageDuration();
 		stageDuration.setDuration(8);
 		stageDuration.setUnit(DurationUnitEnum.HOURS);
-		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
+		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
 
 		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.VALIDATION)).andReturn(event);
 		
-		EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationDAOMock, eventFactoryMock);
+		EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock);
 		
 		applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
 
@@ -193,9 +193,9 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		StageDuration stageDuration = new StageDuration();
 		stageDuration.setDuration(1);
-		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
+		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationDAOMock);
+		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationServiceMock);
 		String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
 		assertEquals("redirect:/applications?messageCode=application.submitted&application=abc" , view);
 	}
@@ -207,9 +207,9 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		StageDuration stageDuration = new StageDuration();
 		stageDuration.setDuration(1);
-		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
+		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationDAOMock);
+		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationServiceMock);
 		applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
 		assertEquals(httpServletRequestMock.getRemoteAddr(), applicationForm.getIpAddressAsString());
 	}
@@ -278,9 +278,9 @@ public class SubmitApplicationFormControllerTest {
 	public void shouldSetValidationDateAfterOneDayOfBatchDeadlineIfBatchDeadlineIsSetAndValidationStageDurationIsOneDay() throws ParseException{
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).batchDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/12")).build();
 		StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
-		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
+		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
 		EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
-		EasyMock.replay(stageDurationDAOMock, stageDurationMock);
+		EasyMock.replay(stageDurationServiceMock, stageDurationMock);
 		applicationController.calculateAndSetValidationDueDate(applicationForm);
 		Date oneDayMore = new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/13");
 		Assert.assertEquals(oneDayMore.getTime(), applicationForm.getDueDate().getTime());
@@ -290,9 +290,9 @@ public class SubmitApplicationFormControllerTest {
 	public void shouldSetValidationDateToCurrentDatePlusValidationStageIntervalIfBatchDeadlineIsNotSet() throws ParseException{
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
 		StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
-		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
+		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
 		EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
-		EasyMock.replay(stageDurationDAOMock, stageDurationMock);
+		EasyMock.replay(stageDurationServiceMock, stageDurationMock);
 		applicationController.calculateAndSetValidationDueDate(applicationForm);
 		Calendar tomorrow = Calendar.getInstance();
 		tomorrow.add(Calendar.MINUTE, 1440);
@@ -305,9 +305,9 @@ public class SubmitApplicationFormControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 
 		applicationFormValidatorMock = EasyMock.createMock(ApplicationFormValidator.class);
-		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
+		stageDurationServiceMock = EasyMock.createMock(StageDurationService.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		applicationController = new SubmitApplicationFormController(applicationsServiceMock,userServiceMock,  applicationFormValidatorMock, stageDurationDAOMock,eventFactoryMock);
+		applicationController = new SubmitApplicationFormController(applicationsServiceMock,userServiceMock,  applicationFormValidatorMock, stageDurationServiceMock,eventFactoryMock);
 		httpServletRequestMock = new MockHttpServletRequest();
 
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

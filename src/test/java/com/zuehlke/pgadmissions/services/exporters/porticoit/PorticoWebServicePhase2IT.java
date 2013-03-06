@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Assert;
@@ -43,8 +42,6 @@ import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 @Ignore
 public class PorticoWebServicePhase2IT {
 
-    private static final Logger LOG = Logger.getLogger(PorticoWebServicePhase2IT.class);
-    
     private static final String TEST_REPORT_FILENAME = "PorticoWebServicePhase2IT.csv";
     
     @Autowired
@@ -93,7 +90,7 @@ public class PorticoWebServicePhase2IT {
             try {
                 uclExportService.sendToPortico(form, new CsvTransferListener());
             } catch (Exception e) {
-                LOG.error(e);
+                // do nothing
             } finally {
                 finish();
             }

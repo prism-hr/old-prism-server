@@ -16,9 +16,10 @@ public class InterviewerPropertyEditor extends PropertyEditorSupport {
 	private final UserService userService;
 	private final EncryptionHelper encryptionHelper;
 
-	InterviewerPropertyEditor(){
+	public InterviewerPropertyEditor(){
 		this(null, null);
 	}
+	
 	@Autowired
 	public InterviewerPropertyEditor(UserService userService, EncryptionHelper encryptionHelper) {
 		this.userService = userService;

@@ -36,7 +36,7 @@ public class ApplicationFormDAO {
 
 	private final SessionFactory sessionFactory;
 
-	ApplicationFormDAO() {
+	public ApplicationFormDAO() {
 		this(null);
 	}
 

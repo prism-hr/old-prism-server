@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
-import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
@@ -76,7 +75,7 @@ public class ApprovalServiceTest {
 
     private ApprovalRoundDAO approvalRoundDAOMock;
 
-    private StageDurationDAO stageDurationDAOMock;
+    private StageDurationService stageDurationDAOMock;
 
     private ProgrammeDetailDAO programmeDetailDAOMock;
 
@@ -101,7 +100,7 @@ public class ApprovalServiceTest {
         supervisorDAOMock = EasyMock.createMock(SupervisorDAO.class);
         applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         approvalRoundDAOMock = EasyMock.createMock(ApprovalRoundDAO.class);
-        stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
+        stageDurationDAOMock = EasyMock.createMock(StageDurationService.class);
         programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
         eventFactoryMock = EasyMock.createMock(EventFactory.class);
         uclExportServiceMock = EasyMock.createMock(UclExportService.class);

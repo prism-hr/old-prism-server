@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/integrationTestContext.xml")
+@ContextConfiguration("/testIntegrationContext.xml")
 public class RejectServiceIntegrationTest {
 
 	@Autowired

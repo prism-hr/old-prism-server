@@ -4,7 +4,8 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,7 +16,7 @@ import com.zuehlke.pgadmissions.services.importers.Importer;
 
 public class XMLDataImportTask {
 
-    private static final Logger log = Logger.getLogger(XMLDataImportTask.class);
+    private final Logger log = LoggerFactory.getLogger(XMLDataImportTask.class);
 
     private final List<Importer> importers;
     private final DataImporterMailSender mailSender;

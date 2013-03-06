@@ -16,7 +16,7 @@ public class QualificationTypeDAO {
 
     private final SessionFactory sessionFactory;
 
-    QualificationTypeDAO() {
+    public QualificationTypeDAO() {
         this(null);
     }
 

@@ -10,7 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -57,7 +58,7 @@ public class PdfDocumentBuilder {
     
     private static final String NOT_PROVIDED = "Not Provided";
 
-    private static final Logger LOG = Logger.getLogger(PdfDocumentBuilder.class);
+    private final Logger log = LoggerFactory.getLogger(PdfDocumentBuilder.class);
     
     private static Font boldFont = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
     private static Font smallBoldFont = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
@@ -134,7 +135,7 @@ public class PdfDocumentBuilder {
                 try {
                     buildDocument(applicationForm, document, writer);
                 } catch (Exception e) {
-                    LOG.warn("Error in generating pdf for application " + applicationForm.getApplicationNumber(), e);
+                    log.warn("Error in generating pdf for application " + applicationForm.getApplicationNumber(), e);
                 }
                 document.newPage();
             }
@@ -1021,7 +1022,7 @@ public class PdfDocumentBuilder {
                     try {
                         readPdf(document, doc, writer);
                     } catch (Exception e) {
-                        LOG.warn(String.format("Error in generating pdf while appending supporting document %s for %s", application.getApplicationNumber(), doc.getFileName()), e);
+                        log.warn(String.format("Error in generating pdf while appending supporting document %s for %s", application.getApplicationNumber(), doc.getFileName()), e);
                     }
                 }
             } else if (obj instanceof ReferenceComment) {
@@ -1061,7 +1062,7 @@ public class PdfDocumentBuilder {
                     try {
                         readPdf(document, refDocument, writer);
                     } catch (Exception e) {
-                        LOG.warn(String.format("Error in generating pdf while appending supporting document %s for %s",
+                        log.warn(String.format("Error in generating pdf while appending supporting document %s for %s",
                                 application.getApplicationNumber(), refDocument.getFileName()), e);
                     }
                 }

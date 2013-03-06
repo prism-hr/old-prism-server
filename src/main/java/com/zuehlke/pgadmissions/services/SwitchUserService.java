@@ -1,9 +1,8 @@
-package com.zuehlke.pgadmissions.security;
+package com.zuehlke.pgadmissions.services;
 
 import java.util.List;
 
 import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
@@ -13,16 +12,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Service
-public class PgAdmissionSwitchUserAuthenticationProvider implements AuthenticationProvider {
+public class SwitchUserService {
 
-    public PgAdmissionSwitchUserAuthenticationProvider() {
+    public SwitchUserService() {
     }
     
-    @Override
+    @Transactional
     public Authentication authenticate(Authentication preProcessToken) throws AuthenticationException {
         if (preProcessToken.getPrincipal() == null || preProcessToken.getCredentials() == null) {
             throw new BadCredentialsException("missing username or password");
@@ -64,11 +64,6 @@ public class PgAdmissionSwitchUserAuthenticationProvider implements Authenticati
         return authentication;
     }
 
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz);
-    }
-    
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {
             if (entry.getId().equals(user.getId())) {

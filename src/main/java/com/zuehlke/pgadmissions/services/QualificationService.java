@@ -11,44 +11,43 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 
 @Service
+@Transactional
 public class QualificationService {
 
-	private final QualificationDAO qualificationDAO;
-	
-	public QualificationService() {
-		this(null);
-	}
+    private final QualificationDAO qualificationDAO;
 
-	@Autowired
-	public QualificationService(final QualificationDAO qualificationDAO) {
-		this.qualificationDAO = qualificationDAO;
-	}
+    public QualificationService() {
+        this(null);
+    }
 
-	public Qualification getQualificationById(Integer id) {
-		return qualificationDAO.getQualificationById(id);
-	}
+    @Autowired
+    public QualificationService(final QualificationDAO qualificationDAO) {
+        this.qualificationDAO = qualificationDAO;
+    }
 
-	@Transactional
-	public void delete(Qualification qualification) {
-		qualificationDAO.delete(qualification);
+    public Qualification getQualificationById(Integer id) {
+        return qualificationDAO.getQualificationById(id);
+    }
 
-	}
+    public void delete(Qualification qualification) {
+        qualificationDAO.delete(qualification);
 
-	@Transactional
-	public void save(Qualification qualification) {
-		qualificationDAO.save(qualification);
-	}
+    }
 
-	@Transactional
-    public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> qualificationsSendToPortico) {
+    public void save(Qualification qualification) {
+        qualificationDAO.save(qualification);
+    }
 
-	    for (Qualification qualification : applicationForm.getQualifications()) {
-	        qualification.setSendToUCL(false);
-	    }
-	    
-	    for (Integer qualificationId : qualificationsSendToPortico) {
-	        Qualification qualification = qualificationDAO.getQualificationById(qualificationId);
-	        qualification.setSendToUCL(true);
-	    }
+    public void selectForSendingToPortico(final ApplicationForm applicationForm,
+            final List<Integer> qualificationsSendToPortico) {
+
+        for (Qualification qualification : applicationForm.getQualifications()) {
+            qualification.setSendToUCL(false);
+        }
+
+        for (Integer qualificationId : qualificationsSendToPortico) {
+            Qualification qualification = qualificationDAO.getQualificationById(qualificationId);
+            qualification.setSendToUCL(true);
+        }
     }
 }

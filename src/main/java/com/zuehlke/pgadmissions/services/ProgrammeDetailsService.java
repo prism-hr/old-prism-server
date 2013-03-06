@@ -19,13 +19,14 @@ import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 
 @Service
+@Transactional
 public class ProgrammeDetailsService {
 
 	private final ProgrammeDetailDAO programmeDetailDAO;
 	private final ProgramInstanceDAO programInstanceDAO;
 	private final SourcesOfInterestDAO sourcesOfInterestDAO;
 
-	ProgrammeDetailsService() {
+	public ProgrammeDetailsService() {
 		this(null, null, null);
 	}
 
@@ -37,12 +38,10 @@ public class ProgrammeDetailsService {
 		this.sourcesOfInterestDAO = sourcesOfInterestDAO;
 	}
 
-	@Transactional
 	public void save(ProgrammeDetails pd) {
 		programmeDetailDAO.save(pd);
 	}
 	
-	@Transactional
 	public List<StudyOption> getAvailableStudyOptions(Program program) {
 		HashSet<StudyOption> options = new HashSet<StudyOption>();
 		List<ProgramInstance> activeProgramInstances = programInstanceDAO.getActiveProgramInstances(program);
@@ -53,7 +52,6 @@ public class ProgrammeDetailsService {
 		return new ArrayList<StudyOption>(options);
 	}
 	
-	@Transactional
     public String getStudyOptionCodeForProgram(Program program, String studyOption) {
         for (ProgramInstance programInstance :  programInstanceDAO.getActiveProgramInstances(program)) {
             if (StringUtils.equalsIgnoreCase(programInstance.getStudyOption(), studyOption)) {
@@ -63,12 +61,10 @@ public class ProgrammeDetailsService {
         return null;
     }
 
-	@Transactional
 	public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, String studyOption) {
 	    return programInstanceDAO.getActiveProgramInstancesOrderedByApplicationStartDate(program, studyOption);
 	}
 	
-	@Transactional
     public List<SourcesOfInterest> getAllEnabledSourcesOfInterest() {
         return sourcesOfInterestDAO.getAllEnabledSourcesOfInterest();
     }

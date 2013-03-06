@@ -16,7 +16,7 @@ public class DocumentDAO {
 
 	private final SessionFactory sessionFactory;
 
-	DocumentDAO() {
+	public DocumentDAO() {
 		this(null);
 	}
 

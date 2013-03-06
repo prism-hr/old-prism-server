@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent;
@@ -23,11 +24,12 @@ import com.zuehlke.pgadmissions.dto.TimelinePhase;
 import com.zuehlke.pgadmissions.dto.TimelineReference;
 
 @Service
+@Transactional
 public class TimelineService {
 
 	private final UserService userService;
 
-	TimelineService() {
+	public TimelineService() {
 		this(null);
 	}
 

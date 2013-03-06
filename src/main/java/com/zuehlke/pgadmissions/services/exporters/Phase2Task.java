@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Task for phase 2 of application form transfer. This task has the following general plan:
@@ -9,7 +10,7 @@ import org.apache.log4j.Logger;
  *   3. Handle sftp errors (if any).
  */
 public class Phase2Task implements Runnable {
-    private static final Logger log = Logger.getLogger(Phase1Task.class);
+    private final Logger log = LoggerFactory.getLogger(Phase1Task.class);
 
     private Integer applicationId;
     private Long transferId;

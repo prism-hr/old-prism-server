@@ -7,7 +7,8 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
+import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
@@ -33,7 +34,7 @@ import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 @RequestMapping(value = { "/submit", "application" })
 public class SubmitApplicationFormController {
 
-    private static final Logger log = Logger.getLogger(SubmitApplicationFormController.class);
+    private final Logger log = LoggerFactory.getLogger(SubmitApplicationFormController.class);
 
     private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "/private/pgStudents/form/main_application_page";
 
@@ -43,7 +44,7 @@ public class SubmitApplicationFormController {
 
     private final ApplicationFormValidator applicationFormValidator;
 
-    private final StageDurationDAO stageDurationDAO;
+    private final StageDurationService stageDurationService;
 
     private final ApplicationsService applicationService;
 
@@ -56,12 +57,13 @@ public class SubmitApplicationFormController {
     }
 
     @Autowired
-    public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationDAO stageDurationDAO, EventFactory eventFactory) {
+    public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService,
+            ApplicationFormValidator applicationFormValidator, StageDurationService stageDurationService,
+            EventFactory eventFactory) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
-        this.stageDurationDAO = stageDurationDAO;
+        this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
     }
 
@@ -95,7 +97,7 @@ public class SubmitApplicationFormController {
         if (applicationForm.getBatchDeadline() != null) {
             dueDate.setTime(applicationForm.getBatchDeadline());
         }
-        StageDuration validationDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.VALIDATION);
+        StageDuration validationDuration = stageDurationService.getByStatus(ApplicationFormStatus.VALIDATION);
         dueDate.add(Calendar.MINUTE, validationDuration.getDurationInMinutes());
         applicationForm.setDueDate(dueDate.getTime());
     }

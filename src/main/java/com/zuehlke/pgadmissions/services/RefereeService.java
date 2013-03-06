@@ -9,7 +9,8 @@ import java.util.Map;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -35,11 +36,12 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Service
+@Transactional
 public class RefereeService {
 
     private final JavaMailSender mailsender;
     private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
-    private final Logger log = Logger.getLogger(RefereeService.class);
+    private final Logger log = LoggerFactory.getLogger(RefereeService.class);
     private final RefereeDAO refereeDAO;
     private final UserService userService;
     private final RoleDAO roleDAO;
@@ -71,27 +73,22 @@ public class RefereeService {
         this.encryptionHelper = encryptionHelper;
     }
 
-    @Transactional
     public Referee getRefereeById(Integer id) {
         return refereeDAO.getRefereeById(id);
     }
 
-    @Transactional
     public void save(Referee referee) {
         refereeDAO.save(referee);
     }
 
-    @Transactional
     public void refresh(Referee referee) {
         refereeDAO.refresh(referee);
     }
 
-    @Transactional
     public List<Referee> getRefereesWhoHaveNotProvidedReference(ApplicationForm form) {
         return refereeDAO.getRefereesWhoDidntProvideReferenceYet(form);
     }
 
-    @Transactional
     public void saveReferenceAndSendMailNotifications(Referee referee) {
         addReferenceEventToApplication(referee);
         sendMailToApplicant(referee);
@@ -160,7 +157,6 @@ public class RefereeService {
         return userService.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
     }
 
-    @Transactional
     public void processRefereesRoles(List<Referee> referees) {
         for (Referee referee : referees) {
             processRefereeAndGetAsUser(referee);
@@ -210,7 +206,6 @@ public class RefereeService {
         return new RegisteredUser();
     }
 
-    @Transactional
     public void delete(Referee referee) {
         if (referee.getUser() != null) {
             referee.getUser().getReferees().remove(referee);
@@ -218,7 +213,6 @@ public class RefereeService {
         refereeDAO.delete(referee);
     }
 
-    @Transactional
     public Referee getRefereeByUserAndApplication(RegisteredUser user, ApplicationForm form) {
         Referee matchedReferee = null;
         List<Referee> referees = user.getReferees();
@@ -230,7 +224,6 @@ public class RefereeService {
         return matchedReferee;
     }
 
-    @Transactional
     public void declineToActAsRefereeAndSendNotification(Referee referee) {
         referee.setDeclined(true);
         refereeDAO.save(referee);
@@ -239,7 +232,6 @@ public class RefereeService {
         sendMailToAdministrators(referee);
     }
 
-    @Transactional
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {
 
         for (Referee referee : applicationForm.getReferees()) {
@@ -252,7 +244,6 @@ public class RefereeService {
         }
     }
     
-    @Transactional
     public ReferenceComment editReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO){
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
         Referee referee = getRefereeById(refereeId);
@@ -270,7 +261,6 @@ public class RefereeService {
         return reference;
     }
 
-    @Transactional
     public ReferenceComment postCommentOnBehalfOfReferee(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
         Referee referee;
         if (BooleanUtils.isTrue(refereesAdminEditDTO.getContainsRefereeData())) {

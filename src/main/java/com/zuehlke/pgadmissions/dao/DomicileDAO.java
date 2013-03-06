@@ -17,7 +17,7 @@ public class DomicileDAO {
 
     private final SessionFactory sessionFactory;
 
-    DomicileDAO() {
+    public DomicileDAO() {
         this(null);
     }
 

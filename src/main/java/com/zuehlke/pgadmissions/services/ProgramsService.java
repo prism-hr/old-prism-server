@@ -10,35 +10,33 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 
 @Service
+@Transactional
 public class ProgramsService {
 
-	private final ProgramDAO programDAO;
-	
-	ProgramsService(){
-		this(null);
-	}
-	
-	@Autowired
-	public ProgramsService(ProgramDAO programDAO) {
-		this.programDAO = programDAO;		
-	}
-	
+    private final ProgramDAO programDAO;
 
-	public List<Program> getAllPrograms() {
-		return programDAO.getAllPrograms();
-	}
+    ProgramsService() {
+        this(null);
+    }
 
+    @Autowired
+    public ProgramsService(ProgramDAO programDAO) {
+        this.programDAO = programDAO;
+    }
 
-	public Program getProgramById(Integer programId) {
-		return programDAO.getProgramById(programId);
-	}
+    public List<Program> getAllPrograms() {
+        return programDAO.getAllPrograms();
+    }
 
-	@Transactional
-	public void save(Program program) {
-		programDAO.save(program);
-	}
+    public Program getProgramById(Integer programId) {
+        return programDAO.getProgramById(programId);
+    }
 
-	public Program getProgramByCode(String code) {
-		return programDAO.getProgramByCode(code);
-	}
+    public void save(Program program) {
+        programDAO.save(program);
+    }
+
+    public Program getProgramByCode(String code) {
+        return programDAO.getProgramByCode(code);
+    }
 }

@@ -6,22 +6,21 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.services.QualificationService;
 
 @Component
 public class QualificationPropertyEditor extends PropertyEditorSupport {
 
-	private final QualificationDAO qualificationDAO;
+	private final QualificationService qualificationService;
 
-	QualificationPropertyEditor() {
+	public QualificationPropertyEditor() {
 		this(null);
 	}
 
 	@Autowired
-	public QualificationPropertyEditor(QualificationDAO qualificationDAO) {
-		this.qualificationDAO = qualificationDAO;
-
+	public QualificationPropertyEditor(QualificationService qualificationDAO) {
+		this.qualificationService = qualificationDAO;
 	}
 
 	@Override
@@ -30,8 +29,7 @@ public class QualificationPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(qualificationDAO.getQualificationById(Integer.parseInt(strId)));
-
+		setValue(qualificationService.getQualificationById(Integer.parseInt(strId)));
 	}
 
 	@Override
@@ -41,5 +39,4 @@ public class QualificationPropertyEditor extends PropertyEditorSupport {
 		}
 		return ((Qualification) getValue()).getId().toString();
 	}
-
 }

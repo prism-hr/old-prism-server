@@ -262,11 +262,11 @@
 
             <!-- Award date -->
             <div class="row">
-                <span id="quali-award-date-lb" class="plain-label<#if !qualification.isQualificationCompleted()> grey-label</#if>">Award Date<#if qualification.isQualificationCompleted()><em>*</em></#if>
+                <span id="quali-award-date-lb" class="plain-label"><#if qualification.isQualificationCompleted()>Award Date<#else>Expected Start Date</#if><em>*</em>
                 </span> <span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 
                 <div class="field" id="awardDateField">
-                    <input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="<#if qualification.isQualificationCompleted()>${(qualification.qualificationAwardDate?string('dd MMM yyyy'))!}</#if>"<#if !qualification.isQualificationCompleted() || applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> />
+                    <input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="${(qualification.qualificationAwardDate?string('dd MMM yyyy'))!}"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> />
                 </div>
             </div>
 
@@ -280,7 +280,7 @@
 
             <!-- Attachment / supporting document -->
             <div class="row">
-                <span id="quali-proof-of-award-lb" class="plain-label"><#if !qualification.isQualificationCompleted()>Transcript (PDF)<#else>Proof of award (PDF)</#if></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
+                <span id="quali-proof-of-award-lb" class="plain-label"><#if !qualification.isQualificationCompleted()>Interim Transcript (PDF)<#else>Proof of award (PDF)</#if></span> <span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
                 <div class="field <#if qualification.proofOfAward??>uploaded</#if>" id="uploadFields">
                     <input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" value=""<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/> <span id="qualUploadedDocument"> <input type="hidden" class="file" id="document_PROOF_OF_AWARD" value="${(encrypter.encrypt(qualification.proofOfAward.id))!}" /> <#if qualification.proofOfAward??> <a class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>" target="_blank"> ${(qualification.proofOfAward.fileName?html)!}</a> <a class="button-delete button-hint" data-desc="Change Proof Of Award">delete</a> </#if>
                     </span> <span class="progress" style="display: none;"></span>

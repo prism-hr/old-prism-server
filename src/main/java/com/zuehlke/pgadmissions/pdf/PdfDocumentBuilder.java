@@ -740,14 +740,23 @@ public class PdfDocumentBuilder {
                 }
                 table.addCell(newTableCell(qualification.getQualificationGrade(), smallFont));
 
-                table.addCell(newTableCell("Award Date", smallBoldFont));
+                if (BooleanUtils.isTrue(qualification.isQualificationCompleted())) {
+                    table.addCell(newTableCell("Award Date", smallBoldFont));
+                } else {
+                    table.addCell(newTableCell("Expected Start Date", smallBoldFont));                    
+                }
                 if (qualification.getQualificationAwardDate() == null) {
                     table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));
                 } else {
                     table.addCell(newTableCell(simpleDateFormat.format(qualification.getQualificationAwardDate()), smallFont));
                 }
 
-                table.addCell(newTableCell("Transcript", smallBoldFont));
+                if (BooleanUtils.isTrue(qualification.isQualificationCompleted())) {
+                    table.addCell(newTableCell("Proof of award", smallBoldFont));                    
+                } else {
+                    table.addCell(newTableCell("Interim Transcript", smallBoldFont));
+                }
+
                 if (qualification.isQualificationCompleted() && qualification.getProofOfAward() != null) {
                     table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", linkFont, appendixCounter));
                     bookmarkMap.put(appendixCounter++, qualification.getProofOfAward());

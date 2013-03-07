@@ -46,17 +46,19 @@ public class StageDuration {
 		this.unit = unit;
 	}
 	
-	public int getDurationInMinutes(){
-		if (this.unit == DurationUnitEnum.DAYS){
-			return (int)TimeUnit.MINUTES.convert(this.duration, TimeUnit.DAYS);
-		}
-		if (this.unit == DurationUnitEnum.HOURS){
-			return  (int)TimeUnit.MINUTES.convert(this.duration, TimeUnit.HOURS);
-		}
-		if (this.unit == DurationUnitEnum.WEEKS){
-			int weekInDays = this.duration * 7;
-			return (int)TimeUnit.MINUTES.convert(weekInDays, TimeUnit.DAYS);
-		}
-		return this.duration;
+    public int getDurationInMinutes() {
+        switch (unit) {
+        case DAYS:
+            return (int) TimeUnit.MINUTES.convert(this.duration, TimeUnit.DAYS);
+        case HOURS:
+            return (int) TimeUnit.MINUTES.convert(this.duration, TimeUnit.HOURS);
+        case WEEKS:
+            int weekInDays = this.duration * 7;
+            return (int) TimeUnit.MINUTES.convert(weekInDays, TimeUnit.DAYS);
+        case MINUTES:
+            return this.duration;
+        default:
+            throw new IllegalArgumentException();
+        }
 	}	
 }

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +13,8 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -158,11 +159,15 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	public void shouldChangeStatusToValidateAndSaveIfNoErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).build();		
+		
+		DateTime now = new DateTime(2013, 3, 8, 8, 0);
+		DateTime expectedDate = new DateTime(2013, 3, 20, 8, 0);
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).batchDeadline(now.toDate()).build();		
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);		
 		StageDuration stageDuration = new StageDuration();
 		stageDuration.setDuration(8);
-		stageDuration.setUnit(DurationUnitEnum.HOURS);
+		stageDuration.setUnit(DurationUnitEnum.DAYS);
 		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
 
@@ -176,12 +181,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());
 		
-		assertEquals(DateUtils.truncate(DateUtils.addHours(new Date(), 8), Calendar.HOUR), DateUtils.truncate(applicationForm.getDueDate(), Calendar.HOUR));
-		
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getSubmittedDate(), Calendar.DATE));
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));		
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
-		
+		assertEquals(expectedDate.toDate(), applicationForm.getDueDate());
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(event, applicationForm.getEvents().get(0));
 	}
@@ -193,6 +193,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		StageDuration stageDuration = new StageDuration();
 		stageDuration.setDuration(1);
+		stageDuration.setUnit(DurationUnitEnum.DAYS);
 		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationServiceMock);
@@ -207,6 +208,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		StageDuration stageDuration = new StageDuration();
 		stageDuration.setDuration(1);
+		stageDuration.setUnit(DurationUnitEnum.DAYS);
 		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationServiceMock);
@@ -275,28 +277,27 @@ public class SubmitApplicationFormControllerTest {
 	}
 	
 	@Test
-	public void shouldSetValidationDateAfterOneDayOfBatchDeadlineIfBatchDeadlineIsSetAndValidationStageDurationIsOneDay() throws ParseException{
+	public void shouldSetValidationDateAfterOneWorkingDayOfBatchDeadlineIfBatchDeadlineIsSetAndValidationStageDurationIsOneDay() throws ParseException{
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).batchDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/12")).build();
 		StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
 		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
 		EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
 		EasyMock.replay(stageDurationServiceMock, stageDurationMock);
 		applicationController.calculateAndSetValidationDueDate(applicationForm);
-		Date oneDayMore = new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/13");
+		Date oneDayMore = new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/14");
 		Assert.assertEquals(oneDayMore.getTime(), applicationForm.getDueDate().getTime());
 	}
 	
 	@Test
-	public void shouldSetValidationDateToCurrentDatePlusValidationStageIntervalIfBatchDeadlineIsNotSet() throws ParseException{
+	public void shouldSetValidationDateToCurrentDatePlusValidationStageIntervalWorkingDayIfBatchDeadlineIsNotSet() throws ParseException{
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
 		StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
 		EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
 		EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
 		EasyMock.replay(stageDurationServiceMock, stageDurationMock);
 		applicationController.calculateAndSetValidationDueDate(applicationForm);
-		Calendar tomorrow = Calendar.getInstance();
-		tomorrow.add(Calendar.MINUTE, 1440);
-		Assert.assertEquals(tomorrow.getTime().getTime(), applicationForm.getDueDate().getTime(), 5);
+		LocalDate tomorrow = new DateTime().plusDays(2).toLocalDate();
+		Assert.assertTrue(DateUtils.isSameDay(tomorrow.toDate(), applicationForm.getDueDate()));
 	}
 
 	@Before

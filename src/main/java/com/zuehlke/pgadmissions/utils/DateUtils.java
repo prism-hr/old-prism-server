@@ -2,11 +2,10 @@ package com.zuehlke.pgadmissions.utils;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.Days;
 
 public final class DateUtils {
 
@@ -31,56 +30,69 @@ public final class DateUtils {
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
     }
     
-    public static Date addWorkingDays(final Date startDate, final int numberOfWorkingDays) {
-        WorkdayIterator it = new WorkdayIterator(new DateTime(startDate), numberOfWorkingDays);
-        DateTime endDate = null;
-        while (it.hasNext()) {
-            endDate = it.next();
-        }
-        return endDate.toDate();
+    public static Date addWorkingDaysInMinutes(final Date startDate, final int numberOfMinutes) {
+        return addWorkingDaysInMinutes(new DateTime(startDate), numberOfMinutes).toDate();
     }
     
-    private static class WorkdayIterator implements Iterator<DateTime> {
-        private final DateTime startDate;
-        private final DateTime endDate;
-        private DateTime currentDate;
+    public static DateTime addWorkingDaysInMinutes(final DateTime date, final int numberOfMinutes) {
+        DateTime startDate = new DateTime(date);
         
-        public WorkdayIterator(final DateTime startDate, final int numberOfDays) {
-            this.startDate = startDate.plusDays(numberOfDaysToSkip(startDate, true));
-            this.endDate = this.startDate.plusDays(numberOfDays);
-            this.currentDate = this.startDate;
-        }
-        
-        @Override
-        public boolean hasNext() {
-            return currentDate.isBefore(endDate);
-        }
-
-        @Override
-        public DateTime next() {
-            currentDate = currentDate.plusDays(numberOfDaysToSkip(currentDate, false));
-            return currentDate;
-        }
-
-        @Override
-        public void remove() {
-            throw new NotImplementedException();
+        switch (startDate.getDayOfWeek()) {
+        case DateTimeConstants.FRIDAY:
+            startDate = startDate.plusDays(3);
+            break;
+        case DateTimeConstants.SATURDAY:
+            startDate = startDate.plusDays(2);
+            break;
+        case DateTimeConstants.SUNDAY:
+            startDate = startDate.plusDays(1);
+            break;
+        default:
+            startDate = startDate.plusDays(1);
+            break;
         }
         
-        private int numberOfDaysToSkip(final DateTime date, final boolean offsetForStartDate) {
-            switch (date.getDayOfWeek()) {
-            case DateTimeConstants.FRIDAY:
-                return 3;
-            case DateTimeConstants.SATURDAY:
-                return 2;
-            case DateTimeConstants.SUNDAY:
-                return 1;
-            default:
-                if (offsetForStartDate) {
-                    return 0;
+        DateTime endDate = new DateTime(startDate).plusDays(1);
+        int numberOfWorkingDaysToAdd = (numberOfMinutes / 1400);
+        while (workingDaysBetween(startDate, endDate) < numberOfWorkingDaysToAdd) {
+            endDate = endDate.plusDays(1);
+        }
+        return endDate;
+    }
+    
+    public static int workingDaysBetween(final DateTime startDate, final DateTime endDate) {
+        Days days = Days.daysBetween(startDate, endDate);
+        int businessDays  = days.getDays() + 1;
+        int fullWeekCount = businessDays / 7;
+        
+        // find out if there are weekends during the time exceeding the full weeks
+        if (businessDays > fullWeekCount * 7) {
+            // we are here to find out if there is a 1-day or 2-days weekend
+            // in the time interval remaining after subtracting the complete weeks
+            int firstDayOfWeek = (int) startDate.getDayOfWeek();
+            int lastDayOfWeek = (int) endDate.getDayOfWeek();
+            
+            if (lastDayOfWeek < firstDayOfWeek) {
+                lastDayOfWeek += 7;
+            }
+            
+            if (firstDayOfWeek <= 6) {
+                if (lastDayOfWeek >= 7) {
+                    // Both Saturday and Sunday are in the remaining time interval
+                    businessDays -= 2;
+                } else if (lastDayOfWeek >= 6) {
+                    // Only Saturday is in the remaining time interval
+                    businessDays -= 1;
                 }
-                return 1;
+            } else if (firstDayOfWeek <= 7 && lastDayOfWeek >= 7) {
+                // Only Sunday is in the remaining time interval
+                businessDays -= 1;
             }
         }
+
+        // subtract the weekends during the full weeks in the interval
+        businessDays -= fullWeekCount + fullWeekCount;
+
+        return businessDays;
     }
 }

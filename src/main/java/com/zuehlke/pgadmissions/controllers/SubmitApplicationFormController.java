@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.net.UnknownHostException;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 @Controller
@@ -93,13 +94,10 @@ public class SubmitApplicationFormController {
     }
 
     public void calculateAndSetValidationDueDate(ApplicationForm applicationForm) {
-        Calendar dueDate = Calendar.getInstance();
-        if (applicationForm.getBatchDeadline() != null) {
-            dueDate.setTime(applicationForm.getBatchDeadline());
-        }
+        DateTime dueDate = new DateTime(applicationForm.getBatchDeadline());
         StageDuration validationDuration = stageDurationService.getByStatus(ApplicationFormStatus.VALIDATION);
-        dueDate.add(Calendar.MINUTE, validationDuration.getDurationInMinutes());
-        applicationForm.setDueDate(dueDate.getTime());
+        dueDate = DateUtils.addWorkingDaysInMinutes(dueDate, validationDuration.getDurationInMinutes());
+        applicationForm.setDueDate(dueDate.toDate());
     }
 
     @InitBinder("applicationForm")

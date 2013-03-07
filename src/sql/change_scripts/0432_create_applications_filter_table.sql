@@ -5,6 +5,7 @@ CREATE TABLE APPLICATIONS_FILTER (
 	search_term VARCHAR(50),
 	PRIMARY KEY(id),
 	KEY registered_user_fk(user_id),
-	CONSTRAINT registered_user_fk FOREIGN KEY(user_id) REFERENCES registered_user(id)
+	CONSTRAINT registered_user_fk FOREIGN KEY(user_id) REFERENCES REGISTERED_USER(id)
 )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+;

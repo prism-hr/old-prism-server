@@ -590,11 +590,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
     private RefereeListTp buildReferee() {
         RefereeListTp resultList = xmlFactory.createRefereeListTp();
-        for (Referee referee : applicationForm.getReferees()) {
-            if (BooleanUtils.isNotTrue(referee.getSendToUCL())) {
-                continue;
-            }
-
+        for (Referee referee : applicationForm.getRefereessToSendToPortico()) {
             RefereeTp refereeTp = xmlFactory.createRefereeTp();
 
             refereeTp.setPosition(referee.getJobTitle());
@@ -610,8 +606,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
             if (StringUtils.isBlank(referee.getPhoneNumber())) {
                 contactDtlsTp.setLandline(PHONE_NUMBER_NOT_PROVIDED_VALUE);
-            } else if (!ESAPI.validator().isValidInput("PhoneNumber", referee.getPhoneNumber(), "PhoneNumber", 25,
-                    false)) {
+            } else if (!ESAPI.validator().isValidInput("PhoneNumber", referee.getPhoneNumber(), "PhoneNumber", 25, false)) {
                 contactDtlsTp.setLandline(PHONE_NUMBER_NOT_PROVIDED_VALUE);
             }
 

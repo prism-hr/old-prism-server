@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services.exporters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.xml.transform.TransformerException;
 
@@ -21,23 +22,22 @@ import org.springframework.ws.soap.client.SoapFaultClientException;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.mail.DataExportMailSender;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
-
-/**
- * This is UCL data export service. Used for situations where we push data to UCL system (PORTICO).
- */
 
 @Service
 public class UclExportService {
@@ -59,14 +59,20 @@ public class UclExportService {
 
     private final DataExportMailSender dataExportMailSender;
 
+    private final ApplicationFormDAO applicationFormDAO;
+    
     public UclExportService() {
-        this(null, null, null, null, 0, null, null);
+        this(null, null, null, null, null, 0, null, null);
     }
 
     @Autowired
-    public UclExportService(WebServiceTemplate webServiceTemplate, ApplicationFormTransferDAO applicationFormTransferDAO,
-            ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO, CommentDAO commentDAO,
-            @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}") int consecutiveSoapFaultsLimit,
+    public UclExportService(
+            WebServiceTemplate webServiceTemplate, 
+            ApplicationFormTransferDAO applicationFormTransferDAO,
+            ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO,
+            ApplicationFormDAO applicationFormDAO,
+            CommentDAO commentDAO,
+            @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}") int consecutiveSoapFaultsLimit, 
             SftpAttachmentsSendingService sftpAttachmentsSendingService, DataExportMailSender dataExportMailSender) {
         super();
         this.webServiceTemplate = webServiceTemplate;
@@ -76,53 +82,29 @@ public class UclExportService {
         this.consecutiveSoapFaultsLimit = consecutiveSoapFaultsLimit;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
         this.dataExportMailSender = dataExportMailSender;
+        this.applicationFormDAO = applicationFormDAO;
     }
 
     // oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 
-    /**
-     * I am scheduling a new application form transfer for a given application form. As a consequence this application form will be sent to UCL (some time later
-     * .. this goes in background). The scheduling mechanism is reliable i.e. is able to survive possible system crash.
-     * <p/>
-     * 
-     * If the caller wants to observe the sending process - please use sendToUCL(ApplicationForm,TransferListener) method.
-     * 
-     * @param applicationForm
-     *            application form to be transferred
-     * @return application transfer id - may be usable for diagnostic purposes, but usually simple ignore this
-     */
     public Long sendToPortico(ApplicationForm applicationForm) {
         return this.sendToPortico(applicationForm, new DeafListener());
     }
 
-    /**
-     * I am scheduling a new application form transfer for a given application form. As a consequence this application form will be sent to UCL (some time later
-     * .. this goes in background). The scheduling mechanism is reliable i.e. is able to survive possible system crash.
-     * 
-     * @param applicationForm
-     *            application form to be transferred
-     * @param listener
-     *            callback listener for observing the sending process
-     * @return application transfer id - may be usable for diagnostic purposes, but usually simple ignore this
-     */
     public Long sendToPortico(ApplicationForm applicationForm, TransferListener listener) {
+        
         log.info("Submitting application form " + applicationForm.getApplicationNumber() + " for ucl-export processing");
 
         ApplicationFormTransfer transfer = this.createPersistentQueueItem(applicationForm);
 
+        prepareApplicationForm(applicationForm);
+        
         transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(transfer.getId(), listener);
-
-        log.info(String.format("Successfully sent application form %s to PORTICO (transfer-id=%d)", applicationForm.getApplicationNumber(), transfer.getId()));
 
         return transfer.getId();
     }
 
-    /**
-     * I am recreating the application form transfers executors queues contents based on what we have in the database. This is supposed to be invoked at system
-     * startup and is crucial to system crash recovery.
-     */
     public void systemStartupSendingQueuesRecovery() {
-
         log.info("Re-initialising the queues for ucl-export processing");
 
         for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForWebserviceCall()) {
@@ -176,7 +158,7 @@ public class UclExportService {
         listener.webServiceCallStarted(request);
 
         try {
-            // call webservice
+            // call web service
             log.info(String.format("Calling marshalSendAndReceive for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
 
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
@@ -278,18 +260,13 @@ public class UclExportService {
 
         listener.sftpTransferStarted();
 
-        // pack attachments and send them over sftp
+        // pack attachments and send them over SFTP
         try {
             log.info(String.format("Calling sendApplicationFormDocuments for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
-
             String zipFileName = sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm, listener);
-
             transfer.setStatus(ApplicationTransferStatus.COMPLETED);
-
             transfer.setTransferFinishTimepoint(new Date());
-
             listener.sftpTransferCompleted(zipFileName, transfer.getUclUserIdReceived(), transfer.getUclBookingReferenceReceived());
-
             log.info(String.format("Transfer of documents completed for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
         } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -373,5 +350,44 @@ public class UclExportService {
     private void logAndSendEmailToSuperadministrator(final String message, final Level logLevel, final Exception exception) {
         log.log(logLevel, message, exception);
         dataExportMailSender.sendErrorMessage(message, exception);
+    }
+    
+    /*
+     * In case we send an incomplete application we still want to send the referees which 
+     * might have responded with a comment and or a document.
+     */
+    @Transactional
+    protected void prepareApplicationForm(final ApplicationForm applicationForm) {
+        if (applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN || applicationForm.getStatus() == ApplicationFormStatus.REJECTED) {
+        
+            if (applicationForm.getReferencesToSendToPortico().isEmpty()) {
+                
+                final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
+                
+                for (Referee referee : applicationForm.getReferees()) {
+                    if (refereesToSend.size() == 2) {
+                        break;
+                    }
+                    
+                    if (referee.hasProvidedReference()) {
+                        referee.setSendToUCL(true);
+                        refereesToSend.put(referee.getId(), referee);
+                    }
+                }
+                
+                for (Referee referee : applicationForm.getReferees()) {
+                    if (refereesToSend.size() == 2) {
+                        break;
+                    }
+                    
+                    if (!refereesToSend.containsKey(referee.getId())) {
+                        referee.setSendToUCL(true);
+                        refereesToSend.put(referee.getId(), referee);
+                    }
+                }
+                
+                applicationFormDAO.save(applicationForm);
+            }
+        }
     }
 }

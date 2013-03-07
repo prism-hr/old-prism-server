@@ -125,29 +125,6 @@ public class AdmissionsApplicationsServiceTest {
         assertEquals("+44 7500934 2", request.getApplication().getApplicant().getCorrespondenceAddress().getLandline());
     }  
     
-    @Test
-    public void shouldAddOneYearToTheQualificationDateIfAwardDateIsEmpty() throws XmlMappingException, IOException {
-        ProgramInstance instance = new ProgramInstanceBuilder()
-            .academicYear("2013")
-            .applicationDeadline(DateUtils.addMonths(new Date(), 1))
-            .applicationStartDate(new Date())
-            .enabled(true)
-            .identifier("0009")
-            .studyOption("F+++++", "Full-time")
-            .build();
-        
-        applicationForm.getQualifications().get(0).setQualificationAwardDate(null);
-        
-        EasyMock.expect(programInstanceDAOMock.getCurrentProgramInstanceForStudyOption(EasyMock.anyObject(Program.class), EasyMock.anyObject(String.class))).andReturn(instance);       
-        EasyMock.replay(programInstanceDAOMock);
-        
-        SubmitAdmissionsApplicationRequestBuilder submitAdmissionsApplicationRequestBuilder = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory());
-        SubmitAdmissionsApplicationRequest request = submitAdmissionsApplicationRequestBuilder.applicationForm(applicationForm).build();
-        
-        int nextYear = new DateTime().plusYears(1).getYear();
-        assertEquals(nextYear, request.getApplication().getApplicant().getQualificationList().getQualificationDetail().get(0).getEndDate().getYear());
-    }      
-
     /**
      * Sends a valid application form to the UCL test web service configured in the environment.properties.
      * Run this test when connected to the UCL network.

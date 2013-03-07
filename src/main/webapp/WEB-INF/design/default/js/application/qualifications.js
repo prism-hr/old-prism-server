@@ -139,20 +139,17 @@ $(document).ready(function() {
         if ($("#currentQualification").val() == 'YES') {
             // Uncheck the box
             $("#currentQualification").val("NO");
-            $("#qualificationAwardDate").val("");
-            $("#qualificationAwardDate").attr("disabled", "disabled");
             $("#quali-grad-id em").remove();
             $("#quali-grad-id").text("Expected Grade / Result / GPA").append('<em>*</em>');
-            $("#quali-award-date-lb").text("Award Date").addClass("grey-label");
-            $("#quali-proof-of-award-lb").text("Transcript (PDF)");
+            $("#quali-award-date-lb").text("Expected Start Date").append('<em>*</em>');
+            $("#quali-proof-of-award-lb").text("Interim Transcript (PDF)");
         } else {
             // Check the box
             $("#currentQualification").val("YES");
-            $("#qualificationAwardDate").removeAttr("disabled", "disabled");
             $("#quali-grad-id em").remove();
             $("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
             $("#quali-award-date-lb em").remove();
-            $("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
+            $("#quali-award-date-lb").text("Award Date").append('<em>*</em>');
             $("#quali-proof-of-award-lb").text("Proof of award (PDF)");
         }
     });
@@ -272,21 +269,16 @@ $(document).ready(function() {
             },
             success : function(data) {
                 $('#qualificationsSection').html(data);
-
                 if ($("#currentQualificationCB").is(":checked")) {
-                    $("#qualificationAwardDate").removeAttr("disabled");
                     $("#quali-grad-id em").remove();
                     $("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
-                    $("#quali-award-date-lb em").remove();
-                    $("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
+                    $("#quali-award-date-lb").text("Award Date").append('<em>*</em>');
                     $("#quali-proof-of-award-lb").text("Proof of award (PDF)");
                 } else {
-                    $("#qualificationAwardDate").attr("disabled", "disabled");
                     $("#quali-grad-id em").remove();
                     $("#quali-grad-id").text("Expected Grade / Result / GPA").append('<em>*</em>');
-                    $("#quali-award-date-lb em").remove();
-                    $("#quali-award-date-lb").text("Award Date").addClass("grey-label");
-                    $("#quali-proof-of-award-lb").text("Transcript (PDF)");
+                    $("#quali-award-date-lb").text("Expected Start Date").append('<em>*</em>');
+                    $("#quali-proof-of-award-lb").text("Interim Transcript (PDF)");
                 }
                 
                 if ($('#qualificationInstitution').val() === "OTHER") {

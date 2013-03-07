@@ -90,7 +90,7 @@
       
       <!-- Attachment / supporting document  -->
       <div class="admin_row">
-        <span class="admin_row_label">Transcript (PDF)</span>
+      	<span class="admin_row_label"><#if qualification.isQualificationCompleted()>Proof of award (PDF)<#else>Interim Transcript (PDF)</#if></span>
         <div class="field" id="referenceDocument">
             <#if qualification.proofOfAward??>
                 <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>" target="_blank">${(qualification.proofOfAward.fileName)!}</a>

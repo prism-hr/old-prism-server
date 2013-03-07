@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
@@ -42,6 +43,7 @@ public class RegisteredUserBuilder {
 
     private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
+    private List<ApplicationsFilter> applicationsFilters = new ArrayList<ApplicationsFilter>();
 
     private String originalApplicationQueryString;
 
@@ -98,6 +100,13 @@ public class RegisteredUserBuilder {
     public RegisteredUserBuilder roles(Role... roles) {
         for (Role role : roles) {
             this.roles.add(role);
+        }
+        return this;
+    }
+    
+    public RegisteredUserBuilder applicationsFilters(ApplicationsFilter... applicationsFilter) {
+        for (ApplicationsFilter applicationFilter : applicationsFilters) {
+            this.applicationsFilters.add(applicationFilter);
         }
         return this;
     }
@@ -217,6 +226,7 @@ public class RegisteredUserBuilder {
         user.setPendingRoleNotifications(pendingRoleNotifications);
         user.setDirectToUrl(directURL);
         user.setOriginalApplicationQueryString(originalApplicationQueryString);
+        user.setApplicationsFilters(applicationsFilters);
         return user;
     }
 

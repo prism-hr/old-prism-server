@@ -18,9 +18,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.ApplicationsFilterDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -44,14 +46,15 @@ public class UserService {
 	private final UserFactory userFactory;
 	private final MessageSource msgSource;
 	private final EncryptionUtils encryptionUtils;
+    private final ApplicationsFilterDAO applicationsFilterDAO;
 
 	public UserService() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
-			JavaMailSender mailsender, MessageSource msgSource, EncryptionUtils encryptionUtils) {
+			JavaMailSender mailsender, MessageSource msgSource, EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.userFactory = userFactory;
@@ -59,6 +62,7 @@ public class UserService {
 		this.mailsender = mailsender;
 		this.msgSource = msgSource;
 		this.encryptionUtils = encryptionUtils;
+		this.applicationsFilterDAO=applicationsFilterDAO;
 	}
 
 	public RegisteredUser getUser(Integer id) {
@@ -382,4 +386,25 @@ public class UserService {
         }
         return false;
     }
+
+    public void saveFilter(RegisteredUser user, ApplicationsFilter filter) {
+        ApplicationsFilter existingFilter = applicationsFilterDAO.getApplicationsFilterByUser(user);
+        if (existingFilter!=null) {
+        	existingFilter.setSearchCategory(filter.getSearchCategory());
+        	existingFilter.setSearchTerm(filter.getSearchTerm());
+        }
+        else {
+        	existingFilter=filter;
+        	existingFilter.setUser(user);
+        }
+        applicationsFilterDAO.save(existingFilter);
+    }
+
+	public void clearApplicationsFilter(ApplicationsFilter filter) {
+		applicationsFilterDAO.removeFilter(filter);
+	}
+
+	public List<ApplicationsFilter> getFiltersForUser(RegisteredUser user) {
+		return user.getApplicationsFilters();
+	}
 }

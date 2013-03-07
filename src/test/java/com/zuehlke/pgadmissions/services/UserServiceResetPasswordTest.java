@@ -15,6 +15,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
+import com.zuehlke.pgadmissions.dao.ApplicationsFilterDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -29,6 +30,7 @@ public class UserServiceResetPasswordTest {
 	private UserService serviceUT;
 
 	private UserDAO userDAOMock;
+	private ApplicationsFilterDAO applicationsFilterDAOmock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private JavaMailSender mailsenderMock;
 	private MessageSource msgSourceMock;
@@ -42,10 +44,11 @@ public class UserServiceResetPasswordTest {
 
 		userDAOMock = EasyMock.createMock(UserDAO.class);
 		RoleDAO roleDAOMock = EasyMock.createMock(RoleDAO.class);
+		applicationsFilterDAOmock = EasyMock.createMock(ApplicationsFilterDAO.class);
 		UserFactory userFactoryMock = EasyMock.createMock(UserFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 
-		serviceUT = new UserService(userDAOMock, roleDAOMock, userFactoryMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock);
+		serviceUT = new UserService(userDAOMock, roleDAOMock, userFactoryMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock, applicationsFilterDAOmock);
 	}
 
 	private void replayAllMocks() {

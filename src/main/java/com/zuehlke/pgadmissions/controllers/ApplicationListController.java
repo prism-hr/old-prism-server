@@ -1,7 +1,11 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
@@ -39,26 +44,55 @@ public class ApplicationListController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getApplicationListPage() {
+	public String getApplicationListPage(Model model) {
+		List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
+		model.addAttribute("hasFilter", !applicationsFilters.isEmpty());
+		if (!applicationsFilters.isEmpty()) {
+			model.addAttribute("searchTerm", applicationsFilters.get(0).getSearchTerm());
+			model.addAttribute("searchCategory", applicationsFilters.get(0).getSearchCategory());
+		}
 		return APPLICATION_LIST_PAGE_VIEW_NAME;
 	}
 
 	@RequestMapping(value = "/section", method = RequestMethod.GET)
-    public String getApplicationListSection(
-            @RequestParam(required = false) SearchCategory searchCategory,
-            @RequestParam(required = false) String searchTerm, 
-            @RequestParam(required = false) SortCategory sortCategory, 
-            @RequestParam(required = false) SortOrder order,
-            @RequestParam(required = false) Integer blockCount,
-            Model model) {
-	    List<ApplicationForm> applications = getApplications(searchCategory, searchTerm, sortCategory, order, blockCount);
-	    model.addAttribute("applications", applications);
+	public String getApplicationListSection(@RequestParam(required = false) SearchCategory searchCategory,
+			@RequestParam(required = false) String searchTerm,
+			@RequestParam(required = false) SortCategory sortCategory, @RequestParam(required = false) SortOrder order,
+			@RequestParam(required = false) Integer blockCount, @RequestParam(required = false) Boolean clear,
+			Model model) {
+		List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
+		if (isTrue(clear) && !applicationsFilters.isEmpty()) {
+			userService.clearApplicationsFilter(applicationsFilters.get(0));
+		} else {
+			if (searchCategory != null && searchTerm != null && !searchTerm.isEmpty()) {
+				createAndSaveFilter(searchCategory, searchTerm);
+			} else if (!applicationsFilters.isEmpty()) {
+				ApplicationsFilter filter = applicationsFilters.get(0);
+				searchCategory = filter.getSearchCategory();
+				searchTerm = filter.getSearchTerm();
+			}
+		}
+		List<ApplicationForm> applications = getApplications(searchCategory, searchTerm, sortCategory, order,
+				blockCount);
+		model.addAttribute("applications", applications);
 		return APPLICATION_LIST_SECTION_VIEW_NAME;
 	}
-	
-	public List<ApplicationForm> getApplications(
-	        SearchCategory searchCategory, String searchTerm, SortCategory sortCategory, SortOrder sortOrder, Integer blockCount) {
-	    return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, StringUtils.trim(searchTerm), sortCategory, sortOrder, blockCount);
+
+	private void createAndSaveFilter(SearchCategory searchCategory, String searchTerm) {
+		ApplicationsFilter filter = new ApplicationsFilter();
+		filter.setSearchCategory(searchCategory);
+		filter.setSearchTerm(searchTerm);
+		userService.saveFilter(getUser(), filter);
+	}
+
+	public List<ApplicationForm> getApplications(SearchCategory searchCategory, String searchTerm,
+			SortCategory sortCategory, SortOrder sortOrder, Integer blockCount) {
+		return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory,
+				StringUtils.trim(searchTerm), sortCategory, sortOrder, blockCount);
+	}
+
+	public List<ApplicationForm> getApplications(ApplicationsFilter filter) {
+		return getApplications(filter.getSearchCategory(), filter.getSearchTerm(), null, null, null);
 	}
 
 	@ModelAttribute("user")
@@ -77,7 +111,8 @@ public class ApplicationListController {
 	}
 
 	@ModelAttribute("message")
-	public String getMessage(@RequestParam(required = false) boolean submissionSuccess, @RequestParam(required = false) String decision, @RequestParam(required = false) String message) {
+	public String getMessage(@RequestParam(required = false) boolean submissionSuccess,
+			@RequestParam(required = false) String decision, @RequestParam(required = false) String message) {
 		if (submissionSuccess) {
 			return "Your application has been successfully submitted.";
 		}

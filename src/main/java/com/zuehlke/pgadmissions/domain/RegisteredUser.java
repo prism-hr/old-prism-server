@@ -131,9 +131,21 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PROGRAM_SUPERVISOR_LINK", joinColumns = { @JoinColumn(name = "supervisor_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
     private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<ApplicationsFilter> applicationsFilters = new ArrayList<ApplicationsFilter>();
 
     @Column(name = "ucl_user_id")
     private String uclUserId;
+    
+    public List<ApplicationsFilter> getApplicationsFilters() {
+        return applicationsFilters;
+    }
+    
+    public void setApplicationsFilters(
+            List<ApplicationsFilter> applicationsFilters) {
+        this.applicationsFilters = applicationsFilters;
+    }
 
     public List<Role> getRoles() {
         return roles;

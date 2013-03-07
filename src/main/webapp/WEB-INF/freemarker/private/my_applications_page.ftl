@@ -43,7 +43,7 @@
 <!--[if (gte IE 9)|!(IE)]><!-->
 <body>
     <!--<![endif]-->
-
+	<input type="hidden" id="hasFilter" value="${hasFilter?string('true', 'false')}">
     <!-- Wrapper Starts -->
     <div id="wrapper">
 
@@ -71,16 +71,19 @@
                         </#if> </#if>
 
                         <div id="table-bar">
-
                             <!-- Download button. -->
                             <a target="_blank" name="downloadAll" id="downloadAll" data-desc="<@spring.message 'myApps.downloadAll'/>">Download</a>
 
 
                             <!-- Search/filter box. -->
                             <div id="search-box">
-                                <input type="text" id="searchTerm" name="searchTerm" placeholder="Filter by..." /> <select name="searchCategory" id="searchCategory">
-                                    <option value="">Column...</option> <#list searchCategories as category>
-                                    <option value="${category}">${category.displayValue()}</option> </#list>
+                                <input type="text" id="searchTerm" name="searchTerm" <#if searchTerm??> value="${searchTerm}" <#else> placeholder="Filter by..." </#if> /> 
+                                <select name="searchCategory" id="searchCategory">
+                                    <option value="">Column...</option>
+                                    <#list searchCategories as category>
+                                    	<option <#if searchCategory?? && searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}
+                                    	</option>
+                                    </#list>
                                 </select>
                                 <button class="blue" type="button" id="search-go">Go</button>
                                 <button type="button" id="search-reset">Clear</button>
@@ -99,9 +102,12 @@
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th class="centre" scope="col"><input type="checkbox" name="select-all" data-desc="<@spring.message 'myApps.toggleAll'/>" id="select-all" /> <input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" /> <input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" /> <input type="hidden" id="block-index" name="block-index" value="1" /></th> <#if !user.isInRole('APPLICANT')>
-                                    <th class="sortable" scope="col" id="APPLICANT_NAME" onclick="sortList(this)">Applicant</th> <#else>
-                                    <th scope="col">Application #</th> </#if>
+                                    <th class="centre" scope="col"><input type="checkbox" name="select-all" data-desc="<@spring.message 'myApps.toggleAll'/>" id="select-all" /> <input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" /> <input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" /> <input type="hidden" id="block-index" name="block-index" value="1" /></th> 
+                                    <#if !user.isInRole('APPLICANT')>
+                                    	<th class="sortable" scope="col" id="APPLICANT_NAME" onclick="sortList(this)">Applicant</th>
+                                    <#else>
+                                    	<th scope="col">Application #</th>
+                                    </#if>
                                     <th class="sortable" scope="col" id="PROGRAMME_NAME" onclick="sortList(this)">Programme</th>
                                     <th class="sortable" scope="col" id="APPLICATION_STATUS" onclick="sortList(this)" class="header-text-center">Status</th>
                                     <th scope="col">Actions</th>

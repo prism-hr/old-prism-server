@@ -4,8 +4,9 @@ $(document).ready(function() {
 
     // Modal window functionality.
     setupModalBox();
-
-    populateApplicationList(true);
+    
+    var hasFilter = $('#hasFilter').val()=="true";
+    populateApplicationList(!hasFilter);
     
     // --------------------------------------------------------------------------------
     // TABLE SORTING
@@ -16,16 +17,17 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // SEARCH / FILTERING
     // --------------------------------------------------------------------------------
-    $('#search-go').addClass('disabled').click(function() {
+    var searchButtonsClass = hasFilter ? 'enabled' : 'disabled';
+    $('#search-go').addClass(searchButtonsClass).click(function() {
         if ($('#searchTerm').val().length == 0 || $('#searchCategory').val() == '') {
             fixedTip($('#search-go'), 'You must specify your filter.');
             return;
         }
         resetPageCount();
-        populateApplicationList();
+						        populateApplicationList();
     });
 
-    $('#search-reset').addClass('disabled').click(function() {
+    $('#search-reset').addClass(searchButtonsClass).click(function() {
         populateApplicationList(true);
         $('#search-go, #search-reset').addClass('disabled');
     });
@@ -135,7 +137,7 @@ function populateApplicationList(reset) {
 
     if (reset) {
         // Reset search filter.
-        $('#searchTerm').val('');
+    	$('#searchTerm').val('');
         $('#sort-column').val('APPLICATION_DATE');
         $('#sort-order').val('DESCENDING');
         $('#block-index').val("1");
@@ -147,7 +149,8 @@ function populateApplicationList(reset) {
         searchTerm : $('#searchTerm').val(),
         sortCategory : $('#sort-column').val(),
         order : $('#sort-order').val(),
-        blockCount : $('#block-index').val()
+        blockCount : $('#block-index').val(),
+        clear : reset
     };
 
     $('#search-box span.invalid').remove();

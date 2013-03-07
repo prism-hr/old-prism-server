@@ -8,6 +8,7 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//TO BE REMOVED
 public class JmsReceiver implements MessageListener {
 
     private final Logger log = LoggerFactory.getLogger(JmsReceiver.class);

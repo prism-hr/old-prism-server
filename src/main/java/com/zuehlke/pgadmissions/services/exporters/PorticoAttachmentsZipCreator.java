@@ -79,10 +79,6 @@ public class PorticoAttachmentsZipCreator {
                 contentsProperties.put("reference.1.serverFilename", filename);
                 contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
                 break;
-            case 1:
-            case 0:
-            default:
-                throw new CouldNotCreateAttachmentsPack("There should be at most 2 references marked for sending to UCL");
         }
     }
 
@@ -100,9 +96,6 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
         List<LanguageQualification> languageQualifications = applicationForm.getPersonalDetails().getLanguageQualificationToSend();
-        if (languageQualifications.size() > 1) {
-            throw new CouldNotCreateAttachmentsPack("There should be at most 1 languageQualification marked for sending to UCL");
-        }
         if (!languageQualifications.isEmpty()) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));

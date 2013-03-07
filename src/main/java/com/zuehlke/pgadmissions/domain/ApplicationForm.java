@@ -28,7 +28,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
 import org.bouncycastle.util.Arrays;
 import org.hibernate.annotations.Generated;
@@ -960,8 +959,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         List<Document> result = new ArrayList<Document>(2);
         for (Qualification qualification : getQualifications()) {
             if (BooleanUtils.isTrue(qualification.getSendToUCL())) {
-                Validate.notNull(qualification.getProofOfAward(), "Qualification with id: " + qualification.getId()
-                        + " is marked for sending to UCL but has no proofOfAward assosiated with it.");
                 result.add(qualification.getProofOfAward());
             }
         }
@@ -972,9 +969,17 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         List<ReferenceComment> result = new ArrayList<ReferenceComment>(2);
         for (Referee refree : getReferees()) {
             if (BooleanUtils.isTrue(refree.getSendToUCL())) {
-                Validate.notNull(refree.getReference(), "Referee with id: " + refree.getId()
-                        + " is marked for sending to UCL but has no reference assosiated with it.");
                 result.add(refree.getReference());
+            }
+        }
+        return result;
+    }
+    
+    public List<Referee> getRefereessToSendToPortico() {
+        List<Referee> result = new ArrayList<Referee>(2);
+        for (Referee refree : getReferees()) {
+            if (BooleanUtils.isTrue(refree.getSendToUCL())) {
+                result.add(refree);
             }
         }
         return result;

@@ -114,7 +114,7 @@ public class ReviewServiceTest {
 
 		reviewService.moveApplicationToReview(applicationForm, reviewRound);
 		
-		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 2), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 2*1400), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
 		assertEquals(applicationForm, reviewRound.getApplication());
 		assertEquals(reviewRound, applicationForm.getLatestReviewRound());
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getStatus());
@@ -123,7 +123,6 @@ public class ReviewServiceTest {
 		assertEquals(event, applicationForm.getEvents().get(0));
 		EasyMock.verify(reviewRoundDAOMock, applicationFormDAOMock);
 		assertTrue(applicationForm.getNotificationRecords().isEmpty());
-
 	}
 
 	@Test

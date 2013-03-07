@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
-
-import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
 @Transactional
@@ -41,7 +40,6 @@ public class ReviewService {
 		this.stageDurationService = stageDurationService;
 		this.eventFactory = eventFactory;
 		this.reviewerDAO = reviewerDAO;
-
 	}
 
 	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound) {
@@ -50,14 +48,14 @@ public class ReviewService {
 		reviewRound.setApplication(application);
 		reviewRoundDAO.save(reviewRound);
 		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
-		application.setDueDate(DateUtils.addMinutes(new Date(), reviewStageDuration.getDurationInMinutes()));
-		application.setStatus(ApplicationFormStatus.REVIEW);
+		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), reviewStageDuration.getDurationInMinutes());
+        application.setDueDate(dueDate.toDate());
+        application.setStatus(ApplicationFormStatus.REVIEW);
 		application.getEvents().add(eventFactory.createEvent(reviewRound));
 		NotificationRecord reviewReminderNotificationRevord = application.getNotificationForType(NotificationType.REVIEW_REMINDER);
-		if(reviewReminderNotificationRevord !=null){
-			application.removeNotificationRecord(reviewReminderNotificationRevord);
-		}
-			
+        if (reviewReminderNotificationRevord != null) {
+            application.removeNotificationRecord(reviewReminderNotificationRevord);
+        }
 		applicationDAO.save(application);
 	}
 

@@ -179,7 +179,7 @@ public class ApprovalServiceTest {
 
         approvalService.moveApplicationToApproval(applicationForm, approvalRound);
 
-        assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 2), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
+        assertEquals(DateUtils.truncate(com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 2*1400), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
         assertEquals(applicationForm, approvalRound.getApplication());
         assertEquals(approvalRound, applicationForm.getLatestApprovalRound());
         assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getStatus());

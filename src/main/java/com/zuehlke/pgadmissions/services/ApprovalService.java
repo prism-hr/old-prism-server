@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
 @Transactional
@@ -144,9 +145,11 @@ public class ApprovalService {
 
         approvalRound.setApplication(application);
         approvalRoundDAO.save(approvalRound);
+        
         StageDuration approveStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.APPROVAL);
-        application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
-
+        DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), approveStageDuration.getDurationInMinutes());
+        application.setDueDate(dueDate.toDate());
+        
         application.getEvents().add(eventFactory.createEvent(approvalRound));
 
         application.setStatus(ApplicationFormStatus.APPROVAL);

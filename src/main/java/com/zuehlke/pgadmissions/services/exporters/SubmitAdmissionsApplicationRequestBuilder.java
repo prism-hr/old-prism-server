@@ -511,17 +511,12 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
 
                 qualificationsTp.setStartDate(buildXmlDate(qualification.getQualificationStartDate()));
-
-                if (qualification.getQualificationAwardDate() == null) {
-                    // endDate is a mandatory fields. We do not collect an end
-                    // date if it is the
-                    // current position. Just add a year in the future to now
-                    // (Alastair)
-                    qualificationsTp.setEndDate(buildXmlDate(DateUtils.addYears(new Date(), 1)));
-                } else {
-                    qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
-                }
-
+                
+                // TODO: This might be null because we've changed this to a mandatory field in mid flight.
+                // Talk to Alastair about this when we go live!
+                // Sending a null value will be rejected by the web service.
+                qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
+                
                 qualificationsTp.setGrade(qualification.getQualificationGrade());
                 qualificationsTp.setLanguageOfInstruction(qualification.getQualificationLanguage());
                 qualificationsTp.setMainSubject(qualification.getQualificationSubject());

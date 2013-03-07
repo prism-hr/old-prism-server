@@ -74,6 +74,15 @@ public class QualificationValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("qualificationStartDate").getCode());
     }
+    
+    @Test
+    public void shouldRejectIfAwardDateIsEmpty() {
+        qualification.setQualificationAwardDate(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+        qualificationValidator.validate(qualification, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("qualificationAwardDate").getCode());
+    }
 
     @Test
     public void shouldRejectIfLanguageIsEmpty() {

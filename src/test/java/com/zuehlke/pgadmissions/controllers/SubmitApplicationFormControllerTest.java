@@ -285,7 +285,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.replay(stageDurationServiceMock, stageDurationMock);
 		applicationController.calculateAndSetValidationDueDate(applicationForm);
 		Date oneDayMore = new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/14");
-		Assert.assertEquals(oneDayMore.getTime(), applicationForm.getDueDate().getTime());
+		Assert.assertEquals(String.format("Dates are not the same [%s] [%s]", oneDayMore, applicationForm.getDueDate()), oneDayMore, applicationForm.getDueDate());
 	}
 	
 	@Test

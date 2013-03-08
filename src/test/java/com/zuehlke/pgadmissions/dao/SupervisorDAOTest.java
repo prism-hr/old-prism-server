@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
@@ -229,6 +230,12 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldNotReturnPrimarySupervisorsDueNotificationIfIntervalIsSmallerThanReminder() {
+        ReminderIntervalDAO reminderIntervalDAO = new ReminderIntervalDAO(sessionFactory);
+        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval();
+        reminderInterval.setDuration(5);
+        save(reminderInterval);
+        flushAndClearSession();
+        
         ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
         Supervisor supervisor = new SupervisorBuilder().user(user).isPrimary(true).lastNotified(DateUtils.addDays(new Date(), -2)).build();
         ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).build();

@@ -31,4 +31,3 @@
 	<#include "/private/common/actions.ftl"/>   
   </div>
 </div>
-<script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>

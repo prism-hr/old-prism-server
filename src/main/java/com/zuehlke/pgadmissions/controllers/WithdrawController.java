@@ -44,8 +44,7 @@ public class WithdrawController{
     @RequestMapping(method = RequestMethod.POST)
     public String withdrawApplicationAndGetApplicationList(@ModelAttribute ApplicationForm applicationForm,
             ModelMap modelMap) {
-        if (applicationForm.getStatus() == ApplicationFormStatus.UNSUBMITTED
-                || applicationForm.getStatus() == ApplicationFormStatus.APPROVED
+        if (applicationForm.getStatus() == ApplicationFormStatus.APPROVED
                 || applicationForm.getStatus() == ApplicationFormStatus.REJECTED
                 || applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN) {
             throw new CannotWithdrawApplicationException();

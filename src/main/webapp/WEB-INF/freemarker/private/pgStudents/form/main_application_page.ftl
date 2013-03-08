@@ -111,8 +111,10 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>    
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>  
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/withdraw_modal_window.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script> 
+
+<!-- this script import was causing a bug in main_application page: the onOk and onCancel functions of the withdraw function are not registered --> 
+<!--<script type="text/javascript" src="<@spring.url '/design/default/js/application/withdraw_modal_window.js'/>"></script>-->
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/timeline_application.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/actions.js'/>"></script>
 

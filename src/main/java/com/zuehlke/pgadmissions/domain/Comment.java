@@ -43,7 +43,7 @@ public class Comment implements Comparable<Comment>, Serializable {
 	@JoinColumn(name = "comment_id")
 	private List<Document> documents = new ArrayList<Document>(); 
 	
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
+	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
 	private String comment;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

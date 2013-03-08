@@ -78,13 +78,13 @@
       
       <!-- Qualification grade -->
       <div class="admin_row">
-        <span class="admin_row_label">Grade / Result /GPA</span>
+        <span class="admin_row_label"><#if qualification.isQualificationCompleted()>Grade / Result /GPA<#else>Expected Grade / Result / GPA</#if></span>
         <div class="field" id="qualificationGrade">${(qualification.qualificationGrade?html)!"Not Provided"}</div>
       </div>
       
       <!-- Award date -->
       <div class="admin_row">
-        <span class="admin_row_label">Award Date</span>
+        <span class="admin_row_label"><#if qualification.isQualificationCompleted()>Award Date<#else>Expected Award Date</#if></span>
         <div class="field" id="qualificationAwardDate">${(qualification.qualificationAwardDate?string('dd MMM yyyy'))!"Not Provided"}</div>
       </div>
       

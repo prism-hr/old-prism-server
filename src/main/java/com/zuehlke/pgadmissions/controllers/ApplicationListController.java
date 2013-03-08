@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.List;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -2,12 +2,15 @@ package com.zuehlke.pgadmissions.controllers.workflow;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,16 +68,18 @@ public class EditApplicationFormAsProgrammeAdminController {
     private final CountryService countryService;
 
     private final CountryPropertyEditor countryPropertyEditor;
+    
+    private final MessageSource messageSource;
 
     public EditApplicationFormAsProgrammeAdminController() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationService,
             final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
             final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-            final EncryptionHelper encryptionHelper, final CountryService countryService, final CountryPropertyEditor countryPropertyEditor) {
+            final EncryptionHelper encryptionHelper, final CountryService countryService, final CountryPropertyEditor countryPropertyEditor, final MessageSource messageSource) {
         this.userService = userService;
         this.applicationService = applicationService;
         this.documentPropertyEditor = documentPropertyEditor;
@@ -84,6 +89,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
         this.countryService = countryService;
         this.countryPropertyEditor = countryPropertyEditor;
+        this.messageSource = messageSource;
     }
 
     @InitBinder(value = "sendToPorticoData")
@@ -127,7 +133,13 @@ public class EditApplicationFormAsProgrammeAdminController {
         } else {
             map.put("success", "false");
             for (FieldError error : result.getFieldErrors()) {
-                map.put(error.getField(), error.getCode());
+            	String message;
+            	if(!StringUtils.isBlank(error.getCode())){
+            		message = messageSource.getMessage(error.getCode(), null, Locale.getDefault());
+            	} else {
+            		message = error.getDefaultMessage();
+            	}
+                map.put(error.getField(), message);
             }
         }
 

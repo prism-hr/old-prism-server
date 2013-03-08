@@ -272,11 +272,9 @@ function editReferenceData() {
         data :  postData,
         success : function(data) {
         	clearRefereeFormErrors();
-        	if(data.success == "true"){
-        		
-        	} else {
+        	if(data.success == "false"){
         		if(data.comment != null){
-        			$("#commentError_" + refereeId).html('<span class="invalid">You must make an entry.</span>');
+        			$("#commentError_" + refereeId).html('<span class="invalid">' + data.comment + '</span>');
         		}
         	}
         },

@@ -48,7 +48,7 @@ public class ApplicationFormControllerTest {
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, null, null, null)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, null, null)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 		
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
@@ -66,7 +66,7 @@ public class ApplicationFormControllerTest {
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program,batchDeadline, null, null)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program,batchDeadline, null, null)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 		
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
@@ -85,7 +85,7 @@ public class ApplicationFormControllerTest {
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program,batchDeadline, null, null)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program,batchDeadline, null, null)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 		
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
@@ -116,7 +116,7 @@ public class ApplicationFormControllerTest {
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, null, "project title", null)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, "project title", null)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 		
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
@@ -135,7 +135,7 @@ public class ApplicationFormControllerTest {
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
 		String researchHomePage = "https://www.researchhomepage.com";
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, null, null, researchHomePage)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, null, researchHomePage)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 		
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
@@ -152,7 +152,7 @@ public class ApplicationFormControllerTest {
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, null, null, null)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, null, null)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 		
@@ -192,7 +192,7 @@ public class ApplicationFormControllerTest {
 	public void shouldReturnProgramDoesNotExistPageIfProgramExistsButDoesntHaveAnyActiveInstances() throws ParseException{
 		Program program = new ProgramBuilder().id(12).enabled(true).build();
 		EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(null);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, null, null, null)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null, null, null)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(null);
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 		

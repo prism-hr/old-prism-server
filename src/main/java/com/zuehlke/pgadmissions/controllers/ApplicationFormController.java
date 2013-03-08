@@ -72,7 +72,7 @@ public class ApplicationFormController {
         if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty() || !prog.isEnabled()) {
             return new ModelAndView(PROGRAM_DOES_NOT_EXIST);
         }       
-        ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, batchDeadline, projectTitle, programhome);
+        ApplicationForm applicationForm = applicationService.createOrGetUnsubmittedApplicationForm(user, prog, batchDeadline, projectTitle, programhome);
         return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
     }
     

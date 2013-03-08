@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -28,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class ApplicationsServiceTest {
@@ -35,11 +38,12 @@ public class ApplicationsServiceTest {
 	private RegisteredUser user;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationsService applicationsService;
-	
+
 	@Before
 	public void setup() {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+		user = new RegisteredUserBuilder().id(1).username("bob")
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		authenticationToken.setDetails(user);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
@@ -51,44 +55,53 @@ public class ApplicationsServiceTest {
 
 	@Test
 	public void shouldGetAllApplicationsDueAndUpdatedNotificationToAdmin() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(),
+				new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> appsDueUpdateNotification = applicationsService.getApplicationsDueUpdateNotification();
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(applicationsList, appsDueUpdateNotification);
 	}
-	
+
 	@Test
 	public void shouldGetAllApplicationsDueRegistryNotification() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(),
+				new ApplicationFormBuilder().id(2).build());
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueRegistryNotification()).andReturn(applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> appsDueRegistryNotification = applicationsService.getApplicationsDueRegistryNotification();
+		List<ApplicationForm> appsDueRegistryNotification = applicationsService
+				.getApplicationsDueRegistryNotification();
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(applicationsList, appsDueRegistryNotification);
 	}
-	
+
 	@Test
 	public void shouldGetAllApplicationsDueApprovalRestartRequestNotification() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
-		EasyMock.expect(applicationFormDAOMock.getApplicationsDueApprovalRequestNotification()).andReturn(applicationsList);
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(),
+				new ApplicationFormBuilder().id(2).build());
+		EasyMock.expect(applicationFormDAOMock.getApplicationsDueApprovalRequestNotification()).andReturn(
+				applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> appsDueNotification = applicationsService.getApplicationsDueApprovalRestartRequestNotification();
+		List<ApplicationForm> appsDueNotification = applicationsService
+				.getApplicationsDueApprovalRestartRequestNotification();
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(applicationsList, appsDueNotification);
 	}
-	
+
 	@Test
 	public void shouldGetAllApplicationsDueApprovalRestartRequestReminder() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(), new ApplicationFormBuilder().id(2).build());
-		EasyMock.expect(applicationFormDAOMock.getApplicationDueApprovalRestartRequestReminder()).andReturn(applicationsList);
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).build(),
+				new ApplicationFormBuilder().id(2).build());
+		EasyMock.expect(applicationFormDAOMock.getApplicationDueApprovalRestartRequestReminder()).andReturn(
+				applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> appsDueNotification = applicationsService.getApplicationsDueApprovalRestartRequestReminder();
+		List<ApplicationForm> appsDueNotification = applicationsService
+				.getApplicationsDueApprovalRestartRequestReminder();
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(applicationsList, appsDueNotification);
 	}
-	
+
 	@Test
 	public void shouldGetApplicationById() {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
@@ -110,52 +123,52 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldCreateAndSaveNewApplicationFormWithoutBatchDeadlineProjectOrResearchHomePage() throws ParseException {
+	public void shouldCreateAndSaveNewApplicationFormWithoutBatchDeadlineProjectOrResearchHomePage()
+			throws ParseException {
 		Program program = new ProgramBuilder().code("KLOP").id(1).build();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
-		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).build();
-		applicationsService = new ApplicationsService(applicationFormDAOMock, null) {
-
-			@Override
-			ApplicationForm newApplicationForm() {
-				return newApplicationForm;
-			}
-		};
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
+		
+		// one existing application, since is approved should be ignored
+		final ApplicationForm existingApplicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).build();
+		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgram(registeredUser, program))
+				.andReturn(Lists.newArrayList(existingApplicationForm));
+		
 		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
-		applicationFormDAOMock.save(newApplicationForm);
+		applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
 		EasyMock.replay(applicationFormDAOMock);
-		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program, null, null, null);
+		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null,
+				null, null);
 		EasyMock.verify(applicationFormDAOMock);
-		assertSame(newApplicationForm, returnedForm);
+		assertNotNull(returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(program, returnedForm.getProgram());
 		assertEquals("KLOP-" + thisYear + "-000024", returnedForm.getApplicationNumber());
 		assertNull(returnedForm.getBatchDeadline());
 	}
-	
+
 	@Test
-	public void shouldCreateAndSaveNewApplicationFormWithBatchDeadlineProjectAndResearchHomePage() throws ParseException {
+	public void shouldCreateAndSaveNewApplicationFormWithBatchDeadlineProjectAndResearchHomePage()
+			throws ParseException {
 		Program program = new ProgramBuilder().code("KLOP").id(1).build();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
-		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).build();
-		applicationsService = new ApplicationsService(applicationFormDAOMock, null) {
-			
-			@Override
-			ApplicationForm newApplicationForm() {
-				return newApplicationForm;
-			}
-		};
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
+		
+		// one existing application, since is withdrawn should be ignored
+		final ApplicationForm existingApplicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.WITHDRAWN).build();
+		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgram(registeredUser, program))
+				.andReturn(Lists.newArrayList(existingApplicationForm));
+		
 		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
-		applicationFormDAOMock.save(newApplicationForm);
+		applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
 		EasyMock.replay(applicationFormDAOMock);
 		Date batchDeadline = new SimpleDateFormat("dd/MM/yyyy").parse("12/12/2012");
 		String projectTitle = "This is the project title";
-		String researchHomePage ="researchHomePage";
-		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program, batchDeadline, projectTitle, researchHomePage);
+		String researchHomePage = "researchHomePage";
+		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program,
+				batchDeadline, projectTitle, researchHomePage);
 		EasyMock.verify(applicationFormDAOMock);
-		assertSame(newApplicationForm, returnedForm);
+		assertNotNull(returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(program, returnedForm.getProgram());
 		assertEquals("KLOP-" + thisYear + "-000024", returnedForm.getApplicationNumber());
@@ -164,6 +177,26 @@ public class ApplicationsServiceTest {
 		assertEquals("http://" + researchHomePage, returnedForm.getResearchHomePage());
 	}
 
+	@Test
+	public void shouldGetExistingUnsubmittedApplicationForGivenQueryString() throws ParseException {
+		
+		// GIVEN
+		Program program = new ProgramBuilder().code("KLOP").id(1).build();
+		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
+		final ApplicationForm existingApplicationForm = new ApplicationFormBuilder().id(1).build();
+
+		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgram(registeredUser, program))
+				.andReturn(Lists.newArrayList(existingApplicationForm));
+
+		// WHEN
+		EasyMock.replay(applicationFormDAOMock);
+		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null,
+				null, null);
+		
+		// THEN
+		EasyMock.verify(applicationFormDAOMock);
+		assertSame(existingApplicationForm, returnedForm);
+	}
 
 	@After
 	public void tearDown() {

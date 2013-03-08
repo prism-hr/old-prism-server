@@ -19,7 +19,7 @@
 		  <#include "/private/common/actions.ftl"/>
 	</td>
 	<td>
-		<#if application.isWithdrawn()>
+		<#if application.isWithdrawn() && !application.submittedDate??>
 			Aborted
 		<#elseif application.submittedDate??>
 			${(application.submittedDate?string("dd MMM yyyy"))}

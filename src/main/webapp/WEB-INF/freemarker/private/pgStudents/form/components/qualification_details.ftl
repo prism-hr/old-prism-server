@@ -11,7 +11,7 @@
         <colgroup>
             <col style="width: 30px" />
             <col />
-            <col style="width: 90px" />
+            <col style="width: 150px" />
             <col style="width: 30px" />
             <col style="width: 30px" />
         </colgroup>
@@ -56,7 +56,7 @@
                     <#if existingQualification.isQualificationCompleted()> 
                         ${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!} 
                     <#else> 
-                        Expected 
+                        ${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!} (Expected) 
                     </#if>
                 </td> 
                 
@@ -262,7 +262,7 @@
 
             <!-- Award date -->
             <div class="row">
-                <span id="quali-award-date-lb" class="plain-label"><#if qualification.isQualificationCompleted()>Award Date<#else>Expected Start Date</#if><em>*</em>
+                <span id="quali-award-date-lb" class="plain-label"><#if qualification.isQualificationCompleted()>Award Date<#else>Expected Award Date</#if><em>*</em>
                 </span> <span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 
                 <div class="field" id="awardDateField">

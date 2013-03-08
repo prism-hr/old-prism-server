@@ -743,7 +743,7 @@ public class PdfDocumentBuilder {
                 if (BooleanUtils.isTrue(qualification.isQualificationCompleted())) {
                     table.addCell(newTableCell("Award Date", smallBoldFont));
                 } else {
-                    table.addCell(newTableCell("Expected Start Date", smallBoldFont));                    
+                    table.addCell(newTableCell("Expected Award Date", smallBoldFont));                    
                 }
                 if (qualification.getQualificationAwardDate() == null) {
                     table.addCell(newTableCell(NOT_PROVIDED, smallGrayFont));

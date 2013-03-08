@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationTypeBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -179,6 +180,15 @@ public class QualificationValidatorTest {
         Assert.assertEquals("A maximum of 70 characters are allowed.", mappingResult
                 .getFieldError("qualificationGrade").getDefaultMessage());
     }
+    
+    @Test
+    public void shouldRejectQualificationAwardDateIfItIsInThePastAndNotCompleted() {
+        qualification.setCompleted(CheckedStatus.NO);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+        qualificationValidator.validate(qualification, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("qualificationAwardDate").getCode());
+    }
 
     @Before
     public void setup() throws ParseException {
@@ -192,6 +202,7 @@ public class QualificationValidatorTest {
         qualification.setQualificationLanguage("Abkhazian");
         qualification.setQualificationSubject("CS");
         qualification.setQualificationTitle("MS");
+        qualification.setCompleted(CheckedStatus.YES);
         qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
         qualification.setQualificationType(new QualificationTypeBuilder().name("degree").build());
 

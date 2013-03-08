@@ -45,10 +45,24 @@ public class WithdrawControllerTest {
 		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
-	@Test(expected = CannotWithdrawApplicationException.class)
+	@Test
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInUnsubmittedStage() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).applicant(student).id(2).build();
-		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).applicant(student).id(2).applicationNumber("abc").build();
+		withdrawServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
+		
+		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
+		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
+		
+		EasyMock.replay(withdrawServiceMock, eventFactoryMock);
+		
+		String view = withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
+		
+		EasyMock.verify(withdrawServiceMock);
+		assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
+		assertEquals("redirect:/applications?messageCode=application.withdrawn&application=abc", view);
+		
+		assertEquals(1, applicationForm.getEvents().size());
+		assertEquals(event, applicationForm.getEvents().get(0));
 	}
 	
 	@Test(expected = CannotWithdrawApplicationException.class)
@@ -93,7 +107,7 @@ public class WithdrawControllerTest {
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfNotApplciationFoud() {
+	public void shouldThrowResourceNotFoundExceptionIfNotApplciationFound() {
 		String applicationNumber = "abc";		
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);

@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -370,6 +372,12 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     }
 
     public List<Program> getProgramsOfWhichAdministrator() {
+        Collections.sort(programsOfWhichAdministrator, new Comparator<Program>() {
+            @Override
+            public int compare(Program o1, Program o2) {
+                return o1.getTitle().compareTo(o2.getTitle());
+            }
+        });
         return programsOfWhichAdministrator;
     }
 

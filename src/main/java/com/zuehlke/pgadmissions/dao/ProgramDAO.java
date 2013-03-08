@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -28,8 +29,8 @@ public class ProgramDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Program> getAllPrograms() {
-		return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-	
+        return sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).addOrder(Order.asc("title")).list();
 	}
 
 	public Program getProgramById(Integer programId) {
@@ -41,6 +42,7 @@ public class ProgramDAO {
 	}
 
 	public Program getProgramByCode(String code) {
-		return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .add(Restrictions.eq("code", code)).uniqueResult();
 	}
 }

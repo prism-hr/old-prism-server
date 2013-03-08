@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import org.easymock.EasyMock;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,6 +63,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     private SendToPorticoDataDTOEditor sendToPorticoDataDTOEditorMock;
     private CountryService countryServiceMock;
     private CountryPropertyEditor countryPropertyEditorMock;
+    private MessageSource messageSourceMock;
 
     @Before
     public void setUp() {
@@ -73,10 +76,11 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         sendToPorticoDataDTOEditorMock = EasyMock.createMock(SendToPorticoDataDTOEditor.class);
         countryServiceMock = EasyMock.createMock(CountryService.class);
         countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
+        messageSourceMock = EasyMock.createMock(MessageSource.class);
 
         controller = new EditApplicationFormAsProgrammeAdminController(userServiceMock, applicationServiceMock, documentPropertyEditorMock,
                 refereeServiceMock, refereesAdminEditDTOValidatorMock, sendToPorticoDataDTOEditorMock, encryptionHelperMock,
-                countryServiceMock, countryPropertyEditorMock);
+                countryServiceMock, countryPropertyEditorMock, messageSourceMock);
     }
 
     @Test
@@ -163,16 +167,17 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         Model model = new ExtendedModelMap();
 
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
-        EasyMock.expectLastCall();
 
-        EasyMock.replay(userServiceMock, refereeServiceMock);
+        EasyMock.expect(messageSourceMock.getMessage("text.field.empty", null, Locale.getDefault())).andReturn("empty field");
+        
+        EasyMock.replay(userServiceMock, refereeServiceMock, messageSourceMock);
         String ret = controller.updateReference(applicationForm, refereesAdminEditDTO, result, model);
         Map<String, String> retMap = new Gson().fromJson(ret, Map.class);
         assertEquals(2, retMap.size());
         assertEquals("false", retMap.get("success"));
-        assertEquals("text.field.empty", retMap.get("comment"));
+        assertEquals("empty field", retMap.get("comment"));
 
-        EasyMock.verify(userServiceMock, refereeServiceMock);
+        EasyMock.verify(userServiceMock, refereeServiceMock, messageSourceMock);
     }
 
     @Test

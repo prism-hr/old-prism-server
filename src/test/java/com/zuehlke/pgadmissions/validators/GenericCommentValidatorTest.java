@@ -41,9 +41,9 @@ public class GenericCommentValidatorTest {
 	}
 	
 	@Test
-    public void shouldRejectIfCommentIsLongerThan500Characters() {
+    public void shouldRejectIfCommentIsLongerThan2000Characters() {
 	    StringBuilder commentBuilder = new StringBuilder();
-	    for (int i = 0; i < 600; i++) {
+	    for (int i = 0; i < 2100; i++) {
 	        commentBuilder.append("a");
 	    }
 	    
@@ -51,7 +51,7 @@ public class GenericCommentValidatorTest {
         comment.setComment(commentBuilder.toString());
         genericCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 500 characters are allowed.", mappingResult.getFieldError("comment").getDefaultMessage());
+        Assert.assertEquals("A maximum of 2000 characters are allowed.", mappingResult.getFieldError("comment").getDefaultMessage());
     }
 	
 	@Test

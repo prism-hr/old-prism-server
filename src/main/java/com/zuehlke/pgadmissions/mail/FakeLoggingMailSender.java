@@ -17,7 +17,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 public class FakeLoggingMailSender extends JavaMailSenderImpl implements FakeLoggingMailSenderListener {
 
-    private final Logger LOG = LoggerFactory.getLogger(FakeLoggingMailSender.class);
+    private final Logger log = LoggerFactory.getLogger(FakeLoggingMailSender.class);
     
     private final List<FakeLoggingMailSenderListener> listeners;
     
@@ -35,16 +35,16 @@ public class FakeLoggingMailSender extends JavaMailSenderImpl implements FakeLog
             for (MimeMessage mimeMessage : mimeMessages) {                
                 onDoSend(mimeMessage);
                 
-                LOG.info(String.format("Sender: %s", mimeMessage.getSender()));
+                log.info(String.format("Sender: %s", mimeMessage.getSender()));
                 
                 onSender(String.format("%s", mimeMessage.getSender()));
                 
                 for (Address address : mimeMessage.getAllRecipients()) {
-                    LOG.info(String.format("Recipient: %s", address));
+                    log.info(String.format("Recipient: %s", address));
                     onRecipient(String.format("%s", address));
                 }
                 
-                LOG.info(String.format("Subject: %s", mimeMessage.getSubject()));
+                log.info(String.format("Subject: %s", mimeMessage.getSubject()));
                 
                 onSubject(mimeMessage.getSubject());
                 
@@ -53,17 +53,17 @@ public class FakeLoggingMailSender extends JavaMailSenderImpl implements FakeLog
                     for (int idx = 0; idx < multiPart.getCount(); idx++) {
                         BodyPart bodyPart = multiPart.getBodyPart(idx);
                         String bodyAsString = IOUtils.toString(bodyPart.getInputStream());
-                        LOG.info(String.format("Body: %s", bodyAsString));
+                        log.info(String.format("Body: %s", bodyAsString));
                         onBody(bodyAsString);
                     }
                 } else {
                     Object contentAsObject = mimeMessage.getContent();
-                    LOG.info(String.format("Body: %s", contentAsObject));
+                    log.info(String.format("Body: %s", contentAsObject));
                     onBody(String.format("%s", contentAsObject));
                 }
             }
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 

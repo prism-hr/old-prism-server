@@ -62,9 +62,9 @@ $(document).ready(function() {
                     });    
                 };
                 var onCancel = function() {
+                	$('#actionTypeSelect').val('Actions');
                     $('div.content-box-inner div.ajax').remove();
                 };
-    
                 modalPrompt(message, onOk, onCancel);
                 break;
             }

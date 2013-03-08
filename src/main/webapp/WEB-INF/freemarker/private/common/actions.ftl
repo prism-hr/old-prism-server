@@ -4,7 +4,7 @@
 <#elseif applicationForm??>
     <#assign application = applicationForm>
 </#if>
-    <select class="actionType" name="app_[${application.applicationNumber}]">
+    <select id="actionTypeSelect" class="actionType" name="app_[${application.applicationNumber}]">
         <option>Actions</option> 
         <option value="view">View<#if application.isUserAllowedToSeeAndEditAsAdministrator(user) || (user == application.applicant && application.isModifiable())> / Edit</#if></option>
 
@@ -29,7 +29,7 @@
         <#if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && application.isModifiable() && !user.getRefereeForApplicationForm(application).hasResponded()  )>
             <option value="reference">Add Reference</option>
         </#if>
-        <#if (user == application.applicant && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>
+        <#if (user == application.applicant && !application.isDecided() && !application.isWithdrawn())>
             <option value="withdraw">Withdraw</option>
         </#if>
         <#if (user.hasAdminRightsOnApplication(application) && application.isPendingApprovalRestart())>

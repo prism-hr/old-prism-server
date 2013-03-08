@@ -32,10 +32,13 @@ public class WithdrawService {
 		this.uclExportService = exportService;
 	}
 	
-	public void saveApplicationFormAndSendMailNotifications(ApplicationForm form) {
-		applicationService.save(form);
-		mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(refereeService.getRefereesWhoHaveNotProvidedReference(form), form);
-        // TODO: Enable when ready for production
-        //uclExportService.sendToUCL(form);
+	public void saveApplicationFormAndSendMailNotifications(ApplicationForm applicationForm) {
+		applicationService.save(applicationForm);
+		mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(refereeService.getRefereesWhoHaveNotProvidedReference(applicationForm), applicationForm);
+        
+//		TODO: Enable when ready for production
+//		if (applicationForm.isSubmitted()) {
+//		    uclExportService.sendToPortico(applicationForm);
+//		}
 	}
 }

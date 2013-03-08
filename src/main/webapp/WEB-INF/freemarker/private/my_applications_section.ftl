@@ -19,7 +19,9 @@
 		  <#include "/private/common/actions.ftl"/>
 	</td>
 	<td>
-		<#if application.submittedDate??>
+		<#if application.isWithdrawn()>
+			Aborted
+		<#elseif application.submittedDate??>
 			${(application.submittedDate?string("dd MMM yyyy"))}
 		<#else>
 			<a class="proceed-link" href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Proceed &gt;</a>

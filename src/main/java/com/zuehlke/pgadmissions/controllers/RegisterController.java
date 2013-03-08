@@ -161,7 +161,7 @@ public class RegisterController {
 		if(!UrlValidator.getInstance().isValid(researchHomePage)){
 			researchHomePage = null;
 		}
-		ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, program, batchDeadline, params[3],researchHomePage);
+		ApplicationForm newApplicationForm = applicationsService.createOrGetUnsubmittedApplicationForm(user, program, batchDeadline, params[3],researchHomePage);
 		return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber();
 	}
 	

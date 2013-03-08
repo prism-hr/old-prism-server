@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -26,7 +27,7 @@
     </scm>
 
     <dependencies>
-    
+
         <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -38,7 +39,7 @@
             <artifactId>hibernate-validator-annotation-processor</artifactId>
             <version>4.1.0.Final</version>
         </dependency>
-    
+
         <!-- Spring -->
         <dependency>
             <groupId>cglib</groupId>
@@ -80,7 +81,7 @@
             <artifactId>spring-jms</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+
         <!-- Freemarker -->
         <dependency>
             <groupId>org.apache.velocity</groupId>
@@ -92,7 +93,7 @@
             <artifactId>freemarker</artifactId>
             <version>2.3.14</version>
         </dependency>
-        
+
         <!-- Validation -->
         <dependency>
             <groupId>org.owasp.esapi</groupId>
@@ -105,7 +106,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <!-- WebService & Portico SFTP upload -->
         <dependency>
             <groupId>org.springframework.ws</groupId>
@@ -122,7 +123,7 @@
             <artifactId>jsch</artifactId>
             <version>0.1.48</version>
         </dependency>
-    
+
         <!-- Performance measuring -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -139,7 +140,7 @@
             <artifactId>aspectjrt</artifactId>
             <version>1.7.0</version>
         </dependency>
-        
+
         <!-- Java Mail API -->
         <dependency>
             <groupId>javax.mail</groupId>
@@ -151,7 +152,7 @@
             <artifactId>jsoup</artifactId>
             <version>1.6.3</version>
         </dependency>
-        
+
         <!-- JSON -->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -185,7 +186,7 @@
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>1.47</version>
         </dependency>
-        
+
         <!-- Servlet -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -200,7 +201,7 @@
             <type>pom</type>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- Commons -->
         <dependency>
             <groupId>commons-logging</groupId>
@@ -242,21 +243,32 @@
             <artifactId>joda-time</artifactId>
             <version>2.1</version>
         </dependency>
-    
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0</version>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.2</version>
         </dependency>
-                
+
         <!-- Testing -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.2</version>
             <scope>test</scope>
-        </dependency>    
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
@@ -305,6 +317,7 @@
             <version>5.1.22</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -315,7 +328,7 @@
                 <version>2.4</version>
             </extension>
         </extensions>
-        
+
         <finalName>pgadmissions</finalName>
         <resources>
             <resource>
@@ -438,9 +451,12 @@
                         <id>default-cli</id>
                         <configuration>
                             <tasks>
-                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root" password="root" src="src/sql/setup/dropdatabase.sql" />
-                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root" password="root" src="src/sql/setup/createdatabase.sql" />
-                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}/pgadmissions" userid="pgadmissions" password="pgadmissions" src="src/sql/setup/createSchemaVersionTable.mysql.sql" />
+                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root"
+                                    password="root" src="src/sql/setup/dropdatabase.sql" />
+                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root"
+                                    password="root" src="src/sql/setup/createdatabase.sql" />
+                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}/pgadmissions"
+                                    userid="pgadmissions" password="pgadmissions" src="src/sql/setup/createSchemaVersionTable.mysql.sql" />
                             </tasks>
                         </configuration>
                         <goals>
@@ -572,7 +588,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <profile>
             <id>ci</id>
             <properties>
@@ -601,7 +617,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <profile>
             <id>ucl-test</id>
             <properties>

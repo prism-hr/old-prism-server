@@ -141,7 +141,7 @@ $(document).ready(function() {
             $("#currentQualification").val("NO");
             $("#quali-grad-id em").remove();
             $("#quali-grad-id").text("Expected Grade / Result / GPA").append('<em>*</em>');
-            $("#quali-award-date-lb").text("Expected Start Date").append('<em>*</em>');
+            $("#quali-award-date-lb").text("Expected Award Date").append('<em>*</em>');
             $("#quali-proof-of-award-lb").text("Interim Transcript (PDF)");
         } else {
             // Check the box
@@ -277,7 +277,7 @@ $(document).ready(function() {
                 } else {
                     $("#quali-grad-id em").remove();
                     $("#quali-grad-id").text("Expected Grade / Result / GPA").append('<em>*</em>');
-                    $("#quali-award-date-lb").text("Expected Start Date").append('<em>*</em>');
+                    $("#quali-award-date-lb").text("Expected Award Date").append('<em>*</em>');
                     $("#quali-proof-of-award-lb").text("Interim Transcript (PDF)");
                 }
                 

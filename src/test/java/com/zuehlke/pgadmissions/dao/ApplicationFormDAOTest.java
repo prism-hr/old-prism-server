@@ -25,6 +25,7 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -1619,7 +1620,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Assert.assertEquals(noOfAppsBefore, applications.size());
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldGetTwoApplicationsByApplicantAndProgram() {
 
@@ -1635,9 +1636,11 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		List<ApplicationForm> applications = applicationDAO.getApplicationsByApplicantAndProgram(user, program);
 		assertNotNull(applications);
-		assertThat((List) applications, hasItems( //
+
+		Matcher<Iterable<ApplicationForm>> hasItems = hasItems( //
 				hasProperty("status", equalTo(ApplicationFormStatus.APPROVAL)), //
-				hasProperty("status", equalTo(ApplicationFormStatus.UNSUBMITTED))));
+				hasProperty("status", equalTo(ApplicationFormStatus.UNSUBMITTED)));
+		assertThat(applications, hasItems);
 	}
 
 	@Test

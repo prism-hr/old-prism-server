@@ -14,7 +14,6 @@ import junit.framework.Assert;
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -296,8 +295,8 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
 		EasyMock.replay(stageDurationServiceMock, stageDurationMock);
 		applicationController.calculateAndSetValidationDueDate(applicationForm);
-		LocalDate tomorrow = new DateTime().plusDays(2).toLocalDate();
-		Assert.assertTrue(DateUtils.isSameDay(tomorrow.toDate(), applicationForm.getDueDate()));
+		Date dayAfterTomorrow = com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 1440); 
+		Assert.assertTrue(String.format("Dates are not on the same day [%s] [%s]", dayAfterTomorrow, applicationForm.getDueDate()), DateUtils.isSameDay(dayAfterTomorrow, applicationForm.getDueDate()));
 	}
 
 	@Before

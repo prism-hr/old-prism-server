@@ -31,29 +31,6 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 		this.userDetailsService = userDetailsService;
 		this.encryptionUtils = encryptionUtils;
 	}
-	
-//	@Override
-//    public Authentication authenticate(final Authentication preProcessToken) throws AuthenticationException {
-//        return defaultTransactionTemplate.execute(new TransactionCallback<UsernamePasswordAuthenticationToken>() {
-//            @Override
-//            public UsernamePasswordAuthenticationToken doInTransaction(TransactionStatus status) {
-//                UsernamePasswordAuthenticationToken authentication = null;
-//                if (preProcessToken.getPrincipal() == null || preProcessToken.getCredentials() == null) {
-//                    throw new BadCredentialsException("missing username or password");
-//                }
-//                UserDetails user;
-//                try {
-//                    user = findAndValidateUser(preProcessToken);
-//                    authentication = new UsernamePasswordAuthenticationToken(preProcessToken.getPrincipal(),
-//                            preProcessToken.getCredentials(), user.getAuthorities());
-//                    authentication.setDetails(user);
-//                } catch (NoSuchAlgorithmException e) {      
-//                    log.error(e.getMessage(), e);
-//                }
-//                return authentication;
-//            }
-//        });
-//    }
 
 	@Override
 	@Transactional

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.security;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -10,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 //TODO: This is work in progress (ked)
 
+@Component
 public class ProgramACR extends AbstractAccessControlRule {
 
     public static final String ACTION_IS_APPROVER = "IS_APPROVER";

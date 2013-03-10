@@ -1,9 +1,5 @@
 package com.zuehlke.pgadmissions.security;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +17,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 @Component
 public class ApplicationFormACR extends AbstractAccessControlRule {
 
-    public static final String ACTION_SEE = "SEE";
-    
     private final ProgramACR programACR;
     
     public ApplicationFormACR() {
@@ -40,14 +34,14 @@ public class ApplicationFormACR extends AbstractAccessControlRule {
     }
 
     @Override
-    public boolean hasPermission(final Object object, final String action, final RegisteredUser currentUser) {
+    public boolean hasPermission(final Object object, final UserAction action, final RegisteredUser currentUser) {
         ApplicationForm applicationForm = (ApplicationForm) object;
-        
-        if (StringUtils.equalsIgnoreCase(ACTION_SEE, action)) {
+        switch (action) {
+        case READ:
             return canSee(applicationForm, currentUser);
+        default:
+            return false;
         }
-        
-        return false;
     }
     
     public boolean canSee(final ApplicationForm form, final RegisteredUser user) {
@@ -85,7 +79,7 @@ public class ApplicationFormACR extends AbstractAccessControlRule {
             }
         }
         
-        if (isStatus(Arrays.asList(ApplicationFormStatus.APPROVAL, ApplicationFormStatus.APPROVED), form)) {
+        if (isStatusEither(form, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.APPROVED)) {
             ApprovalRound latestApprovalRound = form.getLatestApprovalRound();
             if (latestApprovalRound != null && containsSupervisor(user, latestApprovalRound.getSupervisors())) {
                 return true;
@@ -98,12 +92,10 @@ public class ApplicationFormACR extends AbstractAccessControlRule {
             }
         }
         
-        // TODO: Clean this up as well
         if (isInRole(Authority.REFEREE, user)) {
-            List<Referee> refereesList = form.getReferees();
-            for (Referee referee : refereesList) {
-                if (!referee.isDeclined() && referee.getUser() != null) {
-                    if (referee.getUser().getId().equals(user.getId()) || (containsReferee(referee, user.getReferees()))) {
+            for (Referee referee : form.getReferees()) {
+                if (!referee.isDeclined()) {
+                    if (areEqual(referee.getUser(), user) || containsReferee(referee, user.getReferees())) {
                         return true;
                     }
                 }

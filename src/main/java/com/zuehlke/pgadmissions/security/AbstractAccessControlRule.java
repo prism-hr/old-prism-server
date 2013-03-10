@@ -95,7 +95,7 @@ public abstract class AbstractAccessControlRule implements AccessControlRuleSupp
         return status.equals(form.getStatus());
     }
     
-    protected boolean isStatus(final List<ApplicationFormStatus> stati, final ApplicationForm form) {
+    protected boolean isStatusEither(final ApplicationForm form, final ApplicationFormStatus... stati) {
         for (ApplicationFormStatus status : stati) {
             if (form.getStatus().equals(status)) {
                 return true;

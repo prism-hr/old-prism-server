@@ -8,5 +8,5 @@ public interface AccessControlRuleSupport {
 
     boolean supports(final Class<?> clazz);
     
-    boolean hasPermission(final Object object, final String action, final RegisteredUser currentUser);
+    boolean hasPermission(final Object object, final UserAction action, final RegisteredUser currentUser);
 }

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.security;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Program;
@@ -14,8 +13,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 @Component
 public class ProgramACR extends AbstractAccessControlRule {
 
-    public static final String ACTION_IS_APPROVER = "IS_APPROVER";
-    
     public ProgramACR() {
     }
     
@@ -25,12 +22,14 @@ public class ProgramACR extends AbstractAccessControlRule {
     }
 
     @Override
-    public boolean hasPermission(final Object object, final String action, final RegisteredUser user) {
+    public boolean hasPermission(final Object object, final UserAction action, final RegisteredUser user) {
         Program program = (Program) object;
-        if (StringUtils.equalsIgnoreCase(ACTION_IS_APPROVER, action)) {
+        switch(action) {
+        case IS_APPROVER:
             return isApprover(program, user);
+        default:
+            return false;
         }
-        return false;
     }
     
     public boolean isApprover(final Program program, final RegisteredUser user) {

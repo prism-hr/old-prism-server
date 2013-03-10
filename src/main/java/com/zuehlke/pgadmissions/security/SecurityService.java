@@ -27,6 +27,10 @@ public class SecurityService {
     }
     
     public boolean hasPermission(final Object object, final String action) {
+        return hasPermission(object, UserAction.valueOf(action));
+    }
+    
+    public boolean hasPermission(final Object object, final UserAction action) {
         for (AccessControlRuleSupport acr : accessControlRules) {
             if (acr.supports(object.getClass())) {
                 return acr.hasPermission(object, action, userService.getCurrentUser());

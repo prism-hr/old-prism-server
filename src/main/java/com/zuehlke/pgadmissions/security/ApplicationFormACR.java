@@ -4,11 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -35,16 +32,20 @@ public class ApplicationFormACR extends AbstractAccessControlRule {
 
     @Override
     public boolean hasPermission(final Object object, final UserAction action, final RegisteredUser currentUser) {
-        ApplicationForm applicationForm = (ApplicationForm) object;
+        ApplicationForm form = (ApplicationForm) object;
         switch (action) {
-        case READ:
-            return canSee(applicationForm, currentUser);
+        case CAN_SEE_APPLICATION:
+            return canSeeApplication(form, currentUser);
+        case ADMIN_RIGHTS_ON_APPLICATION:
+            return hasAdminRightsOnApplication(form, currentUser);
+        case STAFF_RIGHTS_ON_APPLICATION:
+            return hasStaffRightsOnApplication(form, currentUser);
         default:
             return false;
         }
     }
     
-    public boolean canSee(final ApplicationForm form, final RegisteredUser user) {
+    public boolean canSeeApplication(final ApplicationForm form, final RegisteredUser user) {
         if (isInRole(Authority.SUPERADMINISTRATOR, user)) {
             return true;
         }
@@ -53,35 +54,32 @@ public class ApplicationFormACR extends AbstractAccessControlRule {
             return true;
         }
 
-        if (isStatus(ApplicationFormStatus.UNSUBMITTED, form) && isNotInRole(user, Authority.APPLICANT)) {
+        if (isStatus(ApplicationFormStatus.UNSUBMITTED, form) && isNotInRole(Authority.APPLICANT, user)) {
             return false;
         }
 
-        if (areEqual(user, form.getApplicationAdministrator())) {
+        if (isApplicationAdministrator(form, user)) {
             return true;
         }
 
-        if (isInRole(Authority.ADMINISTRATOR, user) && containsUser(user, form.getProgram().getAdministrators())) {
+        if (isInRole(Authority.ADMINISTRATOR, user) && isProgrammeAdministrator(form, user)) {
             return true;
         }
 
         if (isStatus(ApplicationFormStatus.REVIEW, form)) {
-            ReviewRound latestReviewRound = form.getLatestReviewRound();
-            if (latestReviewRound != null && containsReviewer(user, latestReviewRound.getReviewers())) {
+            if (isReviewerInReviewRound(form.getLatestReviewRound(), user)) {
                 return true;
             }
         }
 
         if (isStatus(ApplicationFormStatus.INTERVIEW, form)) {
-            Interview latestInterview = form.getLatestInterview();
-            if (latestInterview != null && containsInterviewer(user, latestInterview.getInterviewers())) {
+            if (isInterviewerInInterview(form.getLatestInterview(), user)) {
                 return true;
             }
         }
         
         if (isStatusEither(form, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.APPROVED)) {
-            ApprovalRound latestApprovalRound = form.getLatestApprovalRound();
-            if (latestApprovalRound != null && containsSupervisor(user, latestApprovalRound.getSupervisors())) {
+            if (isSupervisorInApprovalRound(form.getLatestApprovalRound(), user)) {
                 return true;
             }
         }
@@ -101,7 +99,51 @@ public class ApplicationFormACR extends AbstractAccessControlRule {
                 }
             }
         }
+        
+        return false;
+    }
+    
+    public boolean hasAdminRightsOnApplication(final ApplicationForm form, final RegisteredUser user) {
+        if (isStatus(ApplicationFormStatus.UNSUBMITTED, form)) {
+            return false;
+        }
+        
+        if (isInRole(Authority.SUPERADMINISTRATOR, user)) {
+            return true;
+        }
+        
+        if (isApplicationAdministrator(form, user)) {
+            return true;
+        }
+        
+        if (isProgrammeAdministrator(form, user)) {
+            return true;
+        }
 
+        return false;
+    }
+    
+    public boolean hasStaffRightsOnApplication(final ApplicationForm form, final RegisteredUser user) {
+        if (hasAdminRightsOnApplication(form, user)) {
+            return true;
+        }
+        
+        if (isPastOrPresentReviewerOfApplication(form, user)) {
+            return true;
+        }
+        
+        if (isPastOrPresentInterviewerOfApplication(form, user)) {
+            return true;
+        }
+        
+        if (isPastOrPresentSupervisorOfApplication(form, user)) {
+            return true;
+        }
+        
+        if (isInRoleInProgramme(Authority.APPROVER, form.getProgram(), user)) {
+            return true;
+        }
+        
         return false;
     }
 }

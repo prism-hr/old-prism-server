@@ -599,11 +599,12 @@ public class RegisteredUserTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		@SuppressWarnings("serial")
 		RegisteredUser user = new RegisteredUser() {
-			@Override
-			public boolean canSee(ApplicationForm application) {
-				return true;
-			}
-
+		    
+		    @Override
+		    public boolean canNotSeeApplication(final ApplicationForm form, final RegisteredUser user) {
+		        return false;
+		    }
+		    
 			@Override
 			public boolean isRefereeOfApplicationForm(ApplicationForm form) {
 				return false;
@@ -642,11 +643,10 @@ public class RegisteredUserTest {
 				return true;
 			}
 
-			@Override
-			public boolean canSee(ApplicationForm application) {
-				return true;
-			}
-
+	         @Override
+	         public boolean canNotSeeApplication(final ApplicationForm form, final RegisteredUser user) {
+	             return false;
+	         }
 		};
 		user.setId(1);
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(user).toReferee();

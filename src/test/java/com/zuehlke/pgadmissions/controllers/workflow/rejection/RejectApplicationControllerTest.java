@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -216,7 +217,9 @@ public class RejectApplicationControllerTest {
 	@Test
 	public void returnApplicationIfUserIsHasAdminRightsOnForm() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);		
+		EasyMock.expect(userMock.getRoles()).andReturn(Arrays.asList(new RoleBuilder().authorityEnum(Authority.REFEREE).build()));
+		
+		EasyMock.expect(userMock.isNotInRole(userMock, Authority.APPROVER)).andReturn(true);
 		EasyMock.expect(userMock.hasAdminRightsOnApplication(application)).andReturn(true);
 		
 		EasyMock.replay(userMock);

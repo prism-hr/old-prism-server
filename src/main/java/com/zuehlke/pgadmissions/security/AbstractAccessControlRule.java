@@ -75,7 +75,7 @@ public abstract class AbstractAccessControlRule implements AccessControlRuleSupp
         return false;
     }
     
-    protected boolean isInRole(final Authority authority, final RegisteredUser user) {
+    protected boolean isInRole(final RegisteredUser user, final Authority authority) {
         for (Role role : user.getRoles()) {
             if (role.getAuthorityEnum() == authority) {
                 return true;
@@ -84,12 +84,12 @@ public abstract class AbstractAccessControlRule implements AccessControlRuleSupp
         return false;
     }
     
-    protected boolean isNotInRole(final Authority authority, final RegisteredUser user) {
-        return !isInRole(authority, user);
+    protected boolean isNotInRole(final RegisteredUser user, final Authority authority) {
+        return !isInRole(user, authority);
     }
     
-    protected boolean isInRoleInProgramme(final Authority authority, final Program programme, final RegisteredUser user) {
-        if (Authority.SUPERADMINISTRATOR == authority && isInRole(Authority.SUPERADMINISTRATOR, user)) {
+    protected boolean isInRoleInProgramme(final Program programme, final RegisteredUser user, final Authority authority) {
+        if (Authority.SUPERADMINISTRATOR == authority && isInRole(user, Authority.SUPERADMINISTRATOR)) {
             return true;
         }
         return getAuthoritiesForProgramme(programme, user).contains(authority);
@@ -115,8 +115,8 @@ public abstract class AbstractAccessControlRule implements AccessControlRuleSupp
         return authorities;
     }
 
-    protected boolean isNotInRoleInProgramme(final Authority authority, final Program programme, final RegisteredUser user) {
-        return !isInRoleInProgramme(authority, programme, user);
+    protected boolean isNotInRoleInProgramme(final Program programme, final RegisteredUser user, final Authority authority) {
+        return !isInRoleInProgramme(programme, user, authority);
     }
     
     protected boolean areEqual(RegisteredUser u1, RegisteredUser u2) {
@@ -126,11 +126,7 @@ public abstract class AbstractAccessControlRule implements AccessControlRuleSupp
         return u1.getId().equals(u2.getId());
     }
     
-    protected boolean isStatus(final ApplicationFormStatus status, final ApplicationForm form) {
-        return status.equals(form.getStatus());
-    }
-    
-    protected boolean isStatusEither(final ApplicationForm form, final ApplicationFormStatus... stati) {
+    protected boolean isStatus(final ApplicationForm form, final ApplicationFormStatus... stati) {
         for (ApplicationFormStatus status : stati) {
             if (form.getStatus().equals(status)) {
                 return true;

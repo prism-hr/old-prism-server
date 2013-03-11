@@ -37,7 +37,7 @@ public class ProgramACR extends AbstractAccessControlRule {
     }
 
     private boolean checkUserRole(final RegisteredUser user, final Authority authority, final List<RegisteredUser> lookup) {
-        if (isNotInRole(authority, user)) {
+        if (isNotInRole(user, authority)) {
             return false;
         }
         for (RegisteredUser lookupUser : lookup) {

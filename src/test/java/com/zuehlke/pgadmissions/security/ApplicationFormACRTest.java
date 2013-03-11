@@ -52,7 +52,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -64,7 +64,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(refereeUser);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -76,7 +76,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(refereeUser);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -87,7 +87,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(refereeUser);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -99,7 +99,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicantTwo);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -110,7 +110,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(administrator);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -122,7 +122,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(interviewerUser);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -133,7 +133,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(interviewerUser);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -145,7 +145,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(revieweruser);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -157,7 +157,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(approver);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -168,7 +168,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(administrator);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -179,7 +179,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(administrator);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -190,7 +190,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(administrator);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -201,7 +201,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(administrator);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -213,7 +213,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(revieweruser);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -224,7 +224,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(reviewer);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -236,7 +236,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(revieweruser);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -247,7 +247,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(interviewer);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -258,7 +258,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -272,7 +272,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(approver);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -284,7 +284,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(supervisorUser);
         EasyMock.replay(userServiceMock);
 
-        assertTrue(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertTrue(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 
@@ -296,7 +296,7 @@ public class ApplicationFormACRTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(approver);
         EasyMock.replay(userServiceMock);
 
-        assertFalse(securityService.hasPermission(applicationForm, UserAction.READ));
+        assertFalse(securityService.hasPermission(applicationForm, UserAction.CAN_SEE_APPLICATION));
         EasyMock.verify(userServiceMock);
     }
 }

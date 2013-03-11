@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.security;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Service
 public class SecurityService {
 
+    private Logger log = LoggerFactory.getLogger(SecurityService.class);
+    
     private final UserService userService;
     
     private final List<AccessControlRuleSupport> accessControlRules;;
@@ -31,10 +35,15 @@ public class SecurityService {
     }
     
     public boolean hasPermission(final Object object, final UserAction action) {
-        for (AccessControlRuleSupport acr : accessControlRules) {
-            if (acr.supports(object.getClass())) {
-                return acr.hasPermission(object, action, userService.getCurrentUser());
+        try {
+            for (AccessControlRuleSupport acr : accessControlRules) {
+                if (acr.supports(object.getClass())) {
+                    return acr.hasPermission(object, action, userService.getCurrentUser());
+                }
             }
+            return false;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
         return false;
     }

@@ -2,7 +2,11 @@ package com.zuehlke.pgadmissions.security;
 
 public enum UserAction {
 
-    READ,
+    CAN_SEE_APPLICATION,
     
-    IS_APPROVER
+    IS_APPROVER, 
+    
+    ADMIN_RIGHTS_ON_APPLICATION, 
+    
+    STAFF_RIGHTS_ON_APPLICATION
 }

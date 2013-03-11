@@ -1054,3 +1054,13 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
     padding: 2px;
     width: 160px;
 }
+// fixes
+body {
+	.gradientback;
+}
+.content-box .row {
+	margin-left: 0px;
+}
+.user .caret {
+	margin-left: 4px;
+}

@@ -68,7 +68,7 @@
 		            <div class="control-group">
 		                <label class="control-label" for="firstName">First Name</label>
 		                <div class="controls">
-			            <input id="firstName" type="text" name="firstName" placeholder='${(pendingUser.firstName?html)!"First Forename"}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+			            <input id="firstName" type="text" name="firstName" placeholder="First Forename" value='${(pendingUser.firstName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 			            <@spring.bind "pendingUser.firstName" /> 
 	              		<#list spring.status.errorMessages as error>	
 	              		 	<div class="alert alert-error">	                                		

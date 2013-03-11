@@ -14,10 +14,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-
 @Entity(name = "PROGRAM")
-public class Program implements Serializable {
+public class Program extends Authorisable implements Serializable {
 
     private static final long serialVersionUID = -9073611033741317582L;
 
@@ -56,6 +54,9 @@ public class Program implements Serializable {
     @JoinTable(name = "BADGE", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
     private List<Badge> badges = new ArrayList<Badge>();
 
+    public Program() {
+    }
+    
     public Integer getId() {
         return id;
     }
@@ -104,7 +105,6 @@ public class Program implements Serializable {
     public void setAdministrators(List<RegisteredUser> administrators) {
         this.administrators.clear();
         this.administrators.addAll(administrators);
-
     }
 
     public List<RegisteredUser> getProgramReviewers() {
@@ -117,27 +117,15 @@ public class Program implements Serializable {
     }
 
     public boolean isApprover(RegisteredUser user) {
-        return checkUserRole(user, Authority.APPROVER, approvers);
+        return isApproverInProgramme(this, user);
     }
 
     public boolean isAdministrator(RegisteredUser user) {
-        return checkUserRole(user, Authority.ADMINISTRATOR, administrators);
+        return isAdminInProgramme(this, user);
     }
 
-    private boolean checkUserRole(RegisteredUser user, Authority authority, Iterable<RegisteredUser> lookup) {
-        if (!user.isInRole(authority)) {
-            return false;
-        }
-        for (RegisteredUser lookupUser : lookup) {
-            if (lookupUser.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isInterviewerOfProgram(RegisteredUser interviewer) {
-        return listContainsId(interviewer, interviewers);
+    public boolean isInterviewerOfProgram(RegisteredUser user) {
+        return isInterviewerOfProgram(this, user);
     }
 
     public List<ProgramInstance> getInstances() {
@@ -178,14 +166,5 @@ public class Program implements Serializable {
 
     public void setAtasRequired(Boolean atasRequired) {
         this.atasRequired = atasRequired;
-    }
-
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
-            if (entry.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

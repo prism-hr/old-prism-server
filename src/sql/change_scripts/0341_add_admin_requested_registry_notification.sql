@@ -1,0 +1,1 @@
+ALTER TABLE APPLICATION_FORM ADD COLUMN admin_requested_registry_id INTEGER UNSIGNED, ADD CONSTRAINT admin_requested_fk FOREIGN KEY (admin_requested_registry_id) REFERENCES REGISTERED_USER(id);

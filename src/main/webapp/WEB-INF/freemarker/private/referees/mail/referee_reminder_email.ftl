@@ -24,7 +24,11 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that ${applicant.firstName?html} ${applicant.lastName?html} has submitted an Application ${application.applicationNumber} for postgraduate research study at 
 			      			<a href="http://www.ucl.ac.uk/">University College London (UCL)</a> in 
-							<#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.
+                            <#if application.researchHomePage??>
+                                <a href="${application.researchHomePage}">${application.program.title}</a>
+                            <#else>
+                                ${application.program.title}
+                            </#if>.
 						</font>
 			      	</p>
 			      	<p>
@@ -40,11 +44,11 @@
 			        <p>
 			          <!-- Button -->
 						<a style="text-decoration:none;" 
-							<#if  !referee.user.enabled>
-		                      	href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}&directToUrl=${"/referee/addReferences?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
-		                    <#else>
-		                      	href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode!}"
-		                    </#if>
+                            <#if  !referee.user.enabled>
+                                href="${host}/pgadmissions/register?activationCode=${referee.user.activationCode!}&directToUrl=${"/referee/addReferences?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
+                            <#else>
+                                href="${host}/pgadmissions/referee/addReferences?applicationId=${application.applicationNumber}&activationCode=${referee.user.activationCode!}"
+                            </#if>
 							
 							title="Provide Reference">
 			            	<img border="0" style="border: none;" width="149" height="36" alt="Provide Reference" src="${host}/pgadmissions/design/default/images/email/provide_reference.png" />

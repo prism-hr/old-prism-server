@@ -22,7 +22,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName?html},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">An error occurred during the import of the reference data at ${time?datetime}. The datails are:</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">An error occurred during the import of the reference data at ${time?datetime}. The details are:</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${message}</font>

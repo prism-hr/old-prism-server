@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
+import com.google.common.base.Strings;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -128,10 +129,7 @@ public class ValidationTransitionControllerTest {
         
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
         
-        StringBuffer projectTitle = new StringBuffer();
-        for (int i = 0; i < 600; i++) {
-            projectTitle.append("a");
-        }
+        String projectTitle = Strings.repeat("a", 600);
         
         EasyMock.replay(userServiceMock, applicationServiceMock, commentServiceMock, badgeServiceMock);
         String view = controller.addComment(applicationForm.getApplicationNumber(), format.format(new Date()), projectTitle.toString(), comment, bindingResultMock, new ModelMap());

@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
+import com.google.common.base.Strings;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 
@@ -42,27 +43,17 @@ public class GenericCommentValidatorTest {
 	
 	@Test
     public void shouldRejectIfCommentIsLongerThan2000Characters() {
-	    StringBuilder commentBuilder = new StringBuilder();
-	    for (int i = 0; i < 2100; i++) {
-	        commentBuilder.append("a");
-	    }
-	    
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "comment");
-        comment.setComment(commentBuilder.toString());
+        comment.setComment(Strings.repeat("a", 2100));
         genericCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("A maximum of 2000 characters are allowed.", mappingResult.getFieldError("comment").getDefaultMessage());
     }
 	
 	@Test
-    public void shouldNotRejectIfCommentIsShorterThan500Characters() {
-        StringBuilder commentBuilder = new StringBuilder();
-        for (int i = 0; i < 400; i++) {
-            commentBuilder.append("a");
-        }
-        
+    public void shouldNotRejectIfCommentIsShorterThan2000Characters() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "comment");
-        comment.setComment(commentBuilder.toString());
+        comment.setComment(Strings.repeat("a", 1900));
         genericCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }

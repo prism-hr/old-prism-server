@@ -31,8 +31,14 @@
 
                 <p>
                     <!-- Button -->
-                    <a style="text-decoration: none;" title="Supervise"<#if !supervisor.user.enabled> href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}&directToUrl=${"/confirmSupervision?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}" <#else> href="${host}/pgadmissions/confirmSupervision?applicationId=${application.applicationNumber}&activationCode=${supervisor.user.activationCode}" </#if> 
-                    <img border="0" style="border: none;" width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png"></a>
+                    <a style="text-decoration: none;" title="Supervise"
+                        <#if !supervisor.user.enabled>
+                            href="${host}/pgadmissions/register?activationCode=${supervisor.user.activationCode}&directToUrl=${"/confirmSupervision?applicationId=${application.applicationNumber}"?url('ISO-8859-1')}"
+                        <#else>
+                            href="${host}/pgadmissions/confirmSupervision?applicationId=${application.applicationNumber}&activationCode=${supervisor.user.activationCode}"
+                        </#if> 
+                        <img border="0" style="border: none;" width="150" height="36" alt="View Application" src="${host}/pgadmissions/design/default/images/email/view_app.png">
+                    </a>
                 </p>
 
                 <p>

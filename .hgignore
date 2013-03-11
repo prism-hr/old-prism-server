@@ -210,6 +210,7 @@ docs/~$research_programmes_20120224.xlsx
 *.bat
 chromedriver.log
 docs/launch/Launch 1.wmv.old
+src/sql/pgadmissions.dump.06_02_2013_11_39_13.sql
 syntax: regexp
 target/*
 

@@ -1,15 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -52,10 +55,10 @@ public class ApplicationsService {
 		applicationFormDAO.save(application);
 	}
 
-	public ApplicationForm createOrGetUnsubmittedApplicationForm(RegisteredUser user, Program program, Date programDeadline,
-			String projectTitle, String researchHomePage) {
+	public ApplicationForm createOrGetUnsubmittedApplicationForm(RegisteredUser user, Program program,
+			Date programDeadline, String projectTitle, String researchHomePage) {
 
-		ApplicationForm applicationForm = findUnsubmittedApplication(user, program);
+		ApplicationForm applicationForm = findMostRecentApplication(user, program);
 		if (applicationForm != null) {
 			return applicationForm;
 		}
@@ -76,22 +79,33 @@ public class ApplicationsService {
 		return applicationForm;
 	}
 
-	private ApplicationForm findUnsubmittedApplication(RegisteredUser user, Program program) {
+	private ApplicationForm findMostRecentApplication(RegisteredUser user, Program program) {
 		List<ApplicationForm> applications = applicationFormDAO.getApplicationsByApplicantAndProgram(user, program);
-		if (!applications.isEmpty()) {
-			Collections.sort(applications, new Comparator<ApplicationForm>() {
-				@Override
-				public int compare(ApplicationForm o1, ApplicationForm o2) {
-					return o1.getApplicationTimestamp().compareTo(o2.getApplicationTimestamp());
-				}
-			});
-			for(ApplicationForm applicationForm : applications){
-				if(!applicationForm.isDecided() && !applicationForm.isWithdrawn()){
-					return applicationForm;
-				}
-			}
-		}
-		return null;
+
+		Iterable<ApplicationForm> filteredApplications = Iterables.filter(applications,
+				new Predicate<ApplicationForm>() {
+					@Override
+					public boolean apply(ApplicationForm applicationForm) {
+						return !applicationForm.isDecided() && !applicationForm.isWithdrawn();
+					}
+				});
+
+		// first order by applications status, the by last updated
+		@SuppressWarnings("unchecked")
+		Ordering<ApplicationForm> ordering = Ordering//
+				.from(new BeanComparator("status"))//
+				.compound(new Comparator<ApplicationForm>() {
+					@Override
+					public int compare(ApplicationForm o1, ApplicationForm o2) {
+						Date date1 = o1.getLastUpdated() != null ? o1.getLastUpdated() : o1.getApplicationTimestamp();
+						Date date2 = o2.getLastUpdated() != null ? o2.getLastUpdated() : o2.getApplicationTimestamp();
+						return date1.compareTo(date2);
+					}
+				});
+
+		List<ApplicationForm> sortedApplications = ordering.sortedCopy(filteredApplications);
+
+		return Iterables.getLast(sortedApplications, null);
 	}
 
 	public void makeApplicationNotEditable(ApplicationForm applicationForm) {

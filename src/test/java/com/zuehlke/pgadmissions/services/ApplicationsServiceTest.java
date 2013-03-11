@@ -13,6 +13,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -128,17 +129,18 @@ public class ApplicationsServiceTest {
 		Program program = new ProgramBuilder().code("KLOP").id(1).build();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
-		
+
 		// one existing application, since is approved should be ignored
-		final ApplicationForm existingApplicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).build();
+		final ApplicationForm existingApplicationForm = new ApplicationFormBuilder().id(1)
+				.status(ApplicationFormStatus.APPROVED).build();
 		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgram(registeredUser, program))
 				.andReturn(Lists.newArrayList(existingApplicationForm));
-		
+
 		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
 		applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
 		EasyMock.replay(applicationFormDAOMock);
-		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null,
-				null, null);
+		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
+				program, null, null, null);
 		EasyMock.verify(applicationFormDAOMock);
 		assertNotNull(returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
@@ -153,20 +155,21 @@ public class ApplicationsServiceTest {
 		Program program = new ProgramBuilder().code("KLOP").id(1).build();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
-		
+
 		// one existing application, since is withdrawn should be ignored
-		final ApplicationForm existingApplicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.WITHDRAWN).build();
+		final ApplicationForm existingApplicationForm = new ApplicationFormBuilder().id(1)
+				.status(ApplicationFormStatus.WITHDRAWN).build();
 		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgram(registeredUser, program))
 				.andReturn(Lists.newArrayList(existingApplicationForm));
-		
+
 		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23L);
 		applicationFormDAOMock.save(EasyMock.isA(ApplicationForm.class));
 		EasyMock.replay(applicationFormDAOMock);
 		Date batchDeadline = new SimpleDateFormat("dd/MM/yyyy").parse("12/12/2012");
 		String projectTitle = "This is the project title";
 		String researchHomePage = "researchHomePage";
-		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program,
-				batchDeadline, projectTitle, researchHomePage);
+		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
+				program, batchDeadline, projectTitle, researchHomePage);
 		EasyMock.verify(applicationFormDAOMock);
 		assertNotNull(returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
@@ -178,24 +181,89 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldGetExistingUnsubmittedApplicationForGivenQueryString() throws ParseException {
-		
+	public void shouldGetRecentlyEditedUnsubmittedApplicationForGivenQueryString() throws ParseException {
+
 		// GIVEN
+		Date date = new Date();
+
 		Program program = new ProgramBuilder().code("KLOP").id(1).build();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
-		final ApplicationForm existingApplicationForm = new ApplicationFormBuilder().id(1).build();
+		final ApplicationForm oldApplicationForm = new ApplicationFormBuilder().id(1)
+				.status(ApplicationFormStatus.UNSUBMITTED).lastUpdated(date).build();
+		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(2)
+				.status(ApplicationFormStatus.UNSUBMITTED).lastUpdated(DateUtils.addDays(date, 2)).build();
+		final ApplicationForm oldApplicationForm2 = new ApplicationFormBuilder().id(3)
+				.status(ApplicationFormStatus.UNSUBMITTED).lastUpdated(DateUtils.addDays(date, 1)).build();
 
 		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgram(registeredUser, program))
-				.andReturn(Lists.newArrayList(existingApplicationForm));
+				.andReturn(Lists.newArrayList(oldApplicationForm, newApplicationForm, oldApplicationForm2));
 
 		// WHEN
 		EasyMock.replay(applicationFormDAOMock);
-		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser, program, null,
-				null, null);
-		
+		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
+				program, null, null, null);
+
 		// THEN
 		EasyMock.verify(applicationFormDAOMock);
-		assertSame(existingApplicationForm, returnedForm);
+		assertSame(newApplicationForm, returnedForm);
+	}
+
+	@Test
+	public void shouldGetInterviewedApplicationForGivenQueryString() throws ParseException {
+
+		// GIVEN
+		Date date = new Date();
+
+		Program program = new ProgramBuilder().code("KLOP").id(1).build();
+		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
+		final ApplicationForm validationApplicationForm = new ApplicationFormBuilder().id(1)
+				.status(ApplicationFormStatus.VALIDATION).lastUpdated(date).build();
+		final ApplicationForm unsubmittedApplicationForm = new ApplicationFormBuilder().id(2)
+				.status(ApplicationFormStatus.UNSUBMITTED).lastUpdated(DateUtils.addDays(date, 2)).build();
+		final ApplicationForm interviewApplicationForm = new ApplicationFormBuilder().id(3)
+				.status(ApplicationFormStatus.INTERVIEW).lastUpdated(DateUtils.addDays(date, 1)).build();
+
+		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgram(registeredUser, program))
+				.andReturn(
+						Lists.newArrayList(validationApplicationForm, unsubmittedApplicationForm,
+								interviewApplicationForm));
+
+		// WHEN
+		EasyMock.replay(applicationFormDAOMock);
+		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
+				program, null, null, null);
+
+		// THEN
+		EasyMock.verify(applicationFormDAOMock);
+		assertSame(interviewApplicationForm, returnedForm);
+	}
+
+	@Test
+	public void shouldGetMostRecentApprovalApplicationForGivenQueryString() throws ParseException {
+
+		// GIVEN
+		Date date = new Date();
+
+		Program program = new ProgramBuilder().code("KLOP").id(1).build();
+		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).build();
+		final ApplicationForm oldApplicationForm = new ApplicationFormBuilder().id(1)
+				.status(ApplicationFormStatus.APPROVAL).lastUpdated(date).build();
+		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(2)
+				.status(ApplicationFormStatus.APPROVAL).lastUpdated(DateUtils.addDays(date, 2)).build();
+		final ApplicationForm oldApplicationForm2 = new ApplicationFormBuilder().id(3)
+				.status(ApplicationFormStatus.APPROVAL).lastUpdated(DateUtils.addDays(date, 1)).build();
+
+		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicantAndProgram(registeredUser, program))
+				.andReturn(Lists.newArrayList(oldApplicationForm, newApplicationForm, oldApplicationForm2));
+
+		// WHEN
+		EasyMock.replay(applicationFormDAOMock);
+		ApplicationForm returnedForm = applicationsService.createOrGetUnsubmittedApplicationForm(registeredUser,
+				program, null, null, null);
+
+		// THEN
+		EasyMock.verify(applicationFormDAOMock);
+		assertSame(newApplicationForm, returnedForm);
 	}
 
 	@After

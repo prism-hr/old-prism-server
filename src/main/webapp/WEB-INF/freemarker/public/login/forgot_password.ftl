@@ -9,8 +9,9 @@
 		<title>UCL Postgraduate Admissions</title>
 		
 		<!-- Styles for Login List Page -->
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
-		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/register.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/forgotPassword.css' />"/>
 		<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
 		
 		<!-- Styles for login List Page -->
@@ -55,20 +56,38 @@
 		    </aside>
 		
 		    <!-- Login form. -->
-		    <section id="registration-box">
+		    <section id="login-box">
 		    
-		    	<form method="post" action= "/pgadmissions/forgotPassword/resetPassword">
-		      		<p>&gt; Please enter your e-mail address...</p>
-		            
-		            <input id="email" type="text" name="email" value="Email Address"/>
-		            <#if errorMessageCode??>                    		
-                    	<span class="invalid"><@spring.message errorMessageCode /></span>                    		
+		    	<form method="post" action= "/pgadmissions/forgotPassword/resetPassword" class="form-horizontal">
+		    		<div id="legend">
+		                <legend>Recover your password</legend>
+		            </div>
+		    		<div class="alert alert-info">
+		      			Please enter your e-mail address...
+					</div>
+		      		 <#if errorMessageCode??>                    		
+                    	<div class="alert alert-error">
+			               <@spring.message errorMessageCode />
+			            </div>                   		
                     </#if>
-                    
-		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
+
+		      		<div class="control-group">
+		           		<label class="control-label" for="email">Email</label>
+						<div class="controls">
+		           			<input id="email" type="text" name="email" placeholder="Email Address"/>
+		           		</div>
+		           	</div>
+		        	<div class="control-group">
+                		<div class="controls">
+		        			<button type="submit" class="btn btn-primary">Get password</button>
+			        	</div>
+			        </div>
+			        <div class="control-group">
+		                <div class="controls">
+				      	<a href="/pgadmissions/login">Back to Login</a>
+				      	</div>
+				    </div>
 		      	</form>
-		      	
-		      	<a href="/pgadmissions/login">&gt; Back to Login</a>
 		      	
 		    </section>
 		

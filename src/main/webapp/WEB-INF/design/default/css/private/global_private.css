@@ -9,7 +9,31 @@ body.ie9 * { filter: none !important; }
 a { text-decoration: none; }
 a:hover { text-decoration: underline; }
 a img { border: none; }
-body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
+body { font: 10pt/1 Arial, Helvetica, sans-serif;
+background: #eeedec;
+  /* Old browsers */
+
+  background: -moz-linear-gradient(top, #eeedec 0%, #c9c9c9 100%);
+  /* FF3.6+ */ 
+
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeedec), color-stop(100%, #c9c9c9));
+  /* Chrome,Safari4+ */
+
+  background: -webkit-linear-gradient(top, #eeedec 0%, #c9c9c9 100%);
+  /* Chrome10+,Safari5.1+ */
+
+  background: -o-linear-gradient(top, #eeedec 0%, #c9c9c9 100%);
+  /* Opera 11.10+ */
+
+  background: -ms-linear-gradient(top, #eeedec 0%, #c9c9c9 100%);
+  /* IE10+ */
+
+  background: linear-gradient(to bottom, #eeedec 0%, #c9c9c9 100%);
+  /* W3C */
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeedec', endColorstr='#c9c9c9', GradientType=0);
+  /* IE6-9 */
+}
 label input { vertical-align: middle; }
 label.normal { font-weight: normal !important; }
 
@@ -1054,13 +1078,14 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
     padding: 2px;
     width: 160px;
 }
-// fixes
-body {
-	.gradientback;
-}
+/* Fixes */
 .content-box .row {
-	margin-left: 0px;
+  margin-left: 0px;
 }
 .user .caret {
-	margin-left: 4px;
+  margin-left: 4px;
+}
+.content-box h2 {
+  font-size: 15px;
+  padding: 4px 14px;
 }

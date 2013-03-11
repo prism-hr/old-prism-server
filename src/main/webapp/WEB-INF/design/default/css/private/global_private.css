@@ -60,7 +60,7 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 #middle > header nav { clear: both; height: 29px; line-height: 29px; /*overflow: hidden;*/ padding-top: 25px; }
 #middle > header nav .navlia {float:left; list-style: none; overflow: hidden;}
 #middle > header nav .navlia ul { float: left; list-style: none; overflow: hidden; }
-#middle > header nav .navlia ul li { float: left; margin-right: 6px; }
+#middle > header nav .navlia ul li { float: left; margin-right: 6px; line-height: 29px; }
 #middle > header nav .navlia ul li a { background: #DCDDDE url(../../images/bg_tabs.jpg) repeat-x 0 -30px; color: #FFF; border-radius: 8px 8px 0 0; display: block; font-size: 9pt; font-weight: bold; padding: 0 10px; text-align: center; }
 #middle > header nav .navlia ul li.current a { background-position: 0 0; color: #000; } 
 

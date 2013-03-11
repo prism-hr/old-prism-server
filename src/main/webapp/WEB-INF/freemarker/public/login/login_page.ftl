@@ -9,6 +9,7 @@
     <title>UCL Postgraduate Admissions</title>
     
     <!-- Styles for Login List Page -->
+    <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/forgotPassword.css' />"/>
     <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
@@ -55,30 +56,47 @@
         <!-- Login form. -->
         <section id="login-box">
         
-          <form id="loginForm" method="post" action="/pgadmissions/j_spring_security_check">
-              <p>&gt; Login</p>
-              
-              <#if Session.loginUserEmail?has_content>
-                <input type="text" id="username_or_email" name="username_or_email" value="${Session.loginUserEmail}" disabled="disabled" />
-                <input type="hidden" id="j_username" name="j_username" value="${Session.loginUserEmail}" />
-              <#else>
-                <input type="text" id="username_or_email" name="j_username" placeholder="Email address" value="Email address" />
-              </#if>
-              
-              <input type="password" id="password" name="j_password" placeholder="Password" value="Password" />
-
+          <form id="loginForm" method="post" action="/pgadmissions/j_spring_security_check" class="form-horizontal">
+              <div id="legend">
+                <legend class="">Login</legend>
+              </div>
               <#if RequestParameters.login_error??>
-                  <span class="invalid">Invalid username/password combination.</span>
+              <div class="alert alert-error">
+                Incorrect Username or Password!
+              </div>
               </#if>
-              <button name="commit" type="submit" value="Sign In" class="blue">Go</button>
+              <div class="control-group">
+                <label class="control-label" for="inputEmail">Email</label>
+                <div class="controls">
+                  <#if Session.loginUserEmail?has_content>
+                    <input type="text" id="username_or_email" name="username_or_email" value="${Session.loginUserEmail}" disabled="disabled" />
+                    <input type="hidden" id="j_username" name="j_username" value="${Session.loginUserEmail}" />
+                  <#else>
+                    <input type="text" id="username_or_email" name="j_username" placeholder="Email address" />
+                  </#if>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="password">Password</label>
+                <div class="controls">
+                 <input type="password" id="password" name="j_password" placeholder="Password"/>
+                </div>
+              </div>
+              <div class="control-group">
+                <div class="controls">
+                 <button type="submit" class="btn btn-primary">Sign in</button>
+                 </div>
+              </div>
+              <div class="control-group">
+                <div class="controls">
+              <#if Session.applyRequest?has_content>
+                    <a href="/pgadmissions/register">Not Registered?</a>
+                </#if>
+                    
+                <a href="/pgadmissions/forgotPassword">Forgot Password</a>
+                </div>
+              </div>
         </form>
-            
-        <#if Session.applyRequest?has_content>
-            <a href="/pgadmissions/register">&gt; Not Registered?</a>
-        </#if>
-            
-        <a href="/pgadmissions/forgotPassword">&gt; Forgot Password</a>
-            
         </section>
     
       </div>

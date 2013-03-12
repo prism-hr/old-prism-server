@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Component
@@ -63,7 +64,7 @@ public class RegistryMailSender extends MailSender {
 				createModel(applicationForm, currentUser, registryContacts),
 				ccAdminAddres,
 				pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber() + ".pdf",
-						pdfDocumentBuilder.buildPdfWithAttachments(applicationForm)));
+						pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), applicationForm)));
 		javaMailSender.send(mimeMessagePreparator);
 
 	}

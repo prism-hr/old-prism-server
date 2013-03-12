@@ -2,14 +2,14 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestBindingException;
@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -28,8 +30,12 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("/print")
 public class PrintController {
 
+    private Logger log = Logger.getLogger(PrintController.class);
+    
 	private final ApplicationsService applicationSevice;
-	private final PdfDocumentBuilder builder;
+	
+	private final PdfDocumentBuilder pdfDocumentBuilder;
+	
 	private final UserService userService;
 
 	public PrintController() {
@@ -37,40 +43,74 @@ public class PrintController {
 	}
 
 	@Autowired
-	public PrintController(ApplicationsService applicationSevice, PdfDocumentBuilder builder, UserService userService) {
+	public PrintController(final ApplicationsService applicationSevice, final PdfDocumentBuilder builder, final UserService userService) {
 		this.applicationSevice = applicationSevice;
-		this.builder = builder;
+		this.pdfDocumentBuilder = builder;
 		this.userService = userService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public void printPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletRequestBindingException {
+	public void printPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletRequestBindingException {
 		String applicationFormNumber = ServletRequestUtils.getStringParameter(request, "applicationFormId");
-		ApplicationForm application = applicationSevice.getApplicationByApplicationNumber(applicationFormNumber);
-		if (application == null || !userService.getCurrentUser().canSee(application)) {
-			throw new ResourceNotFoundException();
+		
+		ApplicationForm form = applicationSevice.getApplicationByApplicationNumber(applicationFormNumber);
+		
+		if (form == null) {
+		    throw new ResourceNotFoundException();
 		}
-		sendPDF(response, applicationFormNumber, builder.buildPdfWithAttachments(application));
+		
+		RegisteredUser currentUser = userService.getCurrentUser();
+		
+		if (!currentUser.canSee(form)) {
+		    throw new ResourceNotFoundException();
+		}
+		
+		PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();
+		if (isApplicant(currentUser, form)) {
+		    pdfModelBuilder.includeCriminialConvictions(true);
+		    pdfModelBuilder.includeDisability(true);
+		    pdfModelBuilder.includeEthnicity(true);
+		} else if (currentUser.hasAdminRightsOnApplication(form)) {
+		    pdfModelBuilder.includeReferences(true);
+		}
+		
+		sendPDF(response, applicationFormNumber, pdfDocumentBuilder.build(pdfModelBuilder, form));
 	}
-
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
-	public void printAll(HttpServletRequest request, HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
+	public void printAll(final HttpServletRequest request, final HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
 		String appListToPrint = ServletRequestUtils.getStringParameter(request, "appList");
 		String[] applicationIds = appListToPrint.split(";");
-		List<ApplicationForm> applicationList = new ArrayList<ApplicationForm>();
-
+		RegisteredUser currentUser = userService.getCurrentUser();
+		HashMap<PdfModelBuilder, ApplicationForm> formsToPrint = new HashMap<PdfModelBuilder, ApplicationForm>();
+		
 		for (String applicationId : applicationIds) {
-			ApplicationForm applicationForm = applicationSevice.getApplicationByApplicationNumber(applicationId);
-			if (applicationForm != null && userService.getCurrentUser().canSee(applicationForm)) {
-				applicationList.add(applicationForm);
+			ApplicationForm form = applicationSevice.getApplicationByApplicationNumber(applicationId);
+			
+			if (form == null) {
+			    continue;
 			}
-
+			
+			if (!currentUser.canSee(form)) {
+			    continue;
+	        }
+			
+			PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();
+			if (isApplicant(currentUser, form)) {
+			    pdfModelBuilder.includeCriminialConvictions(true);
+			    pdfModelBuilder.includeDisability(true);
+			    pdfModelBuilder.includeEthnicity(true);
+			} else if (currentUser.hasAdminRightsOnApplication(form)) {
+	            pdfModelBuilder.includeReferences(true);
+	        }
+			
+			formsToPrint.put(pdfModelBuilder, form);
 		}
-		sendPDF(response,getTimestamp(), builder.buildPdfWithAttachments(applicationList.toArray(new ApplicationForm[] {})));
+		
+		sendPDF(response, getTimestamp(), pdfDocumentBuilder.build(formsToPrint));
 	}
 
-	private void sendPDF(HttpServletResponse response, String pdfFileNamePostFix, byte[] pdf) throws IOException {
+	private void sendPDF(final HttpServletResponse response, final String pdfFileNamePostFix, final byte[] pdf) throws IOException {
 		response.setHeader("Expires", "0");
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
 		response.setHeader("Pragma", "public");
@@ -81,23 +121,28 @@ public class PrintController {
 		try {
 			out = response.getOutputStream();
 			out.write(pdf);
-
+		} catch (Exception e) {
+            log.warn(e.getMessage(), e);		    
 		} finally {
 			try {
 				out.flush();
 			} catch (Exception e) {
-			    // do nothing
+			    log.warn(e.getMessage(), e);
 			}
 			
 			try {
 			    out.close();
 			} catch (Exception e) {
-			    // do nothing
+			    log.warn(e.getMessage(), e);
 			}
 		}
 	}
 	
-	String getTimestamp(){
+	protected String getTimestamp(){
 		return new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
+	}
+	
+	private boolean isApplicant(final RegisteredUser user, final ApplicationForm form) {
+	    return user.getId().equals(form.getApplicant().getId());
 	}
 }

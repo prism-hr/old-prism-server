@@ -17,7 +17,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
+import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
+import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 
 @Component
@@ -25,13 +28,20 @@ public class PorticoAttachmentsZipCreator {
 
     private final PdfDocumentBuilder pdfDocumentBuilder;
     
+    private final CombinedReferencesPdfBuilder combinedReferenceBuilder;
+    
+    private final Transcript1PdfBuilder transcriptBuilder;
+    
     public PorticoAttachmentsZipCreator() {
-        this(null);
+        this(null, null, null);
     }
     
     @Autowired
-    public PorticoAttachmentsZipCreator(PdfDocumentBuilder pdfDocumentBuilder) {
+    public PorticoAttachmentsZipCreator(final PdfDocumentBuilder pdfDocumentBuilder, 
+            final CombinedReferencesPdfBuilder combinedReferenceBuilder, final Transcript1PdfBuilder transcriptBuilder) {
         this.pdfDocumentBuilder = pdfDocumentBuilder;
+        this.combinedReferenceBuilder = combinedReferenceBuilder;
+        this.transcriptBuilder = transcriptBuilder;
     }
     
     public void writeZipEntries(ApplicationForm applicationForm, String referenceNumber, OutputStream sftpOs) throws IOException, CouldNotCreateAttachmentsPack {
@@ -67,14 +77,14 @@ public class PorticoAttachmentsZipCreator {
             case 2:
                 filename = getRandomFilename();
                 zos.putNextEntry(new ZipEntry(filename));
-                pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(1), zos);
+                combinedReferenceBuilder.build(references.get(1), zos);
                 zos.closeEntry();
                 contentsProperties.put("reference.2.serverFilename", filename);
                 contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
 
                 filename = getRandomFilename();
                 zos.putNextEntry(new ZipEntry(filename));
-                pdfDocumentBuilder.writeCombinedReferencesAsPdfToOutputStream(references.get(0), zos);
+                combinedReferenceBuilder.build(references.get(0), zos);
                 zos.closeEntry();
                 contentsProperties.put("reference.1.serverFilename", filename);
                 contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
@@ -141,7 +151,7 @@ public class PorticoAttachmentsZipCreator {
         case 0:
             filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(pdfDocumentBuilder.buildTranscript1FromApprovalRoundComment(applicationForm));
+            zos.write(transcriptBuilder.build(applicationForm));
             zos.closeEntry();
             contentsProperties.put("transcript.1.serverFilename", filename);
             contentsProperties.put("transcript.1.applicationFilename", "ExplanationOfMissingQualifications.pdf");
@@ -153,7 +163,7 @@ public class PorticoAttachmentsZipCreator {
         String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "ApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
-        pdfDocumentBuilder.buildPdf(applicationForm, zos, false);
+        pdfDocumentBuilder.build(new PdfModelBuilder().includeCriminialConvictions(true).includeDisability(true).includeEthnicity(true).includeAttachments(false), zos, applicationForm);
         zos.closeEntry();
         contentsProperties.put("applicationForm.1.serverFilename", serverfilename);
         contentsProperties.put("applicationForm.1.applicationFilename", applicationFilename);
@@ -163,7 +173,7 @@ public class PorticoAttachmentsZipCreator {
         String serverfilename = "MergedApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "MergedApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
-        pdfDocumentBuilder.buildPdf(applicationForm, zos, true);
+        pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), zos, applicationForm);
         zos.closeEntry();
         contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);
         contentsProperties.put("mergedApplication.1.applicationFilename", applicationFilename);        

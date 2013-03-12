@@ -202,7 +202,7 @@ table.existing .button-edit, table.existing .button-delete { margin: 3px 0; }
 /* FORM ELEMENTS ----------------------------------------------------------------------------------------- */
 input, select, textarea { border: 1px solid #999; font-family: Arial, Helvetica, sans-serif !important; }
 input { padding: 1px 3px; }
-input.date, input.hasDatepicker { background: url(../../images/calendar.png) no-repeat right center; padding-right: 24px; width: 80px !important; }
+input.date, input.hasDatepicker { background: url(../../images/calendar.png) no-repeat right center; padding-right: 24px; width: 96px !important; }
 textarea { padding: 3px; resize: none; }
 input[type=checkbox], input[type=radio] { border: none !important; padding: 0; }
 select[multiple] { vertical-align: top; }

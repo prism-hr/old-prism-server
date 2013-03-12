@@ -4,6 +4,8 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,16 +43,22 @@ public class ApplicationListController {
 		this.userService = userService;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getApplicationListPage(Model model) {
-		List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
-		model.addAttribute("hasFilter", !applicationsFilters.isEmpty());
-		if (!applicationsFilters.isEmpty()) {
-			model.addAttribute("searchTerm", applicationsFilters.get(0).getSearchTerm());
-			model.addAttribute("searchCategory", applicationsFilters.get(0).getSearchCategory());
-		}
-		return APPLICATION_LIST_PAGE_VIEW_NAME;
-	}
+    @RequestMapping(method = RequestMethod.GET)
+    public String getApplicationListPage(Model model, HttpSession session) {
+        Object alertDefinition = session.getAttribute("alertDefinition");
+        if (alertDefinition != null) {
+            model.addAttribute("alertDefinition", alertDefinition);
+            session.removeAttribute("alertDefinition");
+        }
+
+        List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
+        model.addAttribute("hasFilter", !applicationsFilters.isEmpty());
+        if (!applicationsFilters.isEmpty()) {
+            model.addAttribute("searchTerm", applicationsFilters.get(0).getSearchTerm());
+            model.addAttribute("searchCategory", applicationsFilters.get(0).getSearchCategory());
+        }
+        return APPLICATION_LIST_PAGE_VIEW_NAME;
+    }
 
 	@RequestMapping(value = "/section", method = RequestMethod.GET)
 	public String getApplicationListSection(@RequestParam(required = false) SearchCategory searchCategory,

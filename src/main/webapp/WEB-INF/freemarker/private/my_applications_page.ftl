@@ -62,6 +62,26 @@
                 <div class="content-box">
                     <div class="content-box-inner">
 
+                        <#if alertDefinition??>
+                            <div class="alert">
+                                
+                                <#if alertDefinition.type??>
+                                    <#if alertDefinition.type.name() == "INFO"> 
+                                        <i class="icon-info-sign"></i>
+                                    <#elseif alertDefinition.type.name() == "WARNING"> 
+                                        <i class="icon-warning-sign"></i>
+                                    </#if>
+                                </#if>
+                                    
+                                <#if alertDefinition.title??> 
+                                    <strong>${alertDefinition.title}</strong>
+                                </#if>
+                                <#if alertDefinition.description??> 
+                                    <p>${alertDefinition.description}</p>
+                                </#if>
+                            </div>
+                        </#if>
+
                         <#if message??>
                         <div class="section-info-bar">${(message?html)!}</div>
                         </#if> <#if RequestParameters.messageCode??> <#if messageApplication??> <#assign args = ["${messageApplication.applicationNumber}"] />

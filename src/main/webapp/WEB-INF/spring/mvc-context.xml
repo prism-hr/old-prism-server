@@ -20,12 +20,12 @@
             <property name="sessionFactory" ref="sessionFactory" />
         </bean>
     </mvc:interceptors>
-    
+
     <mvc:resources mapping="/design/**" location="/WEB-INF/design/" />
 
     <!-- JSR-303 support will be detected on classpath and enabled automatically -->
     <mvc:annotation-driven />
-    
+
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <!-- one of the properties available; the maximum file size in bytes -->
         <property name="maxUploadSize" value="2097152" />
@@ -44,14 +44,9 @@
         </property>
     </bean>
 
-    <!-- general exception page handler -->
-    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="warnLogCategory" value="any" />
-        <property name="exceptionMappings">
-            <props>
-                <prop key="java.lang.Exception">redirect:error</prop>
-            </props>
-        </property>
+
+    <!-- custom exception resolver -->
+    <bean class="com.zuehlke.pgadmissions.interceptors.PgadmissionsExceptionResolver">
     </bean>
 
     <!-- freemarker config -->
@@ -83,7 +78,7 @@
     <bean id="themeResolver" class="org.springframework.web.servlet.theme.FixedThemeResolver">
         <property name="defaultThemeName" value="default" />
     </bean>
-    
+
     <mvc:view-controller path="/register/complete" view-name="public/register/registration_complete" />
     <mvc:view-controller path="/addReferences/referenceuploaded" view-name="private/referees/upload_success" />
     <mvc:view-controller path="/error" view-name="public/error/error" />

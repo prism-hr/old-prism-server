@@ -14,14 +14,15 @@
 #timeline-statuses { list-style: none; margin: 0; padding: 0; }
 #timeline-statuses ul { list-style: none; margin-left: 90px; }
 
-#timeline-statuses .box { background: #C8C8C8; margin-bottom: 10px; }
+#timeline-statuses .box { background: #C8C8C8; margin-bottom: 10px; position: relative; }
+
 #timeline-statuses .box .title { background: #999; font-weight: bold; line-height: 24px; overflow: hidden; padding: 5px; }
 #timeline-statuses .box .title .name { margin-left: 4px; }
 #timeline-statuses .box .title .datetime { float: right; margin-right: 5px; }
 #timeline-statuses .box .title em { color: black; font-weight: normal; font-size: 12px; }
 #timeline-statuses .box p { line-height: 1.2; margin: 0; padding: 5px 10px 0 30px; }
 #timeline-statuses .box p.highlight { background-image: url(../../../images/bg_status_default.gif); font-size: 16px; font-weight: bold; margin: 0; padding: 10px 25px 10px 10px; }
-#timeline-statuses .box h3 { line-height: 1.2; margin-bottom: 0; margin-top: .5em; padding: 0 10px; }
+#timeline-statuses .box h3 {font-size:13px; line-height: 1.2; margin-bottom: 0; margin-top: .5em; padding: 0 10px; }
 #timeline-statuses .box label { display: inline-block; margin-right: 1em; }
 #timeline-statuses .box label input { vertical-align: middle; }
 #timeline-statuses .box ul { margin: 0 30px; padding: 10px 0; }
@@ -131,3 +132,30 @@
 #application div.admin_row .field { line-height: 1.2; margin: 4px 0 4px 235px; padding: 0; }
 
 #application div.buttons { display: none !important; }
+
+/* Dropdown css */
+#timeline-statuses .box .textContainer {
+	overflow: hidden;
+}
+.expandable {
+	margin-bottom: 24px;
+}
+.expander {
+	position: absolute;
+	right: 12px;
+	width: 73px;
+	cursor: pointer;
+	display: block;
+	bottom: 8px;
+	color: #333333;
+	font-weight: bold;
+	padding-right: 24px;
+	line-height: 24px;
+}
+.expander.expand {
+	background: url('../../../images/icon_expand.png') center right no-repeat;
+}
+.expander.collapsed {
+	background: url('../../../images/icon_collapse.png') center right no-repeat;
+}
+

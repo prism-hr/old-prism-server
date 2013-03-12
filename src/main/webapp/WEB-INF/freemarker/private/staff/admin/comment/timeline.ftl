@@ -1,11 +1,9 @@
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">
 <!-- Styles for Application List Page -->
-<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
-<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
-<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/timeline.css' />"/>
-
-
+<!-- <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/> -->
+<!-- <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/> -->
+<!-- <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/timeline.css' />"/> -->
 <section class="form-rows">
   <div>            
     <div class="row-group">
@@ -147,14 +145,14 @@
     			                  <span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
     			                </div>
     			                <#if comment.type == 'REQUEST_RESTART'>
-    												<p><em>${(comment.comment?html)!}</em></p>
+    												<div class="textContainer"><p><em>${(comment.comment?html)!}</em></p></div>
     												<p class="restart"><span></span>Restart of approval stage requested.</p>
     			                <#elseif comment.comment?starts_with("Referred to")>
     												<p class="referral"><span></span><em>${(comment.comment?html)!}</em></p>
     			                <#elseif comment.comment?starts_with("Delegated Application")>
     												<p class="delegate"><span></span><em>${(comment.comment?html)!}</em></p>
     											<#elseif comment.comment?length &gt; 0>
-    												<p><em>${(comment.comment?html)!}</em></p>
+    												<div class="textContainer"><p><em>${(comment.comment?html)!}</em></p></div>
     											</#if>
     							<#if comment.documents?? && comment.documents?size &gt; 0>
     				                <ul class="uploads">                
@@ -187,3 +185,4 @@
     </div>           
   </div>
 </section>
+<script type="text/javascript" src="<@spring.url '/design/default/js/expand.js' />"></script>

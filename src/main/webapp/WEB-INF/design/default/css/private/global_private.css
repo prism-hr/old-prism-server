@@ -861,13 +861,13 @@ span.icon-role {
 	white-space: nowrap;
 	width: 24px;
 }
-span.icon-role.administrator { background-image: url(../../images/role_admin.png); }
-span.icon-role.reviewer { background-image: url(../../images/role_reviewer.png); }
-span.icon-role.interviewer { background-image: url(../../images/role_interviewer.png); }
-span.icon-role.approver { background-image: url(../../images/role_approver.png); }
-span.icon-role.applicant { background-image: url(../../images/role_applicant.png); }
-span.icon-role.referee { background-image: url(../../images/role_referee.png); }
-span.icon-role.supervisor { background-image: url(../../images/role_supervisor.png); }
+span.icon-role.administrator { background-image: url(../../images/role_admin.png); background-position: 0 0; }
+span.icon-role.reviewer { background-image: url(../../images/role_reviewer.png);  background-position: 0 0; }
+span.icon-role.interviewer { background-image: url(../../images/role_interviewer.png); background-position: 0 0;  }
+span.icon-role.approver { background-image: url(../../images/role_approver.png);  background-position: 0 0; }
+span.icon-role.applicant { background-image: url(../../images/role_applicant.png);  background-position: 0 0; }
+span.icon-role.referee { background-image: url(../../images/role_referee.png);  background-position: 0 0; }
+span.icon-role.supervisor { background-image: url(../../images/role_supervisor.png); background-position: 0 0;  }
 
 
 button span.icon-up, button span.icon-down {

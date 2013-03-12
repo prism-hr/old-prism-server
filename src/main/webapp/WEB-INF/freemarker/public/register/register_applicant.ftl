@@ -114,7 +114,7 @@
 		            <div class="control-group">
 		                <label class="control-label" for="lastName">Last Name</label>
 		                <div class="controls">
-			            <input id="lastName" type="text" name="lastName" placeholder='${(pendingUser.lastName?html)!"Last Name"}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+			            <input id="lastName" type="text" name="lastName" placeholder="Last Name" value='${(pendingUser.lastName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 	                    <@spring.bind "pendingUser.lastName" /> 
 	                    <#list spring.status.errorMessages as error>		                                		
 	                        <div class="alert alert-error">${error}</div>                     		
@@ -128,7 +128,7 @@
 			            <#if RequestParameters.activationCode?has_content>
 			            <div id="email_tooltip_input" name="email_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
 			            </#if>
-			            <input id="email" type="text" name="email" placeholder='${(pendingUser.email?html)!"Email Address"}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+			            <input id="email" type="text" placeholder="Email Address" name="email" value='${(pendingUser.email?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 			            <#if RequestParameters.activationCode?has_content>
 	                    </div>
 	                    </#if>

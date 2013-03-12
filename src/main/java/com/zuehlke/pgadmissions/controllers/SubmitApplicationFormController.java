@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
@@ -107,7 +108,7 @@ public class SubmitApplicationFormController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
-        if (applicationForm != null && applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(getCurrentUser().getId())
+        if (applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(getCurrentUser().getId())
                 && applicationForm.isModifiable()) {
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
@@ -130,12 +131,15 @@ public class SubmitApplicationFormController {
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null || !getCurrentUser().canSee(applicationForm)) {
+        if (applicationForm == null) {
+        	throw new MissingApplicationFormException(applicationId);
+        }
+        if (!getCurrentUser().canSee(applicationForm)) {
             throw new ResourceNotFoundException();
         }
         return applicationForm;
     }
-
+    
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return getCurrentUser();

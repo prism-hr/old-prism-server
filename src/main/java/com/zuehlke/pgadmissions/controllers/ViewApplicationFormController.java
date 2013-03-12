@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -42,7 +43,10 @@ public class ViewApplicationFormController {
 			@RequestParam(required = false) String fundingErrors) {
 		RegisteredUser currentuser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
-		if (applicationForm == null || !currentuser.canSee(applicationForm)) {
+		if(applicationForm == null){
+			throw new MissingApplicationFormException(id);
+		}
+		if (!currentuser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 

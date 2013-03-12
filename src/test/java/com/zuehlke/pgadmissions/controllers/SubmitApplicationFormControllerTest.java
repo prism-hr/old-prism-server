@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
@@ -134,6 +135,8 @@ public class SubmitApplicationFormControllerTest {
 	
 	@Test
 	public void shouldReturnStudenApplicationViewWithoutHeaders() {
+	    
+	    ApplicationForm applicationForm = new ApplicationFormBuilder().build();
 		RegisteredUser otherUser = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(otherUser).anyTimes();
@@ -142,7 +145,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(request.getParameter("embeddedApplication")).andReturn("true");
 		EasyMock.expect(request.getParameter("embeddedApplication")).andReturn("true");
 		EasyMock.replay(request);
-		String view = applicationController.getApplicationView(request, null);
+		String view = applicationController.getApplicationView(request, applicationForm);
 		assertEquals("/private/staff/application/main_application_page_without_headers", view);
 	}
 	
@@ -249,7 +252,7 @@ public class SubmitApplicationFormControllerTest {
 
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
+	@Test(expected = MissingApplicationFormException.class)
 	public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationFormDoesNotExist() {
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);

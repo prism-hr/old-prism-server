@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class RegistryMailSenderTest {
@@ -81,7 +82,6 @@ public class RegistryMailSenderTest {
 			public Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser currentAdminUser, List<Person> registryContacts) {
 				return model;
 			}
-
 		};
 
 		Person registryUser1 = new PersonBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").build();
@@ -89,15 +89,14 @@ public class RegistryMailSenderTest {
 		List<Person> registryContacts = Arrays.asList(registryUser1, registryUser2);	
 
 		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().adminRequestedRegistry(currentAdminUser).id(1).program(new ProgramBuilder().title("program name").build()).applicationNumber("application number")
-				.build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().adminRequestedRegistry(currentAdminUser).id(1).program(new ProgramBuilder().title("program name").build()).applicationNumber("application number").build();
 
 		InternetAddress toAddress1 = new InternetAddress("jones@test.com", "Bob Jones");
 		InternetAddress toAddress2 = new InternetAddress("peters@test.com", "Karla Peters");
 		InternetAddress toAddress3 = new InternetAddress("hobnob@test.com", "Hanna Hobnop");
 		
 		byte[] pdf = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments(applicationForm)).andReturn(pdf);		
+		EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(PdfModelBuilder.class), EasyMock.eq(applicationForm))).andReturn(pdf);		
 		PdfAttachmentInputSource attachmentInputSource = EasyMock.createMock(PdfAttachmentInputSource.class);
 		EasyMock.expect(pdfAttachmentInputSourceFactoryMock.getAttachmentDataSource("application number.pdf", pdf)).andReturn(attachmentInputSource);
 
@@ -117,7 +116,6 @@ public class RegistryMailSenderTest {
 		registryMailSender.sendApplicationToRegistryContacts(applicationForm, registryContacts);
 
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock,  pdfDocumentBuilderMock,pdfAttachmentInputSourceFactoryMock , msgSourceMock);
-
 	}
 
 	@Before

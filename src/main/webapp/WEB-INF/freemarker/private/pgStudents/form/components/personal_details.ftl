@@ -72,35 +72,51 @@
             </#list>
             
             <div class="row">
-                <label class="plain-label grey-label">First Name</label>
-                <span class="hint" data-desc="<@spring.message 'personalDetails.firstname'/>"></span>
-                <div class="field">                     
-                    <input class="full" readonly="readonly" type="text" value="${(user.firstName?html)!}" name="firstName" id="firstName" disabled="disabled"/>             
-                </div>
-            </div>
-            
-            <div class="row">
-                <label class="plain-label grey-label">First Name 2</label>
-                <span class="hint" data-desc="<@spring.message 'personalDetails.firstname2'/>"></span>
-                <div class="field">                     
-                    <input class="full" readonly="readonly" type="text" value="${(user.firstName2?html)!}" name="firstName2" id="firstName2" disabled="disabled"/>             
-                </div>
-            </div>
-            
-            <div class="row">
-                <label class="plain-label grey-label">First Name 3</label>
-                <span class="hint" data-desc="<@spring.message 'personalDetails.firstname3'/>"></span>
-                <div class="field">                     
-                    <input class="full" readonly="readonly" type="text" value="${(user.firstName3?html)!}" name="firstName3" id="firstName3" disabled="disabled"/>             
-                </div>
-            </div>
-             
-            <div class="row">
-                <label class="plain-label grey-label">Last Name</label>
-                <span class="hint" data-desc="<@spring.message 'personalDetails.lastname'/>"></span>
+                <span id="firstName-lbl" class="plain-label">First Names<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
                 <div class="field">
-                    <input class="full" readonly="readonly" type="text" value="${(user.lastName?html)!}" name="lastName" id="lastName" disabled="disabled"/>           
+                    <input class="full" type="text" id="firstName" value="${(updatedUser.firstName?html)!}" />
                 </div>
+                <@spring.bind "updatedUser.firstName" /> <#list spring.status.errorMessages as error>
+                <div class="field">
+                    <span class="invalid">${error}</span>
+                </div>
+                </#list>
+            </div>
+            
+            <div class="row">
+                <span class="plain-label"></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
+                <div class="field">
+                    <input class="full" type="text" id="firstName2" value="${(updatedUser.firstName2?html)!}" />
+                </div>
+                <@spring.bind "updatedUser.firstName2" /> <#list spring.status.errorMessages as error>
+                <div class="field">
+                    <span class="invalid">${error}</span>
+                </div>
+                </#list>
+            </div>
+            
+            <div class="row">
+                <span class="plain-label"></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
+                <div class="field">
+                    <input class="full" type="text" id="firstName3" value="${(updatedUser.firstName3?html)!}" />
+                </div>
+                <@spring.bind "updatedUser.firstName3" /> <#list spring.status.errorMessages as error>
+                <div class="field">
+                    <span class="invalid">${error}</span>
+                </div>
+                </#list>
+            </div>
+
+            <div class="row">
+                <span id="lastName-lbl" class="plain-label">Last Name<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
+                <div class="field">
+                    <input class="full" type="text" id="lastName" value="${(updatedUser.lastName?html)!}" />
+                </div>
+                <@spring.bind "updatedUser.lastName" /> <#list spring.status.errorMessages as error>
+                <div class="field">
+                    <span class="invalid">${error}</span>
+                </div>
+                </#list>
             </div>
              
             <div class="row">

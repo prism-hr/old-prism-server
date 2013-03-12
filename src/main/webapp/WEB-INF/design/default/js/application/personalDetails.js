@@ -1,8 +1,5 @@
 $(document).ready(function() {
 
-    var persImgCount = 0;
-    var currentRel = 0; // currently edited languageQualification row
-    
     showOrHideNationalityButton();
     if ($("input[name='passportAvailable']:checked").val() == "true") {
     	enablePassportInformation();
@@ -140,7 +137,6 @@ $(document).ready(function() {
             $("#acceptTermsPEDValue").val("NO");
         } else {
             $("#acceptTermsPEDValue").val("YES");
-            persImgCount = 0;
         }
     });
     
@@ -510,8 +506,9 @@ function postPersonalDetailsData(message) {
     var postData = {
         title : $("#title").val(),
         firstName : $("#firstName").val(),
+        firstName2 : $("#firstName2").val(),
+        firstName3 : $("#firstName3").val(),
         lastName : $("#lastName").val(),
-        email : $("#email").val(),
         country : $("#country").val(),
         dateOfBirth : $("#dateOfBirth").val(),
         residenceCountry : $("#residenceCountry").val(),

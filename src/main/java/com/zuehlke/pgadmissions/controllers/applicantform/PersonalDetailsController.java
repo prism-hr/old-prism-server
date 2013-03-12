@@ -55,16 +55,17 @@ import com.zuehlke.pgadmissions.services.EthnicityService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.PersonalDetailsUserValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 
 @Controller
 @RequestMapping("/update")
-@SessionAttributes({"personalDetails"})
+@SessionAttributes({ "personalDetails" })
 public class PersonalDetailsController {
 
     private static final String STUDENTS_FORM_PERSONAL_DETAILS_VIEW = "/private/pgStudents/form/components/personal_details";
     private static final String STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW = "/private/pgStudents/form/components/personal_details_language_qualifications";
-    
+
     private final ApplicationsService applicationsService;
     private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
     private final DatePropertyEditor datePropertyEditor;
@@ -84,22 +85,20 @@ public class PersonalDetailsController {
     private final DocumentPropertyEditor documentPropertyEditor;
     private final DocumentService documentService;
     private final EncryptionHelper encryptionHelper;
-    
+    private final PersonalDetailsUserValidator personalDetailsUserValidator;
+
     public PersonalDetailsController() {
-        this(null, null, null, null, null, null, null, null, null, 
-                null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public PersonalDetailsController(ApplicationsService applicationsService, UserService userService,
-            ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor,
-            CountryService countryService, EthnicityService ethnicityService, DisabilityService disabilityService,
-            LanguageService languageService, LanguagePropertyEditor languagePropertyEditor,
-            CountryPropertyEditor countryPropertyEditor, DisabilityPropertyEditor disabilityPropertyEditor,
-            EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator,
-            PersonalDetailsService personalDetailsService, DomicileService domicileService,
-            DomicilePropertyEditor domicilePropertyEditor, DocumentPropertyEditor documentPropertyEditor,
-            DocumentService documentService, EncryptionHelper encryptionHelper) {
+            ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor, CountryService countryService,
+            EthnicityService ethnicityService, DisabilityService disabilityService, LanguageService languageService,
+            LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, DisabilityPropertyEditor disabilityPropertyEditor,
+            EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator, PersonalDetailsService personalDetailsService,
+            DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, DocumentPropertyEditor documentPropertyEditor,
+            DocumentService documentService, EncryptionHelper encryptionHelper, PersonalDetailsUserValidator personalDetailsUserValidator) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -119,8 +118,9 @@ public class PersonalDetailsController {
         this.documentPropertyEditor = documentPropertyEditor;
         this.documentService = documentService;
         this.encryptionHelper = encryptionHelper;
+        this.personalDetailsUserValidator = personalDetailsUserValidator;
     }
-    
+
     @InitBinder(value = "personalDetails")
     public void registerPropertyEditorsForPersonalDetails(WebDataBinder binder) {
         binder.setValidator(personalDetailsValidator);
@@ -134,7 +134,13 @@ public class PersonalDetailsController {
         binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
     }
-    
+
+    @InitBinder(value = "updatedUser")
+    public void registerUserValidator(WebDataBinder binder) {
+        binder.setValidator(personalDetailsUserValidator);
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
+
     @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
     public String getPersonalDetailsView(@RequestParam String applicationId, Model model) {
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
@@ -143,83 +149,97 @@ public class PersonalDetailsController {
 
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        
-        if(personalDetails.getLanguageQualifications().isEmpty()){
-        	personalDetails.addLanguageQualification(new LanguageQualification());
+
+        if (personalDetails.getLanguageQualifications().isEmpty()) {
+            personalDetails.addLanguageQualification(new LanguageQualification());
         }
-        
+
         model.addAttribute("personalDetails", personalDetails);
         model.addAttribute("applicationForm", applicationForm);
-        
+
         return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
     }
-    
+
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
-    public String editPersonalDetails(@Valid PersonalDetails personalDetails,
-            BindingResult result, Model model, SessionStatus sessionStatus) {
+    public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult,
+            @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model, SessionStatus sessionStatus) {
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
             throw new ResourceNotFoundException();
         }
-        
+
         if (personalDetails.getApplication().isDecided()) {
             throw new CannotUpdateApplicationException();
         }
-        
-        if (result.hasErrors()) {
+
+        if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
             return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
         }
-        
+
         if (BooleanUtils.isNotTrue(personalDetails.getLanguageQualificationAvailable())) {
-        	personalDetails.getLanguageQualifications().clear();
+            personalDetails.getLanguageQualifications().clear();
         }
-        
+
+        userService.updateCurrentUser(updatedUser);
         personalDetailsService.save(personalDetails);
         personalDetails.getApplication().setLastUpdated(new Date());
         applicationsService.save(personalDetails.getApplication());
 
-        sessionStatus.isComplete();
-        
-        if(personalDetails.getLanguageQualifications().isEmpty()){
-        	personalDetails.addLanguageQualification(new LanguageQualification());
+        sessionStatus.setComplete();
+
+        if (personalDetails.getLanguageQualifications().isEmpty()) {
+            personalDetails.addLanguageQualification(new LanguageQualification());
         }
-        
-        return "redirect:/update/getPersonalDetails?applicationId="+ personalDetails.getApplication().getApplicationNumber();
+
+        return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getApplicationNumber();
     }
-    
-	@RequestMapping(value = "/deleteAllLanguageQualifications", method = RequestMethod.POST)
-	public String deleteAllLanguageQualifications(@RequestParam(value = "englishFirstLanguage", required = false) Boolean englishFirstLanguage,
-			@RequestParam(value = "languageQualificationAvailable", required = false) Boolean languageQualificationAvailable,
-			@ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
 
-		for (LanguageQualification languageQualification : personalDetails.getLanguageQualifications()) {
-			languageQualification.setLanguageQualificationDocument(null);
-		}
+    @RequestMapping(value = "/deleteAllLanguageQualifications", method = RequestMethod.POST)
+    public String deleteAllLanguageQualifications(@RequestParam(value = "englishFirstLanguage", required = false) Boolean englishFirstLanguage,
+            @RequestParam(value = "languageQualificationAvailable", required = false) Boolean languageQualificationAvailable,
+            @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
+        if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+            throw new ResourceNotFoundException();
+        }
 
-		personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
-		personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
-		personalDetails.getLanguageQualifications().clear();
-		personalDetails.addLanguageQualification(new LanguageQualification());
-		return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
-	}
-    
+        for (LanguageQualification languageQualification : personalDetails.getLanguageQualifications()) {
+            languageQualification.setLanguageQualificationDocument(null);
+        }
+
+        personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
+        personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
+        personalDetails.getLanguageQualifications().clear();
+        personalDetails.addLanguageQualification(new LanguageQualification());
+        return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
+    }
+
     @RequestMapping(value = "/deleteLanguageQualificationsDocument", method = RequestMethod.POST)
     public String deleteLanguageQualificationsDocument(@RequestParam String documentId, Model model) {
         if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
             throw new ResourceNotFoundException();
         }
-        
+
         if (StringUtils.isNotBlank(documentId)) {
-        	documentService.delete(documentService.getDocumentById(encryptionHelper.decryptToInteger(documentId)));
+            documentService.delete(documentService.getDocumentById(encryptionHelper.decryptToInteger(documentId)));
         }
 
         return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
     }
-    
+
     private RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
+    }
+
+    @ModelAttribute(value = "updatedUser")
+    public RegisteredUser getUpdatedUser() {
+        RegisteredUser registeredUser = new RegisteredUser();
+        RegisteredUser currentUser = getUser();
+        registeredUser.setFirstName(currentUser.getFirstName());
+        registeredUser.setFirstName2(currentUser.getFirstName2());
+        registeredUser.setFirstName3(currentUser.getFirstName3());
+        registeredUser.setLastName(currentUser.getLastName());
+        registeredUser.setEmail(currentUser.getEmail());
+        registeredUser.setPassword(currentUser.getPassword());
+        return registeredUser;
     }
 
     @ModelAttribute("languages")

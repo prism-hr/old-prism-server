@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="row">
-                    <span id="email-lbl" class="plain-label">Last Name<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
+                    <span id="lastName-lbl" class="plain-label">Last Name<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
                     <div class="field">
                         <input class="full" type="text" id="lastName" value="${(updatedUser.lastName?html)!}" />
                     </div>

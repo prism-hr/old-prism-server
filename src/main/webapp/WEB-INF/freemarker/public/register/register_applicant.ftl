@@ -78,39 +78,6 @@
 						</div>
                 	</div>
 
-                     <!--div class="control-group">
-		                <label class="control-label" for="firstName2">Second Name</label>
-		                <div class="controls">
-	                    <#if RequestParameters.activationCode?has_content>
-	                        <#if pendingUser.firstName2??> 
-	                            <input id="firstName2" type="text" name="firstName2" placeholder='${pendingUser.firstName2!}' disabled="disabled" />
-	                        </#if>
-	                    <#else>
-	                        <input id="firstName2" type="text" name="firstName2" placeholder='${(pendingUser.firstName2?html)!"Second Forename (optional)"}' />
-	                    </#if>
-	                    <@spring.bind "pendingUser.firstName2" /> 
-	                    <#list spring.status.errorMessages as error>                                                
-	                        <div class="alert alert-error">${error}</div>                           
-	                    </#list>
-                    	</div>
-	            	</div>
-	            	<div class="control-group">
-		                <label class="control-label" for="firstName3">Third Name</label>
-		                <div class="controls">
-	                    <#if RequestParameters.activationCode?has_content>
-	                        <#if pendingUser.firstName3??> 
-	                            <input id="firstName3" type="text" name="firstName3" placeholder='${pendingUser.firstName3!}' disabled="disabled" />
-	                        </#if>
-	                    <#else>
-	                        <input id="firstName3" type="text" name="firstName3" placeholder='${(pendingUser.firstName3?html)!"Third Forename (optional)"}' />
-	                    </#if>
-	                    
-	                    <#list spring.status.errorMessages as error>                                                
-	                       <div class="alert alert-error">${error}</div>                             
-	                    </#list>
-		           		</div>
-	            	</div-->
-
 		            <div class="control-group">
 		                <label class="control-label" for="lastName">Last Name</label>
 		                <div class="controls">

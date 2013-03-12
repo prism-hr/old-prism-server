@@ -1089,3 +1089,11 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
   font-size: 15px;
   padding: 4px 14px;
 }
+input[readonly]#startDate {
+	background-color: #FFFFFF;
+	cursor:auto;
+}
+input[readonly][disabled]#startDate {
+	background-color: #EEEEEE;
+	cursor: not-allowed;
+}

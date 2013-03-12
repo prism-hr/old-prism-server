@@ -20,7 +20,8 @@
 		
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
-        <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
         
 				<!-- Styles for Application List Page -->
 

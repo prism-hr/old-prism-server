@@ -83,6 +83,7 @@ public class SubmitApplicationFormControllerTest {
 	
 	@Test
 	public void shouldReturnEditableApplicationViewOnGetForProgrammeAdministrator() {
+	    student.getRoles().add(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build());
 	    Program program = new ProgramBuilder().id(1).administrators(student).build();
 	    ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).applicationNumber("abc").program(program).build();
 	    String view = applicationController.getApplicationView(null,  applicationForm);

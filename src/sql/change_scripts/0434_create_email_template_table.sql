@@ -1,0 +1,8 @@
+CREATE TABLE EMAIL_TEMPLATE (
+        id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+        name VARCHAR(50) UNIQUE,
+        content LONGTEXT,
+        PRIMARY KEY(id)
+)
+ENGINE = innoDB
+;

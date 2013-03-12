@@ -7,30 +7,23 @@
 #form-box div.row div.field { margin-left: 160px; width: 350px; }
 #form-box div.row input { margin-bottom: 4px; width: 90%; }
 #form-box div.row select { margin-bottom: 4px; width: 92%; }
-
+ 
 
 /* REGISTRATION page * new design - date:27-03-12 * -------------------------------------------------------------------------------------------- */
 #registration-box {
-	background: #828386 url(../../images/bg_login_box.jpg) repeat-x; /* Old browsers */
-	background: -moz-linear-gradient(top,  #ffffff 0%, #f2f2f2 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f2f2f2)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #ffffff 0%,#f2f2f2 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #ffffff 0%,#f2f2f2 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #ffffff 0%,#f2f2f2 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  #ffffff 0%,#f2f2f2 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f2f2f2',GradientType=0 ); /* IE6-9 */
+	background: #C0C0C2;
 
 	/* Mofified height from 108px to auto - Manish*/
-	border-radius: 4px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: auto; position: absolute; right: 35px; top: 35px; width: 330px;
-	padding-bottom: 10px;
+	border-radius: 4px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: auto; position: absolute; right: 35px; top: 35px; width: 310px;
+	padding-bottom: 0px;
 	box-shadow: 0 0 3px 1px #888888;
 }
 
 #registration-box label { width: 70px;}
 .form-horizontal .controls {	margin-left: 80px;}
 #registration-box .control-group {	margin-bottom: 14px;}
-#registration-box .alert {	margin-top: 4px !important; margin-bottom:0; width: 169px; }
-#registration-box form { padding: 10px 10px 0 10px; margin-bottom: 0px; }
+#registration-box .alert {	margin-top: 4px !important; margin-bottom:0; width: 145px; }
+#registration-box form { padding: 0px 14px 0; margin-bottom: 0px; }
 #registration-box p { line-height: 18px; }
 #registration-box legend {	border-bottom: none; color: #58585A; margin-bottom: 6px;}
 #registration-box #confirmPassword {margin-top: 8px;}

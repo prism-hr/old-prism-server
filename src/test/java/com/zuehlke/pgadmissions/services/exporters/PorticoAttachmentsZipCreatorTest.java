@@ -32,7 +32,9 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 
 @RunWith(PowerMockRunner.class)
@@ -45,6 +47,10 @@ public class PorticoAttachmentsZipCreatorTest {
     private ApplicationForm applicationForm;
 
     private PdfDocumentBuilder pdfDocumentBuilder;
+    
+    private CombinedReferencesPdfBuilder combinedReferenceBuilder;
+    
+    private Transcript1PdfBuilder transcriptBuilder;
     
     private Map<String, String> expectedValues = new HashMap<String, String>();
     
@@ -79,7 +85,7 @@ public class PorticoAttachmentsZipCreatorTest {
         EasyMock.replay(mockSecurityContextHolder, mockSecurityContext, authenticationMock, registeredUserMock);
         
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder) {
+        attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
             @Override
             protected String getRandomFilename() {
                 String randomFilename = UUID.randomUUID() + ".pdf";
@@ -133,7 +139,10 @@ public class PorticoAttachmentsZipCreatorTest {
     public void setup() {
         applicationForm = new ValidApplicationFormBuilder().build();
         pdfDocumentBuilder = new PdfDocumentBuilder();
-        attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder);
+        combinedReferenceBuilder = new CombinedReferencesPdfBuilder();
+        transcriptBuilder = new Transcript1PdfBuilder();
+        
+        attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder);
         
         expectedValues.put("bookingReferenceNumber", "P123456");
 

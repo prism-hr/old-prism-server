@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -18,8 +19,10 @@ import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
+import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -54,23 +57,21 @@ public class PrintControllerTest {
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(null).anyTimes();
 		EasyMock.replay(applicationSevice);
 		controller.printPage(request, response);
-
 	}
 
 	@Test
 	public void shouldBuildPDFForApplicationAndSend() throws IOException, ServletRequestBindingException {
-		
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setParameter("applicationFormId", "23");
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		response.setOutputStreamAccessAllowed(true);		
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(currentUser).build();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser);
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
 		byte[] bytes = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments(applicationForm)).andReturn(bytes);
+		EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(PdfModelBuilder.class), EasyMock.eq(applicationForm))).andReturn(bytes);
 
 		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
 
@@ -83,27 +84,27 @@ public class PrintControllerTest {
 		assertEquals("inline; filename=\"UCL_PRISM_23.pdf\"", response.getHeader("Content-Disposition"));
 		assertEquals("application/pdf", response.getContentType());
 		assertEquals(bytes.length, response.getContentLength());
-		
-
 	}
 
-	@Test
+    @Test
+    @SuppressWarnings("unchecked")
 	public void shouldBuildPDFForAllSelectedApplicationsAndSend() throws IOException, ServletRequestBindingException, DocumentException {
-		
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setParameter("appList", "23;34;");
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		response.setOutputStreamAccessAllowed(true);		
 
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).build();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).build();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new RegisteredUserBuilder().id(4).build()).build();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new RegisteredUserBuilder().id(5).build()).build();
 		EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
 		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
+		EasyMock.expect(currentUser.hasAdminRightsOnApplication(EasyMock.eq(applicationFormOne))).andReturn(true);
+		EasyMock.expect(currentUser.hasAdminRightsOnApplication(EasyMock.eq(applicationFormTwo))).andReturn(true);
 		EasyMock.replay(currentUser);
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
 		byte[] bytes = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments(applicationFormOne, applicationFormTwo)).andReturn(bytes);
+        EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
 
 		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
 
@@ -116,26 +117,54 @@ public class PrintControllerTest {
 		assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
 		assertEquals("application/pdf", response.getContentType());
 		assertEquals(bytes.length, response.getContentLength());
-
 	}
 
-	@Test
+    @Test
+    @SuppressWarnings("unchecked")
 	public void shouldSkipNullApplications() throws ServletRequestBindingException, DocumentException, IOException{
-
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setParameter("appList", "23;34;");
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		response.setOutputStreamAccessAllowed(true);		
 
-		
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).build();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(currentUser).build();
 		
 		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
 		EasyMock.replay(currentUser);
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(null).anyTimes();
 		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
 		byte[] bytes = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments( applicationFormTwo)).andReturn(bytes);
+        EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
+		
+		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
+
+		controller.printAll(request, response);
+		
+		assertArrayEquals(bytes, response.getContentAsByteArray());
+		assertEquals("0", response.getHeader("Expires"));
+		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
+		assertEquals("public", response.getHeader("Pragma"));
+		assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
+		assertEquals("application/pdf", response.getContentType());
+		assertEquals(bytes.length, response.getContentLength());
+	}
+	
+	@Test
+	public void shouldSkipApplicationsUserCannotSees() throws ServletRequestBindingException, DocumentException, IOException{
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("appList", "23;34;");
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		response.setOutputStreamAccessAllowed(true);		
+
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(currentUser).build();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(currentUser).build();
+		EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(false);
+		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
+		EasyMock.replay(currentUser);
+		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
+		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
+        byte[] bytes = "pdf".getBytes();
+        EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
 
 		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
 
@@ -150,54 +179,22 @@ public class PrintControllerTest {
 		assertEquals(bytes.length, response.getContentLength());
 	}
 	
-	@Test
-	public void shouldSkipApplicationsUserCannotSees() throws ServletRequestBindingException, DocumentException, IOException{
-		
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setParameter("appList", "23;34;");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		response.setOutputStreamAccessAllowed(true);		
-
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).build();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).build();
-		EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(false);
-		EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
-		EasyMock.replay(currentUser);
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
-		byte[] bytes = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.buildPdfWithAttachments( applicationFormTwo)).andReturn(bytes);
-
-		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
-
-		controller.printAll(request, response);
-
-		assertArrayEquals(bytes, response.getContentAsByteArray());
-		assertEquals("0", response.getHeader("Expires"));
-		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
-		assertEquals("public", response.getHeader("Pragma"));
-		assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
-		assertEquals("application/pdf", response.getContentType());
-		assertEquals(bytes.length, response.getContentLength());
-	}
 	@Before
 	public void setUp() {
 		applicationSevice = EasyMock.createMock(ApplicationsService.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		controller = new PrintController(applicationSevice, pdfDocumentBuilderMock, userServiceMock){
-
 			@Override
-			String getTimestamp() {
+			protected String getTimestamp() {
 				return "timestamp";
 			}
-			
 		};
 		currentUser = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(currentUser.getId()).andReturn(1).anyTimes();
 		
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 		EasyMock.replay(userServiceMock);
-
 	}
 
 	@After

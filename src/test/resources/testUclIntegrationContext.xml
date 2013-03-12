@@ -16,6 +16,10 @@
     <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
 
     <bean id="pdfDocumentBuilder" class="com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder" />
+
+    <bean id="combinedReferencesPdfBuilder" class="com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder" />
+
+    <bean id="transcript1PdfBuilder" class="com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder" />
     
     <bean id="dataExportMailSender" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
         <constructor-arg value="com.zuehlke.pgadmissions.mail.DataExportMailSender" />

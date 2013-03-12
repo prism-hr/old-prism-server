@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -25,7 +26,7 @@ public class ViewApplicationFormControllerTest {
 	private ApplicationPageModelBuilder applicationPageModelBuilderMock;
 	private UserService userServiceMock;
 
-	@Test(expected = ResourceNotFoundException.class)
+	@Test(expected = MissingApplicationFormException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);

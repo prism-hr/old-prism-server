@@ -26,7 +26,8 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -97,16 +98,16 @@ public class StateTransitionControllerTest {
 		
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfApplicatioNDoesNotExist() {
+	@Test(expected = MissingApplicationFormException.class)
+	public void shouldThrowExceptionIfApplicatioNDoesNotExist() {
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
 
 		controller.getApplicationForm("5");
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrApproverInApplicationProgram() {
+	@Test(expected = InsufficientApplicationFormPrivilegesException.class)
+	public void shouldThrowExceptionIfUserNotAdminOrApproverInApplicationProgram() {
 
 		Program program = new ProgramBuilder().id(6).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();

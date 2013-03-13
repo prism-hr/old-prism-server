@@ -1,22 +1,16 @@
-package com.zuehlke.pgadmissions.exceptions;
+package com.zuehlke.pgadmissions.exceptions.application;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
-public class IncorrectApplicationFormStateException extends PgadmissionsException {
+public class IncorrectApplicationFormStateException extends ApplicationFormException {
 
     private static final long serialVersionUID = -1058592315562054622L;
-
-    private String applicationNumber;
 
     private ApplicationFormStatus expectedState;
 
     public IncorrectApplicationFormStateException(String applicationNumber, ApplicationFormStatus expectedState) {
-        this.applicationNumber = applicationNumber;
+        super(applicationNumber);
         this.expectedState = expectedState;
-    }
-
-    public String getApplicationNumber() {
-        return applicationNumber;
     }
 
     public ApplicationFormStatus getExpectedState() {

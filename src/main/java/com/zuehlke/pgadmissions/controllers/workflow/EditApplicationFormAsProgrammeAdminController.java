@@ -32,7 +32,8 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -68,7 +69,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     private final CountryService countryService;
 
     private final CountryPropertyEditor countryPropertyEditor;
-    
+
     private final MessageSource messageSource;
 
     public EditApplicationFormAsProgrammeAdminController() {
@@ -79,7 +80,8 @@ public class EditApplicationFormAsProgrammeAdminController {
     public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationService,
             final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
             final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-            final EncryptionHelper encryptionHelper, final CountryService countryService, final CountryPropertyEditor countryPropertyEditor, final MessageSource messageSource) {
+            final EncryptionHelper encryptionHelper, final CountryService countryService, final CountryPropertyEditor countryPropertyEditor,
+            final MessageSource messageSource) {
         this.userService = userService;
         this.applicationService = applicationService;
         this.documentPropertyEditor = documentPropertyEditor;
@@ -109,7 +111,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
         if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
-            throw new ResourceNotFoundException();
+            throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
         }
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
@@ -120,7 +122,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             BindingResult result, Model model) {
 
         if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
-            throw new ResourceNotFoundException();
+            throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
         }
 
         model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
@@ -133,12 +135,12 @@ public class EditApplicationFormAsProgrammeAdminController {
         } else {
             map.put("success", "false");
             for (FieldError error : result.getFieldErrors()) {
-            	String message;
-            	if(!StringUtils.isBlank(error.getCode())){
-            		message = messageSource.getMessage(error.getCode(), null, Locale.getDefault());
-            	} else {
-            		message = error.getDefaultMessage();
-            	}
+                String message;
+                if (!StringUtils.isBlank(error.getCode())) {
+                    message = messageSource.getMessage(error.getCode(), null, Locale.getDefault());
+                } else {
+                    message = error.getDefaultMessage();
+                }
                 map.put(error.getField(), message);
             }
         }
@@ -153,7 +155,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             @RequestParam(required = false) Boolean forceSavingReference, Model model) {
 
         if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
-            throw new ResourceNotFoundException();
+            throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
         }
 
         String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
@@ -163,15 +165,15 @@ public class EditApplicationFormAsProgrammeAdminController {
         if (sendToPorticoData.getRefereesSendToPortico() != null) {
             refereeService.selectForSendingToPortico(applicationForm, sendToPorticoData.getRefereesSendToPortico());
         }
-        
+
         if (!"newReferee".equals(editedRefereeId)) {
             Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
             Referee referee = refereeService.getRefereeById(decryptedId);
-            if(referee.getReference() != null){
+            if (referee.getReference() != null) {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
         }
-        
+
         if (BooleanUtils.isTrue(forceSavingReference) || refereesAdminEditDTO.hasUserStartedTyping()) {
             refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, referenceResult);
 
@@ -183,7 +185,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             Referee referee = newComment.getReferee();
             applicationService.refresh(applicationForm);
             refereeService.refresh(referee);
-            
+
             String newRefereeId = encryptionHelper.encrypt(referee.getId());
             model.addAttribute("editedRefereeId", newRefereeId);
         }
@@ -212,9 +214,13 @@ public class EditApplicationFormAsProgrammeAdminController {
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null || !getCurrentUser().canSee(applicationForm)) {
-            throw new ResourceNotFoundException();
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
         }
+        if (!getCurrentUser().canSee(applicationForm)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
+
         return applicationForm;
     }
 

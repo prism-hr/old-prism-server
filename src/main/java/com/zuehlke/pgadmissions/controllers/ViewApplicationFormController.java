@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -18,44 +18,44 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping(value = { "applicationinternal" })
 public class ViewApplicationFormController {
 
-	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "private/staff/application/main_application_page";
-	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
-	
-	private final ApplicationsService applicationService;
-	private final ApplicationPageModelBuilder applicationPageModelBuilder;
-	private final UserService userService;
+    private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "private/staff/application/main_application_page";
+    private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
 
-	ViewApplicationFormController() {
-		this(null, null, null);
-	}
+    private final ApplicationsService applicationService;
+    private final ApplicationPageModelBuilder applicationPageModelBuilder;
+    private final UserService userService;
 
-	@Autowired
-	public ViewApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationPageModelBuilder applicationPageModelBuilder) {
-		this.applicationService = applicationService;
-		this.userService = userService;
-		this.applicationPageModelBuilder = applicationPageModelBuilder;
+    ViewApplicationFormController() {
+        this(null, null, null);
+    }
 
-	}
+    @Autowired
+    public ViewApplicationFormController(ApplicationsService applicationService, UserService userService,
+            ApplicationPageModelBuilder applicationPageModelBuilder) {
+        this.applicationService = applicationService;
+        this.userService = userService;
+        this.applicationPageModelBuilder = applicationPageModelBuilder;
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getViewApplicationPage(@RequestParam(required = false) String view, @RequestParam String id,
-			@RequestParam(required = false) String uploadErrorCode, @RequestParam(required = false) String uploadTwoErrorCode, 
-			@RequestParam(required = false) String fundingErrors) {
-		RegisteredUser currentuser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
-		if(applicationForm == null){
-			throw new MissingApplicationFormException(id);
-		}
-		if (!currentuser.canSee(applicationForm)) {
-			throw new ResourceNotFoundException();
-		}
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView getViewApplicationPage(@RequestParam(required = false) String view, @RequestParam String applicationId,
+            @RequestParam(required = false) String uploadErrorCode, @RequestParam(required = false) String uploadTwoErrorCode,
+            @RequestParam(required = false) String fundingErrors) {
+        RegisteredUser currentuser = userService.getCurrentUser();
+        ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if (!currentuser.canSee(applicationForm)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
 
-		if (applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(currentuser.getId()) && applicationForm.isModifiable()) {
-			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
-					uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
-		}
-		
-		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
-				uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
-	}
+        if (applicationForm.getApplicant() != null && applicationForm.getApplicant().getId().equals(currentuser.getId()) && applicationForm.isModifiable()) {
+            return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
+                    uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
+        }
+
+        return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
+                uploadErrorCode, view, uploadTwoErrorCode, fundingErrors));
+    }
 }

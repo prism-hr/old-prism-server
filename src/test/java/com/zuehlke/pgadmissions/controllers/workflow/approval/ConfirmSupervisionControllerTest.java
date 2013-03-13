@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.approval;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 
@@ -19,24 +19,14 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
+import com.zuehlke.pgadmissions.exceptions.application.SupervisorAlreadyRespondedException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
-import com.zuehlke.pgadmissions.services.CountryService;
-import com.zuehlke.pgadmissions.services.QualificationService;
-import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.ConfirmSupervisionDTOValidator;
-import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
-import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
-import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 
 public class ConfirmSupervisionControllerTest {
 
@@ -94,7 +84,7 @@ public class ConfirmSupervisionControllerTest {
         EasyMock.verify(approvalServiceMock);
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = PrimarySupervisorNotDefinedException.class)
     public void shouldNotReturnApplicationFormIfPrimarySupervisorIsNotDefined() {
         Supervisor supervisor = new SupervisorBuilder().id(13).build();
         ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).build();
@@ -104,12 +94,10 @@ public class ConfirmSupervisionControllerTest {
 
         EasyMock.replay(applicationServiceMock);
 
-        assertEquals(applicationForm, controller.getApplicationForm("app1"));
-
-        EasyMock.verify(applicationServiceMock);
+        controller.getApplicationForm("app1");
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = SupervisorAlreadyRespondedException.class)
     public void shouldNotReturnApplicationFormIfPrimarySupervisorAlreadyConfirmed() {
         RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().id(88).build();
 
@@ -123,12 +111,10 @@ public class ConfirmSupervisionControllerTest {
 
         EasyMock.replay(applicationServiceMock, userServiceMock);
 
-        assertEquals(applicationForm, controller.getApplicationForm("app1"));
-
-        EasyMock.verify(applicationServiceMock, userServiceMock);
+        controller.getApplicationForm("app1");
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
     public void shouldNotReturnApplicationFormIfCurrentUserIsNotPrimarySupervisor() {
         RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().id(88).build();
         RegisteredUser secondarySupervisorUser = new RegisteredUserBuilder().id(89).build();
@@ -144,9 +130,7 @@ public class ConfirmSupervisionControllerTest {
 
         EasyMock.replay(applicationServiceMock, userServiceMock);
 
-        assertEquals(applicationForm, controller.getApplicationForm("app1"));
-
-        EasyMock.verify(applicationServiceMock, userServiceMock);
+        controller.getApplicationForm("app1");
     }
 
     @Test

@@ -19,8 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
+import com.zuehlke.pgadmissions.exceptions.application.SupervisorAlreadyRespondedException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -60,11 +64,18 @@ public class ConfirmSupervisionController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null//
-                || application.getLatestApprovalRound().getPrimarySupervisor() == null
-                || application.getLatestApprovalRound().getPrimarySupervisor().getConfirmedSupervision() != null
-                || getUser().getId() != application.getLatestApprovalRound().getPrimarySupervisor().getUser().getId()) {
-            throw new ResourceNotFoundException();
+        if (application == null){
+            throw new MissingApplicationFormException(applicationId);
+        }
+        Supervisor primarySupervisor = application.getLatestApprovalRound().getPrimarySupervisor();
+        if(primarySupervisor == null) {
+            throw new PrimarySupervisorNotDefinedException(applicationId);
+        }
+        if(getUser().getId() != primarySupervisor.getUser().getId()){
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
+        if(primarySupervisor.getConfirmedSupervision() != null){
+            throw new SupervisorAlreadyRespondedException(applicationId);
         }
         return application;
     }

@@ -6,15 +6,8 @@ public class PrimarySupervisorNotDefinedException extends ApplicationFormExcepti
 
     private static final long serialVersionUID = -1058592315562054622L;
 
-    private ApplicationFormStatus expectedState;
-
-    public PrimarySupervisorNotDefinedException(String applicationNumber, ApplicationFormStatus expectedState) {
+    public PrimarySupervisorNotDefinedException(String applicationNumber) {
         super(applicationNumber);
-        this.expectedState = expectedState;
-    }
-
-    public ApplicationFormStatus getExpectedState() {
-        return expectedState;
     }
 
 }

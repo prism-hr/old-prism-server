@@ -11,11 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
-import com.zuehlke.pgadmissions.exceptions.IncorrectApplicationFormStateException;
-import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
-import com.zuehlke.pgadmissions.exceptions.RefereeAlreadyRespondedException;
-import com.zuehlke.pgadmissions.exceptions.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.IncorrectApplicationFormStateException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
+import com.zuehlke.pgadmissions.exceptions.application.RefereeAlreadyRespondedException;
+import com.zuehlke.pgadmissions.exceptions.application.SupervisorAlreadyRespondedException;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 
 public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResolver {
@@ -43,13 +45,13 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
     protected ModelAndView handlePgadmissionsException(PgadmissionsException ex, HttpServletRequest request) {
         String view = "redirect:/applications";
         ModelAndView modelAndView = new ModelAndView(view);
-        
-        if(handlerMap.containsKey(ex.getClass())) {
+
+        if (handlerMap.containsKey(ex.getClass())) {
             PgadmissionExceptionHandler handler = handlerMap.get(ex.getClass());
             AlertDefinition alertDefinition = handler.handlePgadmissionsException(ex, request);
             request.getSession().setAttribute("alertDefinition", alertDefinition);
         }
-        
+
         return modelAndView;
     }
 
@@ -71,21 +73,38 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(InsufficientApplicationFormPrivilegesException.class, new PgadmissionExceptionHandler<InsufficientApplicationFormPrivilegesException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(InsufficientApplicationFormPrivilegesException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "You have no sufficient privileges on given application form: " + ex.getApplicationNumber());
+                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "You have no sufficient privileges on given application form: "
+                        + ex.getApplicationNumber());
             }
         });
         addHandler(RefereeAlreadyRespondedException.class, new PgadmissionExceptionHandler<RefereeAlreadyRespondedException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(RefereeAlreadyRespondedException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot post reference", "You have already posted a reference for application: " + ex.getApplicationNumber());
+                return new AlertDefinition(AlertType.INFO, "Cannot post reference", "You have already posted a reference for application: "
+                        + ex.getApplicationNumber());
             }
         });
         addHandler(IncorrectApplicationFormStateException.class, new PgadmissionExceptionHandler<IncorrectApplicationFormStateException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(IncorrectApplicationFormStateException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Application " + ex.getApplicationNumber() + " is no longer in \"" + ex.getExpectedState().displayValue() + "\" state.");
+                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Application " + ex.getApplicationNumber() + " is no longer in \""
+                        + ex.getExpectedState().displayValue() + "\" state.");
             }
         });
-        
+        addHandler(PrimarySupervisorNotDefinedException.class, new PgadmissionExceptionHandler<PrimarySupervisorNotDefinedException>() {
+            @Override
+            public AlertDefinition handlePgadmissionsException(PrimarySupervisorNotDefinedException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "No primary supervisor", "No primary supervisor has been defined for application: "
+                        + ex.getApplicationNumber());
+            }
+        });
+        addHandler(SupervisorAlreadyRespondedException.class, new PgadmissionExceptionHandler<SupervisorAlreadyRespondedException>() {
+            @Override
+            public AlertDefinition handlePgadmissionsException(SupervisorAlreadyRespondedException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "Cannot confirm supervision", "You have already responded to supervision request: "
+                        + ex.getApplicationNumber());
+            }
+        });
+
     }
 }

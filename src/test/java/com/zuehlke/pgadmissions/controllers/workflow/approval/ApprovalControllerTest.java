@@ -54,7 +54,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -73,6 +74,7 @@ import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 
 public class ApprovalControllerTest {
+    
     private ApplicationsService applicationServiceMock;
     private UserService userServiceMock;
     private RegisteredUser currentUserMock;
@@ -312,7 +314,7 @@ public class ApprovalControllerTest {
 
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
         EasyMock.replay(applicationServiceMock);
@@ -320,8 +322,8 @@ public class ApprovalControllerTest {
         controller.getApplicationForm("5");
     }
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfUserNotAdminOrApproverOfApplicationProgram() {
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
+    public void shouldThrowExceptionIfUserNotAdminOrApproverOfApplicationProgram() {
 
         Program program = new ProgramBuilder().id(6).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();

@@ -1,0 +1,20 @@
+package com.zuehlke.pgadmissions.exceptions.application;
+
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+
+public class PrimarySupervisorNotDefinedException extends ApplicationFormException {
+
+    private static final long serialVersionUID = -1058592315562054622L;
+
+    private ApplicationFormStatus expectedState;
+
+    public PrimarySupervisorNotDefinedException(String applicationNumber, ApplicationFormStatus expectedState) {
+        super(applicationNumber);
+        this.expectedState = expectedState;
+    }
+
+    public ApplicationFormStatus getExpectedState() {
+        return expectedState;
+    }
+
+}

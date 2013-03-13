@@ -10,7 +10,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.web.authentication.rememberme.CookieTheftException;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 
 import static org.junit.Assert.assertEquals;

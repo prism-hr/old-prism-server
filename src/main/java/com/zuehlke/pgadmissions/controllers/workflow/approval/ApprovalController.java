@@ -35,6 +35,8 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -152,11 +154,13 @@ public class ApprovalController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        RegisteredUser currentUser = userService.getCurrentUser();
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null//
-                || (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()//
-                        .isInRoleInProgram(Authority.APPROVER, application.getProgram()))) {
-            throw new ResourceNotFoundException();
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if (!currentUser.hasAdminRightsOnApplication(application) && !currentUser.isInRoleInProgram(Authority.APPROVER, application.getProgram())) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         return application;
     }
@@ -203,7 +207,7 @@ public class ApprovalController {
             }
         }
         Date startDate = applicationForm.getProgrammeDetails().getStartDate();
-        approvalRound.setRecommendedStartDate(startDate); 
+        approvalRound.setRecommendedStartDate(startDate);
         return approvalRound;
     }
 
@@ -324,7 +328,7 @@ public class ApprovalController {
             Referee referee = newComment.getReferee();
             applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
-            
+
             String newRefereeId = encryptionHelper.encrypt(referee.getId());
             model.addAttribute("editedRefereeId", newRefereeId);
 

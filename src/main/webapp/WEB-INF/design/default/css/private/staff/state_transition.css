@@ -3,7 +3,7 @@ h1 { margin-bottom: 50px; float: left; }
 label.label { font-weight: bold; }
 
 .row { line-height: 24px; margin-bottom: 7px; clear: left; }
-.label { float: left; line-height: 1.2; width: 180px; }
+.label { float: left; line-height: 1.2; /*width: 180px;*/ }
 .long-label { float: left; line-height: 1.2; width: 450px; margin-bottom:10px;}
 
 .field { margin-left: 205px; }

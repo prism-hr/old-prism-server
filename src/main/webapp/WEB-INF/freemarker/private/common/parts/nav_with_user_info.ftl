@@ -6,7 +6,7 @@
 			
 	<div class="tagline">A Spectrum of Postgraduate Research Opportunities</div>
 			
-	<!-- Main tabbed menu -->
+	<!-- Main tabbed menu --> 
 	<nav>
 		<ul>
 			<li <#if activeTab=="account">class="current"</#if>><a href="<@spring.url '/myAccount'/>">My Account</a></li>			

@@ -158,13 +158,6 @@
     <@header/>
     <!-- Main content area. -->
     <article id="content" role="main">
-    
-      <div id="tools">
-        <ul class="left">
-          <li class="icon-print"><a target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
-          <li class="icon-feedback"><a title="Send Feedback" href="mailto:prism@ucl.ac.uk?subject=Feedback" target="_blank">Send Feedback</a></li>
-        </ul>
-      </div>
 
       <!-- FLOATING TOOLBAR -->
       <ul id="view-toolbar" class="toolbar">
@@ -187,13 +180,14 @@
       <!-- content box -->
       <div class="content-box">
         <div class="content-box-inner">
-        	
+          <#include "/private/common/parts/application_info.ftl"/>
+
           <@spring.bind "applicationForm.*" />
           <#if spring.status.errorMessages?has_content>
           <span class="invalid-submit">Some required fields are missing, please review your application form.<p></p></span>
           </#if>
 
-		<#include "/private/common/parts/application_info.ftl"/>
+		  
           <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 					<div id="timelineview">
 						<ul class="tabs">				

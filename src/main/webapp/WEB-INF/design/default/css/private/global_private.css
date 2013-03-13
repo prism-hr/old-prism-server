@@ -9,7 +9,7 @@ body.ie9 * { filter: none !important; }
 a { text-decoration: none; }
 a:hover { text-decoration: underline; }
 a img { border: none; }
-body { font: 10pt/1 Arial, Helvetica, sans-serif;
+body { font: 10pt/1 Arial, Helvetica, sans-serif; 
 background: #eeedec;
   /* Old browsers */
 
@@ -1096,4 +1096,12 @@ input[readonly]#startDate {
 input[readonly][disabled]#startDate {
 	background-color: #EEEEEE;
 	cursor: not-allowed;
+}
+
+/* counter style */
+span.count {
+	border-radius: 0 4px 4px 0;
+	font-size: 12px;
+	position: absolute;
+    top: 16px;
 }

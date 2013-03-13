@@ -41,7 +41,7 @@ $(document).ready(function() {
             },
             url : "/pgadmissions/myAccount/switch",
             data : $.param(postData),
-            success : function(data) {
+            success : function(data) { 
                 if (data == "OK") {
                     window.location.href = "/pgadmissions/applications";
                 } else {
@@ -66,7 +66,7 @@ $(document).ready(function() {
     // ------------------------------------------------------------------------------
     $('.field').each(function() {
         var strValue = $(this).text();
-        if (strValue.match("Not Provided")) {
+        if (strValue.match("Not Provided")) { 
             $(this).toggleClass('grey-label');
         }
     });
@@ -138,7 +138,7 @@ $(document).ready(function() {
             }
         });
 
-        $.scrollTo('#' + sectionId, 1000);
+        $.scrollTo('#' + sectionId, 1000); 
         return false;
     });
 
@@ -192,6 +192,9 @@ $(document).ready(function() {
             $.ui.selectable.prototype._setOption.apply(this, arguments);
         }
     });
+
+    //Add Counter
+    addCounter();
 });
 
 // Tooltip settings used across the board.
@@ -273,6 +276,32 @@ function limitTextArea() {
         }
     });
 }
+// Textarea Counter
+function addCounter() {
+
+    var $textArea = $("textarea[class='max']")
+    $.each($textArea, function() {
+        // Create the span with all the content and characters left
+        $(this).after('<span class="badge count">' + ( parseInt($(this).attr('maxlength')) - $(this).val().length) + ' Characters left</span>');
+
+        // Counting on keyup
+        $(this).keyup(function count(){
+            // get the limit from maxlength attribute
+            var limit = parseInt($(this).attr('maxlength'));
+
+            counter = limit - $(this).val().length;
+            if  (counter == 0) {
+                c$(this).nextAll(".count").addClass('badge-warning');
+            } else {
+                $(this).nextAll(".count").removeClass('badge-warning')
+            }
+            // Editing the count span
+            $(this).nextAll(".count").html(counter  + ' Characters left' );
+        });
+    });
+}
+       
+
 
 // ------------------------------------------------------------------------------
 // Adding tooltips to items with a data-desc attribute.
@@ -656,7 +685,7 @@ function modalPrompt(message, okay, cancel) {
         $('#dialog-overlay, #dialog-box').hide();
         okay();
         return false;
-    });
+    }); 
 
     // Set function to execute on "Cancel".
     $('#dialog-box').off('click', '#popup-cancel-button').on('click', '#popup-cancel-button', function() {

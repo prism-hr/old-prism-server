@@ -223,10 +223,11 @@ function postRefereesData(postSendToPorticoData, forceSavingReference) {
         	if($closeReferenceSectionAfterSaving && postSendToPorticoData && $('#anyReferenceErrors').val() == 'false'){
         		$('#referee-H2').trigger('click');
         	}
-            
+            addCounter();
         },
         complete : function() {
             $('#referencesSection div.ajax').remove();
+            
         }
     });
 }

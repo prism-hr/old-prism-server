@@ -211,6 +211,8 @@ docs/~$research_programmes_20120224.xlsx
 chromedriver.log
 docs/launch/Launch 1.wmv.old
 src/sql/pgadmissions.dump.06_02_2013_11_39_13.sql
+src/main/java/com/zuehlke/pgadmissions/utils/DateUtils.java.orig
+src/environments/jboss-7.1.1-standalone.xml.orig
 syntax: regexp
 target/*
 

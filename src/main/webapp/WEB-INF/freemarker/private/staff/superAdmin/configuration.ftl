@@ -32,6 +32,7 @@
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/configuration.js' />"></script> 
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge.js'/>"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/templateEdit/actions.js'/>"></script>
 	    
 	    <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
@@ -69,6 +70,39 @@
 								<div id="configsection">		
 								
 								</div>
+								
+								<div id="edit-template-section">
+									<section class="form-rows">
+										<h2>Email templates</h2>
+									</section>
+									<div>
+									<div class="section-info-bar">
+										Customise the e-mail templates
+									</div>
+										<div class="field">
+						            		<select name="emailTemplateType" id="emailTemplateType" class="templateType">
+						                		<option value="default">Template...</option>
+						                  		<#list templateTypes as type>
+							              			<option value="${type}">${type.displayValue()}
+							               			</option>
+						                  		</#list>
+						             		</select><br>
+						             		<select name="emailTemplateVersion" id="emailTemplateVersion" class="templateVersion">
+						             		</select><br>
+						            	</div>
+						            	
+										Edit template
+										<div class="field">
+											<textarea disabled name="templateContent" id="templateContentId" class="max" rows="15" cols="150">
+												<#if template??>${template.content}</#if>
+											</textarea>
+										</div>
+										<button class="blue" type="button" id="save-go">Save</button>
+										<button class="blue" type="button" id="enable-go">Enable</button>
+										<button class="blue" type="button" id="delete-go">Delete</button>
+									</div>
+								</div>
+								
 								<section class="form-rows">
 									<h2>Badge</h2>
 									
@@ -83,7 +117,7 @@
 										</form>
 									</div>
 								</section>
-							
+								
 							</div><!-- .content-box-inner -->
 						</div><!-- .content-box -->
 							

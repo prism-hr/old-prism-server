@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -298,7 +299,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     }
 
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
     public void shouldInterruptReferenceSubmittingIfUserNotAllowed() {
         Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build();
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
@@ -354,6 +355,20 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         controller.registerPropertyEditors(binderMock);
 
         EasyMock.verify(binderMock);
+    }
+    
+    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
+    public void shouldThrowExceptionIfUserCannotSeeApplicationForm() {
+        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
+        EasyMock.replay(userServiceMock);
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("3")).andReturn(applicationForm);
+        EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
+        EasyMock.replay(applicationServiceMock, userMock);
+
+        controller.getApplicationForm("3");
     }
 
 }

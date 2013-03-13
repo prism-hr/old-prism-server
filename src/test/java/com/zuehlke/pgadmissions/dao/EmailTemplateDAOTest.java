@@ -244,7 +244,7 @@ public class EmailTemplateDAOTest extends AutomaticRollbackTestCase {
 		compareEmailTemplates(template2, result);
 	}
 
-	@Ignore
+	
 	@Test(expected = ConstraintViolationException.class)
 	public void shouldFailToSaveTwoEmailTemplatesWithSameNameAndVersion() {
 		DateTime version = new DateTime(2013, 3, 12, 00, 00);

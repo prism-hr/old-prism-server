@@ -10,66 +10,69 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public abstract class ReviewController {
-	protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
-	protected static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
-	protected final ApplicationsService applicationsService;
-	protected final UserService userService;
-	protected final ReviewService reviewService;
+    protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
+    protected static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
+    protected final ApplicationsService applicationsService;
+    protected final UserService userService;
+    protected final ReviewService reviewService;
 
-	ReviewController() {
-		this(null, null, null);
-	}
+    ReviewController() {
+        this(null, null, null);
+    }
 
-	@Autowired
-	public ReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService ) {
-		this.applicationsService = applicationsService;
-		this.userService = userService;
-		this.reviewService = reviewService;
-	}
+    @Autowired
+    public ReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService) {
+        this.applicationsService = applicationsService;
+        this.userService = userService;
+        this.reviewService = reviewService;
+    }
 
-	@ModelAttribute("programmeReviewers")
-	public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId) {
-		return getApplicationForm(applicationId).getProgram().getProgramReviewers();
-	}
+    @ModelAttribute("programmeReviewers")
+    public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId) {
+        return getApplicationForm(applicationId).getProgram().getProgramReviewers();
+    }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
 
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 
-		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (application == null
-				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application))) {
-			throw new ResourceNotFoundException();
-		}
-		return application;
-	}
+        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if (!userService.getCurrentUser().hasAdminRightsOnApplication(application)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
+        return application;
+    }
 
-	public abstract ReviewRound getReviewRound(@RequestParam Object id);
+    public abstract ReviewRound getReviewRound(@RequestParam Object id);
 
-	@ModelAttribute("previousReviewers")
-	public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId) {
-		List<RegisteredUser> availablePreviousReviewers = new ArrayList<RegisteredUser>();
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		List<RegisteredUser> previousReviewersOfProgram = userService.getAllPreviousReviewersOfProgram(applicationForm.getProgram());
+    @ModelAttribute("previousReviewers")
+    public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId) {
+        List<RegisteredUser> availablePreviousReviewers = new ArrayList<RegisteredUser>();
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        List<RegisteredUser> previousReviewersOfProgram = userService.getAllPreviousReviewersOfProgram(applicationForm.getProgram());
 
-		for (RegisteredUser registeredUser : previousReviewersOfProgram) {
-			if (!listContainsId(registeredUser, applicationForm.getProgram().getProgramReviewers())) {
-				availablePreviousReviewers.add(registeredUser);
-			}
-		}
-		return availablePreviousReviewers;
-	}
-	
+        for (RegisteredUser registeredUser : previousReviewersOfProgram) {
+            if (!listContainsId(registeredUser, applicationForm.getProgram().getProgramReviewers())) {
+                availablePreviousReviewers.add(registeredUser);
+            }
+        }
+        return availablePreviousReviewers;
+    }
+
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {
             if (entry.getId().equals(user.getId())) {

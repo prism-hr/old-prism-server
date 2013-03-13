@@ -18,7 +18,8 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -54,9 +55,11 @@ public class InterviewCommentController {
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null  || !currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
-			
-			throw new ResourceNotFoundException();
+		if (applicationForm == null){
+		    throw new MissingApplicationFormException(applicationId);
+		}
+		if(!currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
+			throw new InsufficientApplicationFormPrivilegesException(applicationId);
 		}
 		return applicationForm;
 	}

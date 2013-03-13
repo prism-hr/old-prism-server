@@ -12,7 +12,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.exceptions.IncorrectApplicationFormStateException;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -46,9 +49,13 @@ public class DeclineController {
 	    ApplicationForm application = getApplicationForm(applicationId);
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 		    // the user clicked on "Confirm"
-		    if (application.getStatus() == ApplicationFormStatus.REVIEW && reviewer.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
-		        commentService.declineReview(reviewer, application);
+		    if (application.getStatus() != ApplicationFormStatus.REVIEW){
+		        throw new IncorrectApplicationFormStateException(applicationId, ApplicationFormStatus.REVIEW);
 		    }
+		    if (!reviewer.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
+		        throw new InsufficientApplicationFormPrivilegesException(applicationId);
+		    }
+		    commentService.declineReview(reviewer, application);
 		    modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
 		    reviewer.setDirectToUrl(null);
 		    userService.save(reviewer);
@@ -75,7 +82,7 @@ public class DeclineController {
 		}
 		Referee referee = user.getRefereeForApplicationForm(applicationForm);
 		if (referee == null) {
-			throw new ResourceNotFoundException();
+			throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
 		}
 		return referee;
 	}
@@ -118,7 +125,7 @@ public class DeclineController {
 	public ApplicationForm getApplicationForm(String applicationId) {
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (applicationForm == null) {
-			throw new ResourceNotFoundException();
+			throw new MissingApplicationFormException(applicationId);
 		}
 		return applicationForm;
 	}

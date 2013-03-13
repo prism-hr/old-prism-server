@@ -20,7 +20,9 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.RefereeAlreadyRespondedException;
+import com.zuehlke.pgadmissions.exceptions.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -58,14 +60,14 @@ public class ReferenceControllerTest {
 		assertEquals(applicationForm, returnedApplicationForm);
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
+	@Test(expected = MissingApplicationFormException.class)
 	public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
 		controller.getApplicationForm("1");
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
+	@Test(expected = InsufficientApplicationFormPrivilegesException.class)
 	public void shouldThrowResourceNoFoundExceptionIfUserNotRefereeForForm() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -126,7 +128,7 @@ public class ReferenceControllerTest {
 		assertEquals("private/referees/upload_references_expired", controller.getUploadReferencesPage(applicationForm));
 	}
 
-	@Test(expected=ResourceNotFoundException.class)
+	@Test(expected=RefereeAlreadyRespondedException.class)
 	public void shoulThrowResourceNotFoundExceptionIfRefereeHasAlreadyProvidedReferecne() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {

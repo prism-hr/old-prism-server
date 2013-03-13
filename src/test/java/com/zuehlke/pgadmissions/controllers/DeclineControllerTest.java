@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.annotation.ExpectedException;
 import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -14,6 +15,9 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.exceptions.IncorrectApplicationFormStateException;
+import com.zuehlke.pgadmissions.exceptions.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -57,8 +61,8 @@ public class DeclineControllerTest {
 		assertEquals(applicationForm, returnedForm);
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfApplicationNotExists() {
+	@Test(expected = MissingApplicationFormException.class)
+	public void shouldThrowExceptionIfApplicationNotExists() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
@@ -87,8 +91,8 @@ public class DeclineControllerTest {
 
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfRefereeNotExists() {
+	@Test(expected = InsufficientApplicationFormPrivilegesException.class)
+	public void shouldThrowExceptionIfNotRefereeForGivenNotExists() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 		EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
@@ -150,8 +154,8 @@ public class DeclineControllerTest {
         assertEquals(DECLINE_CONFIRMATION_VIEW_NAME, view);
     }
 
-	@Test
-	public void shouldNotDeclineReviewButStillReturnMessageViewIfUserNotReviewerInLatestRoundOfReviews() {
+	@Test(expected = InsufficientApplicationFormPrivilegesException.class)
+	public void shouldThrowExceptionIfUserNotReviewerInLatestRoundOfReviews() {
 		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
@@ -175,12 +179,10 @@ public class DeclineControllerTest {
 		
 		EasyMock.replay(commentServiceMock, reviewer);
 		String view = controller.declineReview("5", applicationForm.getApplicationNumber(), "OK", new ModelMap());
-		EasyMock.verify(commentServiceMock);
-		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
 	}
 	
-	@Test
-	public void shouldNotDeclineReviewButStillReturnMessageViewIfUserApplicationNotInReview() {
+	@Test(expected = IncorrectApplicationFormStateException.class)
+	public void shouldThrowExceptionIfUserApplicationNotInReview() {
 		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
@@ -204,8 +206,6 @@ public class DeclineControllerTest {
 		
 		EasyMock.replay(commentServiceMock, reviewer);
 		String view = controller.declineReview("5", "ABC", "OK", new ModelMap());
-		EasyMock.verify(commentServiceMock);
-		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
 	}
 
 	@Test

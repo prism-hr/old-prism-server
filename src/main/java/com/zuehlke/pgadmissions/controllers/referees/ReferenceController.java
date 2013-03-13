@@ -19,7 +19,9 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.RefereeAlreadyRespondedException;
+import com.zuehlke.pgadmissions.exceptions.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -30,6 +32,7 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @Controller
 @RequestMapping("/referee")
 public class ReferenceController {
+    
 	private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
 	private static final String EXPIRED_VIEW_NAME = "private/referees/upload_references_expired";
 	private final ApplicationsService applicationsService;
@@ -57,8 +60,11 @@ public class ReferenceController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null || !getCurrentUser().isRefereeOfApplicationForm(applicationForm)) {
-			throw new ResourceNotFoundException();
+		if (applicationForm == null ){
+			throw new MissingApplicationFormException(applicationId);
+		}
+		if(!getCurrentUser().isRefereeOfApplicationForm(applicationForm)) {
+		    throw new InsufficientApplicationFormPrivilegesException(applicationId);
 		}
 		return applicationForm;
 	}
@@ -75,7 +81,7 @@ public class ReferenceController {
 	@RequestMapping(value = "/addReferences", method = RequestMethod.GET)
 	public String getUploadReferencesPage(@ModelAttribute ApplicationForm applicationForm) {
 		if(getCurrentUser().getRefereeForApplicationForm(applicationForm).hasResponded()){
-			throw new ResourceNotFoundException();
+			throw new RefereeAlreadyRespondedException(applicationForm.getApplicationNumber());
 		}
 		if (!applicationForm.isModifiable()) {
 			return EXPIRED_VIEW_NAME;

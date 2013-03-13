@@ -1,5 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPROVAL_NOTIFICATION;
+import static junit.framework.Assert.assertNotNull;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -10,14 +17,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.easymock.EasyMock;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -27,10 +37,12 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.dto.RegistryUserDTO;
 import com.zuehlke.pgadmissions.dto.StageDurationDTO;
+import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class ConfigurationControllerTest {
@@ -45,6 +57,8 @@ public class ConfigurationControllerTest {
 
 	private PersonPropertyEditor registryPropertyEditorMock;
 	private UserService userServiceMock;
+	
+	private EmailTemplateService emailTemplateServiceMock;
 
 	private ConfigurationService configurationServiceMock;
 
@@ -150,7 +164,7 @@ public class ConfigurationControllerTest {
 	}
 	@Test
 	public void shouldExtractConfigurationObjectsAndSave() {
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(superAdmin).anyTimes();
+		expect(userServiceMock.getCurrentUser()).andReturn(superAdmin).anyTimes();
 		EasyMock.replay(userServiceMock);
 		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS)
 				.build();
@@ -174,13 +188,128 @@ public class ConfigurationControllerTest {
 		
 		configurationServiceMock.saveConfigurations(stageDurationList, registryContactList, reminderInterval);
 		
-		EasyMock.replay(configurationServiceMock);
+		replay(configurationServiceMock);
 		
 		String view = controller.submit(stageDurationDto, registryUserDTO , reminderInterval );
 		
-		EasyMock.verify(configurationServiceMock);
+		verify(configurationServiceMock);
 		assertEquals( "redirect:/configuration/config_section", view);
 
+	}
+	
+	@Test
+	public void getTemplateVersionShouldSetPropertiesInMap() {
+		EmailTemplate template = new EmailTemplateBuilder().id(1L).name(APPROVAL_NOTIFICATION)
+				.content("Some content").build();
+		expect(emailTemplateServiceMock.getEmailTemplate(1L)).andReturn(template);
+		replay(emailTemplateServiceMock);
+		
+		Map<String, Object> result = controller.getTemplateVersion(1L);
+		
+		verify(emailTemplateServiceMock);
+		assertEquals(template.getContent(), result.get("content"));
+		assertEquals(template.getVersion(), result.get("version"));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void getTemplateVersionsShouldSetPropertiesInMap() {
+		EmailTemplate template = new EmailTemplateBuilder().id(1L).name(APPROVAL_NOTIFICATION)
+				.content("Some content").active(true).build();
+		Map<Long, String> returnedByMock = new HashMap<Long, String>();
+		returnedByMock.put(1L, "default");
+		returnedByMock.put(2L, "12/12/2012 - 12:12:12");
+		returnedByMock.put(3L, "12/12/2013 - 12:12:12");
+		expect(emailTemplateServiceMock.getActiveEmailTemplate(APPROVAL_NOTIFICATION)).andReturn(template);
+		expect(emailTemplateServiceMock.getEmailTemplateVersions(APPROVAL_NOTIFICATION)).andReturn(returnedByMock);
+		replay(emailTemplateServiceMock);
+		
+		Map<Object, Object> result = controller.getVersionsForTemplate("APPROVAL_NOTIFICATION");
+		
+		verify(emailTemplateServiceMock);
+		assertEquals(template.getContent(), result.get("content"));
+		assertEquals(template.getId(), result.get("activeVersion"));
+		Map<Long, String> actual = (Map<Long, String>) result.get("versions");
+		assertNotNull(actual);
+		for (Map.Entry<Long, String> expectedEntry : returnedByMock.entrySet()) {
+			assertEquals(expectedEntry.getValue(), actual.get(expectedEntry.getKey()));
+		}
+	}
+	
+	@Test
+	public void saveTemplateShouldSetPropertiesInMap() {
+		DateTime version = new DateTime(2012, 11, 5, 0, 0, 0);
+		EmailTemplate template = new EmailTemplateBuilder().id(1L).name(APPROVAL_NOTIFICATION)
+				.content("Some content").active(false).version(version.toDate()).build();
+		expect(emailTemplateServiceMock.saveNewEmailTemplate(APPROVAL_NOTIFICATION, "Some content")).andReturn(template);
+		replay(emailTemplateServiceMock);
+		
+		Map<String, Object> result = controller.saveTemplate(APPROVAL_NOTIFICATION, "Some content");
+		
+		verify(emailTemplateServiceMock);
+		assertEquals("2012/11/5 - 00:00:00", result.get("version"));
+		assertEquals(template.getId(), result.get("id"));
+	}
+	
+	@Test
+	public void activateTemplateShouldSetPropertiesInMap() throws Exception {
+		emailTemplateServiceMock.activateEmailTemplate(APPROVAL_NOTIFICATION, 1L);
+				replay(emailTemplateServiceMock);
+		
+		Map<String, String> result = controller.activateTemplate("APPROVAL_NOTIFICATION", 1L);
+		
+		verify(emailTemplateServiceMock);
+		assertTrue(result.isEmpty());
+	}
+	
+	@Test
+	public void activateTemplateShouldSetErrorInMap() throws Exception {
+		emailTemplateServiceMock.activateEmailTemplate(APPROVAL_NOTIFICATION, 1L);
+		expectLastCall().andThrow(new EmailTemplateException("test error"));
+		replay(emailTemplateServiceMock);
+		
+		Map<String, String> result = controller.activateTemplate("APPROVAL_NOTIFICATION", 1L);
+		
+		verify(emailTemplateServiceMock);
+		assertEquals("test error", result.get("error"));
+	}
+	
+	@Test
+	public void deleteTemplateShouldSetErrorInMap() throws Exception {
+		DateTime version = new DateTime(2012, 11, 5, 0, 0, 0);
+		EmailTemplate toDeleteTemplate = new EmailTemplateBuilder().id(1L).name(APPROVAL_NOTIFICATION)
+				.content("Some content").active(false).version(version.toDate()).build();
+		EmailTemplate activeTemplate = new EmailTemplateBuilder().id(2L).name(APPROVAL_NOTIFICATION)
+				.content("Some content").active(true).build();
+		expect(emailTemplateServiceMock.getEmailTemplate(1L)).andReturn(toDeleteTemplate);
+		expect(emailTemplateServiceMock.getActiveEmailTemplate(APPROVAL_NOTIFICATION)).andReturn(activeTemplate);
+		emailTemplateServiceMock.deleteTemplateVersion(toDeleteTemplate);
+		expectLastCall().andThrow(new EmailTemplateException("test error"));
+		replay(emailTemplateServiceMock);
+		
+		Map<String, Object> result = controller.deleteTemplate(1L);
+		
+		verify(emailTemplateServiceMock);
+		assertEquals("test error", result.get("error"));
+	}
+	
+	@Test
+	public void deleteTemplateShouldSetPropertiesInMap() throws Exception {
+		DateTime version = new DateTime(2012, 11, 5, 0, 0, 0);
+		EmailTemplate toDeleteTemplate = new EmailTemplateBuilder().id(1L).name(APPROVAL_NOTIFICATION)
+				.content("Some content").active(false).version(version.toDate()).build();
+		EmailTemplate activeTemplate = new EmailTemplateBuilder().id(2L).name(APPROVAL_NOTIFICATION)
+				.content("Some active content").active(true).build();
+		expect(emailTemplateServiceMock.getEmailTemplate(1L)).andReturn(toDeleteTemplate);
+		expect(emailTemplateServiceMock.getActiveEmailTemplate(APPROVAL_NOTIFICATION)).andReturn(activeTemplate);
+		emailTemplateServiceMock.deleteTemplateVersion(toDeleteTemplate);
+		replay(emailTemplateServiceMock);
+		
+		Map<String, Object> result = controller.deleteTemplate(1L);
+		
+		verify(emailTemplateServiceMock);
+		assertEquals(2L, result.get("activeTemplateId"));
+		assertEquals("Some active content", result.get("activeTemplateContent"));
 	}
 
 	@Test(expected=ResourceNotFoundException.class)
@@ -234,9 +363,10 @@ public class ConfigurationControllerTest {
 
 		registryPropertyEditorMock = EasyMock.createMock(PersonPropertyEditor.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
+		emailTemplateServiceMock = createMock(EmailTemplateService.class);
 		configurationServiceMock = EasyMock.createMock(ConfigurationService.class);
 
-		controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock, userServiceMock, configurationServiceMock);
+		controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock, userServiceMock, configurationServiceMock, emailTemplateServiceMock);
 
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
 				.role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();

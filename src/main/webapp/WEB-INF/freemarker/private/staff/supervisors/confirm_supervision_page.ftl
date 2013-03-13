@@ -106,7 +106,7 @@
                                                 <label id="lbl_declinedSupervisionReason" class="plain-label">Reason<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'confirmSupervision.reason'/>"></span>
                                                 <div class="field">
-                                                    <textarea id="declinedSupervisionReason" name="declinedSupervisionReason" class="max" cols="80" rows="6">${(confirmSupervisionDTO.declinedSupervisionReason?html)!}</textarea>
+                                                    <textarea id="declinedSupervisionReason" name="declinedSupervisionReason"  maxlength="2000" class="max" cols="80" rows="6">${(confirmSupervisionDTO.declinedSupervisionReason?html)!}</textarea>
                                                 </div>
                                             </div>
                                             
@@ -176,7 +176,7 @@
                                                 <label id="lbl_projectAbstract" class="plain-label">Project Abstract (ATAS)<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.projectAbstract'/>"></span>
                                                 <div class="field">
-                                                    <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6">${(confirmSupervisionDTO.projectAbstract?html)!}</textarea>
+                                                    <textarea id="projectAbstract" name="projectAbstract" class="max" cols="80" rows="6" maxlength="2000" >${(confirmSupervisionDTO.projectAbstract?html)!}</textarea>
                                                 </div>
                                             </div>
                                             
@@ -201,7 +201,7 @@
                                                 <label id="lbl_recommendedStartDate" class="plain-label">Provisional Start Date<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerStartDate'/>"></span>
                                                 <div class="field">
-                                                    <input type="text" value="${(confirmSupervisionDTO.recommendedStartDate?string('dd MMM yyyy'))!}" id="recommendedStartDate" name="recommendedStartDate" class="half date" readonly="readonly">
+                                                    <input type="text" value="${(confirmSupervisionDTO.recommendedStartDate?string('dd MMM yyyy'))!}" id="recommendedStartDate" name="recommendedStartDate" class="half date" readonly>
                                                 </div>
                                             </div>
                                             <@spring.bind "confirmSupervisionDTO.recommendedStartDate" />
@@ -234,7 +234,7 @@
                                                 <label id="lbl_recommendedConditions" class="plain-label">Recommended Conditions<em>*</em></label>
                                                 <span class="hint" data-desc="<@spring.message 'assignSupervisor.offerConditions'/>"></span>
                                                 <div class="field">
-                                                    <textarea id="recommendedConditions" name="recommendedConditions" class="max" cols="80" rows="6">${(confirmSupervisionDTO.recommendedConditions?html)!}</textarea>
+                                                    <textarea id="recommendedConditions" name="recommendedConditions" class="max" cols="80" rows="6" maxlength="2000" >${(confirmSupervisionDTO.recommendedConditions?html)!}</textarea>
                                                 </div>
                                             </div>
                                             <@spring.bind "confirmSupervisionDTO.recommendedConditions" />

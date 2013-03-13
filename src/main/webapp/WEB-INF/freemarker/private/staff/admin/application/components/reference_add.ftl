@@ -3,7 +3,7 @@
         <span class="plain-label">Comment<em>*</em></span>
         <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
         <div class="field">
-            <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80">${(refereesAdminEditDTO.comment?html)!}</textarea>
+            <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80" maxlength="2000">${(refereesAdminEditDTO.comment?html)!}</textarea>
         </div>
     </div>
     <@spring.bind "refereesAdminEditDTO.comment" />
@@ -82,3 +82,4 @@
     </div>
     
 </div>
+<script type="text/javascript" src="<@spring.url '/design/default/js/counter.js' />"></script>

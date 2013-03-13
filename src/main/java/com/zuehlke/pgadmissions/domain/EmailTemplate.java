@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 
@@ -19,6 +22,7 @@ public class EmailTemplate implements Serializable {
 
 	@Id
 	@GeneratedValue
+	@Column(name = "id")
 	private Long id;
 
 	@Column(name = "name")
@@ -28,6 +32,29 @@ public class EmailTemplate implements Serializable {
 	@Lob
 	@Column(name = "content")
 	private String content;
+	
+	@Column(name = "version")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date version;
+	
+	@Column(name = "active")
+	private Boolean active;
+	
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+	
+	public Boolean getActive() {
+		return active;
+	}
+	
+	public Date getVersion() {
+		return version;
+	}
+	
+	public void setVersion(Date version) {
+		this.version = version;
+	}
 
 	public EmailTemplateName getName() {
 		return name;

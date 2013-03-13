@@ -19,8 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -64,14 +64,14 @@ public class FileUploadController {
 		if(id  == null){
 			return null;
 		}
-		ApplicationForm applicationform = applicationService.getApplicationByApplicationNumber(id);
-		if (applicationform == null || (applicationform.getApplicant() != null && !userService.getCurrentUser().getId().equals(applicationform.getApplicant().getId()))) {
+		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
+		if (applicationForm == null || (applicationForm.getApplicant() != null && !userService.getCurrentUser().getId().equals(applicationForm.getApplicant().getId()))) {
 			throw new ResourceNotFoundException();
 		}
-		if (applicationform.isSubmitted()) {
-			throw new CannotUpdateApplicationException();
+		if (applicationForm.isSubmitted()) {
+			throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
 		}
-		return applicationform;
+		return applicationForm;
 	}
 
 	@ModelAttribute

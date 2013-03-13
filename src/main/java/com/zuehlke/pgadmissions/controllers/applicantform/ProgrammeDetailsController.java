@@ -28,8 +28,8 @@ import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
@@ -79,7 +79,7 @@ public class ProgrammeDetailsController {
 		}
 		
 		if (programmeDetails.getApplication().isDecided()) {
-			throw new CannotUpdateApplicationException();
+			throw new CannotUpdateApplicationException(programmeDetails.getApplication().getApplicationNumber());
 		}
 		
 		if (result.hasErrors()) {

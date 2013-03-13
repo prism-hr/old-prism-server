@@ -22,8 +22,8 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -61,7 +61,7 @@ public class AddressController {
 			throw new ResourceNotFoundException();
 		}
 		if (applicationForm.isDecided()) {
-			throw new CannotUpdateApplicationException();
+			throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
 		}
 		if(result.hasErrors()){
 			return APPLICATION_ADDRESS_VIEW;

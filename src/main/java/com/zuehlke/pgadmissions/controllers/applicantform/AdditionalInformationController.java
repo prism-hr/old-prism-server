@@ -19,8 +19,8 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
@@ -63,7 +63,7 @@ public class AdditionalInformationController {
 			throw new ResourceNotFoundException();
 		}
 		if (info.getApplication().isDecided()) {
-			throw new CannotUpdateApplicationException();
+			throw new CannotUpdateApplicationException(info.getApplication().getApplicationNumber());
 		}
 		if (result.hasErrors()) {
 			return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;

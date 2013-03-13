@@ -8,7 +8,13 @@ body.ie9 section.form-rows > div { margin-bottom: 10px; }
 
 /* SECTION HEADINGS --------------------------------------------------------------------------------------- */
 section.form-rows h2,
-#view-toolbar li.tool-button a { border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; }
+#view-toolbar li.tool-button a { 
+  border: none;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  box-shadow: none;
+  color: #FFF; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; }
 section.form-rows h2 .left { background: url(../../images/bg_expand_arrow.png) no-repeat; float: left; height: 11px; margin: 5px 4px 0 0; width: 11px; }
 section.form-rows h2.open .left { background-position: 0 -11px; }
 section.form-rows h2 .status { 
@@ -24,7 +30,7 @@ section.form-rows h2.empty .status { background-position: 0 -30px; }
 
 
 /* SECTION BODY ------------------------------------------------------------------------------------------ */
-section.form-rows > div { background: #CCC; border: 2px solid #999; padding: 10px; position: relative; }
+section.form-rows > div { background: #CCC; border: 1px solid #999; padding: 10px; padding-bottom: 0; position: relative; }
 
 
 /* EXISTING ROWS ----------------------------------------------------------------------------------------- */
@@ -46,7 +52,7 @@ section.form-rows table.existing th#primary-header { padding-left: 33px; }
 
 
 /* ROW GROUPS (white boxes) ------------------------------------------------------------------------------ */
-section.form-rows .row-group { background: #FFF; border: 1px solid #999; margin-bottom: 2px; overflow: hidden; padding: 10px; position: relative; }
+section.form-rows .row-group { background: #FFF; border: 1px solid #999; margin-bottom: 10px; overflow: hidden; padding: 10px; position: relative; }
 section.form-rows .row-group .admin_row:last-child { border-bottom: none; }
 
 

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.exceptions.CannotWithdrawApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotWithdrawApplicationException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -47,7 +47,7 @@ public class WithdrawController{
         if (applicationForm.getStatus() == ApplicationFormStatus.APPROVED
                 || applicationForm.getStatus() == ApplicationFormStatus.REJECTED
                 || applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN) {
-            throw new CannotWithdrawApplicationException();
+            throw new CannotWithdrawApplicationException(applicationForm.getApplicationNumber());
         }
         applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));

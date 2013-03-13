@@ -12,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotWithdrawApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.IncorrectApplicationFormStateException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -103,6 +105,18 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
             public AlertDefinition handlePgadmissionsException(SupervisorAlreadyRespondedException ex, HttpServletRequest request) {
                 return new AlertDefinition(AlertType.INFO, "Cannot confirm supervision", "You have already responded to supervision request: "
                         + ex.getApplicationNumber());
+            }
+        });
+        addHandler(CannotUpdateApplicationException.class, new PgadmissionExceptionHandler<CannotUpdateApplicationException>() {
+            @Override
+            public AlertDefinition handlePgadmissionsException(CannotUpdateApplicationException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "Cannot update application", "Following application cannot be updated: " + ex.getApplicationNumber());
+            }
+        });
+        addHandler(CannotWithdrawApplicationException.class, new PgadmissionExceptionHandler<CannotWithdrawApplicationException>() {
+            @Override
+            public AlertDefinition handlePgadmissionsException(CannotWithdrawApplicationException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "Cannot withdraw application", "Following application cannot be withdrawn: " + ex.getApplicationNumber());
             }
         });
 

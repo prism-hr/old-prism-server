@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -96,7 +96,7 @@ public class ReviewCommentController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String addComment(@Valid @ModelAttribute("comment") ReviewComment comment, BindingResult result) {
 		if(comment.getApplication().isDecided()){
-			throw new CannotUpdateApplicationException();
+			throw new CannotUpdateApplicationException(comment.getApplication().getApplicationNumber());
 		}
 		if(result.hasErrors()){
 			return REVIEW_FEEDBACK_PAGE;

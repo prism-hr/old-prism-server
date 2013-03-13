@@ -22,8 +22,8 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -88,7 +88,7 @@ public class FundingController {
 			throw new ResourceNotFoundException();
 		}
 		if(funding.getApplication().isDecided()){
-			throw new CannotUpdateApplicationException();
+			throw new CannotUpdateApplicationException(funding.getApplication().getApplicationNumber());
 		}
 		if(result.hasErrors()){
 			return STUDENT_FUNDING_DETAILS_VIEW;

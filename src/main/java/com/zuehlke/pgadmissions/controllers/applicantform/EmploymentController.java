@@ -22,8 +22,8 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
@@ -103,7 +103,7 @@ public class EmploymentController {
 			throw new ResourceNotFoundException();
 		}
 		if(employment.getApplication().isDecided()){
-			throw new CannotUpdateApplicationException();
+			throw new CannotUpdateApplicationException(employment.getApplication().getApplicationNumber());
 		}
 		if(result.hasErrors()){
 			return STUDENTS_EMPLOYMENT_DETAILS_VIEW;

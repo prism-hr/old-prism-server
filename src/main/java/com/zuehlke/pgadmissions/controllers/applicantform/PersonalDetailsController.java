@@ -35,8 +35,8 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
@@ -168,7 +168,7 @@ public class PersonalDetailsController {
         }
 
         if (personalDetails.getApplication().isDecided()) {
-            throw new CannotUpdateApplicationException();
+            throw new CannotUpdateApplicationException(personalDetails.getApplication().getApplicationNumber());
         }
 
         if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {

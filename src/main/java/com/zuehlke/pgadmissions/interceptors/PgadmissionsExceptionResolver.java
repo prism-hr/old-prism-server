@@ -59,7 +59,7 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
     }
 
     protected void initializeHandlerMap() {
-        handlerMap.put(MissingApplicationFormException.class, new PgadmissionExceptionHandler<MissingApplicationFormException>() {
+        addHandler(MissingApplicationFormException.class, new PgadmissionExceptionHandler<MissingApplicationFormException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(MissingApplicationFormException ex, HttpServletRequest request) {
                 return new AlertDefinition(AlertType.INFO, "Missing application", "Given application does not exist: " + ex.getApplicationNumber());

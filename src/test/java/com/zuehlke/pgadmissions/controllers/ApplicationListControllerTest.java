@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.*;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
@@ -32,6 +32,8 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
+import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -45,16 +47,21 @@ public class ApplicationListControllerTest {
     @Test
     public void shouldReturnViewForApplicationListPageWithNoFilters() {
 
+        // GIVEN
         Model model = new ExtendedModelMap();
         HttpSession httpSession = new MockHttpSession();
+        AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
+        httpSession.setAttribute("alertDefinition", alert);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
+        // WHEN
         EasyMock.replay(userServiceMock);
         assertEquals("private/my_applications_page", controller.getApplicationListPage(model, httpSession));
         EasyMock.verify(userServiceMock);
 
-        boolean hasFilter = false;
-        assertEquals(hasFilter, model.asMap().get("hasFilter"));
+        // THEN
+        assertEquals(false, model.asMap().get("hasFilter"));
+        assertSame(alert, model.asMap().get("alertDefinition"));
     }
 
     @Test
@@ -69,8 +76,7 @@ public class ApplicationListControllerTest {
 
         EasyMock.replay(userServiceMock, applicationsServiceMock);
         assertEquals("private/my_applications_page", controller.getApplicationListPage(model, httpSession));
-        boolean hasFilter = true;
-        assertEquals(hasFilter, model.asMap().get("hasFilter"));
+        assertEquals(true, model.asMap().get("hasFilter"));
         assertEquals("term", model.asMap().get("searchTerm"));
         assertEquals(SearchCategory.APPLICANT_NAME, model.asMap().get("searchCategory"));
         EasyMock.verify(userServiceMock, applicationsServiceMock);

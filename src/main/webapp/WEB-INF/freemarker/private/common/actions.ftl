@@ -17,7 +17,7 @@
         <#if user.hasAdminRightsOnApplication(application) && application.isInState('INTERVIEW')> 
             <option value="validate">Evaluate interview feedback</option>
         </#if>
-        <#if user.hasAdminRightsOnApplication(application)>
+        <#if user.hasAdminRightsOnApplication(application) || user.isViewerOfProgramme(application)>
             <option value="comment">Comment</option>                                                    
         </#if>
         <#if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplicationLatestRound(application))> 

@@ -118,7 +118,11 @@
 		          <ul>
 		            <#list timelineObject.comments as comment>
 			            <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION'>                                                    
-			           		<#assign role = "administrator"/>     
+			           		<#if comment.user.isViewerOfProgramme(comment.application)>
+			           			<#assign role = "viewer"/>
+			           		<#else>
+			           			<#assign role = "administrator"/>     
+			           		</#if>
 			            <#elseif comment.type == 'REVIEW'>
 			            	<#assign role = "reviewer"/>
 			            <#elseif comment.type == 'INTERVIEW'>

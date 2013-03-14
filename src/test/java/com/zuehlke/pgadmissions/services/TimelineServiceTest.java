@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -66,16 +66,12 @@ public class TimelineServiceTest {
 		RegisteredUser userThree = new RegisteredUserBuilder().id(3).build();
 		RegisteredUser userFour = new RegisteredUserBuilder().id(4).build();
 
-		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1)
-				.build();
-
-		Event reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).user(userTwo)
-				.build();
-		Event rejectedPhaseEnteredEvent = new StateChangeEventBuilder().date(rejectedDate).newStatus(ApplicationFormStatus.REJECTED).id(3).user(userThree)
-				.build();
+		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1).build();
+		Event reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).user(userTwo).build();
+		Event rejectedPhaseEnteredEvent = new StateChangeEventBuilder().date(rejectedDate).newStatus(ApplicationFormStatus.REJECTED).id(3).user(userThree).build();
 		Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).toReferee()).id(4).user(userFour).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(rejectedPhaseEnteredEvent, validationPhaseEnteredEvent, reviewPhaseEnteredEvent, referenceEvent));
 
@@ -116,7 +112,7 @@ public class TimelineServiceTest {
 		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1)
 				.build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).appDate(creationDate).applicant(currentUser).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).appDate(creationDate).applicant(currentUser).build();
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(validationPhaseEnteredEvent));
 
@@ -145,8 +141,7 @@ public class TimelineServiceTest {
 		Event referenceEvent = new ReferenceEventBuilder().date(referenceDate).referee(new RefereeBuilder().id(4).toReferee()).id(4).build();
 
 		Comment comment = new CommentBuilder().date(commentDate).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(reviewPhaseEnteredEvent, referenceEvent).comments(comment)
-				.build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(reviewPhaseEnteredEvent, referenceEvent).comments(comment).program(new ProgramBuilder().build()).build();
 
 		List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
 		assertEquals(2, objects.size());
@@ -162,7 +157,7 @@ public class TimelineServiceTest {
 		StateChangeEvent reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().newStatus(ApplicationFormStatus.REVIEW).id(2).reviewRound(reviewRound)
 				.build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
 
@@ -179,7 +174,7 @@ public class TimelineServiceTest {
 		InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().newStatus(ApplicationFormStatus.INTERVIEW).id(1)
 				.interview(interview).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(interviewStateChangeEvent));
 
@@ -196,7 +191,7 @@ public class TimelineServiceTest {
 		StateChangeEvent reviewPhaseEnteredEvent = new ApprovalStateChangeEventBuilder().newStatus(ApplicationFormStatus.REVIEW).id(2)
 				.approvalRound(approvalRound).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
 
@@ -212,7 +207,7 @@ public class TimelineServiceTest {
 		Referee referee = new RefereeBuilder().id(4).toReferee();
 		Event event = new ReferenceEventBuilder().referee(referee).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).build();
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(event));
 
@@ -313,7 +308,7 @@ public class TimelineServiceTest {
 			Event approvalEventThree = new StateChangeEventBuilder().date(thirdApprovalDate).newStatus(ApplicationFormStatus.APPROVAL).id(3)
 					.build();
 
-			ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).events(approvalEventOne, approvalEventTwo, approvalEventThree).build();
+			ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build()).events(approvalEventOne, approvalEventTwo, approvalEventThree).build();
 
 			List<TimelineObject> objects = timelineService.getTimelineObjects(applicationForm);
 			assertEquals(3, objects.size());

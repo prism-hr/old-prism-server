@@ -4,7 +4,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 /**
- * Methods used by the domain objects to do authorisation decisions.
+ * Methods used by the domain objects to do authorisation/security decisions.
  */
 public abstract class Authorisable extends AbstractAuthorisationAPI {
 
@@ -64,6 +64,10 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
                     }
                 }
             }
+        }
+        
+        if (isInRole(user, Authority.VIEWER) && isViewerOfProgramme(form, user)) {
+            return true;
         }
         
         if (areEqual(user, form.getApplicant())) {

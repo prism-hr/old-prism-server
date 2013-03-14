@@ -29,17 +29,19 @@ section.form-rows #existingUsers { margin-bottom: 10px; }
 /* User's roles as icons. */
 #existingUsers .role-icons span { background: url(../../../images/icon_roles.png) no-repeat; display: inline-block; height: 21px; margin-right: 4px; width: 22px; }
 
-#existingUsers .role-icons .is-supervisor { background-position: 0 -21px; }
-#existingUsers .role-icons .is-admin { background-position: -22px -21px; }
-#existingUsers .role-icons .is-interviewer { background-position: -44px -21px; }
-#existingUsers .role-icons .is-reviewer { background-position: -66px -21px; }
-#existingUsers .role-icons .is-approver { background-position: -88px -21px; }
+#existingUsers .role-icons .is-viewer { background-position: 0 -21px; }
+#existingUsers .role-icons .is-supervisor { background-position: -22px -21px; }
+#existingUsers .role-icons .is-admin { background-position: -44px -21px; }
+#existingUsers .role-icons .is-interviewer { background-position: -66px -21px; }
+#existingUsers .role-icons .is-reviewer { background-position: -88px -21px; }
+#existingUsers .role-icons .is-approver { background-position: -110px -21px; }
 
-#existingUsers .role-icons.supervisor .is-supervisor { background-position: 0 0; }
-#existingUsers .role-icons.administrator .is-admin { background-position: -22px 0; }
-#existingUsers .role-icons.interviewer .is-interviewer { background-position: -44px 0; }
-#existingUsers .role-icons.reviewer .is-reviewer { background-position: -66px 0; }
-#existingUsers .role-icons.approver .is-approver { background-position: -88px 0; }
+#existingUsers .role-icons.viewer .is-viewer { background-position: 0 0; }
+#existingUsers .role-icons.supervisor .is-supervisor { background-position: -22px 0; }
+#existingUsers .role-icons.administrator .is-admin { background-position: -44px 0; }
+#existingUsers .role-icons.interviewer .is-interviewer { background-position: -66px 0; }
+#existingUsers .role-icons.reviewer .is-reviewer { background-position: -88px 0; }
+#existingUsers .role-icons.approver .is-approver { background-position: -110px 0; }
 
 /* Table with scrolling content and fixed header. */
 #existingUsers table { margin-bottom: 0; }

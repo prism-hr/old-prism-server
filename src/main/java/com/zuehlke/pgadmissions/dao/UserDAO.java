@@ -99,6 +99,11 @@ public class UserDAO {
                 .createCriteria("programsOfWhichSupervisor")
                 .add(Restrictions.eq("id", program.getId()));
         
+        Criteria programsOfWhichViewer = sessionFactory.getCurrentSession()
+                .createCriteria(RegisteredUser.class)
+                .createCriteria("programsOfWhichViewer")
+                .add(Restrictions.eq("id", program.getId()));
+        
         CollectionUtils.forAllDo(getUsersInRole((Role) superAdminRoleCriteria.uniqueResult()), new Closure() {
             @Override
             public void execute(Object target) {
@@ -140,6 +145,14 @@ public class UserDAO {
         });
         
         CollectionUtils.forAllDo(programsOfWhichSupervisor.list(), new Closure() {
+            @Override
+            public void execute(Object target) {
+                RegisteredUser user = (RegisteredUser) target;
+                users.put(user.getId(), user);
+            }
+        });
+        
+        CollectionUtils.forAllDo(programsOfWhichViewer.list(), new Closure() {
             @Override
             public void execute(Object target) {
                 RegisteredUser user = (RegisteredUser) target;

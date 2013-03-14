@@ -46,6 +46,9 @@ public class Program extends Authorisable implements Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichSupervisor")
     private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
+    
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichViewer")
+    private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
@@ -61,11 +64,11 @@ public class Program extends Authorisable implements Serializable {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(final Integer id) {
         this.id = id;
     }
 
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
@@ -77,7 +80,7 @@ public class Program extends Authorisable implements Serializable {
         return badges;
     }
 
-    public void setBadges(List<Badge> badges) {
+    public void setBadges(final List<Badge> badges) {
         this.badges = badges;
     }
 
@@ -93,7 +96,7 @@ public class Program extends Authorisable implements Serializable {
         return approvers;
     }
 
-    public void setApprovers(List<RegisteredUser> approvers) {
+    public void setApprovers(final List<RegisteredUser> approvers) {
         this.approvers.clear();
         this.approvers.addAll(approvers);
     }
@@ -102,7 +105,7 @@ public class Program extends Authorisable implements Serializable {
         return administrators;
     }
 
-    public void setAdministrators(List<RegisteredUser> administrators) {
+    public void setAdministrators(final List<RegisteredUser> administrators) {
         this.administrators.clear();
         this.administrators.addAll(administrators);
     }
@@ -111,20 +114,20 @@ public class Program extends Authorisable implements Serializable {
         return programReviewers;
     }
 
-    public void setProgramReviewers(List<RegisteredUser> reviewers) {
+    public void setProgramReviewers(final List<RegisteredUser> reviewers) {
         this.programReviewers.clear();
         this.programReviewers.addAll(reviewers);
     }
 
-    public boolean isApprover(RegisteredUser user) {
+    public boolean isApprover(final RegisteredUser user) {
         return isApproverInProgramme(this, user);
     }
 
-    public boolean isAdministrator(RegisteredUser user) {
+    public boolean isAdministrator(final RegisteredUser user) {
         return isAdminInProgramme(this, user);
     }
 
-    public boolean isInterviewerOfProgram(RegisteredUser user) {
+    public boolean isInterviewerOfProgram(final RegisteredUser user) {
         return isInterviewerOfProgram(this, user);
     }
 
@@ -132,7 +135,7 @@ public class Program extends Authorisable implements Serializable {
         return instances;
     }
 
-    public void setInstances(List<ProgramInstance> instances) {
+    public void setInstances(final List<ProgramInstance> instances) {
         this.instances = instances;
     }
 
@@ -140,7 +143,7 @@ public class Program extends Authorisable implements Serializable {
         return interviewers;
     }
 
-    public void setInterviewers(List<RegisteredUser> interviewers) {
+    public void setInterviewers(final List<RegisteredUser> interviewers) {
         this.interviewers = interviewers;
     }
 
@@ -148,7 +151,7 @@ public class Program extends Authorisable implements Serializable {
         return supervisors;
     }
 
-    public void setSupervisors(List<RegisteredUser> supervisors) {
+    public void setSupervisors(final List<RegisteredUser> supervisors) {
         this.supervisors = supervisors;
     }
 
@@ -156,7 +159,7 @@ public class Program extends Authorisable implements Serializable {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -164,7 +167,16 @@ public class Program extends Authorisable implements Serializable {
         return atasRequired;
     }
 
-    public void setAtasRequired(Boolean atasRequired) {
+    public void setAtasRequired(final Boolean atasRequired) {
         this.atasRequired = atasRequired;
+    }
+
+    public List<RegisteredUser> getViewers() {
+        return viewers;
+    }
+
+    public void setViewers(final List<RegisteredUser> viewers) {
+        this.viewers.clear();
+        this.approvers.addAll(viewers);
     }
 }

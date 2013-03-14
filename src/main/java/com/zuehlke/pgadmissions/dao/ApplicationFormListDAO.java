@@ -74,6 +74,10 @@ public class ApplicationFormListDAO {
                 disjunction.add(Subqueries.propertyIn("id", getApprovedApplicationsInProgramsOfWhichApprover(user)));
             }
             
+            if (!user.getProgramsOfWhichViewer().isEmpty()) {
+                disjunction.add(Subqueries.propertyIn("id", getApplicationsInProgramsOfWhichViewer(user)));
+            }
+            
             disjunction.add(Subqueries.propertyIn("id", getSubmittedApplicationsOfWhichApplicationAdministrator(user)));
 
             disjunction.add(Subqueries.propertyIn("id", getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(user)));
@@ -238,5 +242,11 @@ public class ApplicationFormListDAO {
                 .createAlias("latestApprovalRound.supervisors", "supervisor")
                 .add(Restrictions.eq("supervisor.user", user));
     }
-
+    
+    private DetachedCriteria getApplicationsInProgramsOfWhichViewer(RegisteredUser user) {
+        return DetachedCriteria.forClass(ApplicationForm.class)
+                .setProjection(Projections.property("id"))
+                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
+                .add(Restrictions.in("program", user.getProgramsOfWhichViewer()));
+    }
 }

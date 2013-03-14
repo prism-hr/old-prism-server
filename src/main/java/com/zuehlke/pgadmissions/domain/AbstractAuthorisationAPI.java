@@ -137,6 +137,9 @@ public abstract class AbstractAuthorisationAPI {
         if (containsProgramme(programme, user.getProgramsOfWhichSupervisor())) {
             authorities.add(Authority.SUPERVISOR);
         }
+        if (containsProgramme(programme, user.getProgramsOfWhichViewer())) {
+            authorities.add(Authority.VIEWER);
+        }
         return authorities;
     }
 
@@ -195,6 +198,10 @@ public abstract class AbstractAuthorisationAPI {
 
     public boolean isProgrammeAdministrator(final ApplicationForm form, final RegisteredUser user) {
         return containsUser(user, form.getProgram().getAdministrators());
+    }
+    
+    public boolean isViewerOfProgramme(final ApplicationForm form, final RegisteredUser user) {
+        return containsUser(user, form.getProgram().getViewers());
     }
 
     public boolean isPastOrPresentReviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
@@ -297,5 +304,16 @@ public abstract class AbstractAuthorisationAPI {
             return false;
         }
         return containsUser(user, programme.getApprovers());
+    }
+    
+    public boolean isViewerInProgramme(final Program programme, final RegisteredUser user) {
+        if (programme == null) {
+            return false;
+        }
+        
+        if (isNotInRole(user, Authority.VIEWER)) {
+            return false;
+        }
+        return containsUser(user, programme.getViewers());
     }
 }

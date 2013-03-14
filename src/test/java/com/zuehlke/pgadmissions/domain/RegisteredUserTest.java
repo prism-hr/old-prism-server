@@ -268,6 +268,14 @@ public class RegisteredUserTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).build();
 		assertFalse(approver.canSee(applicationForm));
 	}
+	
+	@Test
+	public void shouldReturnTrueIfUserIsViewerOfProgram() {
+	    RegisteredUser viewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.VIEWER).build()).build();
+	    Program program = new ProgramBuilder().id(1).viewers(viewer).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).build();
+        assertTrue(viewer.canSee(applicationForm));
+	}
 
 	@Test
 	public void shouldReturnTrueIfUserIsReviewerTApplication() {

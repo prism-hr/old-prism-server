@@ -40,6 +40,7 @@ public class RegisteredUserBuilder {
     private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
     private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
     private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
+    private List<Program> programsOfWhichViewer = new ArrayList<Program>();
 
     private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
@@ -79,6 +80,11 @@ public class RegisteredUserBuilder {
 
     public RegisteredUserBuilder programsOfWhichInterviewer(Program... programs) {
         this.programsOfWhichInterviewer.addAll(Arrays.asList(programs));
+        return this;
+    }
+    
+    public RegisteredUserBuilder programsOfWhichViewer(Program... programs) {
+        this.programsOfWhichViewer.addAll(Arrays.asList(programs));
         return this;
     }
 
@@ -219,6 +225,7 @@ public class RegisteredUserBuilder {
         user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
         user.setProgramsOfWhichInterviewer(programsOfWhichInterviewer);
         user.setProgramsOfWhichSupervisor(programsOfWhichSupervisor);
+        user.setProgramsOfWhichViewer(programsOfWhichViewer);
         user.setConfirmPassword(confirmPassword);
         user.setReferees(referees);
         user.setComments(comments);
@@ -229,5 +236,4 @@ public class RegisteredUserBuilder {
         user.setApplicationsFilters(applicationsFilters);
         return user;
     }
-
 }

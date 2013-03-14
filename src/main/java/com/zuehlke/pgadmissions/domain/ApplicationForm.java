@@ -422,22 +422,25 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public List<Comment> getVisibleComments(RegisteredUser user) {
+        ArrayList<Comment> returnList = new ArrayList<Comment>();
+        
         if (user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)) {
-            List<Comment> comments = new ArrayList<Comment>();
             for (Comment comment : applicationComments) {
                 if (comment instanceof ReferenceComment && ((ReferenceComment) comment).getReferee().getUser().getId().equals(user.getId())) {
-                    comments.add(comment);
+                    returnList.add(comment);
                 }
             }
-            Collections.sort(comments);
-            return comments;
+            Collections.sort(returnList);
+            return returnList;
         }
-        if (!user.hasStaffRightsOnApplicationForm(this)) {
-            return new ArrayList<Comment>();
+        
+        if (user.hasStaffRightsOnApplicationForm(this) || user.isViewerOfProgramme(this, user)) {
+            returnList.addAll(applicationComments);
+            Collections.sort(returnList);
+            return returnList;
         }
 
-        Collections.sort(applicationComments);
-        return applicationComments;
+        return returnList;
     }
 
     public boolean shouldOpenFirstSection() {

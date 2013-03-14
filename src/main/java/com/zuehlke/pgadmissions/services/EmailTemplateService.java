@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -125,5 +127,24 @@ public class EmailTemplateService {
 		template.setName(templateName);
 		saveNewEmailTemplate(template);
 		return template;
+	}
+
+	//Not used now, may be in the future
+	public String processTemplateContent(String templateContent) {
+		Pattern pattern = Pattern.compile("\\$\\{(.*?)\\}");  
+	    Matcher matcher = pattern.matcher(templateContent);
+	    String result = templateContent;
+	    while (matcher.find()) {
+	    	String ftlVariable = matcher.group(1);
+	    	String keyWord = ftlVariable.replace("?", "\\?");
+	    	int indexOfQuestionMark = ftlVariable.indexOf("?");
+	    	String newString = indexOfQuestionMark != -1 
+	    			?
+	    				ftlVariable.substring(0, indexOfQuestionMark)
+	    			:
+	    				ftlVariable;
+	    				result = result.replaceAll("\\$\\{"+keyWord+"\\}", newString);
+	    }
+	    return result;
 	}
 }

@@ -170,6 +170,12 @@ public class ConfigurationController {
 		return result;
 	}
 	
+	//Not used now, may be in the future
+	@RequestMapping(method = RequestMethod.POST, value ={"previewTemplate"})
+	@ResponseBody
+	public Map<String, String> getTemplatePreview(@RequestParam String templateContent) {
+		return Collections.singletonMap("template", templateService.processTemplateContent(templateContent));
+	}
 	
 	@ModelAttribute("templateTypes")
 	public EmailTemplateName[] getTemplateTypes() {

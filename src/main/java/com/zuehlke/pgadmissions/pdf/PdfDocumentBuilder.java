@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.Document;
@@ -19,7 +20,7 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 @Component
 public class PdfDocumentBuilder {
     
-    private Logger log = Logger.getLogger(PdfDocumentBuilder.class);
+    private Logger log = LoggerFactory.getLogger(PdfDocumentBuilder.class);
 
     public void build(final PdfModelBuilder builder, final OutputStream outputStream, final ApplicationForm form) {
         try {

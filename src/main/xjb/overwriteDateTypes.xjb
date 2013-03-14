@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" jaxb:version="2.0">
+    <jaxb:globalBindings>
+<!--         <jaxb:javaType xmlns="http://java.sun.com/xml/ns/jaxb" -->
+<!--             name="org.joda.time.LocalDate" xmlType="xs:date" -->
+<!--             parseMethod="org.joda.time.LocalDate.parse" printMethod="java.lang.String.valueOf" /> -->
+<!--         <jaxb:javaType xmlns="http://java.sun.com/xml/ns/jaxb" -->
+<!--             name="org.joda.time.LocalTime" xmlType="xs:time" -->
+<!--             parseMethod="org.joda.time.LocalTime.parse" printMethod="java.lang.String.valueOf" /> -->
+<!--         <jaxb:javaType xmlns="http://java.sun.com/xml/ns/jaxb" -->
+<!--             name="org.joda.time.DateTime" xmlType="xs:dateTime" -->
+<!--             parseMethod="org.joda.time.DateTime.parse" printMethod="java.lang.String.valueOf" /> -->
+        <jaxb:javaType xmlns="http://java.sun.com/xml/ns/jaxb"
+            name="org.joda.time.DateTime" xmlType="xs:gMonth"
+            parseMethod="com.zuehlke.pgadmissions.jaxb.GMonthAdapter.parse" 
+            printMethod="com.zuehlke.pgadmissions.jaxb.GMonthAdapter.print" />
+    </jaxb:globalBindings>
+</jaxb:bindings>

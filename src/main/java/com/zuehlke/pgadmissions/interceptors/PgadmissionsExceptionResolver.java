@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFo
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
 import com.zuehlke.pgadmissions.exceptions.application.RefereeAlreadyRespondedException;
+import com.zuehlke.pgadmissions.exceptions.application.ReviewerAlreadyRespondedException;
 import com.zuehlke.pgadmissions.exceptions.application.SupervisorAlreadyRespondedException;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 
@@ -107,6 +108,13 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
                         + ex.getApplicationNumber());
             }
         });
+        addHandler(ReviewerAlreadyRespondedException.class, new PgadmissionExceptionHandler<ReviewerAlreadyRespondedException>() {
+            @Override
+            public AlertDefinition handlePgadmissionsException(ReviewerAlreadyRespondedException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "Cannot provide review",
+                        "You have already provided or declined to provide a review for application: " + ex.getApplicationNumber());
+            }
+        });
         addHandler(CannotUpdateApplicationException.class, new PgadmissionExceptionHandler<CannotUpdateApplicationException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotUpdateApplicationException ex, HttpServletRequest request) {
@@ -116,7 +124,8 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(CannotWithdrawApplicationException.class, new PgadmissionExceptionHandler<CannotWithdrawApplicationException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotWithdrawApplicationException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot withdraw application", "Following application cannot be withdrawn: " + ex.getApplicationNumber());
+                return new AlertDefinition(AlertType.INFO, "Cannot withdraw application", "Following application cannot be withdrawn: "
+                        + ex.getApplicationNumber());
             }
         });
 

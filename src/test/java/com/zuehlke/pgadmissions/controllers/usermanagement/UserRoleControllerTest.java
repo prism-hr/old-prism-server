@@ -306,7 +306,7 @@ public class UserRoleControllerTest {
 
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
-		userServiceMock.updateUserWithNewRoles(existingUser, program);
+		userServiceMock.deleteUserFromProgramme(existingUser, program);
 		
 		EasyMock.replay(currentUserMock, userServiceMock);
 

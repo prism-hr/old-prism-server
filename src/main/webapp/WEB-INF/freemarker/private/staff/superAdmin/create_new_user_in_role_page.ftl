@@ -133,7 +133,11 @@
 										<div class="field">
 											<select multiple size="6" id="roles" name="selectedAuthorities" class="max">
 												<#list authorities as authority>
-												<option value="${authority}" <#if userDTO.isInAuthority(authority)>selected="selected"</#if>>${authority?capitalize}</option>
+													<#if authority == 'VIEWER'>
+														<option value="${authority}" selected="selected">${authority?capitalize}</option>
+													<#else>
+														<option value="${authority}" <#if userDTO.isInAuthority(authority)>selected="selected"</#if>>${authority?capitalize}</option>
+													</#if>
 												</#list>
 											</select>
 											<@spring.bind "userDTO.selectedAuthorities" /> 

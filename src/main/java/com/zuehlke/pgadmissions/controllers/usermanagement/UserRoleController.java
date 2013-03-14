@@ -172,7 +172,7 @@ public class UserRoleController {
 	    if (!isCurrentUserAdministrator()) {
             throw new ResourceNotFoundException();
         }
-		userService.updateUserWithNewRoles(userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail()), userDTO.getSelectedProgram());		
+		userService.deleteUserFromProgramme(userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail()), userDTO.getSelectedProgram());		
 		return "redirect:/manageUsers/edit?programCode=" + userDTO.getSelectedProgram().getCode();
 	}
 	

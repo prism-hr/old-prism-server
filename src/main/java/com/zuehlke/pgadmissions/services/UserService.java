@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -114,7 +115,7 @@ public class UserService {
 		user.getRoles().add(roleDAO.getRoleByAuthority(authority));
 	}
 
-	public void updateUserWithNewRoles(RegisteredUser selectedUser, Program selectedProgram, Authority... newAuthorities) {
+	public void updateUserWithNewRoles(final RegisteredUser selectedUser, final Program selectedProgram, final Authority... newAuthorities) {
 		//Please note: it is a deliberate decision to never remove people from SUPERADMIN role.
 	
 		for (Authority authority : Authority.values()) {
@@ -126,17 +127,25 @@ public class UserService {
 		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		addOrRemoveFromProgramsOfWhichSupervisorIfRequired(selectedUser, selectedProgram, newAuthorities);
-		addOrRemoveFromProgramsOfWhichViewerIfRequired(selectedUser, selectedProgram, newAuthorities);
+		addToProgramsOfWhichViewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		
 		userDAO.save(selectedUser);
 	}
+	
+	public void deleteUserFromProgramme(final RegisteredUser selectedUser, final Program selectedProgram) {
+	    selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
+	    selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
+	    selectedUser.getProgramsOfWhichReviewer().remove(selectedProgram);
+	    selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
+	    selectedUser.getProgramsOfWhichSupervisor().remove(selectedProgram);
+	    selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
+	    userDAO.save(selectedUser);
+	}
 
-	private void addOrRemoveFromProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-	    if (newAuthoritiesContains(newAuthorities, Authority.VIEWER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichViewer())) {
-            selectedUser.getProgramsOfWhichViewer().add(selectedProgram);           
-        } else if (!newAuthoritiesContains(newAuthorities, Authority.VIEWER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichViewer())) {
-            selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
-        }
+	private void addToProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+	    if (!selectedUser.getProgramsOfWhichViewer().contains(selectedProgram)) {
+	        selectedUser.getProgramsOfWhichViewer().add(selectedProgram);
+	    }
     }
 
     private void addOrRemoveFromProgramsOfWhichSupervisorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
@@ -153,7 +162,6 @@ public class UserService {
 		} else if (!newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichAdministrator())) {
 			selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
 		}
-
 	}
 
 	private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
@@ -173,7 +181,6 @@ public class UserService {
 	}
 
 	private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-
 		if (newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichInterviewer())) {
 			selectedUser.getProgramsOfWhichInterviewer().add(selectedProgram);			
 		} else if (!newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichInterviewer())) {
@@ -184,6 +191,9 @@ public class UserService {
 	private void addToRoleIfRequired(RegisteredUser selectedUser, Authority[] newAuthorities, Authority authority) {
 		if (!selectedUser.isInRole(authority) && newAuthoritiesContains(newAuthorities, authority)) {
 			selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));			
+		}
+		if (selectedUser.isNotInRole(Authority.VIEWER)) {
+		    selectedUser.getRoles().add(roleDAO.getRoleByAuthority(Authority.VIEWER));
 		}
 	}
 
@@ -217,35 +227,54 @@ public class UserService {
 		userDAO.save(newUser);
 	}
 
-	public RegisteredUser createNewUserForProgramme(String firstName, String lastName, String email, Program program, Authority... authorities) {
+	public RegisteredUser createNewUserForProgramme(final String firstName, final String lastName, final String email, final Program program, final Authority... authorities) {
 		RegisteredUser newUser = userDAO.getUserByEmail(email);
+		
 		if (newUser != null) {
 			throw new IllegalStateException(String.format("user with email: %s already exists!", email));
 		}
-		newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
-		if (Arrays.asList(authorities).contains(Authority.SUPERADMINISTRATOR)) {
+		
+		// make a new user a VIEWER per default for the programme
+		List<Authority> authList = new ArrayList<Authority>(Arrays.asList(authorities));
+		if (!authList.contains(Authority.VIEWER)) {
+		    authList.add(Authority.VIEWER);
+		}
+		
+		newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authList);
+		if (authList.contains(Authority.SUPERADMINISTRATOR)) {
 			addPendingRoleNotificationToUser(newUser, Authority.SUPERADMINISTRATOR, null);
 		}
-		if (Arrays.asList(authorities).contains(Authority.REVIEWER)) {
+		
+		if (authList.contains(Authority.REVIEWER)) {
 			newUser.getProgramsOfWhichReviewer().add(program);
 			addPendingRoleNotificationToUser(newUser, Authority.REVIEWER, program);
 		}
-		if (Arrays.asList(authorities).contains(Authority.ADMINISTRATOR)) {
+		
+		if (authList.contains(Authority.ADMINISTRATOR)) {
 			newUser.getProgramsOfWhichAdministrator().add(program);
 			addPendingRoleNotificationToUser(newUser, Authority.ADMINISTRATOR, program);
 		}
-		if (Arrays.asList(authorities).contains(Authority.APPROVER)) {
+		
+		if (authList.contains(Authority.APPROVER)) {
 			newUser.getProgramsOfWhichApprover().add(program);
 			addPendingRoleNotificationToUser(newUser, Authority.APPROVER, program);
 		}
-		if (Arrays.asList(authorities).contains(Authority.INTERVIEWER)) {
+		
+		if (authList.contains(Authority.INTERVIEWER)) {
 			newUser.getProgramsOfWhichInterviewer().add(program);
 			addPendingRoleNotificationToUser(newUser, Authority.INTERVIEWER, program);
 		}
-		if (Arrays.asList(authorities).contains(Authority.SUPERVISOR)) {
+		
+		if (authList.contains(Authority.SUPERVISOR)) {
 			newUser.getProgramsOfWhichSupervisor().add(program);
 			addPendingRoleNotificationToUser(newUser, Authority.SUPERVISOR, program);
 		}
+		
+		if (authList.contains(Authority.VIEWER)) {
+            newUser.getProgramsOfWhichViewer().add(program);
+            addPendingRoleNotificationToUser(newUser, Authority.VIEWER, program);
+        }
+		
 		userDAO.save(newUser);
 		return newUser;
 	}

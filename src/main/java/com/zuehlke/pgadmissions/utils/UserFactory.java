@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.utils;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +25,24 @@ public class UserFactory {
         this.encryptionUtils = encryptionUtils;
     }
 
-    public RegisteredUser createNewUserInRoles(String firstname, String lastname, String email,
-            Authority... authorities) {
+    public RegisteredUser createNewUserInRoles(String firstname, String lastname, String email, List<Authority> authorities) {
+        RegisteredUser user = buildRegisteredUser(firstname, lastname, email);
+        for (Authority authority : authorities) {
+            user.getRoles().add(roleService.getRoleByAuthority(authority));
+        }
+        return user;
+    }
+    
+    public RegisteredUser createNewUserInRoles(String firstname, String lastname, String email, Authority... authorities) {
+        RegisteredUser user = buildRegisteredUser(firstname, lastname, email);
+        for (Authority authority : authorities) {
+            user.getRoles().add(roleService.getRoleByAuthority(authority));
+        }
+        return user;
+    }
+    
+    private RegisteredUser buildRegisteredUser(final String firstname, final String lastname, final String email) {
         RegisteredUser user = new RegisteredUser();
-
         user.setFirstName(firstname);
         user.setLastName(lastname);
         user.setUsername(email);
@@ -36,9 +52,6 @@ public class UserFactory {
         user.setEnabled(false);
         user.setCredentialsNonExpired(true);
         user.setActivationCode(encryptionUtils.generateUUID());
-        for (Authority authority : authorities) {
-            user.getRoles().add(roleService.getRoleByAuthority(authority));
-        }
         return user;
     }
 }

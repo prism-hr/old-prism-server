@@ -97,6 +97,12 @@ $(document).ready(function() {
 		 });
     });
     
+    $('#preview-go').click(function() {
+    	 var myWindow=window.open
+    	  ('','Template preview','width=800,height=600,left=200,top=100');
+    	  myWindow.document.write($('#templateContentId').val());
+    });
+    
     $('#delete-go').click(function() {
     	$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
     	$.ajax({

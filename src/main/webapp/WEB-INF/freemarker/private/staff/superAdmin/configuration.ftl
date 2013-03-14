@@ -100,6 +100,7 @@
 										<button class="blue" type="button" id="save-go">Save</button>
 										<button class="blue" type="button" id="enable-go">Enable</button>
 										<button class="blue" type="button" id="delete-go">Delete</button>
+										<button class="blue" type="button" id="preview-go">Preview</button>
 									</div>
 								</div>
 								

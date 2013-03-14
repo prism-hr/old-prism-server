@@ -224,5 +224,14 @@ public class EmailTemplateServiceTest {
 		assertNotNull(updatedTemplate.getVersion());
 		verify(daoMock);
 	}
+	
+	@Test
+	public void shouldProduceTemplatePreview() {
+		String ftlCode = "href=${host}/pgadmissions/register?activationCode=${approver.activationCode}";
+		String expected = "href=host/pgadmissions/register?activationCode=approver.activationCode";
+		assertEquals(expected , service.processTemplateContent(ftlCode));
+		ftlCode = "href=${host}/pgadmissions/register?activationCode=${approver.activationCode?html}";
+		assertEquals(expected , service.processTemplateContent(ftlCode));
+	}
 
 }

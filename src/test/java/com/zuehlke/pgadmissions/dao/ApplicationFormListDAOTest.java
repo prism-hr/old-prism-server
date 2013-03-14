@@ -340,7 +340,6 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(reviewerUser);
         assertTrue(listContainsId(applicationForm, applications));
-
     }
 
     @Test
@@ -654,6 +653,35 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approverAndAdminUser);
+
+        assertTrue(listContainsId(applicationFormOne, applications));
+        assertTrue(listContainsId(applicationFormTwo, applications));
+    }
+    
+    @Test
+    public void shouldReturnAppsForWhichHeIsViewer() {
+        Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
+        save(otherProgram);
+
+        RegisteredUser viewer = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
+                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
+                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .programsOfWhichAdministrator(program).programsOfWhichViewer(otherProgram).build();
+
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user)
+                .status(ApplicationFormStatus.APPROVAL).build();
+        
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user)
+                .status(ApplicationFormStatus.VALIDATION).build();
+        
+        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(user)
+                .status(ApplicationFormStatus.UNSUBMITTED).build();
+        
+        save(viewer, applicationFormOne, applicationFormTwo, applicationFormThree);
+
+        flushAndClearSession();
+
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(viewer);
 
         assertTrue(listContainsId(applicationFormOne, applications));
         assertTrue(listContainsId(applicationFormTwo, applications));

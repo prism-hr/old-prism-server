@@ -115,8 +115,7 @@ public class UserService {
 	}
 
 	public void updateUserWithNewRoles(RegisteredUser selectedUser, Program selectedProgram, Authority... newAuthorities) {
-		//Please note:
-		//it is a deliberate decision to never remove people from SUPERADMIN role.
+		//Please note: it is a deliberate decision to never remove people from SUPERADMIN role.
 	
 		for (Authority authority : Authority.values()) {
 			addToRoleIfRequired(selectedUser, newAuthorities, authority);
@@ -127,11 +126,20 @@ public class UserService {
 		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		addOrRemoveFromProgramsOfWhichSupervisorIfRequired(selectedUser, selectedProgram, newAuthorities);
+		addOrRemoveFromProgramsOfWhichViewerIfRequired(selectedUser, selectedProgram, newAuthorities);
+		
 		userDAO.save(selectedUser);
-
 	}
 
-	private void addOrRemoveFromProgramsOfWhichSupervisorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+	private void addOrRemoveFromProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+	    if (newAuthoritiesContains(newAuthorities, Authority.VIEWER) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichViewer())) {
+            selectedUser.getProgramsOfWhichViewer().add(selectedProgram);           
+        } else if (!newAuthoritiesContains(newAuthorities, Authority.VIEWER) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichViewer())) {
+            selectedUser.getProgramsOfWhichViewer().remove(selectedProgram);
+        }
+    }
+
+    private void addOrRemoveFromProgramsOfWhichSupervisorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
 		if (newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR) && !listContainsId(selectedProgram, selectedUser.getProgramsOfWhichSupervisor())) {
 			selectedUser.getProgramsOfWhichSupervisor().add(selectedProgram);			
 		} else if (!newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR) && listContainsId(selectedProgram, selectedUser.getProgramsOfWhichSupervisor())) {

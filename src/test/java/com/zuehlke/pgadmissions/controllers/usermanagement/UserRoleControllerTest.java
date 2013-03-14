@@ -39,7 +39,6 @@ public class UserRoleControllerTest {
 	private ProgramPropertyEditor programPropertyEditorMock;
 	private UserDTOValidator newUserDTOValidatorMock;
 	private EncryptionHelper encryptionHelperMock;
-
 	
 	@Test
 	public void shouldGetSelectedProgramfIdProvided() {
@@ -81,7 +80,6 @@ public class UserRoleControllerTest {
 		assertNull(userDTO.getLastName());
 		assertEquals(0, userDTO.getSelectedAuthorities().length);
 		assertEquals(program, userDTO.getSelectedProgram());
-
 	}
 
 	@Test
@@ -142,9 +140,15 @@ public class UserRoleControllerTest {
 		EasyMock.replay(currentUserMock);
 
 		List<Authority> authorities = controller.getAuthorities();
-		assertEquals(5, authorities.size());
-		assertTrue(authorities.containsAll(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER,
-				Authority.SUPERVISOR)));
+		assertEquals(6, authorities.size());
+		assertTrue(authorities.containsAll(
+		        Arrays.asList(
+		                Authority.ADMINISTRATOR, 
+		                Authority.APPROVER, 
+		                Authority.REVIEWER, 
+		                Authority.INTERVIEWER,
+		                Authority.SUPERVISOR,
+		                Authority.VIEWER)));
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -310,6 +314,7 @@ public class UserRoleControllerTest {
 
 		EasyMock.verify(userServiceMock);
 	}
+	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserNeitherSuperAdminOrAdminOnRemove() {
 		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
@@ -342,6 +347,5 @@ public class UserRoleControllerTest {
 		EasyMock.replay(userServiceMock);
 
 		controller = new UserRoleController(programServiceMock, userServiceMock, programPropertyEditorMock, newUserDTOValidatorMock, encryptionHelperMock);
-
 	}
 }

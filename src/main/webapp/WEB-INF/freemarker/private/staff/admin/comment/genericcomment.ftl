@@ -65,7 +65,7 @@
 				        <div class="content-box-inner">
 				         <#include "/private/common/parts/application_info.ftl"/>
 				        
-				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) >
+				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) || user.isViewerOfProgramme(applicationForm) >
 									<section class="form-rows">
 										<h2 class="no-arrow">
 											Add comment

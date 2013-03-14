@@ -35,8 +35,8 @@
 										<span class="is-reviewer" data-desc="Reviewer"></span>
 										<span class="is-supervisor" data-desc="Supervisor"></span>
 										<span class="is-approver" data-desc="Approver"></span>
+										<span class="is-viewer" data-desc="Viewer"></span>
 									</div>
-									<#-- list userInRole.getAuthoritiesForProgram(selectedProgram) as authority>${authority} - </#list -->
 								</td>
 								<td scope="col">
 									<a class="button-edit" data-desc="Edit" href="<@spring.url '/manageUsers/edit?programCode=${selectedProgram.code}&user=${encrypter.encrypt(userInRole.id)}'/>">Edit</a>

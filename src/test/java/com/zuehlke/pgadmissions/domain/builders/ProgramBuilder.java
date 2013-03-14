@@ -19,7 +19,15 @@ public class ProgramBuilder {
 	private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
 	private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
 	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
+	private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
 	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
+	
+	public ProgramBuilder viewers(RegisteredUser...users) {
+	    for (RegisteredUser approver : users) {
+            this.viewers.add(approver);
+        }
+        return this;
+	}
 	
 	public ProgramBuilder enabled(boolean enabled){
         this.enabled = enabled;
@@ -96,6 +104,7 @@ public class ProgramBuilder {
 		program.getInterviewers().addAll(interviewers);
 		program.getSupervisors().addAll(supervisors);
 		program.getInstances().addAll(instances);
+		program.getViewers().addAll(viewers);
 		return program;
 	}
 }

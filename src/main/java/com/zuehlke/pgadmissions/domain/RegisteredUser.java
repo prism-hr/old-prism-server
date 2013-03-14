@@ -133,192 +133,61 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @JoinTable(name = "PROGRAM_SUPERVISOR_LINK", joinColumns = { @JoinColumn(name = "supervisor_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
     private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
     
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "PROGRAM_VIEWER_LINK", joinColumns = { @JoinColumn(name = "viewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+    private List<Program> programsOfWhichViewer = new ArrayList<Program>();
+    
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<ApplicationsFilter> applicationsFilters = new ArrayList<ApplicationsFilter>();
 
     @Column(name = "ucl_user_id")
     private String uclUserId;
     
-    public List<ApplicationsFilter> getApplicationsFilters() {
-        return applicationsFilters;
-    }
-    
-    public void setApplicationsFilters(final List<ApplicationsFilter> applicationsFilters) {
-        this.applicationsFilters = applicationsFilters;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(final String firstLame) {
-        this.firstName = firstLame;
-    }
-
-    public String getFirstName2() {
-        return firstName2;
-    }
-
-    public void setFirstName2(final String firstName2) {
-        this.firstName2 = firstName2;
-    }
-
-    public String getFirstName3() {
-        return firstName3;
-    }
-
-    public void setFirstName3(final String firstName3) {
-        this.firstName3 = firstName3;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(final String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(final String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public String getUclUserId() {
-        return uclUserId;
-    }
-
-    public void setUclUserId(final String uclUserId) {
-        this.uclUserId = uclUserId;
-    }
-
-    @Override
-    @Transient
-    public Collection<Role> getAuthorities() {
-        return getRoles();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-    public void setAccountNonLocked(final boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
-    }
-
-    public void setCredentialsNonExpired(final boolean credentialsNonExpired) {
-        this.credentialsNonExpired = credentialsNonExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setAccountNonExpired(final boolean accountNonExpired) {
-        this.accountNonExpired = accountNonExpired;
-    }
-
-    public boolean isInRole(Authority authority) {
-        return isInRole(this, authority);
-    }
-
-    public boolean isInRole(String strAuthority) {
-        return isInRole(this, strAuthority);
-    }
-
-    public boolean isInRoleInProgram(final String strAuthority, final Program programme) {
-        return isInRoleInProgramme(programme, this, strAuthority);
-    }
-
     public boolean canSee(ApplicationForm applicationForm) {
         return canSeeApplication(applicationForm, this);
+    }
+    
+    public boolean canSeeReference(final ReferenceComment reference) {
+        return canSeeReference(reference, this);
+    }
+
+    @Override
+    public int compareTo(final RegisteredUser other) {
+        int firstNameResult = this.firstName.compareTo(other.firstName);
+        if (firstNameResult == 0) {
+            return this.lastName.compareTo(other.lastName);
+        }
+        return firstNameResult;
     }
 
     public String getActivationCode() {
         return activationCode;
     }
 
-    public void setActivationCode(String activationCode) {
-        this.activationCode = activationCode;
-    }
+    public List<RegisteredUser> getAllLinkedAccounts() {
+        List<RegisteredUser> linkedAccountsList = new ArrayList<RegisteredUser>();
 
-    public List<Program> getProgramsOfWhichAdministrator() {
-        Collections.sort(programsOfWhichAdministrator, new Comparator<Program>() {
-            @Override
-            public int compare(Program o1, Program o2) {
-                return o1.getTitle().compareTo(o2.getTitle());
+        if (this.primaryAccount == null) {
+            linkedAccountsList.addAll(getLinkedAccounts());
+        } else {
+            linkedAccountsList.add(getPrimaryAccount());
+            for (RegisteredUser u : getPrimaryAccount().getLinkedAccounts()) {
+                if (!u.getId().equals(this.id)) {
+                    linkedAccountsList.add(u);
+                }
             }
-        });
-        return programsOfWhichAdministrator;
+        }
+        return linkedAccountsList;
     }
 
-    public void setProgramsOfWhichAdministrator(final List<Program> programsOfWhichAdministrator) {
-        this.programsOfWhichAdministrator = programsOfWhichAdministrator;
+    public List<ApplicationsFilter> getApplicationsFilters() {
+        return applicationsFilters;
     }
 
-    public List<Program> getProgramsOfWhichApprover() {
-        return programsOfWhichApprover;
-    }
-
-    public void setProgramsOfWhichApprover(final List<Program> programsOfWhichApprover) {
-        this.programsOfWhichApprover = programsOfWhichApprover;
-    }
-
-    public List<Program> getProgramsOfWhichReviewer() {
-        return programsOfWhichReviewer;
-    }
-
-    public void setProgramsOfWhichReviewer(final List<Program> programsOfWhichReviewer) {
-        this.programsOfWhichReviewer = programsOfWhichReviewer;
+    @Override
+    @Transient
+    public Collection<Role> getAuthorities() {
+        return getRoles();
     }
 
     public List<Authority> getAuthoritiesForProgram(final Program programme) {
@@ -340,84 +209,122 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return stringBuffer.toString();
     }
 
-    public boolean isInRoleInProgram(final Authority authority, final Program programme) {
-        return isInRoleInProgramme(programme, this, authority);
+    public List<Comment> getComments() {
+        return comments;
     }
 
     public String getConfirmPassword() {
         return confirmPassword;
     }
 
-    public void setConfirmPassword(final String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
-    public boolean isReviewerInProgramme(final Program programme) {
-        return isReviewerInProgramme(programme, this);
-    }
-
-    public boolean isAdminOrReviewerInProgramme(final Program programme) {
-        return isAdminOrReviewerInProgramme(programme, this);
-    }
-
-    public boolean isAdminInProgramme(final Program programme) {
-        return isAdminInProgramme(programme, this);
-    }
-
-    public List<Referee> getReferees() {
-        return referees;
-    }
-
-    public void setReferees(final List<Referee> referees) {
-        this.referees = referees;
-    }
-
     public Referee getCurrentReferee() {
         return currentReferee;
     }
 
-    public void setCurrentReferee(final Referee currentReferee) {
-        this.currentReferee = currentReferee;
+    public String getDirectToUrl() {
+        return directToUrl;
     }
 
-    public boolean isRefereeOfApplicationForm(final ApplicationForm form) {
-        return isRefereeOfApplication(form, this);
+    public String getDisplayName() {
+        StringBuilder userNameBuilder = new StringBuilder(getFirstName());
+        userNameBuilder.append(StringUtils.trimToEmpty(" " + getFirstName2()));
+        userNameBuilder.append(StringUtils.trimToEmpty(" " + getFirstName3()));
+        userNameBuilder.append(StringUtils.trimToEmpty(" " + getLastName()));
+        return userNameBuilder.toString();
     }
 
-    public boolean isReviewerInLatestReviewRoundOfApplicationForm(final ApplicationForm form) {
-        return isReviewerInLatestReviewRoundOfApplication(form, this);
+    public String getEmail() {
+        return email;
     }
 
-    public boolean isPastOrPresentReviewerOfApplicationForm(final ApplicationForm form) {
-        return isPastOrPresentReviewerOfApplication(form, this);
+    public String getFirstName() {
+        return firstName;
     }
 
-    public boolean isInterviewerOfApplicationForm(final ApplicationForm form) {
-        return isInterviewerOfApplication(form, this);
+    public String getFirstName2() {
+        return firstName2;
     }
 
-    public boolean isPastOrPresentInterviewerOfApplicationForm(final ApplicationForm form) {
-        return isPastOrPresentInterviewerOfApplication(form, this);
+    public String getFirstName3() {
+        return firstName3;
     }
 
-    public boolean isSupervisorOfApplicationForm(final ApplicationForm form) {
-        return isSupervisorOfApplicationForm(form, this);
+    public Integer getId() {
+        return id;
     }
 
-    public boolean isPastOrPresentSupervisorOfApplicationForm(final ApplicationForm form) {
-        return isPastOrPresentSupervisorOfApplication(form, this);
+    public List<Interviewer> getInterviewersForApplicationForm(final ApplicationForm form) {
+        List<Interviewer> interviewers = new ArrayList<Interviewer>();
+        List<Interviewer> formInterviewers = form.getLatestInterview().getInterviewers();
+        for (Interviewer interviewer : formInterviewers) {
+            if (this.getId().equals(interviewer.getUser().getId())) {
+                interviewers.add(interviewer);
+            }
+        }
+        return interviewers;
     }
 
-    public boolean isInterviewerOfProgram(final Program programme) {
-        return isInterviewerOfProgram(programme, this);
+    public String getLastName() {
+        return lastName;
     }
 
-    public boolean hasRefereesInApplicationForm(final ApplicationForm form) {
-        return getRefereeForApplicationForm(form) != null;
+    public List<RegisteredUser> getLinkedAccounts() {
+        return linkedAccounts;
     }
 
-    public boolean canSeeReference(final ReferenceComment reference) {
-        return canSeeReference(reference, this);
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public List<NotificationRecord> getNotificationRecords() {
+        return notificationRecords;
+    }
+
+    public String getOriginalApplicationQueryString() {
+        return originalApplicationQueryString;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public List<PendingRoleNotification> getPendingRoleNotifications() {
+        return pendingRoleNotifications;
+    }
+
+    public RegisteredUser getPrimaryAccount() {
+        return primaryAccount;
+    }
+
+    public List<Program> getProgramsOfWhichAdministrator() {
+        Collections.sort(programsOfWhichAdministrator, new Comparator<Program>() {
+            @Override
+            public int compare(Program o1, Program o2) {
+                return o1.getTitle().compareTo(o2.getTitle());
+            }
+        });
+        return programsOfWhichAdministrator;
+    }
+
+    public List<Program> getProgramsOfWhichApprover() {
+        return programsOfWhichApprover;
+    }
+
+    public List<Program> getProgramsOfWhichInterviewer() {
+        return programsOfWhichInterviewer;
+    }
+
+    public List<Program> getProgramsOfWhichReviewer() {
+        return programsOfWhichReviewer;
+    }
+
+    public List<Program> getProgramsOfWhichSupervisor() {
+        return programsOfWhichSupervisor;
+    }
+
+    public List<Program> getProgramsOfWhichViewer() {
+        return programsOfWhichViewer;
     }
 
     public Referee getRefereeForApplicationForm(final ApplicationForm form) {
@@ -429,30 +336,58 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return null;
     }
 
-    public List<Comment> getComments() {
-        return comments;
+    public List<Referee> getReferees() {
+        return referees;
     }
 
-    public List<NotificationRecord> getNotificationRecords() {
-        return notificationRecords;
+    public Reviewer getReviewerForCurrentUserFromLatestReviewRound(final ApplicationForm form) {
+        ReviewRound latestReviewRound = form.getLatestReviewRound();
+
+        if (latestReviewRound == null) {
+            throw new IllegalStateException(String.format("latestReviewRound is null for application[applicationNumber=%s]",
+                    form.getApplicationNumber()));
+        }
+
+        List<Reviewer> formReviewers = latestReviewRound.getReviewers();
+        for (Reviewer reviewer : formReviewers) {
+            if (this.getId().equals(reviewer.getUser().getId())) {
+                return reviewer;
+            }
+        }
+        throw new IllegalStateException(String.format("Reviewer object could not be found for user [id=%d]", getId()));
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setNotificationRecords(final List<NotificationRecord> notificationRecords) {
-        this.notificationRecords.clear();
-        this.notificationRecords.addAll(notificationRecords);
+    public String getUclUserId() {
+        return uclUserId;
     }
 
-    public boolean hasRespondedToProvideReviewForApplication(final ApplicationForm form) {
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public boolean hasAdminRightsOnApplication(final ApplicationForm form) {
+        return hasAdminRightsOnApplication(form, this);
+    }
+
+    public boolean hasDeclinedToProvideReviewForApplication(final ApplicationForm form) {
         for (Comment comment : comments) {
             if (comment.getApplication().getId().equals(form.getId()) && comment.getType().equals(CommentType.REVIEW)) {
-                return true;
+                ReviewComment reviewComment = (ReviewComment) comment;
+                if (reviewComment.isDecline()) {
+                    return true;
+                }
             }
         }
         return false;
+    }
+    
+    public boolean hasRefereesInApplicationForm(final ApplicationForm form) {
+        return getRefereeForApplicationForm(form) != null;
     }
 
     public boolean hasRespondedToProvideInterviewFeedbackForApplication(final ApplicationForm form) {
@@ -474,6 +409,15 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return false;
     }
 
+    public boolean hasRespondedToProvideReviewForApplication(final ApplicationForm form) {
+        for (Comment comment : comments) {
+            if (comment.getApplication().getId().equals(form.getId()) && comment.getType().equals(CommentType.REVIEW)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hasRespondedToProvideReviewForApplicationLatestRound(final ApplicationForm form) {
         List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
         for (Reviewer reviewer : reviewers) {
@@ -484,56 +428,197 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return false;
     }
 
-    public boolean hasDeclinedToProvideReviewForApplication(final ApplicationForm form) {
-        for (Comment comment : comments) {
-            if (comment.getApplication().getId().equals(form.getId()) && comment.getType().equals(CommentType.REVIEW)) {
-                ReviewComment reviewComment = (ReviewComment) comment;
-                if (reviewComment.isDecline()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public boolean hasStaffRightsOnApplicationForm(final ApplicationForm form) {
+        return hasStaffRightsOnApplication(form, this);
     }
 
-    public List<Program> getProgramsOfWhichInterviewer() {
-        return programsOfWhichInterviewer;
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
     }
 
-    public void setProgramsOfWhichInterviewer(final List<Program> programsOfWhichInterviewer) {
-        this.programsOfWhichInterviewer = programsOfWhichInterviewer;
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
     }
 
-    public Reviewer getReviewerForCurrentUserFromLatestReviewRound(final ApplicationForm form) {
-        ReviewRound latestReviewRound = form.getLatestReviewRound();
-
-        if (latestReviewRound == null) {
-            throw new IllegalStateException(String.format("latestReviewRound is null for application[applicationNumber=%s]",
-                    form.getApplicationNumber()));
-        }
-
-        List<Reviewer> formReviewers = latestReviewRound.getReviewers();
-        for (Reviewer reviewer : formReviewers) {
-            if (this.getId().equals(reviewer.getUser().getId())) {
-                return reviewer;
-            }
-        }
-        throw new IllegalStateException(String.format("Reviewer object could not be found for user [id=%d]", getId()));
+    public boolean isAdminInProgramme(final Program programme) {
+        return isAdminInProgramme(programme, this);
     }
 
-    public List<Interviewer> getInterviewersForApplicationForm(final ApplicationForm form) {
-        List<Interviewer> interviewers = new ArrayList<Interviewer>();
-        List<Interviewer> formInterviewers = form.getLatestInterview().getInterviewers();
-        for (Interviewer interviewer : formInterviewers) {
-            if (this.getId().equals(interviewer.getUser().getId())) {
-                interviewers.add(interviewer);
-            }
-        }
-        return interviewers;
+    public boolean isAdminOrReviewerInProgramme(final Program programme) {
+        return isAdminOrReviewerInProgramme(programme, this);
     }
 
-    public List<PendingRoleNotification> getPendingRoleNotifications() {
-        return pendingRoleNotifications;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isInRole(final Authority authority) {
+        return isInRole(this, authority);
+    }
+
+    public boolean isInRole(final String strAuthority) {
+        return isInRole(this, strAuthority);
+    }
+    
+    public boolean isNotInRole(final Authority authority) {
+        return !isInRole(this, authority);
+    }
+
+    public boolean isNotInRole(final String strAuthority) {
+        return !isInRole(this, strAuthority);
+    }
+
+    public boolean isInRoleInProgram(final Authority authority, final Program programme) {
+        return isInRoleInProgramme(programme, this, authority);
+    }
+
+    public boolean isInRoleInProgram(final String strAuthority, final Program programme) {
+        return isInRoleInProgramme(programme, this, strAuthority);
+    }
+
+    public boolean isInterviewerInInterview(final Interview interview) {
+        return isInterviewerInInterview(interview, this);
+    }
+
+    public boolean isInterviewerOfApplicationForm(final ApplicationForm form) {
+        return isInterviewerOfApplication(form, this);
+    }
+
+    public boolean isInterviewerOfProgram(final Program programme) {
+        return isInterviewerOfProgram(programme, this);
+    }
+    
+    public boolean isViewerOfProgramme(final ApplicationForm form) {
+        return isViewerOfProgramme(form, this);
+    }
+    
+    public boolean isPastOrPresentInterviewerOfApplicationForm(final ApplicationForm form) {
+        return isPastOrPresentInterviewerOfApplication(form, this);
+    }
+
+    public boolean isPastOrPresentReviewerOfApplicationForm(final ApplicationForm form) {
+        return isPastOrPresentReviewerOfApplication(form, this);
+    }
+
+    public boolean isPastOrPresentSupervisorOfApplicationForm(final ApplicationForm form) {
+        return isPastOrPresentSupervisorOfApplication(form, this);
+    }
+
+    public boolean isRefereeOfApplicationForm(final ApplicationForm form) {
+        return isRefereeOfApplication(form, this);
+    }
+
+    public boolean isReviewerInLatestReviewRoundOfApplicationForm(final ApplicationForm form) {
+        return isReviewerInLatestReviewRoundOfApplication(form, this);
+    }
+
+    public boolean isReviewerInProgramme(final Program programme) {
+        return isReviewerInProgramme(programme, this);
+    }
+
+    public boolean isReviewerInReviewRound(final ReviewRound reviewRound) {
+        return isReviewerInReviewRound(reviewRound, this);
+    }
+
+    public boolean isSupervisorInApprovalRound(final ApprovalRound approvalRound) {
+        return isSupervisorInApprovalRound(approvalRound, this);
+    }
+
+    public boolean isSupervisorOfApplicationForm(final ApplicationForm form) {
+        return isSupervisorOfApplicationForm(form, this);
+    }
+
+    public void setAccountNonExpired(final boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
+
+    public void setAccountNonLocked(final boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
+    }
+
+    public void setApplicationsFilters(final List<ApplicationsFilter> applicationsFilters) {
+        this.applicationsFilters = applicationsFilters;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public void setConfirmPassword(final String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public void setCredentialsNonExpired(final boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
+
+    public void setCurrentReferee(final Referee currentReferee) {
+        this.currentReferee = currentReferee;
+    }
+
+    public void setDirectToUrl(final String directToUrl) {
+        this.directToUrl = directToUrl;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setFirstName(final String firstLame) {
+        this.firstName = firstLame;
+    }
+
+    public void setFirstName2(final String firstName2) {
+        this.firstName2 = firstName2;
+    }
+
+    public void setFirstName3(final String firstName3) {
+        this.firstName3 = firstName3;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setLastName(final String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setLinkedAccounts(final List<RegisteredUser> linkedAccounts) {
+        this.linkedAccounts = linkedAccounts;
+    }
+
+    public void setNewPassword(final String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public void setNotificationRecords(final List<NotificationRecord> notificationRecords) {
+        this.notificationRecords.clear();
+        this.notificationRecords.addAll(notificationRecords);
+    }
+
+    public void setOriginalApplicationQueryString(final String queryString) {
+        this.originalApplicationQueryString = queryString;
+    }
+
+    public void setPassword(final String password) {
+        this.password = password;
     }
 
     public void setPendingRoleNotifications(final List<PendingRoleNotification> pendingRoleNotifications) {
@@ -541,109 +626,48 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         this.pendingRoleNotifications.addAll(pendingRoleNotifications);
     }
 
-    @Override
-    public String toString() {
-        return "RegisteredUser [id=" + id + ", username=" + username + "]";
+    public void setPrimaryAccount(final RegisteredUser primary) {
+        this.primaryAccount = primary;
     }
 
-    public List<Program> getProgramsOfWhichSupervisor() {
-        return programsOfWhichSupervisor;
+    public void setProgramsOfWhichAdministrator(final List<Program> programsOfWhichAdministrator) {
+        this.programsOfWhichAdministrator = programsOfWhichAdministrator;
+    }
+
+    public void setProgramsOfWhichApprover(final List<Program> programsOfWhichApprover) {
+        this.programsOfWhichApprover = programsOfWhichApprover;
+    }
+
+    public void setProgramsOfWhichInterviewer(final List<Program> programsOfWhichInterviewer) {
+        this.programsOfWhichInterviewer = programsOfWhichInterviewer;
+    }
+
+    public void setProgramsOfWhichReviewer(final List<Program> programsOfWhichReviewer) {
+        this.programsOfWhichReviewer = programsOfWhichReviewer;
     }
 
     public void setProgramsOfWhichSupervisor(final List<Program> programsOfWhichSupervisor) {
         this.programsOfWhichSupervisor = programsOfWhichSupervisor;
     }
 
-    public boolean hasAdminRightsOnApplication(final ApplicationForm form) {
-        return hasAdminRightsOnApplication(form, this);
+    public void setProgramsOfWhichViewer(final List<Program> programsOfWhichViewer) {
+        this.programsOfWhichViewer = programsOfWhichViewer;
     }
 
-    public String getDirectToUrl() {
-        return directToUrl;
+    public void setReferees(final List<Referee> referees) {
+        this.referees = referees;
     }
 
-    public void setDirectToUrl(final String directToUrl) {
-        this.directToUrl = directToUrl;
+    public void setUclUserId(final String uclUserId) {
+        this.uclUserId = uclUserId;
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
     }
 
     @Override
-    public int compareTo(final RegisteredUser other) {
-        int firstNameResult = this.firstName.compareTo(other.firstName);
-        if (firstNameResult == 0) {
-            return this.lastName.compareTo(other.lastName);
-        }
-        return firstNameResult;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(final String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getOriginalApplicationQueryString() {
-        return originalApplicationQueryString;
-    }
-
-    public void setOriginalApplicationQueryString(final String queryString) {
-        this.originalApplicationQueryString = queryString;
-    }
-
-    public boolean isReviewerInReviewRound(final ReviewRound reviewRound) {
-        return isReviewerInReviewRound(reviewRound, this);
-    }
-
-    public boolean isInterviewerInInterview(final Interview interview) {
-        return isInterviewerInInterview(interview, this);
-    }
-
-    public boolean isSupervisorInApprovalRound(final ApprovalRound approvalRound) {
-        return isSupervisorInApprovalRound(approvalRound, this);
-    }
-
-    public boolean hasStaffRightsOnApplicationForm(final ApplicationForm form) {
-        return hasStaffRightsOnApplication(form, this);
-    }
-
-    public List<RegisteredUser> getLinkedAccounts() {
-        return linkedAccounts;
-    }
-
-    public List<RegisteredUser> getAllLinkedAccounts() {
-        List<RegisteredUser> linkedAccountsList = new ArrayList<RegisteredUser>();
-
-        if (this.primaryAccount == null) {
-            linkedAccountsList.addAll(getLinkedAccounts());
-        } else {
-            linkedAccountsList.add(getPrimaryAccount());
-            for (RegisteredUser u : getPrimaryAccount().getLinkedAccounts()) {
-                if (!u.getId().equals(this.id)) {
-                    linkedAccountsList.add(u);
-                }
-            }
-        }
-        return linkedAccountsList;
-    }
-
-    public void setLinkedAccounts(final List<RegisteredUser> linkedAccounts) {
-        this.linkedAccounts = linkedAccounts;
-    }
-
-    public String getDisplayName() {
-        StringBuilder userNameBuilder = new StringBuilder(getFirstName());
-        userNameBuilder.append(StringUtils.trimToEmpty(" " + getFirstName2()));
-        userNameBuilder.append(StringUtils.trimToEmpty(" " + getFirstName3()));
-        userNameBuilder.append(StringUtils.trimToEmpty(" " + getLastName()));
-        return userNameBuilder.toString();
-    }
-
-    public RegisteredUser getPrimaryAccount() {
-        return primaryAccount;
-    }
-
-    public void setPrimaryAccount(final RegisteredUser primary) {
-        this.primaryAccount = primary;
+    public String toString() {
+        return "RegisteredUser [id=" + id + ", username=" + username + "]";
     }
 }

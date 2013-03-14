@@ -29,76 +29,80 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @RequestMapping(value = { "/reviewFeedback" })
 public class ReviewCommentController {
 
-	private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
-	private final ApplicationsService applicationsService;
-	private final UserService userService;
-	private final FeedbackCommentValidator reviewFeedbackValidator;
-	private final CommentService commentService;
-	private final DocumentPropertyEditor documentPropertyEditor;
+    private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
+    private final ApplicationsService applicationsService;
+    private final UserService userService;
+    private final FeedbackCommentValidator reviewFeedbackValidator;
+    private final CommentService commentService;
+    private final DocumentPropertyEditor documentPropertyEditor;
 
-	ReviewCommentController() {
-		this(null, null, null, null, null);
-	}
+    ReviewCommentController() {
+        this(null, null, null, null, null);
+    }
 
-	@Autowired
-	public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor) {
-		this.applicationsService = applicationsService;
-		this.userService = userService;
-		this.commentService = commentService;
-		this.reviewFeedbackValidator = reviewFeedbackValidator;
-		this.documentPropertyEditor = documentPropertyEditor;
-	}
+    @Autowired
+    public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+            FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor) {
+        this.applicationsService = applicationsService;
+        this.userService = userService;
+        this.commentService = commentService;
+        this.reviewFeedbackValidator = reviewFeedbackValidator;
+        this.documentPropertyEditor = documentPropertyEditor;
+    }
 
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null  || !currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
-			
-			throw new ResourceNotFoundException();
-		}
-		return applicationForm;
-	}
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (applicationForm == null || !currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getReviewFeedbackPage() {
-		return REVIEW_FEEDBACK_PAGE;
-	}
+            throw new ResourceNotFoundException();
+        }
+        return applicationForm;
+    }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+    @RequestMapping(method = RequestMethod.GET)
+    public String getReviewFeedbackPage() {
+        return REVIEW_FEEDBACK_PAGE;
+    }
 
-	@ModelAttribute("comment")
-	public ReviewComment getComment(@RequestParam String applicationId) {
-	    ApplicationForm applicationForm = getApplicationForm(applicationId);
-		ReviewComment reviewComment = new ReviewComment();
-		reviewComment.setApplication(applicationForm);
-		RegisteredUser currentUser = getUser();
-		reviewComment.setUser(currentUser);
-		reviewComment.setComment("");
-		reviewComment.setType(CommentType.REVIEW);
-		reviewComment.setReviewer(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm));
-		return reviewComment;
-	}
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
 
-	@InitBinder(value = "comment")
-	public void registerBinders(WebDataBinder binder) {
-		binder.setValidator(reviewFeedbackValidator);
-		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-	}
+    @ModelAttribute("comment")
+    public ReviewComment getComment(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        ReviewComment reviewComment = new ReviewComment();
+        reviewComment.setApplication(applicationForm);
+        RegisteredUser currentUser = getUser();
+        reviewComment.setUser(currentUser);
+        reviewComment.setComment("");
+        reviewComment.setType(CommentType.REVIEW);
+        reviewComment.setReviewer(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm));
+        return reviewComment;
+    }
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String addComment(@Valid @ModelAttribute("comment") ReviewComment comment, BindingResult result) {
-		if(comment.getApplication().isDecided()){
-			throw new CannotUpdateApplicationException();
-		}
-		if(result.hasErrors()){
-			return REVIEW_FEEDBACK_PAGE;
-		}
-		commentService.save(comment);		
-		return "redirect:/applications?messageCode=review.feedback&application=" + comment.getApplication().getApplicationNumber();
-	}
+    @InitBinder(value = "comment")
+    public void registerBinders(WebDataBinder binder) {
+        binder.setValidator(reviewFeedbackValidator);
+        binder.registerCustomEditor(Document.class, documentPropertyEditor);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public String addComment(@Valid @ModelAttribute("comment") ReviewComment comment, BindingResult result) {
+        ApplicationForm applicationForm = comment.getApplication();
+        if (getUser().hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)) {
+            throw new ResourceNotFoundException();
+        }
+        if (applicationForm.isDecided()) {
+            throw new CannotUpdateApplicationException();
+        }
+        if (result.hasErrors()) {
+            return REVIEW_FEEDBACK_PAGE;
+        }
+        commentService.save(comment);
+        return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
+    }
 }

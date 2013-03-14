@@ -9,7 +9,7 @@
 	<#assign selectedOptionsSize = 25 />
 </#if> 
 <div class="row">
-	<span class="plain-label">Assign Reviewers<#if !user.isInRole('REVIWER')><em>*</em></#if></span>
+	<span class="plain-label">Assign Reviewers<#if !user.isInRole('REVIEWER')><em>*</em></#if></span>
 	<span class="hint" data-desc="<@spring.message 'assignReviewer.defaultReviewers'/>"></span>
 	<div class="field">
 	  <select id="programReviewers" class="list-select-from" multiple="multiple" size="${avaliableOptionsSize}">

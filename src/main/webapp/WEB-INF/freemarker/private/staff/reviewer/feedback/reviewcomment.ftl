@@ -88,18 +88,6 @@
 											Provide an assessment of the applicant's suitability for postgraduate study and for their chosen study programme.
 										</div>
 	
-<#--
-										<div class="row-group">
-											<div class="row">
-												<label class="plain-label">Decline</label>
-												<span class="hint" data-desc=""></span>
-												<div class="field">        
-													<input type="checkbox" name="decline" id="decline"/>	           								
-												</div>
-											</div>
-										</div>
--->
-											
 										<div class="row-group">
 											<div class="row"> 
 												<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>

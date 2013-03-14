@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.application.ReviewerAlreadyRespondedException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -155,34 +156,68 @@ public class ReviewCommentControllerTest {
 
     @Test
     public void shouldReturnToCommentsPageIfErrors() {
+        ApplicationForm application = new ApplicationForm();
+
+        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userMock.hasRespondedToProvideReviewForApplicationLatestRound(application)).andReturn(false);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock);
+        
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-        ReviewComment comment = new ReviewCommentBuilder().application(new ApplicationForm()).build();
+        ReviewComment comment = new ReviewCommentBuilder().application(application).build();
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-        EasyMock.replay(errorsMock);
+        EasyMock.replay(errorsMock, userMock, userServiceMock);
         assertEquals("private/staff/reviewer/feedback/reviewcomment", controller.addComment(comment, errorsMock));
+        EasyMock.verify(errorsMock, userMock, userServiceMock);
     }
 
     @Test(expected = CannotUpdateApplicationException.class)
-    public void shouldThrowResourceNotFoundIfApplicationAlreadyDecided() {
+    public void shouldThrowExceptionIfApplicationAlreadyDecided() {
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build();
+
+        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userMock.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)).andReturn(false);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock);
+        
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-        ReviewComment comment = new ReviewCommentBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build()).build();
+        ReviewComment comment = new ReviewCommentBuilder().application(applicationForm).build();
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-        EasyMock.replay(errorsMock);
+        EasyMock.replay(errorsMock, userMock, userServiceMock);
         controller.addComment(comment, errorsMock);
+        EasyMock.verify(errorsMock, userMock, userServiceMock);
+    }
+    
+    @Test(expected = ReviewerAlreadyRespondedException.class)
+    public void shouldThrowExceptionIfReviewIsAlreadyProvided() {
+        
+        ApplicationForm applicationForm = new ApplicationFormBuilder().build();
+
+        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userMock.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)).andReturn(true);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock);
+        
+        ReviewComment comment = new ReviewCommentBuilder().application(applicationForm).build();
+        EasyMock.replay(userMock, userServiceMock);
+        controller.addComment(comment, null);
+        EasyMock.verify(userMock, userServiceMock);
     }
 
     @Test
     public void shouldSaveCommentAndRedirectApplicationsPagefNoErrors() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).build();
+        
+        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userMock.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)).andReturn(false);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock);
+        
         ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).build();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
         commentServiceMock.save(comment);
-        EasyMock.replay(errorsMock, commentServiceMock);
+        EasyMock.replay(errorsMock, commentServiceMock, userMock, userServiceMock);
         assertEquals("redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber(),
                 controller.addComment(comment, errorsMock));
-        EasyMock.verify(errorsMock, commentServiceMock);
-
+        EasyMock.verify(errorsMock, commentServiceMock, userMock, userServiceMock);
     }
 
     @Before

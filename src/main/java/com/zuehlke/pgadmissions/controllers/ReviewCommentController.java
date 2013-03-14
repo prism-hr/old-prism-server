@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.application.ReviewerAlreadyRespondedException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -95,13 +96,17 @@ public class ReviewCommentController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String addComment(@Valid @ModelAttribute("comment") ReviewComment comment, BindingResult result) {
-		if(comment.getApplication().isDecided()){
-			throw new CannotUpdateApplicationException(comment.getApplication().getApplicationNumber());
+	    ApplicationForm applicationForm = comment.getApplication();
+        if(getUser().hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)){
+	        throw new ReviewerAlreadyRespondedException(applicationForm.getApplicationNumber());
+	    }
+		if(applicationForm.isDecided()){
+			throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
 		}
 		if(result.hasErrors()){
 			return REVIEW_FEEDBACK_PAGE;
 		}
 		commentService.save(comment);		
-		return "redirect:/applications?messageCode=review.feedback&application=" + comment.getApplication().getApplicationNumber();
+		return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
 	}
 }

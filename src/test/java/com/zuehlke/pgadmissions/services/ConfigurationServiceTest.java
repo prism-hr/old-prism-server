@@ -26,12 +26,10 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 public class ConfigurationServiceTest {
 
-	
 	private StageDurationDAO stageDurationDAOMock;
 	private ReminderIntervalDAO reminderIntervalDAOMock;
 	private PersonDAO personDAOMock;
 	private ConfigurationService service;
-
 	
 	@Test
 	public void voidShouldGetRegistryUserWithIdFromDAO() {

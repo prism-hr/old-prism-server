@@ -4,9 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -18,9 +19,12 @@ import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
 public class AdminApprovedNotificationTask extends TimerTask {
 
-	private final Logger log = Logger.getLogger(AdminInterviewFeedbackNotificationTask.class);
+    private final Logger log = LoggerFactory.getLogger(AdminApprovedNotificationTask.class);
+	
 	private final AdminMailSender adminMailSender;
+	
 	private final SessionFactory sessionFactory;
+	
 	private final ApplicationFormDAO applicationDAO;
 
 	public AdminApprovedNotificationTask() {

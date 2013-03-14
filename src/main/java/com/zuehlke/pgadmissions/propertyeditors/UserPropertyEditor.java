@@ -12,37 +12,37 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class UserPropertyEditor extends PropertyEditorSupport {
-	private final UserService userService;
-	private final EncryptionHelper encryptionHelper;
 
-	UserPropertyEditor() {
-		this(null, null);
+    private final UserService userService;
+    private final EncryptionHelper encryptionHelper;
 
-	}
+    public UserPropertyEditor() {
+        this(null, null);
+    }
 
-	@Autowired
-	public UserPropertyEditor(UserService userService, EncryptionHelper encryptionHelper) {
-		this.userService = userService;
-		this.encryptionHelper = encryptionHelper;
+    @Autowired
+    public UserPropertyEditor(UserService userService, EncryptionHelper encryptionHelper) {
+        this.userService = userService;
+        this.encryptionHelper = encryptionHelper;
 
-	}
+    }
 
-	@Override
-	public void setAsText(String strId) throws IllegalArgumentException {
-		if (StringUtils.isBlank(strId)) {
-			setValue(null);
-			return;
-		}
-		setValue(userService.getUser(encryptionHelper.decryptToInteger(strId)));
+    @Override
+    public void setAsText(String strId) throws IllegalArgumentException {
+        if (StringUtils.isBlank(strId)) {
+            setValue(null);
+            return;
+        }
+        setValue(userService.getUser(encryptionHelper.decryptToInteger(strId)));
 
-	}
+    }
 
-	@Override
-	public String getAsText() {
-		if (getValue() == null || ((RegisteredUser) getValue()).getId() == null) {
-			return null;
-		}
-		return encryptionHelper.encrypt(((RegisteredUser) getValue()).getId());
-	}
+    @Override
+    public String getAsText() {
+        if (getValue() == null || ((RegisteredUser) getValue()).getId() == null) {
+            return null;
+        }
+        return encryptionHelper.encrypt(((RegisteredUser) getValue()).getId());
+    }
 
 }

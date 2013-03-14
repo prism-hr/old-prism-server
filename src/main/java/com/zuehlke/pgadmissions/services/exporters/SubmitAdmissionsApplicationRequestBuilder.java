@@ -409,8 +409,9 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         
         ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
         if (latestApprovalRound != null) {
-            if(this.isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getAtasRequired()))
-            applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
+            if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getAtasRequired())) {
+                applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
+            }
         }
         
         if (latestApprovalRound != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {

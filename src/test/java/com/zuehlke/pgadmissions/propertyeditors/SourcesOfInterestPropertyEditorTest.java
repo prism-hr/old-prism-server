@@ -8,23 +8,23 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.SourcesOfInterestDAO;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
 
 public class SourcesOfInterestPropertyEditorTest {
 
     private SourcesOfInterestPropertyEditor editor;
-    private SourcesOfInterestDAO sourcesOfInterestDAOMock;
+    private SourcesOfInterestService sourcesOfInterestServiceMock;
     private EncryptionHelper encryptionHelperMock;
     
     @Test   
     public void shouldLoadByIdAndSetAsValue() {
         SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).build();
         EasyMock.expect(encryptionHelperMock.decryptToInteger("1")).andReturn(1);
-        EasyMock.expect(sourcesOfInterestDAOMock.getSourcesOfInterestById(1)).andReturn(interest);
-        EasyMock.replay(sourcesOfInterestDAOMock, encryptionHelperMock);
+        EasyMock.expect(sourcesOfInterestServiceMock.getSourcesOfInterestById(1)).andReturn(interest);
+        EasyMock.replay(sourcesOfInterestServiceMock, encryptionHelperMock);
         editor.setAsText("1");
         assertSame(interest, editor.getValue());
     }
@@ -51,9 +51,9 @@ public class SourcesOfInterestPropertyEditorTest {
     
     @Before
     public void setup(){
-        sourcesOfInterestDAOMock = EasyMock.createMock(SourcesOfInterestDAO.class);
+        sourcesOfInterestServiceMock = EasyMock.createMock(SourcesOfInterestService.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-        editor = new SourcesOfInterestPropertyEditor(sourcesOfInterestDAOMock, encryptionHelperMock);
+        editor = new SourcesOfInterestPropertyEditor(sourcesOfInterestServiceMock, encryptionHelperMock);
     }
     
 }

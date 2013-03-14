@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
-import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -21,37 +20,36 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Service
+@Transactional
 public class ReviewService {
 
 	private final ApplicationFormDAO applicationDAO;
 	private final ReviewRoundDAO reviewRoundDAO;
-	private final StageDurationDAO stageDurationDAO;
+	private final StageDurationService stageDurationService;
 	private final EventFactory eventFactory;
 	private final ReviewerDAO reviewerDAO;
 
-	ReviewService() {
+	public ReviewService() {
 		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO, StageDurationDAO stageDurationDAO, EventFactory eventFactory,
-			ReviewerDAO reviewerDAO) {
-
+    public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO,
+            StageDurationService stageDurationService, EventFactory eventFactory, ReviewerDAO reviewerDAO) {
 		this.applicationDAO = applicationDAO;
 		this.reviewRoundDAO = reviewRoundDAO;
-		this.stageDurationDAO = stageDurationDAO;
+		this.stageDurationService = stageDurationService;
 		this.eventFactory = eventFactory;
 		this.reviewerDAO = reviewerDAO;
 
 	}
 
-	@Transactional
 	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound) {
 		checkApplicationStatus(application);
 		application.setLatestReviewRound(reviewRound);
 		reviewRound.setApplication(application);
 		reviewRoundDAO.save(reviewRound);
-		StageDuration reviewStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.REVIEW);
+		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
 		application.setDueDate(DateUtils.addMinutes(new Date(), reviewStageDuration.getDurationInMinutes()));
 		application.setStatus(ApplicationFormStatus.REVIEW);
 		application.getEvents().add(eventFactory.createEvent(reviewRound));
@@ -74,12 +72,10 @@ public class ReviewService {
 		}
 	}
 
-	@Transactional
 	public void save(ReviewRound reviewRound) {
 		reviewRoundDAO.save(reviewRound);
 	}
 
-	@Transactional
 	public void createReviewerInNewReviewRound(ApplicationForm applicationForm, RegisteredUser newUser) {
 		Reviewer reviewer = newReviewer();
 		reviewer.setUser(newUser);

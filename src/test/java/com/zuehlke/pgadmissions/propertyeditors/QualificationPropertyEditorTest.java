@@ -7,15 +7,13 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-
+import com.zuehlke.pgadmissions.services.QualificationService;
 
 public class QualificationPropertyEditorTest {
-	private QualificationDAO qualificationServiceMock;
+	private QualificationService qualificationServiceMock;
 	private QualificationPropertyEditor editor;
-
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
@@ -25,7 +23,6 @@ public class QualificationPropertyEditorTest {
 		
 		editor.setAsText("1");
 		assertEquals(qualification, editor.getValue());
-		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -64,7 +61,7 @@ public class QualificationPropertyEditorTest {
 	
 	@Before
 	public void setup(){
-		qualificationServiceMock = EasyMock.createMock(QualificationDAO.class);
+		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
 		editor = new QualificationPropertyEditor(qualificationServiceMock);
 	}
 }

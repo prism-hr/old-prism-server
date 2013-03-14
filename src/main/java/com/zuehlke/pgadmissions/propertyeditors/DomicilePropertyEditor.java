@@ -6,23 +6,23 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.DomicileService;
 
 @Component
 public class DomicilePropertyEditor extends PropertyEditorSupport {
 
-	private final DomicileDAO domicileDAO;
+	private final DomicileService domicileService;
 	private final EncryptionHelper encryptionHelper;
 
-	DomicilePropertyEditor(){
+	public DomicilePropertyEditor(){
 		this(null, null);
 	}
 	
 	@Autowired
-	public DomicilePropertyEditor(DomicileDAO domicileDAO, EncryptionHelper encryptionHelper) {
-		this.domicileDAO = domicileDAO;
+	public DomicilePropertyEditor(DomicileService domicileService, EncryptionHelper encryptionHelper) {
+		this.domicileService = domicileService;
 		this.encryptionHelper = encryptionHelper;	
 	}
 	
@@ -32,7 +32,7 @@ public class DomicilePropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(domicileDAO.getDomicileById(encryptionHelper.decryptToInteger(strId)));
+		setValue(domicileService.getDomicileById(encryptionHelper.decryptToInteger(strId)));
 		
 	}
 

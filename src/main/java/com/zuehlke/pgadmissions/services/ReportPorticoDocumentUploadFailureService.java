@@ -3,7 +3,8 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.mail.DataExportMailSender;
 
 @Service
+@Transactional
 public class ReportPorticoDocumentUploadFailureService {
 
     private final DataExportMailSender dataExportMailSender;
@@ -25,7 +27,7 @@ public class ReportPorticoDocumentUploadFailureService {
     
     private final ApplicationFormTransferDAO applicationFormTransferDAO;
     
-    private final Logger log = Logger.getLogger(ReportPorticoDocumentUploadFailureService.class);
+    private final Logger log = LoggerFactory.getLogger(ReportPorticoDocumentUploadFailureService.class);
     
     public ReportPorticoDocumentUploadFailureService() {
         this(null, null, null);
@@ -39,7 +41,6 @@ public class ReportPorticoDocumentUploadFailureService {
         this.applicationFormTransferDAO = applicationFormTransferDAO;
     }
     
-    @Transactional
     public void reportPorticoUploadError(final String bookingReference, final String errorCode, final String message) {
         ApplicationFormTransferError transferError = saveDocumentUploadError(bookingReference, errorCode, message);
         
@@ -55,12 +56,10 @@ public class ReportPorticoDocumentUploadFailureService {
         sendErrorMessageToSuperAdministrators(errorMessage);
     }
 
-    @Transactional(readOnly = true)
     private void sendErrorMessageToSuperAdministrators(final String message) {
         this.dataExportMailSender.sendErrorMessage(message);
     }
     
-    @Transactional
     private ApplicationFormTransferError saveDocumentUploadError(final String bookingReference, final String errorCode, final String message) {
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getByReceivedBookingReferenceNumber(bookingReference);
         if (transfer != null) {

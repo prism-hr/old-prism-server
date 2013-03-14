@@ -10,13 +10,14 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 public class FakeLoggingMailSender extends JavaMailSenderImpl implements FakeLoggingMailSenderListener {
 
-    private static final Logger LOG = Logger.getLogger(FakeLoggingMailSender.class);
+    private final Logger LOG = LoggerFactory.getLogger(FakeLoggingMailSender.class);
     
     private final List<FakeLoggingMailSenderListener> listeners;
     
@@ -62,7 +63,7 @@ public class FakeLoggingMailSender extends JavaMailSenderImpl implements FakeLog
                 }
             }
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e.getMessage(), e);
         }
     }
 

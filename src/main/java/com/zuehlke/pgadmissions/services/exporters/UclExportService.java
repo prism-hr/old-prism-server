@@ -7,8 +7,8 @@ import java.util.HashMap;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
 @Service
 public class UclExportService {
-    private static final Logger log = Logger.getLogger(UclExportService.class);
+    private static final Logger log = LoggerFactory.getLogger(UclExportService.class);
 
     private final WebServiceTemplate webServiceTemplate;
 
@@ -170,7 +170,7 @@ public class UclExportService {
         } catch (WebServiceIOException e) {
             logAndSendEmailToSuperadministrator(String.format(
                     "WebServiceTransportException during webservice call for transfer [transferId=%d, applicationNumber=%s]", transferId,
-                    applicationForm.getApplicationNumber()), Level.WARN, e);
+                    applicationForm.getApplicationNumber()), e);
             // CASE 1: webservice call failed because of network failure, protocol problems etc
             // seems like we have communication problems so makes no sense to push more application forms at the moment
             // TODO: we should measure the time of this problem constantly occurring; after some threshold (1 day?) we should inform admins
@@ -191,7 +191,7 @@ public class UclExportService {
         } catch (SoapFaultClientException e) {
             logAndSendEmailToSuperadministrator(String.format(
                     "SoapFaultClientException during webservice call for transfer [transferId=%d, applicationNumber=%s]", transferId,
-                    applicationForm.getApplicationNumber()), Level.WARN, e);
+                    applicationForm.getApplicationNumber()), e);
             // CASE 2: webservice is alive but refused to accept our request
             // usually this will be caused by validation problems - and is actually expected as side effect of PORTICO and PRISM evolution
 
@@ -207,7 +207,7 @@ public class UclExportService {
             try {
                 e.getWebServiceMessage().writeTo(responseMessageBuffer);
             } catch (IOException ioex) {
-                log.warn(ioex);
+                log.warn(ioex.getMessage(), ioex);
                 throw new RuntimeException("Line unreachable", e);
             }
             error.setResponseCopy(responseMessageBuffer.toString());
@@ -223,7 +223,7 @@ public class UclExportService {
             numberOfConsecutiveSoapFaults++;
             if (numberOfConsecutiveSoapFaults > consecutiveSoapFaultsLimit) {
                 logAndSendEmailToSuperadministrator(String.format("Could not transfer application even after %d retries [transferId=%d, applicationNumber=%s]",
-                        numberOfConsecutiveSoapFaults, transferId, applicationForm.getApplicationNumber()), Level.ERROR, e);
+                        numberOfConsecutiveSoapFaults, transferId, applicationForm.getApplicationNumber()), e);
             }
             return;
         }
@@ -283,7 +283,7 @@ public class UclExportService {
 
             logAndSendEmailToSuperadministrator(
                     String.format("CouldNotCreateAttachmentsPack for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), Level.ERROR, couldNotCreateAttachmentsPack);
+                            applicationForm.getApplicationNumber()), couldNotCreateAttachmentsPack);
         } catch (SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong locallyDefinedSshConfigurationIsWrong) {
             // stop queue
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -298,7 +298,7 @@ public class UclExportService {
 
             logAndSendEmailToSuperadministrator(
                     String.format("LocallyDefinedSshConfigurationIsWrong for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), Level.ERROR, locallyDefinedSshConfigurationIsWrong);
+                            applicationForm.getApplicationNumber()), locallyDefinedSshConfigurationIsWrong);
         } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost couldNotOpenSshConnectionToRemoteHost) {
             // network problems - just wait some time and try again (pause queue)
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -313,7 +313,7 @@ public class UclExportService {
 
             logAndSendEmailToSuperadministrator(
                     String.format("CouldNotOpenSshConnectionToRemoteHost for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), Level.WARN, couldNotOpenSshConnectionToRemoteHost);
+                            applicationForm.getApplicationNumber()), couldNotOpenSshConnectionToRemoteHost);
         } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible sftpTargetDirectoryNotAccessible) {
             // stop queue, inform admin (possibly ucl has to correct their config)
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -328,7 +328,7 @@ public class UclExportService {
 
             logAndSendEmailToSuperadministrator(
                     String.format("SftpTargetDirectoryNotAccessible for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), Level.WARN, sftpTargetDirectoryNotAccessible);
+                            applicationForm.getApplicationNumber()), sftpTargetDirectoryNotAccessible);
         } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError sftpTransmissionFailedOrProtocolError) {
             // network problems - just wait some time and try again (pause queue)
             ApplicationFormTransferError error = new ApplicationFormTransferError();
@@ -343,12 +343,12 @@ public class UclExportService {
 
             logAndSendEmailToSuperadministrator(
                     String.format("SftpTransmissionFailedOrProtocolError for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), Level.WARN, sftpTransmissionFailedOrProtocolError);
+                            applicationForm.getApplicationNumber()), sftpTransmissionFailedOrProtocolError);
         }
     }
 
-    private void logAndSendEmailToSuperadministrator(final String message, final Level logLevel, final Exception exception) {
-        log.log(logLevel, message, exception);
+    private void logAndSendEmailToSuperadministrator(final String message, final Exception exception) {
+        log.error(message, exception);
         dataExportMailSender.sendErrorMessage(message, exception);
     }
     

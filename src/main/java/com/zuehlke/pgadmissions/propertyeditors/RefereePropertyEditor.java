@@ -12,35 +12,34 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 @Component
 public class RefereePropertyEditor extends PropertyEditorSupport {
 
-	private final RefereeService refereeService;
-	private final EncryptionHelper encryptionHelper;
-	
+    private final RefereeService refereeService;
+    private final EncryptionHelper encryptionHelper;
 
-	RefereePropertyEditor() {
-		this(null, null);
-	}
-	
-	@Autowired
-	public RefereePropertyEditor(RefereeService refereeService, EncryptionHelper encryptionHelper) {
-		this.refereeService = refereeService;
-		this.encryptionHelper = encryptionHelper;
-	}
+    public RefereePropertyEditor() {
+        this(null, null);
+    }
 
-	@Override
-	public void setAsText(String strId) throws IllegalArgumentException {
-		if (strId == null) {
-			setValue(null);
-			return;
-		}
-		setValue(refereeService.getRefereeById(Integer.parseInt(encryptionHelper.decrypt(strId))));
+    @Autowired
+    public RefereePropertyEditor(RefereeService refereeService, EncryptionHelper encryptionHelper) {
+        this.refereeService = refereeService;
+        this.encryptionHelper = encryptionHelper;
+    }
 
-	}
+    @Override
+    public void setAsText(String strId) throws IllegalArgumentException {
+        if (strId == null) {
+            setValue(null);
+            return;
+        }
+        setValue(refereeService.getRefereeById(Integer.parseInt(encryptionHelper.decrypt(strId))));
 
-	@Override
-	public String getAsText() {
-		if (getValue() == null || ((Referee) getValue()).getId() == null) {
-			return null;
-		}
-		return ((Referee) getValue()).getId().toString();
-	}
+    }
+
+    @Override
+    public String getAsText() {
+        if (getValue() == null || ((Referee) getValue()).getId() == null) {
+            return null;
+        }
+        return ((Referee) getValue()).getId().toString();
+    }
 }

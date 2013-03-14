@@ -17,7 +17,7 @@ public class BadgeDAO {
 
     private final SessionFactory sessionFactory;
     
-    BadgeDAO(){
+    public BadgeDAO(){
         this(null);
     }
     

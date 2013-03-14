@@ -16,7 +16,7 @@ public class DisabilityDAO {
 
 	private final SessionFactory sessionFactory;
 
-	DisabilityDAO() {
+	public DisabilityDAO() {
 		this(null);
 	}
 

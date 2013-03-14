@@ -8,7 +8,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.Countries;
 @Service
 public class CountriesOfBirthImporter implements Importer {
 
-	private static final Logger log = Logger.getLogger(CountriesOfBirthImporter.class);
+	private final Logger log = LoggerFactory.getLogger(CountriesOfBirthImporter.class);
 
 	private final JAXBContext context;
 	private final URL xmlFileLocation;
@@ -35,7 +36,8 @@ public class CountriesOfBirthImporter implements Importer {
 	}
 	
 	@Autowired
-	public CountriesOfBirthImporter(CountriesDAO countriesDAO, ImportService importService, @Value("${xml.data.import.countriesOfBirth.url}") URL xmlFileLocation) throws JAXBException {
+    public CountriesOfBirthImporter(CountriesDAO countriesDAO, ImportService importService,
+            @Value("${xml.data.import.countriesOfBirth.url}") URL xmlFileLocation) throws JAXBException {
 		this.countriesDAO = countriesDAO;
 		this.importService = importService;
 		this.xmlFileLocation = xmlFileLocation;

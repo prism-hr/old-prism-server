@@ -15,9 +15,10 @@ public class LanguagePropertyEditor extends PropertyEditorSupport {
 	private final LanguageService languageService;
 	private final EncryptionHelper encryptionHelper;
 
-	LanguagePropertyEditor(){
+	public LanguagePropertyEditor(){
 		this(null, null);
 	}
+	
 	@Autowired
 	public LanguagePropertyEditor(LanguageService languageService, EncryptionHelper encryptionHelper) {
 		this.languageService = languageService;

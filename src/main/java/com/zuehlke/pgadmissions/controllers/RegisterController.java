@@ -9,7 +9,8 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -35,33 +36,44 @@ import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 @Controller
 @RequestMapping(value = { "/register" })
 public class RegisterController {
-	private final Logger log = Logger.getLogger(RegisterController.class);
-	private static final String REGISTER_USERS_VIEW_NAME = "public/register/register_applicant";
-	private static final String REGISTER_INFO_VIEW_NAME = "public/register/activation_failed";
-	private static final String REGISTER_COMPLETE_VIEW_NAME = "public/register/registration_complete";
-	private static final String REGISTER_NOT_COMPLETE_VIEW_NAME = "public/register/registration_not_complete";
-	private final UserService userService;
-	private final RegisterFormValidator registerFormValidator;
-	private final RegistrationService registrationService;
-	private final ApplicationsService applicationsService;
-	private final ProgramsService programService;
-	private final ApplicationQueryStringParser applicationQueryStringParser;
-	protected final EncryptionHelper encryptionHelper;
+    
+    private final Logger log = LoggerFactory.getLogger(RegisterController.class);
+    
+    private static final String REGISTER_USERS_VIEW_NAME = "public/register/register_applicant";
+	
+    private static final String REGISTER_INFO_VIEW_NAME = "public/register/activation_failed";
+	
+    private static final String REGISTER_COMPLETE_VIEW_NAME = "public/register/registration_complete";
+	
+    private static final String REGISTER_NOT_COMPLETE_VIEW_NAME = "public/register/registration_not_complete";
+	
+    private final UserService userService;
+	
+    private final RegisterFormValidator registerFormValidator;
+	
+    private final RegistrationService registrationService;
+	
+    private final ApplicationsService applicationsService;
+	
+    private final ProgramsService programService;
+	
+    private final ApplicationQueryStringParser applicationQueryStringParser;
 
 	public RegisterController() {
 		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public RegisterController(RegisterFormValidator validator, UserService userService, RegistrationService registrationService,
-			ApplicationsService applicationsService, ProgramsService programService, ApplicationQueryStringParser applicationQueryStringParser, EncryptionHelper encryptionHelper) {
+    public RegisterController(RegisterFormValidator validator, UserService userService,
+            RegistrationService registrationService, ApplicationsService applicationsService,
+            ProgramsService programService, ApplicationQueryStringParser applicationQueryStringParser,
+            EncryptionHelper encryptionHelper) {
 		this.registerFormValidator = validator;
 		this.userService = userService;
 		this.registrationService = registrationService;
 		this.applicationsService = applicationsService;
 		this.programService = programService;
 		this.applicationQueryStringParser = applicationQueryStringParser;
-		this.encryptionHelper = encryptionHelper;
 	}
 
 

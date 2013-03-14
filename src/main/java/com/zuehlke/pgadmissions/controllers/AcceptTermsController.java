@@ -21,7 +21,7 @@ public class AcceptTermsController {
 	private static final String TERMS_AND_CONDITIONS_VIEW_NAME = "/private/pgStudents/form/components/terms_and_conditions";
 	private final UserService userService;
 
-	AcceptTermsController() {
+	public AcceptTermsController() {
 		this(null, null);
 	}
 

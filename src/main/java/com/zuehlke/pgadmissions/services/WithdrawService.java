@@ -1,5 +1,4 @@
 package com.zuehlke.pgadmissions.services;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +7,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.services.exporters.UclExportService;
 
 @Service
+@Transactional
 public class WithdrawService {
 
     private final ApplicationsService applicationService;
@@ -31,7 +31,6 @@ public class WithdrawService {
         this.uclExportService = exportService;
     }
 
-    @Transactional
     public void saveApplicationFormAndSendMailNotifications(ApplicationForm applicationForm) {
         applicationService.save(applicationForm);
         mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(refereeService.getRefereesWhoHaveNotProvidedReference(applicationForm), applicationForm);

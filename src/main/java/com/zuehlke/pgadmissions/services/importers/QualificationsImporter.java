@@ -8,7 +8,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.Qualifications.Qualification;
 @Service
 public class QualificationsImporter implements Importer {
 	
-	private static final Logger log = Logger.getLogger(QualificationsImporter.class);
+    private final Logger log = LoggerFactory.getLogger(QualificationsImporter.class);
 	
 	private final JAXBContext context;
 	

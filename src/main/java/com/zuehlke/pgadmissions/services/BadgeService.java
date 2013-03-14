@@ -10,17 +10,19 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.BadgeDAO;
 import com.zuehlke.pgadmissions.domain.Badge;
 import com.zuehlke.pgadmissions.domain.Program;
 
 @Service
+@Transactional
 public class BadgeService {
 
 	private final BadgeDAO badgeDAO;
 
-	BadgeService(){
+	public BadgeService(){
 		this(null);
 	}
 	

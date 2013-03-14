@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @Service("applicationsService")
+@Transactional
 public class ApplicationsService {
 	
     public static final int APPLICATION_BLOCK_SIZE = 50;
@@ -45,12 +46,10 @@ public class ApplicationsService {
 		return applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
 	}
 
-	@Transactional
 	public void save(ApplicationForm application) {
 		applicationFormDAO.save(application);
 	}
 
-	@Transactional
 	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Program program, Date programDeadline, String projectTitle, String researchHomePage)  {
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
 		ApplicationForm applicationForm = newApplicationForm();
@@ -66,7 +65,6 @@ public class ApplicationsService {
 		return applicationForm;
 	}
 	
-	@Transactional
     public void makeApplicationNotEditable(ApplicationForm applicationForm) {
         applicationForm.setIsEditableByApplicant(false);
     }
@@ -75,12 +73,10 @@ public class ApplicationsService {
 		return new ApplicationForm();
 	}
 
-	@Transactional
 	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
 		return applicationFormDAO.getApplicationsDueUpdateNotification();
 	}
 
-	@Transactional
     public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,
             SearchCategory searchCategory, String term, SortCategory sort, SortOrder order, Integer page) {
 	    // default values
@@ -93,12 +89,10 @@ public class ApplicationsService {
 		return applicationFormListDAO.getVisibleApplications(user, searchCategory, term, sortCategory, sortOrder, pageCount, APPLICATION_BLOCK_SIZE);
 	}
 	
-    @Transactional
     public void refresh(ApplicationForm applicationForm) {
         applicationFormDAO.refresh(applicationForm);
     }
 
-	@Transactional
 	public List<ApplicationForm> getApplicationsDueRegistryNotification() {
 		return applicationFormDAO.getApplicationsDueRegistryNotification();
 	}

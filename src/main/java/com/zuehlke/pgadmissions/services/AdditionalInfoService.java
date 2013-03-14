@@ -8,6 +8,7 @@ import com.zuehlke.pgadmissions.dao.AdditionalInfoDAO;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 
 @Service
+@Transactional
 public class AdditionalInfoService {
 
 	private final AdditionalInfoDAO infoDAO;
@@ -21,7 +22,6 @@ public class AdditionalInfoService {
 		this.infoDAO = addInfoDAO;
 	}
 
-	@Transactional
 	public void save(AdditionalInformation info) {
 		infoDAO.save(info);
 	}

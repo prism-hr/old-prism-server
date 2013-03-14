@@ -4,7 +4,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -34,7 +35,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class PausableHibernateCompatibleSequentialTaskExecutor implements Executor {
     
-    private Logger log = Logger.getLogger(PausableHibernateCompatibleSequentialTaskExecutor.class);
+    private final Logger log = LoggerFactory.getLogger(PausableHibernateCompatibleSequentialTaskExecutor.class);
             
     private boolean pickingTasksIsPaused = false;
     

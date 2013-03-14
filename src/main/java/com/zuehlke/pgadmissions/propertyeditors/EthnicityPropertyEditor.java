@@ -16,7 +16,7 @@ public class EthnicityPropertyEditor extends PropertyEditorSupport {
 	private final EthnicityService ethnicityService;
 	private final EncryptionHelper encryptionHelper;
 
-	EthnicityPropertyEditor(){
+	public EthnicityPropertyEditor(){
 		this(null, null);
 	}
 	

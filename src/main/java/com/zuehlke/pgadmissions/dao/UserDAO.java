@@ -29,7 +29,7 @@ public class UserDAO {
 
 	private final SessionFactory sessionFactory;
 
-	UserDAO() {
+	public UserDAO() {
 		this(null);
 	}
 

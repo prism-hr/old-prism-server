@@ -4,9 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
@@ -15,10 +16,12 @@ import com.zuehlke.pgadmissions.mail.NewUserMailSender;
 
 public class NewUserNotificationTask extends TimerTask {
     
-	private final Logger log = Logger.getLogger(NewUserNotificationTask.class);
+    private final Logger log = LoggerFactory.getLogger(NewUserNotificationTask.class);
 	
 	private final SessionFactory sessionFactory;
+	
 	private final NewUserMailSender newUserMailSender;
+	
 	private final UserDAO userDAO;
 
 	public NewUserNotificationTask(SessionFactory sessionFactory, NewUserMailSender newUserMailSender, UserDAO userDAO) {

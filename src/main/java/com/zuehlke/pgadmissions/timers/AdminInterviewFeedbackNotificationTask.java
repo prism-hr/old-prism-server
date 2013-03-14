@@ -3,9 +3,10 @@ package com.zuehlke.pgadmissions.timers;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zuehlke.pgadmissions.domain.InterviewComment;
@@ -14,9 +15,12 @@ import com.zuehlke.pgadmissions.services.CommentService;
 
 public class AdminInterviewFeedbackNotificationTask extends TimerTask {
 
-	private final Logger log = Logger.getLogger(AdminInterviewFeedbackNotificationTask.class);
+    private final Logger log = LoggerFactory.getLogger(AdminInterviewFeedbackNotificationTask.class);
+	
 	private final CommentService commentService;
+	
 	private final AdminMailSender adminMailSender;
+	
 	private final SessionFactory sessionFactory;
 
 	public AdminInterviewFeedbackNotificationTask() {

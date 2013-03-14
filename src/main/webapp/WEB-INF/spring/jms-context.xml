@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc" 
+xmlns:tx="http://www.springframework.org/schema/tx" xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr" 
+xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop" 
+xmlns:oxm="http://www.springframework.org/schema/oxm"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd      
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+        http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd">
+
+    <bean id="jmsFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:/ConnectionFactory"/>
+    </bean>
+
+    <bean id="mailQueue" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:jboss/exported/jms/pgadmissions/mail"/>
+    </bean>
+
+    <bean id="porticoQueue" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:jboss/exported/jms/pgadmissions/portico"/>
+    </bean>
+
+    <bean id="jmsPorticoTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="jmsFactory" />
+        <property name="defaultDestination" ref="mailQueue" />
+    </bean>
+
+<!-- 
+    <bean id="myMessageListener" class="com.zuhlke.hibernate.jms.JmsMessageReceiver" />
+
+    <bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="jmsFactory" />
+        <property name="destination" ref="jmsQueue" />
+        <property name="messageListener" ref="myMessageListener" />
+    </bean>
+ -->
+
+</beans>

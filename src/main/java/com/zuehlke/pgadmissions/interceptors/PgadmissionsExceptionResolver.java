@@ -14,7 +14,7 @@ import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotWithdrawApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
@@ -96,10 +96,10 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
                 return new AlertDefinition(AlertType.INFO, "Cannot update application", "Following application cannot be updated: " + ex.getApplicationNumber());
             }
         });
-        addHandler(CannotWithdrawApplicationException.class, new PgadmissionExceptionHandler<CannotWithdrawApplicationException>() {
+        addHandler(CannotTerminateApplicationException.class, new PgadmissionExceptionHandler<CannotTerminateApplicationException>() {
             @Override
-            public AlertDefinition handlePgadmissionsException(CannotWithdrawApplicationException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot withdraw application", "Following application cannot be withdrawn: "
+            public AlertDefinition handlePgadmissionsException(CannotTerminateApplicationException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Following application cannot be withdrawn/rejected: "
                         + ex.getApplicationNumber());
             }
         });

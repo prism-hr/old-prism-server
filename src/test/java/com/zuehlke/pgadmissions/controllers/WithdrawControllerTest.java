@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotWithdrawApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -33,13 +33,13 @@ public class WithdrawControllerTest {
 	private EventFactory eventFactoryMock;
 	private UserService userServiceMock;
 
-	@Test(expected = CannotWithdrawApplicationException.class)
+	@Test(expected = CannotTerminateApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInApprovedStage() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicant(student).id(2).build();
 		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
 	}
 	
-	@Test(expected = CannotWithdrawApplicationException.class)
+	@Test(expected = CannotTerminateApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfInRejectStage() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).applicant(student).id(2).build();
 		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());
@@ -65,7 +65,7 @@ public class WithdrawControllerTest {
 		assertEquals(event, applicationForm.getEvents().get(0));
 	}
 	
-	@Test(expected = CannotWithdrawApplicationException.class)
+	@Test(expected = CannotTerminateApplicationException.class)
 	public void shouldThrowCannotWithdrawApplicationExceptionIfAlreadyWithdrawn() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).applicant(student).id(2).build();
 		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm, new ModelMap());

@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.exceptions.application;
 
-public class CannotWithdrawApplicationException extends ApplicationFormException {
+public class CannotTerminateApplicationException extends ApplicationFormException {
 
     private static final long serialVersionUID = -2390352248154970804L;
 
-    public CannotWithdrawApplicationException(String applicationNumber) {
+    public CannotTerminateApplicationException(String applicationNumber) {
         super(applicationNumber);
     }
 

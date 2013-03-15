@@ -94,14 +94,8 @@ public class RejectApplicationController {
     }
 
     private void checkApplicationStatus(ApplicationForm application) {
-        switch (application.getStatus()) {
-        case UNSUBMITTED:
-        case APPROVED:
-        case WITHDRAWN:
-        case REJECTED:
+        if (!application.isSubmitted() || application.isDecided() || application.isWithdrawn()) {
             throw new CannotTerminateApplicationException(application.getApplicationNumber());
-        default:
-            break;
         }
     }
 

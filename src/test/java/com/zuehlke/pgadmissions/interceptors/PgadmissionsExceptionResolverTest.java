@@ -34,7 +34,7 @@ public class PgadmissionsExceptionResolverTest {
         AlertDefinition alert = (AlertDefinition) request.getSession().getAttribute("alertDefinition");
         assertEquals(AlertType.INFO, alert.getType());
         assertEquals("Missing application", alert.getTitle());
-        assertEquals("Given application does not exist: app1", alert.getDescription());
+        assertEquals("Application does not exist: app1", alert.getDescription());
 
         assertEquals("redirect:/applications", modelAndView.getViewName());
     }

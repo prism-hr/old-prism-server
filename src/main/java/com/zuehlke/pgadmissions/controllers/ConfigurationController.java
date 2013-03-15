@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.valueOf;
+import static java.util.Arrays.sort;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,7 +181,14 @@ public class ConfigurationController {
 	
 	@ModelAttribute("templateTypes")
 	public EmailTemplateName[] getTemplateTypes() {
-		return EmailTemplateName.values();
+		EmailTemplateName[] names = EmailTemplateName.values();
+		sort(names, new Comparator<EmailTemplateName>() {
+			@Override
+			public int compare(EmailTemplateName o1, EmailTemplateName o2) {
+				return o1.displayValue().compareTo(o2.displayValue());
+			}
+		});
+		return names;
 	}
 	
 	@ModelAttribute("stages")

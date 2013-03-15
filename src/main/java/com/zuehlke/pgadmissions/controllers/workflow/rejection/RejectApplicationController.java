@@ -20,8 +20,9 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
@@ -32,104 +33,107 @@ import com.zuehlke.pgadmissions.validators.RejectionValidator;
 @RequestMapping(value = { "/rejectApplication" })
 public class RejectApplicationController {
 
-	private static final String REJECT_VIEW_NAME = "private/staff/approver/reject_page";
-	private static final String NEXT_VIEW_NAME = "redirect:/applications";
-	
-	private final RejectService rejectService;
-	
-	private final RejectReasonPropertyEditor rejectReasonPropertyEditor;
-	
-	private final UserService userService;
-	
-	private final RejectionValidator rejectionValidator;
-	
-	private final ApplicationsService applicationsService;
+    private static final String REJECT_VIEW_NAME = "private/staff/approver/reject_page";
+    private static final String NEXT_VIEW_NAME = "redirect:/applications";
 
-	public RejectApplicationController() {
-		this(null, null, null, null, null);
-	}
+    private final RejectService rejectService;
 
-	@Autowired
-	public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
-			RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator) {	
-		this.applicationsService = applicationsService;
-		this.rejectService = rejectService;
-		this.userService = userService;
-		this.rejectReasonPropertyEditor = rejectReasonPropertyEditor;
-		this.rejectionValidator = rejectionValidator;
-	}
+    private final RejectReasonPropertyEditor rejectReasonPropertyEditor;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getRejectPage() {
-		return REJECT_VIEW_NAME;
-	}
+    private final UserService userService;
 
-	@RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
-    public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection,
-            BindingResult errors, @ModelAttribute("applicationForm") ApplicationForm application, ModelMap modelMap) {
-		checkPermissionForApplication(application);
-		checkApplicationStatus(application);
-		if(errors.hasErrors()){
-			return REJECT_VIEW_NAME;
-		}
-		rejectService.moveApplicationToReject(application, getCurrentUser(), rejection);
-		return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
-	}
+    private final RejectionValidator rejectionValidator;
 
-	@ModelAttribute("availableReasons")
-	public List<RejectReason> getAvailableReasons() {
-		return rejectService.getAllRejectionReasons();
-	}
+    private final ApplicationsService applicationsService;
 
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-		checkPermissionForApplication(application);
-		checkApplicationStatus(application);
-		return application;
-	}
+    public RejectApplicationController() {
+        this(null, null, null, null, null);
+    }
 
-	private void checkApplicationStatus(ApplicationForm application) {
-		switch (application.getStatus()) {
-		case REVIEW:
-		case VALIDATION:
-		case APPROVAL:
-		case INTERVIEW:
-			break;
-		default:
-			throw new CannotUpdateApplicationException(application.getApplicationNumber());
-		}
-	}
+    @Autowired
+    public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
+            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator) {
+        this.applicationsService = applicationsService;
+        this.rejectService = rejectService;
+        this.userService = userService;
+        this.rejectReasonPropertyEditor = rejectReasonPropertyEditor;
+        this.rejectionValidator = rejectionValidator;
+    }
 
-	private void checkPermissionForApplication(ApplicationForm application) {
-		RegisteredUser currentUser = getCurrentUser();
-		if (application == null || !(application.getProgram().isApprover(currentUser) || currentUser.hasAdminRightsOnApplication(application))) {
-			throw new ResourceNotFoundException();
-		}
-	}
+    @RequestMapping(method = RequestMethod.GET)
+    public String getRejectPage() {
+        return REJECT_VIEW_NAME;
+    }
 
-	protected RegisteredUser getCurrentUser() {
-		return userService.getCurrentUser();
-	}
+    @RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
+    public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors,
+            @ModelAttribute("applicationForm") ApplicationForm application, ModelMap modelMap) {
+        checkPermissionForApplication(application);
+        checkApplicationStatus(application);
+        if (errors.hasErrors()) {
+            return REJECT_VIEW_NAME;
+        }
+        rejectService.moveApplicationToReject(application, getCurrentUser(), rejection);
+        return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
+    }
 
-	@ModelAttribute("rejection")
-	public Rejection getRejection() {
-		return new Rejection();
-	}
+    @ModelAttribute("availableReasons")
+    public List<RejectReason> getAvailableReasons() {
+        return rejectService.getAllRejectionReasons();
+    }
 
-	@InitBinder("rejection")
-	public void registerBindersAndValidators(WebDataBinder binder) {
-		binder.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditor);
-		binder.setValidator(rejectionValidator);
-		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-	}
-	        
-	public StringTrimmerEditor newStringTrimmerEditor() {
-	    return new StringTrimmerEditor(false);
-	}
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        checkPermissionForApplication(application);
+        checkApplicationStatus(application);
+        return application;
+    }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {	
-		return getCurrentUser();
-	}
+    private void checkApplicationStatus(ApplicationForm application) {
+        switch (application.getStatus()) {
+        case UNSUBMITTED:
+        case APPROVED:
+        case WITHDRAWN:
+        case REJECTED:
+            throw new CannotTerminateApplicationException(application.getApplicationNumber());
+        default:
+            break;
+        }
+    }
+
+    private void checkPermissionForApplication(ApplicationForm application) {
+        RegisteredUser currentUser = getCurrentUser();
+        if (!(application.getProgram().isApprover(currentUser) || currentUser.hasAdminRightsOnApplication(application))) {
+            throw new InsufficientApplicationFormPrivilegesException(application.getApplicationNumber());
+        }
+    }
+
+    protected RegisteredUser getCurrentUser() {
+        return userService.getCurrentUser();
+    }
+
+    @ModelAttribute("rejection")
+    public Rejection getRejection() {
+        return new Rejection();
+    }
+
+    @InitBinder("rejection")
+    public void registerBindersAndValidators(WebDataBinder binder) {
+        binder.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditor);
+        binder.setValidator(rejectionValidator);
+        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+    }
+
+    public StringTrimmerEditor newStringTrimmerEditor() {
+        return new StringTrimmerEditor(false);
+    }
+
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return getCurrentUser();
+    }
 }

@@ -67,13 +67,13 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(MissingApplicationFormException.class, new PgadmissionExceptionHandler<MissingApplicationFormException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(MissingApplicationFormException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Missing application", "Given application does not exist: " + ex.getApplicationNumber());
+                return new AlertDefinition(AlertType.INFO, "Missing application", "Application does not exist: " + ex.getApplicationNumber());
             }
         });
         addHandler(InsufficientApplicationFormPrivilegesException.class, new PgadmissionExceptionHandler<InsufficientApplicationFormPrivilegesException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(InsufficientApplicationFormPrivilegesException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "You have no sufficient privileges on given application form: "
+                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "You do not have sufficient privileges on application form: "
                         + ex.getApplicationNumber());
             }
         });
@@ -93,13 +93,13 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(CannotUpdateApplicationException.class, new PgadmissionExceptionHandler<CannotUpdateApplicationException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotUpdateApplicationException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot update application", "Following application cannot be updated: " + ex.getApplicationNumber());
+                return new AlertDefinition(AlertType.INFO, "Cannot update application", "Application cannot be updated: " + ex.getApplicationNumber());
             }
         });
         addHandler(CannotTerminateApplicationException.class, new PgadmissionExceptionHandler<CannotTerminateApplicationException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotTerminateApplicationException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Following application cannot be withdrawn/rejected: "
+                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Application cannot be withdrawn/rejected: "
                         + ex.getApplicationNumber());
             }
         });

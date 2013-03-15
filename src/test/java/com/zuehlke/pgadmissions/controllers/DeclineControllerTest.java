@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.annotation.ExpectedException;
 import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -16,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.IncorrectApplicationFormStateException;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -181,7 +180,7 @@ public class DeclineControllerTest {
 		String view = controller.declineReview("5", applicationForm.getApplicationNumber(), "OK", new ModelMap());
 	}
 	
-	@Test(expected = IncorrectApplicationFormStateException.class)
+	@Test(expected = ActionNoLongerRequiredException.class)
 	public void shouldThrowExceptionIfUserApplicationNotInReview() {
 		final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();

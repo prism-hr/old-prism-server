@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -164,7 +164,7 @@ public class InterviewCommentControllerTest {
         assertEquals("private/staff/interviewers/feedback/interview_feedback", controller.addComment(comment, errorsMock));
     }
 
-    @Test(expected = CannotUpdateApplicationException.class)
+    @Test(expected = ActionNoLongerRequiredException.class)
     public void shouldThrowResourceNotFoundIfApplicationAlreadyDecided() {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build())

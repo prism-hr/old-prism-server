@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.exceptions.application.RefereeAlreadyRespondedException;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -81,7 +81,7 @@ public class ReferenceController {
 	@RequestMapping(value = "/addReferences", method = RequestMethod.GET)
 	public String getUploadReferencesPage(@ModelAttribute ApplicationForm applicationForm) {
 		if(getCurrentUser().getRefereeForApplicationForm(applicationForm).hasResponded()){
-			throw new RefereeAlreadyRespondedException(applicationForm.getApplicationNumber());
+			throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
 		}
 		if (!applicationForm.isModifiable()) {
 			return EXPIRED_VIEW_NAME;

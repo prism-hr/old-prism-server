@@ -21,10 +21,10 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
-import com.zuehlke.pgadmissions.exceptions.application.SupervisorAlreadyRespondedException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -75,7 +75,7 @@ public class ConfirmSupervisionController {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
         if(primarySupervisor.getConfirmedSupervision() != null){
-            throw new SupervisorAlreadyRespondedException(applicationId);
+            throw new ActionNoLongerRequiredException(applicationId);
         }
         return application;
     }

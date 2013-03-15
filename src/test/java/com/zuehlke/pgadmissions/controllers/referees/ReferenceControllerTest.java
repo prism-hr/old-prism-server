@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.exceptions.application.RefereeAlreadyRespondedException;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -128,7 +128,7 @@ public class ReferenceControllerTest {
 		assertEquals("private/referees/upload_references_expired", controller.getUploadReferencesPage(applicationForm));
 	}
 
-	@Test(expected=RefereeAlreadyRespondedException.class)
+	@Test(expected=ActionNoLongerRequiredException.class)
 	public void shoulThrowResourceNotFoundExceptionIfRefereeHasAlreadyProvidedReferecne() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator, commentServiceMock) {

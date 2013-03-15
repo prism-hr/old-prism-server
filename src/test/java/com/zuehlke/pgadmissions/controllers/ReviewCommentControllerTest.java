@@ -22,10 +22,10 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.exceptions.application.ReviewerAlreadyRespondedException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -170,7 +170,7 @@ public class ReviewCommentControllerTest {
         EasyMock.verify(errorsMock, userMock, userServiceMock);
     }
 
-    @Test(expected = CannotUpdateApplicationException.class)
+    @Test(expected = ActionNoLongerRequiredException.class)
     public void shouldThrowExceptionIfApplicationAlreadyDecided() {
         
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build();
@@ -187,7 +187,7 @@ public class ReviewCommentControllerTest {
         EasyMock.verify(errorsMock, userMock, userServiceMock);
     }
     
-    @Test(expected = ReviewerAlreadyRespondedException.class)
+    @Test(expected = ActionNoLongerRequiredException.class)
     public void shouldThrowExceptionIfReviewIsAlreadyProvided() {
         
         ApplicationForm applicationForm = new ApplicationFormBuilder().build();

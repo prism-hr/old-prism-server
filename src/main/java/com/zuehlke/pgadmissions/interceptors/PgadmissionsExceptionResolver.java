@@ -12,15 +12,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotWithdrawApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.IncorrectApplicationFormStateException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
-import com.zuehlke.pgadmissions.exceptions.application.RefereeAlreadyRespondedException;
-import com.zuehlke.pgadmissions.exceptions.application.ReviewerAlreadyRespondedException;
-import com.zuehlke.pgadmissions.exceptions.application.SupervisorAlreadyRespondedException;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 
 public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResolver {
@@ -80,18 +77,10 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
                         + ex.getApplicationNumber());
             }
         });
-        addHandler(RefereeAlreadyRespondedException.class, new PgadmissionExceptionHandler<RefereeAlreadyRespondedException>() {
+        addHandler(ActionNoLongerRequiredException.class, new PgadmissionExceptionHandler<ActionNoLongerRequiredException>() {
             @Override
-            public AlertDefinition handlePgadmissionsException(RefereeAlreadyRespondedException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot post reference", "You have already posted a reference for application: "
-                        + ex.getApplicationNumber());
-            }
-        });
-        addHandler(IncorrectApplicationFormStateException.class, new PgadmissionExceptionHandler<IncorrectApplicationFormStateException>() {
-            @Override
-            public AlertDefinition handlePgadmissionsException(IncorrectApplicationFormStateException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Application " + ex.getApplicationNumber() + " is no longer in \""
-                        + ex.getExpectedState().displayValue() + "\" state.");
+            public AlertDefinition handlePgadmissionsException(ActionNoLongerRequiredException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Your action upon application form " + ex.getApplicationNumber() + " is no longer required.");
             }
         });
         addHandler(PrimarySupervisorNotDefinedException.class, new PgadmissionExceptionHandler<PrimarySupervisorNotDefinedException>() {
@@ -99,20 +88,6 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
             public AlertDefinition handlePgadmissionsException(PrimarySupervisorNotDefinedException ex, HttpServletRequest request) {
                 return new AlertDefinition(AlertType.INFO, "No primary supervisor", "No primary supervisor has been defined for application: "
                         + ex.getApplicationNumber());
-            }
-        });
-        addHandler(SupervisorAlreadyRespondedException.class, new PgadmissionExceptionHandler<SupervisorAlreadyRespondedException>() {
-            @Override
-            public AlertDefinition handlePgadmissionsException(SupervisorAlreadyRespondedException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot confirm supervision", "You have already responded to supervision request: "
-                        + ex.getApplicationNumber());
-            }
-        });
-        addHandler(ReviewerAlreadyRespondedException.class, new PgadmissionExceptionHandler<ReviewerAlreadyRespondedException>() {
-            @Override
-            public AlertDefinition handlePgadmissionsException(ReviewerAlreadyRespondedException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot provide review",
-                        "You have already provided or declined to provide a review for application: " + ex.getApplicationNumber());
             }
         });
         addHandler(CannotUpdateApplicationException.class, new PgadmissionExceptionHandler<CannotUpdateApplicationException>() {

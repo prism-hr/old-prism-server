@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.IncorrectApplicationFormStateException;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -50,7 +50,7 @@ public class DeclineController {
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 		    // the user clicked on "Confirm"
 		    if (application.getStatus() != ApplicationFormStatus.REVIEW){
-		        throw new IncorrectApplicationFormStateException(applicationId, ApplicationFormStatus.REVIEW);
+		        throw new ActionNoLongerRequiredException(applicationId);
 		    }
 		    if (!reviewer.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
 		        throw new InsufficientApplicationFormPrivilegesException(applicationId);

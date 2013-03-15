@@ -19,9 +19,9 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.PrimarySupervisorNotDefinedException;
-import com.zuehlke.pgadmissions.exceptions.application.SupervisorAlreadyRespondedException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -97,7 +97,7 @@ public class ConfirmSupervisionControllerTest {
         controller.getApplicationForm("app1");
     }
 
-    @Test(expected = SupervisorAlreadyRespondedException.class)
+    @Test(expected = ActionNoLongerRequiredException.class)
     public void shouldNotReturnApplicationFormIfPrimarySupervisorAlreadyConfirmed() {
         RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().id(88).build();
 

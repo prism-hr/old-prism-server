@@ -61,6 +61,9 @@ public class ReviewCommentController {
         if (!currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
+        if(applicationForm.isDecided() || applicationForm.isWithdrawn() || getUser().hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)){
+            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+        }
 		return applicationForm;
 	}
 
@@ -77,13 +80,13 @@ public class ReviewCommentController {
 	@ModelAttribute("comment")
 	public ReviewComment getComment(@RequestParam String applicationId) {
 	    ApplicationForm applicationForm = getApplicationForm(applicationId);
+	    RegisteredUser user = getUser();
 		ReviewComment reviewComment = new ReviewComment();
 		reviewComment.setApplication(applicationForm);
-		RegisteredUser currentUser = getUser();
-		reviewComment.setUser(currentUser);
+		reviewComment.setUser(user);
 		reviewComment.setComment("");
 		reviewComment.setType(CommentType.REVIEW);
-		reviewComment.setReviewer(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm));
+		reviewComment.setReviewer(user.getReviewerForCurrentUserFromLatestReviewRound(applicationForm));
 		return reviewComment;
 	}
 
@@ -96,9 +99,6 @@ public class ReviewCommentController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String addComment(@Valid @ModelAttribute("comment") ReviewComment comment, BindingResult result) {
 	    ApplicationForm applicationForm = comment.getApplication();
-        if(getUser().hasRespondedToProvideReviewForApplicationLatestRound(applicationForm) || applicationForm.isDecided()){
-	        throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
-	    }
 		if(result.hasErrors()){
 			return REVIEW_FEEDBACK_PAGE;
 		}

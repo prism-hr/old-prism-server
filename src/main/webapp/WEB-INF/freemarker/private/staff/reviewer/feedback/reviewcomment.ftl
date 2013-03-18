@@ -72,9 +72,6 @@
 					<div class="content-box">
 						<div class="content-box-inner">
 						 <#include "/private/common/parts/application_info.ftl"/>
-						 <!--	if user is reviewer in program and haven't already declined-->	
-							<#if !user.hasRespondedToProvideReviewForApplicationLatestRound(applicationForm)>			        		
-					
 							<section class="form-rows">
 								<h2 class="no-arrow">
 									Review Application
@@ -154,9 +151,6 @@
 										</div>
 	
 										<div class="buttons">						        		
-<#--
-											<button type="button" id="cancelReviewBtn" value="cancel" class="clear">Clear</button>
--->
 											<button class="blue" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>						        
 										</div>
 									</form>
@@ -165,10 +159,7 @@
 							</section>
 							
 							<hr/>
-						<#else>
-							<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
-						</#if>
-						<#include "/private/staff/admin/comment/timeline_application.ftl"/>
+    						<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 						</div><!-- .content-box-inner -->
 					</div><!-- .content-box -->
 					

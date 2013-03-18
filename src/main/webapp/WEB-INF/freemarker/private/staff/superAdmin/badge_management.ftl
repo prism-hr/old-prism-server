@@ -84,7 +84,7 @@
 
                                         
 <div class="buttons">
-    <button class="blue" id="badgeSaveButton" type="button">Create</button>
+    <button class="btn btn-primary" id="badgeSaveButton" type="button">Create</button>
 </div>
 			
 </section>

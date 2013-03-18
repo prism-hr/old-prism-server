@@ -25,8 +25,6 @@ table.data thead th.headerSortDown, table.data thead th.headerSortUp { backgroun
 table.data th.header-text-center{
 	text-align:center;
 }
-
-
 /* Sorting functionality. */
 table.data th.sorting {
 	background: #0076c0; /* Old browsers */

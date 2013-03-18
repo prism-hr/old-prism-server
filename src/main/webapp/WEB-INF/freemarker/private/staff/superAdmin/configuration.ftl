@@ -74,41 +74,62 @@
 								<div id="edit-template-section">
 									<section class="form-rows">
 										<h2>Email templates</h2>
-									</section>
+									
 									<div>
-									<div class="section-info-bar">
+									<div class="alert alert-info">
+										<i class="icon-info-sign"></i> 
 										Customise the e-mail templates
 									</div>
-										<div class="field">
-						            		<select name="emailTemplateType" id="emailTemplateType" class="templateType">
-						                		<option value="default">Template...</option>
-						                  		<#list templateTypes as type>
-							              			<option value="${type}">${type.displayValue()}
-							               			</option>
-						                  		</#list>
-						             		</select><br>
-						             		<select name="emailTemplateVersion" id="emailTemplateVersion" class="templateVersion">
-						             		</select><br>
+
+										<div class="row-group">
+											<div class="row">
+											<label class="plain-label" for="emailTemplateType">Template</label>
+											<span data-desc="Select the template to edit" class="hint" ></span>
+											<div class="field">
+							            		<select name="emailTemplateType" id="emailTemplateType" class="templateType">
+							                		<option value="default">Template...</option>
+							                  		<#list templateTypes as type>
+								              			<option value="${type}">${type.displayValue()}
+								               			</option>
+							                  		</#list>
+							             		</select>
+							             	</div>
+						             	</div>
+						             	<div class="row">
+						             		<label class="plain-label" for="emailTemplateVersion">Template Version</label>
+						             		<span data-desc="Select the version template to edit" class="hint" ></span>
+						             		<div class="field">
+						             			<select name="emailTemplateVersion" id="emailTemplateVersion" class="templateVersion"></select>
+						             		</div>
+						             	</div>
 						            	</div>
-						            	
-										Edit template
-										<div class="field">
-											<textarea disabled name="templateContent" id="templateContentId" class="max" rows="15" cols="150">
-												<#if template??>${template.content}</#if>
-											</textarea>
+						            	<div class="row-group">
+						            		<div class="row">
+												<label class="plain-label" for="templateContentId">Edit template</label>
+												<span data-desc="HTML template" class="hint" ></span>
+												<div class="field">
+													<textarea disabled name="templateContent" id="templateContentId" class="input-xxlarge" rows="15" cols="150">
+														<#if template??>${template.content}</#if>
+													</textarea>
+												</div>
+											</div>
+											<div class="field"><button class="btn" type="button" id="preview-go">Preview</button></div>
 										</div>
-										<button class="blue" type="button" id="save-go">Save</button>
-										<button class="blue" type="button" id="enable-go">Enable</button>
-										<button class="blue" type="button" id="delete-go">Delete</button>
-										<button class="blue" type="button" id="preview-go">Preview</button>
+										<div class="buttons">
+										<button class="btn btn-danger" type="button" id="delete-go">Delete Draft</button>
+										<button class="btn" type="button" id="save-go">Save as Draf</button>
+										<button class="btn btn-primary" type="button" id="enable-go">Enable</button>
+										</div>
 									</div>
+									</section>
 								</div>
 								
 								<section class="form-rows">
 									<h2>Badge</h2>
 									
 									<div>
-										<div class="section-info-bar">
+										<div class="alert alert-info">
+										<i class="icon-info-sign"></i> 
 											Configure your 'apply now' badge. You embed this on external web pages to enable your programme to accept applications.
 										</div>
 										<form id = "badgeSection">

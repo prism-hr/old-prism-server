@@ -10,7 +10,7 @@ body.ie9 section.form-rows > div { margin-bottom: 10px; }
 section.form-rows h2,
 #view-toolbar li.tool-button a { 
   border: none;
-  -webkit-border-radius: 4px;
+  -webkit-border-radius: 4px; 
   -moz-border-radius: 4px;
   border-radius: 4px;
   box-shadow: none;
@@ -30,7 +30,7 @@ section.form-rows h2.empty .status { background-position: 0 -30px; }
 
 
 /* SECTION BODY ------------------------------------------------------------------------------------------ */
-section.form-rows > div { background: #CCC; border: 1px solid #999; padding: 10px; padding-bottom: 0; position: relative; }
+section.form-rows > div { background: #DDD; border: 1px solid #999; padding: 10px; padding-bottom: 0; position: relative; }
 
 
 /* EXISTING ROWS ----------------------------------------------------------------------------------------- */
@@ -57,14 +57,14 @@ section.form-rows .row-group .admin_row:last-child { border-bottom: none; }
 
 
 /* BUTTONS AREA ------------------------------------------------------------------------------------------ */
-section.form-rows .buttons { background: #DDD; border: 1px solid #999; border-width: 1px 0 0; margin: 8px -10px -10px; padding: 10px;  border-radius: 0  0 4px 4px;}
-
+section.form-rows .buttons { background: #EEE; border: 1px solid #999; border-width: 1px 0 0; margin: 8px -10px -10px; padding: 10px;  border-radius: 0  0 4px 4px;}
+#edit-template-section section.form-rows .buttons {margin-bottom: 0px;}
 /* Expandable content boxes */
 /*section.form-rows > div { border: 2px solid #999; margin-bottom: 10px; }*/
 
 /* Expanding forms ---------------------------------------------------------------------------------------- */
-section.form-rows header { background: #DDD; border-bottom: 1px solid #999; font-weight: bold; padding: 6px; }
-section.form-rows footer { background: #DDD; border-top: 1px solid #999; padding: 6px !important; text-align: right; }
+section.form-rows header { background: #EEE; border-bottom: 1px solid #999; font-weight: bold; padding: 6px; }
+section.form-rows footer { background: #EEE; border-top: 1px solid #999; padding: 6px !important; text-align: right; }
 
 
 
@@ -147,7 +147,7 @@ section.form-rows label.label { font-weight: bold; }
 
 .grey-label { color: #AAA; }
 .grey-label em { color: #AAA !important; }
-
+section.form-rows .alert { margin-bottom: 10px;}
 
 section.form-rows .field .max { width: 330px; }
 section.form-rows .field .full { width: 240px; }

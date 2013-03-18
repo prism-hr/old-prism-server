@@ -5,8 +5,8 @@
 	<div>
 		<form id="configForm">
 
-			<div class="section-info-bar">
-				Edit the system configuration. <strong>Be aware that this will change the system behaviour for all programmes.</strong>
+			<div class="alert alert-info">
+				<i class="icon-info-sign"></i> Edit the system configuration. <strong>Be aware that this will change the system behaviour for all programmes.</strong>
 			</div>
 		
 			<div class="row-group" id="section-stages">
@@ -82,7 +82,8 @@
 			<div class="row-group" id="section-registryusers">
 
 				<div class="row">
-					<span class="label"><b>Admissions Contacts</b></span>
+					<h3 >Admissions Contacts</h3>
+					<div class="row-group">
 					<div class="field">
 						<table id="registryUsers">
 							<tbody>
@@ -118,7 +119,7 @@
 						</table>
 					</div>
 				</div>
-
+				</div>
 				<!-- Entry form. -->
 				<div class="row">
 					<span class="plain-label">First Name<em>*</em></span>
@@ -146,14 +147,14 @@
 
 				<div class="row">
 					<div class="field">	
-						<button class="blue" type="button" id="registryUserAdd">Add</button>
+						<button class="btn" type="button" id="registryUserAdd">Add</button>
 					</div>
 				</div><!-- .row -->
 				<div id = "regContactData"></div>
 			</div>
 			
 			<div class="buttons">						        		
-					<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
+					<button class="btn btn-primary" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
 			</div>
 			
 		</form>

@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.InvalidParameterFormatException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -28,77 +29,74 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("/apply")
 public class ApplicationFormController {
 
-	private final ProgramDAO programDAO;
-	private final ApplicationsService applicationService;
-	private final PlainTextUserPropertyEditor userPropertyEditor;
-	public static final String PROGRAM_DOES_NOT_EXIST = "private/pgStudents/programs/program_does_not_exist";
-	private final ProgramInstanceDAO programInstanceDAO;
-	private final UserService userService;
+    private final ProgramDAO programDAO;
+    private final ApplicationsService applicationService;
+    private final PlainTextUserPropertyEditor userPropertyEditor;
+    public static final String PROGRAM_DOES_NOT_EXIST = "private/pgStudents/programs/program_does_not_exist";
+    private final ProgramInstanceDAO programInstanceDAO;
+    private final UserService userService;
 
-	ApplicationFormController() {
-		this(null, null, null, null, null);
-	}
+    ApplicationFormController() {
+        this(null, null, null, null, null);
+    }
 
-	@Autowired
-	public ApplicationFormController(ProgramDAO programDAO, ApplicationsService applicationService, PlainTextUserPropertyEditor userPropertyEditor,
-			ProgramInstanceDAO programInstanceDAO, UserService userService) {
-		this.programDAO = programDAO;
-		this.applicationService = applicationService;
-		this.userPropertyEditor = userPropertyEditor;
-		this.programInstanceDAO = programInstanceDAO;
-		this.userService = userService;
-	}
+    @Autowired
+    public ApplicationFormController(ProgramDAO programDAO, ApplicationsService applicationService, PlainTextUserPropertyEditor userPropertyEditor,
+            ProgramInstanceDAO programInstanceDAO, UserService userService) {
+        this.programDAO = programDAO;
+        this.applicationService = applicationService;
+        this.userPropertyEditor = userPropertyEditor;
+        this.programInstanceDAO = programInstanceDAO;
+        this.userService = userService;
+    }
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public ModelAndView createNewApplicationForm(@RequestParam String program, @RequestParam String programDeadline, @RequestParam String projectTitle, @RequestParam String programhome) {
-	    return processApplyNew(program, programDeadline, projectTitle, programhome);
-	}
-	
-    @RequestMapping(value = "/new", method = {RequestMethod.GET})
-    public ModelAndView createNewApplicationFormGet(
-            @RequestParam String program, 
-            @RequestParam(required = false) String sequence,
-            @RequestParam(required = false) String programDeadline, 
-            @RequestParam(required = false) String projectTitle, 
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public ModelAndView createNewApplicationForm(@RequestParam String program, @RequestParam String programDeadline, @RequestParam String projectTitle,
+            @RequestParam String programhome) {
+        return processApplyNew(program, programDeadline, projectTitle, programhome);
+    }
+
+    @RequestMapping(value = "/new", method = { RequestMethod.GET })
+    public ModelAndView createNewApplicationFormGet(@RequestParam String program, @RequestParam(required = false) String sequence,
+            @RequestParam(required = false) String programDeadline, @RequestParam(required = false) String projectTitle,
             @RequestParam(required = false) String programhome) {
         return processApplyNew(program, programDeadline, projectTitle, programhome);
     }
-    
-    private ModelAndView processApplyNew(String program, String programDeadline, String projectTitle, String programhome) {
+
+    private ModelAndView processApplyNew(String programName, String programDeadline, String projectTitle, String programhome) {
         Date batchDeadline = parseBatchDeadline(programDeadline);
         RegisteredUser user = userService.getCurrentUser();
 
-        Program prog = programDAO.getProgramByCode(program);
-        if (prog == null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty() || !prog.isEnabled()) {
-            return new ModelAndView(PROGRAM_DOES_NOT_EXIST);
-        }       
-        ApplicationForm applicationForm = applicationService.createOrGetUnsubmittedApplicationForm(user, prog, batchDeadline, projectTitle, programhome);
+        Program program = programDAO.getProgramByCode(programName);
+        if (program == null || programInstanceDAO.getActiveProgramInstances(program).isEmpty() || !program.isEnabled()) {
+            throw new CannotApplyToProgramException(program);
+        }
+        ApplicationForm applicationForm = applicationService.createOrGetUnsubmittedApplicationForm(user, program, batchDeadline, projectTitle, programhome);
         return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
     }
-    
 
-	private Date parseBatchDeadline(String programDeadline) {
-		Date batchDeadline = null;
+    private Date parseBatchDeadline(String programDeadline) {
+        Date batchDeadline = null;
         if (StringUtils.isBlank(programDeadline)) {
             return null;
         }
 
-		try {
-		    batchDeadline = DateUtils.parseDate(programDeadline, new String[] {"dd MMM yyyy", "dd-MMM-yyyy"});
-		} catch (ParseException e) {
-			throw new InvalidParameterFormatException(e);			
-		}
-		
-		return batchDeadline;
-	}
+        try {
+            batchDeadline = DateUtils.parseDate(programDeadline, new String[] { "dd MMM yyyy", "dd-MMM-yyyy" });
+        } catch (ParseException e) {
+            throw new InvalidParameterFormatException(e);
+        }
 
-	ApplicationForm newApplicationForm() {
-		return new ApplicationForm();
-	}
+        return batchDeadline;
+    }
 
-	@InitBinder
-	public void registerPropertyEditors(WebDataBinder binder) {
-		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
+    ApplicationForm newApplicationForm() {
+        return new ApplicationForm();
+    }
 
-	}
+    @InitBinder
+    public void registerPropertyEditors(WebDataBinder binder) {
+        binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
+
+    }
 }

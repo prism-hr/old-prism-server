@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
+import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -80,7 +81,8 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(ActionNoLongerRequiredException.class, new PgadmissionExceptionHandler<ActionNoLongerRequiredException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(ActionNoLongerRequiredException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Your action upon application form " + ex.getApplicationNumber() + " is no longer required.");
+                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Your action upon application form " + ex.getApplicationNumber()
+                        + " is no longer required.");
             }
         });
         addHandler(PrimarySupervisorNotDefinedException.class, new PgadmissionExceptionHandler<PrimarySupervisorNotDefinedException>() {
@@ -99,8 +101,13 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(CannotTerminateApplicationException.class, new PgadmissionExceptionHandler<CannotTerminateApplicationException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotTerminateApplicationException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Application cannot be withdrawn/rejected: "
-                        + ex.getApplicationNumber());
+                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "Application cannot be withdrawn/rejected: " + ex.getApplicationNumber());
+            }
+        });
+        addHandler(CannotApplyToProgramException.class, new PgadmissionExceptionHandler<CannotApplyToProgramException>() {
+            @Override
+            public AlertDefinition handlePgadmissionsException(CannotApplyToProgramException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "Cannot apply to program", "Program \"" + ex.getProgram().getTitle() + "\" is not available at the moment.");
             }
         });
 

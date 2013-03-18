@@ -110,9 +110,6 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
-        if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
-        }
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
 
@@ -120,10 +117,6 @@ public class EditApplicationFormAsProgrammeAdminController {
     @ResponseBody
     public String updateReference(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
             BindingResult result, Model model) {
-
-        if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
-        }
 
         model.addAttribute("editedRefereeId", refereesAdminEditDTO.getEditedRefereeId());
         refereesAdminEditDTOValidator.validate(refereesAdminEditDTO, result);
@@ -153,10 +146,6 @@ public class EditApplicationFormAsProgrammeAdminController {
     public String submitRefereesData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute RefereesAdminEditDTO refereesAdminEditDTO,
             BindingResult referenceResult, @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData,
             @RequestParam(required = false) Boolean forceSavingReference, Model model) {
-
-        if (!applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
-        }
 
         String editedRefereeId = refereesAdminEditDTO.getEditedRefereeId();
         model.addAttribute("editedRefereeId", editedRefereeId);
@@ -217,10 +206,10 @@ public class EditApplicationFormAsProgrammeAdminController {
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }
-        if (!getCurrentUser().canSee(applicationForm)) {
+        if (!getCurrentUser().canSee(applicationForm) || !applicationForm.isUserAllowedToSeeAndEditAsAdministrator(getCurrentUser())) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
-
+        
         return applicationForm;
     }
 

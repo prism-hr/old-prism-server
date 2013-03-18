@@ -106,9 +106,8 @@ public class RegisterFormValidatorTest {
 		EasyMock.expect(userServiceMock.getUserByEmail("meuston@gmail.com")).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(user, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.passwords.notmatch", mappingResult.getFieldError("confirmPassword").getCode());
-		Assert.assertEquals("user.passwords.notmatch", mappingResult.getFieldError("password").getCode());
 	}
 	
 	@Test

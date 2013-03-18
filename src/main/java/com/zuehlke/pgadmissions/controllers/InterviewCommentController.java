@@ -61,7 +61,7 @@ public class InterviewCommentController {
         if (!currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
             throw new InsufficientApplicationFormPrivilegesException(applicationId);
         }
-        if (applicationForm.isDecided() || currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)) {
+        if (applicationForm.isDecided() || applicationForm.isWithdrawn() || currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
         return applicationForm;

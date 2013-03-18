@@ -63,36 +63,39 @@
 		    
 		    	<form method="post" action= "/pgadmissions/register/submit" class="form-horizontal">
 		      		<div id="legend">
-		                <legend >Register Today...</legend>
+		                <legend >Register Today</legend>
 		              </div>
 
 		            <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
 		            <div class="control-group">
-		                <label class="control-label" for="firstName">First Name</label>
+		                <label class="control-label" for="firstName">First Name <em>*</em></label>
+		                <span class="hint" data-desc="Please enter your First Name"></span>
 		                <div class="controls">
-			            <input id="firstName" type="text" name="firstName" placeholder="First Forename" value='${(pendingUser.firstName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+			            <input id="firstName" type="text" name="firstName" value='${(pendingUser.firstName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 			            <@spring.bind "pendingUser.firstName" /> 
 	              		<#list spring.status.errorMessages as error>	
 	              		 	<div class="alert alert-error">	                                		
-	                    	${error}
+	                    	<i class="icon-warning-sign"></i> ${error}
 	                    	</div>                 		
 	                    </#list>
 						</div>
                 	</div>
 
 		            <div class="control-group">
-		                <label class="control-label" for="lastName">Last Name</label>
+		                <label class="control-label" for="lastName">Last Name <em>*</em></label>
+		                <span class="hint" data-desc="Please enter your Last Name"></span>
 		                <div class="controls">
-			            <input id="lastName" type="text" name="lastName" placeholder="Last Name" value='${(pendingUser.lastName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
+			            <input id="lastName" type="text" name="lastName" value='${(pendingUser.lastName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 	                    <@spring.bind "pendingUser.lastName" /> 
 	                    <#list spring.status.errorMessages as error>		                                		
-	                        <div class="alert alert-error">${error}</div>                     		
+	                        <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>                     		
 	                    </#list>
 		           		</div>
                 	</div>
 					
 					<div class="control-group">
-		                <label class="control-label" for="email">Email</label>
+		                <label class="control-label" for="email">Email <em>*</em></label>
+		                <span class="hint" data-desc="Please enter your Email Address"></span>
 		                <div class="controls">
 			            <#if RequestParameters.activationCode?has_content>
 			            <div id="email_tooltip_input" name="email_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
@@ -103,24 +106,30 @@
 	                    </#if>
 			            <@spring.bind "pendingUser.email" /> 
 	                    <#list spring.status.errorMessages as error>		                                		
-	                        <div class="alert alert-error">${error}</div>                   		
+	                        <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>                   		
 	                    </#list>
 		            	</div>
                 	</div>
 					
 					<div class="control-group">
-		                <label class="control-label" for="password">Password</label>
+		                <label class="control-label" for="password">Password <em>*</em></label>
+		                <span class="hint" data-desc="Please enter a password wiht a minimum of 8 characters"></span>
 		                <div class="controls">
 			            <input id="password" type="password" name="password" placeholder="Password"/>
 	                    <@spring.bind "pendingUser.password" /> 
 			        	<#list spring.status.errorMessages as error>		                                		
-	                        <div class="alert alert-error">${error}</div>                     		
+	                        <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>                     		
 	                    </#list>
-			            
+	                	</div>
+	                </div>
+	                <div class="control-group">
+	                	<label class="control-label" for="password"> </label>
+	                	<span class="hint" data-desc="Please confirm your Password"></span>
+			            <div class="controls">
 			            <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm password"/>
 	                    <@spring.bind "pendingUser.confirmPassword" /> 
 			            <#list spring.status.errorMessages as error>		                                		
-	                    	<div class="alert alert-error">${error}</div>                      		
+	                    	<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>                      		
 	                    </#list>
 	                  	</div>
                 	</div>  

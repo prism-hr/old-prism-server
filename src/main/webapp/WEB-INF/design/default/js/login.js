@@ -1,5 +1,6 @@
 $(document).ready(function()
 {
+	
 	// Clear form fields on focus
 	var el = $('input[type=text], input[type=password]');
 	var cssObjBefore = {'color': '#808080' };

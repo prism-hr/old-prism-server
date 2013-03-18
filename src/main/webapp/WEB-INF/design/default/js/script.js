@@ -1,6 +1,7 @@
 $(document).ready(function() {
+    addToolTips();
 
-    $(".dropdown-toggle").dropdown();
+    //$(".dropdown-toggle").dropdown();
 
     // --------------------------------------------------------------------------------
     // SWITCH USER ACCOUNTS

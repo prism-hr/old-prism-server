@@ -57,7 +57,7 @@ section.form-rows .row-group .admin_row:last-child { border-bottom: none; }
 
 
 /* BUTTONS AREA ------------------------------------------------------------------------------------------ */
-section.form-rows .buttons { background: #DDD; border: 1px solid #999; border-width: 1px 0 0; margin: 8px -10px -10px; padding: 10px; }
+section.form-rows .buttons { background: #DDD; border: 1px solid #999; border-width: 1px 0 0; margin: 8px -10px -10px; padding: 10px;  border-radius: 0  0 4px 4px;}
 
 /* Expandable content boxes */
 /*section.form-rows > div { border: 2px solid #999; margin-bottom: 10px; }*/

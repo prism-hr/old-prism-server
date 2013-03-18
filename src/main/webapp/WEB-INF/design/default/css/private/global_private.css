@@ -1120,7 +1120,7 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
     width: 160px;
 }
 .form-rows form {
-	margin-bottom: 0px;
+	margin-bottom: 10px;
 }
 .form-rows .row-group {
   -webkit-border-radius: 4px;

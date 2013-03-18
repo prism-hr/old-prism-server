@@ -113,7 +113,7 @@
 					
 					<div class="control-group">
 		                <label class="control-label" for="password">Password <em>*</em></label>
-		                <span class="hint" data-desc="Please enter a password wiht a minimum of 8 characters"></span>
+		                <span class="hint" data-desc="Please enter a password with a minimum of 8 characters"></span>
 		                <div class="controls">
 			            <input id="password" type="password" name="password" placeholder="Password"/>
 	                    <@spring.bind "pendingUser.password" /> 

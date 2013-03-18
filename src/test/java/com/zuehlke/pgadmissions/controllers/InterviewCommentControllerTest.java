@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -46,58 +47,89 @@ public class InterviewCommentControllerTest {
     public void shouldGetApplicationFormFromId() {
         Program program = new ProgramBuilder().id(7).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
-        ;
+        EasyMock.expect(currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)).andReturn(false);
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-        EasyMock.replay(currentUser, userServiceMock);
-
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock);
+        
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
         ApplicationForm returnedApplication = controller.getApplicationForm("5");
+        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
+        
         assertEquals(returnedApplication, applicationForm);
     }
 
     @Test(expected = MissingApplicationFormException.class)
-    public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
+    public void shouldThrowExceptionIfApplicationFormDoesNotExist() {
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+        
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("5");
+        EasyMock.verify(applicationsServiceMock);
     }
 
     @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotInterviewerOfForm() {
+    public void shouldThrowExceptionIfCurrentUserNotInterviewerOfForm() {
         Program program = new ProgramBuilder().id(7).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
-        EasyMock.replay(currentUser, userServiceMock);
-
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock);
+        
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
         controller.getApplicationForm("5");
-
+        EasyMock.verify(applicationsServiceMock, currentUser, userServiceMock);
     }
 
     @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication() {
+    public void shouldThrowExceptionIfCurrentUserCannotSeeApplication() {
         Program program = new ProgramBuilder().id(7).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
-
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-        EasyMock.replay(currentUser, userServiceMock);
 
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock);
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
         controller.getApplicationForm("5");
-
+    }
+    
+    @Test(expected = ActionNoLongerRequiredException.class)
+    public void shouldThrowExceptionIfInterviewerAlreadyResponded() {
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        controller.getApplicationForm("5");
+    }
+    
+    @Test(expected = ActionNoLongerRequiredException.class)
+    public void shouldThrowExceptionIfApplicationFormAlreadyDecided() {
+        Program program = new ProgramBuilder().id(7).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).status(ApplicationFormStatus.APPROVED).build();
+        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+        EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        
+        EasyMock.replay(applicationsServiceMock, currentUser, userServiceMock);
+        controller.getApplicationForm("5");
     }
 
     @Test
@@ -117,8 +149,9 @@ public class InterviewCommentControllerTest {
     public void shouldCreateNewInterviewCommentForApplicationForm() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
         final RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         Interviewer interviewer = new InterviewerBuilder().id(5).build();
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.expect(currentUser.getInterviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(interviewer));
         EasyMock.replay(userServiceMock, currentUser);
         controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock,
@@ -150,6 +183,7 @@ public class InterviewCommentControllerTest {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
         binderMock.setValidator(reviewFeedbackValidatorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
+        
         EasyMock.replay(binderMock);
         controller.registerBinders(binderMock);
         EasyMock.verify(binderMock);
@@ -157,33 +191,23 @@ public class InterviewCommentControllerTest {
 
     @Test
     public void shouldReturnToCommentsPageIfErrors() {
-        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationForm()).build();
-        EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-        EasyMock.replay(errorsMock);
+        BindingResult errorsMock = new BeanPropertyBindingResult(comment, "comment");
+        errorsMock.reject("error");
+        
         assertEquals("private/staff/interviewers/feedback/interview_feedback", controller.addComment(comment, errorsMock));
-    }
-
-    @Test(expected = ActionNoLongerRequiredException.class)
-    public void shouldThrowResourceNotFoundIfApplicationAlreadyDecided() {
-        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-        InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).build())
-                .build();
-        EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-        EasyMock.replay(errorsMock);
-        controller.addComment(comment, errorsMock);
     }
 
     @Test
     public void shouldSaveCommentAndToApplicationListIfNoErrors() {
         InterviewComment comment = new InterviewCommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).applicationNumber("abc").build()).build();
-        BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+        BindingResult errorsMock = new BeanPropertyBindingResult(comment, "comment");
+       
         commentServiceMock.save(comment);
-        EasyMock.replay(errorsMock, commentServiceMock);
+        
+        EasyMock.replay(commentServiceMock);
         assertEquals("redirect:/applications?messageCode=interview.feedback&application=abc", controller.addComment(comment, errorsMock));
-        EasyMock.verify(errorsMock, commentServiceMock);
-
+        EasyMock.verify(commentServiceMock);
     }
 
     @Before

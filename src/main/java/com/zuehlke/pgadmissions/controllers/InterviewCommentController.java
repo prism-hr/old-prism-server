@@ -30,78 +30,79 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @RequestMapping(value = { "/interviewFeedback" })
 public class InterviewCommentController {
 
-	private static final String INTERVIEW_FEEDBACK_PAGE = "private/staff/interviewers/feedback/interview_feedback";
-	private final ApplicationsService applicationsService;
-	private final UserService userService;
-	private final FeedbackCommentValidator feedbackCommentValidator;
-	private final CommentService commentService;
-	private final DocumentPropertyEditor documentPropertyEditor;
+    private static final String INTERVIEW_FEEDBACK_PAGE = "private/staff/interviewers/feedback/interview_feedback";
+    private final ApplicationsService applicationsService;
+    private final UserService userService;
+    private final FeedbackCommentValidator feedbackCommentValidator;
+    private final CommentService commentService;
+    private final DocumentPropertyEditor documentPropertyEditor;
 
-	public InterviewCommentController() {
-		this(null, null, null, null, null);
-	}
+    public InterviewCommentController() {
+        this(null, null, null, null, null);
+    }
 
-	@Autowired
-	public InterviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor) {
-		this.applicationsService = applicationsService;
-		this.userService = userService;
-		this.commentService = commentService;
-		this.feedbackCommentValidator = reviewFeedbackValidator;
-		this.documentPropertyEditor = documentPropertyEditor;
-	}
+    @Autowired
+    public InterviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+            FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor) {
+        this.applicationsService = applicationsService;
+        this.userService = userService;
+        this.commentService = commentService;
+        this.feedbackCommentValidator = reviewFeedbackValidator;
+        this.documentPropertyEditor = documentPropertyEditor;
+    }
 
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null){
-		    throw new MissingApplicationFormException(applicationId);
-		}
-		if(!currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
-			throw new InsufficientApplicationFormPrivilegesException(applicationId);
-		}
-		return applicationForm;
-	}
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        if (!currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationId);
+        }
+        if (applicationForm.isDecided() || currentUser.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)) {
+            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+        }
+        return applicationForm;
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getInterviewFeedbackPage() {
-		return INTERVIEW_FEEDBACK_PAGE;
-	}
+    @RequestMapping(method = RequestMethod.GET)
+    public String getInterviewFeedbackPage() {
+        return INTERVIEW_FEEDBACK_PAGE;
+    }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
 
-	@ModelAttribute("comment")
-	public InterviewComment getComment(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		InterviewComment interviewComment = new InterviewComment();
-		interviewComment.setApplication(applicationForm);
-		RegisteredUser currentUser = getUser();
-		interviewComment.setUser(currentUser);
-		interviewComment.setComment("");
-		interviewComment.setType(CommentType.INTERVIEW);
-		interviewComment.setInterviewer(currentUser.getInterviewersForApplicationForm(applicationForm).get(0));
-		return interviewComment;
-	}
+    @ModelAttribute("comment")
+    public InterviewComment getComment(@RequestParam String applicationId) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser currentUser = getUser();
 
-	@InitBinder(value = "comment")
-	public void registerBinders(WebDataBinder binder) {
-		binder.setValidator(feedbackCommentValidator);
-		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-	}
+        InterviewComment interviewComment = new InterviewComment();
+        interviewComment.setApplication(applicationForm);
+        interviewComment.setUser(currentUser);
+        interviewComment.setComment("");
+        interviewComment.setType(CommentType.INTERVIEW);
+        interviewComment.setInterviewer(currentUser.getInterviewersForApplicationForm(applicationForm).get(0));
+        return interviewComment;
+    }
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String addComment(@Valid @ModelAttribute("comment") InterviewComment comment, BindingResult result) {
-		if(comment.getApplication().isDecided()){
-			throw new ActionNoLongerRequiredException(comment.getApplication().getApplicationNumber());
-		}
-		if(result.hasErrors()){
-			return INTERVIEW_FEEDBACK_PAGE;
-		}
-		commentService.save(comment);		
-		return "redirect:/applications?messageCode=interview.feedback&application=" + comment.getApplication().getApplicationNumber();
-	}
+    @InitBinder(value = "comment")
+    public void registerBinders(WebDataBinder binder) {
+        binder.setValidator(feedbackCommentValidator);
+        binder.registerCustomEditor(Document.class, documentPropertyEditor);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public String addComment(@Valid @ModelAttribute("comment") InterviewComment comment, BindingResult result) {
+        if (result.hasErrors()) {
+            return INTERVIEW_FEEDBACK_PAGE;
+        }
+        commentService.save(comment);
+        return "redirect:/applications?messageCode=interview.feedback&application=" + comment.getApplication().getApplicationNumber();
+    }
 }

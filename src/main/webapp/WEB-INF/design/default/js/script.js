@@ -280,7 +280,7 @@ function limitTextArea() {
 // Textarea Counter
 function addCounter() {
 
-    var $textArea = $("textarea[class='max']")
+    var $textArea = $("textarea[class='max']");
     $.each($textArea, function() {
         // Create the span with all the content and characters left
         $(this).after('<span class="badge count">' + ( parseInt($(this).attr('maxlength')) - $(this).val().length) + ' Characters left</span>');
@@ -292,9 +292,9 @@ function addCounter() {
 
             counter = limit - $(this).val().length;
             if  (counter == 0) {
-                c$(this).nextAll(".count").addClass('badge-warning');
+                $(this).nextAll(".count").addClass('badge-warning');
             } else {
-                $(this).nextAll(".count").removeClass('badge-warning')
+                $(this).nextAll(".count").removeClass('badge-warning');
             }
             // Editing the count span
             $(this).nextAll(".count").html(counter  + ' Characters left' );

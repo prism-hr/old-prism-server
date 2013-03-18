@@ -11,7 +11,6 @@
     <!-- Styles for Login List Page -->
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
-    <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/forgotPassword.css' />"/>
     <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
@@ -64,11 +63,12 @@
               </div>
               <#if RequestParameters.login_error??>
               <div class="alert alert-error">
-                Incorrect Username or Password!
+                <i class="icon-warning-sign"></i> Incorrect Username or Password!
               </div>
               </#if>
               <div class="control-group">
                 <label class="control-label" for="inputEmail">Email</label>
+                <span class="hint" data-desc="Please enter your e-mail address"></span>
                 <div class="controls">
                   <#if Session.loginUserEmail?has_content>
                     <input type="text" id="username_or_email" name="username_or_email" value="${Session.loginUserEmail}" disabled="disabled" />
@@ -80,6 +80,7 @@
               </div>
               <div class="control-group">
                 <label class="control-label" for="password">Password</label>
+                <span class="hint" data-desc="Please enter your password"></span>
                 <div class="controls">
                  <input type="password" id="password" name="j_password" placeholder="Password"/>
                 </div>
@@ -108,6 +109,7 @@
     </div>
     
     <!-- Scripts -->
+    <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>

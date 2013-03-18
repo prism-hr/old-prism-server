@@ -11,7 +11,7 @@
 		<!-- Styles for Login List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/forgotPassword.css' />"/>
 		<link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
@@ -64,17 +64,16 @@
 		    		<div id="legend">
 		                <legend>Recover your password</legend>
 		            </div>
-		    		<div class="alert alert-info">
-		      			Please enter your e-mail address...
-					</div>
+					
 		      		 <#if errorMessageCode??>                    		
                     	<div class="alert alert-error">
-			               <@spring.message errorMessageCode />
+			               <i class="icon-warning-sign"></i> <@spring.message errorMessageCode />
 			            </div>                   		
                     </#if>
 
 		      		<div class="control-group">
 		           		<label class="control-label" for="email">Email</label>
+		           		<span class="hint" data-desc="Please enter your e-mail address"></span>
 						<div class="controls">
 		           			<input id="email" type="text" name="email" placeholder="Email Address"/>
 		           		</div>
@@ -100,6 +99,7 @@
 		</div>
 		
 		<!-- Scripts -->
+		<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>

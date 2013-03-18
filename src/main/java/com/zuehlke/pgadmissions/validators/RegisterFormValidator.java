@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.validators;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -31,22 +33,25 @@ public class RegisterFormValidator extends AbstractValidator {
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", EMPTY_FIELD_ERROR_MESSAGE);
-		RegisteredUser record = (RegisteredUser) target;
-		if(record.getConfirmPassword()!=null && record.getPassword() !=null && !record.getConfirmPassword().equals(record.getPassword())){
-			errors.rejectValue("password", "user.passwords.notmatch");
-			errors.rejectValue("confirmPassword", "user.passwords.notmatch");
-		}
+	    RegisteredUser record = (RegisteredUser) target;
 
-		if(record.getPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
-			errors.rejectValue("password", "user.password.small");
-		}
+	    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);
+
+		// checking for length of password field
+		if(StringUtils.isBlank(record.getPassword())){
+		    errors.rejectValue("password", EMPTY_FIELD_ERROR_MESSAGE);
+		} else if(record.getPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
+            errors.rejectValue("password", "user.password.small");
+        } else if(record.getPassword().length() > MAXIMUM_PASSWORD_CHARACTERS){
+            errors.rejectValue("password", "user.password.large");
+        }
 		
-		if(record.getPassword().length() > MAXIMUM_PASSWORD_CHARACTERS){
-			errors.rejectValue("password", "user.password.large");
+		// check if confirm password is not empty and if matches the password
+		if(StringUtils.isBlank(record.getConfirmPassword())){
+		    errors.rejectValue("confirmPassword", EMPTY_FIELD_ERROR_MESSAGE);
+		} else if(!Objects.equal(record.getConfirmPassword(), record.getPassword())){
+		    errors.rejectValue("confirmPassword", "user.passwords.notmatch");
 		}
 		
 		RegisteredUser userWithSameEmail = userService.getUserByEmail(record.getEmail());

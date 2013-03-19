@@ -11,12 +11,19 @@ $(document).ready(function() {
                 $(this).animate({
                     height : maxHeight
                 }, 200);
-                $(this).find('.expander').removeClass('expand').addClass('collapsed').text('Show less');
+                $(this).find('.expander').removeClass('expand').addClass('collapsed').text('Show less').animate (
+                    {
+                        
+                        top: maxHeight + 34
+                    }, 200);
             }, function() {
                 $(this).animate({
                     height : expandheight
                 }, 200);
-                $(this).find('.expander').removeClass('collapsed').addClass('expand').text('Show more');
+                $(this).find('.expander').removeClass('collapsed').addClass('expand').text('Show more').animate (
+                    {
+                        top: 90
+                    }, 200);
             });
 
             $(this).addClass('expandable').height(expandheight);

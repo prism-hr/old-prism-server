@@ -41,7 +41,7 @@
             <props>
                 <prop key="mail.smtp.auth">true</prop>
                 <prop key="mail.smtp.starttls.enable">true</prop>
-                <prop key="mail.smtp.quitwait">false</prop>
+<!--                 <prop key="mail.smtp.quitwait">false</prop> -->
                 <prop key="mail.smtp.connectiontimeout">20000</prop>
                 <prop key="mail.smtp.timeout">20000</prop>
                 <prop key="mail.debug">true</prop>

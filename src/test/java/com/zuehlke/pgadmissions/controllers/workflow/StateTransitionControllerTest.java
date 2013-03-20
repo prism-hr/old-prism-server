@@ -58,6 +58,7 @@ public class StateTransitionControllerTest {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
 		binderMock.setValidator(stateChangeValidatorMock);
 		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
+		binderMock.registerCustomEditor((Class<?>) EasyMock.isNull(), EasyMock.eq("comment"), EasyMock.anyObject(StringTrimmerEditor.class));
 		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 		
 		EasyMock.replay(binderMock);

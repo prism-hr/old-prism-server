@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -114,7 +115,7 @@ public class GenericCommentControllerTest {
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("5");
     }
-    
+
     @Test
     public void shouldNotThrowResourceNotFoundExceptionIfCurrentUserIsRefereeAndSuperAdministrator() {
         Program program = new ProgramBuilder().id(7).build();
@@ -174,8 +175,8 @@ public class GenericCommentControllerTest {
         RegisteredUser currentUser = new RegisteredUserBuilder().id(8).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
-        controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock,
-                genericCommentValidatorMock, documentPropertyEditorMock) {
+        controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
+                documentPropertyEditorMock) {
 
             @Override
             public ApplicationForm getApplicationForm(String id) {
@@ -195,9 +196,13 @@ public class GenericCommentControllerTest {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
         binderMock.setValidator(genericCommentValidatorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
+
+        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.eq("comment"), EasyMock.isA(StringTrimmerEditor.class));
+
         EasyMock.replay(binderMock);
         controller.registerBinders(binderMock);
         EasyMock.verify(binderMock);
+
     }
 
     @Test
@@ -210,9 +215,7 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldSaveCommentAndRedirectBackToPageIfNoErrors() {
-        Comment comment = new CommentBuilder().id(1)
-                .application(new ApplicationFormBuilder().id(6).applicationNumber("ABC").build())
-                .build();
+        Comment comment = new CommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).applicationNumber("ABC").build()).build();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
         commentServiceMock.save(comment);
@@ -228,8 +231,8 @@ public class GenericCommentControllerTest {
         genericCommentValidatorMock = EasyMock.createMock(GenericCommentValidator.class);
         commentServiceMock = EasyMock.createMock(CommentService.class);
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
-        controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock,
-                genericCommentValidatorMock, documentPropertyEditorMock);
+        controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
+                documentPropertyEditorMock);
 
     }
 }

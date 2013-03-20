@@ -69,7 +69,7 @@
 		            <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
 		            <div class="control-group">
 		                <label class="control-label" for="firstName">First Name <em>*</em></label>
-		                <span class="hint" data-desc="Please enter your First Name"></span>
+		                <span class="hint" data-desc="Please enter your first name."></span>
 		                <div class="controls">
 			            <input id="firstName" type="text" name="firstName" value='${(pendingUser.firstName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 			            <@spring.bind "pendingUser.firstName" /> 
@@ -83,7 +83,7 @@
 
 		            <div class="control-group">
 		                <label class="control-label" for="lastName">Last Name <em>*</em></label>
-		                <span class="hint" data-desc="Please enter your Last Name"></span>
+		                <span class="hint" data-desc="Please enter your last name."></span>
 		                <div class="controls">
 			            <input id="lastName" type="text" name="lastName" value='${(pendingUser.lastName?html)!""}' <#if RequestParameters.activationCode?has_content>disabled="disabled"</#if> />
 	                    <@spring.bind "pendingUser.lastName" /> 
@@ -95,7 +95,7 @@
 					
 					<div class="control-group">
 		                <label class="control-label" for="email">Email <em>*</em></label>
-		                <span class="hint" data-desc="Please enter your Email Address"></span>
+		                <span class="hint" data-desc="Please enter your email address."></span>
 		                <div class="controls">
 			            <#if RequestParameters.activationCode?has_content>
 			            <div id="email_tooltip_input" name="email_tooltip_input" data-desc="<@spring.message 'registration.email'/>" style="cursor: pointer;">
@@ -113,7 +113,7 @@
 					
 					<div class="control-group">
 		                <label class="control-label" for="password">Password <em>*</em></label>
-		                <span class="hint" data-desc="Please enter a password with a minimum of 8 characters"></span>
+		                <span class="hint" data-desc="Please enter a password with a minimum of 8 characters."></span>
 		                <div class="controls">
 			            <input id="password" type="password" name="password" placeholder="Password"/>
 	                    <@spring.bind "pendingUser.password" /> 
@@ -123,8 +123,8 @@
 	                	</div>
 	                </div>
 	                <div class="control-group">
-	                	<label class="control-label" for="password"> </label>
-	                	<span class="hint" data-desc="Please confirm your Password"></span>
+	                	<label class="control-label" for="password">Confirm <em>*</em></label>
+	                	<span class="hint" data-desc="Please confirm your Password."></span>
 			            <div class="controls">
 			            <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm password"/>
 	                    <@spring.bind "pendingUser.confirmPassword" /> 

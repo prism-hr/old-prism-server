@@ -61,14 +61,10 @@
               <div id="legend">
                 <legend class="">Login</legend>
               </div>
-              <#if RequestParameters.login_error??>
-              <div class="alert alert-error">
-                <i class="icon-warning-sign"></i> Incorrect Username or Password!
-              </div>
-              </#if>
+             
               <div class="control-group">
-                <label class="control-label" for="inputEmail">Email</label>
-                <span class="hint" data-desc="Please enter your e-mail address"></span>
+                <label class="control-label" for="inputEmail">Email <em>*</em></label>
+                <span class="hint" data-desc="Please enter your e-mail address."></span>
                 <div class="controls">
                   <#if Session.loginUserEmail?has_content>
                     <input type="text" id="username_or_email" name="username_or_email" value="${Session.loginUserEmail}" disabled="disabled" />
@@ -79,10 +75,15 @@
                 </div>
               </div>
               <div class="control-group">
-                <label class="control-label" for="password">Password</label>
-                <span class="hint" data-desc="Please enter your password"></span>
+                <label class="control-label" for="password">Password <em>*</em></label>
+                <span class="hint" data-desc="Please enter your password."></span>
                 <div class="controls">
                  <input type="password" id="password" name="j_password" placeholder="Password"/>
+                  <#if RequestParameters.login_error??>
+              <div class="alert alert-error">
+                <i class="icon-warning-sign"></i> Incorrect Username or Password!
+              </div>
+              </#if>
                 </div>
               </div>
               <div class="control-group">

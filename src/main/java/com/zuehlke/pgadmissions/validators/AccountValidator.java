@@ -75,9 +75,13 @@ public class AccountValidator extends AbstractValidator {
             errors.rejectValue("newPassword", "user.password.large");
         }
 
-        RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
-        if (userWithSameEmail != null && !userWithSameEmail.getId().equals(existingUser.getId())) {
-            errors.rejectValue("email", "user.email.alreadyexists");
+        if(StringUtils.isBlank(updatedUser.getEmail())){
+            errors.rejectValue("email", EMPTY_FIELD_ERROR_MESSAGE);
+        } else {
+            RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
+            if (userWithSameEmail != null && !userWithSameEmail.getId().equals(existingUser.getId())) {
+                errors.rejectValue("email", "user.email.alreadyexists");
+            }
         }
     }  
 

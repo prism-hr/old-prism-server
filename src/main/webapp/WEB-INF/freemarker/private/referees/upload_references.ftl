@@ -72,7 +72,7 @@
 												<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>
 												<span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
 												<div class="field">		            				
-													<textarea maxlength="2000" name="comment" id="comment" class="max" rows="6" cols="80" >${(comment.comment?html)!}</textarea>
+													<textarea  name="comment" id="comment" class="max" rows="6" cols="80" >${(comment.comment?html)!}</textarea>
 													<@spring.bind "comment.comment" /> 
 													<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 												</div>

@@ -3,7 +3,7 @@
         <span class="plain-label">Comment<em>*</em></span>
         <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
         <div class="field">
-            <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80" maxlength="2000">${(referee.reference.comment?html)!}</textarea>
+            <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80" >${(referee.reference.comment?html)!}</textarea>
         </div>
     </div>
     

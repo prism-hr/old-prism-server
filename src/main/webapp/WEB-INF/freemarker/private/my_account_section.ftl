@@ -5,9 +5,11 @@
         <form autocomplete="off">
 
             <#if RequestParameters.messageCode??>
-            <div class="section-info-bar"><@spring.message '${RequestParameters.messageCode}'/></div>
+            <div class="alert alert-info">
+                <i class="icon-info-sign"></i> <@spring.message '${RequestParameters.messageCode}'/></div>
             <#else>
-            <div class="section-info-bar">Edit your account details.</div>
+            <div class="alert alert-info">
+                <i class="icon-info-sign"></i> Edit your account details.</div>
             </#if>
 
             <div class="row-group">

@@ -66,6 +66,7 @@ public class StateTransitionController {
     public void registerBinders(WebDataBinder binder) {
         binder.setValidator(stateChangeValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
+        binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }
 

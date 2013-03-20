@@ -653,20 +653,13 @@ public class ApprovalControllerTest {
     @Test
     public void shouldRegisterPropertyEditors() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+
         binderMock.setValidator(refereesAdminEditDTOValidatorMock);
-        EasyMock.expectLastCall();
-
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-        EasyMock.expectLastCall();
-
         binderMock.registerCustomEditor(Country.class, countryPropertyEditorMock);
-        EasyMock.expectLastCall();
-
+        binderMock.registerCustomEditor((Class<?>) EasyMock.isNull(), EasyMock.eq("comment"), EasyMock.isA(StringTrimmerEditor.class));
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
-        EasyMock.expectLastCall();
-
         binderMock.registerCustomEditor(EasyMock.eq(String[].class), EasyMock.anyObject(StringArrayPropertyEditor.class));
-        EasyMock.expectLastCall();
 
         EasyMock.replay(binderMock);
         controller.registerPropertyEditors(binderMock);

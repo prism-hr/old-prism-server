@@ -25,7 +25,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${requester.firstName?html} ${requester.lastName?html} is unable to complete their approval of ${application.applicant.firstName?html} ${application.applicant.lastName?html} Application ${application.applicationNumber} for UCL <#if application.researchHomePage??><a href="${application.researchHomePage}">${application.program.title}</a><#else>${application.program.title}</#if>.</font>
 			      	</p>
 			      	 <p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The following reason was given: ${comment.comment?html}</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The following reason was given: ${comment.comment?html?replace("\n", "<br>")}</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2"><b>You must restart the approval stage for the application to progress.</b></font>

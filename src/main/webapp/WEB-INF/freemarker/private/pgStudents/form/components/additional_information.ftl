@@ -64,9 +64,9 @@
 					<#if !applicationForm.isDecided()>
 					<textarea id="convictionsText" name="convictionsText" 
 					<#if additionalInformation.convictions?? && !additionalInformation.convictions> disabled="disabled"</#if>
-					class="max" rows="6" cols="80"  maxlength="2000"  >${(additionalInformation.convictionsText?html)!}</textarea>
+					class="max" rows="6" cols="80"    >${(additionalInformation.convictionsText?html)!}</textarea>
 					<#else>
-					<textarea readonly id="convictionsText" name="convictionsText" class="max" rows="10" cols=80" maxlength="2000"  >${(additionalInformation.convictionsText?html)!}</textarea>
+					<textarea readonly id="convictionsText" name="convictionsText" class="max" rows="10" cols=80"   >${(additionalInformation.convictionsText?html)!}</textarea>
 					</#if>
 				</div>
 			</div>

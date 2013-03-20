@@ -254,7 +254,7 @@ function bindDatePicker(selector) {
 // ------------------------------------------------------------------------------
 // Restrict TEXTAREA fields to a certain number of characters.
 // ------------------------------------------------------------------------------
-function limitTextArea() {
+/*function limitTextArea() {
     $('textarea[maxlength]').keyup(function() {
         // get the limit from maxlength attribute
         var limit = parseInt($(this).attr('maxlength'));
@@ -276,25 +276,40 @@ function limitTextArea() {
             return false;
         }
     });
-}
+}*/
 // Textarea Counter
 function addCounter() {
 
     var $textArea = $("textarea[class='max']");
+    var maxlength = 2000;
     $.each($textArea, function() {
+        
+
         // Create the span with all the content and characters left
-        $(this).after('<span class="badge count">' + ( parseInt($(this).attr('maxlength')) - $(this).val().length) + ' Characters left</span>');
+        $(this).after('<span class="badge count">' + ( maxlength - $(this).val().length) + ' Characters left</span>');
+
+         if ($(this).val().length > 1990) {
+            $(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
+            if ($(this).val().length > 2000) {
+                $(this).nextAll(".count").addClass('badge-important').removeClass('badge-warning');
+            }
+        }
 
         // Counting on keyup
         $(this).keyup(function count(){
-            // get the limit from maxlength attribute
-            var limit = parseInt($(this).attr('maxlength'));
+            
+            var counter = maxlength - $(this).val().length;
+            if  (counter <= 10) {
 
-            counter = limit - $(this).val().length;
-            if  (counter == 0) {
-                $(this).nextAll(".count").addClass('badge-warning');
-            } else {
-                $(this).nextAll(".count").removeClass('badge-warning');
+                if (counter < 1) {
+                    $(this).nextAll(".count").addClass('badge-important').removeClass('badge-warning');
+
+                } else {
+                    $(this).nextAll(".count").removeClass('badge-important').addClass('badge-warning');
+                }
+
+            }  else {
+                $(this).nextAll(".count").removeClass('badge-warning').removeClass('badge-important');
             }
             // Editing the count span
             $(this).nextAll(".count").html(counter  + ' Characters left' );

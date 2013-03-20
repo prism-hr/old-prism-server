@@ -8,7 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Chunk;
@@ -43,7 +44,7 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
-    private final Logger log = Logger.getLogger(PdfModelBuilder.class);
+    private final Logger log = LoggerFactory.getLogger(PdfModelBuilder.class);
     
     private boolean includeCriminialConvictions = false;
     

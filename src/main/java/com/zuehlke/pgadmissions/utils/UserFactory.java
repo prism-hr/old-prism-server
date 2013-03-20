@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.utils;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,7 @@ public class UserFactory {
     }
     
     public RegisteredUser createNewUserInRoles(String firstname, String lastname, String email, Authority... authorities) {
-        RegisteredUser user = buildRegisteredUser(firstname, lastname, email);
-        for (Authority authority : authorities) {
-            user.getRoles().add(roleService.getRoleByAuthority(authority));
-        }
-        return user;
+        return createNewUserInRoles(firstname, lastname, email, Arrays.asList(authorities));
     }
     
     private RegisteredUser buildRegisteredUser(final String firstname, final String lastname, final String email) {

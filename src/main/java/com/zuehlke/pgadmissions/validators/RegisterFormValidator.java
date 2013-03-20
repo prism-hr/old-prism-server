@@ -54,9 +54,14 @@ public class RegisterFormValidator extends AbstractValidator {
 		    errors.rejectValue("confirmPassword", "user.passwords.notmatch");
 		}
 		
-		RegisteredUser userWithSameEmail = userService.getUserByEmail(record.getEmail());
-		if (userWithSameEmail != null && !userWithSameEmail.getId().equals(record.getId())) {
-		    errors.rejectValue("email", "user.email.alreadyexists");
+		if(StringUtils.isBlank(record.getEmail())){
+		    errors.rejectValue("email", EMPTY_FIELD_ERROR_MESSAGE);
+		} else {
+		    RegisteredUser userWithSameEmail = userService.getUserByEmail(record.getEmail());
+		    if (userWithSameEmail != null && !userWithSameEmail.getId().equals(record.getId())) {
+		        errors.rejectValue("email", "user.email.alreadyexists");
+		    }
 		}
+		
 	}
 }

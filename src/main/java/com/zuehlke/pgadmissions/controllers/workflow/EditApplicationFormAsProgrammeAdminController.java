@@ -104,6 +104,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         binder.setValidator(refereesAdminEditDTOValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
         binder.registerCustomEditor(Country.class, countryPropertyEditor);
+        binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
         binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
     }

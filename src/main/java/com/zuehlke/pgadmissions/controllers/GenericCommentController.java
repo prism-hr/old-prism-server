@@ -93,7 +93,7 @@ public class GenericCommentController {
 	@InitBinder(value = "comment")
 	public void registerBinders(WebDataBinder binder) {
 		binder.setValidator(genericCommentValidator);
-		binder.registerCustomEditor(String.class, "comment", new StringTrimmerEditor("\r", true));
+		binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
 		binder.registerCustomEditor(Document.class, documentPropertyEditor);
 
 	}

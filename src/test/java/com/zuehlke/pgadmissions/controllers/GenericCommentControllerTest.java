@@ -196,8 +196,7 @@ public class GenericCommentControllerTest {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
         binderMock.setValidator(genericCommentValidatorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-
-        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.eq("comment"), EasyMock.isA(StringTrimmerEditor.class));
+        binderMock.registerCustomEditor((Class<?>) EasyMock.isNull(), EasyMock.eq("comment"), EasyMock.isA(StringTrimmerEditor.class));
 
         EasyMock.replay(binderMock);
         controller.registerBinders(binderMock);

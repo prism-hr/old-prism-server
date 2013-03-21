@@ -134,10 +134,37 @@
                 <div class="alert alert-info">
                 <i class="icon-info-sign"></i> Link <span style="text-decoration: underline">${user.email!}</span> to another account that you own.</div>
             </#if>
-
-            <div class="row-group">
+            <#if user.allLinkedAccounts?has_content>
+                <div class="row-group">
+                    <div class="field">                 
+                        <table id="linkedAccountsTable" class="data-table">
+                            <colgroup>
+                                <col />
+                                <col style="width: 60px;" />
+                            </colgroup>
+                            <tbody>
+                                <#list user.allLinkedAccounts as linkedAccount>
+                                <tr>
+                                    <td>${linkedAccount.email?html}</td>
+                                    <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>
+                                </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </#if>
+             <div class="row-group">
+                <h3 >Link new account</h3>
                 <div class="row">
-                    <label class="plain-label" for="linkCurrentPassword">Current Password<em>*</em></label> 
+                    <label class="plain-label" for="linkCurrentPassword">Account 1 Email </label> 
+                    <div class="field">
+                        <input class="full" disabled type="text" value="${user.email!}" />
+                    </div>
+                </div>
+                <div class="row">
+                    
+                    <label class="plain-label" for="linkCurrentPassword">Account 1 Password<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.currentPw' />"></span>
                     <div class="field">
                         <input class="full" id="linkCurrentPassword" type="password" value="${switchAndLinkUserAccountDTO.currentPassword!}" />
@@ -149,37 +176,9 @@
                         </#list>
                     </div>
                 </div>
-
-            </div>
-
-            <div class="row-group">
                 <div class="row">
-                    <h3 >Linked Accounts</h3>
-                    <div class="row-group">
-                        <div class="field">
-                            <#if user.allLinkedAccounts?has_content>
-                                <table id="linkedAccountsTable" class="data-table">
-                                    <colgroup>
-                                        <col />
-                                        <col style="width: 60px;" />
-                                    </colgroup>
-                                    <tbody>
-                                        <#list user.allLinkedAccounts as linkedAccount>
-                                        <tr>
-                                            <td>${linkedAccount.email?html}</td>
-                                            <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>
-                                        </tr>
-                                        </#list>
-                                    </tbody>
-                                </table>
-                            </#if>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                     <h3 >Link new account</h3>
-                    <label class="plain-label" for="linkEmail">Email<em>*</em></label> 
+                     
+                    <label class="plain-label" for="linkEmail">Account 2 Email<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.email' />"></span>
                     <div class="field">
                         <input class="full" id="linkEmail" type="text" value="${switchAndLinkUserAccountDTO.email!}" />
@@ -191,9 +190,9 @@
                         </#list>
                     </div>
                 </div>
-
+                
                 <div class="row">
-                    <label class="plain-label" for="linkPassword">Password<em>*</em></label> 
+                    <label class="plain-label" for="linkPassword"> Account 2 Password<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.password' />"></span>
                     <div class="field">
                         <input class="full" id="linkPassword" type="password" value="${switchAndLinkUserAccountDTO.password!}" />

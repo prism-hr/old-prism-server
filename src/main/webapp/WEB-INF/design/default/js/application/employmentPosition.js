@@ -4,7 +4,7 @@ $(document).ready(function(){
 	var numberOfSavedPositions = 0;
 	
 	$("#acceptTermsEPValue").val("NO");
-	limitTextArea();
+	//limitTextArea();
 	showOrHideAdPosisionButtonOnly();
 	
 	// -------------------------------------------------------------------------------

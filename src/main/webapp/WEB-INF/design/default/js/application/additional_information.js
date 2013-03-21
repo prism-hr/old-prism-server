@@ -4,7 +4,7 @@ $(document).ready(function(){
 	
 	$("#acceptTermsAIDValue").val("NO");
 	
-	limitTextArea();
+	//limitTextArea();
 	
 	$("#convictionsText").attr("disabled", "disabled");
 	

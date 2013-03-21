@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +12,14 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -25,6 +29,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
+import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -38,20 +43,22 @@ public class ConfigurationController {
 	private final PersonPropertyEditor registryPropertyEditor;
 	private final UserService userService;
 	private final ConfigurationService configurationService;
+	private final ThrottleService throttleService;
 
 	ConfigurationController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor, PersonPropertyEditor registryPropertyEditor,
-			UserService userService, ConfigurationService configurationService) {
+			UserService userService, ConfigurationService configurationService, ThrottleService throttleService) {
 
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
 
 		this.registryPropertyEditor = registryPropertyEditor;
 		this.userService = userService;
 		this.configurationService = configurationService;
+		this.throttleService = throttleService;
 	}
 
 	@InitBinder(value = "stageDurationDTO")
@@ -72,6 +79,7 @@ public class ConfigurationController {
 
 		return CONFIGURATION_VIEW_NAME;
 	}
+	
 	@RequestMapping(method = RequestMethod.GET, value="config_section")
 	public String getConfigurationSection() {		
 		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)  ) {
@@ -80,7 +88,6 @@ public class ConfigurationController {
 
 		return CONFIGURATION_SECTION_NAME;
 	}
-
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@ModelAttribute StageDurationDTO stageDurationDto, @ModelAttribute RegistryUserDTO registryUserDTO, @ModelAttribute ReminderInterval reminderInterval) {
@@ -89,7 +96,37 @@ public class ConfigurationController {
 		}
 		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval);
 		return "redirect:/configuration/config_section";
-
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/getThrottle")
+	@ResponseBody
+	public Map<String, Object> getThrottle() {
+		Throttle throttle = throttleService.getThrottle();
+		if (throttle==null) {
+			return Collections.emptyMap();
+		}
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("throttleId", throttle.getId());
+		result.put("enabled", throttle.getEnabled());
+		result.put("batchSize", throttle.getBatchSize());
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
+	@ResponseBody
+	public Map<String, String> updateThrottle(@RequestParam Integer id, @RequestParam Boolean enabled, @RequestParam String batchSize) {
+		Throttle throttle = new Throttle();
+		throttle.setEnabled(enabled);
+		try {
+			throttle.setBatchSize(Integer.parseInt(batchSize));
+		}
+		catch (NumberFormatException nfe) {
+			return Collections.singletonMap("error", "The throttling batch size must be a number");
+		}
+		throttle.setId(id);
+		throttleService.updateThrottle(throttle);
+		return Collections.emptyMap();
 	}
 	
 	@ModelAttribute("stages")
@@ -126,7 +163,4 @@ public class ConfigurationController {
 	public DurationUnitEnum[] getUnits() {
 		return DurationUnitEnum.values();
 	}
-
-	
-
 }

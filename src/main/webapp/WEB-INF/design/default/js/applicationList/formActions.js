@@ -100,7 +100,7 @@ $(document).ready(function() {
 //        }
 //    });
     
-    $("td#loadMoreApplications").live('click', function() {
+    $("#loadMoreApplications").live('click', function() {
         if (loading) {
           return;
         }

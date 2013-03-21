@@ -106,20 +106,20 @@
                                     	</option>
                                     </#list>
                                 </select>
-                                <button class="blue" type="button" id="search-go">Go</button>
-                                <button type="button" id="search-reset">Clear</button>
+                                <button class="btn btn-primary" type="button" id="search-go">Go</button>
+                                <button class="btn" type="button" id="search-reset">Clear</button>
                             </div>
 
                         </div>
 
-                        <table class="data" border="0">
+                        <table class="data table table-striped table-condensed table-bordered table-hover" id="appliList" border="0">
                             <colgroup>
                                 <col style="width: 46px" />
                                 <col style="width: 20%" />
                                 <col />
-                                <col style="width: 66px;" />
-                                <col />
-                                <col style="width: 90px" />
+                                <col style="width: 60px;" />
+                                <col style="width: 130px;" />
+                                <col style="width: 80px" />
                             </colgroup>
                             <thead>
                                 <tr>
@@ -139,11 +139,9 @@
                             </tbody>
                         </table>
                         
-                        <table id="loadMoreApplicationsTable" class="data" border="0">
-                            <tr>
-                                <td id="loadMoreApplications" align="center" style="cursor:pointer; background:#FFFFFF; border:1px solid #AAAAAA;height:25px;"><a class="proceed-link" href="javascript:void(0);">Display next 50 Applications</a></td>                                             
-                            </tr>
-                        </table>
+                        <div id="loadMoreApplicationsTable" border="0">
+                            <a id="loadMoreApplications" class="proceed-link btn btn-large btn-block" href="javascript:void(0);">Display next 50 Applications</a>
+                        </div>
 
                     </div>
                     <!-- .content-box-inner -->

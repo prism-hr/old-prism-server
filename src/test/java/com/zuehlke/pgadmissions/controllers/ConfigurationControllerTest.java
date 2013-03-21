@@ -5,6 +5,7 @@ import static junit.framework.Assert.assertNotNull;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertArrayEquals;
@@ -27,11 +28,13 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ThrottleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -43,6 +46,7 @@ import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
+import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class ConfigurationControllerTest {
@@ -59,6 +63,8 @@ public class ConfigurationControllerTest {
 	private UserService userServiceMock;
 	
 	private EmailTemplateService emailTemplateServiceMock;
+	
+	private ThrottleService throttleserviceMock;
 
 	private ConfigurationService configurationServiceMock;
 
@@ -345,6 +351,58 @@ public class ConfigurationControllerTest {
 		EasyMock.verify(configurationServiceMock);
 
 	}
+	
+	@Test
+	public void shouldGetThrottleAndSetProperties() {
+		Throttle throttle = new ThrottleBuilder().id(12).enabled(true).batchSize(40).build();
+		expect(throttleserviceMock.getThrottle()).andReturn(throttle);
+		replay(throttleserviceMock);
+		
+		Map<String, Object> result = controller.getThrottle();
+		
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals(12, result.get("throttleId"));
+		assertEquals(true, result.get("enabled"));
+		assertEquals(40, result.get("batchSize"));
+		verify(throttleserviceMock);
+	}
+	
+	@Test
+	public void shouldGetNoThrottleAndSetNoProperties() {
+		expect(throttleserviceMock.getThrottle()).andReturn(null);
+		replay(throttleserviceMock);
+		
+		Map<String, Object> result = controller.getThrottle();
+		
+		assertNotNull(result);
+		assertTrue(result.isEmpty());
+		verify(throttleserviceMock);
+	}
+	
+	@Test
+	public void shouldUpdateThrottle() {
+		throttleserviceMock.updateThrottle(isA(Throttle.class));
+		replay(throttleserviceMock);
+		
+		Map<String, String> result = controller.updateThrottle(15, false, "15");
+		
+		assertNotNull(result);
+		assertTrue(result.isEmpty());
+	}
+	
+	@Test
+	public void shouldNotUpdateThrottleAndReturnErrorMessage() {
+		String errorMessage = "The throttling batch size must be a number";
+		throttleserviceMock.updateThrottle(isA(Throttle.class));
+		replay(throttleserviceMock);
+		
+		Map<String, String> result = controller.updateThrottle(15, false, "15khg");
+		
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		assertEquals(errorMessage, result.get("error"));
+	}
 
 	
 
@@ -364,9 +422,10 @@ public class ConfigurationControllerTest {
 		registryPropertyEditorMock = EasyMock.createMock(PersonPropertyEditor.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		emailTemplateServiceMock = createMock(EmailTemplateService.class);
-		configurationServiceMock = EasyMock.createMock(ConfigurationService.class);
+		throttleserviceMock = createMock(ThrottleService.class);
+		configurationServiceMock = createMock(ConfigurationService.class);
 
-		controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock, userServiceMock, configurationServiceMock, emailTemplateServiceMock);
+		controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock, userServiceMock, configurationServiceMock, emailTemplateServiceMock, throttleserviceMock);
 
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
 				.role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();

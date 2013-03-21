@@ -33,6 +33,7 @@
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/configuration.js' />"></script> 
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge.js'/>"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/templateEdit/actions.js'/>"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/serviceThrottling/actions.js'/>"></script>
 	    
 	    <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
@@ -119,6 +120,36 @@
 										<button class="btn btn-danger" type="button" id="delete-go">Delete Draft</button>
 										<button class="btn" type="button" id="save-go">Save As Draft</button>
 										<button class="btn btn-primary" type="button" id="enable-go">Save as Default</button>
+										</div>
+									</div>
+									</section>
+								</div>
+								
+								<div id="edit-throttle-section">
+									<section class="form-rows">
+										<h2>Web Service throttling</h2>
+									
+									<div>
+									<div class="alert alert-info">
+										<i class="icon-info-sign"></i> 
+										Web Service throttling
+									</div>
+
+										<div class="row-group">
+											<div class="row">
+												<label class="plain-label" for="throttoleSwitchOnId">Web Service throttling</label> 
+													<input id="throttoleSwitchOnId" type="radio" name="switch" value="on" > On </input>
+													<input type="radio" name="switch" value="off" > Off </input>
+							             	</div>
+											<div class="row">
+												<label class="plain-label" for="batchSizeId">Throttling batch size</label> 
+												<input type="text" id="batchSizeId" />
+							             	</div>
+							             	<div class = "field"><input type="hidden" id="throttleId"/> </div>
+						             	</div>
+						            	</div>
+										<div class="buttons">
+										<button class="btn btn-primary" type="button" id="apply-throttle-go">Apply changes</button>
 										</div>
 									</div>
 									</section>

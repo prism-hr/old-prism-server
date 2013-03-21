@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
+import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -52,14 +54,15 @@ public class ConfigurationController {
 	private final UserService userService;
 	private final ConfigurationService configurationService;
 	private final EmailTemplateService templateService;
+	private final ThrottleService throttleService;
 
 	ConfigurationController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor, PersonPropertyEditor registryPropertyEditor,
-			UserService userService, ConfigurationService configurationService, EmailTemplateService templateService) {
+			UserService userService, ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService) {
 
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
 
@@ -67,6 +70,7 @@ public class ConfigurationController {
 		this.userService = userService;
 		this.configurationService = configurationService;
 		this.templateService = templateService;
+		this.throttleService = throttleService;
 	}
 
 	@InitBinder(value = "stageDurationDTO")
@@ -116,6 +120,36 @@ public class ConfigurationController {
 		result.put("content", template.getContent());
 		result.put("version", template.getVersion());
 		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/getThrottle")
+	@ResponseBody
+	public Map<String, Object> getThrottle() {
+		Throttle throttle = throttleService.getThrottle();
+		if (throttle==null) {
+			return Collections.emptyMap();
+		}
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("throttleId", throttle.getId());
+		result.put("enabled", throttle.getEnabled());
+		result.put("batchSize", throttle.getBatchSize());
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
+	@ResponseBody
+	public Map<String, String> updateThrottle(@RequestParam Integer id, @RequestParam Boolean enabled, @RequestParam String batchSize) {
+		Throttle throttle = new Throttle();
+		throttle.setEnabled(enabled);
+		try {
+			throttle.setBatchSize(Integer.parseInt(batchSize));
+		}
+		catch (NumberFormatException nfe) {
+			return Collections.singletonMap("error", "The throttling batch size must be a number");
+		}
+		throttle.setId(id);
+		throttleService.updateThrottle(throttle);
+		return Collections.emptyMap();
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{templateName:[a-zA-Z_]+}")

@@ -127,7 +127,7 @@ public class UserService {
 		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		addOrRemoveFromProgramsOfWhichSupervisorIfRequired(selectedUser, selectedProgram, newAuthorities);
-		addToProgramsOfWhichViewerIfRequired(selectedUser, selectedProgram, newAuthorities);
+		addToProgramsOfWhichViewerIfRequired(selectedUser, selectedProgram);
 		
 		userDAO.save(selectedUser);
 	}
@@ -142,7 +142,7 @@ public class UserService {
 	    userDAO.save(selectedUser);
 	}
 
-	private void addToProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+	private void addToProgramsOfWhichViewerIfRequired(RegisteredUser selectedUser, Program selectedProgram) {
 	    if (!selectedUser.getProgramsOfWhichViewer().contains(selectedProgram)) {
 	        selectedUser.getProgramsOfWhichViewer().add(selectedProgram);
 	    }

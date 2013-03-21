@@ -132,13 +132,9 @@
 										<label for="roles" class="plain-label">Roles<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.roles'/>"></span>
 										<div class="field">
-											<select multiple size="6" id="roles" name="selectedAuthorities" class="max">
+											<select multiple size="5" id="roles" name="selectedAuthorities" class="max">
 												<#list authorities as authority>
-													<#if authority == 'VIEWER'>
-														<option value="${authority}" selected="selected">${authority?capitalize}</option>
-													<#else>
-														<option value="${authority}" <#if userDTO.isInAuthority(authority)>selected="selected"</#if>>${authority?capitalize}</option>
-													</#if>
+													<option value="${authority}" <#if userDTO.isInAuthority(authority)>selected="selected"</#if>>${authority?capitalize}</option>
 												</#list>
 											</select>
 											<@spring.bind "userDTO.selectedAuthorities" /> 

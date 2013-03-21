@@ -174,7 +174,7 @@ $(document).ready(function() {
         _create: function() {
             var self = this;
 
-            $.ui.selectable.prototype._create.call(this);
+            $.ui.selectable.prototype._create.call(this); 
 
             $(this.element).on('selectableselecting', function(event, ui){
                 self.currentIndex = $(ui.selecting.tagName, event.target).index(ui.selecting);

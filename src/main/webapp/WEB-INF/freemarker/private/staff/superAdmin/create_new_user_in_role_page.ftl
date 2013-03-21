@@ -56,14 +56,15 @@
 								<!-- Table of users. -->
 								<div id="existingUsers" class="tableContainer"></div>
 								
-								<div class="section-info-bar">
-									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>">manage superadministrators.</a></#if>
+								<div class="alert alert-info">
+									<i class="icon-info-sign"></i> 
+									Manage programme roles.<#if user.isInRole('SUPERADMINISTRATOR')> You can also <a class="proceed-link" href="<@spring.url '/manageUsers/superadmins'/>"><strong>manage superadministrators.</strong></a></#if>
 								</div>
 	
 								<div class="row-group">
 								
 									<div class="row programme">
-										<span class="plain-label">Programme<em>*</em></span>
+										<label for="programs" class="plain-label">Programme<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.programme'/>"></span>
 										<div class="field">
 											<select class="max" name="selectedProgram" id="programs">
@@ -89,7 +90,7 @@
 									<h3><#if userDTO.newUser>Add New User<#else>Edit User Roles</#if></h3>
 									
 									<div class="row">
-										<span class="plain-label<#if !userDTO.newUser> grey-label</#if>">First Name<em>*</em></span>
+										<label for="firstName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">First Name<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			    
@@ -102,7 +103,7 @@
 									</div>
 			
 									<div class="row">
-										<span class="plain-label<#if !userDTO.newUser> grey-label</#if>">Last Name<em>*</em></span>
+										<label for="lastName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Last Name<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.lastName?html)!}"  name="lastName" id="lastName"  <#if !userDTO.newUser>disabled="disabled"</#if>/>

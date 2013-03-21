@@ -117,8 +117,8 @@
 										</div>
 										<div class="buttons">
 										<button class="btn btn-danger" type="button" id="delete-go">Delete Draft</button>
-										<button class="btn" type="button" id="save-go">Save as Draf</button>
-										<button class="btn btn-primary" type="button" id="enable-go">Enable</button>
+										<button class="btn" type="button" id="save-go">Save As Draft</button>
+										<button class="btn btn-primary" type="button" id="enable-go">Save as Default</button>
 										</div>
 									</div>
 									</section>

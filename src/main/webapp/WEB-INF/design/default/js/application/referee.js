@@ -5,7 +5,7 @@ $(document).ready(function()
 	
 	$("#acceptTermsRDValue").val("NO");
 	
-	limitTextArea();
+	//limitTextArea();
 	
 	// -------------------------------------------------------------------------------
 	// Close button.

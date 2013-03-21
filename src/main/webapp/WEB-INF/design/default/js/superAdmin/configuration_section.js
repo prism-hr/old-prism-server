@@ -31,17 +31,17 @@ $(document).ready(function()
 		// Validation on any entered details.
 		if (!validateEmail($('#reg-email').val()))
 		{
-			$('#reg-email').after('<span class="invalid">You must enter a valid email address.</span>');
+			$('#reg-email').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must enter a valid email address.</div>');
 			errors = true;
 		}
 		if ($('#reg-firstname').val() == "")
 		{
-			$('#reg-firstname').after('<span class="invalid">You must make an entry.</span>');
+			$('#reg-firstname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make an entry.</div>');
 			errors = true;
 		}
 		if ( $('#reg-lastname').val() == "")
 		{
-			$('#reg-lastname').after('<span class="invalid">You must make an entry.</span>');
+			$('#reg-lastname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make an entry.</div>');
 			errors = true;
 		}
 
@@ -172,25 +172,25 @@ function validateReminderInterval()
 	var reminderIntervalUnit = $('#reminderUnit').val();
 	if (isNaN(reminderIntervalDuration) || reminderIntervalDuration == "" || reminderIntervalDuration <= 0)
 	{
-		$("span[name='invalidDurationInterval']").html('You must enter a whole number greater that 0.');
-		$("span[name='invalidDurationInterval']").show();
+		$("#invalidDurationInterval span").html('You must enter a whole number greater that 0.');
+		$("#invalidDurationInterval").show();
 		validationErrors = true;
 	}
 	else
 	{
-		$("span[name='invalidDurationInterval']").html('');
-		$("span[name='invalidDurationInterval']").hide();
+	    $("#invalidDurationInterval span").html('');
+	    $("#invalidDurationInterval").hide();
 	}
 	if (reminderIntervalUnit == "" && !validationErrors)
 	{
-		$("span[name='invalidUnitInterval']").html('You must make a selection.');
-		$("span[name='invalidUnitInterval']").show();
+	    $("#invalidUnitInterval span").html('You must make a selection.');
+		$("#invalidUnitInterval").show();
 		validationErrors = true;
 	}
 	else
 	{
-		$("span[name='invalidUnitInterval']").html('');
-		$("span[name='invalidUnitInterval']").hide();
+	    $("#invalidUnitInterval span").html('');
+	    $("#invalidUnitInterval").hide();
 	}
 	return validationErrors;
 }
@@ -208,26 +208,26 @@ function appendStagesJSON()
 		var stageUnit = $('#'+ stageName + '_unit').val();
 		if (isNaN(stageDuration) || stageDuration == "" || stageDuration <= 0)
 		{
-			$("span[name='"+stageName+"_invalidDuration']").html('You must enter a whole number greater that 0.');
-			$("span[name='"+stageName+"_invalidDuration']").show();
+			$("#"+stageName+"_invalidDuration span").html('You must enter a whole number greater that 0.');
+			$("#"+stageName+"_invalidDuration").show();
 			isStageDurationError = true;
 			validationErrors = true;
 		}
 		else
 		{
-			$("span[name='"+stageName+"_invalidDuration']").html('');
-			$("span[name='"+stageName+"_invalidDuration']").hide();
+		    $("#"+stageName+"_invalidDuration span").html('');
+		    $("#"+stageName+"_invalidDuration").hide();
 		}
 		if (stageUnit == "" &&  !isStageDurationError)
 		{
-			$("span[name='"+stageName+"_invalidUnit']").html('You must make a selection.');
-			$("span[name='"+stageName+"_invalidUnit']").show();
+		    $("#"+stageName+"_invalidUnit span").html('You must make a selection.');
+			$("#"+stageName+"_invalidUnit").show();
 			validationErrors = true;
 		}
 		else
 		{
-			$("span[name='"+stageName+"_invalidUnit']").html('');
-			$("span[name='"+stageName+"_invalidUnit']").hide();
+		    $("#"+stageName+"_invalidUnit span").html('');
+		    $("#"+stageName+"_invalidUnit").hide();
 		}
 		$("#stagesDuration").append('<input type="hidden" name="stagesDuration" id= "stagesDuration"  value=' +"'" + '{"stage":"' +  stageName+ '","duration":"' + stageDuration + '","unit":"' + stageUnit + '"} ' + "'" + "/>");
 	}

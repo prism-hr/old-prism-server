@@ -29,7 +29,7 @@ $(document).ready(function(){
 	});
 	
 	$("#acceptTermsFDValue").val("NO");
-	limitTextArea();
+	//limitTextArea();
 	
 
 	// -------------------------------------------------------------------------------

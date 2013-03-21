@@ -14,110 +14,110 @@
 
             <div class="row-group">
                 <div class="row">
-                    <span id="firstName-lbl" class="plain-label">First Names<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
+                    <label id="firstName-lbl" class="plain-label" for="firstName">First Names<em>*</em></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
                     <div class="field">
                         <input class="full" type="text" id="firstName" value="${(updatedUser.firstName?html)!}" />
+                        <@spring.bind "updatedUser.firstName" /> <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                               <i class="icon-warning-sign"></i> ${error}
+                        </div>
+                        </#list>
                     </div>
-                    <@spring.bind "updatedUser.firstName" /> <#list spring.status.errorMessages as error>
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                    </#list>
                 </div>
                 
                 <div class="row">
-                    <span class="plain-label"></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
+                    <label class="plain-label" for="firstName2"></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
                     <div class="field">
                         <input class="full" type="text" id="firstName2" value="${(updatedUser.firstName2?html)!}" />
+                        <@spring.bind "updatedUser.firstName2" /> <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error}
+                            </div>
+                        </#list>
                     </div>
-                    <@spring.bind "updatedUser.firstName2" /> <#list spring.status.errorMessages as error>
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                    </#list>
                 </div>
                 
                 <div class="row">
-                    <span class="plain-label"></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
+                    <label class="plain-label" for="firstName3"></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
                     <div class="field">
                         <input class="full" type="text" id="firstName3" value="${(updatedUser.firstName3?html)!}" />
+                            <@spring.bind "updatedUser.firstName3" /> <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error}
+                            </div>
+                        </#list>
                     </div>
-                    <@spring.bind "updatedUser.firstName3" /> <#list spring.status.errorMessages as error>
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                    </#list>
                 </div>
 
                 <div class="row">
-                    <span id="lastName-lbl" class="plain-label">Last Name<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
+                    <label id="lastName-lbl" class="plain-label" for="lastName">Last Name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
                     <div class="field">
                         <input class="full" type="text" id="lastName" value="${(updatedUser.lastName?html)!}" />
+                        <@spring.bind "updatedUser.lastName" /> <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error}
+                            </div>
+                        </#list>
                     </div>
-                    <@spring.bind "updatedUser.lastName" /> <#list spring.status.errorMessages as error>
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                    </#list>
                 </div>
 
                 <div class="row">
-                    <span id="email-lbl" class="plain-label">Email<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.email'/>"></span>
+                    <label id="email-lbl" class="plain-label" for="email">Email<em>*</em></label> <span class="hint" data-desc="<@spring.message 'myaccount.email'/>"></span>
                     <div class="field">
-                        <input class="full" type="text" id="email" value="${updatedUser.email}" />
+                        <input class="full" type="text" id="email" value="${(updatedUser.email?html)!}" />
+                        <@spring.bind "updatedUser.email" /> <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error}
+                             </div>
+                        </#list>
                     </div>
-                    <@spring.bind "updatedUser.email" /> <#list spring.status.errorMessages as error>
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                    </#list>
                 </div>
             </div>
 
             <div class="row-group">
                 <h3>Change Password</h3>
                 <div class="row">
-                    <span class="plain-label">Current Password<em>*</em></span> 
+                    <label class="plain-label" for="currentPassword">Current Password<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.currentPw'/>"></span>
                     <div class="field">
                         <input class="full" id="currentPassword" type="password" />
+                            <@spring.bind "updatedUser.password" /> <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error}
+                            </div>
+                        </#list>
                     </div>
-                    <@spring.bind "updatedUser.password" /> <#list spring.status.errorMessages as error>
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                    </#list>
                 </div>
 
                 <div class="row">
-                    <span class="plain-label">New Password<em>*</em></span> 
+                    <label class="plain-label" for="newPassword">New Password<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.newPw'/>"></span>
                     <div class="field">
                         <input class="full" id="newPassword" type="password" />
+                        <@spring.bind "updatedUser.newPassword" /> <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error}
+                            </div>
+                        </#list>
                     </div>
-                    <@spring.bind "updatedUser.newPassword" /> <#list spring.status.errorMessages as error>
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                    </#list>
                 </div>
 
                 <div class="row">
-                    <span class="plain-label">Re-enter new Password<em>*</em></span> 
+                    <label class="plain-label" for="confirmNewPass">Re-enter new Password<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.confirmPw'/>"></span>
                     <div class="field">
                         <input class="full" id="confirmNewPass" type="password" />
+                        <@spring.bind "updatedUser.confirmPassword" /> <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error}
+                            </div>
+                        </#list>
                     </div>
-                    <@spring.bind "updatedUser.confirmPassword" /> <#list spring.status.errorMessages as error>
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                    </#list>
                 </div>
             </div>
             <!-- .row-group -->
             <div class="buttons">
-                <button class="blue" id="saveChanges" type="button">Submit</button>
+                <button class="btn btn-primary" id="saveChanges" type="button">Submit</button>
             </div>
         </form>
     </div>
@@ -125,83 +125,91 @@
 
 <section id="linkAcountDetailsSection" class="form-rows">
     <h2 class="no-arrow">Linked Accounts</h2>
-    <div id="linkAccountsSection">             
+    <div id="linkAccountsSection">   
+        <form>          
             <#if RequestParameters.messageCodeLink??>
-                <div class="section-info-bar"><@spring.message '${RequestParameters.messageCodeLink}'/></div>
+                <div class="alert alert-info">
+                <i class="icon-info-sign"></i> <@spring.message '${RequestParameters.messageCodeLink}'/></div>
             <#else>
-                <div class="section-info-bar">Link <span style="text-decoration: underline">${user.email!}</span> to another account that you own.</div>
+                <div class="alert alert-info">
+                <i class="icon-info-sign"></i> Link <span style="text-decoration: underline">${user.email!}</span> to another account that you own.</div>
             </#if>
 
             <div class="row-group">
                 <div class="row">
-                    <span class="plain-label">Password<em>*</em></span> 
+                    <label class="plain-label" for="linkCurrentPassword">Current Password<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.currentPw' />"></span>
                     <div class="field">
                         <input class="full" id="linkCurrentPassword" type="password" value="${switchAndLinkUserAccountDTO.currentPassword!}" />
+                        <@spring.bind "switchAndLinkUserAccountDTO.currentPassword" /> 
+                            <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error}
+                            </div>
+                        </#list>
                     </div>
                 </div>
-                <@spring.bind "switchAndLinkUserAccountDTO.currentPassword" /> 
-                <#list spring.status.errorMessages as error>
-                <div class="field">
-                    <span class="invalid">${error}</span>
-                </div>
-                </#list>
+
             </div>
 
             <div class="row-group">
                 <div class="row">
-                    <span class="group-heading-label">Account to be Linked</span>
-                    <div class="field">
-                        <#if user.allLinkedAccounts?has_content>
-                            <table id="linkedAccountsTable" class="data-table">
-                                <colgroup>
-                                    <col />
-                                    <col style="width: 60px;" />
-                                </colgroup>
-                                <tbody>
-                                    <#list user.allLinkedAccounts as linkedAccount>
-                                    <tr>
-                                        <td>${linkedAccount.email?html}</td>
-                                        <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>
-                                    </tr>
-                                    </#list>
-                                </tbody>
-                            </table>
-                        </#if>
+                    <h3 >Linked Accounts</h3>
+                    <div class="row-group">
+                        <div class="field">
+                            <#if user.allLinkedAccounts?has_content>
+                                <table id="linkedAccountsTable" class="data-table">
+                                    <colgroup>
+                                        <col />
+                                        <col style="width: 60px;" />
+                                    </colgroup>
+                                    <tbody>
+                                        <#list user.allLinkedAccounts as linkedAccount>
+                                        <tr>
+                                            <td>${linkedAccount.email?html}</td>
+                                            <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>
+                                        </tr>
+                                        </#list>
+                                    </tbody>
+                                </table>
+                            </#if>
+                        </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <span class="plain-label">Email<em>*</em></span> 
+                     <h3 >Link new account</h3>
+                    <label class="plain-label" for="linkEmail">Email<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.email' />"></span>
                     <div class="field">
                         <input class="full" id="linkEmail" type="text" value="${switchAndLinkUserAccountDTO.email!}" />
+                        <@spring.bind "switchAndLinkUserAccountDTO.email" /> 
+                        <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error}
+                            </div>
+                        </#list>
                     </div>
                 </div>
-                <@spring.bind "switchAndLinkUserAccountDTO.email" /> 
-                <#list spring.status.errorMessages as error>
-                <div class="field">
-                    <span class="invalid">${error}</span>
-                </div>
-                </#list>
 
                 <div class="row">
-                    <span class="plain-label">Password<em>*</em></span> 
+                    <label class="plain-label" for="linkPassword">Password<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.link.password' />"></span>
                     <div class="field">
                         <input class="full" id="linkPassword" type="password" value="${switchAndLinkUserAccountDTO.password!}" />
+                        <@spring.bind "switchAndLinkUserAccountDTO.password" /> 
+                        <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                            <i class="icon-warning-sign"></i> ${error}
+                        </div>
+                        </#list>
                     </div>
-                </div>
-                <@spring.bind "switchAndLinkUserAccountDTO.password" /> 
-                <#list spring.status.errorMessages as error>
-                <div class="field">
-                    <span class="invalid">${error}</span>
-                </div>
-                </#list>
+                </div>     
             </div>
             <div class="buttons">
-                <button class="blue" id="linkAccounts" type="button">Submit</button>
+                <button class="btn btn-primary" id="linkAccounts" type="button">Submit</button>
             </div>
+        </form>
     </div>
     <a href="#linkAcountDetailsSection"> </a>
 </section>

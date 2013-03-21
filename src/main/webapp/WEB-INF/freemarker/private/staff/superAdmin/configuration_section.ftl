@@ -20,7 +20,7 @@
 
 				<#list stages as stage>
 				<div class="row"> 
-					<span id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Stage Duration<em>*</em></span>
+					<label for="${stage}_duration" id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Stage Duration<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.validationDuration'/> ${stage.displayValue()} stage."></span>
 					<div class="field">	
 						<input type="hidden" id="stage" name="stage" value="${stage}" />
@@ -40,9 +40,14 @@
 										${unit.displayValue()}</option>
 								 </#if>              
 							</#list>
-						</select>	
-						<span class="invalid" name="${stage}_invalidDuration" style="display:none;"></span>
-						<span class="invalid" name="${stage}_invalidUnit" style="display:none;"></span>
+						</select>
+                        <div class="alert alert-error" id="${stage}_invalidDuration"  style="display:none;">
+                               <i class="icon-warning-sign"></i> <span></span>	
+                        </div>
+                        <div class="alert alert-error" id="${stage}_invalidUnit"  style="display:none;">
+                               <i class="icon-warning-sign"></i> <span></span>	
+                        </div>
+
 					</div>
 				</div>
 				</#list>
@@ -56,7 +61,7 @@
 				<h3>Task Notifications</h3>
 
 				<div class="row">
-					<span id="reminder-lbl" class="plain-label">Reminder Frequency<em>*</em></span>
+					<label for="reminderIntervalDuration" id="reminder-lbl" class="plain-label">Reminder Frequency<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
 					<div class="field">	
 						<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
@@ -70,7 +75,13 @@
 							</#if>>
 							${unit.displayValue()}</option>               
 						</#list>
-						</select>	
+						</select>
+						<div class="alert alert-error" id="invalidDurationInterval"  style="display:none;">
+                               <i class="icon-warning-sign"></i> <span></span>	
+                        </div>
+                        <div class="alert alert-error" id="invalidUnitInterval"  style="display:none;">
+                               <i class="icon-warning-sign"></i> <span></span>	
+                        </div>	
 						<span class="invalid" name="invalidDurationInterval" style="display:none;"></span>
 						<span class="invalid" name="invalidUnitInterval" style="display:none;"></span>
 					</div>
@@ -122,7 +133,7 @@
 				</div>
 				<!-- Entry form. -->
 				<div class="row">
-					<span class="plain-label">First Name<em>*</em></span>
+					<label for="reg-firstname" class="plain-label">First Name<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.firstName'/>"></span>
 					<div class="field">	
 						<input type="text" class="full" id="reg-firstname" name="regUserFirstname" />
@@ -130,7 +141,7 @@
 				</div><!-- .row -->
 				
 				<div class="row">
-					<span class="plain-label">Last Name<em>*</em></span>
+					<label for="reg-lastname" class="plain-label">Last Name<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.lastName'/>"></span>
 					<div class="field">	
 						<input type="text" class="full" id="reg-lastname" name="regUserLastname" />
@@ -138,7 +149,7 @@
 				</div><!-- .row -->
 				
 				<div class="row">
-					<span class="plain-label">Email Address<em>*</em></span>
+					<label for="reg-email" class="plain-label">Email Address<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.email'/>"></span>
 					<div class="field">	
 						<input type="text" class="full" id="reg-email" name="regUserEmail" />

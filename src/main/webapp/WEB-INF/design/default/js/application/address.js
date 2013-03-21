@@ -3,7 +3,7 @@ $(document).ready(function(){
 	var addrImgCount = 0; 
 	
 	$("#acceptTermsADValue").val("NO");
-	limitTextArea();
+	//limitTextArea();
 
 	$('#addressCloseButton').click(function(){
 		$('#address-H2').trigger('click');

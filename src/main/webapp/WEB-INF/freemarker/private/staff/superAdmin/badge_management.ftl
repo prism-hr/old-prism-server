@@ -4,7 +4,7 @@
 
 <div class="row-group">
 	<div class="row">
-		<label class="plain-label">Programme<em>*</em></label>
+		<label for="programme" class="plain-label">Programme<em>*</em></label>
 		<span class="hint" data-desc="<@spring.message 'badge.programme'/>"></span>
 		<div class="field">
 			<select name="programme" id="programme" class="max">
@@ -19,13 +19,15 @@
         <#list spring.status.errorMessages as error>
         <div class="row">
             <div class="field">
-                <span class="invalid">${error}</span>
+                <div class="alert alert-error">
+                    <i class="icon-warning-sign"></i> ${error}
+                </div>
             </div>
         </div>
     </#list>
 
 	<div class="row">
-		<label class="plain-label">Programme Homepage</label>
+		<label for="programhome" class="plain-label">Programme Homepage</label>
 		<span class="hint" data-desc="<@spring.message 'badge.programmeHomepage'/>"></span>
 		<div class="field">
 			<input type="text" name="programhome" id="programhome" class="max" value="${(badge.programmeHomepage?html)!}" placeholder="e.g. http://www.ucl.ac.uk" />
@@ -35,13 +37,15 @@
         <#list spring.status.errorMessages as error>
         <div class="row">
             <div class="field">
-                <span class="invalid">${error}</span>
+                 <div class="alert alert-error">
+                    <i class="icon-warning-sign"></i> ${error}
+                </div>
             </div>
         </div>
     </#list>		
 
 	<div class="row">
-		<label class="plain-label">Project Title</label>
+		<label for="project" class="plain-label">Project Title</label>
 		<span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
 		<div class="field">
 		    <input id="project" name="project" class="full ui-autocomplete-input" type="text" value="${(badge.projectTitle?html)!}" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
@@ -51,13 +55,16 @@
         <#list spring.status.errorMessages as error>
         <div class="row">
             <div class="field">
-                <span class="invalid">${error}</span>
+                <div class="alert alert-error">
+                    <i class="icon-warning-sign"></i>
+                    ${error}
+                </div>
             </div>
         </div>
     </#list>												
 											
 	<div class="row">
-		<label class="plain-label">Closing Date</label>
+		<label for="batchdeadline" class="plain-label">Closing Date</label>
 		<span class="hint" data-desc="<@spring.message 'badge.closingDate'/>"></span>
 		<div class="field">
 			<input type="text" name="batchdeadline" id="batchdeadline" class="half date" />
@@ -67,7 +74,9 @@
         <#list spring.status.errorMessages as error>
         <div class="row">
             <div class="field">
-                <span class="invalid">${error}</span>
+                <div class="alert alert-error">
+                    <i class="icon-warning-sign"></i> ${error}
+                </div>
             </div>
         </div>
     </#list>	
@@ -75,7 +84,7 @@
 
 
 <div class="row-group">
-	<label class="plain-label">Badge HTML</label>
+	<label class="plain-label" for="html">Badge HTML</label>
 	<span class="hint" data-desc="<@spring.message 'badge.html'/>"></span>
 	<div class="field">
 		<textarea readonly="readonly" id="html" rows="10" cols="70"></textarea>

@@ -35,6 +35,7 @@
 										<span class="is-reviewer" data-desc="Reviewer"></span>
 										<span class="is-supervisor" data-desc="Supervisor"></span>
 										<span class="is-approver" data-desc="Approver"></span>
+										<span class="is-viewer" data-desc="Viewer"></span>
 									</div>
 								</td>
 								<td scope="col">

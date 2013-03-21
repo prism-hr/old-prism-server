@@ -78,7 +78,7 @@
 		
 											<@spring.bind "userDTO.selectedProgram" /> 
 											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
+											 <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
 											</#list>
 										</div>
 									</div>
@@ -97,7 +97,7 @@
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.firstName?html)!}" name="firstName" /></#if>                              
 											<@spring.bind "userDTO.firstName" /> 
 											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
+												<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
 											</#list>			                             
 										</div>
 									</div>
@@ -110,26 +110,26 @@
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.lastName?html)!}" name="lastName" /></#if>    
 											<@spring.bind "userDTO.lastName" /> 
 											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
+												<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
 											</#list>
 										</div>
 									</div>
 				
 									<div class="row">
-										<span class="plain-label<#if !userDTO.newUser> grey-label</#if>">Email<em>*</em></span>
+										<label for="email" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Email<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.email?html)!}" name="email" /></#if>    
 											<@spring.bind "userDTO.email" /> 
 											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
+												<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
 											</#list>
 										</div>
 									</div>
 		
 									<div class="row">
-										<span class="plain-label">Roles<em>*</em></span>
+										<label for="roles" class="plain-label">Roles<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.roles'/>"></span>
 										<div class="field">
 											<select multiple size="6" id="roles" name="selectedAuthorities" class="max">
@@ -143,14 +143,14 @@
 											</select>
 											<@spring.bind "userDTO.selectedAuthorities" /> 
 											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
+												<div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
 											</#list>
 										</div>
 									</div>
 																			
 									<div class="row">
 										<div class="field">
-											<button class="blue" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
+											<button class="btn" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
 										</div>
 									</div>
 									

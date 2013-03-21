@@ -135,9 +135,8 @@
                 <i class="icon-info-sign"></i> Link <span style="text-decoration: underline">${user.email!}</span> to another account that you own.</div>
             </#if>
             <#if user.allLinkedAccounts?has_content>
-                <div class="row-group">
-                    <div class="field">                 
-                        <table id="linkedAccountsTable" class="data-table">
+                <div class="row-group">               
+                        <table class="table table-striped table-condensed table-bordered table-hover">
                             <colgroup>
                                 <col />
                                 <col style="width: 60px;" />
@@ -145,13 +144,12 @@
                             <tbody>
                                 <#list user.allLinkedAccounts as linkedAccount>
                                 <tr>
-                                    <td>${linkedAccount.email?html}</td>
+                                    <td>${linkedAccount.firstName?html} ${linkedAccount.lastName?html} (${linkedAccount.email?html})</td>
                                     <td><button type="button" class="button-delete" data-desc="Delete" email="${linkedAccount.email?html}">Delete</button></td>
                                 </tr>
                                 </#list>
                             </tbody>
                         </table>
-                    </div>
                 </div>
             </#if>
              <div class="row-group">

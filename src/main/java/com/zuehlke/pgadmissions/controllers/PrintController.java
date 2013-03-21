@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("/print")
 public class PrintController {
 
-    private final Logger log = LoggerFactory.getLogger(PdfModelBuilder.class);
+    private final Logger log = LoggerFactory.getLogger(PrintController.class);
     
 	private final ApplicationsService applicationSevice;
 	

@@ -32,9 +32,11 @@
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/configuration.js' />"></script> 
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/badge.js'/>"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/serviceThrottling/actions.js'/>"></script>
 	    
 	    <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
-        <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 	    
 	</head>
 	
@@ -68,11 +70,43 @@
 								<div id="configsection">		
 								
 								</div>
+								
+								<div id="edit-throttle-section">
+									<section class="form-rows">
+										<h2>Web Service throttling</h2>
+									
+									<div>
+									<div class="alert alert-info">
+										<i class="icon-info-sign"></i> 
+										Web Service throttling
+									</div>
+
+										<div class="row-group">
+											<div class="row">
+												<label class="plain-label" for="throttoleSwitchOnId">Web Service throttling</label> 
+													<input id="throttoleSwitchOnId" type="radio" name="switch" value="on" > On </input>
+													<input type="radio" name="switch" value="off" > Off </input>
+							             	</div>
+											<div class="row">
+												<label class="plain-label" for="batchSizeId">Throttling batch size</label> 
+												<input type="text" id="batchSizeId" />
+							             	</div>
+							             	<div class = "field"><input type="hidden" id="throttleId"/> </div>
+						             	</div>
+						            	</div>
+										<div class="buttons">
+										<button class="btn btn-primary" type="button" id="apply-throttle-go">Apply changes</button>
+										</div>
+									</div>
+									</section>
+								</div>
+								
 								<section class="form-rows">
 									<h2>Badge</h2>
 									
 									<div>
-										<div class="section-info-bar">
+										<div class="alert alert-info">
+										<i class="icon-info-sign"></i> 
 											Configure your 'apply now' badge. You embed this on external web pages to enable your programme to accept applications.
 										</div>
 										<form id = "badgeSection">
@@ -82,7 +116,7 @@
 										</form>
 									</div>
 								</section>
-							
+								
 							</div><!-- .content-box-inner -->
 						</div><!-- .content-box -->
 							

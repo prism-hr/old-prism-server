@@ -79,8 +79,7 @@ public class UserRoleController {
 	            Authority.APPROVER, 
 	            Authority.INTERVIEWER, 
 	            Authority.REVIEWER, 
-	            Authority.SUPERVISOR,
-	            Authority.VIEWER);
+	            Authority.SUPERVISOR);
 	}
 
 	@ModelAttribute("userDTO")

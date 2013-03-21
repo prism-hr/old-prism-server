@@ -22,7 +22,8 @@
 #registration-box label { width: 70px;}
 .form-horizontal .controls {	margin-left: 105px;}
 #registration-box .control-group {	margin-bottom: 14px;}
-#registration-box .alert {	margin-top: 4px !important; margin-bottom:0; width: 177px; padding: 8px; line-height: 1.4em; }
+#registration-box .alert {	margin-top: 4px !important; margin-bottom:0; width: 164px; padding: 8px; line-height: 1.4em; padding-left: 22px; }
+#registration-box .alert i{ margin-left: -14px;}
 #registration-box form { padding: 0px 14px 0; margin-bottom: 0px; }
 #registration-box p { line-height: 18px; }
 #registration-box legend {	border-bottom: none; color: #58585A; margin-bottom: 6px;}

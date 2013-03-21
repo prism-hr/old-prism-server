@@ -14,7 +14,7 @@ $(document).ready(function() {
                 $(this).find('.expander').removeClass('expand').addClass('collapsed').text('Show less').animate (
                     {
                         
-                        top: maxHeight + 34
+                        top: maxHeight + 39
                     }, 200);
             }, function() {
                 $(this).animate({

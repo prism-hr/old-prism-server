@@ -18,7 +18,7 @@
 	<td class="centre">
 		  <#include "/private/common/actions.ftl"/>
 	</td>
-	<td>
+	<td class="centre">
 		<#if application.isWithdrawn() && !application.submittedDate??>
 			Aborted
 		<#elseif application.submittedDate??>

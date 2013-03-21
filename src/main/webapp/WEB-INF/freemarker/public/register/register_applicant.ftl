@@ -124,7 +124,7 @@
 	                </div>
 	                <div class="control-group">
 	                	<label class="control-label" for="password">Confirm <em>*</em></label>
-	                	<span class="hint" data-desc="Please confirm your Password."></span>
+	                	<span class="hint" data-desc="Please confirm your password."></span>
 			            <div class="controls">
 			            <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm password"/>
 	                    <@spring.bind "pendingUser.confirmPassword" /> 

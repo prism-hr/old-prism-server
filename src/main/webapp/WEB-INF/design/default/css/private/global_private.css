@@ -11,7 +11,7 @@ a:hover { text-decoration: underline;}
 a img { border: none; }
 body { font: 10pt/1 Arial, Helvetica, sans-serif; 
 background: #eeedec;
-  /* Old browsers */
+  /* Old browsers */ 
 
   background: -moz-linear-gradient(top, #eeedec 0%, #c9c9c9 100%);
   /* FF3.6+ */ 
@@ -392,29 +392,29 @@ table.multiples { border-spacing: 0 4px; width: 70%; margin-top: 1em; }
 table.multiples .align-left { text-align: left; }
 table.multiples input[type=text] { width: 100%; }
 
-table.data { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
+/*table.data { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
 table.data thead th {
   background: rgb(124,124,124); /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdjN2M3YyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2JjYmNiYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM3YzdjN2MiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-  background: -moz-linear-gradient(top,  rgba(124,124,124,1) 0%, rgba(188,188,188,1) 50%, rgba(124,124,124,1) 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(124,124,124,1)), color-stop(50%,rgba(188,188,188,1)), color-stop(100%,rgba(124,124,124,1))); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* IE10+ */
-  background: linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7c7c7c', endColorstr='#7c7c7c',GradientType=0 ); /* IE6-8 */
-  cursor: pointer; font-weight: bold; text-align: left; padding: 5px 3px;
-	line-height: 1.3;
+  /*/*background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdjN2M3YyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2JjYmNiYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM3YzdjN2MiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  /*background: -moz-linear-gradient(top,  rgba(124,124,124,1) 0%, rgba(188,188,188,1) 50%, rgba(124,124,124,1) 100%); /* FF3.6+ */
+  /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(124,124,124,1)), color-stop(50%,rgba(188,188,188,1)), color-stop(100%,rgba(124,124,124,1))); /* Chrome,Safari4+ */
+  /*background: -webkit-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* Chrome10+,Safari5.1+ */
+  /*background: -o-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* Opera 11.10+ */
+  /*background: -ms-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* IE10+ */
+  /*background: linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* W3C */
+  /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7c7c7c', endColorstr='#7c7c7c',GradientType=0 ); /* IE6-8 */
+  /*cursor: pointer; font-weight: bold; text-align: left; padding: 5px 3px;
+	/*line-height: 1.3;
 }
-table.data th, table.data td { padding: 3px; vertical-align: middle; }
+/*table.data th, table.data td { padding: 3px; vertical-align: middle; }
 table.data tr td, table.data tr th { border-bottom: 1px solid #999; }
 table.data tbody td { background: url(../../images/bg_table_row.jpg) repeat-x 0 100%; }
 table.data select { width: 100%; }
 table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }
 table.data thead th span.arrow { background: url(../../images/sort_arrows.png) no-repeat 100% -34px; float: height: 16px; padding-right: 20px; display: block; }
 table.data thead th.headerSortUp span.arrow { background-position: 100% -2px; }
-table.data thead th.headerSortDown span.arrow { background-position: 100% -19px; }
+table.data thead th.headerSortDown span.arrow { background-position: 100% -19px; }*/
 
 
 #programme-details { margin-bottom: 10px; overflow: hidden; min-height: 115px; }
@@ -963,9 +963,9 @@ div.ajax {
 #view-toolbar { top: 126px; }
 #view-toolbar li.tool-button a { background: #444; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
 
-/* To provide same style for command line. */
+/* To provide same style for command line. 
 a.proceed-link { color: #00F; }
-a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
+a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
 
 
 /* MODAL WINDOW / DIALOGUE BOX --------------------------------------------------------------------------- */
@@ -1129,9 +1129,7 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
   border-color: #ddd !important;
 }
 /* Fixes */
-.table th, .table td {
-  line-height: 29px !important;
-}
+
 #content {
   padding: 15px !important;
 }
@@ -1219,12 +1217,18 @@ span.count {
 }
 .field .alert {
     line-height: 1.4em;
-    padding: 8px;
+    padding: 6px;
+    padding-left: 24px;
 }
+.field .alert i{
+  margin-left: -14px;
+}
+
+/* New Icons */
 section.form-rows .hint{
   background: none !important;
 }
-.hint:before, .button-delete:before, .button-edit:before {
+.hint:before, .button-delete:before, .button-edit:before, span.icon-status:before {
   font-family:FontAwesome;font-weight:normal;
   font-style:normal;
   text-decoration:inherit;-webkit-font-smoothing:antialiased;
@@ -1280,9 +1284,39 @@ section.form-rows .hint{
   background: url("../../images/icon_round.png") no-repeat -33px 0;
   filter:none; 
 }
+
+/* Application status icons. ------------------------------------------------------------------------- */
+span.icon-status {
+  background: url(../../images/status_icons.png) no-repeat 0 -125px;
+  display: inline-block; 
+  height: 25px;
+  overflow: hidden;
+  text-indent: 25px;
+  vertical-align: top;
+  white-space: nowrap;
+  width: 25px;
+  border-radius: 12px;
+}
+span.icon-status.interview {
+  background: #CCD31F;
+}
+span.icon-status.interview:before {
+  content:"\f005";
+}
+span.icon-status.withdrawn { background-position: 0 -25px; }
+span.icon-status.review { background-position: 0 -50px; }
+span.icon-status.approved { background-position: 0 -75px; }
+span.icon-status.rejected { background-position: 0 -100px; }
+span.icon-status.validation { background-position: 0 -150px; }
+span.icon-status.not-submitted { background-position: 0 -175px; }
+span.icon-status.approval { background-position: 0 -200px; }
+/* New icons end */
 #registryUsers table {
   min-width:416px; 
 }
 #linkAccountsSection table{
   margin-bottom: 0px;
+}
+#registryUsers .table th, #registryUsers .table td, #linkAccountsSection .table th, #registryUsers .table td {
+  line-height: 29px !important;
 }

@@ -143,10 +143,12 @@
 .expander {
 	position: absolute;
 	right: 12px;
-	width: 73px;
+	width: 688px;
+  text-align: right;
+  border-top: 1px solid #999;
 	cursor: pointer;
 	display: block;
-	top: 90px;
+	top: 92px;
 	color: #333333;
 	font-weight: bold;
 	padding-right: 24px;

@@ -6,8 +6,8 @@ body.ie9 * { filter: none !important; }
 
 
 /* Default styling ---------------------------------------------------------------------------------------- */
-a { text-decoration: none; }
-a:hover { text-decoration: underline;}
+a { text-decoration: none; } 
+a:hover { text-decoration: underline;} 
 a img { border: none; }
 body { font: 10pt/1 Arial, Helvetica, sans-serif; 
 background: #eeedec;
@@ -157,21 +157,21 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 button, a.button, div.button, span.indicator {
   background: rgb(147,149,152); /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-  background: -moz-linear-gradient(top,  rgba(147,149,152,1) 0%, rgba(147,149,152,1) 50%, rgba(98,99,101,1) 51%, rgba(140,142,145,1) 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(147,149,152,1)), color-stop(50%,rgba(147,149,152,1)), color-stop(51%,rgba(98,99,101,1)), color-stop(100%,rgba(140,142,145,1))); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* IE10+ */
-  background: linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#939598', endColorstr='#8c8e91',GradientType=0 ); /* IE6-8 */
-  border: 2px solid #FFF;
+  /*background: -moz-linear-gradient(top,  rgba(147,149,152,1) 0%, rgba(147,149,152,1) 50%, rgba(98,99,101,1) 51%, rgba(140,142,145,1) 100%); /* FF3.6+ */
+  /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(147,149,152,1)), color-stop(50%,rgba(147,149,152,1)), color-stop(51%,rgba(98,99,101,1)), color-stop(100%,rgba(140,142,145,1))); /* Chrome,Safari4+ */
+  /*background: -webkit-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Chrome10+,Safari5.1+ */
+  /*background: -o-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Opera 11.10+ */
+  /*background: -ms-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* IE10+ */
+  /*background: linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* W3C */
+  /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#939598', endColorstr='#8c8e91',GradientType=0 ); /* IE6-8 */
+  /*border: 2px solid #FFF;
   border-radius: 11px;
-  box-shadow: 0 0 3px 0 #999;
+  box-shadow: 0 0 3px 0 #999;*/
   color: #FFF;
   cursor: pointer;
   font: bold 8.5pt Arial, Helvetica, sans-serif;
   line-height: 16px;
-  padding: 1px 10px;
+  /*padding: 1px 10px;*/
   text-align: center;
   vertical-align: middle;
 }
@@ -216,7 +216,7 @@ span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical
 	box-shadow: none;
 	cursor: pointer;
 	display: inline-block;
-	height: 24px;
+	height: 25px;
 	margin: 3px 0;
 	overflow: hidden;
 	text-indent: 30px;
@@ -1129,6 +1129,9 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
   border-color: #ddd !important;
 }
 /* Fixes */
+.table th, .table td {
+  line-height: 29px !important;
+}
 #content {
   padding: 15px !important;
 }
@@ -1221,11 +1224,11 @@ span.count {
 section.form-rows .hint{
   background: none !important;
 }
-.hint:before, .button-delete:before{
+.hint:before, .button-delete:before, .button-edit:before {
   font-family:FontAwesome;font-weight:normal;
   font-style:normal;
   text-decoration:inherit;-webkit-font-smoothing:antialiased;
-  display:inline;
+  display:inline-block;
   width:auto;
   height:auto;
   line-height:normal;
@@ -1234,27 +1237,39 @@ section.form-rows .hint{
   background-position:0 0;
   background-repeat:repeat;
   margin-top:0;
+  text-decoration: none;
+  text-align: center;
+  width: 25px;
 }
 .hint:before{
   cursor: default;
   content:"\f059";
   color: #9B9DA0;
-  font-size:24px;
+  font-size:25px;
 }
-.button-delete {
+.button-delete, .button-edit {
   overflow: hidden;
-  line-height: 22px;
+  line-height: 25px;
   background: #9B9DA0;
   color: #9B9DA0;
   border-radius: 12px; 
-  text-indent: 6px;
-  font-size: 18px;
+  text-indent: 0px;
+  font-size: 19px;
+  /*margin: 2px 6px 2px 0 ;*/
 }
-.button-delete:hover {
+.button-edit {
+  font-size: 16px;
+}
+.button-delete:hover, .button-edit:hover {
   color: #9B9DA0;
+  text-decoration: none;
 }
 .button-delete:before {
   content:"\f014 ";
+  color: white;
+}
+.button-edit:before {
+  content:"\f040 ";
   color: white;
 }
 .old-ie .button-delete:before{
@@ -1264,4 +1279,10 @@ section.form-rows .hint{
   text-indent: -990px;
   background: url("../../images/icon_round.png") no-repeat -33px 0;
   filter:none; 
+}
+#registryUsers table {
+  min-width:416px; 
+}
+#linkAccountsSection table{
+  margin-bottom: 0px;
 }

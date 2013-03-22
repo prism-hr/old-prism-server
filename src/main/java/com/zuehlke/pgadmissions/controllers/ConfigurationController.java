@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.dto.RegistryUserDTO;
 import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
@@ -48,29 +49,37 @@ public class ConfigurationController {
 
 	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
 	private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
+	
 	private final StageDurationPropertyEditor stageDurationPropertyEditor;
 
 	private final PersonPropertyEditor registryPropertyEditor;
+	
 	private final UserService userService;
+	
 	private final ConfigurationService configurationService;
+	
 	private final EmailTemplateService templateService;
+	
 	private final ThrottleService throttleService;
+	
+	private final PorticoQueueService queueService;
 
-	ConfigurationController() {
-		this(null, null, null, null, null, null);
+	public ConfigurationController() {
+		this(null, null, null, null, null, null, null);
 	}
 
-	@Autowired
-	public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor, PersonPropertyEditor registryPropertyEditor,
-			UserService userService, ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService) {
-
+    @Autowired
+    public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor,
+            PersonPropertyEditor registryPropertyEditor, UserService userService,
+            ConfigurationService configurationService, EmailTemplateService templateService,
+            ThrottleService throttleService, PorticoQueueService queueService) {
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
-
 		this.registryPropertyEditor = registryPropertyEditor;
 		this.userService = userService;
 		this.configurationService = configurationService;
 		this.templateService = templateService;
 		this.throttleService = throttleService;
+		this.queueService = queueService;
 	}
 
 	@InitBinder(value = "stageDurationDTO")
@@ -88,7 +97,6 @@ public class ConfigurationController {
 		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMINISTRATOR) ) {
 			throw new ResourceNotFoundException();
 		}
-
 		return CONFIGURATION_VIEW_NAME;
 	}
 	
@@ -97,7 +105,6 @@ public class ConfigurationController {
 		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)  ) {
 			return "/private/common/simpleMessage";
 		}
-
 		return CONFIGURATION_SECTION_NAME;
 	}
 	
@@ -108,13 +115,11 @@ public class ConfigurationController {
 		}
 		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval);
 		return "redirect:/configuration/config_section";
-		
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{id:\\d+}")
 	@ResponseBody
 	public Map<String, Object> getTemplateVersion(@PathVariable Long id) {
-		
 		EmailTemplate template = templateService.getEmailTemplate(id);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("content", template.getContent());
@@ -126,9 +131,9 @@ public class ConfigurationController {
 	@ResponseBody
 	public Map<String, Object> getThrottle() {
 		Throttle throttle = throttleService.getThrottle();
-		if (throttle==null) {
-			return Collections.emptyMap();
-		}
+        if (throttle == null) {
+            return Collections.emptyMap();
+        }
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("throttleId", throttle.getId());
 		result.put("enabled", throttle.getEnabled());
@@ -139,23 +144,24 @@ public class ConfigurationController {
 	@RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
 	@ResponseBody
 	public Map<String, String> updateThrottle(@RequestParam Integer id, @RequestParam Boolean enabled, @RequestParam String batchSize) {
-		Throttle throttle = new Throttle();
-		throttle.setEnabled(enabled);
-		try {
-			throttle.setBatchSize(Integer.parseInt(batchSize));
+	    boolean hasSwitchedFromFalseToTrue = throttleService.hasSwitchedFromFalseToTrue(enabled);
+	    
+	    try {
+	        throttleService.updateThrottleWithNewValues(enabled, batchSize);
+	    } catch (NumberFormatException e) {
+	        return Collections.singletonMap("error", "The throttling batch size must be a number");
+	    }
+	    
+		if (hasSwitchedFromFalseToTrue) {
+		    queueService.sendQueuedApprovedApplicationsToPortico();
 		}
-		catch (NumberFormatException nfe) {
-			return Collections.singletonMap("error", "The throttling batch size must be a number");
-		}
-		throttle.setId(id);
-		throttleService.updateThrottle(throttle);
+		
 		return Collections.emptyMap();
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{templateName:[a-zA-Z_]+}")
 	@ResponseBody
 	public Map<Object, Object> getVersionsForTemplate(@PathVariable String templateName) {
-		
 		EmailTemplate template = templateService.getActiveEmailTemplate(valueOf(templateName));
 		Map<Long, String> versions = templateService.getEmailTemplateVersions(template.getName());
 		Map<Object, Object> result = new HashMap<Object, Object>();
@@ -259,7 +265,5 @@ public class ConfigurationController {
 	public DurationUnitEnum[] getUnits() {
 		return DurationUnitEnum.values();
 	}
-
-	
 
 }

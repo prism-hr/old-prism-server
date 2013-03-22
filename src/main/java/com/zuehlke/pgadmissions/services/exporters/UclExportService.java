@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services.exporters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.xml.transform.TransformerException;
@@ -10,7 +9,6 @@ import javax.xml.transform.TransformerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ws.WebServiceMessage;
@@ -23,8 +21,6 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
@@ -36,8 +32,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlin
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
-import com.zuehlke.pgadmissions.mail.DataExportMailSender;
-import com.zuehlke.pgadmissions.utils.StacktraceDump;
+import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
 
 /**
  * This is UCL data export service. Used for situations where we push data to UCL system (PORTICO).
@@ -49,311 +44,184 @@ public class UclExportService {
 
     private final WebServiceTemplate webServiceTemplate;
 
-    private final ApplicationFormTransferDAO applicationFormTransferDAO;
-
-    private final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO;
-
     private final CommentDAO commentDAO;
-
-    private int numberOfConsecutiveSoapFaults = 0;
-
-    private final int consecutiveSoapFaultsLimit;
 
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
-    private final DataExportMailSender dataExportMailSender;
-
     private final ApplicationFormDAO applicationFormDAO;
     
+    private final ApplicationFormTransferService applicationFormTransferService;
+    
+    private static final String WS_CALL_FAILED_NETWORK = "The web service is unreachable because of network issues [applicationNumber=%s]";
+    
+    private static final String WS_CALL_FAILED_REFUSED = "The web service refused our request [applicationNumber=%s]";
+
+    private static final String SFTP_CALL_FAILED_UNEXPECTED = "There was an error creating the ZIP file for PORTICO [applicationNumber=%s]";
+
+    private static final String SFTP_CALL_FAILED_CONFIGURATION = "There was an error speaking to the SFTP service due to a misconfiguration in PRISM [applicationNumber=%s]";
+
+    private static final String SFTP_CALL_FAILED_NETWORK = "The SFTP service is unreachable because of network issues [applicationNumber=%s]";
+
+    private static final String SFTP_CALL_FAILED_DIRECTORY = "The SFTP target directory is not accessible [applicationNumber=%s]";
+    
     public UclExportService() {
-        this(null, null, null, null, null, 0, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
     public UclExportService(
-            WebServiceTemplate webServiceTemplate, 
-            ApplicationFormTransferDAO applicationFormTransferDAO,
-            ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO,
+            WebServiceTemplate webServiceTemplate,
             ApplicationFormDAO applicationFormDAO,
             CommentDAO commentDAO,
-            @Value("${xml.data.export.webservice.consecutiveSoapFaultsLimit}") int consecutiveSoapFaultsLimit, 
-            SftpAttachmentsSendingService sftpAttachmentsSendingService, DataExportMailSender dataExportMailSender) {
-        super();
+            SftpAttachmentsSendingService sftpAttachmentsSendingService,
+            ApplicationFormTransferService applicationFormTransferService) {
         this.webServiceTemplate = webServiceTemplate;
-        this.applicationFormTransferDAO = applicationFormTransferDAO;
-        this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;
         this.commentDAO = commentDAO;
-        this.consecutiveSoapFaultsLimit = consecutiveSoapFaultsLimit;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
-        this.dataExportMailSender = dataExportMailSender;
+        this.applicationFormTransferService = applicationFormTransferService;
         this.applicationFormDAO = applicationFormDAO;
     }
 
     // oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 
-    public Long sendToPortico(ApplicationForm applicationForm) {
-        return this.sendToPortico(applicationForm, new DeafListener());
+    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer) throws UclExportServiceException {
+        sendToPortico(form, transfer, new DeafListener());
     }
 
-    public Long sendToPortico(ApplicationForm applicationForm, TransferListener listener) {
-        
-        log.info("Submitting application form " + applicationForm.getApplicationNumber() + " for ucl-export processing");
-
-        ApplicationFormTransfer transfer = this.createPersistentQueueItem(applicationForm);
-
-        prepareApplicationForm(applicationForm);
-        
-        transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(transfer.getId(), listener);
-
-        return transfer.getId();
+    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws UclExportServiceException {
+        log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
+        prepareApplicationForm(form);
+        sendWebServiceRequest(form, transfer, listener);
+        uploadDocuments(form, transfer, listener);
     }
-
-    public void systemStartupSendingQueuesRecovery() {
-        log.info("Re-initialising the queues for ucl-export processing");
-
-        for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForWebserviceCall()) {
-            transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(applicationFormTransfer.getId(), new DeafListener());
-        }
-
-        for (ApplicationFormTransfer applicationFormTransfer : this.applicationFormTransferDAO.getAllTransfersWaitingForAttachmentsSending()) {
-            transactionallyExecuteSftpTransferAndUpdatePersistentQueue(applicationFormTransfer.getId(), new DeafListener());
-        }
-    }
-
-    public void setPorticoAttachmentsZipCreator(PorticoAttachmentsZipCreator zipCreator) {
+    
+    public void setPorticoAttachmentsZipCreator(final PorticoAttachmentsZipCreator zipCreator) {
         sftpAttachmentsSendingService.setPorticoAttachmentsZipCreator(zipCreator);
     }
 
-    public void setSftpAttachmentsSendingService(SftpAttachmentsSendingService sendingService) {
+    public void setSftpAttachmentsSendingService(final SftpAttachmentsSendingService sendingService) {
         sftpAttachmentsSendingService = sendingService;
     }
 
     // ooooooooooooooooooooooooooooooo PRIVATE oooooooooooooooooooooooooooooooo
 
     @Transactional
-    public ApplicationFormTransfer createPersistentQueueItem(ApplicationForm applicationForm) {
-        ApplicationFormTransfer result = new ApplicationFormTransfer();
-        result.setApplicationForm(applicationForm);
-        result.setTransferStartTimepoint(new Date());
-        result.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
-        applicationFormTransferDAO.save(result);
-        return result;
-    }
-
-    @Transactional
-    public void transactionallyExecuteWebserviceCallAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
-        ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
-        ApplicationForm applicationForm = transfer.getApplicationForm();
-        ValidationComment validationComment = commentDAO.getValidationCommentForApplication(applicationForm);
-        Boolean isOverseasStudent = validationComment.getHomeOrOverseas() == HomeOrOverseas.OVERSEAS;
-        // prepare to webservice call
-        SubmitAdmissionsApplicationRequest request;
-        AdmissionsApplicationResponse response;
+    public void sendWebServiceRequest(final ApplicationForm formObj, final ApplicationFormTransfer transferObj, final TransferListener listener) throws UclExportServiceException {
+        ApplicationForm form = applicationFormDAO.get(formObj.getId());
+        ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
+        ValidationComment validationComment = commentDAO.getValidationCommentForApplication(form);
+        Boolean isOverseasStudent = validationComment.getHomeOrOverseas().equals(HomeOrOverseas.OVERSEAS);
         final ByteArrayOutputStream requestMessageBuffer = new ByteArrayOutputStream(5000);
-
-        WebServiceMessageCallback webServiceMessageCallback = new WebServiceMessageCallback() {
-            public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
-                webServiceMessage.writeTo(requestMessageBuffer);
-            }
-        };
-
-        request = new SubmitAdmissionsApplicationRequestBuilder(new ObjectFactory()).applicationForm(applicationForm).isOverseasStudent(isOverseasStudent)
-                .build();
-        listener.webServiceCallStarted(request);
-
+        
+        AdmissionsApplicationResponse response = null;
         try {
-            // call web service
-            log.info(String.format("Calling marshalSendAndReceive for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
-
-            response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, webServiceMessageCallback);
-
-            log.info(String.format("Successfully returned from webservice call for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
-
-            log.info(String.format("Received web service response [transferId=%d, applicationNumber=%s, applicantID=%s, applicationID=%s]", transferId,
-                    applicationForm.getApplicationNumber(), response.getReference().getApplicantID(), response.getReference().getApplicationID()));
+            SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilder(
+                    new ObjectFactory()).applicationForm(form).isOverseasStudent(isOverseasStudent).build();
+            
+            listener.webServiceCallStarted(request, form);
+            
+            log.info(String.format("Calling PORTICO web service [applicationNumber=%s]", form.getApplicationNumber()));
+            
+            response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, new WebServiceMessageCallback() {
+                public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
+                    webServiceMessage.writeTo(requestMessageBuffer);
+                }});
+            
+            log.info(String.format("Received response from web service [applicationNumber=%s, applicantId=%s, applicationId=%s]", 
+                    form.getApplicationNumber(), response.getReference().getApplicantID(), response.getReference().getApplicationID()));
+            
+            applicationFormTransferService.updateApplicationFormPorticoIds(form, response);
+            applicationFormTransferService.updateTransferPorticoIds(transfer, response);
+            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING);
+            log.info(String.format("Finished PORTICO web service [applicationNumber=%s]", form.getApplicationNumber()));
+            listener.webServiceCallCompleted(response, form);
         } catch (WebServiceIOException e) {
-            logAndSendEmailToSuperadministrator(String.format(
-                    "WebServiceTransportException during webservice call for transfer [transferId=%d, applicationNumber=%s]", transferId,
-                    applicationForm.getApplicationNumber()), e);
-            // CASE 1: webservice call failed because of network failure, protocol problems etc
-            // seems like we have communication problems so makes no sense to push more application forms at the moment
-            // TODO: we should measure the time of this problem constantly occurring; after some threshold (1 day?) we should inform admins
-
-            // save error information
-            ApplicationFormTransferError error = new ApplicationFormTransferError();
-            error.setTransfer(transfer);
-            error.setTimepoint(new Date());
-            error.setProblemClassification(ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE);
-            error.setDiagnosticInfo(StacktraceDump.printRootCauseStackTrace(e));
-            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
-            applicationFormTransferErrorDAO.save(error);
-
-            listener.webServiceCallFailed(error);
-
-            return;
-
+            // Network problems
+            ApplicationFormTransferError transferError = applicationFormTransferService
+                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(e)
+                            .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.RETRY)
+                            .problemClassification(ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE)
+                            .requestCopy(requestMessageBuffer.toString()).transfer(transfer));
+            listener.webServiceCallFailed(e, transferError, form);
+            log.error(String.format(WS_CALL_FAILED_NETWORK, form.getApplicationNumber()), e); 
+            throw new UclExportServiceException(String.format(WS_CALL_FAILED_NETWORK, form.getApplicationNumber()), e, transferError);
         } catch (SoapFaultClientException e) {
-            logAndSendEmailToSuperadministrator(String.format(
-                    "SoapFaultClientException during webservice call for transfer [transferId=%d, applicationNumber=%s]", transferId,
-                    applicationForm.getApplicationNumber()), e);
-            // CASE 2: webservice is alive but refused to accept our request
-            // usually this will be caused by validation problems - and is actually expected as side effect of PORTICO and PRISM evolution
-
-            // save error information
-            ApplicationFormTransferError error = new ApplicationFormTransferError();
-            error.setTransfer(transfer);
-            error.setTimepoint(new Date());
-            error.setProblemClassification(ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT);
-            error.setDiagnosticInfo(StacktraceDump.forException(e));
-            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY);
-            error.setRequestCopy(requestMessageBuffer.toString());
-            ByteArrayOutputStream responseMessageBuffer = new ByteArrayOutputStream(5000);
-            try {
-                e.getWebServiceMessage().writeTo(responseMessageBuffer);
-            } catch (IOException ioex) {
-                log.warn(ioex.getMessage(), ioex);
-                throw new RuntimeException("Line unreachable", e);
-            }
-            error.setResponseCopy(responseMessageBuffer.toString());
-            applicationFormTransferErrorDAO.save(error);
-
-            listener.webServiceCallFailed(error);
-
-            // update transfer status
-            transfer.setStatus(ApplicationTransferStatus.REJECTED_BY_WEBSERVICE);
-            transfer.setTransferFinishTimepoint(new Date());
-
-            // we count soap-fault situations; if faults are repeating - we will eventually stop the queue and issue an email alert to administrators
-            numberOfConsecutiveSoapFaults++;
-            if (numberOfConsecutiveSoapFaults > consecutiveSoapFaultsLimit) {
-                logAndSendEmailToSuperadministrator(String.format("Could not transfer application even after %d retries [transferId=%d, applicationNumber=%s]",
-                        numberOfConsecutiveSoapFaults, transferId, applicationForm.getApplicationNumber()), e);
-            }
-            return;
+            // Web service refused our request. Probably with some validation errors
+            ApplicationFormTransferError transferError = applicationFormTransferService
+                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(e)
+                            .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
+                            .problemClassification(ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT)
+                            .responseCopy(e.getWebServiceMessage()).requestCopy(requestMessageBuffer.toString())
+                            .transfer(transfer));
+            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.REJECTED_BY_WEBSERVICE);
+            listener.webServiceCallFailed(e, transferError, form);
+            log.error(String.format(WS_CALL_FAILED_REFUSED, form.getApplicationNumber()), e);
+            throw new UclExportServiceException(String.format(WS_CALL_FAILED_REFUSED, form.getApplicationNumber()), e, transferError);
         }
-
-        // CASE 3; webservice answer was ok (transmission successful, request approved)
-        numberOfConsecutiveSoapFaults = 0;
-
-        // extract precious IDs received from UCL and store them into ApplicationTransfer, ApplicationForm and RegisteredUser
-        transfer.setUclUserIdReceived(response.getReference().getApplicantID());
-        transfer.setUclBookingReferenceReceived(response.getReference().getApplicationID());
-        applicationForm.setUclBookingReferenceNumber(response.getReference().getApplicationID());
-        if (applicationForm.getApplicant().getUclUserId() == null) {
-            applicationForm.getApplicant().setUclUserId(response.getReference().getApplicantID());
-        } else {
-            if (!applicationForm.getApplicant().getUclUserId().equals(response.getReference().getApplicantID())) {
-                throw new RuntimeException("User code received from PORTICO do not mach with our PRISM user id: PRISM_ID="
-                        + applicationForm.getApplicant().getUclUserId() + " PORTICO_ID=" + response.getReference().getApplicantID());
-            }
-        }
-
-        // update transfer status in the database
-        transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING);
-
-        listener.webServiceCallCompleted(response);
-
-        // schedule phase 2 (sftp)
-        transactionallyExecuteSftpTransferAndUpdatePersistentQueue(transferId, listener);
     }
 
     @Transactional
-    public void transactionallyExecuteSftpTransferAndUpdatePersistentQueue(Long transferId, TransferListener listener) {
-        ApplicationFormTransfer transfer = applicationFormTransferDAO.getById(transferId);
-        ApplicationForm applicationForm = transfer.getApplicationForm();
-
-        listener.sftpTransferStarted();
-
-        // pack attachments and send them over SFTP
+    public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener) throws UclExportServiceException {
         try {
-            log.info(String.format("Calling sendApplicationFormDocuments for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
-            String zipFileName = sftpAttachmentsSendingService.sendApplicationFormDocuments(applicationForm, listener);
-            transfer.setStatus(ApplicationTransferStatus.COMPLETED);
-            transfer.setTransferFinishTimepoint(new Date());
-            listener.sftpTransferCompleted(zipFileName, transfer.getUclUserIdReceived(), transfer.getUclBookingReferenceReceived());
-            log.info(String.format("Transfer of documents completed for transfer %d (%s)", transferId, applicationForm.getApplicationNumber()));
+            listener.sftpTransferStarted(form);
+            log.info(String.format("Calling PORTICO SFTP service [applicationNumber=%s]", form.getApplicationNumber()));
+            String zipFileName = sftpAttachmentsSendingService.sendApplicationFormDocuments(form, listener);
+            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.COMPLETED);
+            log.info(String.format("Finished PORTICO SFTP service [applicationNumber=%s, zipFileName=%s]", form.getApplicationNumber(), zipFileName));
+            listener.sftpTransferCompleted(zipFileName, transfer);
         } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
-            ApplicationFormTransferError error = new ApplicationFormTransferError();
-            error.setTransfer(transfer);
-            error.setTimepoint(new Date());
-            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION);
-            error.setDiagnosticInfo(StacktraceDump.forException(couldNotCreateAttachmentsPack));
-            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY);
-            applicationFormTransferErrorDAO.save(error);
-
-            listener.sftpTransferFailed(error);
-
-            transfer.setStatus(ApplicationTransferStatus.CANCELLED);
-
-            logAndSendEmailToSuperadministrator(
-                    String.format("CouldNotCreateAttachmentsPack for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), couldNotCreateAttachmentsPack);
+            // There was an error building our ZIP archive
+            ApplicationFormTransferError transferError = applicationFormTransferService
+                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(couldNotCreateAttachmentsPack)
+                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
+                    .problemClassification(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION)
+                    .transfer(transfer));
+            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.CANCELLED);
+            listener.sftpTransferFailed(couldNotCreateAttachmentsPack, transferError, form);
+            log.error(String.format(SFTP_CALL_FAILED_UNEXPECTED, form.getApplicationNumber()), couldNotCreateAttachmentsPack);
+            throw new UclExportServiceException(String.format(SFTP_CALL_FAILED_UNEXPECTED, form.getApplicationNumber()), couldNotCreateAttachmentsPack, transferError);
         } catch (SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong locallyDefinedSshConfigurationIsWrong) {
-            // stop queue
-            ApplicationFormTransferError error = new ApplicationFormTransferError();
-            error.setTransfer(transfer);
-            error.setTimepoint(new Date());
-            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION);
-            error.setDiagnosticInfo(StacktraceDump.forException(locallyDefinedSshConfigurationIsWrong));
-            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION);
-            applicationFormTransferErrorDAO.save(error);
-
-            listener.sftpTransferFailed(error);
-
-            logAndSendEmailToSuperadministrator(
-                    String.format("LocallyDefinedSshConfigurationIsWrong for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), locallyDefinedSshConfigurationIsWrong);
+            // There is an issue with our configuration
+            ApplicationFormTransferError transferError = applicationFormTransferService
+                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(locallyDefinedSshConfigurationIsWrong)
+                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION)
+                    .problemClassification(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION)
+                    .transfer(transfer));
+            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
+            listener.sftpTransferFailed(locallyDefinedSshConfigurationIsWrong, transferError, form);
+            log.error(String.format(SFTP_CALL_FAILED_CONFIGURATION, form.getApplicationNumber()), locallyDefinedSshConfigurationIsWrong);
+            throw new UclExportServiceException(String.format(SFTP_CALL_FAILED_CONFIGURATION, form.getApplicationNumber()), locallyDefinedSshConfigurationIsWrong, transferError);
         } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost couldNotOpenSshConnectionToRemoteHost) {
-            // network problems - just wait some time and try again (pause queue)
-            ApplicationFormTransferError error = new ApplicationFormTransferError();
-            error.setTransfer(transfer);
-            error.setTimepoint(new Date());
-            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE);
-            error.setDiagnosticInfo(StacktraceDump.forException(couldNotOpenSshConnectionToRemoteHost));
-            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
-            applicationFormTransferErrorDAO.save(error);
-
-            listener.sftpTransferFailed(error);
-
-            logAndSendEmailToSuperadministrator(
-                    String.format("CouldNotOpenSshConnectionToRemoteHost for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), couldNotOpenSshConnectionToRemoteHost);
+            // Network issues
+            ApplicationFormTransferError transferError = applicationFormTransferService
+                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(couldNotOpenSshConnectionToRemoteHost)
+                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.RETRY)
+                    .problemClassification(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE)
+                    .transfer(transfer));
+            listener.sftpTransferFailed(couldNotOpenSshConnectionToRemoteHost, transferError, form);
+            log.error(String.format(SFTP_CALL_FAILED_NETWORK, form.getApplicationNumber()), couldNotOpenSshConnectionToRemoteHost);
+            throw new UclExportServiceException(String.format(SFTP_CALL_FAILED_NETWORK, form.getApplicationNumber()), couldNotOpenSshConnectionToRemoteHost, transferError);
         } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible sftpTargetDirectoryNotAccessible) {
-            // stop queue, inform admin (possibly ucl has to correct their config)
-            ApplicationFormTransferError error = new ApplicationFormTransferError();
-            error.setTransfer(transfer);
-            error.setTimepoint(new Date());
-            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE);
-            error.setDiagnosticInfo(StacktraceDump.forException(sftpTargetDirectoryNotAccessible));
-            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION);
-            applicationFormTransferErrorDAO.save(error);
-
-            listener.sftpTransferFailed(error);
-
-            logAndSendEmailToSuperadministrator(
-                    String.format("SftpTargetDirectoryNotAccessible for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), sftpTargetDirectoryNotAccessible);
+            // The target directory is not available. Configuration issue
+            ApplicationFormTransferError transferError = applicationFormTransferService
+                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(sftpTargetDirectoryNotAccessible)
+                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION)
+                    .problemClassification(ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE)
+                    .transfer(transfer));
+            listener.sftpTransferFailed(sftpTargetDirectoryNotAccessible, transferError, form);
+            log.error(String.format(SFTP_CALL_FAILED_DIRECTORY, form.getApplicationNumber()), sftpTargetDirectoryNotAccessible);
+            throw new UclExportServiceException(String.format(SFTP_CALL_FAILED_DIRECTORY, form.getApplicationNumber()), sftpTargetDirectoryNotAccessible, transferError);
         } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError sftpTransmissionFailedOrProtocolError) {
-            // network problems - just wait some time and try again (pause queue)
-            ApplicationFormTransferError error = new ApplicationFormTransferError();
-            error.setTransfer(transfer);
-            error.setTimepoint(new Date());
-            error.setProblemClassification(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE);
-            error.setDiagnosticInfo(StacktraceDump.forException(sftpTransmissionFailedOrProtocolError));
-            error.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.PAUSE_TRANSERS_AND_RESUME_AFTER_DELAY);
-            applicationFormTransferErrorDAO.save(error);
-
-            listener.sftpTransferFailed(error);
-
-            logAndSendEmailToSuperadministrator(
-                    String.format("SftpTransmissionFailedOrProtocolError for application [transferId=%d, applicationNumber=%s]", transferId,
-                            applicationForm.getApplicationNumber()), sftpTransmissionFailedOrProtocolError);
+            // We couldn't establish a SFTP connection for some reason
+            ApplicationFormTransferError transferError = applicationFormTransferService
+                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(sftpTransmissionFailedOrProtocolError)
+                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.RETRY)
+                    .problemClassification(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE)
+                    .transfer(transfer));
+            listener.sftpTransferFailed(sftpTransmissionFailedOrProtocolError, transferError, form);
+            log.error(String.format(SFTP_CALL_FAILED_NETWORK, form.getApplicationNumber()), sftpTransmissionFailedOrProtocolError);
+            throw new UclExportServiceException(String.format(SFTP_CALL_FAILED_NETWORK, form.getApplicationNumber()), sftpTransmissionFailedOrProtocolError, transferError);
         }
-    }
-
-    private void logAndSendEmailToSuperadministrator(final String message, final Exception exception) {
-        log.error(message, exception);
-        dataExportMailSender.sendErrorMessage(message, exception);
     }
     
     /*
@@ -361,14 +229,12 @@ public class UclExportService {
      * might have responded with a comment and or a document.
      */
     @Transactional
-    protected void prepareApplicationForm(final ApplicationForm applicationForm) {
-        if (applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN || applicationForm.getStatus() == ApplicationFormStatus.REJECTED) {
-        
-            if (applicationForm.getReferencesToSendToPortico().isEmpty()) {
-                
+    protected void prepareApplicationForm(final ApplicationForm form) {
+        if (form.getStatus() == ApplicationFormStatus.WITHDRAWN || form.getStatus() == ApplicationFormStatus.REJECTED) {
+            if (form.getReferencesToSendToPortico().isEmpty()) {
                 final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
-                
-                for (Referee referee : applicationForm.getReferees()) {
+
+                for (Referee referee : form.getReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
                     }
@@ -379,7 +245,7 @@ public class UclExportService {
                     }
                 }
                 
-                for (Referee referee : applicationForm.getReferees()) {
+                for (Referee referee : form.getReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
                     }
@@ -390,8 +256,12 @@ public class UclExportService {
                     }
                 }
                 
-                applicationFormDAO.save(applicationForm);
+                applicationFormDAO.save(form);
             }
         }
+    }
+
+    public ApplicationFormTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
+        return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
 }

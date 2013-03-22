@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 
 public class RejectServiceTest {
 
@@ -50,14 +50,14 @@ public class RejectServiceTest {
 
 	private EventFactory eventFactoryMock;
 
-	private UclExportService uclExportServiceMock;
+	private PorticoQueueService porticoQueueService;
 	
 	@Before
 	public void setUp() {
 		applicationDaoMock = EasyMock.createMock(ApplicationFormDAO.class);		
 		rejectDaoMock = EasyMock.createMock(RejectReasonDAO.class);
 		eventFactoryMock = EasyMock.createMock(EventFactory.class);
-		uclExportServiceMock = EasyMock.createMock(UclExportService.class);
+		porticoQueueService = EasyMock.createMock(PorticoQueueService.class);
 
 		admin = new RegisteredUserBuilder().id(324).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
 		approver = new RegisteredUserBuilder().id(22414).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
@@ -67,7 +67,7 @@ public class RejectServiceTest {
 		reason1 = new RejectReasonBuilder().id(1).text("idk").build();
 		reason2 = new RejectReasonBuilder().id(2).text("idc").build();
 		
-		rejectService = new RejectService(applicationDaoMock, rejectDaoMock, eventFactoryMock, uclExportServiceMock);
+		rejectService = new RejectService(applicationDaoMock, rejectDaoMock, eventFactoryMock, porticoQueueService);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

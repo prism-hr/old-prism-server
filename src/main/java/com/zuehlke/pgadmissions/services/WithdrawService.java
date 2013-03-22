@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 
 @Service
 @Transactional
@@ -17,7 +17,7 @@ public class WithdrawService {
 	
 	private final RefereeService refereeService;
 	
-	private final UclExportService uclExportService;
+	private final PorticoQueueService porticoQueueService;
 
 	public WithdrawService() {
 		this(null, null, null, null);
@@ -25,20 +25,20 @@ public class WithdrawService {
 
 	@Autowired
     public WithdrawService(ApplicationsService applicationService, MailService mailService,
-            RefereeService refereeService, UclExportService exportService) {
+            RefereeService refereeService, PorticoQueueService porticoQueueService) {
 		this.mailService = mailService;
 		this.applicationService = applicationService;
 		this.refereeService = refereeService;
-		this.uclExportService = exportService;
+		this.porticoQueueService = porticoQueueService;
 	}
 	
-	public void saveApplicationFormAndSendMailNotifications(ApplicationForm applicationForm) {
-		applicationService.save(applicationForm);
-		mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(refereeService.getRefereesWhoHaveNotProvidedReference(applicationForm), applicationForm);
+	public void saveApplicationFormAndSendMailNotifications(final ApplicationForm form) {
+		applicationService.save(form);
+		mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(refereeService.getRefereesWhoHaveNotProvidedReference(form), form);
         
 //		TODO: Enable when ready for production
-//		if (applicationForm.isSubmitted()) {
-//		    uclExportService.sendToPortico(applicationForm);
-//		}
+		if (form.isSubmitted()) {
+		    porticoQueueService.sendToPortico(form);
+		}
 	}
 }

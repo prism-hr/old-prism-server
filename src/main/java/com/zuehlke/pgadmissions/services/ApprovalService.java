@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,7 @@ public class ApprovalService {
         this(null, null, null, null, null, null, null, null, null);
     }
 
+    @Autowired
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO,
             ApprovalRoundDAO approvalRoundDAO, StageDurationService stageDurationService, EventFactory eventFactory,
             CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO,

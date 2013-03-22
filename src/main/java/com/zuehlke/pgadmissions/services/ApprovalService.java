@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
@@ -51,7 +51,7 @@ public class ApprovalService {
 
     private final UserService userService;
 
-    private final UclExportService uclExportService;
+    private final PorticoQueueService approvedSenderService;
 
     private final SupervisorDAO supervisorDAO;
 
@@ -63,7 +63,7 @@ public class ApprovalService {
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO,
             ApprovalRoundDAO approvalRoundDAO, StageDurationService stageDurationService, EventFactory eventFactory,
             CommentDAO commentDAO, SupervisorDAO supervisorDAO, ProgrammeDetailDAO programmeDetailDAO,
-            UclExportService uclExportService) {
+            PorticoQueueService approvedSenderService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;
@@ -72,7 +72,7 @@ public class ApprovalService {
         this.commentDAO = commentDAO;
         this.supervisorDAO = supervisorDAO;
         this.programmeDetailDAO = programmeDetailDAO;
-        this.uclExportService = uclExportService;
+        this.approvedSenderService = approvedSenderService;
     }
 
     public void confirmSupervision(ApplicationForm application, ConfirmSupervisionDTO confirmSupervisionDTO) {
@@ -266,7 +266,7 @@ public class ApprovalService {
         applicationDAO.save(application);
 
         // TODO: Enable when ready for production
-        // uclExportService.sendToUCL(application);
+        approvedSenderService.sendToPortico(application);
 
         return true;
     }

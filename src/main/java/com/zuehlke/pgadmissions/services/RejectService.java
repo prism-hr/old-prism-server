@@ -13,28 +13,30 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 
 @Service
 @Transactional
 public class RejectService {
 
 	private final ApplicationFormDAO applicationDao;
+	
 	private final RejectReasonDAO rejectDao;
+	
 	private final EventFactory eventFactory;
-	private final UclExportService uclExportService;
+	
+	private final PorticoQueueService porticoQueueService;
 
 	public RejectService() {
 		this(null, null, null, null);
 	}
 
 	@Autowired
-    public RejectService(ApplicationFormDAO applicationDAO, RejectReasonDAO rejectDao, EventFactory eventFactory,
-            UclExportService exportService) {
+    public RejectService(ApplicationFormDAO applicationDAO, RejectReasonDAO rejectDao, EventFactory eventFactory, PorticoQueueService rejectedSenderService) {
 		this.applicationDao = applicationDAO;
 		this.rejectDao = rejectDao;
 		this.eventFactory = eventFactory;
-		this.uclExportService = exportService;
+		this.porticoQueueService = rejectedSenderService;
 	}
 
 	public List<RejectReason> getAllRejectionReasons() {
@@ -45,23 +47,23 @@ public class RejectService {
 		return rejectDao.getRejectReasonById(id);
 	}
 
-	public void moveApplicationToReject(ApplicationForm application, RegisteredUser approver, Rejection rejection) {
+	public void moveApplicationToReject(final ApplicationForm form, final RegisteredUser approver, final Rejection rejection) {
 		if (rejection == null) {
 			throw new IllegalArgumentException("rejection must be provided!");
 		}
 		if (approver == null) {
 			throw new IllegalArgumentException("approver must not be null!");
 		}
-		if (!(application.getProgram().isApprover(approver) || approver.hasAdminRightsOnApplication(application))) {
+		if (!(form.getProgram().isApprover(approver) || approver.hasAdminRightsOnApplication(form))) {
 			throw new IllegalArgumentException("approver is not an approver or administrator in the program of the application!");
 		}
-		application.setApprover(approver);
-		application.setStatus(ApplicationFormStatus.REJECTED);		
-		application.setRejection(rejection);
-		application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));
-		applicationDao.save(application);
+		form.setApprover(approver);
+		form.setStatus(ApplicationFormStatus.REJECTED);		
+		form.setRejection(rejection);
+		form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));
+		applicationDao.save(form);
 		
         // TODO: Enable when ready for production
-        //uclExportService.sendToUCL(application);
+		porticoQueueService.sendToPortico(form);
 	}
 }

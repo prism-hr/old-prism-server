@@ -65,7 +65,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 
 public class ApprovalServiceTest {
 
@@ -91,7 +91,7 @@ public class ApprovalServiceTest {
 
     private Supervisor supervisor;
 
-    private UclExportService uclExportServiceMock;
+    private PorticoQueueService porticoQueueServiceMock;
 
     @Before
     public void setUp() {
@@ -103,12 +103,12 @@ public class ApprovalServiceTest {
         stageDurationDAOMock = EasyMock.createMock(StageDurationService.class);
         programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
         eventFactoryMock = EasyMock.createMock(EventFactory.class);
-        uclExportServiceMock = EasyMock.createMock(UclExportService.class);
+        porticoQueueServiceMock = EasyMock.createMock(PorticoQueueService.class);
         commentDAOMock = EasyMock.createMock(CommentDAO.class);
         userServiceMock = EasyMock.createMock(UserService.class);
 
         approvalService = new ApprovalService(userServiceMock, applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, eventFactoryMock,
-                commentDAOMock, supervisorDAOMock, programmeDetailDAOMock, uclExportServiceMock) {
+                commentDAOMock, supervisorDAOMock, programmeDetailDAOMock, porticoQueueServiceMock) {
             @Override
             public ApprovalRound newApprovalRound() {
                 return approvalRound;

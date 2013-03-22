@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -49,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
@@ -1768,6 +1770,7 @@ public class PorticoDocumentUploadIT {
         
     private void sendToPortico() {        
         List<ApplicationForm> allApplicationsByStatus = applicationsService.getAllApplicationsByStatus(ApplicationFormStatus.REVIEW);
+        
         applicationForm = null; 
         
         boolean foundEnoughDataForQualifications = false;
@@ -1819,14 +1822,19 @@ public class PorticoDocumentUploadIT {
         
         applicationsService.save(applicationForm);
         
-        uclExportService.sendToPortico(applicationForm, new CsvTransferListener());
-
-        sentApps++;
+        ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
+        
+        try {
+            uclExportService.sendToPortico(applicationForm, applicationFormTransfer, new CsvTransferListener());
+            sentApps++;
+        } catch (UclExportServiceException e) {
+            e.printStackTrace();
+        }
     }
     
     private class CsvTransferListener implements TransferListener {
         @Override
-        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
             switch (sentApps % 3) {
             case 1:
                 request.getApplication().getCourseApplication().setApplicationStatus("WITHDRAWN");
@@ -1860,7 +1868,7 @@ public class PorticoDocumentUploadIT {
         }
 
         @Override
-        public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+        public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
             if (response != null) {
                 csvEntries.add(response.getReference().getApplicantID());
                 csvEntries.add(response.getReference().getApplicationID());
@@ -1873,7 +1881,7 @@ public class PorticoDocumentUploadIT {
         }
 
         @Override
-        public void webServiceCallFailed(ApplicationFormTransferError error) {
+        public void webServiceCallFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add(error.getDiagnosticInfo());
@@ -1881,11 +1889,11 @@ public class PorticoDocumentUploadIT {
         }
 
         @Override
-        public void sftpTransferStarted() {
+        public void sftpTransferStarted(ApplicationForm form) {
         }
 
         @Override
-        public void sftpTransferFailed(ApplicationFormTransferError error) {
+        public void sftpTransferFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add("null");
@@ -1894,10 +1902,10 @@ public class PorticoDocumentUploadIT {
         }
 
         @Override
-        public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+        public void sftpTransferCompleted(String zipFileName, ApplicationFormTransfer transfer) {
             csvEntries.add(zipFileName);
-            csvEntries.add(applicantId);
-            csvEntries.add(bookingReferenceId);
+            csvEntries.add(transfer.getUclUserIdReceived());
+            csvEntries.add(transfer.getUclBookingReferenceReceived());
             csvEntries.add("null");
         }
     }

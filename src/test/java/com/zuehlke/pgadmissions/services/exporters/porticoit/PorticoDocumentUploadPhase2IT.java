@@ -35,9 +35,11 @@ import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResp
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.QualificationsTp;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.exceptions.UclExportServiceException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
@@ -102,7 +104,7 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void missingResearchProposal1ApplicationFilenameForValidResearchProposal() {
+    public void missingResearchProposal1ApplicationFilenameForValidResearchProposal() throws UclExportServiceException {
         csvEntries.add("Missing researchProposal.1.applicationFilename for valid research proposal document in the document upload package.");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCIVSGEO01-2012-000111");
         addReferres(applicationForm);
@@ -120,9 +122,10 @@ public class PorticoDocumentUploadPhase2IT {
             }
         });
         
-        uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
+        ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
+        uclExportService.sendToPortico(applicationForm, applicationFormTransfer, new CsvTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 request.getApplication().getCourseApplication().setExternalApplicationID("RRDCIVSGEO01-2016-000111");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
@@ -149,7 +152,7 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void missingtranscript2applicationFilename() {
+    public void missingtranscript2applicationFilename() throws UclExportServiceException {
         csvEntries.add("Missing transcript.2.applicationFilename with valid corresponding document in the upload package.");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000329");
         addReferres(applicationForm);
@@ -186,9 +189,10 @@ public class PorticoDocumentUploadPhase2IT {
             }
         });
         
-        uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
+        ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
+        uclExportService.sendToPortico(applicationForm, applicationFormTransfer, new CsvTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2016-000329");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
@@ -215,7 +219,7 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void noEnglishLanguageTestCertificate1InDocumentUpload() {
+    public void noEnglishLanguageTestCertificate1InDocumentUpload() throws UclExportServiceException {
         csvEntries.add("No englishLanguageTestCertificate.1 in document upload.");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000329");
         addReferres(applicationForm);
@@ -225,9 +229,10 @@ public class PorticoDocumentUploadPhase2IT {
             }
         });
         
-        uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
+        ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
+        uclExportService.sendToPortico(applicationForm, applicationFormTransfer, new CsvTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2016-000329-1");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
@@ -254,7 +259,7 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void corruptedApplicationForm1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() {
+    public void corruptedApplicationForm1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() throws UclExportServiceException {
         csvEntries.add("Corrupted applicationForm.1 in document upload with valid corresponding entry in document upload contents file (optional document).");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDSECSING01-2012-000202");
         addReferres(applicationForm);
@@ -271,9 +276,10 @@ public class PorticoDocumentUploadPhase2IT {
             }
         });
         
-        uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
+        ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
+        uclExportService.sendToPortico(applicationForm, applicationFormTransfer, new CsvTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 request.getApplication().getCourseApplication().setExternalApplicationID("RRDSECSING01-2016-000202");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
@@ -300,13 +306,15 @@ public class PorticoDocumentUploadPhase2IT {
     // ----------------------------------------------------------------------------------    
     @Test
     @Transactional
-    public void validApplicationFormWithBogusInstitutionCode() {
+    public void validApplicationFormWithBogusInstitutionCode() throws UclExportServiceException {
         csvEntries.add("Bogus institution code");
         applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000282");
         addReferres(applicationForm);
-        uclExportService.sendToPortico(applicationForm, new CsvTransferListener() {
+        
+        ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
+        uclExportService.sendToPortico(applicationForm, applicationFormTransfer, new CsvTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
                 request.getApplication().getCourseApplication().setExternalApplicationID("RRDCOMSING01-2016-000282");
                 request.getApplication().getApplicant().setEnglishIsFirstLanguage(true);
                 request.getApplication().getApplicant().setEnglishLanguageQualificationList(null);
@@ -346,7 +354,7 @@ public class PorticoDocumentUploadPhase2IT {
     
     private class CsvTransferListener implements TransferListener {
         @Override
-        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {
                 marshaller.marshal(request, new StreamResult(new File("request_" + request.getApplication().getCourseApplication().getExternalApplicationID() + ".txt")));
@@ -356,7 +364,7 @@ public class PorticoDocumentUploadPhase2IT {
         }
 
         @Override
-        public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+        public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
             if (response != null) {
                 csvEntries.add(response.getReference().getApplicantID());
                 csvEntries.add(response.getReference().getApplicationID());
@@ -369,7 +377,7 @@ public class PorticoDocumentUploadPhase2IT {
         }
 
         @Override
-        public void webServiceCallFailed(ApplicationFormTransferError error) {
+        public void webServiceCallFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add(error.getDiagnosticInfo());
@@ -377,11 +385,11 @@ public class PorticoDocumentUploadPhase2IT {
         }
 
         @Override
-        public void sftpTransferStarted() {
+        public void sftpTransferStarted(ApplicationForm form) {
         }
 
         @Override
-        public void sftpTransferFailed(ApplicationFormTransferError error) {
+        public void sftpTransferFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add("null");
@@ -390,10 +398,10 @@ public class PorticoDocumentUploadPhase2IT {
         }
 
         @Override
-        public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+        public void sftpTransferCompleted(String zipFileName, ApplicationFormTransfer transfer) {
             csvEntries.add(zipFileName);
-            csvEntries.add(applicantId);
-            csvEntries.add(bookingReferenceId);
+            csvEntries.add(transfer.getUclUserIdReceived());
+            csvEntries.add(transfer.getUclBookingReferenceReceived());
             csvEntries.add("null");
         }
     }

@@ -30,6 +30,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -86,9 +87,10 @@ public class PorticoWebServicePhase2IT {
         
         for (String appNumber : applications) {
             ApplicationForm form = applicationsService.getApplicationByApplicationNumber(appNumber);
+            ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(form);
             selectReferres(form);
             try {
-                uclExportService.sendToPortico(form, new CsvTransferListener());
+                uclExportService.sendToPortico(form, applicationFormTransfer, new CsvTransferListener());
             } catch (Exception e) {
                 // do nothing
             } finally {
@@ -107,7 +109,7 @@ public class PorticoWebServicePhase2IT {
     
     private class CsvTransferListener implements TransferListener {
         @Override
-        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request) {
+        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
             request.getApplication().getCourseApplication().setExternalApplicationID(request.getApplication().getCourseApplication().getExternalApplicationID() + "-1");
             Marshaller marshaller = webServiceTemplate.getMarshaller();
             try {
@@ -118,7 +120,7 @@ public class PorticoWebServicePhase2IT {
         }
 
         @Override
-        public void webServiceCallCompleted(AdmissionsApplicationResponse response) {
+        public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
             if (response != null) {
                 csvEntries.add(response.getReference().getApplicantID());
                 csvEntries.add(response.getReference().getApplicationID());
@@ -131,7 +133,7 @@ public class PorticoWebServicePhase2IT {
         }
 
         @Override
-        public void webServiceCallFailed(ApplicationFormTransferError error) {
+        public void webServiceCallFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add(error.getDiagnosticInfo());
@@ -139,11 +141,11 @@ public class PorticoWebServicePhase2IT {
         }
 
         @Override
-        public void sftpTransferStarted() {
+        public void sftpTransferStarted(ApplicationForm form) {
         }
 
         @Override
-        public void sftpTransferFailed(ApplicationFormTransferError error) {
+        public void sftpTransferFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add("null");
@@ -152,10 +154,10 @@ public class PorticoWebServicePhase2IT {
         }
 
         @Override
-        public void sftpTransferCompleted(String zipFileName, String applicantId, String bookingReferenceId) {
+        public void sftpTransferCompleted(String zipFileName, ApplicationFormTransfer transfer) {
             csvEntries.add(zipFileName);
-            csvEntries.add(applicantId);
-            csvEntries.add(bookingReferenceId);
+            csvEntries.add(transfer.getUclUserIdReceived());
+            csvEntries.add(transfer.getUclBookingReferenceReceived());
             csvEntries.add("null");
         }
     }

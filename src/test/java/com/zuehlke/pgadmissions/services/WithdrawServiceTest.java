@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.services.exporters.UclExportService;
+import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 
 public class WithdrawServiceTest {
 
@@ -23,7 +23,7 @@ public class WithdrawServiceTest {
 	
 	private WithdrawService service;
 	
-	private UclExportService uclExportServiceMock;
+	private PorticoQueueService porticoQueueServiceMock;
 	
 	@Test
 	public void shouldSaveFormAndSendEmails() {
@@ -45,7 +45,7 @@ public class WithdrawServiceTest {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		mailServiceMock = EasyMock.createMock(MailService.class);
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
-		uclExportServiceMock = EasyMock.createMock(UclExportService.class);
-		service = new WithdrawService(applicationServiceMock, mailServiceMock, refereeServiceMock, uclExportServiceMock);
+		porticoQueueServiceMock = EasyMock.createMock(PorticoQueueService.class);
+		service = new WithdrawService(applicationServiceMock, mailServiceMock, refereeServiceMock, porticoQueueServiceMock);
 	}
 }

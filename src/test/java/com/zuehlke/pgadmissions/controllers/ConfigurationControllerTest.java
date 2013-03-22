@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static junit.framework.Assert.assertNotNull;
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertArrayEquals;
@@ -36,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.dto.RegistryUserDTO;
 import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
@@ -44,24 +43,19 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 public class ConfigurationControllerTest {
 
-	private ConfigurationController controller;
+    private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
+    private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
 
+    private ConfigurationController controller;
 	private RegisteredUser superAdmin;
 	private StageDurationPropertyEditor stageDurationPropertyEditorMock;
-
-	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
-	private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
-
 	private PersonPropertyEditor registryPropertyEditorMock;
 	private UserService userServiceMock;
-	
-	
 	private ThrottleService throttleserviceMock;
-
 	private ConfigurationService configurationServiceMock;
-
 	private RegisteredUser admin;
-
+	private PorticoQueueService queueServiceMock;
+	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).username("aa").email("aa@gmail.com").firstName("mark").lastName("ham")
@@ -195,6 +189,7 @@ public class ConfigurationControllerTest {
 
 	}
 	
+
 	@Test(expected=ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfNotSueradmin() {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
@@ -218,8 +213,6 @@ public class ConfigurationControllerTest {
 		
 		ReminderInterval reminderInterval = new ReminderInterval();
 		reminderInterval.setId(1);
-		
-
 		
 		EasyMock.replay(configurationServiceMock);
 		
@@ -259,7 +252,8 @@ public class ConfigurationControllerTest {
 	
 	@Test
 	public void shouldUpdateThrottle() {
-		throttleserviceMock.updateThrottle(isA(Throttle.class));
+		throttleserviceMock.updateThrottleWithNewValues(false, "15");
+		EasyMock.expect(throttleserviceMock.hasSwitchedFromFalseToTrue(false)).andReturn(false);
 		replay(throttleserviceMock);
 		
 		Map<String, String> result = controller.updateThrottle(15, false, "15");
@@ -271,7 +265,9 @@ public class ConfigurationControllerTest {
 	@Test
 	public void shouldNotUpdateThrottleAndReturnErrorMessage() {
 		String errorMessage = "The throttling batch size must be a number";
-		throttleserviceMock.updateThrottle(isA(Throttle.class));
+		throttleserviceMock.updateThrottleWithNewValues(false, "15khg");
+		EasyMock.expectLastCall().andThrow(new NumberFormatException());
+		EasyMock.expect(throttleserviceMock.hasSwitchedFromFalseToTrue(false)).andReturn(false);
 		replay(throttleserviceMock);
 		
 		Map<String, String> result = controller.updateThrottle(15, false, "15khg");
@@ -280,8 +276,19 @@ public class ConfigurationControllerTest {
 		assertEquals(1, result.size());
 		assertEquals(errorMessage, result.get("error"));
 	}
-
 	
+	@Test
+	public void shouldTriggerSendingApplicationsToPorticoIfTheSwitchHasBeenSetToTrue() {
+	    throttleserviceMock.updateThrottleWithNewValues(true, "15");
+	    EasyMock.expect(throttleserviceMock.hasSwitchedFromFalseToTrue(true)).andReturn(true);
+	    queueServiceMock.sendQueuedApprovedApplicationsToPortico();
+	    
+	    replay(throttleserviceMock, queueServiceMock);
+	    
+	    controller.updateThrottle(15, true, "15");
+	    
+	    verify(throttleserviceMock, queueServiceMock);
+	}
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -293,21 +300,26 @@ public class ConfigurationControllerTest {
 
 	@Before
 	public void setUp() {
-
 		stageDurationPropertyEditorMock = EasyMock.createMock(StageDurationPropertyEditor.class);
-
-		registryPropertyEditorMock = EasyMock.createMock(PersonPropertyEditor.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-		throttleserviceMock = createMock(ThrottleService.class);
-		configurationServiceMock = createMock(ConfigurationService.class);
-
-		controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock, userServiceMock, configurationServiceMock, throttleserviceMock);
-
-		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
 		
-		admin = new RegisteredUserBuilder().id(3).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
+		registryPropertyEditorMock = EasyMock.createMock(PersonPropertyEditor.class);
+		
+		userServiceMock = EasyMock.createMock(UserService.class);
+		
+		throttleserviceMock = EasyMock.createMock(ThrottleService.class);
+		
+		configurationServiceMock = EasyMock.createMock(ConfigurationService.class);
+		
+		queueServiceMock = EasyMock.createMock(PorticoQueueService.class);
+		
+        controller = new ConfigurationController(stageDurationPropertyEditorMock, registryPropertyEditorMock,
+                userServiceMock, configurationServiceMock, throttleserviceMock, queueServiceMock);
+
+        superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark")
+                .lastName("ham").role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+
+        admin = new RegisteredUserBuilder().id(3).username("mark").email("mark@gmail.com").firstName("mark")
+                .lastName("ham").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
 
 	}
 }

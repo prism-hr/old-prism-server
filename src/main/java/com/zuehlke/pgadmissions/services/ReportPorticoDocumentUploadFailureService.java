@@ -65,7 +65,7 @@ public class ReportPorticoDocumentUploadFailureService {
         if (transfer != null) {
             ApplicationFormTransferError transferError = new ApplicationFormTransferError();
             transferError.setDiagnosticInfo(String.format("DocumentUploadError from Portico [errorCode=%s, message=%s]", errorCode, message));
-            transferError.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP_THIS_TRANSFER_ONLY);
+            transferError.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP);
             transferError.setProblemClassification(ApplicationFormTransferErrorType.PORTICO_SFTP_DOCUMENT_HANDLING_PROBLEM);
             transferError.setRequestCopy(StringUtils.EMPTY);
             transferError.setResponseCopy(StringUtils.EMPTY);

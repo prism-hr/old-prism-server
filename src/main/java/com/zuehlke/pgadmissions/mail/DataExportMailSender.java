@@ -81,5 +81,4 @@ public class DataExportMailSender {
         String subject = messageSource.getMessage(subjectCode, null, null);
         mailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, template, createModel(user, message), null));
     }
-
 }

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -31,9 +30,8 @@ import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.application.CannotTerminateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
@@ -41,8 +39,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RejectionValidator;
 
 public class RejectApplicationControllerTest {
-
     private static final String VIEW_RESULT = "private/staff/approver/reject_page";
+    private static final String REJECT_EMAIL = "private/pgStudents/mail/rejected_notification";
     private static final String AFTER_REJECT_VIEW = "redirect:/applications";
 
     private RejectApplicationController controllerUT;
@@ -63,13 +61,16 @@ public class RejectApplicationControllerTest {
 
     @Before
     public void setUp() {
-        admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
+        admin = new RegisteredUserBuilder().id(1).username("admin")
+                .role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
 
         reason1 = new RejectReasonBuilder().id(10).text("idk").build();
         reason2 = new RejectReasonBuilder().id(20).text("idc").build();
-        approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+        approver = new RegisteredUserBuilder().id(2).username("real approver")
+                .role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
         program = new ProgramBuilder().id(100).administrators(admin).approver(approver).build();
-        application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION).applicationNumber("abc").program(program)//
+        application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION)
+                .applicationNumber("abc").program(program)//
                 .build();
 
         rejectServiceMock = EasyMock.createMock(RejectService.class);
@@ -79,8 +80,8 @@ public class RejectApplicationControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         EasyMock.replay(userServiceMock);
         rejectionValidatorMock = EasyMock.createMock(RejectionValidator.class);
-        controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock, rejectReasonPropertyEditorMock,
-                rejectionValidatorMock);
+        controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock,
+                rejectReasonPropertyEditorMock, rejectionValidatorMock);
 
         errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
@@ -116,9 +117,8 @@ public class RejectApplicationControllerTest {
 
     // -------------------------------------------------------------------
     // ----------- check for application states:
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void throwExceptionIfApplicationIsUnsubmitted() {
-        // FIXME thrown exception is semanticaly incorrect, but RegisteredUser#hasAdminRightsOnApplication checks for application status
+    @Test(expected = ResourceNotFoundException.class)
+    public void throwCUAEIfApplicationIsUnsubmitted() {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
         EasyMock.replay(applicationServiceMock);
 
@@ -126,8 +126,8 @@ public class RejectApplicationControllerTest {
         controllerUT.getApplicationForm("10");
     }
 
-    @Test(expected = CannotTerminateApplicationException.class)
-    public void throwExceptionIfApplicationIsWithdrawn() {
+    @Test(expected = CannotUpdateApplicationException.class)
+    public void throwCUAEIfApplicationIsWithdrawn() {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
         EasyMock.replay(applicationServiceMock);
 
@@ -135,8 +135,8 @@ public class RejectApplicationControllerTest {
         controllerUT.getApplicationForm("10");
     }
 
-    @Test(expected = MissingApplicationFormException.class)
-    public void throwExceptionIfApplicationDoesntExist() {
+    @Test(expected = ResourceNotFoundException.class)
+    public void throwRNFEIfApplicationDoesntExist() {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(null);
         EasyMock.replay(applicationServiceMock);
         controllerUT.getApplicationForm("10");
@@ -167,12 +167,6 @@ public class RejectApplicationControllerTest {
     }
 
     @Test
-    public void returnApplicationIfApplicationIsInRequestRestartOfApprovalState() {
-        application.setStatus(ApplicationFormStatus.REQUEST_RESTART_APPROVAL);
-        returnApplicationIfApplicationHasValidState();
-    }
-
-    @Test
     public void returnApplicationIfApplicationIsInInterviewState() {
         application.setStatus(ApplicationFormStatus.INTERVIEW);
         returnApplicationIfApplicationHasValidState();
@@ -180,8 +174,8 @@ public class RejectApplicationControllerTest {
 
     // -------------------------------------------------------------------
     // ----------- check for user roles:
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void throwExceptionIfUserIsApplicant() {
+    @Test(expected = ResourceNotFoundException.class)
+    public void throwRNFEIfUserIsApplicant() {
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
         EasyMock.replay(applicationServiceMock);
         RegisteredUser applicant = new RegisteredUserBuilder().id(2023).username("applicant")
@@ -193,8 +187,8 @@ public class RejectApplicationControllerTest {
         controllerUT.getApplicationForm("10");
     }
 
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void throwExceptionIfUserIsNotApproverOfApplication() {
+    @Test(expected = ResourceNotFoundException.class)
+    public void throwRNFEIfUserIsNotApproverOfApplication() {
         RegisteredUser wrongApprover = new RegisteredUserBuilder().id(656).username("wrongApprover")
                 .role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
         EasyMock.reset(userServiceMock);
@@ -223,9 +217,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void returnApplicationIfUserIsHasAdminRightsOnForm() {
         RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(userMock.getRoles()).andReturn(Arrays.asList(new RoleBuilder().authorityEnum(Authority.REFEREE).build()));
-
-        EasyMock.expect(userMock.isNotInRole(userMock, Authority.APPROVER)).andReturn(true);
+        EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
         EasyMock.expect(userMock.hasAdminRightsOnApplication(application)).andReturn(true);
 
         EasyMock.replay(userMock);
@@ -276,6 +268,7 @@ public class RejectApplicationControllerTest {
 
         Rejection rejection = new RejectionBuilder().id(3).build();
         rejectServiceMock.moveApplicationToReject(application, admin, rejection);
+        rejectServiceMock.sendToPortico(application);
         EasyMock.expectLastCall();
         EasyMock.replay(rejectServiceMock);
 
@@ -300,8 +293,8 @@ public class RejectApplicationControllerTest {
         Assert.assertEquals(VIEW_RESULT, nextView);
     }
 
-    @Test(expected = InsufficientApplicationFormPrivilegesException.class)
-    public void throwExceptionWhenMovingToReviewAsInvalidUser() {
+    @Test(expected = ResourceNotFoundException.class)
+    public void moveToReviewThrowRNFEWhenInvalidUser() {
         RegisteredUser applicant = new RegisteredUserBuilder().id(156).username("appl")//
                 .role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build())//
                 .build();
@@ -311,5 +304,4 @@ public class RejectApplicationControllerTest {
         Rejection rejection = new RejectionBuilder().id(3).build();
         controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
     }
-
 }

@@ -62,8 +62,10 @@ public class RejectService {
 		form.setRejection(rejection);
 		form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));
 		applicationDao.save(form);
-		
-        // TODO: Enable when ready for production
-		porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
+	}
+	
+	public void sendToPortico(ApplicationForm form) {
+	    // TODO: Enable when ready for production
+	    porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);	    
 	}
 }

@@ -52,6 +52,7 @@ public class WithdrawControllerTest {
 		
 		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
+		withdrawServiceMock.sendToPortico(applicationForm);
 		
 		EasyMock.replay(withdrawServiceMock, eventFactoryMock);
 		
@@ -78,6 +79,7 @@ public class WithdrawControllerTest {
 		
 		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
 		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
+		withdrawServiceMock.sendToPortico(applicationForm);
 		
 		EasyMock.replay(withdrawServiceMock, eventFactoryMock);
 		
@@ -89,8 +91,8 @@ public class WithdrawControllerTest {
 		
 		assertEquals(1, applicationForm.getEvents().size());
 		assertEquals(event, applicationForm.getEvents().get(0));
-		
 	}
+
 	@Test
 	public void shouldGetApplicationForm() {
 		String applicationNumber = "abc";

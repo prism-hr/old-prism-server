@@ -85,6 +85,7 @@ public class EvaluationTransitionController extends StateTransitionController {
 			ApprovalEvaluationComment approvalComment = (ApprovalEvaluationComment) newComment;
             if (ApplicationFormStatus.APPROVED == approvalComment.getNextStatus()) {
                 if (approvalService.moveToApproved(applicationForm)) {
+                    approvalService.sendToPortico(applicationForm);                    
                     modelMap.put("messageCode", "move.approved");
                     modelMap.put("application", applicationForm.getApplicationNumber());
                 } else {

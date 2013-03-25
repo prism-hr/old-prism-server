@@ -38,7 +38,7 @@ public class WithdrawService {
         
 //		TODO: Enable when ready for production
 		if (form.isSubmitted()) {
-		    porticoQueueService.sendToPortico(form);
+		    porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
 		}
 	}
 }

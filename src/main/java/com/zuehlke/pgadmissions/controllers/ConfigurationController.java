@@ -149,7 +149,7 @@ public class ConfigurationController {
 	    try {
 	        throttleService.updateThrottleWithNewValues(enabled, batchSize);
 	    } catch (NumberFormatException e) {
-	        return Collections.singletonMap("error", "The throttling batch size must be a number");
+	        return Collections.singletonMap("error", "The throttling batch size must be a valid positive number");
 	    }
 	    
 		if (hasSwitchedFromFalseToTrue) {

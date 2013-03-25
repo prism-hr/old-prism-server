@@ -128,7 +128,7 @@
   									<form>
                                     <div class="row-group">
                                         <div class="row">
-                                            <label class="plain-label" for="throttoleSwitchOnId">Portico Interface</label>
+                                            <label class="plain-label" for="throttoleSwitchOnId">Portico Interface</label><span data-desc="Enable/disable the Portico interface" class="hint"></span> 
                                             <div class="field"> 
                                             	<input id="throttoleSwitchOnId" type="radio" name="switch" value="on"> On </input> 
                                             	<input type="radio" name="switch" value="off"> Off </input>
@@ -136,7 +136,7 @@
                                         </div>
 
                                         <div class="row">
-                                            <label class="plain-label" for="batchSizeId">Throttling batch size</label>                                             
+                                            <label class="plain-label" for="batchSizeId">Throttling batch size</label> <span data-desc="Maximum number of rejected and withdrawn applications to send to Portico every night (0 = no limit)" class="hint"></span>                                            
                                         	<div class="field">
                                             	<input type="text" id="batchSizeId" />
 												<input type="hidden" id="throttleId" />

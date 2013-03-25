@@ -36,7 +36,11 @@ public class ThrottleService {
 	public void updateThrottleWithNewValues(boolean enabled, String batchSize) throws NumberFormatException {
 	    Throttle throttle = getThrottle();
         throttle.setEnabled(enabled);
-        throttle.setBatchSize(Integer.parseInt(batchSize));
+        Integer size = Integer.parseInt(batchSize);
+        if (size < 0) {
+        	throw new NumberFormatException("Batch size cannot be negative");
+        }
+        throttle.setBatchSize(size);
 	}
 	
 	public void disablePorticoInterface() {

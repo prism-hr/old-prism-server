@@ -81,15 +81,26 @@ public class ThrottleServiceTest {
 	}
 	
 	@Test(expected = NumberFormatException.class)
-	public void shouldNotUpdateExistingThrottle() {
+	public void shouldNotUpdateExistingThrottleBecauseOfNumberFormat() {
 		Throttle throttle = new ThrottleBuilder().batchSize(12).enabled(false).id(1).build();
 		expect(mockRepo.get()).andReturn(throttle);
 		replay(mockRepo);
 		
 		service.updateThrottleWithNewValues(true, "1liv5");
 		
-		assertEquals((Boolean) true, throttle.getEnabled());
-		assertEquals((Integer) 15, throttle.getBatchSize());
+		assertEquals((Boolean) false, throttle.getEnabled());
+		assertEquals((Integer) 12, throttle.getBatchSize());
+		verify(mockRepo);
+	}
+	
+	@Test(expected = NumberFormatException.class)
+	public void shouldNotUpdateExistingThrottleWithNegativeBatchSize() {
+		Throttle throttle = new ThrottleBuilder().batchSize(12).enabled(false).id(1).build();
+		expect(mockRepo.get()).andReturn(throttle);
+		replay(mockRepo);
+		
+		service.updateThrottleWithNewValues(true, "-15");
+		
 		verify(mockRepo);
 	}
 	

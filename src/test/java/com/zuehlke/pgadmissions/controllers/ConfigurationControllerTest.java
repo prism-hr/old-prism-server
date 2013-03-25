@@ -375,7 +375,7 @@ public class ConfigurationControllerTest {
 	@Test
 	public void shouldUpdateThrottle() {
 		throttleserviceMock.updateThrottleWithNewValues(false, "15");
-		EasyMock.expect(throttleserviceMock.hasSwitchedFromFalseToTrue(false)).andReturn(false);
+		EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(false)).andReturn(false);
 		replay(throttleserviceMock);
 		
 		Map<String, String> result = controller.updateThrottle(15, false, "15");
@@ -389,7 +389,7 @@ public class ConfigurationControllerTest {
 		String errorMessage = "The throttling batch size must be a number";
 		throttleserviceMock.updateThrottleWithNewValues(false, "15khg");
 		EasyMock.expectLastCall().andThrow(new NumberFormatException());
-		EasyMock.expect(throttleserviceMock.hasSwitchedFromFalseToTrue(false)).andReturn(false);
+		EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(false)).andReturn(false);
 		replay(throttleserviceMock);
 		
 		Map<String, String> result = controller.updateThrottle(15, false, "15khg");
@@ -402,7 +402,7 @@ public class ConfigurationControllerTest {
 	@Test
 	public void shouldTriggerSendingApplicationsToPorticoIfTheSwitchHasBeenSetToTrue() {
 	    throttleserviceMock.updateThrottleWithNewValues(true, "15");
-	    EasyMock.expect(throttleserviceMock.hasSwitchedFromFalseToTrue(true)).andReturn(true);
+	    EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(true)).andReturn(true);
 	    queueServiceMock.sendQueuedApprovedApplicationsToPortico();
 	    
 	    replay(throttleserviceMock, queueServiceMock);

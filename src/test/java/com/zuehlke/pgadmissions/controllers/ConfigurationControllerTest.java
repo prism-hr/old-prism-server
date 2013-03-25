@@ -386,7 +386,7 @@ public class ConfigurationControllerTest {
 	
 	@Test
 	public void shouldNotUpdateThrottleAndReturnErrorMessage() {
-		String errorMessage = "The throttling batch size must be a number";
+		String errorMessage = "The throttling batch size must be a valid positive number";
 		throttleserviceMock.updateThrottleWithNewValues(false, "15khg");
 		EasyMock.expectLastCall().andThrow(new NumberFormatException());
 		EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(false)).andReturn(false);

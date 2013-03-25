@@ -75,11 +75,10 @@ public class PorticoQueueService {
     public void sendQueuedWithdrawnOrRejectedApplicationsToPortico(final int batchSize) {
         List<ApplicationFormTransfer> applications = formTransferService.getAllTransfersWaitingToBeSentToPorticoOldestFirst();
         int numberOfApplicationsSent = 1;
-        
         for (ApplicationFormTransfer transfer : applications) {
             ApplicationForm form = transfer.getApplicationForm();
             if (form.getStatus().equals(ApplicationFormStatus.WITHDRAWN) || form.getStatus().equals(ApplicationFormStatus.REJECTED)) {
-                if (numberOfApplicationsSent <= batchSize) {
+                if ((batchSize == 0) || numberOfApplicationsSent <= batchSize) {
                     numberOfApplicationsSent++;
                     sendToPortico(form);
                 }

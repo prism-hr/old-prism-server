@@ -64,6 +64,6 @@ public class RejectService {
 		applicationDao.save(form);
 		
         // TODO: Enable when ready for production
-		porticoQueueService.sendToPortico(form);
+		porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
 	}
 }

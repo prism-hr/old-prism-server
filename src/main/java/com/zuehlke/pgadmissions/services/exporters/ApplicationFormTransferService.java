@@ -58,7 +58,7 @@ public class ApplicationFormTransferService {
         return transferError;
     }
     
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ApplicationFormTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getByApplicationForm(form);
         if (transfer == null) {

@@ -37,138 +37,139 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("/configuration")
 public class ConfigurationController {
 
-	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
-	private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
-	
-	private final StageDurationPropertyEditor stageDurationPropertyEditor;
+    private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
+    private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
+    
+    private final StageDurationPropertyEditor stageDurationPropertyEditor;
 
-	private final PersonPropertyEditor registryPropertyEditor;
-	
-	private final UserService userService;
-	
-	private final ConfigurationService configurationService;
-	
-	private final ThrottleService throttleService;
-	
-	private final PorticoQueueService queueService;
+    private final PersonPropertyEditor registryPropertyEditor;
+    
+    private final UserService userService;
+    
+    private final ConfigurationService configurationService;
+    
+    
+    private final ThrottleService throttleService;
+    
+    private final PorticoQueueService queueService;
 
-	public ConfigurationController() {
-		this(null, null, null, null, null, null);
-	}
+    public ConfigurationController() {
+        this(null, null, null, null, null, null);
+    }
 
     @Autowired
     public ConfigurationController(StageDurationPropertyEditor stageDurationPropertyEditor,
             PersonPropertyEditor registryPropertyEditor, UserService userService,
-            ConfigurationService configurationService,
-            ThrottleService throttleService, PorticoQueueService queueService) {
-		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
-		this.registryPropertyEditor = registryPropertyEditor;
-		this.userService = userService;
-		this.configurationService = configurationService;
-		this.throttleService = throttleService;
-		this.queueService = queueService;
-	}
+            ConfigurationService configurationService, ThrottleService throttleService,
+            PorticoQueueService queueService) {
+        this.stageDurationPropertyEditor = stageDurationPropertyEditor;
+        this.registryPropertyEditor = registryPropertyEditor;
+        this.userService = userService;
+        this.configurationService = configurationService;
+        this.throttleService = throttleService;
+        this.queueService = queueService;
+    }
 
-	@InitBinder(value = "stageDurationDTO")
-	public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
-		binder.registerCustomEditor(StageDuration.class, stageDurationPropertyEditor);
-	}
+    @InitBinder(value = "stageDurationDTO")
+    public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
+        binder.registerCustomEditor(StageDuration.class, stageDurationPropertyEditor);
+    }
 
-	@InitBinder(value = "registryUserDTO")
-	public void registerValidatorsAndPropertyEditorsForRegistryUsers(WebDataBinder binder) {
-		binder.registerCustomEditor(Person.class, registryPropertyEditor);
-	}
+    @InitBinder(value = "registryUserDTO")
+    public void registerValidatorsAndPropertyEditorsForRegistryUsers(WebDataBinder binder) {
+        binder.registerCustomEditor(Person.class, registryPropertyEditor);
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getConfigurationPage() {
-		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMINISTRATOR) ) {
-			throw new ResourceNotFoundException();
-		}
-		return CONFIGURATION_VIEW_NAME;
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, value="config_section")
-	public String getConfigurationSection() {		
-		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)  ) {
-			return "/private/common/simpleMessage";
-		}
-		return CONFIGURATION_SECTION_NAME;
-	}
-	
-	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@ModelAttribute StageDurationDTO stageDurationDto, @ModelAttribute RegistryUserDTO registryUserDTO, @ModelAttribute ReminderInterval reminderInterval) {
-		if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)  ) {
-			throw new ResourceNotFoundException();
-		}
-		configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval);
-		return "redirect:/configuration/config_section";
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/getThrottle")
-	@ResponseBody
-	public Map<String, Object> getThrottle() {
-		Throttle throttle = throttleService.getThrottle();
+    @RequestMapping(method = RequestMethod.GET)
+    public String getConfigurationPage() {
+        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMINISTRATOR) ) {
+            throw new ResourceNotFoundException();
+        }
+        return CONFIGURATION_VIEW_NAME;
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value="config_section")
+    public String getConfigurationSection() {       
+        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)  ) {
+            return "/private/common/simpleMessage";
+        }
+        return CONFIGURATION_SECTION_NAME;
+    }
+    
+    @RequestMapping(method = RequestMethod.POST)
+    public String submit(@ModelAttribute StageDurationDTO stageDurationDto, @ModelAttribute RegistryUserDTO registryUserDTO, @ModelAttribute ReminderInterval reminderInterval) {
+        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)  ) {
+            throw new ResourceNotFoundException();
+        }
+        configurationService.saveConfigurations(stageDurationDto.getStagesDuration(), registryUserDTO.getRegistryUsers(), reminderInterval);
+        return "redirect:/configuration/config_section";
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getThrottle")
+    @ResponseBody
+    public Map<String, Object> getThrottle() {
+        Throttle throttle = throttleService.getThrottle();
         if (throttle == null) {
             return Collections.emptyMap();
         }
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("throttleId", throttle.getId());
-		result.put("enabled", throttle.getEnabled());
-		result.put("batchSize", throttle.getBatchSize());
-		return result;
-	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
-	@ResponseBody
-	public Map<String, String> updateThrottle(@RequestParam Integer id, @RequestParam Boolean enabled, @RequestParam String batchSize) {
-	    boolean hasSwitchedFromFalseToTrue = throttleService.hasSwitchedFromFalseToTrue(enabled);
-	    
-	    try {
-	        throttleService.updateThrottleWithNewValues(enabled, batchSize);
-	    } catch (NumberFormatException e) {
-	        return Collections.singletonMap("error", "The throttling batch size must be a number");
-	    }
-	    
-		if (hasSwitchedFromFalseToTrue) {
-		    queueService.sendQueuedApprovedApplicationsToPortico();
-		}
-		
-		return Collections.emptyMap();
-	}
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("throttleId", throttle.getId());
+        result.put("enabled", throttle.getEnabled());
+        result.put("batchSize", throttle.getBatchSize());
+        return result;
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
+    @ResponseBody
+    public Map<String, String> updateThrottle(@RequestParam Integer id, @RequestParam Boolean enabled, @RequestParam String batchSize) {
+        boolean hasSwitchedFromFalseToTrue = throttleService.userTurnedOnThrottle(enabled);
+        
+        try {
+            throttleService.updateThrottleWithNewValues(enabled, batchSize);
+        } catch (NumberFormatException e) {
+            return Collections.singletonMap("error", "The throttling batch size must be a valid positive number");
+        }
+        
+        if (hasSwitchedFromFalseToTrue) {
+            queueService.sendQueuedApprovedApplicationsToPortico();
+        }
+        
+        return Collections.emptyMap();
+    }
+    
+    @ModelAttribute("stages")
+    public ApplicationFormStatus[] getConfigurableStages() {
+        return ApplicationFormStatus.getConfigurableStages();
+    }
 
-	@ModelAttribute("stages")
-	public ApplicationFormStatus[] getConfigurableStages() {
-		return ApplicationFormStatus.getConfigurableStages();
-	}
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+    @ModelAttribute("stageDurations")
+    public Map<String, StageDuration> getStageDurations() {
+        Map<ApplicationFormStatus, StageDuration> stageDurations = configurationService.getStageDurations();
+        Map<String, StageDuration> durations = new HashMap<String, StageDuration>();
+        for (ApplicationFormStatus status : stageDurations.keySet()) {
+            durations.put(status.toString(), stageDurations.get(status));
+        }
+        return durations;
+    }
 
-	@ModelAttribute("stageDurations")
-	public Map<String, StageDuration> getStageDurations() {
-		Map<ApplicationFormStatus, StageDuration> stageDurations = configurationService.getStageDurations();
-		Map<String, StageDuration> durations = new HashMap<String, StageDuration>();
-		for (ApplicationFormStatus status : stageDurations.keySet()) {
-			durations.put(status.toString(), stageDurations.get(status));
-		}
-		return durations;
-	}
+    @ModelAttribute("reminderInterval")
+    public ReminderInterval getReminderInterval() {
+        return configurationService.getReminderInterval();
+    }
 
-	@ModelAttribute("reminderInterval")
-	public ReminderInterval getReminderInterval() {
-		return configurationService.getReminderInterval();
-	}
-
-	@ModelAttribute("allRegistryUsers")
-	public List<Person> getAllRegistryContacts() {
-		return configurationService.getAllRegistryUsers();
-	}
-	
-	@ModelAttribute("units")
-	public DurationUnitEnum[] getUnits() {
-		return DurationUnitEnum.values();
-	}
+    @ModelAttribute("allRegistryUsers")
+    public List<Person> getAllRegistryContacts() {
+        return configurationService.getAllRegistryUsers();
+    }
+    
+    @ModelAttribute("units")
+    public DurationUnitEnum[] getUnits() {
+        return DurationUnitEnum.values();
+    }
 
 }

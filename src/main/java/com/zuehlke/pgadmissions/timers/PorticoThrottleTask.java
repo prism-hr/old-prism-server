@@ -31,7 +31,7 @@ public class PorticoThrottleTask {
         log.info("Portico Throttle Task Running");
         if (throttleService.isPorticoInterfaceEnabled()) {
             int batchSize = throttleService.getBatchSize();
-            log.info(String.format("Sending %d applications to PORTICO"), batchSize);
+            log.info(String.format("Sending %d applications to PORTICO", batchSize));
             queueService.sendQueuedWithdrawnOrRejectedApplicationsToPortico(batchSize);
         } else {
             log.info("Portico interface is disabled");

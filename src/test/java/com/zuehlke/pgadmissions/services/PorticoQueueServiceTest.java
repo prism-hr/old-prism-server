@@ -172,5 +172,42 @@ public class PorticoQueueServiceTest {
         
         assertEquals(2, numberOfSentApplications);
     }
+    
+    @Test
+    public void shouldSendAllRejectedOrWithdrawnApplicationsToTheQueueWithoutBatching() {
+    	porticoQueueService = new PorticoQueueService() {
+    		@Override
+    		public void sendToPortico(final ApplicationForm form) {
+    			numberOfSentApplications++;
+    		}
+    	};
+    	porticoQueueService.setExportService(exportServiceMock);
+    	porticoQueueService.setFormTransferService(formTransferServiceMock);
+    	porticoQueueService.setThrottleService(throttleServiceMock);
+    	porticoQueueService.setTemplate(templateMock);
+    	porticoQueueService.setQueue(queueMock);
+    	
+    	ApplicationForm rejected = new ValidApplicationFormBuilder().build();
+    	rejected.setStatus(ApplicationFormStatus.REJECTED);
+    	
+    	ApplicationFormTransfer transferRejected1 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
+    	ApplicationFormTransfer transferRejected2 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
+    	ApplicationFormTransfer transferRejected3 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
+    	ApplicationFormTransfer transferRejected4 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
+    	ApplicationFormTransfer transferRejected5 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
+    	ApplicationFormTransfer transferRejected6 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
+    	ApplicationFormTransfer transferRejected7 = new ApplicationFormTransferBuilder().applicationForm(rejected).build();
+    	
+    	EasyMock.expect(formTransferServiceMock.getAllTransfersWaitingToBeSentToPorticoOldestFirst()).andReturn(
+    			Arrays.asList(transferRejected1, transferRejected2, transferRejected3, transferRejected4, transferRejected5, transferRejected6, transferRejected7));
+    	
+    	EasyMock.replay(formTransferServiceMock, throttleServiceMock, templateMock);
+    	
+    	porticoQueueService.sendQueuedWithdrawnOrRejectedApplicationsToPortico(0);
+    	
+    	EasyMock.verify(formTransferServiceMock, throttleServiceMock, templateMock);
+    	
+    	assertEquals(7, numberOfSentApplications);
+    }
 
 }

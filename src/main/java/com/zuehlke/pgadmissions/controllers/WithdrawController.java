@@ -53,6 +53,7 @@ public class WithdrawController{
         applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
         applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
         withdrawService.saveApplicationFormAndSendMailNotifications(applicationForm);
+        withdrawService.sendToPortico(applicationForm);
         return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
     }
 	

@@ -82,6 +82,7 @@ public class PorticoQueueListener implements MessageListener {
         ApplicationFormTransfer transfer = getApplicationFormTransfer(form);
         
         if (form == null || transfer == null) {
+            log.warn("The applicationForm or the applicationTransfer object is NULL! applicationForm: {} applicationTransfer: {}", form, transfer);
             return;
         }
         

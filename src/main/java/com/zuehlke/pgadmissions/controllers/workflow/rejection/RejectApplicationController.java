@@ -73,6 +73,7 @@ public class RejectApplicationController {
 			return REJECT_VIEW_NAME;
 		}
 		rejectService.moveApplicationToReject(application, getCurrentUser(), rejection);
+		rejectService.sendToPortico(application);
 		return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
 	}
 

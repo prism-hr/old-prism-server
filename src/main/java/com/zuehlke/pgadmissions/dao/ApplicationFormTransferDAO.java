@@ -65,4 +65,9 @@ public class ApplicationFormTransferDAO {
         return (ApplicationFormTransfer) sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).
                 add(Restrictions.eq("applicationForm", form)).uniqueResult();
     }
+
+    @SuppressWarnings("unchecked")
+    public List<ApplicationFormTransfer> getAllTransfers() {
+        return (List<ApplicationFormTransfer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).list();
+    }
 }

@@ -144,7 +144,7 @@ public class ConfigurationController {
 	@RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
 	@ResponseBody
 	public Map<String, String> updateThrottle(@RequestParam Integer id, @RequestParam Boolean enabled, @RequestParam String batchSize) {
-	    boolean hasSwitchedFromFalseToTrue = throttleService.hasSwitchedFromFalseToTrue(enabled);
+	    boolean hasSwitchedFromFalseToTrue = throttleService.userTurnedOnThrottle(enabled);
 	    
 	    try {
 	        throttleService.updateThrottleWithNewValues(enabled, batchSize);

@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
-import org.apache.commons.lang.BooleanUtils;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +29,8 @@ public class ThrottleService {
 	    return getThrottle().getBatchSize();
 	}
 	
-	public boolean hasSwitchedFromFalseToTrue(boolean newValueSetByTheUser) {
-	    return BooleanUtils.isFalse(getThrottle().getEnabled()) && BooleanUtils.isTrue(newValueSetByTheUser);
+	public boolean userTurnedOnThrottle(boolean newValueSetByTheUser) {
+	    return isFalse(getThrottle().getEnabled()) && isTrue(newValueSetByTheUser);
 	}
 	
 	public void updateThrottleWithNewValues(boolean enabled, String batchSize) throws NumberFormatException {
@@ -46,7 +48,7 @@ public class ThrottleService {
 	}
 	
 	public boolean isPorticoInterfaceEnabled() {
-	    return BooleanUtils.isTrue(getThrottle().getEnabled());
+	    return isTrue(getThrottle().getEnabled());
 	}
 	
 	private void setPortioInterface(final boolean flag) {

@@ -249,6 +249,7 @@ public class ApprovalService {
         if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
             throw new IllegalStateException();
         }
+        
         if (!application.isPrefferedStartDateWithinBounds()) {
             Date earliestPossibleStartDate = application.getEarliestPossibleStartDate();
             if (earliestPossibleStartDate == null) {
@@ -257,17 +258,18 @@ public class ApprovalService {
             application.getProgrammeDetails().setStartDate(earliestPossibleStartDate);
             programmeDetailDAO.save(application.getProgrammeDetails());
         }
+        
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApprover(userService.getCurrentUser());
         application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
         applicationDAO.save(application);
-
-        // TODO: Enable when ready for production
-        approvedSenderService.sendToPortico(application);
-
         return true;
     }
-
+    
+    public void sendToPortico(ApplicationForm application) {
+        approvedSenderService.sendToPortico(application);
+    }
+    
     public void addSupervisorInPreviousApprovalRound(ApplicationForm applicationForm, RegisteredUser newUser) {
         Supervisor supervisor = newSupervisor();
         supervisor.setUser(newUser);

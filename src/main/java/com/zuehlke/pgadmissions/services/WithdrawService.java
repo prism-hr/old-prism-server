@@ -8,7 +8,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.jms.PorticoQueueService;
 
 @Service
-@Transactional
 public class WithdrawService {
 
 	private final ApplicationsService applicationService;
@@ -32,13 +31,17 @@ public class WithdrawService {
 		this.porticoQueueService = porticoQueueService;
 	}
 	
+	@Transactional
 	public void saveApplicationFormAndSendMailNotifications(final ApplicationForm form) {
 		applicationService.save(form);
 		mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(refereeService.getRefereesWhoHaveNotProvidedReference(form), form);
-        
-//		TODO: Enable when ready for production
-		if (form.isSubmitted()) {
-		    porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
-		}
 	}
+	
+    @Transactional
+    public void sendToPortico(final ApplicationForm form) {
+        // TODO: Enable when ready for production
+        if (form.isSubmitted()) {
+            porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
+        }
+    }
 }

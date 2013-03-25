@@ -39,271 +39,270 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RejectionValidator;
 
 public class RejectApplicationControllerTest {
-	private static final String VIEW_RESULT = "private/staff/approver/reject_page";
-	private static final String REJECT_EMAIL = "private/pgStudents/mail/rejected_notification";
-	private static final String AFTER_REJECT_VIEW = "redirect:/applications";
+    private static final String VIEW_RESULT = "private/staff/approver/reject_page";
+    private static final String REJECT_EMAIL = "private/pgStudents/mail/rejected_notification";
+    private static final String AFTER_REJECT_VIEW = "redirect:/applications";
 
-	private RejectApplicationController controllerUT;
+    private RejectApplicationController controllerUT;
 
-	private ApplicationForm application;
-	private ApplicationsService applicationServiceMock;
-	private RejectService rejectServiceMock;
+    private ApplicationForm application;
+    private ApplicationsService applicationServiceMock;
+    private RejectService rejectServiceMock;
 
-	
-	private RegisteredUser admin;
-	private RegisteredUser approver;
-	private RejectReason reason1;
-	private RejectReason reason2;
-	private Program program;
-	private RejectReasonPropertyEditor rejectReasonPropertyEditorMock;
-	private UserService userServiceMock;
-	private RejectionValidator rejectionValidatorMock;
-	private BindingResult errorsMock;
+    private RegisteredUser admin;
+    private RegisteredUser approver;
+    private RejectReason reason1;
+    private RejectReason reason2;
+    private Program program;
+    private RejectReasonPropertyEditor rejectReasonPropertyEditorMock;
+    private UserService userServiceMock;
+    private RejectionValidator rejectionValidatorMock;
+    private BindingResult errorsMock;
 
-	@Before
-	public void setUp() {
-		admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
-		
-		reason1 = new RejectReasonBuilder().id(10).text("idk").build();
-		reason2 = new RejectReasonBuilder().id(20).text("idc").build();
-		approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
-		program = new ProgramBuilder().id(100).administrators(admin).approver(approver).build();
-		application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION).applicationNumber("abc")
-				.program(program)//
-				.build();
+    @Before
+    public void setUp() {
+        admin = new RegisteredUserBuilder().id(1).username("admin")
+                .role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).build()).build();
 
-		rejectServiceMock = EasyMock.createMock(RejectService.class);
-		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
-		rejectReasonPropertyEditorMock = EasyMock.createMock(RejectReasonPropertyEditor.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
-		EasyMock.replay(userServiceMock);
-		rejectionValidatorMock = EasyMock.createMock(RejectionValidator.class);
-		controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock, rejectReasonPropertyEditorMock,rejectionValidatorMock);
-		
-		errorsMock = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		EasyMock.replay(errorsMock);
-	}
+        reason1 = new RejectReasonBuilder().id(10).text("idk").build();
+        reason2 = new RejectReasonBuilder().id(20).text("idc").build();
+        approver = new RegisteredUserBuilder().id(2).username("real approver")
+                .role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+        program = new ProgramBuilder().id(100).administrators(admin).approver(approver).build();
+        application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION)
+                .applicationNumber("abc").program(program)//
+                .build();
 
-	
+        rejectServiceMock = EasyMock.createMock(RejectService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        rejectReasonPropertyEditorMock = EasyMock.createMock(RejectReasonPropertyEditor.class);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
+        EasyMock.replay(userServiceMock);
+        rejectionValidatorMock = EasyMock.createMock(RejectionValidator.class);
+        controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock,
+                rejectReasonPropertyEditorMock, rejectionValidatorMock);
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
+        errorsMock = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+        EasyMock.replay(errorsMock);
+    }
 
-	@Test
-	public void getRejectionPage() {
-		Assert.assertEquals(VIEW_RESULT, controllerUT.getRejectPage());
-	}
+    @After
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
 
-	@Test
-	public void shouldGetNewRejection(){
-		Rejection rejection = controllerUT.getRejection();
-		Assert.assertNull(rejection.getId());
-	}
-	
-	@Test
-	public void shouldRegisterRejectReasonProperyEditor(){
-		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditorMock);
-		binderMock.setValidator(rejectionValidatorMock);
-		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
-		EasyMock.replay(binderMock);
-		controllerUT.registerBindersAndValidators(binderMock);
-		EasyMock.verify(binderMock);
-	}
-	
-	// -------------------------------------------------------------------
-	// ----------- check for application states:
-	@Test(expected =ResourceNotFoundException.class)
-	public void throwCUAEIfApplicationIsUnsubmitted() {
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
-		EasyMock.replay(applicationServiceMock);
+    @Test
+    public void getRejectionPage() {
+        Assert.assertEquals(VIEW_RESULT, controllerUT.getRejectPage());
+    }
 
-		application.setStatus(ApplicationFormStatus.UNSUBMITTED);
-		controllerUT.getApplicationForm("10");
-	}
+    @Test
+    public void shouldGetNewRejection() {
+        Rejection rejection = controllerUT.getRejection();
+        Assert.assertNull(rejection.getId());
+    }
 
-	@Test(expected = CannotUpdateApplicationException.class)
-	public void throwCUAEIfApplicationIsWithdrawn() {
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
-		EasyMock.replay(applicationServiceMock);
+    @Test
+    public void shouldRegisterRejectReasonProperyEditor() {
+        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        binderMock.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditorMock);
+        binderMock.setValidator(rejectionValidatorMock);
+        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+        EasyMock.replay(binderMock);
+        controllerUT.registerBindersAndValidators(binderMock);
+        EasyMock.verify(binderMock);
+    }
 
-		application.setStatus(ApplicationFormStatus.WITHDRAWN);
-		controllerUT.getApplicationForm("10");
-	}
+    // -------------------------------------------------------------------
+    // ----------- check for application states:
+    @Test(expected = ResourceNotFoundException.class)
+    public void throwCUAEIfApplicationIsUnsubmitted() {
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
+        EasyMock.replay(applicationServiceMock);
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void throwRNFEIfApplicationDoesntExist() {
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(null);
-		EasyMock.replay(applicationServiceMock);
-		controllerUT.getApplicationForm("10");
-	}
+        application.setStatus(ApplicationFormStatus.UNSUBMITTED);
+        controllerUT.getApplicationForm("10");
+    }
 
-	@Test
-	public void returnApplicationIfApplicationHasValidState() {
-		// setup of application status is VALIDATION
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
-		EasyMock.replay(applicationServiceMock);
+    @Test(expected = CannotUpdateApplicationException.class)
+    public void throwCUAEIfApplicationIsWithdrawn() {
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
+        EasyMock.replay(applicationServiceMock);
 
-		ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
-		Assert.assertNotNull(applicationForm);
-		Assert.assertEquals(application, applicationForm);
-		EasyMock.verify(applicationServiceMock);
-	}
+        application.setStatus(ApplicationFormStatus.WITHDRAWN);
+        controllerUT.getApplicationForm("10");
+    }
 
-	@Test
-	public void returnApplicationIfApplicationIsInReviewState() {
-		application.setStatus(ApplicationFormStatus.REVIEW);
-		returnApplicationIfApplicationHasValidState();
-	}
+    @Test(expected = ResourceNotFoundException.class)
+    public void throwRNFEIfApplicationDoesntExist() {
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(null);
+        EasyMock.replay(applicationServiceMock);
+        controllerUT.getApplicationForm("10");
+    }
 
-	@Test
-	public void returnApplicationIfApplicationIsInApprovalState() {
-		application.setStatus(ApplicationFormStatus.APPROVAL);
-		returnApplicationIfApplicationHasValidState();
-	}
+    @Test
+    public void returnApplicationIfApplicationHasValidState() {
+        // setup of application status is VALIDATION
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
+        EasyMock.replay(applicationServiceMock);
 
-	@Test
-	public void returnApplicationIfApplicationIsInInterviewState() {
-		application.setStatus(ApplicationFormStatus.INTERVIEW);
-		returnApplicationIfApplicationHasValidState();
-	}
+        ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
+        Assert.assertNotNull(applicationForm);
+        Assert.assertEquals(application, applicationForm);
+        EasyMock.verify(applicationServiceMock);
+    }
 
-	// -------------------------------------------------------------------
-	// ----------- check for user roles:
-	@Test(expected = ResourceNotFoundException.class)
-	public void throwRNFEIfUserIsApplicant() {
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
-		EasyMock.replay(applicationServiceMock);
-		RegisteredUser applicant = new RegisteredUserBuilder().id(2023).username("applicant").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
-		EasyMock.replay(userServiceMock);
-		
+    @Test
+    public void returnApplicationIfApplicationIsInReviewState() {
+        application.setStatus(ApplicationFormStatus.REVIEW);
+        returnApplicationIfApplicationHasValidState();
+    }
 
-		controllerUT.getApplicationForm("10");
-	}
+    @Test
+    public void returnApplicationIfApplicationIsInApprovalState() {
+        application.setStatus(ApplicationFormStatus.APPROVAL);
+        returnApplicationIfApplicationHasValidState();
+    }
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void throwRNFEIfUserIsNotApproverOfApplication() {
-		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(656).username("wrongApprover").role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(wrongApprover).anyTimes();
-		EasyMock.replay(userServiceMock);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
-		EasyMock.replay(applicationServiceMock);	
+    @Test
+    public void returnApplicationIfApplicationIsInInterviewState() {
+        application.setStatus(ApplicationFormStatus.INTERVIEW);
+        returnApplicationIfApplicationHasValidState();
+    }
 
-		controllerUT.getApplicationForm("10");
-	}
+    // -------------------------------------------------------------------
+    // ----------- check for user roles:
+    @Test(expected = ResourceNotFoundException.class)
+    public void throwRNFEIfUserIsApplicant() {
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
+        EasyMock.replay(applicationServiceMock);
+        RegisteredUser applicant = new RegisteredUserBuilder().id(2023).username("applicant")
+                .role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
+        EasyMock.replay(userServiceMock);
 
-	@Test
-	public void returnApplicationIfUserIsApprover() {
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(approver).anyTimes();
-		EasyMock.replay(userServiceMock);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
-		EasyMock.replay(applicationServiceMock);
+        controllerUT.getApplicationForm("10");
+    }
 
-		ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
-		Assert.assertNotNull(applicationForm);
-		Assert.assertEquals(application, applicationForm);
-		EasyMock.verify(applicationServiceMock);
-	}
+    @Test(expected = ResourceNotFoundException.class)
+    public void throwRNFEIfUserIsNotApproverOfApplication() {
+        RegisteredUser wrongApprover = new RegisteredUserBuilder().id(656).username("wrongApprover")
+                .role(new RoleBuilder().authorityEnum(Authority.APPROVER).build()).build();
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(wrongApprover).anyTimes();
+        EasyMock.replay(userServiceMock);
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
+        EasyMock.replay(applicationServiceMock);
 
-	@Test
-	public void returnApplicationIfUserIsHasAdminRightsOnForm() {
-		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);		
-		EasyMock.expect(userMock.hasAdminRightsOnApplication(application)).andReturn(true);
-		
-		EasyMock.replay(userMock);
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
-		EasyMock.replay(userServiceMock);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
-		EasyMock.replay(applicationServiceMock);
+        controllerUT.getApplicationForm("10");
+    }
 
-		ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
-		Assert.assertNotNull(applicationForm);
-		Assert.assertEquals(application, applicationForm);
-		EasyMock.verify(applicationServiceMock);
-	}
+    @Test
+    public void returnApplicationIfUserIsApprover() {
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(approver).anyTimes();
+        EasyMock.replay(userServiceMock);
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
+        EasyMock.replay(applicationServiceMock);
 
-	// -----------------------------------------
-	// ------ Retrieve all available reasons:
-	@Test
-	public void getAvailbalbeReasons() {
-		List<RejectReason> values = new ArrayList<RejectReason>();
-		values.add(reason1);
-		values.add(reason2);
-		EasyMock.expect(rejectServiceMock.getAllRejectionReasons()).andReturn(values);
-		EasyMock.replay(rejectServiceMock);
+        ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
+        Assert.assertNotNull(applicationForm);
+        Assert.assertEquals(application, applicationForm);
+        EasyMock.verify(applicationServiceMock);
+    }
 
-		List<RejectReason> allReasons = controllerUT.getAvailableReasons();
+    @Test
+    public void returnApplicationIfUserIsHasAdminRightsOnForm() {
+        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
+        EasyMock.expect(userMock.hasAdminRightsOnApplication(application)).andReturn(true);
 
-		EasyMock.verify(rejectServiceMock);
-		Assert.assertNotNull(allReasons);
-		Assert.assertTrue(allReasons.containsAll(values));
-	}
-	
-	@Test
-	public void shouldGetCurrentUserAsUser(){
-		EasyMock.reset(userServiceMock);
-		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
-		EasyMock.replay(userServiceMock);
-		assertEquals(user,controllerUT.getUser());
-		
-	}
+        EasyMock.replay(userMock);
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
+        EasyMock.replay(userServiceMock);
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
+        EasyMock.replay(applicationServiceMock);
 
-	// -------------------------------------------
-	// ------- move application to reject:
+        ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
+        Assert.assertNotNull(applicationForm);
+        Assert.assertEquals(application, applicationForm);
+        EasyMock.verify(applicationServiceMock);
+    }
 
-	@Test
-	public void moveToRejectWithValidRejection() {		
-		
-		Rejection rejection = new RejectionBuilder().id(3).build();
-		rejectServiceMock.moveApplicationToReject(application, admin, rejection);
-		EasyMock.expectLastCall();
-		EasyMock.replay(rejectServiceMock);
+    // -----------------------------------------
+    // ------ Retrieve all available reasons:
+    @Test
+    public void getAvailbalbeReasons() {
+        List<RejectReason> values = new ArrayList<RejectReason>();
+        values.add(reason1);
+        values.add(reason2);
+        EasyMock.expect(rejectServiceMock.getAllRejectionReasons()).andReturn(values);
+        EasyMock.replay(rejectServiceMock);
 
-		String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
+        List<RejectReason> allReasons = controllerUT.getAvailableReasons();
 
-		EasyMock.verify(rejectServiceMock);
-		Assert.assertEquals(AFTER_REJECT_VIEW + "?messageCode=application.rejected&application=abc", nextView);
-	}
+        EasyMock.verify(rejectServiceMock);
+        Assert.assertNotNull(allReasons);
+        Assert.assertTrue(allReasons.containsAll(values));
+    }
 
-	@Test
-	public void returnToRejectViewWithInvalidRejection() {		
-		EasyMock.reset(errorsMock);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-		EasyMock.replay(errorsMock);
-		Rejection rejection = new RejectionBuilder().id(3).build();
+    @Test
+    public void shouldGetCurrentUserAsUser() {
+        EasyMock.reset(userServiceMock);
+        RegisteredUser user = new RegisteredUserBuilder().id(1).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
+        EasyMock.replay(userServiceMock);
+        assertEquals(user, controllerUT.getUser());
 
-		EasyMock.replay(rejectServiceMock);
+    }
 
-		String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
+    // -------------------------------------------
+    // ------- move application to reject:
 
-		EasyMock.verify(rejectServiceMock);
-		Assert.assertEquals(VIEW_RESULT, nextView);
-	}
+    @Test
+    public void moveToRejectWithValidRejection() {
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void moveToReviewThrowRNFEWhenInvalidUser() {
-		RegisteredUser applicant = new RegisteredUserBuilder().id(156).username("appl")//
-				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build())//
-				.build();
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
-		EasyMock.replay(userServiceMock);
-		Rejection rejection = new RejectionBuilder().id(3).build();
-		controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
-	}
+        Rejection rejection = new RejectionBuilder().id(3).build();
+        rejectServiceMock.moveApplicationToReject(application, admin, rejection);
+        rejectServiceMock.sendToPortico(application);
+        EasyMock.expectLastCall();
+        EasyMock.replay(rejectServiceMock);
 
+        String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
 
-	
-	
+        EasyMock.verify(rejectServiceMock);
+        Assert.assertEquals(AFTER_REJECT_VIEW + "?messageCode=application.rejected&application=abc", nextView);
+    }
+
+    @Test
+    public void returnToRejectViewWithInvalidRejection() {
+        EasyMock.reset(errorsMock);
+        EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
+        EasyMock.replay(errorsMock);
+        Rejection rejection = new RejectionBuilder().id(3).build();
+
+        EasyMock.replay(rejectServiceMock);
+
+        String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
+
+        EasyMock.verify(rejectServiceMock);
+        Assert.assertEquals(VIEW_RESULT, nextView);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void moveToReviewThrowRNFEWhenInvalidUser() {
+        RegisteredUser applicant = new RegisteredUserBuilder().id(156).username("appl")//
+                .role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build())//
+                .build();
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
+        EasyMock.replay(userServiceMock);
+        Rejection rejection = new RejectionBuilder().id(3).build();
+        controllerUT.moveApplicationToReject(rejection, errorsMock, application, new ModelMap());
+    }
+
 }

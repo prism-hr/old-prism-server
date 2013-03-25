@@ -73,17 +73,17 @@
 								
 								<div id="edit-throttle-section">
 									<section class="form-rows">
-										<h2>Web Service throttling</h2>
+										<h2>Portico Interface</h2>
 									
 									<div>
 									<div class="alert alert-info">
 										<i class="icon-info-sign"></i> 
-										Web Service throttling
+										 Configure how many rejected and withdrawn applications should be sent to Portico every night.
 									</div>
 
 										<div class="row-group">
 											<div class="row">
-												<label class="plain-label" for="throttoleSwitchOnId">Web Service throttling</label> 
+												<label class="plain-label" for="throttoleSwitchOnId">Portico Interface</label> 
 													<input id="throttoleSwitchOnId" type="radio" name="switch" value="on" > On </input>
 													<input type="radio" name="switch" value="off" > Off </input>
 							             	</div>

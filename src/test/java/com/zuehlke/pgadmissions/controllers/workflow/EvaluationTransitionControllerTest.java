@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -110,6 +110,7 @@ public class EvaluationTransitionControllerTest {
         commentServiceMock.save(comment);
         EasyMock.expect(approvalServiceMock.moveToApproved(applicationForm)).andReturn(true);
         EasyMock.expect(stateTransitionViewResolverMock.resolveView(applicationForm)).andReturn("bob");
+        approvalServiceMock.sendToPortico(applicationForm);
         EasyMock.replay(commentFactoryMock, commentServiceMock, approvalServiceMock, stateTransitionViewResolverMock);
 
         ModelMap modelMap = new ModelMap();

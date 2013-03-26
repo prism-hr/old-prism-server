@@ -58,7 +58,7 @@ public class DataExportMailSender {
     
     public void sendErrorMessage(final String message, final Exception exception) {
         StringBuilder builder = new StringBuilder();
-        builder.append(message).append("\n").append(exception.getMessage()).append("\n")
+        builder.append(message).append("\n").append(exception.getMessage()).append("\n\n")
                 .append(ExceptionUtils.getFullStackTrace(exception.getCause()));
         sendErrorMessage(builder.toString());
     }

@@ -202,7 +202,7 @@
       <!-- Contact Details -->
       <div class="admin_row">
         <span class="admin_row_label">Email</span>
-        <div class="field">${(applicationForm.personalDetails.email?html)!"Not Provided"}</div>
+        <div class="field">${(applicationForm.applicant.email?html)!"Not Provided"}</div>
       </div>
       
       <div class="admin_row">

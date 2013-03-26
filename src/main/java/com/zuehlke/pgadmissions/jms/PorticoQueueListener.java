@@ -91,6 +91,8 @@ public class PorticoQueueListener implements MessageListener {
         } catch (UclExportServiceException e) {
             sendEmailWithErrorMessage(e);
             errorHandlingStrategyResolver(e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
     

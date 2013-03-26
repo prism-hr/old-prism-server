@@ -32,7 +32,9 @@ section.form-rows.violet div.add a.button,
 }
 
 #supervisor_div span.invalid { display: block; }
+#supervisors {
+	margin-bottom: 0px;
+}
 
-#supervisors { border-collapse: separate; border-spacing: 2px; margin-bottom: 10px; width: 320px; }
-#supervisors td { padding: 0; }
-#supervisors tr.unaware td { color: #999; } /* unaware supervisors. */
+#supervisors td { vertical-align: middle; }
+#supervisors tr.unaware td { color: #999; }

@@ -5,10 +5,10 @@
 /* Background */
 section.form-rows.orange > div { background: #FFF9F6; }
 
-/* Border colours */
+/* Border colours 
 section.form-rows.orange > div,
 section.form-rows.orange table.existing,
-section.form-rows.orange div.buttons { border-color: #F58149; }
+section.form-rows.orange div.buttons { border-color: #F58149; }*/
 
 /* Buttons / existing rows areas */
 section.form-rows.orange table.existing, section.form-rows.orange div.buttons { background: #FEE8D9; }

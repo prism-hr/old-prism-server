@@ -45,17 +45,20 @@
     <form>              
         <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
         <#if errorCode?? && errorCode=="true">
-            <div class="section-error-bar">
+            <div class="alert alert-error">
+                <i class="icon-warning-sign"></i>
                 <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>               
                 <span class="invalid-info-text"><@spring.message 'personalDetails.sectionInfo'/></span>
             </div>
         <#else>
-            <div id="pres-info-bar-div" class="section-info-bar"><@spring.message 'personalDetails.sectionInfo'/></div>  
+            <div class="alert alert-info">
+             <i class="icon-info-sign"></i> <@spring.message 'personalDetails.sectionInfo'/>
+            </div>  
         </#if>
         
         <div class="row-group">
             <div class="row">
-                <label class="plain-label">Title<em>*</em></label>
+                <label class="plain-label" for="title">Title<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.title'/>"></span>
                 <div class="field">
                     <select class="full" name="title" id="title" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
@@ -63,60 +66,62 @@
                             <#list titles as title>
                                 <option value="${title}" <#if personalDetails.title?? &&  personalDetails.title == title >selected="selected"</#if>>${title.displayValue?html}</option>               
                             </#list>
-                    </select>                
+                    </select>   
+                    <@spring.bind "personalDetails.title" /> 
+                    <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                        <i class="icon-warning-sign"></i>  ${error}</div>
+                    </#list>             
                 </div>
             </div>
-            <@spring.bind "personalDetails.title" /> 
-            <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-            </#list>
+            
             
             <div class="row">
-                <span id="firstName-lbl" class="plain-label">First Names<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
+                <label id="firstName-lbl" class="plain-label" for="firstName">First Names<em>*</em></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName'/>"></span>
                 <div class="field">
                     <input class="full" type="text" id="firstName" value="${(updatedUser.firstName?html)!}" />
+                    <@spring.bind "updatedUser.firstName" /> <#list spring.status.errorMessages as error>
+                    <div class="alert alert-error">
+                            <i class="icon-warning-sign"></i>  ${error}</div>
+                    </#list>
                 </div>
-                <@spring.bind "updatedUser.firstName" /> <#list spring.status.errorMessages as error>
-                <div class="field">
-                    <span class="invalid">${error}</span>
-                </div>
-                </#list>
             </div>
             
             <div class="row">
-                <span class="plain-label"></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
+                <label class="plain-label"></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
                 <div class="field">
                     <input class="full" type="text" id="firstName2" value="${(updatedUser.firstName2?html)!}" />
+                    <@spring.bind "updatedUser.firstName2" /> <#list spring.status.errorMessages as error>
+                    <div class="alert alert-error">
+                         <i class="icon-warning-sign"></i> ${error}
+                    </div>
+                    </#list>
                 </div>
-                <@spring.bind "updatedUser.firstName2" /> <#list spring.status.errorMessages as error>
-                <div class="field">
-                    <span class="invalid">${error}</span>
-                </div>
-                </#list>
             </div>
             
             <div class="row">
-                <span class="plain-label"></span> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
+                <label class="plain-label"></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
                 <div class="field">
                     <input class="full" type="text" id="firstName3" value="${(updatedUser.firstName3?html)!}" />
+                    <@spring.bind "updatedUser.firstName3" /> <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                             <i class="icon-warning-sign"></i> ${error}
+                        </div>
+                    </#list>
                 </div>
-                <@spring.bind "updatedUser.firstName3" /> <#list spring.status.errorMessages as error>
-                <div class="field">
-                    <span class="invalid">${error}</span>
-                </div>
-                </#list>
+                
             </div>
 
             <div class="row">
-                <span id="lastName-lbl" class="plain-label">Last Name<em>*</em></span> <span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
+                <label id="lastName-lbl" class="plain-label" for="lastName">Last Name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'myaccount.lastName'/>"></span>
                 <div class="field">
                     <input class="full" type="text" id="lastName" value="${(updatedUser.lastName?html)!}" />
-                </div>
-                <@spring.bind "updatedUser.lastName" /> <#list spring.status.errorMessages as error>
-                <div class="field">
-                    <span class="invalid">${error}</span>
-                </div>
+                    <@spring.bind "updatedUser.lastName" /> <#list spring.status.errorMessages as error>
+                    <div class="alert alert-error">
+                         <i class="icon-warning-sign"></i> ${error}
+                    </div>
                 </#list>
+                </div>
             </div>
              
             <div class="row">
@@ -130,35 +135,36 @@
                             </#if> 
                             <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>                                       
                                 /> ${gender.displayValue}</label>
-                    </#list>                
+                    </#list>   
+                    <@spring.bind "personalDetails.gender" /> 
+                    <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                             <i class="icon-warning-sign"></i> ${error}
+                        </div>
+                    </#list>             
                 </div>
             </div>
-            <@spring.bind "personalDetails.gender" /> 
-            <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-            </#list>
+            
             
             <div class="row">
-                <label class="plain-label">Date of Birth<em>*</em> </label>
+                <label class="plain-label" for="dateOfBirth">Date of Birth<em>*</em> </label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.dateOfBirth'/>"></span>
                 <div class="field">
                     <#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
-                        <input class="half date" value="${(personalDetails.dateOfBirth?string('dd MMM yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>                      
+                        <input type="text" class="half date" value="${(personalDetails.dateOfBirth?string('dd MMM yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>                      
                     <#else>
-                        <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.dateOfBirth?string('dd MMM yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
-                    </#if>    
+                        <input type="text" class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.dateOfBirth?string('dd MMM yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
+                    </#if>   
+                    <@spring.bind "personalDetails.dateOfBirth" /> 
+                    <#list spring.status.errorMessages as error>
+                       <div class="alert alert-error">
+                             <i class="icon-warning-sign"></i> ${error}
+                        </div>
+                    </#list>   
                 </div>               
             </div>
-            <@spring.bind "personalDetails.dateOfBirth" /> 
-            <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-            </#list>                
-        </div>
-        
-        <div class="row-group">
-            <div class="row"><label class="group-heading-label">Nationality</label></div>
             <div class="row">
-                <label class="plain-label">Country of Birth<em>*</em></label>
+                <label class="plain-label" for="country">Country of Birth<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.countryOfBirth'/>"></span>
                 <div class="field">
                     <select class="full" name="country" id="country" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
@@ -170,50 +176,62 @@
                             </#if>   
                             >${country.name?html}</option>               
                         </#list>
-                    </select>                           
+                    </select>   
+
+                    <@spring.bind "personalDetails.country" /> 
+                    <#list spring.status.errorMessages as error>
+                         <div class="alert alert-error">
+                                 <i class="icon-warning-sign"></i> ${error}
+                            </div>
+                    </#list>                        
+                </div>
+            </div>        
+        </div>
+        
+        <div class="row-group">
+            <h3>Nationalities</h3>
+            <div class="row">  
+                <div class="field">
+                 <div id="my-nationality-div">
+                    <#list personalDetails.candidateNationalities as nationality >                              
+                        <div class="nationality-item">
+                            <label class="full">${nationality.name}</label>  
+                            <input type="hidden" name="candidateNationalities" value='${encrypter.encrypt(nationality.id)}'/>
+                            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><button type="button" class="button-delete" data-desc="Delete">Delete</button></#if>
+                        </div>                          
+                    </#list>
                 </div>
             </div>
-            <@spring.bind "personalDetails.country" /> 
-            <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-            </#list>
-                
             <div class="row">                       
-                <label class="plain-label" id="my-nationality">Nationality<#if !nationalityExist><em id="nationality-em">*</em></#if></label>      
+                <label class="plain-label" id="my-nationality" for="candidateNationalityCountry">Add Nationality<#if !nationalityExist><em id="nationality-em">*</em></#if></label>      
                 <span id="my-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
-                <div class="field">
-                    <div id="my-nationality-div">
-                        <#list personalDetails.candidateNationalities as nationality >                              
-                            <div class="nationality-item">
-                                <label class="full">${nationality.name}</label>  
-                                <input type="hidden" name="candidateNationalities" value='${encrypter.encrypt(nationality.id)}'/>
-                                <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><button type="button" class="button-delete" data-desc="Delete">Delete</button></#if>
-                            </div>                          
-                        </#list>
-                    </div>
-                        
+                    <div class="field">
+                   
                     <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
                         <option value="">Select...</option>
                         <#list languages as country>
                             <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
                         </#list>
-                    </select>                
+                    </select>   
+                    <@spring.bind "personalDetails.candidateNationalities" />
+                    <#list spring.status.errorMessages as error>
+                         <div class="alert alert-error">
+                            <i class="icon-warning-sign"></i> ${error} 
+                        </div>
+                    </#list>             
                 </div>
             </div>
-            <@spring.bind "personalDetails.candidateNationalities" />
-            <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-            </#list>
+
                  
             <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 <div class="row">
-                    <div class="field"><button type="button" class="blue" id="addCandidateNationalityButton">Add</button></div>
+                    <div class="field"><button type="button" class="btn" id="addCandidateNationalityButton">Add</button></div>
                 </div>
             </#if>
         </div>
-        
+         </div>
         <div class="row-group">
-            <div class="row"><label class="group-heading-label">Language</label></div>                     
+            <h3>Language</h3>                  
             <div class="row">
                 <label class="plain-label">Is English your first language?<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.language.section'/>"></span>
@@ -236,11 +254,13 @@
                             disabled="disabled"
                         </#if>/> No
                     </label>
-                </div>
-                <@spring.bind "personalDetails.englishFirstLanguage" />
-                <#list spring.status.errorMessages as error>
-                    <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
+                    <@spring.bind "personalDetails.englishFirstLanguage" />
+                    <#list spring.status.errorMessages as error>
+                    <div class="alert alert-error">
+                        <i class="icon-warning-sign"></i> ${error} 
+                    </div>
                 </#list>
+                </div>
             </div>
             
             <div class="row">
@@ -265,12 +285,15 @@
                             disabled="disabled"
                         </#if>/> No
                     </label>
+                    <@spring.bind "personalDetails.languageQualificationAvailable" />
+                    <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                            <i class="icon-warning-sign"></i> ${error} 
+                        </div>
+                    </#list>
                 </div>
             </div>
-            <@spring.bind "personalDetails.languageQualificationAvailable" />
-            <#list spring.status.errorMessages as error>
-                <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-            </#list>
+            
         </div>
         
         <div id="languageQualification_div" class="row-group">
@@ -278,11 +301,9 @@
         </div>
 
         <div class="row-group">
+            <h3>Residence</h3>
             <div class="row">
-                <label class="group-heading-label">Residence</label>
-            </div>
-            <div class="row">
-                <span class="plain-label">Country of Residence<em>*</em></span>
+                <label for="residenceCountry" class="plain-label">Country of Residence<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.residence.country'/>"></span>        
                 <div class="field">
                     <select class="full" name="residenceCountry" id="residenceCountry" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
@@ -295,16 +316,14 @@
                               >${domicile.name?html}</option>               
                             </#list>
                      </select>
-                    
-                </div>
-                <@spring.bind "personalDetails.residenceCountry" /> 
-                <#list spring.status.errorMessages as error>
-                    <div class="row">
-                        <div class="field">
-                            <span class="invalid">${error}</span>
+                    <@spring.bind "personalDetails.residenceCountry" /> 
+                    <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error} 
                         </div>
-                    </div>
-                </#list>
+                    </#list>
+                </div>
+            </div>
                 
                 <div class="row">
                     <label class="plain-label">Do you require a visa to study in the UK?<em>*</em></label>
@@ -328,15 +347,13 @@
                                       disabled="disabled"
                             </#if>/> No
                         </label>
-                    </div>
-                    <@spring.bind "personalDetails.requiresVisa" />
-                    <#list spring.status.errorMessages as error >
-                        <div class="row">
-                            <div class="field">
-                                <span class="invalid">${error}</span>
+                        <@spring.bind "personalDetails.requiresVisa" />
+                        <#list spring.status.errorMessages as error >
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error} 
                             </div>
-                        </div>
-                    </#list>
+                        </#list>
+                    </div>
                 </div>
 
                 <div class="row">
@@ -361,99 +378,91 @@
                                       disabled="disabled"
                             </#if>/> No
                         </label>
-                    </div>
-                    <@spring.bind "personalDetails.passportAvailable" />
-                    <#list spring.status.errorMessages as error >
-                        <div class="row">
-                            <div class="field">
-                                <span class="invalid">${error}</span>
+                         <@spring.bind "personalDetails.passportAvailable" />
+                        <#list spring.status.errorMessages as error >
+                           <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error} 
                             </div>
-                        </div>
-                    </#list>
+                        </#list>
+                    </div>
+                   
                 </div>
                 
                 <div class="row">
-                    <label id="lbl_passportNumber" class="plain-label">Passport Number</label>
+                    <label id="lbl_passportNumber" class="plain-label" for="passportNumber">Passport Number</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.passportNumber'/>"></span>
                     <div class="field">                     
-                        <input class="full" readonly="readonly" type="text" value="${(personalDetails.passportInformation.passportNumber?html)!}" name="passportNumber" id="passportNumber" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa()) >disabled="disabled"</#if> />             
+                        <input class="full" readonly="readonly" type="text" value="${(personalDetails.passportInformation.passportNumber?html)!}" name="passportNumber" id="passportNumber" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa()) >disabled="disabled"</#if> />  
+
+                        <@spring.bind "personalDetails.passportInformation.passportNumber" /> 
+                        <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error} 
+                            </div>
+                        </#list>           
                     </div>
                 </div>
-                <@spring.bind "personalDetails.passportInformation.passportNumber" /> 
-                <#list spring.status.errorMessages as error>
-                    <div class="row">
-                        <div class="field">
-                            <span class="invalid">${error}</span>
-                        </div>
-                    </div>
-                </#list>
+                
                 
                 <div class="row">
-                    <label id="lbl_nameOnPassport" class="plain-label">Name on Passport</label>
+                    <label id="lbl_nameOnPassport" class="plain-label" for="nameOnPassport">Name on Passport</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.nameOnPassport'/>"></span>
                     <div class="field">
-                        <input class="full" readonly="readonly" type="text" value="${(personalDetails.passportInformation.nameOnPassport?html)!}" name="nameOnPassport" id="nameOnPassport" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>disabled="disabled"</#if> />             
+                        <input class="full" readonly="readonly" type="text" value="${(personalDetails.passportInformation.nameOnPassport?html)!}" name="nameOnPassport" id="nameOnPassport" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>disabled="disabled"</#if> />   
+                        <@spring.bind "personalDetails.passportInformation.nameOnPassport" /> 
+                        <#list spring.status.errorMessages as error>
+                          <div class="alert alert-error">
+                            <i class="icon-warning-sign"></i> ${error} 
+                          </div>
+                        </#list>          
                     </div>
                 </div>
-                <@spring.bind "personalDetails.passportInformation.nameOnPassport" /> 
-                <#list spring.status.errorMessages as error>
-                    <div class="row">
-                        <div class="field">
-                            <span class="invalid">${error}</span>
-                        </div>
-                    </div>
-                </#list>
+                
                 
                 <div class="row">
-                    <label id="lbl_passportIssueDate" class="plain-label">Passport Issue Date</label>
+                    <label id="lbl_passportIssueDate" class="plain-label" for="passportIssueDate">Passport Issue Date</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.passportIssueDate'/>"></span>
                     <div class="field">
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
                             <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate" />             
                         <#else>
-                            <input class="half date" readonly="readonly" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate"/>
-                        </#if>    
+                            <input class="half date" readonly="readonly" type="text" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate"/>
+                        </#if>  
+
+                        <@spring.bind "personalDetails.passportInformation.passportIssueDate" /> 
+                        <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error} 
+                              </div>
+                        </#list>  
                     </div>               
                 </div>
-                <@spring.bind "personalDetails.passportInformation.passportIssueDate" /> 
-                <#list spring.status.errorMessages as error>
-                    <div class="row">
-                        <div class="field">
-                            <span class="invalid">${error}</span>
-                        </div>
-                    </div>
-                </#list>
+
             
                 <div class="row">
-                    <label id="lbl_passportExpiryDate" class="plain-label">Passport Expiry Date</label>
+                    <label id="lbl_passportExpiryDate" class="plain-label" for="passportExpiryDate">Passport Expiry Date</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.passportExpiryDate'/>"></span>
                     <div class="field">
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
                             <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate" />             
                         <#else>
-                            <input class="half date" readonly="readonly" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate"/>
-                        </#if>    
+                            <input class="half date" readonly="readonly" type="text" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate"/>
+                        </#if>  
+                        <@spring.bind "personalDetails.passportInformation.passportExpiryDate" /> 
+                        <#list spring.status.errorMessages as error>
+                           <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> ${error} 
+                              </div>
+                        </#list>  
                     </div>               
-                </div>
-                <@spring.bind "personalDetails.passportInformation.passportExpiryDate" /> 
-                <#list spring.status.errorMessages as error>
-                    <div class="row">
-                        <div class="field">
-                            <span class="invalid">${error}</span>
-                        </div>
-                    </div>
-                </#list>
-                
             </div>
         </div>
 
         <div class="row-group">
-            <div class="row">
-                <label class="group-heading-label">Contact Details</label>
-            </div>
+            <h3>Contact Details</h3>
             
             <div class="row">
-                <span class="plain-label grey-label">Email</span>
+                <label class="plain-label grey-label" for="email">Email</label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.email'/>"></span> 
                 <div class="field">
                         <input class="full" readonly="readonly" type="email" value="${(user.email?html)!}"  
@@ -462,7 +471,7 @@
             </div>
    
                 <div class="row">          
-                <span class="plain-label">Telephone<em>*</em></span>
+                <label class="plain-label" for="pd_telephone">Telephone<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.telephone'/>"></span>
                 <div class="field">                     
                     <#if !applicationForm.isDecided()  && !applicationForm.isWithdrawn()>
@@ -470,20 +479,18 @@
                     <#else>
                         <input class="full" readonly="readonly" disabled="disabled" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone" />           
                     </#if>
+                     <@spring.bind "personalDetails.phoneNumber" />
+                    <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i>  ${error}</div>
+                    </#list>
                 </div>
             </div>
-            <@spring.bind "personalDetails.phoneNumber" />
-            <#list spring.status.errorMessages as error>
-                <div class="row">
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                </div>
-            </#list>
+           
             
           
             <div class="row">
-                <label class="plain-label">Skype Name</label>
+                <label class="plain-label" for="pd_messenger">Skype Name</label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.skype'/>"></span>
                 <div class="field">                     
                     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
@@ -491,24 +498,20 @@
                     <#else>
                         <input class="full" readonly="readonly" disabled="disabled" type="text" value="${(personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger" />             
                     </#if>
+                     <@spring.bind "personalDetails.messenger" />         
+                    <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i>  ${error}</div>
+                    </#list>
                 </div>
             </div>
-            <@spring.bind "personalDetails.messenger" />         
-            <#list spring.status.errorMessages as error>
-                <div class="row">
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                </div>
-            </#list>
+           
         </div>
         
         <div class="row-group">
+            <h3>Equal Opportunities</h3>
             <div class="row">
-                <label class="group-heading-label">Equal Opportunities</label>
-            </div>
-            <div class="row">
-                <label class="plain-label">Ethnicity<em>*</em></label>
+                <label class="plain-label" for="ethnicity">Ethnicity<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.ethnicity'/>"></span>
                 <div class="field">
                     <select class="full" name="ethnicity" id="ethnicity" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
@@ -518,20 +521,17 @@
                         <#if personalDetails.ethnicity?? && personalDetails.ethnicity.id?? && personalDetails.ethnicity.id == ethnicity.id >selected="selected"</#if> >${ethnicity.name}</option>               
                     </#list>
                     </select>
-                    
+                    <@spring.bind "personalDetails.ethnicity" /> 
+                    <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                                <i class="icon-warning-sign"></i>  ${error}</div>
+                    </#list>
                 </div>
             </div>
-            <@spring.bind "personalDetails.ethnicity" /> 
-            <#list spring.status.errorMessages as error>
-                <div class="row">
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                </div>
-            </#list>
+            
             
             <div class="row">
-                <label class="plain-label">Disability<em>*</em></label>
+                <label class="plain-label" for="disability">Disability<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.disability'/>"></span>
                 <div class="field">
                     <select class="full" name="disability" id="disability" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
@@ -544,16 +544,14 @@
                       >${disability.name}</option>               
                     </#list>
                     </select>
+                    <@spring.bind "personalDetails.disability" />
+                    <#list spring.status.errorMessages as error>
+                        <div class="alert alert-error">
+                            <i class="icon-warning-sign"></i>  ${error}</div>
+                    </#list>
                 </div>
             </div>
-            <@spring.bind "personalDetails.disability" />
-            <#list spring.status.errorMessages as error>
-                <div class="row">
-                    <div class="field">
-                        <span class="invalid">${error}</span>
-                    </div>
-                </div>
-            </#list>
+            
             
         </div>
   
@@ -582,11 +580,11 @@
   
             <div class="buttons">
             <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-            <button type="button" class="" name="personalDetailsClearButton" id="personalDetailsClearButton" value="clear">Clear</button>
-            <button type="button" class="blue" id="personalDetailsCloseButton">Close</button>
-            <button type="button" class="blue" id="personalDetailsSaveButton" value="close">Save</button>
+            <button type="button" class="btn" name="personalDetailsClearButton" id="personalDetailsClearButton" value="clear">Clear</button>
+            <button type="button" class="btn" id="personalDetailsCloseButton">Close</button>
+            <button type="button" class="btn btn-primary" id="personalDetailsSaveButton" value="close">Save</button>
             <#else>
-            <a id="personalDetailsCloseButton"class="button blue">Close</a>         
+            <a id="personalDetailsCloseButton"class="btn">Close</a>         
             </#if>
         </div>
      </form>

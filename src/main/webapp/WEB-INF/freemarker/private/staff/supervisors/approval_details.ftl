@@ -52,13 +52,13 @@
 			<!-- Main content area. -->
 			<article id="content" role="main">
 
-			  <!-- "Tools" -->
+			  <!-- "Tools"
 			  <div id="tools">
 				<ul class="left">
 				  <li class="icon-print"><a target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
 				  <li class="icon-feedback"><a title="Send Feedback" href="mailto:prism@ucl.ac.uk?subject=Feedback" target="_blank">Send Feedback</a></li>
 				</ul>
-			  </div>
+			  </div> -->
   
 				<!-- FLOATING TOOLBAR -->
 	            <ul id="view-toolbar" class="toolbar">

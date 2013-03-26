@@ -34,21 +34,24 @@ section.form-rows > div { background: #DDD; border: 1px solid #999; padding: 10p
 
 
 /* EXISTING ROWS ----------------------------------------------------------------------------------------- */
-section.form-rows table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%;  margin: -10px -10px 10px; width: 824px; }
-section.form-rows table.existing th { background: url(../../images/bg_table_head.png) repeat-x; text-align: left; }
+/*section.form-rows table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%;  margin: -10px -10px 10px; width: 824px; }
+/*section.form-rows table.existing th { background: url(../../images/bg_table_head.png) repeat-x; text-align: left; }
 /*  Temp Fix: Modified to accomodate backgournd for long strings : Manish */
-section.form-rows table.existing td { 
-	background: url("../../images/bg_table_row.jpg") repeat-x scroll left bottom #E6E8E7;
+/*section.form-rows table.existing td { 
+	/*background: url("../../images/bg_table_row.jpg") repeat-x scroll left bottom #E6E8E7;
 	/* background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; */
-	padding: 3px;
-}
+	/*padding: 3px;
+/*}
 /*  Modified to acomodate long strings : Manish */
-section.form-rows table.existing td,
-section.form-rows table.existing th { 
-	line-height: 25px; padding: 0 3px; vertical-align: text-top; 
-}
+/*section.form-rows table.existing td,
+/*section.form-rows table.existing th { 
+/*	line-height: 25px; padding: 0 3px; vertical-align: text-top; 
+/*}
 /* Contrlloing the appearince of the text of the first column header */
-section.form-rows table.existing th#primary-header { padding-left: 33px; }
+/*section.form-rows table.existing th#primary-header { padding-left: 33px; }*/
+section.form-rows table.existing td {
+	vertical-align: middle;
+}
 
 
 /* ROW GROUPS (white boxes) ------------------------------------------------------------------------------ */

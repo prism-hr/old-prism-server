@@ -124,7 +124,7 @@ $(document).ready(function()
 		}
 
 		// Remove validation errors.
-		$('#supervisor_div span.invalid').remove();
+		$('#supervisor_div div.alert-error').remove();
 		
 		$("#supervisorId").val('');
 		$("#supervisorFirstname").val('');
@@ -145,48 +145,48 @@ $(document).ready(function()
 	{
 		// Hide error messages.
 		var errors = 0;
-		$("#supervisor_div span.invalid").remove();
+		$("#supervisor_div div.alert-error").remove();
 		
 		if ($('#supervisorFirstname').val() == "")
 		{
-			$('#supervisorFirstname').after('<span class="invalid">You must make an entry.</span>').show();
+			$('#supervisorFirstname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make an entry. <div>').show();
 			errors++;
 		} else if (!validateStringChars($('#supervisorFirstname').val())) 
 		{
-			$('#supervisorFirstname').after('<span class="invalid">You must only enter valid characters.</span>').show();
+			$('#supervisorFirstname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must only enter valid characters.</div>').show();
 			errors++;
 		} else if (!validateStringLength($('#supervisorFirstname').val(), 30)) 
 		{
-			$('#supervisorFirstname').after('<span class="invalid">A maximum of 30 characters are allowed.</span>').show();
+			$('#supervisorFirstname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> A maximum of 30 characters are allowed.</div>').show();
 			errors++;
 		}		
 		
 		if ($('#supervisorLastname').val() == "")
 		{
-			$('#supervisorLastname').after('<span class="invalid">You must make an entry.</span>').show();
+			$('#supervisorLastname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make an entry.</div>').show();
 			errors++;
 		} else if (!validateStringChars($('#supervisorLastname').val())) 
 		{
-			$('#supervisorLastname').after('<span class="invalid">You must only enter valid characters.</span>').show();
+			$('#supervisorLastname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must only enter valid characters.</div>').show();
 			errors++;
 		} else if (!validateStringLength($('#supervisorLastname').val(), 40)) 
 		{
-			$('#supervisorLastname').after('<span class="invalid">A maximum of 40 characters are allowed.</span>').show();
+			$('#supervisorLastname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> A maximum of 40 characters are allowed.</div>').show();
 			errors++;
 		}	
 		
 		if ($("input[name='awareSupervisor']:checked").val() == undefined)
 		{
-			$('#awareNo').parent().after('<span class="invalid">You must make a selection.</span>').show();
+			$('#awareNo').parent().after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make a selection.</div>').show();
 			errors++;
 		}	
 		if (!validateEmail($('#supervisorEmail').val()))
 		{
-			$('#supervisorEmail').after('<span class="invalid">You must enter a valid email address.</span>').show();
+			$('#supervisorEmail').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must enter a valid email address.</div>').show();
 			errors++;
 		} else if (!validateStringLength($('#supervisorEmail').val(), 255)) 
 		{
-			$('#supervisorEmail').after('<span class="invalid">A maximum of 255 characters are allowed.</span>').show();
+			$('#supervisorEmail').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> A maximum of 255 characters are allowed.</div>').show();
 			errors++;
 		}
 		
@@ -246,7 +246,7 @@ $(document).ready(function()
 		var s_aware			= $('input[name="sAS"]', $edit_row).val();
 		
 		// Remove validation errors.
-		$('#supervisor_div span.invalid').remove();
+		$('#supervisor_div div.alert-error').remove();
 		
 		$("#supervisorId").val(s_id);
 		$("#supervisorFirstname").val(s_firstname);
@@ -269,50 +269,50 @@ $(document).ready(function()
 	{
 		// Hide error messages.
 		var errors = 0;
-		$("#supervisor_div span.invalid").remove();
+		$("#supervisor_div div.alert-error").remove();
 		
 		$("#supervisors").show();
 		if ($('#supervisorFirstname').val() == "")
 		{
-			$('#supervisorFirstname').after('<span class="invalid">You must make an entry.</span>').show();
+			$('#supervisorFirstname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make an entry.</div>').show();
 			errors++;
 		} else if (!validateStringChars($('#supervisorFirstname').val())) 
 		{
-			$('#supervisorFirstname').after('<span class="invalid">You must only enter valid characters.</span>').show();
+			$('#supervisorFirstname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must only enter valid characters.</div>').show();
 			errors++;
 		} else if (!validateStringLength($('#supervisorFirstname').val(), 30)) 
 		{
-			$('#supervisorFirstname').after('<span class="invalid">A maximum of 30 characters are allowed.</span>').show();
+			$('#supervisorFirstname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> A maximum of 30 characters are allowed.</div>').show();
 			errors++;
 		}		
 		
 		if ($('#supervisorLastname').val() == "")
 		{
-			$('#supervisorLastname').after('<span class="invalid">You must make an entry.</span>').show();
+			$('#supervisorLastname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make an entry.</div>').show();
 			errors++;
 		} else if (!validateStringChars($('#supervisorLastname').val())) 
 		{
-			$('#supervisorLastname').after('<span class="invalid">You must only enter valid characters.</span>').show();
+			$('#supervisorLastname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must only enter valid characters.</div>').show();
 			errors++;
 		} else if (!validateStringLength($('#supervisorLastname').val(), 40)) 
 		{
-			$('#supervisorLastname').after('<span class="invalid">A maximum of 40 characters are allowed.</span>').show();
+			$('#supervisorLastname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> A maximum of 40 characters are allowed.</div>').show();
 			errors++;
 		}	
 		
 		if ($("input[name='awareSupervisor']:checked").val() == undefined)
 		{
-			$('#awareNo').parent().after('<span class="invalid">You must make a selection.</span>').show();
+			$('#awareNo').parent().after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make a selection.</div>').show();
 			errors++;
 		}
 		
 		if (!validateEmail($('#supervisorEmail').val()))
 		{
-			$('#supervisorEmail').after('<span class="invalid">You must enter a valid email address.</span>').show();
+			$('#supervisorEmail').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must enter a valid email address.</div>').show();
 			errors++;
 		} else if (!validateStringLength($('#supervisorEmail').val(), 255)) 
 		{
-			$('#supervisorEmail').after('<span class="invalid">A maximum of 255 characters are allowed.</span>').show();
+			$('#supervisorEmail').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> A maximum of 255 characters are allowed.</div>').show();
 			errors++;
 		}
 		

@@ -86,6 +86,9 @@
             <logger category="com.zuehlke.pgadmissions" use-parent-handlers="true">
                 <level name="INFO"/>
             </logger>
+            <logger category="com.zuehlke.pgadmissions.timers" use-parent-handlers="true">
+                <level name="OFF"/>
+            </logger>
             <root-logger>
                 <level name="INFO"/>
                 <handlers>

@@ -88,11 +88,19 @@ Copy the "pgadmissions.jks" provided in this folder to "/usr/local/jboss/"
 
 # cp pgadmissions.jks /usr/local/jboss/
 
-Edit the "/etc/init.d/jboss" file with your favourite edtior to verify that the 
-following two lines are correct for your setup:
+Edit the JBOSS_HOME/bin/standalone.conf to include the following lines:
 
-    JAVA_OPTS=${JAVA_OPTS} -Djavax.net.ssl.keyStore=/usr/local/jboss/pgadmissions.jks -Djavax.net.ssl.keyStorePassword=pgadmissions
-    export JAVA_OPTS=${JAVA_OPTS}
+    #
+    # Specify options to pass to the Java VM.
+    #
+    if [ "x$JAVA_OPTS" = "x" ]; then
+       JAVA_OPTS="-Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
+       JAVA_OPTS="$JAVA_OPTS -Djboss.modules.system.pkgs=$JBOSS_MODULES_SYSTEM_PKGS -Djava.awt.headless=true"
+       JAVA_OPTS="$JAVA_OPTS -Djboss.server.default.config=standalone.xml"
+       JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.keyStore=/usr/local/jboss/pgadmissions.jks -Djavax.net.ssl.keyStorePassword=pgadmissions"
+    else
+       echo "JAVA_OPTS already set in environment; overriding default settings with values: $JAVA_OPTS"
+    fi
 
 ========================================================================
             Install the MySQL Driver & Connection in JBoss
@@ -296,3 +304,36 @@ Add the following two lines to the <socket-binding-group> tag:
 
     <socket-binding name="messaging" port="5445" />
     <socket-binding name="messaging-throughput" port="5455" />
+
+========================================================================
+        Using Apache as a REVERSE PROXY for JBoss
+========================================================================
+
+Install the Apache HTTPD if it is not already installed.
+
+# yum install httpd
+
+Make sure that the httpd is being started when the Linux machine starts:
+
+# chkconfig httpd on
+# service httpd start
+
+Configure the reverse proxy settings by changing the "/etc/httpd/conf/httpd.conf" file 
+accordingly:
+
+    <IfModule mod_proxy.c>
+    ProxyRequests Off
+    ProxyPass / http://localhost:8080/
+    ProxyPassReverse / http://localhost:8080/
+
+    #<Proxy *>
+    #    Order deny,allow
+    #    Deny from all
+    #    Allow from .example.com
+    #</Proxy>
+
+At the end of the file add:
+
+    RewriteEngine  on
+    RewriteRule    ^/$  /pgadmissions [R]
+    RewriteRule    ^$  /pgadmissions [R]

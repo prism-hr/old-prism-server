@@ -68,10 +68,6 @@
 			    <!-- Main content area. -->
 			    <article id="content" role="main">
 			    
-			    <!-- "Tools" -->
-                <div id="tools">
-                
-                </div>
 			      
 			      
 				   <!-- FLOATING TOOLBAR -->

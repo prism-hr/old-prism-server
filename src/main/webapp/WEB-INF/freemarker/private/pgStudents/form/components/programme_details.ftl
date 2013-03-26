@@ -15,38 +15,42 @@
 <div>
   <form>
     <#if (errorCode?? && errorCode=="true")>
-	    <div class="section-error-bar">
+	    <div class="alert alert-error">
+            <i class="icon-warning-sign"></i>
 				<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>               
-				<span class="invalid-info-text"><@spring.message 'programmeDetails.project'/></span>
+				<span class="invalid-info-text"><@spring.message 'programmeDetails.project'/></div>
 	    </div>
     <#else>
-    	<div id="prog-info-bar-div" class="section-info-bar">
-     		 <@spring.message 'programmeDetails.project'/>
+    	<div class="alert alert-info">
+          <i class="icon-info-sign"></i> 
+     		  <@spring.message 'programmeDetails.project'/>
     	</div>  
     </#if>
   
     <div class="row-group">
       <#if programError?? && programError=='true'>
-      <span class="invalid"><@spring.message 'application.program.invalid'/></span>
+      <div class="alert alert-error">
+          <i class="icon-warning-sign"></i>  <@spring.message 'application.program.invalid'/></div>
       </#if>
       
       <!-- Programme name (disabled) -->
       <div class="row">
-        <label class="plain-label grey-label">Programme<em class="grey-label">*</em></label>
+        <label class="plain-label grey-label" for="programmeName">Programme<em class="grey-label">*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.programme'/>"></span>
         <div class="field">
           <input class="full" id="programmeName" name="programmeName" type="text" value="${(applicationForm.program.title?html)!}" disabled="disabled" />
           
           <@spring.bind "programmeDetails.programmeName" />
           <#list spring.status.errorMessages as error>
-            <span class="invalid">${error}</span>
+            <div class="alert alert-error">
+                <i class="icon-warning-sign"></i>  ${error}</div>
           </#list>
         </div>
       </div>
   
       <!-- Study option -->
       <div class="row">
-        <label class="plain-label">Study Option<em>*</em></label>
+        <label class="plain-label" for="studyOption">Study Option<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.studyOption'/>"></span>
         <div class="field">
           <select class="full" id="studyOption" name="studyOption"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
@@ -56,32 +60,35 @@
             </#list>
           </select>
           <#if studyOptionError?? && studyOptionError=='true'>
-          <span class="invalid"><@spring.message  'programmeDetails.studyOption.invalid'/></span>
+          <div class="alert alert-error">
+              <i class="icon-warning-sign"></i>  <@spring.message  'programmeDetails.studyOption.invalid'/></div>
           </#if>
 
           <@spring.bind "programmeDetails.studyOption" />
           <#if spring.status.errorMessages?has_content>
-          <span class="invalid">${spring.status.errorMessages[0]!}</span>
+          <div class="alert alert-error">
+              <i class="icon-warning-sign"></i>  ${spring.status.errorMessages[0]!}</div>
           </#if>
         </div>
       </div>
       
       <!-- Start date -->
       <div class="row">
-        <label id="lbl_startDate" class="plain-label">Preferred Start Date<em>*</em></label>
+        <label id="lbl_startDate" class="plain-label" for="startDate">Preferred Start Date<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.startDate'/>"></span>
         <div class="field">
           <input class="full date" type="text" id="startDate" name="startDate" value="${(programmeDetails.startDate?string('dd MMM yyyy'))!}"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if> />
           <@spring.bind "programmeDetails.startDate" />
           <#list spring.status.errorMessages as error>
-          <span class="invalid">${error}</span>
+          <div class="alert alert-error">
+              <i class="icon-warning-sign"></i>  ${error}</div>
           </#list>
         </div>
       </div>
   
       <!-- Project -->
       <div class="row">
-        <label class="plain-label grey-label">Project</label>
+        <label class="plain-label grey-label" for="projectName">Project</label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
         <div class="field">
         	<#if applicationForm.projectTitle?has_content>
@@ -96,7 +103,7 @@
   
       <!-- Referrer -->
       <div class="row">
-        <label class="plain-label">How did you find us?<em>*</em></label>
+        <label class="plain-label" for="referrer">How did you find us?<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.howDidYouFindUs'/>"></span>
         <div class="field">
           <select class="full" id="referrer" name="referrer"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
@@ -109,37 +116,44 @@
           </select>    
           <@spring.bind "programmeDetails.sourcesOfInterest" /> 
           <#list spring.status.errorMessages as error>
-          <span class="invalid">${error}</span>
+          <div class="alert alert-error">
+            <i class="icon-warning-sign"></i> ${error}</div>
           </#list>
         </div>
       </div>
       
       <!-- Referrer Free Text-->
       <div class="row">
-        <label id="referrer-text-lbl" class="plain-label grey-label">Please explain<em>*</em></label>
+        <label id="referrer-text-lbl" class="plain-label grey-label" for="referrer_text">Please explain<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.howDidYouFindUsExplain'/>"></span>
         <div class="field">
           <input class="full grey-label" id="referrer_text" name="referrer_text" type="text" value=<#if programmeDetails.sourcesOfInterestText??>"${(programmeDetails.sourcesOfInterestText?html)}"<#else>"Not Required" disabled="disabled"</#if> />
           <@spring.bind "programmeDetails.sourcesOfInterestText" /> 
           <#list spring.status.errorMessages as error>
-          <span class="invalid">${error}</span>
+          <div class="alert alert-error">
+            <i class="icon-warning-sign"></i> ${error}</div>
           </#list>
         </div>
       </div>
   
     </div><!-- .row-group -->
-  
-    <div class="row-group" id="supervisor_div">
-      <label class="group-heading-label">Supervision</label>
-      <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.supervisor'/>"></span>
-  
-      <div class="field">
+  <div id="supervisor_div">
+    <div class="row-group">
+      <h3>Supervision</h3>
+      <div class="alert alert-info">
+          <i class="icon-info-sign"></i> <@spring.message 'programmeDetails.supervisor.supervisor'/>
+      </div>
+    
+
         <@spring.bind "programmeDetails.suggestedSupervisors" /> 
-        <#list spring.status.errorMessages as error><span class="invalid">${error}</span></#list>
-        <table id="supervisors" class="data-table">
+        <#list spring.status.errorMessages as error>
+        <div class="alert alert-error">
+            <i class="icon-warning-sign"></i> ${error}</div>
+        </#list>
+        <table id="supervisors" class="table table-striped table-condensed table-bordered table-hover">
           <colgroup>
             <col />
-            <col style="width: 60px;" />
+            <col style="width: 65px;" />
           </colgroup>
           <tbody>
             <#list programmeDetails.suggestedSupervisors! as supervisor>
@@ -163,14 +177,15 @@
             </#list>
           </tbody>
         </table>
-      </div>
-  
+      </div><!-- .row-group -->
+      <div class="row-group">
+        <h3>Add Supervisor</h3>
       <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
       <!-- supervisor rows -->
       <input type="hidden" id="supervisorId" name="supervisorId"/>
       
       <div class="row">
-        <label class="plain-label">Supervisor First Name</label>
+        <label class="plain-label" for="supervisorFirstname">Supervisor First Name</label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
         <div class="field">
           <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
@@ -178,7 +193,7 @@
       </div>
       
       <div class="row">
-        <label class="plain-label">Supervisor Last Name</label>
+        <label class="plain-label" for="supervisorLastname">Supervisor Last Name</label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
         <div class="field"> 
           <input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
@@ -197,22 +212,22 @@
         <label class="plain-label">Is this supervisor aware of your application?</label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
         <div class="field">
-          <label><input id="awareYes" type="radio" name="awareSupervisor" value="YES" /> Yes</label>
-          <label><input id="awareNo" type="radio" name="awareSupervisor" value="NO" /> No</label>
+          <label for="awareYes"><input id="awareYes" type="radio" name="awareSupervisor" value="YES" /> Yes</label>
+          <label for="awareNo"><input id="awareNo" type="radio" name="awareSupervisor" value="NO" /> No</label>
         </div>
       </div>
   
       <div class="row">
         <span class="supervisorAction"></span>       
         <div class="field">
-          <button id="updateSupervisorButton" class="blue" type="button" style="display:none;">Update</button>
-          <button id="addSupervisorButton" class="blue" type="button">Add</button>
+          <button id="updateSupervisorButton" class="btn" type="button" style="display:none;">Update</button>
+          <button id="addSupervisorButton" class="btn" type="button">Add</button>
         </div>
       </div>
       </#if>
       
     </div><!-- .row-group -->
-    
+    </div>
   
     <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
     	<@spring.bind "programmeDetails.acceptedTerms" />
@@ -242,11 +257,11 @@
 
     <div class="buttons">
       <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-      <button type="button" id="programmeClearButton" name="programmeClearButton" value="clear">Clear</button>
+      <button class="btn" type="button" id="programmeClearButton" name="programmeClearButton" value="clear">Clear</button>
       </#if>    
-      <button class="blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</button>
+      <button class="btn" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</button>
       <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-      <button class="blue" type="button" id="programmeSaveButton">Save</button>
+      <button class="btn btn-primary" type="button" id="programmeSaveButton">Save</button>
       </#if>    
     </div>
   

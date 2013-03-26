@@ -13,7 +13,7 @@
     
    </div>
   <div id="tools">
-      <a class="btn btn-small" target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>"><i class="icon-print"></i> Download as PDF</a>
+      <a class="btn btn-small" target="_blank" title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>"><i class="icon-download-alt"></i> Download as PDF</a>
   </div>
 </div>
   <div class="row">

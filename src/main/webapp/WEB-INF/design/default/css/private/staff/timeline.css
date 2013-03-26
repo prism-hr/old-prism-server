@@ -218,20 +218,12 @@
 #timelineview .tab-page {
   padding-top: 10px;
 }
-#timelineview .alert {
-  margin-bottom: 10px;
-}
-#timelineview .field {
-  position: relative;
-}
-#timelineview .field .alert-error {
-  position: absolute;
-  margin-left: 10px;
-  top: 1;
-  clear: left;
-  padding: 2px 6px;
-}
+
+
 #timelineview input[type="radio"],
 #timelineview input[type="checkbox"] {
   margin-top: -3px;
+}
+#timelineview .field>label {
+  margin-top: 4px;
 }

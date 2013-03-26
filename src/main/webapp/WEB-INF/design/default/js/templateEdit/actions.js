@@ -5,7 +5,18 @@ var errorCodes= {
 		400 : function() { window.location.href = "/pgadmissions/400"; },
 		403 : function() { window.location.href = "/pgadmissions/404"; }
 		};
+
+function toggleButtons(disable) {
+	$('#delete-go').prop('disabled', disable);
+	$('#save-go').prop('disabled', disable);
+	$('#enable-go').prop('disabled', disable);
+	var href = disable ? '' : '#previewModal';
+	$('#modal-preview-go').attr('href', href);
+	$('#modal-preview-go').attr('disabled', disable);
+}
+
 $(document).ready(function() {
+	toggleButtons(true);
     $(document).on('change', 'select.templateType', function() {
             if ($(this).val()!='default') {
             	$('div.content-box-inner').css({position : 'relative'}).append('<div class="ajax" />');
@@ -18,6 +29,7 @@ $(document).ready(function() {
         	        success : function(data) {
         	            		$('#templateContentId').val(data.content);
         	            		$('#templateContentId').prop('disabled', false);
+        	            		toggleButtons(false);
         	            		$('#emailTemplateVersion').empty();
         	            		$.each(data, function(key,value){
         	            	        if (!isNaN(key)) {
@@ -37,6 +49,7 @@ $(document).ready(function() {
             	$('#templateContentId').prop('disabled', true);
             	$('#templateContentId').val('');
             	$('#emailTemplateVersion').empty();
+            	toggleButtons(true);
             }
             
         });
@@ -53,6 +66,7 @@ $(document).ready(function() {
     			success : function(data) {
     				$('#templateContentId').val(data.content);
     				$('#templateContentId').prop('disabled', false);
+    				toggleButtons(false);
     			},
     			complete : function() {
     				$('div.ajax').remove();
@@ -61,6 +75,7 @@ $(document).ready(function() {
     	} else {
     		$('#templateContentId').prop('disabled', true);
     		$('#templateContentId').val('');
+    		toggleButtons(true);
     	}
     	
     });
@@ -97,10 +112,14 @@ $(document).ready(function() {
 		 });
     });
     
-    $('#preview-go').click(function() {
-    	 var myWindow=window.open
-    	  ('','Template preview','width=800,height=600,left=200,top=100');
-    	  myWindow.document.write($('#templateContentId').val());
+    
+    $('#modal-preview-go').click(function() {
+    	var html = $('#templateContentId').val();
+    	html = html.replace(/\$\{host\}/g, "");
+    	html = html.replace(/href=\"(.*)\"/g, "");
+    	var header = $("#emailTemplateType option:selected").text();
+    	$('#previewModalLabel').html(header);
+    	$('#previewModalContent').html(html);
     });
     
     $('#delete-go').click(function() {

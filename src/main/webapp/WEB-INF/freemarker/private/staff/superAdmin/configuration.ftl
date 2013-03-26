@@ -70,6 +70,24 @@
                         <div id="configsection"></div>
 
                         <div id="edit-template-section">
+                        
+
+						<!-- Modal -->
+						<div id="previewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						  <div class="modal-header">
+						    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						    <h3 id="previewModalLabel"></h3>
+						  </div>
+						  <div id="previewModalContent" class="modal-body">
+						  	<!-- Modal content -->
+						    
+						  </div>
+						  <div class="modal-footer">
+						    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+						  </div>
+						</div>
+
+
                             <section class="form-rows">
                                 <h2>Email templates</h2>
 
@@ -105,13 +123,13 @@
                                             </div>
                                         </div>
                                         <div class="field">
-                                            <button class="btn" type="button" id="preview-go">Preview</button>
+                                            <a disabled href="#previewModal" id="modal-preview-go" role="button" class="btn" data-toggle="modal">Preview</a>
                                         </div>
                                     </div>
                                     <div class="buttons">
-                                        <button class="btn btn-danger" type="button" id="delete-go">Delete Draft</button>
-                                        <button class="btn" type="button" id="save-go">Save As Draft</button>
-                                        <button class="btn btn-primary" type="button" id="enable-go">Save as Default</button>
+                                        <button disabled class="btn btn-danger" type="button" id="delete-go">Delete Draft</button>
+                                        <button disabled class="btn" type="button" id="save-go">Save As Draft</button>
+                                        <button disabled class="btn btn-primary" type="button" id="enable-go">Save as Default</button>
                                     </div>
                                 </div>
                             </section>

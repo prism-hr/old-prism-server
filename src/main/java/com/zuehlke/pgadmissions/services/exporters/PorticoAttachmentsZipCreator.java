@@ -75,19 +75,23 @@ public class PorticoAttachmentsZipCreator {
         String filename;
         switch (references.size()) {
             case 2:
-                filename = getRandomFilename();
-                zos.putNextEntry(new ZipEntry(filename));
-                combinedReferenceBuilder.build(references.get(1), zos);
-                zos.closeEntry();
-                contentsProperties.put("reference.2.serverFilename", filename);
-                contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
+                if (references.get(1) != null) {
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    combinedReferenceBuilder.build(references.get(1), zos);
+                    zos.closeEntry();
+                    contentsProperties.put("reference.2.serverFilename", filename);
+                    contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
+                }
 
-                filename = getRandomFilename();
-                zos.putNextEntry(new ZipEntry(filename));
-                combinedReferenceBuilder.build(references.get(0), zos);
-                zos.closeEntry();
-                contentsProperties.put("reference.1.serverFilename", filename);
-                contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
+                if (references.get(0) != null) {
+                    filename = getRandomFilename();
+                    zos.putNextEntry(new ZipEntry(filename));
+                    combinedReferenceBuilder.build(references.get(0), zos);
+                    zos.closeEntry();
+                    contentsProperties.put("reference.1.serverFilename", filename);
+                    contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
+                }
                 break;
         }
     }

@@ -160,3 +160,9 @@ UPDATE APPLICATION_FORM SET excluded = 1 WHERE application_number = "RRDCENSING0
 ;
 UPDATE APPLICATION_FORM SET excluded = 1 WHERE application_number = "RRDMECSING01-2012-000008"
 ;
+
+UPDATE APPLICATION_FORM af
+LEFT JOIN PROGRAM p ON p.id = af.program_id
+SET excluded = 1
+WHERE p.code = 'ABC'
+;

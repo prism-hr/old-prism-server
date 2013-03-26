@@ -52,6 +52,8 @@ public class UclExportService {
     
     private final ApplicationFormTransferService applicationFormTransferService;
     
+    private static final String PRISM_EXCEPTION = "There was an internal PRISM exception [applicationNumber=%s]";
+
     private static final String WS_CALL_FAILED_NETWORK = "The web service is unreachable because of network issues [applicationNumber=%s]";
     
     private static final String WS_CALL_FAILED_REFUSED = "The web service refused our request [applicationNumber=%s]";
@@ -89,10 +91,22 @@ public class UclExportService {
     }
 
     public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws UclExportServiceException {
-        log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
-        prepareApplicationForm(form);
-        sendWebServiceRequest(form, transfer, listener);
-        uploadDocuments(form, transfer, listener);
+        try {
+            log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
+            prepareApplicationForm(form);
+            sendWebServiceRequest(form, transfer, listener);
+            uploadDocuments(form, transfer, listener);
+        } catch (UclExportServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.CANCELLED);
+            ApplicationFormTransferError transferError = applicationFormTransferService
+                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(e)
+                            .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
+                            .problemClassification(ApplicationFormTransferErrorType.PRISM_EXCEPTION)
+                            .transfer(transfer));
+            throw new UclExportServiceException(String.format(PRISM_EXCEPTION, form.getApplicationNumber()), e, transferError);
+        }
     }
     
     public void setPorticoAttachmentsZipCreator(final PorticoAttachmentsZipCreator zipCreator) {
@@ -110,7 +124,7 @@ public class UclExportService {
         ApplicationForm form = applicationFormDAO.get(formObj.getId());
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         ValidationComment validationComment = commentDAO.getValidationCommentForApplication(form);
-        Boolean isOverseasStudent = validationComment.getHomeOrOverseas().equals(HomeOrOverseas.OVERSEAS);
+        Boolean isOverseasStudent = validationComment == null ? true : validationComment.getHomeOrOverseas().equals(HomeOrOverseas.OVERSEAS);
         final ByteArrayOutputStream requestMessageBuffer = new ByteArrayOutputStream(5000);
         
         AdmissionsApplicationResponse response = null;
@@ -126,6 +140,8 @@ public class UclExportService {
                 public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
                     webServiceMessage.writeTo(requestMessageBuffer);
                 }});
+            
+            log.info(String.format("Sent web service request [applicationNumber=%s, request=%s]", form.getApplicationNumber(), requestMessageBuffer.toString()));
             
             log.info(String.format("Received response from web service [applicationNumber=%s, applicantId=%s, applicationId=%s]", 
                     form.getApplicationNumber(), response.getReference().getApplicantID(), response.getReference().getApplicationID()));
@@ -234,6 +250,7 @@ public class UclExportService {
             if (form.getReferencesToSendToPortico().isEmpty()) {
                 final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
 
+                // try to find two referees which have provided a reference.
                 for (Referee referee : form.getReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
@@ -245,6 +262,7 @@ public class UclExportService {
                     }
                 }
                 
+                // select x more referees until we've got 2
                 for (Referee referee : form.getReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;

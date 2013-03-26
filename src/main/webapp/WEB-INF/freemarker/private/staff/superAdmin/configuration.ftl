@@ -134,42 +134,43 @@
                                 </div>
                             </section>
                         </div>
-
-                        <div id="edit-throttle-section">
-                            <section class="form-rows">
-                                <h2>Portico Interface</h2>
-                              
-                                <div>
-                                    <div class="alert alert-info">
-                                        <i class="icon-info-sign"></i> Configure how many rejected and withdrawn applications should be sent to Portico every night.
-                                    </div>
-  									<form>
-                                    <div class="row-group">
-                                        <div class="row">
-                                            <label class="plain-label" for="throttoleSwitchOnId">Portico Interface</label><span data-desc="Enable/disable the Portico interface" class="hint"></span> 
-                                            <div class="field"> 
-                                            	<input id="throttoleSwitchOnId" type="radio" name="switch" value="on"> On </input> 
-                                            	<input type="radio" name="switch" value="off"> Off </input>
-                                        	</div>
-                                        </div>
-
-                                        <div class="row">
-                                            <label class="plain-label" for="batchSizeId">Throttling batch size</label> <span data-desc="Maximum number of rejected and withdrawn applications to send to Portico every night (0 = no limit)" class="hint"></span>                                            
-                                        	<div class="field">
-                                            	<input type="text" id="batchSizeId" />
-												<input type="hidden" id="throttleId" />
-                                        	</div>
-                                    	</div>
-                                    </div>
-                                    <div class="buttons">
-                                        <button class="btn btn-primary" type="button" id="apply-throttle-go">Apply changes</button>
-                                    </div>
-                               </form> 
-                               </div>
-                                
-                            </section>
-                        </div>
-
+						
+						<#if user.isInRole('SUPERADMINISTRATOR') >
+	                        <div id="edit-throttle-section">
+	                            <section class="form-rows">
+	                                <h2>Portico Interface</h2>
+	                              
+	                                <div>
+	                                    <div class="alert alert-info">
+	                                        <i class="icon-info-sign"></i> Configure how many rejected and withdrawn applications should be sent to Portico every night.
+	                                    </div>
+	  									<form>
+	                                    <div class="row-group">
+	                                        <div class="row">
+	                                            <label class="plain-label" for="throttoleSwitchOnId">Portico Interface</label><span data-desc="Enable/disable the Portico interface" class="hint"></span> 
+	                                            <div class="field"> 
+	                                            	<input id="throttoleSwitchOnId" type="radio" name="switch" value="on"> On </input> 
+	                                            	<input type="radio" name="switch" value="off"> Off </input>
+	                                        	</div>
+	                                        </div>
+	
+	                                        <div class="row">
+	                                            <label class="plain-label" for="batchSizeId">Throttling batch size</label> <span data-desc="Maximum number of rejected and withdrawn applications to send to Portico every night (0 = no limit)" class="hint"></span>                                            
+	                                        	<div class="field">
+	                                            	<input type="text" id="batchSizeId" />
+													<input type="hidden" id="throttleId" />
+	                                        	</div>
+	                                    	</div>
+	                                    </div>
+	                                    <div class="buttons">
+	                                        <button class="btn btn-primary" type="button" id="apply-throttle-go">Apply changes</button>
+	                                    </div>
+	                               </form> 
+	                               </div>
+	                                
+	                            </section>
+	                        </div>
+						</#if>
                         <div>
                             <section class="form-rows">
                                 <h2>Badge</h2>

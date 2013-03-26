@@ -176,6 +176,10 @@ public class ConfigurationController {
 	@ResponseBody
 	public Map<String, Object> saveTemplate(@PathVariable EmailTemplateName templateName,
 			@RequestParam String content) {
+		return saveNewTemplate(templateName, content);
+	}
+
+	private Map<String, Object> saveNewTemplate(EmailTemplateName templateName, String content) {
 		EmailTemplate template = templateService.saveNewEmailTemplate(templateName, content);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("id", template.getId());
@@ -185,12 +189,20 @@ public class ConfigurationController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = {"activateEmailTemplate/{templateName:[a-zA-Z_]+}/{id:\\d+}"})
 	@ResponseBody
-	public Map<String, String> activateTemplate(@PathVariable String templateName, @PathVariable Long id) {
+	public Map<String, Object> activateTemplate(@PathVariable String templateName, @PathVariable Long id,
+			@RequestParam Boolean saveCopy, @RequestParam(required = false) String newContent) {
+		Map<String, Object> result=new HashMap<String, Object>();
+		if (saveCopy != null && saveCopy) {
+			result = saveNewTemplate(valueOf(templateName), newContent);
+			id = (Long) result.get("id");
+		}
+		Long previousId = templateService.getActiveEmailTemplate(valueOf(templateName)).getId();
 		try {
 			templateService.activateEmailTemplate(valueOf(templateName), id);
-			return Collections.emptyMap();
+			result.put("previousTemplateId", (Object)previousId);
+			return result;
 		} catch (EmailTemplateException ete) {
-			return Collections.singletonMap("error", ete.getMessage());
+			return Collections.singletonMap("error", (Object)ete.getMessage());
 		}
 	}
 	

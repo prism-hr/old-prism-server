@@ -89,7 +89,7 @@ public class EmailTemplateService {
 		DateFormat formatter = new SimpleDateFormat("yyyy/M/d - HH:mm:ss");
 		for (Map.Entry<Long, Date> idDate : versions.entrySet()) {
 			if (idDate.getValue() == null) {
-				result.put(idDate.getKey(), "default");
+				result.put(idDate.getKey(), "original template");
 			}
 			else {
 				result.put(idDate.getKey(), formatter.format(idDate.getValue()));

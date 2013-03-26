@@ -94,7 +94,7 @@ public class EmailTemplateServiceTest {
 		
 		Map<Long, String> result = service.getEmailTemplateVersions(INTERVIEWER_REMINDER_FIRST);
 		
-		assertEquals("default", result.get(1L));
+		assertEquals("original template", result.get(1L));
 		assertEquals("2013/4/25 - 00:00:00", result.get(2L));
 		assertEquals("2013/10/27 - 00:00:00", result.get(3L));
 		verify(daoMock);

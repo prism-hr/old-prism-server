@@ -1,19 +1,18 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPROVAL_NOTIFICATION;
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.*;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
@@ -160,7 +159,7 @@ public class ConfigurationControllerTest {
 
 	@Test
 	public void shouldGetPossibleDurationUnits(){
-		assertArrayEquals(DurationUnitEnum.values(), controller.getUnits());
+		org.junit.Assert.assertArrayEquals(DurationUnitEnum.values(), controller.getUnits());
 	}
 	@Test
 	public void shouldExtractConfigurationObjectsAndSave() {
@@ -253,22 +252,48 @@ public class ConfigurationControllerTest {
 	
 	@Test
 	public void activateTemplateShouldSetPropertiesInMap() throws Exception {
+		EmailTemplate activeTemplate = new EmailTemplateBuilder().id(2L).name(APPROVAL_NOTIFICATION)
+				.content("Some content").active(true).build();
+		expect(emailTemplateServiceMock.getActiveEmailTemplate(APPROVAL_NOTIFICATION)).andReturn(activeTemplate);
 		emailTemplateServiceMock.activateEmailTemplate(APPROVAL_NOTIFICATION, 1L);
-				replay(emailTemplateServiceMock);
+		replay(emailTemplateServiceMock);
 		
-		Map<String, String> result = controller.activateTemplate("APPROVAL_NOTIFICATION", 1L);
+		Map<String, Object> result = controller.activateTemplate("APPROVAL_NOTIFICATION", 1L, false, null);
 		
 		verify(emailTemplateServiceMock);
-		assertTrue(result.isEmpty());
+		assertEquals((Long)2L, (Long)result.get("previousTemplateId"));
+	}
+	
+	@Test
+	public void activateTemplateShouldSaveANewTemplatecopyAndSetPropertiesInMap() throws Exception {
+		EmailTemplate activeTemplate = new EmailTemplateBuilder().id(2L).name(APPROVAL_NOTIFICATION)
+				.content("Some content").active(true).build();
+		DateTime version = new DateTime(2012, 11, 5, 0, 0, 0);
+		EmailTemplate newTemplate = new EmailTemplateBuilder().id(3L).name(APPROVAL_NOTIFICATION)
+				.content("whatever").active(false).version(version.toDate()).build();
+		expect(emailTemplateServiceMock.saveNewEmailTemplate(APPROVAL_NOTIFICATION, "whatever")).andReturn(newTemplate);
+		expect(emailTemplateServiceMock.getActiveEmailTemplate(APPROVAL_NOTIFICATION)).andReturn(activeTemplate);
+		emailTemplateServiceMock.activateEmailTemplate(APPROVAL_NOTIFICATION, 3L);
+		replay(emailTemplateServiceMock);
+		
+		Map<String, Object> result = controller.activateTemplate("APPROVAL_NOTIFICATION", 1L, true, "whatever");
+		
+		verify(emailTemplateServiceMock);
+		assertEquals((Long)2L, (Long)result.get("previousTemplateId"));
+		assertEquals((Long)3L, (Long)result.get("id"));
+		assertEquals("2012/11/5 - 00:00:00", result.get("version"));
 	}
 	
 	@Test
 	public void activateTemplateShouldSetErrorInMap() throws Exception {
+		EmailTemplate activeTemplate = new EmailTemplateBuilder().id(2L).name(APPROVAL_NOTIFICATION)
+				.content("Some content").active(true).build();
+		expect(emailTemplateServiceMock.getActiveEmailTemplate(APPROVAL_NOTIFICATION)).andReturn(activeTemplate);
 		emailTemplateServiceMock.activateEmailTemplate(APPROVAL_NOTIFICATION, 1L);
 		expectLastCall().andThrow(new EmailTemplateException("test error"));
 		replay(emailTemplateServiceMock);
 		
-		Map<String, String> result = controller.activateTemplate("APPROVAL_NOTIFICATION", 1L);
+		Map<String, Object> result = controller.activateTemplate("APPROVAL_NOTIFICATION", 1L, false, null);
 		
 		verify(emailTemplateServiceMock);
 		assertEquals("test error", result.get("error"));

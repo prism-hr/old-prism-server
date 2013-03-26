@@ -1,0 +1,39 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          jboss
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start/Stop/Restart JBoss AS v7.1.1
+### END INIT INFO
+ 
+set -e
+ 
+### declare the directory where is jboss/java installed
+JAVA_HOME=/usr/lib/jvm/jre
+JBOSS_HOME=/usr/local/jboss/current
+JAVA_OPTS=${JAVA_OPTS} -Djavax.net.ssl.keyStore=/usr/local/jboss/pgadmissions.jks -Djavax.net.ssl.keyStorePassword=pgadmissions
+export PATH=${JAVA_HOME}/bin:${JBOSS_HOME}/bin:${PATH}
+export JAVA_OPTS=${JAVA_OPTS}
+ 
+case $1 in
+        start )
+                echo -e "\aStarting JBoss ..."
+                start-stop-daemon --start --quiet --background --chuid jboss --exec ${JBOSS_HOME}/bin/standalone.sh 
+        ;;
+        stop )
+                echo -e "\aStopping JBoss ..."
+                start-stop-daemon --start --quiet --background --chuid jboss --exec ${JBOSS_HOME}/bin/jboss-cli.sh -- --connect command=:shutdown
+        ;;
+        restart )
+                echo -e "\aRestarting the JBoss server ..."
+                start-stop-daemon --start --quiet --background --chuid jboss --exec ${JBOSS_HOME}/bin/jboss-cli.sh -- --connect command=:shutdown && \
+                start-stop-daemon --start --quiet --background --chuid jboss --exec ${JBOSS_HOME}/bin/standalone.sh
+        ;;
+        * )
+                echo -e "\aUsage: /etc/init.d/jboss {start|stop|restart}"
+                exit 1
+        ;;
+esac
+exit 0

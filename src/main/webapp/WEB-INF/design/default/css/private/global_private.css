@@ -1152,11 +1152,11 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
   font-size: 15px;
   padding: 6px 14px;
 }
-input[readonly]#qualificationAwardDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate {
+input[readonly]#fundingAwardDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate {
 	background-color: #FFFFFF;
 	cursor:auto;
 }
-input[readonly][disabled]#qualificationAwardDate, input[readonly][disabled]#qualificationStartDate, input[readonly][disabled]#startDate, input[readonly][disabled]#dateOfBirth, input[readonly][disabled]#dateOfExamination, input[readonly][disabled]#passportIssueDate, input[readonly][disabled]#passportExpiryDate {
+input[readonly][disabled]#fundingAwardDate, input[readonly][disabled]#position_endDate, input[readonly][disabled]#qualificationAwardDate, input[readonly][disabled]#position_startDate, input[readonly][disabled]#qualificationStartDate, input[readonly][disabled]#startDate, input[readonly][disabled]#dateOfBirth, input[readonly][disabled]#dateOfExamination, input[readonly][disabled]#passportIssueDate, input[readonly][disabled]#passportExpiryDate {
 	background-color: #EEEEEE;
 	cursor: not-allowed;
 }
@@ -1171,7 +1171,7 @@ span.count {
 	border-radius: 0 4px 4px 0;
 	font-size: 12px;
 	position: absolute;
-    top: 16px;
+  margin-top: 3px;
 }
 /* Status box */
 .applicantinfo {
@@ -1392,4 +1392,8 @@ span.icon-status.not-submitted:before {
 .ui-tooltip,
 .qtip {
   line-height: 14px;
+}
+#previewModal {
+  width: 650px !important;
+  margin-left: -318px !important;
 }

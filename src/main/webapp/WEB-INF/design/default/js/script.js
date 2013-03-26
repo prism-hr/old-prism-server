@@ -1,6 +1,8 @@
 $(document).ready(function() {
     addToolTips();
-
+	
+    //Add Counter
+    addCounter();
     //$(".dropdown-toggle").dropdown();
 
     // --------------------------------------------------------------------------------
@@ -194,8 +196,7 @@ $(document).ready(function() {
         }
     });
 
-    //Add Counter
-    addCounter();
+
 });
 
 // Tooltip settings used across the board.

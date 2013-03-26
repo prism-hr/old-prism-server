@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+	addCounter();
 	var empImgCount = 0;
 	var numberOfSavedPositions = 0;
 	

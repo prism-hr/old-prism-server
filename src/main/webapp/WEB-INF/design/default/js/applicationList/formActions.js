@@ -37,6 +37,32 @@ $(document).ready(function() {
 //        $('#search-go, #search-reset').addClass('disabled');
     });
 
+    $('#storeFiltersBtn').click(function() {
+        filters = getFilters();
+
+        data = {
+            filters : JSON.stringify(filters),
+        };
+        
+        $.ajax({
+            type : 'POST',
+            statusCode : {
+                401 : function() { window.location.reload(); },
+                500 : function() { window.location.href = "/pgadmissions/error"; },
+                404 : function() { window.location.href = "/pgadmissions/404"; },
+                400 : function() { window.location.href = "/pgadmissions/400"; },
+                403 : function() { window.location.href = "/pgadmissions/404"; }
+            },
+            url : "/pgadmissions/applications/saveFilters",
+            data : data,
+            success : function(data) {
+            },
+            complete : function() {
+            }
+        });
+        
+    });
+
 //    $('#search-box').on('change keypress', '#searchTerm, #searchCategory', function() {
 //        var length = $('#searchTerm').val().length;
 //        var column = $('#searchCategory').val();
@@ -148,17 +174,7 @@ function populateApplicationList() {
     
     loading = true;
     
-    filters = new Array();
-    
-//    if($('#searchTerm').val()  != ''){
-//        filter = {
-//            searchCategory : $('#searchCategory').val(),
-//            searchTerm : $('#searchTerm').val()
-//        };
-//        filters.push(filter);
-//    }
-    
-    filters.push({searchCategory : "APPLICATION_NUMBER", searchTerm : "RRD"});
+    filters = getFilters();
     
     options = {
         filters : JSON.stringify(filters),
@@ -240,4 +256,24 @@ function flipSortOrder() {
     } else {
         $('#sort-order').val("ASCENDING");
     }
+}
+
+function getFilters() {
+    filters = new Array();
+    
+    $filterbox = $(".filter");
+    
+    $.each($filterbox, function() {
+        searchCategory = $(this).find('.selectInput').val();
+        searchTerm = $(this).find('.filterInput').val();
+        
+        if(searchCategory && searchTerm.length > 0){
+            filters.push({
+                searchCategory : searchCategory,
+                searchTerm : searchTerm
+            });
+        }
+    });
+
+    return filters;
 }

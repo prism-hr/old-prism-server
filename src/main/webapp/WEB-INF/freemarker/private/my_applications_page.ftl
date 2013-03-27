@@ -99,9 +99,9 @@
                                 <#list filters as filter>
                                     <!-- Search/filter box. -->
                                     <div class="filter" id="filter_${filter_index}">
-                                        <input type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." /> 
-                                        <select name="searchCategory" id="searchCategory_${filter_index}">
-                                            <option value="">Column...</option>
+                                        <input class="filterInput" type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." /> 
+                                        <select class="selectInput" name="searchCategory" id="searchCategory_${filter_index}">
+                                            <option>Column...</option>
                                             <#list searchCategories as category>
                                             	<option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}
                                             	</option>
@@ -114,8 +114,8 @@
                                 
                                 <!-- New search/filter box. -->
                                 <div class="filter" id="filter">
-                                    <input type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." /> 
-                                    <select name="searchCategory" id="searchCategory">
+                                    <input class="filterInput" type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." /> 
+                                    <select class="selectInput" name="searchCategory" id="searchCategory">
                                         <option value="">Column...</option>
                                         <#list searchCategories as category>
                                             <option value="${category}">${category.displayValue()}
@@ -128,7 +128,7 @@
                                 
                                 <button class="btn btn-primary" type="button" id="search-go">Go</button>
                                 <button class="btn" type="button" id="search-reset">Clear</button>
-                                <button class="btn">Store</button>
+                                <button class="btn" id="storeFiltersBtn">Store</button>
                             </div>
 
                         </div>

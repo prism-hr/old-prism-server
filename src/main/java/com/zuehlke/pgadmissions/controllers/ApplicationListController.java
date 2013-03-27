@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
@@ -59,10 +60,6 @@ public class ApplicationListController {
 
         List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
         model.addAttribute("filters", applicationsFilters);
-        if (!applicationsFilters.isEmpty()) {
-//            model.addAttribute("searchTerm", applicationsFilters.get(0).getSearchTerm());
-//            model.addAttribute("searchCategory", applicationsFilters.get(0).getSearchCategory());
-        }
         return APPLICATION_LIST_PAGE_VIEW_NAME;
     }
     
@@ -75,31 +72,21 @@ public class ApplicationListController {
 	public String getApplicationListSection(@ModelAttribute("applicationSeachDTO") ApplicationSearchDTO dto, 
 			Model model) {
 	    
-	    // FIXME storing filter
-//		List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
-//		if (isTrue(clear) && !applicationsFilters.isEmpty()) {
-//			userService.clearApplicationsFilter(applicationsFilters.get(0));
-//		} else {
-//			if (searchCategory != null && searchTerm != null && !searchTerm.isEmpty()) {
-//				createAndSaveFilter(searchCategory, searchTerm);
-//			} else if (!applicationsFilters.isEmpty()) {
-//				ApplicationsFilter filter = applicationsFilters.get(0);
-//				searchCategory = filter.getSearchCategory();
-//				searchTerm = filter.getSearchTerm();
-//			}
-//		}
-	    
 		List<ApplicationForm> applications = getApplications(dto.getFilters(), dto.getSortCategory(), dto.getOrder(),
 				dto.getBlockCount());
 		model.addAttribute("applications", applications);
 		return APPLICATION_LIST_SECTION_VIEW_NAME;
 	}
-
-	private void createAndSaveFilter(SearchCategory searchCategory, String searchTerm) {
-		ApplicationsFilter filter = new ApplicationsFilter();
-		filter.setSearchCategory(searchCategory);
-		filter.setSearchTerm(searchTerm);
-		userService.saveFilter(getUser(), filter);
+	
+	@RequestMapping(value = "/saveFilters", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveFiltersAsDefault(@ModelAttribute("applicationSeachDTO") ApplicationSearchDTO dto){
+	    RegisteredUser user = getUser();
+        userService.clearApplicationsFilters(user);
+	    for(ApplicationsFilter filter : dto.getFilters()){
+	        userService.addFilter(user, filter);
+	    }
+	    return "OK";
 	}
 
 	public List<ApplicationForm> getApplications(List<ApplicationsFilter> filters,

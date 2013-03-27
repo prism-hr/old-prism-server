@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -43,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
@@ -99,7 +102,14 @@ public class ApprovalControllerTest {
     public void shouldGetApprovalPage() {
         Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
         Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
+
+        Date startDate = new Date();
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
+                .enabled(true).studyOption("1", "full").build();
+        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
+
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).program(program)
                 .latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, suprvisorTwo).build()).build();
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
@@ -202,7 +212,14 @@ public class ApprovalControllerTest {
     public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfAny() {
         Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
         Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc")
+
+        Date startDate = new Date();
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
+                .enabled(true).studyOption("1", "full").build();
+        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
+
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).programmeDetails(programmeDetails)
                 .latestApprovalRound(new ApprovalRoundBuilder().supervisors(supervisorOne, suprvisorTwo).build()).build();
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
@@ -221,6 +238,7 @@ public class ApprovalControllerTest {
         assertNull(returnedApprovalRound.getId());
         assertEquals(2, returnedApprovalRound.getSupervisors().size());
         assertTrue(returnedApprovalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, suprvisorTwo)));
+        assertEquals(startDate, returnedApprovalRound.getRecommendedStartDate());
     }
 
     @Test
@@ -233,7 +251,15 @@ public class ApprovalControllerTest {
         InterviewComment interviewThree = new InterviewCommentBuilder().id(3).user(userThree).willingToSupervise(true).build();
         Supervisor interviewerOne = new SupervisorBuilder().id(1).user(userOne).build();
         Supervisor interviewerTwo = new SupervisorBuilder().id(2).user(userTwo).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").comments(interviewOne, interviewTwo, interviewThree)
+
+        Date startDate = new Date();
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
+                .enabled(true).studyOption("1", "full").build();
+        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
+
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).program(program)
+                .comments(interviewOne, interviewTwo, interviewThree)
                 .latestApprovalRound(new ApprovalRoundBuilder().supervisors(interviewerOne, interviewerTwo).build()).build();
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
@@ -261,8 +287,14 @@ public class ApprovalControllerTest {
     public void shouldReturnNewApprovalRoundWithEmtpySupervisorsIfNoLatestApprovalRound() {
 
         Date startDate = new Date();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(34).startDate(startDate).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).build();
+
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
+                .enabled(true).studyOption("1", "full").build();
+        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
+
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails).program(program)
+                .build();
 
         controller = new ApprovalController(applicationServiceMock, userServiceMock, approvalServiceMock, approvalRoundValidatorMock,
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,

@@ -271,14 +271,13 @@ span.invalid-submit {
 }
 
 span.invalid-info-text {
-	color: red; 
+	/*color: red; 
 	display: inline-block;
 	padding-left: 10px;
 	margin-left: -2px;
-	/*IE 7*/ zoom: 1; *display: inline;
+	/*IE 7*//* zoom: 1; *display: inline;
 	margin-bottom: 5px;
-	padding-bottom: 3px;
-	
+	padding-bottom: 3px;*/
 }
 span.info-text { 
 	 
@@ -320,8 +319,8 @@ section.folding div.section-error-bar {
 	position: relative;
 }
 section.folding div.section-error-bar .row { background: none; margin-bottom: 0; padding-left: 30px; }
-section.folding div.section-error-bar .invalid-info-text { margin: 0; padding: 0; }
-section.folding div.section-error-bar .error-hint { margin: 0 0 0 -30px; }
+/* section.folding div.section-error-bar .invalid-info-text { margin: 0; padding: 0; }
+section.folding div.section-error-bar .error-hint { margin: 0 0 0 -30px; }*/
 
 /* Section headers. */
 section.form-rows h2 {
@@ -1396,4 +1395,27 @@ span.icon-status.not-submitted:before {
 #previewModal {
   width: 650px !important;
   margin-left: -318px !important;
+}
+#psUploadFields .button-delete, #cvUploadedDocument .button-delete  {
+  margin-top: 0px;
+  margin-left: 6px;
+}
+#psUploadedDocument, #cvUploadedDocument {
+  line-height: 25px;
+}
+i {
+  cursor: default;
+}
+.alert-error.big {
+  font-size: 16px;
+   margin-top: 20px;
+}
+#termscond .row{
+  margin-bottom: 0px;
+}
+#termscond label {
+  margin-bottom: 0px;
+}
+#refereesTable .buttons {
+  margin-bottom: 0px !important;
 }

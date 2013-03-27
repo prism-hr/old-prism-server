@@ -40,7 +40,7 @@
   <input type="hidden" id="positionId" name="positionId" value="<#if employmentPosition?? && employmentPosition.id??>${(encrypter.encrypt(employmentPosition.id))!}</#if>" />
   <form>
     <#if errorCode?? && errorCode=="true">
-    <div class="alert alert-error"> <i class="icon-warning-sign"></i> <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>
+    <div class="alert alert-error"> <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i>
       <@spring.message 'employmentDetails.sectionInfo'/>
     </div>
     <#else>

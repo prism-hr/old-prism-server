@@ -68,6 +68,8 @@ public class ApplicationFormTransferService {
             result.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
             applicationFormTransferDAO.save(result);
             return result;
+        } else {
+            transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
         }
         return transfer;
     }

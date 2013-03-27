@@ -39,7 +39,7 @@ Install JBoss AS7 into /usr/local/jboss
 # cd /usr/local/jboss/
 # wget http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip
 # unzip jboss-as-7.1.1.Final.zip
-# ln –s /usr/local/jboss/jboss-as-7.1.1.Final /usr/local/jboss/
+# ln –s /usr/local/jboss/jboss-as-7.1.1.Final /usr/local/jboss/current
 # chown -fR jboss.jboss /usr/local/jboss/
 
 After you have successfully installed JBoss you want to add a management user which is 
@@ -322,7 +322,6 @@ Configure the reverse proxy settings by changing the "/etc/httpd/conf/httpd.conf
 accordingly:
 
     <IfModule mod_proxy.c>
-    ProxyRequests Off
     ProxyPass / http://localhost:8080/
     ProxyPassReverse / http://localhost:8080/
 
@@ -337,3 +336,55 @@ At the end of the file add:
     RewriteEngine  on
     RewriteRule    ^/$  /pgadmissions [R]
     RewriteRule    ^$  /pgadmissions [R]
+
+If you are running SELinux:
+
+    setsebool -P httpd_can_network_connect 1
+
+========================================================================
+        Accessing the JBoss Management Console
+========================================================================
+
+Create a SSH tunnel and forward the JBoss Management Console port to your 
+local machine by issuing the following command (make sure you are in zred):    
+
+    ssh -L 9990:localhost:9990 prism@prism.ucl.ac.uk
+
+Then point your browser to:
+    
+    http://localhost:9990/console/
+
+Username: prism / Password: pg@m1ss1on
+
+========================================================================
+              Doing a normal release (from now on)
+========================================================================
+
+    1) SSH in to prism@prism.ucl.ac.uk (ssh prism@prism.ucl.ac.uk)    
+
+    2) Become the root user and enter the password
+        # sudo -s
+
+    3) Make a backup of the existing database
+        # cd /root/pgadmissions-backup
+        # mkdir 2013-mm-dd (enter the current date)
+        # mysqldump -u pgadmissions -ppgadmissions pgadmissions > out.sql
+    
+    4) Become the jboss user and update the current sources, build the WAR file 
+        and run the database change scripts if necessary
+        # su -l jboss
+        # cd pgadmissions
+        # hg pull
+        # hg update
+        # mvn clean package -DskipTests -Pucl-prod
+        # mvn dbdeploy:update (runs the database change scripts)
+        # cp target/pgadmissions.war /usr/local/jboss/current/standalone/deployments
+
+    5) Check the log files if everything works like expected
+        # tail -f /usr/local/jboss/current/standalone/log/server.log
+
+========================================================================
+         Showing a Maintenace Screen when going down for longer
+========================================================================
+
+    TODO

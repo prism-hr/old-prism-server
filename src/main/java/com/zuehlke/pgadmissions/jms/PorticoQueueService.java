@@ -91,7 +91,6 @@ public class PorticoQueueService {
         return formTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
     
-    
     public void setThrottleService(ThrottleService throttleService) {
         this.throttleService = throttleService;
     }

@@ -70,6 +70,7 @@ public class ApplicationFormTransferService {
             return result;
         } else {
             transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
+            transfer.setTransferStartTimepoint(new Date());
         }
         return transfer;
     }

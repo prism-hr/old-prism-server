@@ -99,16 +99,16 @@
                                 <#list filters as filter>
                                     <!-- Search/filter box. -->
                                     <div class="filter" id="filter_${filter_index}">
-                                        <input type="text" id="searchTerm" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." /> 
-                                        <select name="searchCategory" id="searchCategory">
+                                        <input type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." /> 
+                                        <select name="searchCategory" id="searchCategory_${filter_index}">
                                             <option value="">Column...</option>
                                             <#list searchCategories as category>
                                             	<option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}
                                             	</option>
                                             </#list>
                                         </select>
-                                        <button class="btn">Remove</button>
-                                        <button class="btn">Add</button>
+                                        <button class="btn remove">Remove</button>
+                                        <button class="btn add">Add</button>
                                      </div>
                                 </#list>
                                 
@@ -122,8 +122,8 @@
                                             </option>
                                         </#list>
                                     </select>
-                                    <button class="btn">Remove</button>
-                                    <button class="btn">Add</button>
+                                    <button class="btn remove">Remove</button>
+                                    <button class="btn add">Add</button>
                                  </div>
                                 
                                 <button class="btn btn-primary" type="button" id="search-go">Go</button>

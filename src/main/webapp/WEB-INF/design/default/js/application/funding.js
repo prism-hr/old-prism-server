@@ -1,5 +1,8 @@
 $(document).ready(function(){
 	
+	//Add Counter
+    addCounter();
+	
 	var fundImgCount = 0;
 
 	// -------------------------------------------------------------------------------
@@ -254,7 +257,7 @@ function postFundingData(message)
 		success: function(data)
 		{
 			$('#fundingSection').html(data);
-			var errorCount = $('#fundingSection .invalid:visible').length;
+			var errorCount = $('#fundingSection .alert-error:visible').length;
 			if (message == 'close' && errorCount == 0)
 			{
 				// Close the section only if there are no errors.	

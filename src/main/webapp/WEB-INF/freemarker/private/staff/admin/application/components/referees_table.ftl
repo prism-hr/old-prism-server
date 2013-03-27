@@ -1,9 +1,9 @@
-<table class="existing">
+<table class="existing  table table-striped table-condensed table-bordered table-hover">
     <colgroup>
         <col style="width: 30px" />
         <col style="width: 650px" />
         <col style="width: 90px" />
-        <col style="width: 30px" />
+        <col style="width: 36px" />
         <col />
     </colgroup>
     <thead>
@@ -21,9 +21,9 @@
                     <table>
                         <colgroup>
                             <col style="width: 30px" />
-                            <col style="width: 640px" />
+                            <col style="width: 650px" />
                             <col style="width: 90px" />
-                            <col style="width: 30px" />
+                            <col style="width: 33px" />
                             <col />
                         </colgroup>
                         <tbody>

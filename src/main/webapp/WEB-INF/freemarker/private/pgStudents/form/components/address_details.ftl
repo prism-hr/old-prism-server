@@ -3,9 +3,10 @@
 <div>
   <form>
     <#if errorCode?? && errorCode=="true">
-    <div class="alert alert-error"> <i class="icon-warning-sign"></i> <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span> <span class="invalid-info-text">
+    <div class="alert alert-error"> 
+    <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
       <@spring.message 'addressDetails.sectionInfo'/>
-      </span> </div>
+    </div>
     <#else>
     <div class="alert alert-info"> <i class="icon-info-sign"></i>
       <@spring.message 'addressDetails.sectionInfo'/>

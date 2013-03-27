@@ -13,7 +13,7 @@
 
     <#include "/private/staff/admin/application/components/referees_table.ftl"/>
 
-    <div class="section-info-bar">
+    <div class="alert alert-info"> <i class="icon-info-sign"></i>
         You may select two completed references to submit for offer processing. You may also enter a reference on behalf of a referee by clicking the provide reference icon.
     </div>
     
@@ -42,9 +42,9 @@
 
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />
     <div class="buttons">
-        <button name="refereeClearButton" type="button" id="refereeClearButton" class="clear">Clear</button>
-        <button type="button" id="refereeCloseButton" class="blue">Close</button>
-        <button type="button" id="refereeSaveButton" class="blue">Save</button>
+        <button name="refereeClearButton" type="button" class="btn" id="refereeClearButton">Clear</button>
+        <button type="button" id="refereeCloseButton" class="btn">Close</button>
+        <button type="button" id="refereeSaveButton" class="btn btn-primary">Save</button>
     </div>
 </#if>
 </div>

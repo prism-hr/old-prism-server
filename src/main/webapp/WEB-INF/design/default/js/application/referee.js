@@ -233,7 +233,7 @@ function postRefereeData(message){
 		success:function(data) {
 				$('#referencesSection').html(data);
 				
-				var errorCount = $('#referencesSection .invalid:visible').length;
+				var errorCount = $('#referencesSection .alert-error:visible').length;
 				var referenceCount = $('#referencesSection table.existing tbody tr').length;				
 					
 				if (message == 'close' && errorCount == 0 && referenceCount >= 3)

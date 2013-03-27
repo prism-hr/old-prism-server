@@ -16,9 +16,8 @@
   <form>
     <#if (errorCode?? && errorCode=="true")>
 	    <div class="alert alert-error">
-            <i class="icon-warning-sign"></i>
-				<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>               
-				<span class="invalid-info-text"><@spring.message 'programmeDetails.project'/></div>
+            <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i>
+				<span class="invalid-info-text"><@spring.message 'programmeDetails.project'/>
 	    </div>
     <#else>
     	<div class="alert alert-info">

@@ -112,6 +112,16 @@ $(document).ready(function() {
         increasePageCount();
         populateApplicationList();
     });
+	
+	// To be extended
+	// Duplicate filters buttons
+	$(".add").live('click',function () {
+		$(this).parent().clone().insertAfter($(this).parent());
+	});
+	// Remover current filter 
+	$(".remove").live('click',function () {
+		$(this).parent().remove();
+	});
 });
 
 function resetPageCount() {

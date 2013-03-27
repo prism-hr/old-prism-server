@@ -60,22 +60,6 @@ public class ApplicationsFilterDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldGetUniqueFilterForUser() {
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-				.username("username").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).id(69).build();
-		ApplicationsFilter applicationsFilter = new ApplicationsFilterBuilder().user(user)
-				.searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("Claudio").build();
-		save(user, applicationsFilter);
-
-		assertNotNull(applicationsFilter.getId());
-		flushAndClearSession();
-		ApplicationsFilter result = filterDao.getApplicationsFilterByUser(user);
-		assertNotNull(result);
-		filtersAreEqual(applicationsFilter, result);
-	}
-	
-	@Test
 	public void shouldRemoveFilter() {
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("username").password("password").accountNonExpired(false).accountNonLocked(false)

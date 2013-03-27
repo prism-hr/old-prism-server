@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -181,37 +182,21 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldSaveApplicationsFilter() {
-        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME)
+    public void shouldClearApplicationsFilter() {
+        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER)
                 .searchTerm("whatever").build();
+        ApplicationsFilter filter2 = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME)
+                .searchTerm("whoever").build();
+        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).applicationsFilters(filter, filter2).build();
 
-        expect(applicationsFilterDAOMock.getApplicationsFilterByUser(selectedUser)).andReturn(null);
-        applicationsFilterDAOMock.save(filter);
-
-        replay(applicationsFilterDAOMock);
-
-        userService.saveFilter(selectedUser, filter);
-        EasyMock.verify(applicationsFilterDAOMock);
-        Assert.assertEquals(selectedUser, filter.getUser());
-    }
-
-    @Test
-    public void shouldUpdateExistingApplicationsFilter() {
-        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME)
-                .user(selectedUser).searchTerm("whatever").id(1).build();
-
-        expect(applicationsFilterDAOMock.getApplicationsFilterByUser(selectedUser)).andReturn(filter);
-        applicationsFilterDAOMock.save(filter);
+        applicationsFilterDAOMock.removeFilter(filter);
+        applicationsFilterDAOMock.removeFilter(filter2);
 
         replay(applicationsFilterDAOMock);
-
-        userService.saveFilter(selectedUser, filter);
-        EasyMock.verify(applicationsFilterDAOMock);
-        Assert.assertEquals(selectedUser, filter.getUser());
+        userService.clearApplicationsFilters(selectedUser);
+        verify(applicationsFilterDAOMock);
     }
-
+    
     @Test
     public void shouldAddUserRoleAdminIfNotAlreadyAdminAndAdminInNewRoles() {
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();

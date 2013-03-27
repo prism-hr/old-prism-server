@@ -32,11 +32,6 @@ public class ApplicationsFilterDAO {
 		return (ApplicationsFilter) sessionFactory.getCurrentSession().get(ApplicationsFilter.class, id);
 	}
 
-	public ApplicationsFilter getApplicationsFilterByUser(RegisteredUser user) {
-		return (ApplicationsFilter) sessionFactory.getCurrentSession().createCriteria(ApplicationsFilter.class)
-				.add(Restrictions.eq("user", user)).uniqueResult();
-	}
-
 	public void removeFilter(ApplicationsFilter filter) {
 		sessionFactory.getCurrentSession().delete(filter);
 	}

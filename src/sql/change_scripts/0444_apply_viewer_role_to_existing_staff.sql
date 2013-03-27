@@ -28,26 +28,27 @@ FROM PROGRAM_ADMINISTRATOR_LINK
 
 -- Modify user role link (viewer privilleges for all non-applicant users)
 INSERT INTO USER_ROLE_LINK
-SELECT interviewer_id AS viewer_id, 9
+
+SELECT interviewer_id AS viewer_id, (SELECT id FROM APPLICATION_ROLE WHERE authority = 'VIEWER')
 FROM PROGRAM_INTERVIEWER_LINK
 
 UNION DISTINCT
 
-SELECT reviewer_id AS viewer_id, 9
+SELECT reviewer_id AS viewer_id, (SELECT id FROM APPLICATION_ROLE WHERE authority = 'VIEWER')
 FROM PROGRAM_REVIEWER_LINK
 
 UNION DISTINCT
 
-SELECT supervisor_id AS viewer_id, 9
+SELECT supervisor_id AS viewer_id, (SELECT id FROM APPLICATION_ROLE WHERE authority = 'VIEWER')
 FROM PROGRAM_SUPERVISOR_LINK
 
 UNION DISTINCT
 
-SELECT registered_user_id AS viewer_id, 9
+SELECT registered_user_id AS viewer_id, (SELECT id FROM APPLICATION_ROLE WHERE authority = 'VIEWER')
 FROM PROGRAM_APPROVER_LINK
 
 UNION DISTINCT
 
-SELECT administrator_id AS viewer_id, 9
+SELECT administrator_id AS viewer_id, (SELECT id FROM APPLICATION_ROLE WHERE authority = 'VIEWER')
 FROM PROGRAM_ADMINISTRATOR_LINK
 ;

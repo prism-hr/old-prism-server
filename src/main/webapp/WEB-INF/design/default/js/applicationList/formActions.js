@@ -25,18 +25,6 @@ $(document).ready(function() {
         populateApplicationList();
     });
 
-    $('#search-reset').addClass('enabled').click(function() {
-        $('#searchTerm').val('');
-        $('#searchCategory').val([ '' ]);
-        
-        $('#sort-column').val('APPLICATION_DATE');
-        $('#sort-order').val('DESCENDING');
-        $('#block-index').val("1");
-        
-        populateApplicationList();
-//        $('#search-go, #search-reset').addClass('disabled');
-    });
-
     $('#storeFiltersBtn').click(function() {
         filters = getFilters();
 
@@ -116,21 +104,6 @@ $(document).ready(function() {
         }
     });
     
-    // --------------------------------------------------------------------------------
-    // INFINITE SCROLL
-    // --------------------------------------------------------------------------------
-//    $(window).scroll(function() {
-//        if (loading) {
-//            return;
-//        }
-//        
-//        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-//            $(window).scrollTop($(window).scrollTop() - 80);
-//            increasePageCount();
-//            populateApplicationList();
-//        }
-//    });
-    
     $("#loadMoreApplications").live('click', function() {
         if (loading) {
           return;
@@ -188,7 +161,6 @@ function populateApplicationList() {
     $('div.content-box-inner').append('<div class="ajax" />');
     
     $('#loadMoreApplicationsTable').show();
-    var dataWasEmpty = false;
     
     $.ajax({
         type : 'GET',
@@ -206,19 +178,12 @@ function populateApplicationList() {
                 $('#applicationListSection').empty();
             }
             
-            if (data.indexOf("applicationRow") !== -1) {
-                $('#applicationListSection').append(data);
-            } else {
-                dataWasEmpty = true;
-            }
+            $('#applicationListSection').append(data);
         },
         complete : function() {
             $('.content-box-inner div.fetching, .content-box-inner div.ajax').remove();
             addToolTips();
             loading = false;
-            if (dataWasEmpty) {
-                //$('#loadMoreApplicationsTable').hide();
-            }
         }
     });
 }

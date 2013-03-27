@@ -184,7 +184,11 @@
 
           <@spring.bind "applicationForm.*" />
           <#if spring.status.errorMessages?has_content>
-          <span class="invalid-submit">Some required fields are missing, please review your application form.<p></p></span>
+          
+          <div class="alert alert-error big">
+          <i class="icon-warning-sign"></i>
+         	 Some required fields are missing, please review your application form.
+          </div>
           </#if>
 
 		  
@@ -246,17 +250,17 @@
 		            <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
 		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
 		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-		              <button id="saveAndClose" type="button">Save &amp; Close</button>
+		              <button id="saveAndClose" type="button" class="btn btn-large">Save &amp; Close</button>
 		            </form>                                      
 		            <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     
 		            <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
 		              <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-		              <button id="saveAndClose" type="button">Save &amp; Close</button>
-		              <button id="submitAppButton" type="button" class="blue">Submit</button>
+		              <button id="saveAndClose" type="button" class="btn btn-large">Save &amp; Close</button>
+		              <button id="submitAppButton" type="button"  class="btn btn-primary btn-large">Submit</button>
 		            </form>
 		            <#else>
 		            <form>
-		              <button id="saveAndClose" type="button">Save &amp; Close</a>
+		              <button class="btn btn-large" id="saveAndClose" type="button">Save &amp; Close</a>
 		            </form>
 		            </#if>
 		          </div>

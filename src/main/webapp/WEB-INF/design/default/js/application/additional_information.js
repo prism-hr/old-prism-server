@@ -1,5 +1,8 @@
 $(document).ready(function(){
 	
+	 //Add Counter
+    addCounter();
+	
 	var addImgCount = 0;
 	
 	$("#acceptTermsAIDValue").val("NO");
@@ -121,7 +124,7 @@ $(document).ready(function(){
 				$('#additionalInformationSection').html(data);
 			
 				// Close the section only if there are no errors.
-				var errorCount = $('#additionalInformationSection .invalid:visible').length;
+				var errorCount = $('#additionalInformationSection .alert-error:visible').length;
 				if (errorCount == 0)
 				{
 					$('#additional-H2').trigger('click');

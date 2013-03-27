@@ -125,7 +125,7 @@ function postDocumentData(message)
 			if (message == 'close')
 			{
 				// Close the section only if there are no errors.
-				var errorCount = $('#documentSection .invalid:visible').length;
+				var errorCount = $('#documentSection .alert-error:visible').length;
 				if (errorCount == 0)
 				{
 					$('#documents-H2').trigger('click');

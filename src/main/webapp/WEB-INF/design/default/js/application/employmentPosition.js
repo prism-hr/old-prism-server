@@ -1,5 +1,7 @@
 $(document).ready(function(){
-	addCounter();
+	//Add Counter
+    addCounter();
+	
 	var empImgCount = 0;
 	var numberOfSavedPositions = 0;
 	
@@ -303,7 +305,7 @@ function postEmploymentData(message)
 		 {
 				$('#positionSection').html(data);
 			
-				var errorCount = $('#positionSection .invalid:visible').length;
+				var errorCount = $('#positionSection .alert-error:visible').length;
 				if (message == 'close' && errorCount == 0)
 				{
 					$('#position-H2').trigger('click');

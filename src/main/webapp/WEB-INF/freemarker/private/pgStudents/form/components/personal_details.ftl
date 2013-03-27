@@ -45,11 +45,10 @@
     <form>              
         <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
         <#if errorCode?? && errorCode=="true">
-            <div class="alert alert-error">
-                <i class="icon-warning-sign"></i>
-                <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>               
-                <span class="invalid-info-text"><@spring.message 'personalDetails.sectionInfo'/></span>
-            </div>
+        <div class="alert alert-error">
+            <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i>
+				<span class="invalid-info-text"><@spring.message 'programmeDetails.sectionInfo'/>
+	    </div>
         <#else>
             <div class="alert alert-info">
              <i class="icon-info-sign"></i> <@spring.message 'personalDetails.sectionInfo'/>
@@ -153,7 +152,7 @@
                     <#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
                         <input type="text" class="half date" value="${(personalDetails.dateOfBirth?string('dd MMM yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>                      
                     <#else>
-                        <input type="text" class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.dateOfBirth?string('dd MMM yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
+                        <input type="text" class="full" readonly type="text" disabled="disabled" value="${(personalDetails.dateOfBirth?string('dd MMM yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
                     </#if>   
                     <@spring.bind "personalDetails.dateOfBirth" /> 
                     <#list spring.status.errorMessages as error>
@@ -392,7 +391,7 @@
                     <label id="lbl_passportNumber" class="plain-label" for="passportNumber">Passport Number</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.passportNumber'/>"></span>
                     <div class="field">                     
-                        <input class="full" readonly="readonly" type="text" value="${(personalDetails.passportInformation.passportNumber?html)!}" name="passportNumber" id="passportNumber" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa()) >disabled="disabled"</#if> />  
+                        <input class="full" readonly type="text" value="${(personalDetails.passportInformation.passportNumber?html)!}" name="passportNumber" id="passportNumber" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa()) >disabled="disabled"</#if> />  
 
                         <@spring.bind "personalDetails.passportInformation.passportNumber" /> 
                         <#list spring.status.errorMessages as error>
@@ -408,7 +407,7 @@
                     <label id="lbl_nameOnPassport" class="plain-label" for="nameOnPassport">Name on Passport</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.nameOnPassport'/>"></span>
                     <div class="field">
-                        <input class="full" readonly="readonly" type="text" value="${(personalDetails.passportInformation.nameOnPassport?html)!}" name="nameOnPassport" id="nameOnPassport" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>disabled="disabled"</#if> />   
+                        <input class="full" readonly type="text" value="${(personalDetails.passportInformation.nameOnPassport?html)!}" name="nameOnPassport" id="nameOnPassport" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>disabled="disabled"</#if> />   
                         <@spring.bind "personalDetails.passportInformation.nameOnPassport" /> 
                         <#list spring.status.errorMessages as error>
                           <div class="alert alert-error">
@@ -424,9 +423,9 @@
                     <span class="hint" data-desc="<@spring.message 'personalDetails.passportIssueDate'/>"></span>
                     <div class="field">
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
-                            <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate" />             
+                            <input class="full" readonly type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate" />             
                         <#else>
-                            <input class="half date" readonly="readonly" type="text" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate"/>
+                            <input class="half date" readonly type="text" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate"/>
                         </#if>  
 
                         <@spring.bind "personalDetails.passportInformation.passportIssueDate" /> 
@@ -444,9 +443,9 @@
                     <span class="hint" data-desc="<@spring.message 'personalDetails.passportExpiryDate'/>"></span>
                     <div class="field">
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
-                            <input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate" />             
+                            <input class="full" readonly type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate" />             
                         <#else>
-                            <input class="half date" readonly="readonly" type="text" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate"/>
+                            <input class="half date" readonly type="text" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate"/>
                         </#if>  
                         <@spring.bind "personalDetails.passportInformation.passportExpiryDate" /> 
                         <#list spring.status.errorMessages as error>
@@ -465,7 +464,7 @@
                 <label class="plain-label grey-label" for="email">Email</label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.email'/>"></span> 
                 <div class="field">
-                        <input class="full" readonly="readonly" type="email" value="${(user.email?html)!}"  
+                        <input class="full" readonly type="email" value="${(user.email?html)!}"  
                         name="email" id="email" disabled="disabled"/>             
                 </div>
             </div>
@@ -477,7 +476,7 @@
                     <#if !applicationForm.isDecided()  && !applicationForm.isWithdrawn()>
                         <input class="full" type="text" value="${(personalDetails.phoneNumber?html)!}" placeholder="e.g. +44 (0) 123 123 1234" name="pd_telephone" id="pd_telephone"/>
                     <#else>
-                        <input class="full" readonly="readonly" disabled="disabled" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone" />           
+                        <input class="full" readonly disabled="disabled" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone" />           
                     </#if>
                      <@spring.bind "personalDetails.phoneNumber" />
                     <#list spring.status.errorMessages as error>
@@ -496,7 +495,7 @@
                     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                         <input class="full" type="text" value="${(personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger"/>
                     <#else>
-                        <input class="full" readonly="readonly" disabled="disabled" type="text" value="${(personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger" />             
+                        <input class="full" readonly disabled="disabled" type="text" value="${(personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger" />             
                     </#if>
                      <@spring.bind "personalDetails.messenger" />         
                     <#list spring.status.errorMessages as error>

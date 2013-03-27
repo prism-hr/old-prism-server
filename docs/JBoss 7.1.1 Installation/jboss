@@ -11,7 +11,7 @@
 set -e
  
 ### declare the directory where is jboss/java installed
-JAVA_HOME=/usr/lib/jvm/jre
+JAVA_HOME=/usr/lib/jvm/java-1.6.0
 JBOSS_HOME=/usr/local/jboss/current
 export PATH=${JAVA_HOME}/bin:${JBOSS_HOME}/bin:${PATH}
  

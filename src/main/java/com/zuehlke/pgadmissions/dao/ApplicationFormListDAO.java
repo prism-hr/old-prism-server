@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -41,12 +42,11 @@ public class ApplicationFormListDAO {
     }
     
     public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
-        return this.getVisibleApplications(user, null, null, SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, 50);
+        return this.getVisibleApplications(user, Collections.<ApplicationsFilter>emptyList(), SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, 50);
     }
     
     @SuppressWarnings("unchecked")
-    public List<ApplicationForm> getVisibleApplications(RegisteredUser user, SearchCategory searchCategory,
-            String term, SortCategory sortCategory, SortOrder sortOrder, int pageCount, int itemsPerPage) {
+    public List<ApplicationForm> getVisibleApplications(RegisteredUser user, List<ApplicationsFilter> filters, SortCategory sortCategory, SortOrder sortOrder, int pageCount, int itemsPerPage) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class);
         criteria.setFirstResult((pageCount - 1) * itemsPerPage);
         criteria.setMaxResults(itemsPerPage);
@@ -89,13 +89,15 @@ public class ApplicationFormListDAO {
             criteria.add(disjunction);
         }
         
-        criteria = setSearchCriteria(searchCategory, term, criteria);
+        for(ApplicationsFilter filter : filters){
+            criteria = setSearchCriteria(filter.getSearchCategory(), filter.getSearchTerm(), criteria);
+        }
         
         if (criteria == null) {
             return Collections.emptyList();
         }
         
-        criteria = setOrderCriteria(sortCategory, sortOrder, searchCategory, criteria);
+        criteria = setOrderCriteria(sortCategory, sortOrder, criteria);
         
         return criteria.list();
     }
@@ -134,7 +136,7 @@ public class ApplicationFormListDAO {
         return criteria;
     }
     
-    public Criteria setOrderCriteria(SortCategory sortCategory, SortOrder order, SearchCategory searchCategory, Criteria criteria) {
+    public Criteria setOrderCriteria(SortCategory sortCategory, SortOrder order, Criteria criteria) {
         boolean ascending = true;
         if (order == SortOrder.DESCENDING) {
             ascending = false;
@@ -143,18 +145,16 @@ public class ApplicationFormListDAO {
         switch (sortCategory) {
 
         case APPLICANT_NAME:
-            if (searchCategory != SearchCategory.APPLICANT_NAME) {
                 criteria.createAlias("applicant", "a");
-            }
+                
             criteria.addOrder(getOrderCriteria("a.lastName", ascending));
             criteria.addOrder(getOrderCriteria("a.firstName", ascending));
             break;
             
         case PROGRAMME_NAME:
-            if (searchCategory != SearchCategory.PROGRAMME_NAME) {
                 criteria.createAlias("program", "p");
-            }
-            criteria.addOrder(getOrderCriteria("p.title", ascending));
+
+                criteria.addOrder(getOrderCriteria("p.title", ascending));
             break;
 
         case APPLICATION_STATUS:

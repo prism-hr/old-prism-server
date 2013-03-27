@@ -5,8 +5,7 @@ $(document).ready(function() {
     // Modal window functionality.
     setupModalBox();
     
-    var hasFilter = $('#hasFilter').val()=="true";
-    populateApplicationList(!hasFilter);
+    populateApplicationList();
     
     // --------------------------------------------------------------------------------
     // TABLE SORTING
@@ -17,31 +16,37 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // SEARCH / FILTERING
     // --------------------------------------------------------------------------------
-    var searchButtonsClass = hasFilter ? 'enabled' : 'disabled';
-    $('#search-go').addClass(searchButtonsClass).click(function() {
-        if ($('#searchTerm').val().length == 0 || $('#searchCategory').val() == '') {
-            fixedTip($('#search-go'), 'You must specify your filter.');
-            return;
-        }
+    $('#search-go').addClass('enabled').click(function() {
+//        if ($('#searchTerm').val().length == 0 || $('#searchCategory').val() == '') {
+//            fixedTip($('#search-go'), 'You must specify your filter.');
+//            return;
+//        }
         resetPageCount();
-						        populateApplicationList();
+        populateApplicationList();
     });
 
-    $('#search-reset').addClass(searchButtonsClass).click(function() {
-        populateApplicationList(true);
-        $('#search-go, #search-reset').addClass('disabled');
+    $('#search-reset').addClass('enabled').click(function() {
+        $('#searchTerm').val('');
+        $('#searchCategory').val([ '' ]);
+        
+        $('#sort-column').val('APPLICATION_DATE');
+        $('#sort-order').val('DESCENDING');
+        $('#block-index').val("1");
+        
+        populateApplicationList();
+//        $('#search-go, #search-reset').addClass('disabled');
     });
 
-    $('#search-box').on('change keypress', '#searchTerm, #searchCategory', function() {
-        var length = $('#searchTerm').val().length;
-        var column = $('#searchCategory').val();
-        $('#search-go').toggleClass('disabled', length == 0 || column == '');
-        $('#search-reset').toggleClass('disabled', length == 0 && column == '');
-
-        if ($('#search-go').not('.disabled')) {
-            $('#search-go').removeData('qtip');
-        }
-    });
+//    $('#search-box').on('change keypress', '#searchTerm, #searchCategory', function() {
+//        var length = $('#searchTerm').val().length;
+//        var column = $('#searchCategory').val();
+//        $('#search-go').toggleClass('disabled', length == 0 || column == '');
+//        $('#search-reset').toggleClass('disabled', length == 0 && column == '');
+//
+//        if ($('#search-go').not('.disabled')) {
+//            $('#search-go').removeData('qtip');
+//        }
+//    });
 
     // ------------------------------------------------------------------------------
     // SELECT ALL/NO APPLICATIONS
@@ -129,34 +134,32 @@ function decreasePageCount() {
     $('#block-index').val(blockIndex.toString());
 }
 
-function populateApplicationList(reset) {
+function populateApplicationList() {
     
     loading = true;
     
-    var options = {};
-
-    if (reset) {
-        // Reset search filter.
-    	$('#searchTerm').val('');
-        $('#sort-column').val('APPLICATION_DATE');
-        $('#sort-order').val('DESCENDING');
-        $('#block-index').val("1");
-        $('#searchCategory').val([ '' ]);
-    }
-
+    filters = new Array();
+    
+//    if($('#searchTerm').val()  != ''){
+//        filter = {
+//            searchCategory : $('#searchCategory').val(),
+//            searchTerm : $('#searchTerm').val()
+//        };
+//        filters.push(filter);
+//    }
+    
+    filters.push({searchCategory : "APPLICATION_NUMBER", searchTerm : "RRD"});
+    
     options = {
-        searchCategory : $('#searchCategory').val(),
-        searchTerm : $('#searchTerm').val(),
+        filters : JSON.stringify(filters),
         sortCategory : $('#sort-column').val(),
         order : $('#sort-order').val(),
-        blockCount : $('#block-index').val(),
-        clear : reset
+        blockCount : $('#block-index').val()
     };
 
     $('#search-box span.invalid').remove();
 
     $('div.content-box-inner').append('<div class="ajax" />');
-    //$('.content-box-inner').append('<div class="fetching">Fetching more applications...</div>');
     
     $('#loadMoreApplicationsTable').show();
     var dataWasEmpty = false;
@@ -173,7 +176,7 @@ function populateApplicationList(reset) {
         url : "/pgadmissions/applications/section",
         data : options,
         success : function(data) {
-            if (reset || getPageCount() === 1) {
+            if (getPageCount() === 1) {
                 $('#applicationListSection').empty();
             }
             

@@ -16,10 +16,10 @@ import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
@@ -117,7 +117,7 @@ public class ApplicationsService {
 	}
 
 	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,
-			SearchCategory searchCategory, String term, SortCategory sort, SortOrder order, Integer page) {
+	        List<ApplicationsFilter> filters, SortCategory sort, SortOrder order, Integer page) {
 		// default values
 		int pageCount = page == null ? 1 : page;
 		SortCategory sortCategory = sort == null ? SortCategory.APPLICATION_DATE : sort;
@@ -125,7 +125,7 @@ public class ApplicationsService {
 		if (pageCount < 0) {
 			pageCount = 0;
 		}
-		return applicationFormListDAO.getVisibleApplications(user, searchCategory, term, sortCategory, sortOrder,
+		return applicationFormListDAO.getVisibleApplications(user, filters, sortCategory, sortOrder,
 				pageCount, APPLICATION_BLOCK_SIZE);
 	}
 

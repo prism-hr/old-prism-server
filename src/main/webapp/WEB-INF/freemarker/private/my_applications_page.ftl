@@ -44,7 +44,7 @@
 <!--[if (gte IE 9)|!(IE)]><!-->
 <body>
     <!--<![endif]-->
-	<input type="hidden" id="hasFilter" value="${hasFilter?string('true', 'false')}">
+
     <!-- Wrapper Starts -->
     <div id="wrapper">
 
@@ -95,19 +95,40 @@
                             <!-- Download button. -->
                             <a target="_blank" name="downloadAll" id="downloadAll" data-desc="<@spring.message 'myApps.downloadAll'/>">Download</a>
 
-
-                            <!-- Search/filter box. -->
                             <div id="search-box">
-                                <input type="text" id="searchTerm" name="searchTerm" <#if searchTerm??> value="${searchTerm}" <#else> placeholder="Filter by..." </#if> /> 
-                                <select name="searchCategory" id="searchCategory">
-                                    <option value="">Column...</option>
-                                    <#list searchCategories as category>
-                                    	<option <#if searchCategory?? && searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}
-                                    	</option>
-                                    </#list>
-                                </select>
+                                <#list filters as filter>
+                                    <!-- Search/filter box. -->
+                                    <div class="filter" id="filter_${filter_index}">
+                                        <input type="text" id="searchTerm" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." /> 
+                                        <select name="searchCategory" id="searchCategory">
+                                            <option value="">Column...</option>
+                                            <#list searchCategories as category>
+                                            	<option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}
+                                            	</option>
+                                            </#list>
+                                        </select>
+                                        <button class="btn">Remove</button>
+                                        <button class="btn">Add</button>
+                                     </div>
+                                </#list>
+                                
+                                <!-- New search/filter box. -->
+                                <div class="filter" id="filter">
+                                    <input type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." /> 
+                                    <select name="searchCategory" id="searchCategory">
+                                        <option value="">Column...</option>
+                                        <#list searchCategories as category>
+                                            <option value="${category}">${category.displayValue()}
+                                            </option>
+                                        </#list>
+                                    </select>
+                                    <button class="btn">Remove</button>
+                                    <button class="btn">Add</button>
+                                 </div>
+                                
                                 <button class="btn btn-primary" type="button" id="search-go">Go</button>
                                 <button class="btn" type="button" id="search-reset">Clear</button>
+                                <button class="btn">Store</button>
                             </div>
 
                         </div>

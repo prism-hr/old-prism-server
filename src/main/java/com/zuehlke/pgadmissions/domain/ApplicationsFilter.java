@@ -35,6 +35,9 @@ public class ApplicationsFilter implements Serializable {
     @Column(name = "search_term")
     private String searchTerm;
 
+    public ApplicationsFilter() {
+    }
+
     public RegisteredUser getUser() {
         return user;
     }

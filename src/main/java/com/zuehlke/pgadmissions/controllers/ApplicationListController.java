@@ -1,15 +1,14 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +20,8 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.dto.ApplicationSearchDTO;
+import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -30,17 +31,22 @@ public class ApplicationListController {
 
 	private static final String APPLICATION_LIST_PAGE_VIEW_NAME = "private/my_applications_page";
 	private static final String APPLICATION_LIST_SECTION_VIEW_NAME = "private/my_applications_section";
+	
 	private final ApplicationsService applicationsService;
+	
 	private final UserService userService;
+	
+	private final ApplicationsFiltersPropertyEditor filtersPropertyEditor;
 
 	ApplicationListController() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public ApplicationListController(ApplicationsService applicationsService, UserService userService) {
+	public ApplicationListController(ApplicationsService applicationsService, UserService userService, ApplicationsFiltersPropertyEditor filtersPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
+		this.filtersPropertyEditor = filtersPropertyEditor;
 	}
 
     @RequestMapping(method = RequestMethod.GET)
@@ -52,34 +58,39 @@ public class ApplicationListController {
         }
 
         List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
-        model.addAttribute("hasFilter", !applicationsFilters.isEmpty());
+        model.addAttribute("filters", applicationsFilters);
         if (!applicationsFilters.isEmpty()) {
-            model.addAttribute("searchTerm", applicationsFilters.get(0).getSearchTerm());
-            model.addAttribute("searchCategory", applicationsFilters.get(0).getSearchCategory());
+//            model.addAttribute("searchTerm", applicationsFilters.get(0).getSearchTerm());
+//            model.addAttribute("searchCategory", applicationsFilters.get(0).getSearchCategory());
         }
         return APPLICATION_LIST_PAGE_VIEW_NAME;
     }
-
+    
+    @InitBinder(value = "applicationSeachDTO")
+    public void registerPropertyEditors(WebDataBinder binder) {
+        binder.registerCustomEditor(List.class, "filters", filtersPropertyEditor);
+    }
+    
 	@RequestMapping(value = "/section", method = RequestMethod.GET)
-	public String getApplicationListSection(@RequestParam(required = false) SearchCategory searchCategory,
-			@RequestParam(required = false) String searchTerm,
-			@RequestParam(required = false) SortCategory sortCategory, @RequestParam(required = false) SortOrder order,
-			@RequestParam(required = false) Integer blockCount, @RequestParam(required = false) Boolean clear,
+	public String getApplicationListSection(@ModelAttribute("applicationSeachDTO") ApplicationSearchDTO dto, 
 			Model model) {
-		List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
-		if (isTrue(clear) && !applicationsFilters.isEmpty()) {
-			userService.clearApplicationsFilter(applicationsFilters.get(0));
-		} else {
-			if (searchCategory != null && searchTerm != null && !searchTerm.isEmpty()) {
-				createAndSaveFilter(searchCategory, searchTerm);
-			} else if (!applicationsFilters.isEmpty()) {
-				ApplicationsFilter filter = applicationsFilters.get(0);
-				searchCategory = filter.getSearchCategory();
-				searchTerm = filter.getSearchTerm();
-			}
-		}
-		List<ApplicationForm> applications = getApplications(searchCategory, searchTerm, sortCategory, order,
-				blockCount);
+	    
+	    // FIXME storing filter
+//		List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
+//		if (isTrue(clear) && !applicationsFilters.isEmpty()) {
+//			userService.clearApplicationsFilter(applicationsFilters.get(0));
+//		} else {
+//			if (searchCategory != null && searchTerm != null && !searchTerm.isEmpty()) {
+//				createAndSaveFilter(searchCategory, searchTerm);
+//			} else if (!applicationsFilters.isEmpty()) {
+//				ApplicationsFilter filter = applicationsFilters.get(0);
+//				searchCategory = filter.getSearchCategory();
+//				searchTerm = filter.getSearchTerm();
+//			}
+//		}
+	    
+		List<ApplicationForm> applications = getApplications(dto.getFilters(), dto.getSortCategory(), dto.getOrder(),
+				dto.getBlockCount());
 		model.addAttribute("applications", applications);
 		return APPLICATION_LIST_SECTION_VIEW_NAME;
 	}
@@ -91,14 +102,13 @@ public class ApplicationListController {
 		userService.saveFilter(getUser(), filter);
 	}
 
-	public List<ApplicationForm> getApplications(SearchCategory searchCategory, String searchTerm,
+	public List<ApplicationForm> getApplications(List<ApplicationsFilter> filters,
 			SortCategory sortCategory, SortOrder sortOrder, Integer blockCount) {
-		return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory,
-				StringUtils.trim(searchTerm), sortCategory, sortOrder, blockCount);
+		return applicationsService.getAllVisibleAndMatchedApplications(getUser(), filters, sortCategory, sortOrder, blockCount);
 	}
 
-	public List<ApplicationForm> getApplications(ApplicationsFilter filter) {
-		return getApplications(filter.getSearchCategory(), filter.getSearchTerm(), null, null, null);
+	public List<ApplicationForm> getApplications(List<ApplicationsFilter> filters) {
+		return getApplications(filters, null, null, null);
 	}
 
 	@ModelAttribute("user")

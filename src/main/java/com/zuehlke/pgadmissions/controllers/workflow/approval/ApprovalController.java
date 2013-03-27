@@ -202,8 +202,12 @@ public class ApprovalController {
                 approvalRound.getSupervisors().add(supervisor);
             }
         }
+
         Date startDate = applicationForm.getProgrammeDetails().getStartDate();
-        approvalRound.setRecommendedStartDate(startDate); 
+        if (!applicationForm.isPrefferedStartDateWithinBounds()) {
+            startDate = applicationForm.getEarliestPossibleStartDate();
+        } 
+        approvalRound.setRecommendedStartDate(startDate);
         return approvalRound;
     }
 
@@ -324,7 +328,7 @@ public class ApprovalController {
             Referee referee = newComment.getReferee();
             applicationsService.refresh(applicationForm);
             refereeService.refresh(referee);
-            
+
             String newRefereeId = encryptionHelper.encrypt(referee.getId());
             model.addAttribute("editedRefereeId", newRefereeId);
 

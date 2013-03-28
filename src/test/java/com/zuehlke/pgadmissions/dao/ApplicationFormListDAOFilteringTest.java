@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -21,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
+import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
@@ -44,6 +46,16 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     private ApplicationForm app5InInterview;
 
+    private ApplicationForm app6InReview;
+
+    private Date submissionDate;
+
+    private Date lastEditedDate;
+
+    private Date searchTermDateForLastEdited;
+
+    private Date searchTermDateForSubmission;
+
     @Before
     public void setup() {
         applicationDAO = new ApplicationFormListDAO(sessionFactory);
@@ -56,21 +68,26 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         adminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).build();
 
-        Date submissionDate = new Date();
-        Date lastEditedDate = new Date();
+        lastEditedDate = new GregorianCalendar(2011, 4, 7, 19, 33).getTime();
+        submissionDate = new GregorianCalendar(2011, 3, 7, 17, 28).getTime();
+
+        searchTermDateForLastEdited = new GregorianCalendar(2011, 4, 9).getTime();
+        searchTermDateForSubmission = new GregorianCalendar(2011, 3, 9).getTime();
 
         app1InApproval = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).applicationNumber("app1")
-                .submittedDate(DateUtils.addDays(submissionDate, 0)).lastUpdated(DateUtils.addDays(lastEditedDate, 4)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 0)).lastUpdated(DateUtils.addDays(lastEditedDate, 5)).build();
         app2InReview = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).applicationNumber("app2")
-                .submittedDate(DateUtils.addDays(submissionDate, 1)).lastUpdated(DateUtils.addDays(lastEditedDate, 3)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 1)).lastUpdated(DateUtils.addDays(lastEditedDate, 4)).build();
         app3InValidation = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).applicationNumber("app3")
-                .submittedDate(DateUtils.addDays(submissionDate, 2)).lastUpdated(DateUtils.addDays(lastEditedDate, 2)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 2)).lastUpdated(DateUtils.addDays(lastEditedDate, 3)).build();
         app4InApproved = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED).applicationNumber("app4")
-                .submittedDate(DateUtils.addDays(submissionDate, 3)).lastUpdated(DateUtils.addDays(lastEditedDate, 1)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 3)).lastUpdated(DateUtils.addDays(lastEditedDate, 2)).build();
         app5InInterview = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).applicationNumber("app5")
-                .submittedDate(DateUtils.addDays(submissionDate, 4)).lastUpdated(DateUtils.addDays(lastEditedDate, 0)).build();
+                .submittedDate(DateUtils.addDays(submissionDate, 4)).lastUpdated(DateUtils.addDays(lastEditedDate, 1)).build();
+        app6InReview = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).applicationNumber("app6")
+                .submittedDate(DateUtils.addDays(submissionDate, 5)).lastUpdated(DateUtils.addDays(lastEditedDate, 0)).build();
 
-        save(program, user, adminUser, app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview);
+        save(program, user, adminUser, app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview, app6InReview);
 
         flushAndClearSession();
     }
@@ -85,10 +102,10 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("app").build();
 
-        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(filter), SortCategory.APPLICATION_STATUS,
-                SortOrder.DESCENDING, 1, 50);
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(filter), SortCategory.APPLICATION_DATE,
+                SortOrder.ASCENDING, 1, 50);
 
-        assertContainsApplications(applications, app3InValidation, app2InReview, app5InInterview, app4InApproved, app1InApproval);
+        assertContainsApplications(applications, app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview, app6InReview);
 
     }
 
@@ -101,7 +118,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(nameFilter, statusFilter),
                 SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, 50);
 
-        assertContainsApplications(applications, app2InReview);
+        assertContainsApplications(applications, app6InReview, app2InReview);
     }
 
     @Test
@@ -113,7 +130,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(nameFilter, statusFilter),
                 SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, 50);
 
-        assertContainsApplications(applications, app2InReview);
+        assertContainsApplications(applications, app6InReview, app2InReview);
     }
 
     @Test
@@ -133,6 +150,54 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
                 SortOrder.DESCENDING, 1, 50);
 
         assertContainsApplications(applications, otherApplicationForm);
+    }
+
+    @Test
+    public void shouldReturnAppsFilteredByStatusAndLastUpdatedFromDate() {
+
+        String lastEditedDatePlus2String = dateToString(searchTermDateForLastEdited);
+
+        ApplicationsFilter statusFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Review").build();
+        ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.LAST_EDITED_DATE).searchTerm(lastEditedDatePlus2String)
+                .searchPredicate(SearchPredicate.FROM_DATE).build();
+
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(dateFilter, statusFilter),
+                SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, 50);
+
+        assertContainsApplications(applications, app2InReview);
+    }
+
+    @Test
+    public void shouldReturnAppsFilteredByToUpdatedDate() {
+
+        String lastEditedDatePlus2String = dateToString(searchTermDateForLastEdited);
+
+        ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.LAST_EDITED_DATE).searchTerm(lastEditedDatePlus2String)
+                .searchPredicate(SearchPredicate.TO_DATE).build();
+
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(dateFilter), SortCategory.APPLICATION_DATE,
+                SortOrder.DESCENDING, 1, 50);
+
+        assertContainsApplications(applications, app6InReview, app5InInterview, app4InApproved);
+    }
+
+    @Test
+    public void shouldReturnAppsFilteredByOnUpdatedDate() {
+
+        String lastEditedDatePlus2String = dateToString(searchTermDateForLastEdited);
+
+        ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.LAST_EDITED_DATE).searchTerm(lastEditedDatePlus2String)
+                .searchPredicate(SearchPredicate.ON_DATE).build();
+
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(dateFilter), SortCategory.APPLICATION_DATE,
+                SortOrder.DESCENDING, 1, 50);
+
+        assertContainsApplications(applications, app4InApproved);
+    }
+
+    private String dateToString(Date date) {
+        String formattedDate = ApplicationFormListDAO.USER_DATE_FORMAT.format(date);
+        return formattedDate;
     }
 
     private static void assertContainsApplications(List<ApplicationForm> applications, ApplicationForm... expectedApplications) {

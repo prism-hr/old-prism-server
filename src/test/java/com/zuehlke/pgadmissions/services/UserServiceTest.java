@@ -183,7 +183,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldSetTwoApplicationsFilter() {
-        ApplicationsFilter existingFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_DATE).searchTerm("whatever").build();
+        ApplicationsFilter existingFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.LAST_EDITED_DATE).searchTerm("whatever").build();
         ApplicationsFilter existingFilter2 = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("whoever").build();
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).applicationsFilters(existingFilter, existingFilter2).build();
 

@@ -59,7 +59,7 @@ public class ApplicationsFilterDAOTest extends AutomaticRollbackTestCase {
     public void shouldRemoveFilter() {
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).id(69).build();
-        ApplicationsFilter applicationsFilter = new ApplicationsFilterBuilder().user(user).searchCategory(SearchCategory.APPLICATION_DATE)
+        ApplicationsFilter applicationsFilter = new ApplicationsFilterBuilder().user(user).searchCategory(SearchCategory.SUBMISSION_DATE)
                 .searchPredicate(SearchPredicate.TO_DATE).searchTerm("14 Dec 2012").build();
         save(user, applicationsFilter);
 

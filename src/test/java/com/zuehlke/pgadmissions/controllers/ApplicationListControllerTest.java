@@ -177,7 +177,7 @@ public class ApplicationListControllerTest {
     public void shouldReturnSearchPredicatesMap() {
         String predicatesMap = controller.getSearchPredicatesMap();
         assertEquals(
-                "{\"APPLICATION_NUMBER\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"APPLICANT_NAME\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"PROGRAMME_NAME\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"APPLICATION_STATUS\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"APPLICATION_DATE\":[\"FROM_DATE\",\"ON_DATE\",\"TO_DATE\"]}",
+                "{\"APPLICATION_NUMBER\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"APPLICANT_NAME\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"PROGRAMME_NAME\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"APPLICATION_STATUS\":[\"CONTAINING\",\"NOT_CONTAINING\"],\"SUBMISSION_DATE\":[\"FROM_DATE\",\"ON_DATE\",\"TO_DATE\"],\"LAST_EDITED_DATE\":[\"FROM_DATE\",\"ON_DATE\",\"TO_DATE\"]}",
                 predicatesMap);
     }
 

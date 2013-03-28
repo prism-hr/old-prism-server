@@ -557,17 +557,16 @@
             <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
             <@spring.bind "personalDetails.acceptedTerms" />
             <#if spring.status.errorMessages?size &gt; 0>        
-                <div class="row-group terms-box invalid" >
-    
-            <#else>
-                <div class="row-group terms-box" >
-             </#if>
+                <div class="alert alert-error tac" >
+              <#else>
+                <div class="alert tac" >
+              </#if>
                 <div class="row">
-                    <span class="terms-label">
+                    <label class="terms-label" for="acceptTermsPEDCB">
                         Confirm that the information that you have provided in this section is true 
                         and correct. Failure to provide true and correct information may result in a 
                         subsequent offer of study being withdrawn.              
-                    </span>
+                    </label>
 
                     <div class="terms-field">
                         <input type="checkbox" name="acceptTermsPEDCB" id="acceptTermsPEDCB"/>

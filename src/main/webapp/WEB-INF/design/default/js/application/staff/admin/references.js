@@ -90,7 +90,7 @@ $(document).ready(function() {
 });
 
 function clearRefereeFormErrors() {
-    $("#referencesSection").find('span.invalid').remove(); // remove all previous form errors
+    $("#referencesSection").find('div.alert-error').remove(); // remove all previous form errors
 }
 
 function clearRefereeForm(form) {
@@ -275,7 +275,7 @@ function editReferenceData() {
         	clearRefereeFormErrors();
         	if(data.success == "false"){
         		if(data.comment != null){
-        			$("#commentError_" + refereeId).html('<span class="invalid">' + data.comment + '</span>');
+        			$("#commentError_" + refereeId).html('<div class="alert alert-error"> <i class="icon-warning-sign"></i>' + data.comment + '</div>');
         		}
         	}
         },

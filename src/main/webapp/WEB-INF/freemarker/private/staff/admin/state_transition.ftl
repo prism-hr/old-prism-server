@@ -91,7 +91,7 @@
 						<div>
 							<form>
 							
-								<div class="section-info-bar">
+								<div class="alert alert-info"> <i class="icon-info-sign"></i>
 								<#if applicationForm.isInState('VALIDATION')>
 									Validate the application here. You may <a class="proceed-link" href="#" id="notifyRegistryButton">refer the application to admissions</a> if you feel unable to assess the Applicant's eligbility.
 								<#elseif applicationForm.isInState('REVIEW')>
@@ -106,12 +106,16 @@
 								<div class="row-group">
 								
 									<div class="row">
-										<span class="plain-label">Comments<em>*</em></span>
+										<label class="plain-label" for="comment">Comments<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'validateApp.comment'/>"></span>
 										<div class="field">		            				
 											<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='2000'>${(comment.comment?html)!}</textarea>
 											<@spring.bind "comment.comment" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											<#list spring.status.errorMessages as error> 
+                                              <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                                                ${error}
+                                              </div>
+                                            </#list>
 										</div>
 									</div>
 	
@@ -134,7 +138,11 @@
 											/> ${option.displayValue}</label>
 											</#list>
 											<@spring.bind "comment.qualifiedForPhd" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											<#list spring.status.errorMessages as error> 
+                                             <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                                                ${error}
+                                              </div>
+                                             </#list>
 										</div>
 									</div>
 	
@@ -147,7 +155,9 @@
 											<#if comment.englishCompentencyOk?? && comment.englishCompentencyOk == option> checked="checked"</#if>/> ${option.displayValue}</label>
 											</#list>
 											<@spring.bind "comment.englishCompentencyOk" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											<#list spring.status.errorMessages as error>  <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                                                ${error}
+                                              </div></#list>
 										</div>
 									</div>
 	
@@ -160,7 +170,9 @@
 											<#if comment.homeOrOverseas?? && comment.homeOrOverseas == option> checked="checked"</#if>/> ${option.displayValue}</label>
 											</#list>
 											<@spring.bind "comment.homeOrOverseas" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											<#list spring.status.errorMessages as error>  <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                                                ${error}
+                                              </div></#list>
 										</div>
 									</div>
 	
@@ -169,17 +181,17 @@
 								
 								<div class="row-group">
     								<div class="row">
-                                        <label class="plain-label">Assign to Closing Date</label>
+                                        <label for="closingDate" class="plain-label">Assign to Closing Date</label>
     								    <span class="hint" data-desc="<@spring.message 'badge.closingDate'/>"></span>
                                         <div class="field">
-                                            <input class="half date" value="${(closingDate?string('dd MMM yyyy'))!}" name="closingDate" id="closingDate"/>
+                                            <input type="text" class="half date" value="${(closingDate?string('dd MMM yyyy'))!}" name="closingDate" id="closingDate"/>
                                             <#if closingDate_error??>
                                                 <span class="invalid">${closingDate_error}</span>
                                             </#if>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <label class="plain-label">Assign to Project</label>
+                                        <label class="plain-label" for="projectTitle">Assign to Project</label>
                                         <span class="hint" data-desc="<@spring.message 'badge.projectTitle'/>"></span>
                                         <div class="field">
                                             <input id="projectTitle" name="projectTitle" class="full ui-autocomplete-input" type="text" value="${(projectTitle)!}" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
@@ -196,7 +208,7 @@
 	
 								<div class="row-group">
 									<div class="row">
-										<label class="plain-label">Next Stage<em>*</em></label>
+										<label class="plain-label" for="status">Next Stage<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'validateApp.nextStage'/>"></span>
 										<div class="field">		            				
 											<select class="max" name="status" id="status">
@@ -209,7 +221,9 @@
 												</#list>
 											</select>	
 											<@spring.bind "comment.nextStatus" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											<#list spring.status.errorMessages as error>  <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                                                ${error}
+                                              </div></#list>
 										</div>
 									</div>
 									<#if reviewersWillingToInterview??>		            			
@@ -234,7 +248,7 @@
 								</div><!-- close .row-group -->
 	
 								<div class="buttons">
-								    <button class="blue" type="button" id="changeStateButton" value="save">Submit</button>
+								    <button class="btn btn-primary" type="button" id="changeStateButton" value="save">Submit</button>
 								</div>
 								
 							</form>

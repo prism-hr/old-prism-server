@@ -29,7 +29,9 @@
     <div class="row-group">
       <#if programError?? && programError=='true'>
       <div class="alert alert-error">
-          <i class="icon-warning-sign"></i>  <@spring.message 'application.program.invalid'/></div>
+          <i class="icon-warning-sign"></i>  
+          <@spring.message 'application.program.invalid'/>
+          </div>
       </#if>
       
       <!-- Programme name (disabled) -->
@@ -60,7 +62,8 @@
           </select>
           <#if studyOptionError?? && studyOptionError=='true'>
           <div class="alert alert-error">
-              <i class="icon-warning-sign"></i>  <@spring.message  'programmeDetails.studyOption.invalid'/></div>
+              <i class="icon-warning-sign"></i>  
+              <@spring.message  'programmeDetails.studyOption.invalid'/></div>
           </#if>
 
           <@spring.bind "programmeDetails.studyOption" />
@@ -200,10 +203,10 @@
       </div>
   
       <div class="row">
-        <label class="plain-label">Supervisor Email</label>
+        <label class="plain-label" for="supervisorEmail">Supervisor Email</label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
         <div class="field">
-          <input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
+          <input class="full" type="email" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
         </div>
       </div>
   
@@ -231,18 +234,17 @@
     <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
     	<@spring.bind "programmeDetails.acceptedTerms" />
        	<#if spring.status.errorMessages?size &gt; 0>        
-		    <div class="row-group terms-box invalid">
-
+		<div class="alert alert-error tac" >
       <#else>
-    		<div class="row-group terms-box" >
+        <div class="alert tac" >
       </#if>
     
       <div class="row">
-				<span class="terms-label">
+				<label for="acceptTermsPDCB" class="terms-label">
 					Confirm that the information that you have provided in this section is true 
 					and correct. Failure to provide true and correct information may result in a 
 					subsequent offer of study being withdrawn.				
-				</span>
+				</label>
 
         <div class="terms-field">
           <input type="checkbox" name="acceptTermsPDCB" id="acceptTermsPDCB"/>

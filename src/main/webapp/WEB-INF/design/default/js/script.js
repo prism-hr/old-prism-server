@@ -464,7 +464,7 @@ function doUpload($upload_field) {
                 $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must upload a PDF document (2Mb). </div>');
             } else {
                 // i.e. if there are no uploading errors, which would be
-                // indicated by the presence of a SPAN.invalid tag.
+                // indicated by the presence of a div.alert-error tag.
                 $hfParent.html(data);
                 $container.addClass('uploaded');
                 var doc_type = $upload_field.attr('data-reference');
@@ -650,7 +650,7 @@ function clearForm($form) {
     if (id != '') {
         unmarkSection(id);
     }
-    // $('span.invalid', $form).remove();
+    // $('div.alert-error', $form).remove();
 }
 
 function setupModalBox() {

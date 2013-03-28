@@ -45,7 +45,7 @@
 			<#list spring.status.errorMessages as error>
 			<div class="row">
 				<div class="field">
-					<span class="invalid">${error}</span>
+					<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
 				</div>
 			</div>
 			</#list>
@@ -77,17 +77,16 @@
 		<#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
 					<@spring.bind "additionalInformation.acceptedTerms" />
 		       	<#if spring.status.errorMessages?size &gt; 0>        
-				    <div class="row-group terms-box invalid" >
-		
-		      	<#else>
-		    		<div class="row-group terms-box" >
-		     	 </#if>
+				     <div class="alert alert-error tac" >
+                    <#else>
+                        <div class="alert tac" >
+                    </#if>
 			<div class="row">
-				<span class="terms-label">
+				<label class="terms-label" for="acceptTermsAIDCB">
 					Confirm that the information that you have provided in this application is true 
 					and correct. Failure to provide true and correct information may result in a 
 					subsequent offer of study being withdrawn.				
-				</span>
+				</label>
 				<div class="terms-field">
 					<input type="checkbox" name="acceptTermsAIDCB" id="acceptTermsAIDCB"/>
 				</div>

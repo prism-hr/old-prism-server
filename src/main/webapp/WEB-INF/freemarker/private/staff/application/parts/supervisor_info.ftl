@@ -10,5 +10,5 @@
 
 <div class="row half">
 	<label>Enter email address</label>
-	<input class="disabledEle" size="39" value="" />
+	<input class="disabledEle" type="email" size="39" value="" />
 </div>

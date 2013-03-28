@@ -83,51 +83,52 @@
 									</table>
 								</div><!-- #existingUsers -->
 
-								<div class="section-info-bar">
+								<div class="alert alert-info">
+          							<i class="icon-info-sign"></i> 
 									Manage superadministrators. You can also <a class="proceed-link" href="<@spring.url '/manageUsers/edit'/>">manage programme roles.</a>
 								</div>
 
 								<div class="row-group">
 								
 									<div class="row">
-										<span class="plain-label">First Name<em>*</em></span>
+										<label class="plain-label" for="firstName">First Name<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
 										<div class="field">
 											<input class="full" type="text"  value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			                                  
 											<@spring.bind "userDTO.firstName" /> 
 											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
+											<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
 											</#list>			                             
 										</div>
 									</div>
 			
 									<div class="row">
-										<span class="plain-label">Last Name<em>*</em></span>
+										<label class="plain-label" for="lastName">Last Name<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
 										<div class="field">
 											<input class="full" type="text" value="${(userDTO.lastName?html)!}" name="lastName" id="lastName"  <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<@spring.bind "userDTO.lastName" /> 
 											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
+											<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
 											</#list>
 										</div>
 									</div>
 			
 									<div class="row">
-										<span class="plain-label">Email<em>*</em></span>
+										<label class="plain-label" for="email">Email<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
 										<div class="field">
-											<input class="full" type="text" value="${(userDTO.email?html)!}" name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
+											<input class="full" type="email" value="${(userDTO.email?html)!}" name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<@spring.bind "userDTO.email" /> 
 											<#list spring.status.errorMessages as error>
-											<span class="invalid">${error}</span>
+											<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
 											</#list>
 										</div>
 									</div>
 		
 									<div class="row">
 										<div class="field">
-											<button class="blue" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
+											<button class="btn btn-primary" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
 										</div>
 									</div>
 			

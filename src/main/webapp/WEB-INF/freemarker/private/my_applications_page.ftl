@@ -84,11 +84,16 @@
                         </#if>
 
                         <#if message??>
-                        <div class="section-info-bar">${(message?html)!}</div>
+                        <div class="alert alert-info">
+         				<i class="icon-info-sign"></i> 
+                       		${(message?html)!}</div>
                         </#if> <#if RequestParameters.messageCode??> <#if messageApplication??> <#assign args = ["${messageApplication.applicationNumber}"] />
-                        <div class="section-info-bar"><@spring.messageArgs '${RequestParameters.messageCode}' args /></div>
+                        <div class="alert alert-info">
+                          <i class="icon-info-sign"></i> 
+                          <@spring.messageArgs '${RequestParameters.messageCode}' args /></div>
                         <#else>
-                        <div class="section-info-bar"><@spring.message '${RequestParameters.messageCode}' /></div>
+                        <div class="alert alert-info">
+          					<i class="icon-info-sign"></i> <@spring.message '${RequestParameters.messageCode}' /></div>
                         </#if> </#if>
 
                         <div id="table-bar">

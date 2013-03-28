@@ -1,18 +1,17 @@
 <div class="row-group">
     <div class="row">
-        <span class="plain-label">Comment<em>*</em></span>
+        <label class="plain-label" for="refereeComment_${encRefereeId}">Comment<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
         <div class="field">
             <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80" >${(referee.reference.comment?html)!}</textarea>
         </div>
     </div>
-    
-    <div class="row"><div id="commentError_${encRefereeId}" class="field"><span class="invalid"></span></div></div>
+    <div class="row"><div id="commentError_${encRefereeId}" class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div></div>
 </div>
 
 <div class="row-group">
     <div class="row">
-        <span class="plain-label">Attach Document</span>
+        <label class="plain-label" for="referenceDocument_${encRefereeId}">Attach Document</label>
         <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
         <div class="field <#if referee.reference.documents[0]??>uploaded</#if>" id="psUploadFields">
             <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">
@@ -66,7 +65,7 @@
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
-            <button id="editReferenceButton" type="button" class="blue">Edit</button>
+            <button id="editReferenceButton" type="button" class="btn">Edit</button>
         </div>
     </div>
     

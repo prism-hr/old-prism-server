@@ -88,29 +88,29 @@ $(document).ready(function()
 function validateFeedback()
 {
 	var errors = 0;
-	$('#interviewForm span.invalid').remove();
+	$('#interviewForm div.alert-error').remove();
 	
 	if ($('#interview-comment').val() == '')
 	{
-		$('#interview-comment').after('<span class="invalid">You must make an entry.</span>');
+		$('#interview-comment').after('<div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make an entry.</div>');;
 		errors++;
 	}
 
 	if ($('input[name="suitableCandidateForUcl"]:checked').length == 0)
 	{
-		$('#field-issuitableucl').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-issuitableucl').append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make a selection.</div>');
 		errors++;
 	}
 
 	if ($('input[name="suitableCandidateForProgramme"]:checked').length == 0)
 	{
-		$('#field-issuitableprog').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-issuitableprog').append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make a selection.</div>');
 		errors++;
 	}
 	
 	if ($('input[name="willingToSupervise"]:checked').length == 0)
 	{
-		$('#field-wouldsupervise').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-wouldsupervise').append('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make a selection.</div>');
 		errors++;
 	}
 	

@@ -217,9 +217,10 @@ function disableContactAddress() {
 
 function enableContactAddress(clear) {
     $("#contactAddressLocation").val("");
-	$("#contactAddressCountry").val("");
+	//$("#contactAddressCountry").val("");
 
 	if (clear === true) {
+		$("#contactAddressCountry").val("");
 	    $("#contactAddress1").val("");
 	    $("#contactAddress2").val("");
 	    $("#contactAddress3").val("");

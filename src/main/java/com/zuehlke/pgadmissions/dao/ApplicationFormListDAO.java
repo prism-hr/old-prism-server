@@ -1,12 +1,17 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
@@ -24,11 +29,14 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
+import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @Repository
 public class ApplicationFormListDAO {
+
+    public static final SimpleDateFormat USER_DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy");
 
     private final SessionFactory sessionFactory;
 
@@ -89,11 +97,11 @@ public class ApplicationFormListDAO {
 
             criteria.add(disjunction);
         }
-        
+
         criteria = setAliases(criteria);
 
         for (ApplicationsFilter filter : filters) {
-            criteria = setSearchCriteria(filter.getSearchCategory(), filter.getSearchTerm(), criteria);
+            criteria = setSearchCriteria(filter.getSearchCategory(), filter.getSearchPredicate(), filter.getSearchTerm(), criteria);
         }
 
         if (criteria == null) {
@@ -104,14 +112,14 @@ public class ApplicationFormListDAO {
 
         return criteria.list();
     }
-    
+
     private Criteria setAliases(final Criteria criteria) {
         criteria.createAlias("applicant", "a");
         criteria.createAlias("program", "p");
         return criteria;
     }
 
-    private Criteria setSearchCriteria(final SearchCategory searchCategory, final String term, final Criteria criteria) {
+    private Criteria setSearchCriteria(final SearchCategory searchCategory, final SearchPredicate searchPredicate, final String term, final Criteria criteria) {
         if (searchCategory != null && StringUtils.isNotBlank(term)) {
             switch (searchCategory) {
             case APPLICANT_NAME:
@@ -136,11 +144,36 @@ public class ApplicationFormListDAO {
             case SUBMISSION_DATE:
                 break;
             case LAST_EDITED_DATE:
+                Date date = convertToSqlDate(term);
+                switch (searchPredicate) {
+                case FROM_DATE:
+                    criteria.add(Restrictions.ge("lastUpdated", date));
+                    break;
+                case ON_DATE:
+                    Conjunction conjunction = Restrictions.conjunction();
+                    conjunction.add(Restrictions.ge("lastUpdated", date));
+                    conjunction.add(Restrictions.lt("lastUpdated", new Date(date.getTime() + TimeUnit.DAYS.toMillis(1))));
+                    criteria.add(conjunction);
+                    break;
+                case TO_DATE:
+                    criteria.add(Restrictions.lt("lastUpdated", new Date(date.getTime() + TimeUnit.DAYS.toMillis(1))));
+                    break;
+                default:
+                    throw new RuntimeException("Unexpected predicate for last edited date: " + searchPredicate.displayValue());
+                }
                 break;
             default:
             }
         }
         return criteria;
+    }
+
+    private Date convertToSqlDate(String term) {
+        try {
+            return USER_DATE_FORMAT.parse(term);
+        } catch (ParseException e) {
+            throw new RuntimeException("Unexpected filter date format: " + term);
+        }
     }
 
     public Criteria setOrderCriteria(SortCategory sortCategory, SortOrder order, Criteria criteria) {

@@ -133,7 +133,9 @@ public class ApplicationFormListDAO {
                     return null;
                 }
                 break;
-            case APPLICATION_DATE:
+            case SUBMISSION_DATE:
+                break;
+            case LAST_EDITED_DATE:
                 break;
             default:
             }

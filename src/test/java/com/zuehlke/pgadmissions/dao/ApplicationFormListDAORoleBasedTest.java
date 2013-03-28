@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -24,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
@@ -38,11 +35,8 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
-public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
+public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCase {
 
     private ApplicationFormListDAO applicationDAO;
 
@@ -624,67 +618,6 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
 
         assertTrue(listContainsId(applicationFormOne, applications));
         assertTrue(listContainsId(applicationFormTwo, applications));
-    }
-
-    @Test
-    public void shouldReturnAppsFilteredByNumber() {
-        Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
-        save(otherProgram);
-
-        RegisteredUser approverAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-                .programsOfWhichAdministrator(program).programsOfWhichApprover(otherProgram).build();
-
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.APPROVAL)
-                .applicationNumber("exclude1").build();
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-                .applicationNumber("app2").build();
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-                .applicationNumber("app3").build();
-        save(approverAndAdminUser, applicationFormOne, applicationFormTwo, applicationFormThree);
-
-        flushAndClearSession();
-
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("app").build();
-
-        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approverAndAdminUser, Arrays.asList(filter), SortCategory.APPLICATION_DATE,
-                SortOrder.DESCENDING, 1, 50);
-        
-
-        assertFalse(listContainsId(applicationFormOne, applications));
-        assertTrue(listContainsId(applicationFormTwo, applications));
-        assertTrue(listContainsId(applicationFormThree, applications));
-    }
-    
-    @Test
-    public void shouldReturnAppsFilteredByNumberAndStatus() {
-        Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
-        save(otherProgram);
-
-        RegisteredUser approverAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-                .programsOfWhichAdministrator(program).programsOfWhichApprover(otherProgram).build();
-
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.APPROVAL)
-                .applicationNumber("exclude1").build();
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-                .applicationNumber("app2").build();
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW)
-                .applicationNumber("app3").build();
-        save(approverAndAdminUser, applicationFormOne, applicationFormTwo, applicationFormThree);
-
-        flushAndClearSession();
-
-        ApplicationsFilter nameFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("app").build();
-        ApplicationsFilter statusFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Interview").build();
-
-        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approverAndAdminUser, Arrays.asList(nameFilter, statusFilter), SortCategory.APPLICATION_DATE,
-                SortOrder.DESCENDING, 1, 50);
-        
-
-        assertFalse(listContainsId(applicationFormOne, applications));
-        assertFalse(listContainsId(applicationFormTwo, applications));
-        assertTrue(listContainsId(applicationFormThree, applications));
     }
 
     private boolean listContainsId(ApplicationForm form, List<ApplicationForm> aplicationForms) {

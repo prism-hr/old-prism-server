@@ -5,10 +5,10 @@
 /* Background */
 section.form-rows.navy > div { background: #E5E8F1; }
 
-/* Border colours */
+/* Border colours 
 section.form-rows.navy > div,
 section.form-rows.navy table.existing,
-section.form-rows.navy div.buttons { border-color: #285F93; }
+section.form-rows.navy div.buttons { border-color: #285F93; }*/
 
 /* Buttons / existing rows areas */
 section.form-rows.navy table.existing, section.form-rows.navy div.buttons { background: #D0D7E7; }
@@ -35,5 +35,5 @@ section.form-rows.navy table.existing th { background-position: 0 -125px; }
 /* Table with scrolling content and fixed header. */
 #refereesTable td.scrollparent { padding: 0; }
 #refereesTable td.scrollparent .button-edit, #existingUsers td.scrollparent .button-delete { margin: 0 }
-#refereesTable .scroll { border-bottom: 1px solid #999; max-height: 155px; overflow: auto; } /* roughly five rows high. */
+#refereesTable .scroll { max-height: 155px; overflow: auto; } /* roughly five rows high. */
 #refereesTable .scroll table { border-collapse: collapse; width: 100%; }

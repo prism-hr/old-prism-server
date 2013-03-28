@@ -173,7 +173,7 @@ $(document).ready(function() {
     // Language Qualification available
     // -------------------------------------------------------------------------------
     $("input[name='languageQualificationAvailable']").bind('change', function() {
-    	$('#languageQualification_div span.invalid').remove();
+    	$('#languageQualification_div div.alert').remove();
     	var selected_radio = $("input[name='languageQualificationAvailable']:checked").val();
     	if (selected_radio == 'true') {
     		enableLanguageQualifications();
@@ -266,7 +266,7 @@ $(document).ready(function() {
 		$("#examTakenOnlineNo").removeAttr("checked");
 		$("#examTakenOnlineYes").removeAttr("checked");
 		
-		$('#languageQualification_div span.invalid').remove();
+		$('#languageQualification_div div.alert').remove();
 		
 		$("#otherQualificationTypeName, #dateOfExamination").val("");
 		
@@ -581,7 +581,7 @@ function postPersonalDetailsData(message) {
 
             if (message == 'close') {
                 // Close the section only if there are no errors.
-                var errorCount = $('#personalDetailsSection .invalid:visible').length;
+                var errorCount = $('#personalDetailsSection .alert-error:visible').length;
                 if (errorCount == 0) {
                     $('#personalDetails-H2').trigger('click');
                 } else {

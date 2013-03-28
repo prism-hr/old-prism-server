@@ -10,20 +10,16 @@
 
 <div>
 	<form>
-	
-		<#if errorCode?? && errorCode=="true">
-		<div class="section-error-bar">
-			<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
-			<span class="invalid-info-text">
-				<@spring.message 'additionalInformation.sectionInfo'/>
-			</span>
-		</div>
-		<#else>
-		<div id="add-info-bar-div" class="section-info-bar">
-			<@spring.message 'additionalInformation.sectionInfo'/> 
-		</div>	
-		</#if>
-	
+	    <#if errorCode?? && errorCode=="true">
+        <div class="alert alert-error"> 
+        <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i> 
+          <@spring.message 'addressDetails.sectionInfo'/>
+        </div>
+        <#else>
+        <div class="alert alert-info"> <i class="icon-info-sign"></i>
+          <@spring.message 'addressDetails.sectionInfo'/>
+        </div>
+        </#if>
 		<div class="row-group">
 		
 			<!-- Radio buttons for convictions. -->
@@ -56,9 +52,9 @@
 	
 			<!-- Free text field for convictions. -->
 			<div class="row">
-				<span id="convictions-details-lbl" class="plain-label<#if !additionalInformation.convictions?? || !additionalInformation.convictions> grey-label</#if>">
+				<label for="convictionsText" id="convictions-details-lbl" class="plain-label<#if !additionalInformation.convictions?? || !additionalInformation.convictions> grey-label</#if>">
 					Description<#if additionalInformation.convictions?? && additionalInformation.convictions><em>*</em></#if>
-				</span>
+				</label>
 				<span class="hint" data-desc="<@spring.message 'additionalInformation.convictionstext'/>"></span>
 				<div class="field">
 					<#if !applicationForm.isDecided()>
@@ -68,17 +64,14 @@
 					<#else>
 					<textarea readonly id="convictionsText" name="convictionsText" class="max" rows="10" cols=80"   >${(additionalInformation.convictionsText?html)!}</textarea>
 					</#if>
+                    <@spring.bind "additionalInformation.convictionsText" />
+                    <#list spring.status.errorMessages as error>
+                    <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                    ${error}
+                    </div>
+                    </#list>
 				</div>
 			</div>
-			<@spring.bind "additionalInformation.convictionsText" />
-			<#list spring.status.errorMessages as error>
-			<div class="row">
-				<div class="field">
-					<span class="invalid">${error}</span>
-				</div>
-			</div>
-			</#list>
-	
 		</div>
 
 		<#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
@@ -105,11 +98,11 @@
 	
 		<div class="buttons">
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-			<button class="clear" id="informationClearButton" type="button" name="informationClearButton">Clear</button>
+			<button class="btn" id="informationClearButton" type="button" name="informationClearButton">Clear</button>
 			</#if>                
-			<button class="blue" id="additionalCloseButton" type="button">Close</button>
+			<button class="btn" id="additionalCloseButton" type="button">Close</button>
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-			<button class="blue" id="informationSaveButton" type="button">Save</button>
+			<button class="btn btn-primary" id="informationSaveButton" type="button">Save</button>
 			</#if>   
 		</div>
 	

@@ -207,7 +207,11 @@ public class ApprovalController {
                 approvalRound.getSupervisors().add(supervisor);
             }
         }
+
         Date startDate = applicationForm.getProgrammeDetails().getStartDate();
+        if (!applicationForm.isPrefferedStartDateWithinBounds()) {
+            startDate = applicationForm.getEarliestPossibleStartDate();
+        } 
         approvalRound.setRecommendedStartDate(startDate);
         return approvalRound;
     }

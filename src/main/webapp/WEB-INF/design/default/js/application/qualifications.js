@@ -366,7 +366,7 @@ function postQualificationData(message) {
         },
         success : function(data) {
             $('#qualificationsSection').html(data);
-            var errorCount = $('#qualificationsSection .invalid:visible').length;
+            var errorCount = $('#qualificationsSection .alert-error:visible').length;
 
             if (errorCount == 0 && message == 'close') {
                 // Close the section only if there are no errors.

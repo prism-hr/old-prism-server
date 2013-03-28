@@ -369,7 +369,7 @@ $(document).ready(function()
 		{
 			$('#addSupervisorButton:visible, #updateSupervisorButton:visible').trigger('click'); // either add or update will be visible
 			// If there was an error submitting the non-empty form, don't continue.
-			if ($('#supervisor_div .invalid:visible').length > 0)
+			if ($('#supervisor_div .alert-error:visible').length > 0)
 			{
 				return false;
 			}
@@ -540,7 +540,7 @@ function postProgrammeData(message)
 			{
 				$('#programmeDetailsSection').html(data);
 			
-				var errorCount = $('#programmeDetailsSection .invalid:visible').length;
+				var errorCount = $('#programmeDetailsSection .alert-error:visible').length;
 				if (message == 'close' && errorCount == 0)
 				{
 					// Close the section only if there are no errors.

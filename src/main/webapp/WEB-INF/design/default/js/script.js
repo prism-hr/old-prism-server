@@ -444,7 +444,7 @@ function doUpload($upload_field) {
     var $progress = $container.find('span.progress');
 
     // Remove any previous error messages.
-    $container.find('span.invalid').remove();
+    $container.find('div.alert-error').remove();
 
     $.ajaxFileUpload({
         url : '/pgadmissions/documents/async',
@@ -456,12 +456,12 @@ function doUpload($upload_field) {
         },
         success : function(data) {
             $container.removeClass('posting');
-            if ($(data).find('span.invalid').length > 0) {
+            if ($(data).find('div.alert-error').length > 0) {
                 // There was an uploading error.
                 $container.append(data);
             } else if ($(data).find('input').length == 0) {
                 // There was (probably) a server error.
-                $container.append('<span class="invalid">You must upload a PDF document (2Mb). </span>');
+                $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must upload a PDF document (2Mb). </div>');
             } else {
                 // i.e. if there are no uploading errors, which would be
                 // indicated by the presence of a SPAN.invalid tag.
@@ -474,7 +474,7 @@ function doUpload($upload_field) {
             }
         },
         error : function() {
-            $container.append('<span class="invalid">Upload failed; please retry.</span>');
+            $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> Upload failed; please retry.</div>');
         }
     });
 }
@@ -522,7 +522,7 @@ function doUploadComment($upload_field, $uploadedDocuments) {
     var $container = $upload_field.parent('div.field');
 
     // Remove any previous error messages.
-    $container.find('span.invalid').remove();
+    $container.find('div.alert-error').remove();
 
     $.ajaxFileUpload({
         url : '/pgadmissions/documents/async',
@@ -534,12 +534,12 @@ function doUploadComment($upload_field, $uploadedDocuments) {
         },
         success : function(data) {
             $container.removeClass('posting');
-            if ($(data).find('span.invalid').length > 0) {
+            if ($(data).find('div.alert-error').length > 0) {
                 // There was an uploading error.
                 $container.append(data);
             } else if ($(data).find('input').length == 0) {
                 // There was (probably) a server error.
-                $container.append('<span class="invalid">You must upload a PDF document (2Mb). </span>');
+                $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must upload a PDF document (2Mb). </div>');
             } else {
                 $container.addClass('uploaded');
                 $("<div class=\"row\"><div class=\"field\">" + data + "</span></div>").appendTo($uploadedDocuments);
@@ -551,7 +551,7 @@ function doUploadComment($upload_field, $uploadedDocuments) {
             }
         },
         error : function() {
-            $container.append('<span class="invalid">Upload failed; please retry.</span>');
+            $container.append('<div class="alert alert-error"><i class="icon-warning-sign"></i>Upload failed; please retry.</div>');
         }
     });
 }
@@ -592,7 +592,7 @@ function markSectionError(section_id) {
     }
 
     // Check for form validation errors.
-    var errors = $('.invalid:visible', $section).length;
+    var errors = $('.alert-error:visible', $section).length;
     if (errors == 0) {
         return;
     }
@@ -617,7 +617,7 @@ function unmarkSection(section_id) {
     $terms.removeAttr('style');
 
     // Remove validation errors.
-    $('span.invalid', $section).remove();
+    $('div.alert-error', $section).remove();
 
     // Revert the info bar.
     var $infobar = $('.section-error-bar', $section);

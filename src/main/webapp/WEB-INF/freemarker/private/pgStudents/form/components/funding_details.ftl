@@ -53,7 +53,7 @@
   <form>
     <input type="hidden" id="fundingId" name="fundingId" value="<#if funding?? && funding.id??>${(encrypter.encrypt(funding.id))!}</#if>"/>
     <#if errorCode?? && errorCode=="true">
-    <div class="alert alert-error"> <i class="icon-warning-sign"></i> <span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>
+    <div class="alert alert-error"> <i class="icon-warning-sign" data-desc="Please provide all mandatory fields in this section."></i>
       <@spring.message 'fundingDetails.sectionInfo'/>
     </div>
     <#else>

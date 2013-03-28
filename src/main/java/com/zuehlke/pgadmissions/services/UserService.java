@@ -427,16 +427,16 @@ public class UserService {
         return false;
     }
 
-    public void addFilter(RegisteredUser user, ApplicationsFilter filter) {
-        filter.setUser(user);
-        user.getApplicationsFilters().add(filter);
-        
-        applicationsFilterDAO.save(filter);
-    }
+    public void setFilters(RegisteredUser user, List<ApplicationsFilter> filters) {
+        for (ApplicationsFilter existingFilter : user.getApplicationsFilters()) {
+            applicationsFilterDAO.removeFilter(existingFilter);
+        }
+        user.getApplicationsFilters().clear();
 
-    public void clearApplicationsFilters(RegisteredUser user) {
-        for (ApplicationsFilter filter : user.getApplicationsFilters()) {
-            applicationsFilterDAO.removeFilter(filter);
+        for (ApplicationsFilter filter : filters) {
+            filter.setUser(user);
+            user.getApplicationsFilters().add(filter);
+            applicationsFilterDAO.save(filter);
         }
     }
 

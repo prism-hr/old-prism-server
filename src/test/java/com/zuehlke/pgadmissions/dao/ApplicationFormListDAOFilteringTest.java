@@ -195,6 +195,48 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         assertContainsApplications(applications, app4InApproved);
     }
 
+    @Test
+    public void shouldReturnAppsFilteredByFromSubmissionDate() {
+
+        String submissionDatePlus2String = dateToString(searchTermDateForSubmission);
+
+        ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUBMISSION_DATE).searchTerm(submissionDatePlus2String)
+                .searchPredicate(SearchPredicate.FROM_DATE).build();
+
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(dateFilter), SortCategory.APPLICATION_DATE,
+                SortOrder.DESCENDING, 1, 50);
+
+        assertContainsApplications(applications, app6InReview, app5InInterview, app4InApproved, app3InValidation);
+    }
+
+    @Test
+    public void shouldReturnAppsFilteredByToSubmissionDate() {
+
+        String submissionDatePlus2String = dateToString(searchTermDateForSubmission);
+
+        ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUBMISSION_DATE).searchTerm(submissionDatePlus2String)
+                .searchPredicate(SearchPredicate.TO_DATE).build();
+
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(dateFilter), SortCategory.APPLICATION_DATE,
+                SortOrder.DESCENDING, 1, 50);
+
+        assertContainsApplications(applications, app3InValidation, app2InReview, app1InApproval);
+    }
+
+    @Test
+    public void shouldReturnAppsFilteredByOnSubmissionDate() {
+
+        String submissionDatePlus2String = dateToString(searchTermDateForSubmission);
+
+        ApplicationsFilter dateFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUBMISSION_DATE).searchTerm(submissionDatePlus2String)
+                .searchPredicate(SearchPredicate.ON_DATE).build();
+
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(adminUser, Arrays.asList(dateFilter), SortCategory.APPLICATION_DATE,
+                SortOrder.DESCENDING, 1, 50);
+
+        assertContainsApplications(applications, app3InValidation);
+    }
+
     private String dateToString(Date date) {
         String formattedDate = ApplicationFormListDAO.USER_DATE_FORMAT.format(date);
         return formattedDate;

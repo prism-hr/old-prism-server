@@ -142,38 +142,15 @@ public class ApplicationFormListDAO {
                 }
                 break;
             case SUBMISSION_DATE:
+                getCriteriaForDate(searchPredicate, term, criteria, "submittedDate");
                 break;
             case LAST_EDITED_DATE:
-                Date date = convertToSqlDate(term);
-                switch (searchPredicate) {
-                case FROM_DATE:
-                    criteria.add(Restrictions.ge("lastUpdated", date));
-                    break;
-                case ON_DATE:
-                    Conjunction conjunction = Restrictions.conjunction();
-                    conjunction.add(Restrictions.ge("lastUpdated", date));
-                    conjunction.add(Restrictions.lt("lastUpdated", new Date(date.getTime() + TimeUnit.DAYS.toMillis(1))));
-                    criteria.add(conjunction);
-                    break;
-                case TO_DATE:
-                    criteria.add(Restrictions.lt("lastUpdated", new Date(date.getTime() + TimeUnit.DAYS.toMillis(1))));
-                    break;
-                default:
-                    throw new RuntimeException("Unexpected predicate for last edited date: " + searchPredicate.displayValue());
-                }
+                getCriteriaForDate(searchPredicate, term, criteria, "lastUpdated");
                 break;
             default:
             }
         }
         return criteria;
-    }
-
-    private Date convertToSqlDate(String term) {
-        try {
-            return USER_DATE_FORMAT.parse(term);
-        } catch (ParseException e) {
-            throw new RuntimeException("Unexpected filter date format: " + term);
-        }
     }
 
     public Criteria setOrderCriteria(SortCategory sortCategory, SortOrder order, Criteria criteria) {
@@ -204,6 +181,34 @@ public class ApplicationFormListDAO {
             break;
         }
         return criteria;
+    }
+
+    private void getCriteriaForDate(final SearchPredicate searchPredicate, final String term, final Criteria criteria, final String field) {
+        Date submissionDate = convertToSqlDate(term);
+        switch (searchPredicate) {
+        case FROM_DATE:
+            criteria.add(Restrictions.ge(field, submissionDate));
+            break;
+        case ON_DATE:
+            Conjunction conjunction = Restrictions.conjunction();
+            conjunction.add(Restrictions.ge(field, submissionDate));
+            conjunction.add(Restrictions.lt(field, new Date(submissionDate.getTime() + TimeUnit.DAYS.toMillis(1))));
+            criteria.add(conjunction);
+            break;
+        case TO_DATE:
+            criteria.add(Restrictions.lt(field, new Date(submissionDate.getTime() + TimeUnit.DAYS.toMillis(1))));
+            break;
+        default:
+            throw new RuntimeException("Unexpected predicate for last edited date: " + searchPredicate.displayValue());
+        }
+    }
+
+    private Date convertToSqlDate(String term) {
+        try {
+            return USER_DATE_FORMAT.parse(term);
+        } catch (ParseException e) {
+            throw new RuntimeException("Unexpected filter date format: " + term);
+        }
     }
 
     private Order getOrderCriteria(String propertyName, boolean ascending) {

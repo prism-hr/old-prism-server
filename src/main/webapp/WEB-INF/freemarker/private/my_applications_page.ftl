@@ -94,19 +94,31 @@
                         <div id="table-bar">
                             <!-- Download button. -->
                             <a target="_blank" name="downloadAll" id="downloadAll" data-desc="<@spring.message 'myApps.downloadAll'/>">Download</a>
-
+                            
+                            <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value="$(searchPredicatesMap)" />
+                            
                             <div id="search-box">
                                 <#list filters as filter>
                                     <!-- Search/filter box. -->
                                     <div class="filter" id="filter_${filter_index}">
-                                        <input class="filterInput" type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." /> 
-                                        <select class="selectInput" name="searchCategory" id="searchCategory_${filter_index}">
+                                        <select class="selectCategory" name="searchCategory" id="searchCategory_${filter_index}">
                                             <option>Column...</option>
                                             <#list searchCategories as category>
-                                            	<option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}
-                                            	</option>
+                                                <option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}
+                                                </option>
                                             </#list>
                                         </select>
+                                        
+                                        <select class="selectPredicate" name="searchPredicate" id="searchPredicate_${filter_index}">
+                                            <option>Choose...</option>
+                                            <#list filter.searchCategory.availablePredicates as predicate>
+                                                <option <#if filter.searchPredicate = predicate>selected="selected"</#if> value="${predicate}">${predicate.displayValue()}
+                                                </option>
+                                            </#list>
+                                        </select>                                        
+                                        
+                                        <input class="filterInput" type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." /> 
+                                        
                                         <button class="btn remove">Remove</button>
                                         <button class="btn add">Add</button>
                                      </div>
@@ -114,7 +126,6 @@
                                 
                                 <!-- New search/filter box. -->
                                 <div class="filter" id="filter">
-                                    <input class="filterInput" type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." /> 
                                     <select class="selectInput" name="searchCategory" id="searchCategory">
                                         <option value="">Column...</option>
                                         <#list searchCategories as category>
@@ -122,6 +133,12 @@
                                             </option>
                                         </#list>
                                     </select>
+                                    
+                                    <select class="selectPredicate" name="searchPredicate" id="searchPredicate_new">
+                                        <option>Choose...</option>
+                                    </select>  
+                                    
+                                    <input class="filterInput" type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." /> 
                                     <button class="btn remove">Remove</button>
                                     <button class="btn add">Add</button>
                                  </div>

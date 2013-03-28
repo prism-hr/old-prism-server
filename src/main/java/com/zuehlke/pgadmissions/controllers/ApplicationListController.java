@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -15,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationSearchDTO;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -79,11 +81,7 @@ public class ApplicationListController {
     @RequestMapping(value = "/saveFilters", method = RequestMethod.POST)
     @ResponseBody
     public String saveFiltersAsDefault(@ModelAttribute("applicationSearchDTO") ApplicationSearchDTO dto) {
-        RegisteredUser user = getUser();
-        userService.clearApplicationsFilters(user);
-        for (ApplicationsFilter filter : dto.getFilters()) {
-            userService.addFilter(user, filter);
-        }
+        userService.setFilters(getUser(), dto.getFilters());
         return "OK";
     }
 
@@ -95,6 +93,15 @@ public class ApplicationListController {
     @ModelAttribute("searchCategories")
     public SearchCategory[] getSearchCategories() {
         return SearchCategory.values();
+    }
+
+    @ModelAttribute("searchPredicatesMap")
+    public String getSearchPredicatesMap() {
+        Map<SearchCategory, List<SearchPredicate>> predicatesMap = Maps.newLinkedHashMap();
+        for (SearchCategory searchCategory : SearchCategory.values()) {
+            predicatesMap.put(searchCategory, searchCategory.getAvailablePredicates());
+        }
+        return new Gson().toJson(predicatesMap);
     }
 
     @ModelAttribute("applications")

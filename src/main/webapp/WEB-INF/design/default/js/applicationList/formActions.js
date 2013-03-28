@@ -229,12 +229,14 @@ function getFilters() {
     $filterbox = $(".filter");
     
     $.each($filterbox, function() {
-        searchCategory = $(this).find('.selectInput').val();
+        searchCategory = $(this).find('.selectCategory').val();
+        searchPredicate = $(this).find('.selectPredicate').val();
         searchTerm = $(this).find('.filterInput').val();
         
         if(searchCategory && searchTerm.length > 0){
             filters.push({
                 searchCategory : searchCategory,
+                searchPredicate : searchPredicate,
                 searchTerm : searchTerm
             });
         }

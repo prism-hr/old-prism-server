@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
+import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 
 @Entity(name = "APPLICATIONS_FILTER")
 public class ApplicationsFilter implements Serializable {
@@ -27,6 +28,10 @@ public class ApplicationsFilter implements Serializable {
     @JoinColumn(name = "user_id")
     @Valid
     private RegisteredUser user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "search_predicate")
+    private SearchPredicate searchPredicate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "search_category")
@@ -46,6 +51,14 @@ public class ApplicationsFilter implements Serializable {
         this.user = user;
     }
 
+    public SearchPredicate getSearchPredicate() {
+        return searchPredicate;
+    }
+
+    public void setSearchPredicate(SearchPredicate searchPredicate) {
+        this.searchPredicate = searchPredicate;
+    }
+
     public SearchCategory getSearchCategory() {
         return searchCategory;
     }
@@ -61,11 +74,11 @@ public class ApplicationsFilter implements Serializable {
     public void setSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;
     }
-    
+
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public Integer getId() {
         return id;
     }

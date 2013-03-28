@@ -9,7 +9,7 @@
 	<#assign selectedOptionsSize = 25 />
 </#if> 
 <div class="row">
-	<span class="plain-label">Assign Reviewers<#if !user.isInRole('REVIEWER')><em>*</em></#if></span>
+	<label class="plain-label" for="programReviewers">Assign Reviewers<#if !user.isInRole('REVIEWER')><em>*</em></#if></label>
 	<span class="hint" data-desc="<@spring.message 'assignReviewer.defaultReviewers'/>"></span>
 	<div class="field">
 	  <select id="programReviewers" class="list-select-from" multiple="multiple" size="${avaliableOptionsSize}">
@@ -31,8 +31,8 @@
 <div class="row list-select-buttons">
 	<div class="field">
 	  <span>
-	    <button class="blue" type="button" id="addReviewerBtn"><span class="icon-down"></span> Add</button>
-	    <button type="button" id="removeReviewerBtn"><span class="icon-up"></span> Remove</button>
+	    <button class="btn" type="button" id="addReviewerBtn"><span class="icon-down"></span> Add</button>
+	    <button class="btn btn-danger" type="button" id="removeReviewerBtn"><span class="icon-up"></span> Remove</button>
 	  </span>
 	</div>
 </div>

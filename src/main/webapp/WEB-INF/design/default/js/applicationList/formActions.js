@@ -153,7 +153,7 @@ function populateApplicationList(reset) {
         clear : reset
     };
 
-    $('#search-box span.invalid').remove();
+    $('#search-box div.alert-error').remove();
 
     $('div.content-box-inner').append('<div class="ajax" />');
     //$('.content-box-inner').append('<div class="fetching">Fetching more applications...</div>');

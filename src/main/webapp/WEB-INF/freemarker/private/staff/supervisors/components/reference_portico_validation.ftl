@@ -21,7 +21,8 @@
             </span>
         </div>
     <#else>
-        <div class="section-info-bar">
+        <div class="alert alert-info">
+          			<i class="icon-info-sign"></i>
             Select two completed references to submit for offer processing. You may also enter a reference on behalf of a referee by clicking the provide reference icon.
         </div>
     </#if>
@@ -51,9 +52,9 @@
     
     <input type="hidden" name="editedRefereeId" id="editedRefereeId" value="${(editedRefereeId)!}" />
     <div class="buttons">
-        <button name="refereeClearButton" type="button" id="refereeClearButton" class="clear">Clear</button>
-        <button type="button" id="refereeCloseButton" class="blue">Close</button>
-        <button type="button" id="refereeSaveButton" class="blue">Save</button>
+        <button name="refereeClearButton" type="button" id="refereeClearButton" class="btn">Clear</button>
+        <button type="button" id="refereeCloseButton" class="btn">Close</button>
+        <button type="button" id="refereeSaveButton" class="btn btn-primary">Save</button>
     </div>
 </#if>
 </div>

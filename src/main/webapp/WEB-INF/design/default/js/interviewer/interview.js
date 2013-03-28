@@ -103,7 +103,7 @@ $(document).ready(function() {
     // Submit button.
     // -----------------------------------------------------------------------------------------
     $('#moveToInterviewBtn').click(function() {
-        $('#interviewsection span.invalid').remove();
+        $('#interviewsection div.alert-error').remove();
         $('#interviewsection').append('<div class="ajax" />');
         var url = "/pgadmissions/interview/move";
 

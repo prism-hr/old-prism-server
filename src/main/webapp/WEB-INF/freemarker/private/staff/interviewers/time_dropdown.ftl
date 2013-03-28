@@ -12,7 +12,7 @@
 	</select>	
 	
 	<@spring.bind "interview.timeHours" /> 
-	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+	<#list spring.status.errorMessages as error> <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div></#list>
 
 	<@spring.bind "interview.timeMinutes" /> 
-	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+	<#list spring.status.errorMessages as error> <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div></#list>

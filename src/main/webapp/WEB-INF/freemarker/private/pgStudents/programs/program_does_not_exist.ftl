@@ -38,7 +38,8 @@
 		      		<div class="content-box">
 		      			<div class="content-box-inner">
 		              
-                  <div class="section-info-bar">
+                  <div class="alert alert-info">
+          			<i class="icon-info-sign"></i> 
                     Sorry, this program is no longer available.
                   </div>
                   

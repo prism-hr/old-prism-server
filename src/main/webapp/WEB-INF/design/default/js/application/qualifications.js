@@ -424,7 +424,7 @@ function ajaxProofOfAwardUpload() {
     });
 
     // Remove any previous error messages.
-    $('#qualUploadedDocument').find('span.invalid').remove();
+    $('#qualUploadedDocument').find('div.alert-error').remove();
 
     // Functionality for uploading files via AJAX (immediately on selection).
     $.ajaxFileUpload({
@@ -436,9 +436,9 @@ function ajaxProofOfAwardUpload() {
             type : 'PROOF_OF_AWARD'
         },
         success : function(data) {
-            if ($(data).find('span.invalid').length == 0) {
+            if ($(data).find('div.alert-error').length == 0) {
                 // i.e. if there are no uploading errors, which would be
-                // indicated by the presence of a SPAN.invalid tag.
+                // indicated by the presence of a div.alert-error tag.
                 $('#qualUploadedDocument').html(data);
                 $('#qualUploadedDocument').show();
                 $('#uploadFields').addClass('uploaded');

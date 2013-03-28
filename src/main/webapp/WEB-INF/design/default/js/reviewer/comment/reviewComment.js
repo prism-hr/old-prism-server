@@ -84,29 +84,29 @@ $(document).ready(function(){
 function validateReview()
 {
 	var errors = 0;
-	$('#reviewForm span.invalid').remove();
+	$('#reviewForm div.alert-error').remove();
 	
 	if ($('#review-comment').val() == '')
 	{
-		$('#review-comment').after('<span class="invalid">You must make an entry.</span>');
+		$('#review-comment').after('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make an entry.</div>');
 		errors++;
 	}
 
 	if ($('input[name="suitableCandidateForUcl"]:checked').length == 0)
 	{
-		$('#field-issuitableucl').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-issuitableucl').append('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make a selection.</div>');
 		errors++;
 	}
 
 	if ($('input[name="suitableCandidateForProgramme"]:checked').length == 0)
 	{
-		$('#field-issuitableprog').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-issuitableprog').append('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make a selection.</div>');
 		errors++;
 	}
 	
 	if ($('input[name="willingToInterview"]:checked').length == 0)
 	{
-		$('#field-wouldinterview').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-wouldinterview').append('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make a selection.</div>');
 		errors++;
 	}
 	

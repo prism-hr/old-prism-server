@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 
-section.form-rows { margin-bottom: 10px; position: relative; }
+section.form-rows { margin-bottom: 7px; position: relative; }
 body.old-ie section.form-rows { width: 100%; }
 body.ie9 section.form-rows { margin-bottom: 0; }
 body.ie9 section.form-rows > div { margin-bottom: 10px; }
@@ -104,8 +104,8 @@ section.form-rows .field { margin-left: 235px; padding: 1px 0; }
 
 /* To align with label, increasing the width : Edited by Manish*/
 section.form-rows .hint { 
-	background: url(../../images/button_question.png) 
-	no-repeat; width: 25px; height: 20px; 
+	/*background: url(../../images/button_question.png)
+	no-repeat; width: 25px; height: 20px;  */
 	float: left; margin-left: 10px;
 	margin-top: 0.1em; 
 }

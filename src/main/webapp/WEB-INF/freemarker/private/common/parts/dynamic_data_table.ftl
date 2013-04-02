@@ -17,7 +17,7 @@
 	
 		<tr>
 			<td>
-				<input type="text" placeholder="Email Address" name="email"/>
+				<input type="email" placeholder="Email Address" name="email"/>
 			</td>
 			<td>
 				<input type="radio" name="isPrimary" value=""/>

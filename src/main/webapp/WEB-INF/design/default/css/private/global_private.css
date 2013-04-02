@@ -10,29 +10,8 @@ a { text-decoration: none; }
 a:hover { text-decoration: underline;} 
 a img { border: none; }
 body { font: 10pt/1 Arial, Helvetica, sans-serif; 
-background: #eeedec;
-  /* Old browsers */ 
-
-  background: -moz-linear-gradient(top, #eeedec 0%, #c9c9c9 100%);
-  /* FF3.6+ */ 
-
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeedec), color-stop(100%, #c9c9c9));
-  /* Chrome,Safari4+ */
-
-  background: -webkit-linear-gradient(top, #eeedec 0%, #c9c9c9 100%);
-  /* Chrome10+,Safari5.1+ */
-
-  background: -o-linear-gradient(top, #eeedec 0%, #c9c9c9 100%);
-  /* Opera 11.10+ */
-
-  background: -ms-linear-gradient(top, #eeedec 0%, #c9c9c9 100%);
-  /* IE10+ */
-
-  background: linear-gradient(to bottom, #eeedec 0%, #c9c9c9 100%);
-  /* W3C */
-
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeedec', endColorstr='#c9c9c9', GradientType=0);
-  /* IE6-9 */
+background-color: #F0F0F0;
+ 
 }
 label input { vertical-align: middle; }
 label.normal { font-weight: normal !important; }
@@ -415,7 +394,7 @@ table.data thead th.headerSortUp span.arrow { background-position: 100% -2px; }
 table.data thead th.headerSortDown span.arrow { background-position: 100% -19px; }*/
 
 
-#programme-details { margin-bottom: 10px; overflow: hidden; min-height: 115px; }
+#programme-details { margin-bottom: 10px; overflow: hidden; min-height: 125px; } 
 #programme-details .row { line-height: 20px; padding: 3px 0; }
 #programme-details .row input { padding: 2px; }
 #programme-details .row label { font-weight: bold; display: inline-block; min-width: 140px; }
@@ -1175,6 +1154,7 @@ span.count {
 /* Status box */
 .applicantinfo {
   font-size: 18px;
+  line-height: 30px;
 }
 .rsbox {
   position: absolute;
@@ -1221,15 +1201,17 @@ span.count {
 }
 .field .alert i, .alert-info i{
   margin-left: -14px;
+  font-size: 14px;
 }
 h3.group-heading-label {
   width: auto;
 }
 /* New Icons */
 section.form-rows .hint{
+  margin-top: 0px !important;
   background: none !important;
 }
-.hint:before, .button-delete:before, .button-edit:before, span.icon-status:before {
+.hint:before, .arrow:before, .button-delete:before, .button-edit:before, span.icon-status:before {
   font-family:FontAwesome;font-weight:normal;
   font-style:normal;
   text-decoration:inherit;-webkit-font-smoothing:antialiased;
@@ -1245,12 +1227,17 @@ section.form-rows .hint{
   text-decoration: none;
   text-align: center;
   width: 26px;
+  -webkit-font-smoothing: antialiased;
+  cursor:default;
 }
 .hint:before{
   cursor: default;
   content:"\f059";
   color: #9B9DA0;
-  font-size:25px;
+  font-size:28px;
+}
+.button-delete:before, .button-edit:before {
+  cursor: pointer;
 }
 .button-delete, .button-edit {
   overflow: hidden;
@@ -1320,7 +1307,7 @@ span.icon-status.review:before {
 }
 span.icon-status.rejected {
   background: #E31E26;
-  font-size: 20px;
+  font-size: 19px;
 }
 span.icon-status.rejected:before {
   content:"\f00d";
@@ -1419,3 +1406,22 @@ i {
 #refereesTable .buttons {
   margin-bottom: 0px !important;
 }
+
+#commentsection input[type="radio"],
+#commentsection input[type="checkbox"],
+#documentUploadForm input[type="radio"],
+#documentUploadForm input[type="checkbox"]{
+   margin-top: -3px;
+}
+#commentsection .field>label, #documentUploadForm .field>label {
+  margin-top: 4px;
+}
+#timeline .form-rows{
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+/* bootstrap overwrite */
+.table {
+  margin-bottom: 10px !important;
+}
+#appliList.table-bordered th, #appliList.table-bordered td { border-color: #B5B1B3;}

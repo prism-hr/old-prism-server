@@ -124,7 +124,7 @@ public class MimeMessagePreparatorTest {
 
         String plainTextMessage = parsedMessage.get(0);
 
-        Assert.assertEquals("Dear Charles, \n\nWe recently informed you that the interview of Anthony Jones in connection \nwith Application DDNBENSING09-2012-000011 for UCL EngD Biochemical Engineering \nhas taken place.\n\nYou must evaluate the feedback and select the next action. \n\n *  Evaluate Feedback: http://pgadmissions-sit.zuehlke.com/pgadmissions/progress/getPage?applicationId=DDNBENSING09-2012-000011 \n\nWe will continue to send reminders until you respond to this request. \n\nYours sincerely, \nUCL Prism \n\n University College London, Gower Street, London, WC1E 6BT\n Tel: +44 (0) 20 7679 2000\n \u00a9 UCL 1999\u20132012 \n\nIf the links do not work in your email client copy and paste them into your browser.", plainTextMessage);
+        Assert.assertEquals("Dear Charles, \n\nWe recently informed you that the interview of Anthony Jones in connection \nwith Application DDNBENSING09-2012-000011 for UCL EngD Biochemical Engineering \nhas taken place. \n\nYou must evaluate the feedback and select the next action. \n\n *  Evaluate Feedback: http://pgadmissions-sit.zuehlke.com/pgadmissions/progress/getPage?applicationId=DDNBENSING09-2012-000011 \n\nWe will continue to send reminders until you respond to this request. \n\nYours sincerely, \nUCL Prism \n\n University College London, Gower Street, London, WC1E 6BT\n Tel: +44 (0) 20 7679 2000\n \u00a9 UCL 1999\u20132012 \n\nIf the links do not work in your email client copy and paste them into your browser.", plainTextMessage);
     }
     
     @Test

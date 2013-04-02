@@ -75,12 +75,14 @@
 												<div class="row-group">
 													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 													<div class="row">
-														<span class="plain-label">Comment<em>*</em></span>
+														<label class="plain-label" for="comment">Comment<em>*</em></label>
 														<span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
 														<div class="field">
-														    <textarea  name="comment" class="max" rows="6" cols="80" maxlength='5000'>${(comment.comment?html)!}</textarea>
+														    <textarea id="comment" name="comment" class="max" rows="6" cols="80">${(comment.comment?html)!}</textarea>
 															<@spring.bind "comment.comment" /> 
-															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+															<#list spring.status.errorMessages as error> 
+                                                            <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+                                                            </#list>
 														</div>
 													</div>
 												</div>
@@ -90,7 +92,7 @@
 												</div>
 											         
 												<div class="buttons">						        		
-													<button class="blue" type="submit" value="Submit">Submit</button>						        
+													<button class="btn btn-primary" type="submit" value="Submit">Submit</button>						        
 												</div>
 											</form>
 											

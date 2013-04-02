@@ -22,7 +22,7 @@ $(document).ready(function()
 
 	$('#referenceUploadFields').on('change','#referenceDocument', function(event)
 	{	
-		$('#referenceUploadFields span.invalid').remove();
+		$('#referenceUploadFields div.alert-error').remove();
 		
 		if (this.files[0].size < 10485760)
 		{
@@ -34,7 +34,7 @@ $(document).ready(function()
 		}
 		else
 		{
-			$('#referenceUploadFields').append('<span class="invalid">Document must be at most 10MB.</span>');
+			$('#referenceUploadFields').append('<div class="alert alert-error"> <i class="icon-warning-sign"></i>Document must be at most 10MB.</div>');
 		}
 	});
 	
@@ -119,23 +119,23 @@ function referenceUpload()
 function validateReference()
 {
 	var errors = 0;
-	$('#reviewForm span.invalid').remove();
+	$('#reviewForm div.alert-error').remove();
 	
 	if ($('#comment').val() == '')
 	{
-		$('#comment').after('<span class="invalid">You must make an entry.</span>');
+		$('#comment').after('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make an entry.</div>');
 		errors++;
 	}
 
 	if ($('input[name="suitableForUCL"]:checked').length == 0)
 	{
-		$('#field-issuitableucl').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-issuitableucl').append('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make a selection.</div>');
 		errors++;
 	}
 
 	if ($('input[name="suitableForProgramme"]:checked').length == 0)
 	{
-		$('#field-issuitableprog').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-issuitableprog').append('<div class="alert alert-error"> <i class="icon-warning-sign"> You must make a selection.</div>');
 		errors++;
 	}
 	

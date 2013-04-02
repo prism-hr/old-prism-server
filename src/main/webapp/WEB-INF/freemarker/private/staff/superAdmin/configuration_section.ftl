@@ -139,7 +139,7 @@
 					<label for="reg-email" class="plain-label">Email Address<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.email'/>"></span>
 					<div class="field">	
-						<input type="text" class="full" id="reg-email" name="regUserEmail" />
+						<input type="email" class="full" id="reg-email" name="regUserEmail" />
 					</div>
 				</div><!-- .row -->
 

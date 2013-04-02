@@ -356,35 +356,3 @@ Then point your browser to:
 
 Username: prism / Password: pg@m1ss1on
 
-========================================================================
-              Doing a normal release (from now on)
-========================================================================
-
-    1) SSH in to prism@prism.ucl.ac.uk (ssh prism@prism.ucl.ac.uk)    
-
-    2) Become the root user and enter the password
-        # sudo -s
-
-    3) Make a backup of the existing database
-        # cd /root/pgadmissions-backup
-        # mkdir 2013-mm-dd (enter the current date)
-        # mysqldump -u pgadmissions -ppgadmissions pgadmissions > out.sql
-    
-    4) Become the jboss user and update the current sources, build the WAR file 
-        and run the database change scripts if necessary
-        # su -l jboss
-        # cd pgadmissions
-        # hg pull
-        # hg update
-        # mvn clean package -DskipTests -Pucl-prod
-        # mvn dbdeploy:update (runs the database change scripts)
-        # cp target/pgadmissions.war /usr/local/jboss/current/standalone/deployments
-
-    5) Check the log files if everything works like expected
-        # tail -f /usr/local/jboss/current/standalone/log/server.log
-
-========================================================================
-         Showing a Maintenace Screen when going down for longer
-========================================================================
-
-    TODO

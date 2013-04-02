@@ -1,20 +1,21 @@
 <div class="row-group">
     <div class="row">
-        <span class="plain-label">Comment<em>*</em></span>
+        <label for="refereeComment_${encRefereeId}" class="plain-label">Comment<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
         <div class="field">
             <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80" >${(refereesAdminEditDTO.comment?html)!}</textarea>
+             <@spring.bind "refereesAdminEditDTO.comment" />
+                <#list spring.status.errorMessages as error>
+                    <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+                </#list>
         </div>
     </div>
-    <@spring.bind "refereesAdminEditDTO.comment" />
-    <#list spring.status.errorMessages as error>
-        <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-    </#list>
+   
 </div>
 
 <div class="row-group">
     <div class="row">
-        <span class="plain-label">Attach Document</span>
+        <label for="referenceDocument_${encRefereeId}" class="plain-label">Attach Document</label>
         <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
         <div class="field <#if refereesAdminEditDTO.referenceDocument??>uploaded</#if>" id="psUploadFields">
             <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">
@@ -27,13 +28,14 @@
                 </#if>
             </span>
             <span id="referenceDocumentProgress" class="progress" style="display: none;"></span>
+            <@spring.bind "refereesAdminEditDTO.referenceDocument" /> 
+            <#list spring.status.errorMessages as error>
+                <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div>
+            </#list>
         </div>
     </div>
         
-    <@spring.bind "refereesAdminEditDTO.referenceDocument" /> 
-    <#list spring.status.errorMessages as error>
-        <div class="row"><div class="field"><span class="invalid">${error}</span></div></div>
-    </#list>
+    
 
 </div>
 
@@ -51,7 +53,7 @@
             <#if refereesAdminEditDTO.isSuitableForUCLSet() && !refereesAdminEditDTO.suitableForUCL> checked="checked"</#if>
             /> No</label>
             <@spring.bind "refereesAdminEditDTO.suitableForUCL" /> 
-                <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                <#list spring.status.errorMessages as error> <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error}</div></#list>
             </div>
     </div>
     <div class="row multi-line" id="field-issuitableprog">
@@ -65,7 +67,9 @@
             <#if refereesAdminEditDTO.isSuitableForProgrammeSet() && !refereesAdminEditDTO.suitableForProgramme> checked="checked"</#if>
             /> No</label> 
             <@spring.bind "refereesAdminEditDTO.suitableForProgramme" /> 
-            <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+            <#list spring.status.errorMessages as error> 
+            <div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
+            </#list>
         </div>
     </div>
     
@@ -77,7 +81,7 @@
     <!-- Add reference add button -->
     <div class="row">
         <div class="field">
-            <button id="addReferenceButton" type="button" class="blue">Add</button>
+            <button id="addReferenceButton" type="button" class="btn">Add</button>
         </div>
     </div>
     

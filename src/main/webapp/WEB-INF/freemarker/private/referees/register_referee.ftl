@@ -60,30 +60,36 @@
 		      		<p>&gt; Register Today...</p>
 		            <input id="encryptedRecordId" type="hidden" name="encryptedRecordId"  value="${(encrypter.encrypt(referee.id))!}" />
         			<#if result?? && result.getFieldError('firstName')??>                    		
-                    	<span class="invalid"><@spring.message  result.getFieldError('firstName').code /></span>                    		
+                    	<div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> <@spring.message  result.getFieldError('firstName').code /></div>                    		
                     </#if>
-		            <input id="firstName" type="text" name="firstName" value="${(referee.firstName?html)!}" readonly="readonly"/>
+		            <input id="firstName" type="text" name="firstName" value="${(referee.firstName?html)!}" readonly/>
         			<#if result?? && result.getFieldError('firstName')??>                    		
-                    	<span class="invalid"><@spring.message  result.getFieldError('firstName').code /></span>                    		
+                    	<div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> <@spring.message  result.getFieldError('firstName').code /></div>                    		
                     </#if>
-		            <input id="lastName" type="text" name="lastName" value="${(referee.lastName?html)!}" readonly="readonly"/>
+		            <input id="lastName" type="text" name="lastName" value="${(referee.lastName?html)!}" readonly/>
         			<#if result?? && result.getFieldError('lastName')??>                    		
-                    	<span class="invalid"><@spring.message  result.getFieldError('lastName').code /></span>                    		
+                    	<div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> <@spring.message  result.getFieldError('lastName').code /></div>                    		
                     </#if>
-		            <input id="email" type="text" name="email" value="${(referee.email?html)!}" readonly="readonly"/>
+		            <input id="email" type="text" name="email" value="${(referee.email?html)!}" readonly/>
         			<#if result?? && result.getFieldError('email')??>                    		
-                    	<span class="invalid"><@spring.message  result.getFieldError('email').code /></span>                    		
+                    	<div class="alert alert-error">
+                                <i class="icon-warning-sign"></i> <@spring.message  result.getFieldError('email').code /></div>                    		
                     </#if>
 		            <input id="password" type="password" name="password" value="Password""/>
         			<#if result?? && result.getFieldError('password')??>                    		
-                    	<span class="invalid"><@spring.message  result.getFieldError('password').code /></span>                    		
+                    	<div class="alert alert-error">
+                                <i class="icon-warning-sign"></i><@spring.message  result.getFieldError('password').code /></div>                    		
                     </#if>
 		            <input id="confirmPassword" type="password" name="confirmPassword" value="Password"/>
                 	<#if result?? && result.getFieldError('confirmPassword')??>                    		
-                    	<span class="invalid"><@spring.message  result.getFieldError('confirmPassword').code /></span>                    		
+                    	<div class="alert alert-error">
+                                <i class="icon-warning-sign"></i><@spring.message  result.getFieldError('confirmPassword').code /></div>                    		
                     </#if>
 		            <input id="currentReferee" type="hidden" name="currentReferee" value="${(encrypter.encrypt(referee.currentReferee.id))}"/>
-		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
+		        	<button name ="commit" type="submit" value="Submit" class="btn btn-primary">GO</button>
 		      	</form>
 		      	
 		      	<a href="pgadmissions/referee/login?activationCode=${referee.currentReferee.activationCode!}">&gt; Back</a>

@@ -23,23 +23,26 @@ $(document).ready(function() {
 function validateReference()
 {
 	var errors = 0;
-	$('#reviewForm span.invalid').remove();
+	$('#reviewForm .alert-error').remove();
+	$('#documentUploadForm .alert-error').remove();
+	$('#documentUploadForm .extrafield').remove();
+	
 	
 	if ($('#comment').val() == '')
 	{
-		$('#comment').after('<span class="invalid">You must make an entry.</span>');
+		$('#comment').parent().after('<div class="field extrafield"><div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make an entry.</div></div>');
 		errors++;
 	}
 
 	if ($('input[name="suitableForUCL"]:checked').length == 0)
 	{
-		$('#field-issuitableucl').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-issuitableucl').append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make a selection.</div>');
 		errors++;
 	}
 
 	if ($('input[name="suitableForProgramme"]:checked').length == 0)
 	{
-		$('#field-issuitableprog').append('<span class="invalid">You must make a selection.</span>');
+		$('#field-issuitableprog').append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> You must make a selection.</div>');
 		errors++;
 	}
 	

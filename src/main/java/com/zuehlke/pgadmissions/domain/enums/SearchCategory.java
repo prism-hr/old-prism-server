@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 public enum SearchCategory {
 
     APPLICATION_NUMBER("Application number", CategoryType.TEXT), APPLICANT_NAME("Applicant", CategoryType.TEXT), PROGRAMME_NAME("Programme", CategoryType.TEXT), APPLICATION_STATUS(
-            "Status", CategoryType.TEXT), SUBMISSION_DATE("Date", CategoryType.DATE), LAST_EDITED_DATE("Date", CategoryType.DATE);
+            "Status", CategoryType.TEXT), SUBMISSION_DATE("Submission date", CategoryType.DATE), LAST_EDITED_DATE("Last edited date", CategoryType.DATE);
 
     private final String displayValue;
 
@@ -21,6 +21,10 @@ public enum SearchCategory {
     public String displayValue() {
         return displayValue;
     }
+    
+    public CategoryType getType() {
+        return type;
+    }
 
     public List<SearchPredicate> getAvailablePredicates() {
         if (type == CategoryType.TEXT) {
@@ -31,7 +35,7 @@ public enum SearchCategory {
         throw new RuntimeException("Unknown predicate for following category: " + displayValue);
     }
 
-    private static enum CategoryType {
+    public static enum CategoryType {
         TEXT, DATE
     }
 }

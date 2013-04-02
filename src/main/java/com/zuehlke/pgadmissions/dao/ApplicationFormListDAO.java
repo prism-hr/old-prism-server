@@ -20,6 +20,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -37,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 @Repository
 public class ApplicationFormListDAO {
 
-    public static final SimpleDateFormat USER_DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy");
+    public static final  DateTimeFormatter USER_DATE_FORMAT = DateTimeFormat.forPattern("dd MMM yyyy");
 
     private final SessionFactory sessionFactory;
 
@@ -218,8 +220,8 @@ public class ApplicationFormListDAO {
 
     private Date convertToSqlDate(String term) {
         try {
-            return USER_DATE_FORMAT.parse(term);
-        } catch (ParseException e) {
+            return USER_DATE_FORMAT.parseDateTime(term).toDate();
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }

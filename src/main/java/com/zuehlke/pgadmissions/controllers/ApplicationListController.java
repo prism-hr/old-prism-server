@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -30,6 +31,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping(value = { "", "applications" })
+@SessionAttributes("applicationSearchDTO")
 public class ApplicationListController {
 
     private static final String APPLICATION_LIST_PAGE_VIEW_NAME = "private/my_applications_page";
@@ -58,16 +60,28 @@ public class ApplicationListController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getApplicationListPage(Model model, HttpSession session) {
+    public String getApplicationListPage(boolean reloadFilters, Model model, HttpSession session) {
         Object alertDefinition = session.getAttribute("alertDefinition");
         if (alertDefinition != null) {
             model.addAttribute("alertDefinition", alertDefinition);
             session.removeAttribute("alertDefinition");
         }
 
-        List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
+        List<ApplicationsFilter> applicationsFilters;
+        ApplicationSearchDTO applicationSearchDTO = (ApplicationSearchDTO) model.asMap().get("applicationSearchDTO");
+        if (applicationSearchDTO.getFilters() == null || reloadFilters) {
+            // filters not initialized in session or filter reload requested
+            applicationsFilters = getUser().getApplicationsFilters();
+        } else {
+            applicationsFilters = applicationSearchDTO.getFilters();
+        }
         model.addAttribute("filters", applicationsFilters);
         return APPLICATION_LIST_PAGE_VIEW_NAME;
+    }
+    
+    @ModelAttribute("applicationSearchDTO")
+    public ApplicationSearchDTO getApplicationSearchDTO(){
+        return new ApplicationSearchDTO();
     }
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)

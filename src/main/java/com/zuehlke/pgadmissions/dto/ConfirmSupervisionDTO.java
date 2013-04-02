@@ -2,20 +2,26 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+
 public class ConfirmSupervisionDTO {
 
     private Boolean confirmedSupervision;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
     private String declinedSupervisionReason;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     private String projectTitle;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
     private String projectAbstract;
 
     private Date recommendedStartDate;
 
     private Boolean recommendedConditionsAvailable;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
     private String recommendedConditions;
 
     public Boolean getConfirmedSupervision() {

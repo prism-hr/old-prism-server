@@ -10,6 +10,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPROVAL_COMMENT")
 public class ApprovalComment extends Comment {
@@ -19,9 +20,11 @@ public class ApprovalComment extends Comment {
     @Column(name = "project_description_available")
     private Boolean projectDescriptionAvailable;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "project_title")
     private String projectTitle;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
     @Column(name = "project_abstract")
     private String projectAbstract;
 
@@ -32,6 +35,7 @@ public class ApprovalComment extends Comment {
     @Column(name = "recommended_conditions_available")
     private Boolean recommendedConditionsAvailable;
 
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
     @Column(name = "recommended_conditions")
     private String recommendedConditions;
 

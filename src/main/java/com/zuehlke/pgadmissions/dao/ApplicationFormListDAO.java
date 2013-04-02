@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
+import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
@@ -121,33 +122,40 @@ public class ApplicationFormListDAO {
 
     private Criteria setSearchCriteria(final SearchCategory searchCategory, final SearchPredicate searchPredicate, final String term, final Criteria criteria) {
         if (searchCategory != null && StringUtils.isNotBlank(term)) {
-            switch (searchCategory) {
-            case APPLICANT_NAME:
-                criteria.add(Restrictions.disjunction().add(Restrictions.ilike("a.firstName", term, MatchMode.ANYWHERE))
-                        .add(Restrictions.ilike("a.lastName", term, MatchMode.ANYWHERE)));
-                break;
-            case APPLICATION_NUMBER:
-                criteria.add(Restrictions.ilike("applicationNumber", term, MatchMode.ANYWHERE));
-                break;
-            case PROGRAMME_NAME:
-                criteria.add(Restrictions.disjunction().add(Restrictions.ilike("p.title", term, MatchMode.ANYWHERE))
-                        .add(Restrictions.ilike("p.code", term, MatchMode.ANYWHERE)));
-                break;
-            case APPLICATION_STATUS:
-                ApplicationFormStatus status = ApplicationFormStatus.convert(term);
-                if (status != null) {
-                    criteria.add(Restrictions.eq("status", status));
-                } else {
-                    return null;
+            Criterion newCriterion = null;
+            if (searchCategory.getType() == CategoryType.TEXT) {
+                switch (searchCategory) {
+                case APPLICANT_NAME:
+                    newCriterion = Restrictions.disjunction().add(Restrictions.ilike("a.firstName", term, MatchMode.ANYWHERE))
+                            .add(Restrictions.ilike("a.lastName", term, MatchMode.ANYWHERE));
+                    break;
+                case APPLICATION_NUMBER:
+                    newCriterion = Restrictions.ilike("applicationNumber", term, MatchMode.ANYWHERE);
+                    break;
+                case PROGRAMME_NAME:
+                    newCriterion = Restrictions.disjunction().add(Restrictions.ilike("p.title", term, MatchMode.ANYWHERE))
+                            .add(Restrictions.ilike("p.code", term, MatchMode.ANYWHERE));
+                    break;
+                case APPLICATION_STATUS:
+                    ApplicationFormStatus status = ApplicationFormStatus.convert(term);
+                    if (status != null) {
+                        newCriterion = Restrictions.eq("status", status);
+                    }
+                    break;
+                default:
                 }
-                break;
-            case SUBMISSION_DATE:
-                getCriteriaForDate(searchPredicate, term, criteria, "submittedDate");
-                break;
-            case LAST_EDITED_DATE:
-                getCriteriaForDate(searchPredicate, term, criteria, "lastUpdated");
-                break;
-            default:
+                if (searchPredicate == SearchPredicate.NOT_CONTAINING) {
+                    newCriterion = Restrictions.not(newCriterion);
+                }
+            } else if (searchCategory.getType() == CategoryType.DATE) {
+                if (searchCategory == SearchCategory.SUBMISSION_DATE) {
+                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "submittedDate");
+                } else if (searchCategory == SearchCategory.LAST_EDITED_DATE) {
+                    newCriterion = createCriteriaForDate(searchPredicate, term, criteria, "lastUpdated");
+                }
+            }
+            if (newCriterion != null) {
+                criteria.add(newCriterion);
             }
         }
         return criteria;
@@ -183,31 +191,36 @@ public class ApplicationFormListDAO {
         return criteria;
     }
 
-    private void getCriteriaForDate(final SearchPredicate searchPredicate, final String term, final Criteria criteria, final String field) {
+    private Criterion createCriteriaForDate(final SearchPredicate searchPredicate, final String term, final Criteria criteria, final String field) {
+        Criterion newCriterion = null;
         Date submissionDate = convertToSqlDate(term);
+        if(submissionDate == null){
+            return null;
+        }
         switch (searchPredicate) {
         case FROM_DATE:
-            criteria.add(Restrictions.ge(field, submissionDate));
+            newCriterion = Restrictions.ge(field, submissionDate);
             break;
         case ON_DATE:
             Conjunction conjunction = Restrictions.conjunction();
             conjunction.add(Restrictions.ge(field, submissionDate));
             conjunction.add(Restrictions.lt(field, new Date(submissionDate.getTime() + TimeUnit.DAYS.toMillis(1))));
-            criteria.add(conjunction);
+            newCriterion = conjunction;
             break;
         case TO_DATE:
-            criteria.add(Restrictions.lt(field, new Date(submissionDate.getTime() + TimeUnit.DAYS.toMillis(1))));
+            newCriterion = Restrictions.lt(field, new Date(submissionDate.getTime() + TimeUnit.DAYS.toMillis(1)));
             break;
         default:
             throw new RuntimeException("Unexpected predicate for last edited date: " + searchPredicate.displayValue());
         }
+        return newCriterion;
     }
 
     private Date convertToSqlDate(String term) {
         try {
             return USER_DATE_FORMAT.parse(term);
         } catch (ParseException e) {
-            throw new RuntimeException("Unexpected filter date format: " + term);
+            return null;
         }
     }
 

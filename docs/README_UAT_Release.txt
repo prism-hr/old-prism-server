@@ -8,6 +8,37 @@
     	Release Instructions for Zuhlke Internal UTA Release
 
 ========================================================================
+                      Setup on your local machine
+========================================================================
+
+Make sure you've got that in your .m2/settings.xml
+
+<settings>
+    <servers>
+    	...
+        <server>
+			<id>C12545-2</id>
+			<username>pgadmin</username>
+			<password>pg@m1ss1on</password>
+		</server>
+		<server>
+			<id>repo.zuehlke.com</id>
+			<username>!!!!!YOUR MERCURIAL USERNAME!!!!!</username>
+			<password>!!!!!YOUR MERCURIAL PASSWORD!!!!!</password>
+		</server>
+    </servers>
+    
+    <proxies>
+        <proxy>
+            <active>true</active>
+            <protocol>http</protocol>
+            <host>proxy.zuehlke.com</host>
+            <port>8080</port>
+            <nonProxyHosts>localhost</nonProxyHosts>
+        </proxy>
+    </proxies>
+
+========================================================================
                           Release Procedure
 ========================================================================
 

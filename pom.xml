@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -7,7 +6,7 @@
     <groupId>com.zuehlke</groupId>
     <artifactId>pgadmissions</artifactId>
     <packaging>war</packaging>
-    <version>2.2.6-SNAPSHOT</version>
+    <version>2.2.6</version>
 
     <properties>
         <spring.version>3.1.0.RELEASE</spring.version>
@@ -457,12 +456,9 @@
                         <id>default-cli</id>
                         <configuration>
                             <tasks>
-                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root"
-                                    password="root" src="src/sql/setup/dropdatabase.sql" />
-                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root"
-                                    password="root" src="src/sql/setup/createdatabase.sql" />
-                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}/pgadmissions"
-                                    userid="pgadmissions" password="pgadmissions" src="src/sql/setup/createSchemaVersionTable.mysql.sql" />
+                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root" password="root" src="src/sql/setup/dropdatabase.sql" />
+                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}" userid="root" password="root" src="src/sql/setup/createdatabase.sql" />
+                                <sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}/pgadmissions" userid="pgadmissions" password="pgadmissions" src="src/sql/setup/createSchemaVersionTable.mysql.sql" />
                             </tasks>
                         </configuration>
                         <goals>

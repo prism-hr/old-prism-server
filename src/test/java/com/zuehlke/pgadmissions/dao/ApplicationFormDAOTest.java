@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
@@ -409,7 +410,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 
         Date now = Calendar.getInstance().getTime();
-        Date oneWeekAgo = DateUtils.addWeeks(now, -1);
+        Date oneWeekAgo = DateUtils.addMinutes(now, -((int) TimeUnit.MINUTES.convert(7, TimeUnit.DAYS)));
         Date oneWeekAgoAndFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, -5);
         Date oneMonthAgo = DateUtils.addMonths(now, -1);
         ApplicationForm applicationForm = new ApplicationFormBuilder()
@@ -612,7 +613,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
 
         Date now = Calendar.getInstance().getTime();
-        Date oneWeekAgo = DateUtils.addWeeks(now, -1);
+        Date oneWeekAgo = DateUtils.addMinutes(now, -((int) TimeUnit.MINUTES.convert(7, TimeUnit.DAYS)));
         Date oneWeekAgoAndFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, -5);
         Date oneMonthAgo = DateUtils.addMonths(now, -1);
         ApplicationForm applicationForm = new ApplicationFormBuilder()

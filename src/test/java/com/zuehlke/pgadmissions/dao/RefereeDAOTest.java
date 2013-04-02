@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
@@ -315,7 +316,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
-		Date oneWeekAgo = DateUtils.addDays(now,-7);
+		Date oneWeekAgo = DateUtils.addMinutes(now, -((int) TimeUnit.MINUTES.convert(7, TimeUnit.DAYS)));
 		Date oneWeekPlusFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, -5);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().user(user).application(application).addressCountry(countriesDAO.getCountryById(1)).address1("sdfsdf").lastNotified(oneWeekPlusFiveMinAgo)

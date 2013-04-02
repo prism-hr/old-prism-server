@@ -46,10 +46,11 @@ public class ApplicationListControllerTest {
     private ApplicationsFiltersPropertyEditor filtersPropertyEditorMock;
 
     @Test
-    public void shouldReturnViewForApplicationListPage() {
+    public void shouldReturnViewForApplicationListPageWhenSessionFiltersNotInitialized() {
 
         // GIVEN
         Model model = new ExtendedModelMap();
+        model.addAttribute("applicationSearchDTO", new ApplicationSearchDTO());
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
@@ -60,11 +61,58 @@ public class ApplicationListControllerTest {
 
         // WHEN
         EasyMock.replay(userServiceMock);
-        assertEquals("private/my_applications_page", controller.getApplicationListPage(model, httpSession));
+        assertEquals("private/my_applications_page", controller.getApplicationListPage(false, model, httpSession));
         EasyMock.verify(userServiceMock);
 
         // THEN
         assertSame(filters, model.asMap().get("filters"));
+        assertSame(alert, model.asMap().get("alertDefinition"));
+    }
+
+    @Test
+    public void shouldReturnViewForApplicationListPageWhenFilterReloadRequested() {
+
+        // GIVEN
+        Model model = new ExtendedModelMap();
+        ApplicationSearchDTO sessionDTO = new ApplicationSearchDTO();
+        sessionDTO.setFilters(Arrays.asList(new ApplicationsFilter()));
+        model.addAttribute("applicationSearchDTO", sessionDTO);
+        HttpSession httpSession = new MockHttpSession();
+        AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
+        httpSession.setAttribute("alertDefinition", alert);
+        ArrayList<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
+        user.setApplicationsFilters(filters);
+
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+
+        // WHEN
+        EasyMock.replay(userServiceMock);
+        assertEquals("private/my_applications_page", controller.getApplicationListPage(true, model, httpSession));
+        EasyMock.verify(userServiceMock);
+
+        // THEN
+        assertSame(filters, model.asMap().get("filters"));
+        assertSame(alert, model.asMap().get("alertDefinition"));
+    }
+
+    @Test
+    public void shouldReturnViewForApplicationListPageWhenSessionFiltersInitialized() {
+
+        // GIVEN
+        Model model = new ExtendedModelMap();
+        ApplicationSearchDTO sessionDTO = new ApplicationSearchDTO();
+        List<ApplicationsFilter> sessionfFilters = Arrays.asList(new ApplicationsFilter());
+        sessionDTO.setFilters(sessionfFilters);
+        model.addAttribute("applicationSearchDTO", sessionDTO);
+        HttpSession httpSession = new MockHttpSession();
+        AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
+        httpSession.setAttribute("alertDefinition", alert);
+
+        // WHEN
+        assertEquals("private/my_applications_page", controller.getApplicationListPage(false, model, httpSession));
+
+        // THEN
+        assertSame(sessionfFilters, model.asMap().get("filters"));
         assertSame(alert, model.asMap().get("alertDefinition"));
     }
 

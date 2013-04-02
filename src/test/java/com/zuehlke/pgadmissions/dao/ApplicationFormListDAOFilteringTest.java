@@ -8,6 +8,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -314,7 +315,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     }
 
     private String dateToString(Date date) {
-        String formattedDate = ApplicationFormListDAO.USER_DATE_FORMAT.format(date);
+        String formattedDate = ApplicationFormListDAO.USER_DATE_FORMAT.print(new DateTime(date));
         return formattedDate;
     }
 

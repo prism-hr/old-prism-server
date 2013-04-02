@@ -137,12 +137,6 @@ function increasePageCount() {
     $('#block-index').val(blockIndex.toString());
 }
 
-function decreasePageCount() {
-    var blockIndex = parseInt($('#block-index').val());
-    blockIndex -= 1;
-    $('#block-index').val(blockIndex.toString());
-}
-
 function populateApplicationList() {
     
     loading = true;
@@ -189,7 +183,6 @@ function populateApplicationList() {
 }
 
 function sortList(column) {
-    $('#block-index').val("1");
     oldValue = $('#sort-column').val();
     newValue = column.id;
 

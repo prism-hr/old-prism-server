@@ -146,6 +146,8 @@
                                 <button class="btn btn-primary" type="button" id="search-go">Go</button>
                                 <button class="btn" type="button" id="search-reset">Clear</button>
                                 <button class="btn" id="storeFiltersBtn">Store</button>
+                                
+                                <a class="btn" href="<@spring.url '/applications?reloadFilters=true'/>">Load</a>
                             </div>
 
                         </div>

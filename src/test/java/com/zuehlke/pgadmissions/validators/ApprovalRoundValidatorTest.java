@@ -164,6 +164,58 @@ public class ApprovalRoundValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("recommendedConditionsAvailable").getCode());
     }
+    
+    @Test
+    public void shouldRejectIfProjectTitleIsLongerThan255Chars() {
+        StringBuilder longString = new StringBuilder();
+        for (int i = 0; i < 300; i++) {
+            longString.append("a");
+        }
+        approvalRound.setProjectTitle(longString.toString());
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 255 characters are allowed.", mappingResult.getFieldError("projectTitle").getDefaultMessage());
+    }
+    
+    @Test
+    public void shouldRejectIfMissingQualificationExplanationIsLongerThan500Chars() {
+        StringBuilder longString = new StringBuilder();
+        for (int i = 0; i < 520; i++) {
+            longString.append("a");
+        }
+        approvalRound.setMissingQualificationExplanation(longString.toString());
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 500 characters are allowed.", mappingResult.getFieldError("missingQualificationExplanation").getDefaultMessage());
+    }
+    
+    @Test
+    public void shouldRejectIfProjectAbstractIsLongerThan2000Chars() {
+        StringBuilder longString = new StringBuilder();
+        for (int i = 0; i < 2010; i++) {
+            longString.append("a");
+        }
+        approvalRound.setProjectAbstract(longString.toString());
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 2000 characters are allowed.", mappingResult.getFieldError("projectAbstract").getDefaultMessage());
+    }
+    
+    @Test
+    public void shouldRejectIfrecommendedConditionsIsLongerThan1000Chars() {
+        StringBuilder longString = new StringBuilder();
+        for (int i = 0; i < 1010; i++) {
+            longString.append("a");
+        }
+        approvalRound.setRecommendedConditions(longString.toString());
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(approvalRound, "approvalRound");
+        approvalRoundValidator.validate(approvalRound, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("A maximum of 1000 characters are allowed.", mappingResult.getFieldError("recommendedConditions").getDefaultMessage());
+    }    
 
     @Before
     public void setup() {

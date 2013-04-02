@@ -7,7 +7,7 @@
 <hr />
 
 <div class="buttons">
-    <button class="blue" type="button" id="applyQualificationsAndReferences">Submit</button>
+    <button class="btn btn-primary" type="button" id="applyQualificationsAndReferences">Submit</button>
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/portico_validation.js'/>"></script>

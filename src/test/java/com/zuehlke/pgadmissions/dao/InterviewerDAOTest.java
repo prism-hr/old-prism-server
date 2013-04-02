@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
@@ -279,8 +280,8 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 	public void shouldReturnInterviewerReminded7Plus5minDaysAgo() {
 
 		Date now = new Date();
-		Date sevenDaysAgo = DateUtils.addDays(now, -7);
-		Date twoWeeksAgo = DateUtils.addDays(now, -14);
+		Date sevenDaysAgo = DateUtils.addMinutes(now, -((int) TimeUnit.MINUTES.convert(7, TimeUnit.DAYS)));
+		Date twoWeeksAgo = DateUtils.addMinutes(now, -((int) TimeUnit.MINUTES.convert(14, TimeUnit.DAYS)));
 		Date sevenDaysPlus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, -5);			
 			
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)

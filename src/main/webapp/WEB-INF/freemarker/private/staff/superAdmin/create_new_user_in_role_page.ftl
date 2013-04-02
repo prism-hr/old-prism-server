@@ -63,7 +63,7 @@
 	
 								<div class="row-group">
 								
-									<div class="row programme">
+									<div class="row">
 										<label for="programs" class="plain-label">Programme<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.programme'/>"></span>
 										<div class="field">
@@ -119,7 +119,7 @@
 										<label for="email" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Email<em>*</em></label>
 										<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
 										<div class="field">
-											<input class="max" type="text" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
+											<input class="max" type="email" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.email?html)!}" name="email" /></#if>    
 											<@spring.bind "userDTO.email" /> 
 											<#list spring.status.errorMessages as error>

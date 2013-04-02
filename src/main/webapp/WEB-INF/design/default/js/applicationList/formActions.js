@@ -150,7 +150,7 @@ function populateApplicationList() {
         blockCount : $('#block-index').val()
     };
 
-    $('#search-box span.invalid').remove();
+    $('#search-box div.alert-error').remove();
 
     $('div.content-box-inner').append('<div class="ajax" />');
     

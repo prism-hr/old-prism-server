@@ -43,7 +43,7 @@
 		        	<label class="plain-label">Supervisor Email<em>*</em></label>
 		            <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
 		            <div class="field">
-		             	<input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
+		             	<input class="full" type="email" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
 		            </div>
 		        </div>
 				
@@ -54,6 +54,6 @@
 		            <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
 				</div>			
 				
-				<button class="blue" id="addSupervisor" type="button" name="add">Submit</button>
+				<button class="btn btn-primary" id="addSupervisor" type="button" name="add">Submit</button>
 
 

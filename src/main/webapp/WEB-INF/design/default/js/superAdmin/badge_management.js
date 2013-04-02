@@ -20,8 +20,8 @@ $(document).ready(function() {
             },
             success: function(data) {
             	if (/^<form/i.test(data)) {
-            		$(".invalid").remove();
-            		$('#html').val(data).autosize();
+            		$(".alert-error").remove();
+            		$('#html').removeAttr('readonly').val(data).autosize();
             	} else {
             		$('#badgeSection').html(data);
             	}
@@ -30,6 +30,7 @@ $(document).ready(function() {
     			initialiseAutocomplete();
             },
             completed: function() {
+				
             }
         });
         

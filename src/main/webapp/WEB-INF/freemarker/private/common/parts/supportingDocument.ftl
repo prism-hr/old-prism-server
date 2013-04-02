@@ -22,5 +22,5 @@
 
 <@spring.bind "document.*" /> 
 <#list spring.status.errorMessages as error>
-<span class="invalid">${error}</span>
+<div class="alert alert-error"> <i class="icon-warning-sign"></i> ${error} </div>
 </#list> 	 

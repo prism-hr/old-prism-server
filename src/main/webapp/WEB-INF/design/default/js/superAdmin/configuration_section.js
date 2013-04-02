@@ -18,13 +18,13 @@ $(document).ready(function()
 	{
 		
 		var errors = false;
-		$('#section-registryusers span.invalid').remove();
+		$('#section-registryusers div.alert-error').remove();
 		
 		// Allow a maximum of three users.
 		var user_count = $('#registryUsers .scroll tr').length;
 		if (user_count >= 3)
 		{
-			$('#reg-email').after('<span class="invalid">Only three registry users can be specified.</span>');
+			$('#reg-email').after('<div class="alert alert-error"> <i class="icon-warning-sign"> Only three registry users can be specified.</div>');
 			return;
 		}
 		

@@ -74,7 +74,8 @@
             <div>
               <form>
               
-                <div id="add-info-bar-div" class="section-info-bar">
+                <div id="add-info-bar-div" class="alert alert-info">
+          		  <i class="icon-info-sign"></i>
                   Assign reviewers to the application here. You may also create new reviewers.
                 </div>  
           
@@ -87,7 +88,7 @@
                 </div>
                 
                  <div class="buttons">
-                  <button class="blue" type="button" id="moveToReviewBtn">Submit</button>
+                  <button class="btn btn-primary" type="button" id="moveToReviewBtn">Submit</button>
                 </div>
                 <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
     

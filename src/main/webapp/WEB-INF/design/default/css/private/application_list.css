@@ -4,6 +4,7 @@
 table#appliList thead th {
 	background: rgb(188,188,188);
 	cursor: pointer; 
+	padding:12px 2px;
 }
 table#appliList thead th:nth-child(5) {
 	cursor: auto;

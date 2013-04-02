@@ -87,7 +87,7 @@
 	<label class="plain-label" for="html">Badge HTML</label>
 	<span class="hint" data-desc="<@spring.message 'badge.html'/>"></span>
 	<div class="field">
-		<textarea readonly="readonly" id="html" rows="10" cols="70"></textarea>
+		<textarea readonly class="max" id="html" rows="10" cols="70"></textarea>
 	</div>
 </div>
 

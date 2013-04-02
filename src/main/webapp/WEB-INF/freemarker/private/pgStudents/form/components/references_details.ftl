@@ -22,11 +22,7 @@
     <tbody>
     <#list applicationForm.referees as existingReferee>
     <tr>
-      <td>${(existingReferee.firstname?html)!}
-        ${(existingReferee.lastname?html)!}
-        (
-        ${(existingReferee.email?html)!}
-        )</td>
+      <td>${(existingReferee.firstname?html)!} ${(existingReferee.lastname?html)!} (${(existingReferee.email?html)!})</td>
       <#assign encExistingRefereeId = encrypter.encrypt(existingReferee.id) />
       <td><#if existingReferee.editable> <a name="editRefereeLink" data-desc="Edit" id="referee_${encExistingRefereeId}" class="button-edit button-hint">edit</a> <#elseif existingReferee.declined || existingReferee.hasProvidedReference()> <a name="editRefereeLink" id="referee_${encExistingRefereeId}" class="button-responded" data-desc="Responded">Responded</a> <#else> <a name="editRefereeLink" data-desc="Show" id="referee_${encExistingRefereeId}" class="button-show button-hint">show</a> </#if>
         <#if applicationForm.isInState('UNSUBMITTED')> <a name="deleteRefereeButton" data-desc="Delete" id="referee_${encExistingRefereeId}" class="button-delete button-hint">delete</a> </#if> </td>
@@ -125,10 +121,10 @@
         </#if>
         >Position<em>*</em></label>
       <span class="hint" data-desc="<@spring.message 'referee.position'/>"></span>
-      <div class="field"> <#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+      <div class="field"> 
+        <#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
         <input type="text" class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}"/>
         <#else>
-        <div class="field">
           <input type="text" readonly class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}" disabled="disabled"/>
           </#if>
           <@spring.bind "referee.jobTitle" />
@@ -366,16 +362,18 @@
     <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
     <@spring.bind "referee.acceptedTerms" />
     <#if spring.status.errorMessages?size &gt; 0>
-    <div class="row-group terms-box invalid" >
-    <#else>
-    <div class="row-group terms-box" > </#if>
-      <div class="row"> <span class="terms-label<#if applicationForm.referees?size &gt;= 3> grey-label</#if>"> Confirm that the information that you have provided in this section is true 
+    <div class="alert alert-error tac" >
+      <#else>
+        <div class="alert tac" >
+      </#if>
+      <div class="row"> 
+      <label for="acceptTermsRDCB" class="terms-label <#if applicationForm.referees?size &gt;= 3> grey-label</#if>"> Confirm that the information that you have provided in this section is true 
         and correct. Failure to provide true and correct information may result in a 
         subsequent offer of study being withdrawn. </span>
-        <div class="terms-field">
-          <input type="text" type="checkbox" name="acceptTermsRDCB" id="acceptTermsRDCB"
-		  <#if applicationForm.referees?size &gt; 3> disabled="disabled"</#if> /> </div>
-        <input type="text" type="hidden" name="acceptTermsRDValue" id="acceptTermsRDValue"/>
+
+          <input type="checkbox" name="acceptTermsRDCB" id="acceptTermsRDCB"
+		  <#if applicationForm.referees?size &gt; 3> disabled="disabled"</#if> />
+        <input type="hidden" name="acceptTermsRDValue" id="acceptTermsRDValue"/>
       </div>
     </div>
     </#if>

@@ -29,7 +29,7 @@
 #registration-box legend {	border-bottom: none; color: #58585A; margin-bottom: 6px;}
 
 /* Changed - Manish*/
-#registration-box a {color: white; font-size: 8.5pt; margin: 10px; margin-top: 0px; float:left;}
+
 #registration-box form span.invalid { 
 	color:white; padding-bottom:10px; padding-top:10px;
 	background: url("../../images/button_exclaim.png") no-repeat scroll 0 0.5em transparent;

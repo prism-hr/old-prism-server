@@ -333,7 +333,7 @@ function disableAddingSupervisorsToList() {
     $("#lbl_newSupervisorEmail").addClass("grey-label");
     $("#lbl_newSupervisorEmail").html("Email");
     
-    $("#createsupervisorsection").find('span.invalid').remove(); // remove all previous form errors
+    $("#createsupervisorsection").find('div.alert-error').remove(); // remove all previous form errors
     
     $("#createSupervisor").hide();
 }

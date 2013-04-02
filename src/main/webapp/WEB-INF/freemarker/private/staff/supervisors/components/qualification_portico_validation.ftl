@@ -33,11 +33,13 @@
             </div>
         <#else>
                 <#if sendToPorticoData.emptyQualificationsExplanation??>
-                    <div class="section-info-bar" style="color:blue">
+                    <div class="alert alert-info">
+          			<i class="icon-info-sign"></i>
                         Explain why no transcripts have been not selected to submit for offer processing.
                     </div>
                 <#else>
-                    <div class="section-info-bar">            
+                    <div class="alert alert-info">
+          				<i class="icon-info-sign"></i>           
                         <#if anyQualificationEnabled>
                             Select a maximum of two qualification transcripts to submit for offer processing.
                         <#else>
@@ -50,7 +52,8 @@
         
         <div class="row-group" id="explanationArea" style="display:none">
             <div class="row">
-                <span class="plain-label">Explanation<em>*</em></span> <span class="hint" data-desc="Explain why you wish to submit this application for offer processing without any accompanying transcript."></span>
+                <label for="explanationText" class="plain-label">Explanation<em>*</em></label> 
+                <span class="hint" data-desc="Explain why you wish to submit this application for offer processing without any accompanying transcript."></span>
                 <div class="field">
                     <textarea cols="80" rows="5" class="max" id="explanationText" name="explanationText">${(sendToPorticoData.emptyQualificationsExplanation?html)!""}</textarea>
                 </div>
@@ -70,9 +73,9 @@
         </div>
         </#if>
         <div class="buttons">
-            <button name="qualificationClearButton" type="button" id="qualificationClearButton" class="clear">Clear</button>
-            <button type="button" id="qualificationCloseButton" class="blue">Close</button>
-            <button type="button" id="qualificationSaveButton" class="blue">Save</button>
+            <button name="qualificationClearButton" type="button" id="qualificationClearButton" class="btn">Clear</button>
+            <button type="button" id="qualificationCloseButton" class="btn">Close</button>
+            <button type="button" id="qualificationSaveButton" class="btn btn-primary">Save</button>
         </div> 
 </div>
 

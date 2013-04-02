@@ -64,7 +64,7 @@
                 <div class="row">
                     <label id="email-lbl" class="plain-label" for="email">Email<em>*</em></label> <span class="hint" data-desc="<@spring.message 'myaccount.email'/>"></span>
                     <div class="field">
-                        <input class="full" type="text" id="email" value="${(updatedUser.email?html)!}" />
+                        <input class="full" type="email" id="email" value="${(updatedUser.email?html)!}" />
                         <@spring.bind "updatedUser.email" /> <#list spring.status.errorMessages as error>
                             <div class="alert alert-error">
                                 <i class="icon-warning-sign"></i> ${error}

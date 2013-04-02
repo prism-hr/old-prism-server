@@ -1,9 +1,10 @@
 <#import "/spring.ftl" as spring />
-<table class="data" border="0">
+<table class="data table table-condensed" border="0">
 	<colgroup>
-		<col style="width: 26px;" />
-		<col style="width: 472px;" />
+		<col style="width: 32px;" />
+		<col/>
 		<col style="width: 240px;" />
+        <col style="width: 88px;" />
 	</colgroup>
 	<thead>
 		<tr>
@@ -17,11 +18,12 @@
 		<tr>
 			<td colspan="4" class="scrollparent">
 				<div class="scroll">
-					<table>
+					<table class="table-hover table-hover table-striped">
 						<colgroup>
 							<col style="width: 20px;" />
-							<col style="width: 472px;" />
+							<col/>
 							<col style="width: 240px;" />
+                            <col style="width: 66px;" />
 						</colgroup>
 						<tbody>
 							<#list usersInRoles as userInRole>

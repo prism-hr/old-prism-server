@@ -31,6 +31,8 @@
         <intercept-url pattern="/reviewer/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER','APPROVER', 'SUPERADMINISTRATOR')" />
         <intercept-url pattern="/**" access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'INTERVIEWER', 'REFEREE', 'SUPERVISOR')" />
         <intercept-url pattern="/dwr/**" access="permitAll" />
+        
+        <session-management session-fixation-protection="migrateSession" />
     </http>
 
     <authentication-manager>

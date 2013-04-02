@@ -374,7 +374,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("foobar").build();
+        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("foobar").build();
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, Arrays.asList(filter), null, null, 1);
 
         assertEquals(0, applications.size());

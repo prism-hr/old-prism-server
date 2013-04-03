@@ -16,6 +16,8 @@
                 <prop key="javax.persistence.validation.mode">NONE</prop>
                 <prop key="hibernate.transaction.jta.platform">org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform</prop>
                 <prop key="hibernate.transaction.factory_class">org.hibernate.engine.transaction.internal.jta.CMTTransactionFactory</prop>
+                <prop key="hibernate.search.default.directory_provider">filesystem</prop>
+                <prop key="hibernate.search.default.indexBase">${hibernate.search.default.indexBase}</prop>
             </props>
         </property>
     </bean>
@@ -36,5 +38,5 @@
     <bean id="defaultTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
         <property name="transactionManager" ref="transactionManager" />
     </bean>
-
+    
 </beans>

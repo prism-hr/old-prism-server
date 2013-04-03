@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+    <!--Application submitted -->
+    <bean id="applicantSubmissionNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
+        <constructor-arg index="0" ref="sessionFactoryMail" />
+        <constructor-arg index="1" ref="mailApplicationDAO" />
+        <constructor-arg index="2" ref="applicantMailSender" />
+        <constructor-arg index="3" value="APPLICANT_SUBMISSION_NOTIFICATION" />
+        <constructor-arg index="4" value="VALIDATION" />
+        <constructor-arg index="5" value="validation.submission.applicant" />
+        <constructor-arg index="6" value="private/pgStudents/mail/application_submit_confirmation.ftl" />
+    </bean>
+
+    <bean id="applicantSubmissionNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="delay" value="${delay.11}" />
+        <property name="period" value="${email.schedule.period.milliseconds}" />
+        <property name="timerTask" ref="applicantSubmissionNotificationTimerTask" />
+    </bean>
+
+    <!-- move to review notifications -->
+    <bean id="moveToReviewNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
+        <constructor-arg index="0" ref="sessionFactoryMail" />
+        <constructor-arg index="1" ref="mailApplicationDAO" />
+        <constructor-arg index="2" ref="applicantMailSender" />
+        <constructor-arg index="3" value="APPLICANT_MOVED_TO_REVIEW_NOTIFICATION" />
+        <constructor-arg index="4" value="REVIEW" />
+        <constructor-arg index="5" value="review.notification.applicant" />
+        <constructor-arg index="6" value="private/pgStudents/mail/moved_to_review_notification.ftl" />
+    </bean>
+
+    <bean id="moveToReviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="delay" value="${delay.12}" />
+        <property name="period" value="${email.schedule.period.milliseconds}" />
+        <property name="timerTask" ref="moveToReviewNotificationTimerTask" />
+    </bean>
+
+    <!-- move to reject notifications -->
+    <bean id="moveToRejectNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
+        <constructor-arg index="0" ref="sessionFactoryMail" />
+        <constructor-arg index="1" ref="mailApplicationDAO" />
+        <constructor-arg index="2" ref="applicantMailSender" />
+        <constructor-arg index="3" value="APPLICATION_MOVED_TO_REJECT_NOTIFICATION" />
+        <constructor-arg index="4" value="REJECTED" />
+        <constructor-arg index="5" value="rejection.notification" />
+        <constructor-arg index="6" value="private/pgStudents/mail/rejected_notification.ftl" />
+    </bean>
+
+    <bean id="moveToRejectNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="delay" value="${delay.13}" />
+        <property name="period" value="${email.schedule.period.milliseconds}" />
+        <property name="timerTask" ref="moveToRejectNotificationTimerTask" />
+    </bean>
+
+
+    <!-- move to interview notifications -->
+    <bean id="moveToInterviewNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
+        <constructor-arg index="0" ref="sessionFactoryMail" />
+        <constructor-arg index="1" ref="mailApplicationDAO" />
+        <constructor-arg index="2" ref="applicantMailSender" />
+        <constructor-arg index="3" value="APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION" />
+        <constructor-arg index="4" value="INTERVIEW" />
+        <constructor-arg index="5" value="interview.notification.applicant" />
+        <constructor-arg index="6" value="private/pgStudents/mail/moved_to_interview_notification.ftl" />
+    </bean>
+
+    <bean id="moveToInterviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="delay" value="${delay.14}" />
+        <property name="period" value="${email.schedule.period.milliseconds}" />
+        <property name="timerTask" ref="moveToInterviewNotificationTimerTask" />
+    </bean>
+
+    <!-- move to approval notifications -->
+    <bean id="moveToApprovalNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.ApplicantMoveToApprovalNotificationTask">
+        <constructor-arg index="0" ref="sessionFactoryMail" />
+        <constructor-arg index="1" ref="mailApplicationDAO" />
+        <constructor-arg index="2" ref="applicantMailSender" />
+        <constructor-arg index="3" value="approval.notification.applicant" />
+        <constructor-arg index="4" value="private/pgStudents/mail/moved_to_approval_notification.ftl" />
+    </bean>
+
+    <bean id="moveToApprovalNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="delay" value="${delay.15}" />
+        <property name="period" value="${email.schedule.period.milliseconds}" />
+        <property name="timerTask" ref="moveToApprovalNotificationTimerTask" />
+    </bean>
+
+    <!-- move to approved notifications -->
+    <bean id="moveToApprovedNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
+        <constructor-arg index="0" ref="sessionFactoryMail" />
+        <constructor-arg index="1" ref="mailApplicationDAO" />
+        <constructor-arg index="2" ref="applicantMailSender" />
+        <constructor-arg index="3" value="APPLICATION_MOVED_TO_APPROVED_NOTIFICATION" />
+        <constructor-arg index="4" value="APPROVED" />
+        <constructor-arg index="5" value="approved.notification.applicant" />
+        <constructor-arg index="6" value="private/pgStudents/mail/moved_to_approved_notification.ftl" />
+    </bean>
+
+    <bean id="moveToApprovedNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="delay" value="${delay.16}" />
+        <property name="period" value="${email.schedule.period.milliseconds}" />
+        <property name="timerTask" ref="moveToApprovedNotificationTimerTask" />
+    </bean>
+</beans>

@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
+import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -66,7 +69,8 @@ public class ApplicationListController {
 			@RequestParam(required = false) SortCategory sortCategory, @RequestParam(required = false) SortOrder order,
 			@RequestParam(required = false) Integer blockCount, @RequestParam(required = false) Boolean clear,
 			Model model) {
-		List<ApplicationsFilter> applicationsFilters = getUser().getApplicationsFilters();
+		RegisteredUser user = getUser();
+        List<ApplicationsFilter> applicationsFilters = user.getApplicationsFilters();
 		if (isTrue(clear) && !applicationsFilters.isEmpty()) {
 			userService.clearApplicationsFilter(applicationsFilters.get(0));
 		} else {
@@ -80,7 +84,14 @@ public class ApplicationListController {
 		}
 		List<ApplicationForm> applications = getApplications(searchCategory, searchTerm, sortCategory, order,
 				blockCount);
+		Map<String, ApplicationActionsDefinition> actionDefinitions = new LinkedHashMap<String, ApplicationActionsDefinition>();
+		for (ApplicationForm applicationForm : applications) {
+            ApplicationActionsDefinition actionsDefinition = applicationsService.getActionsDefinition(user, applicationForm);
+            actionDefinitions.put(applicationForm.getApplicationNumber(), actionsDefinition);
+        }
+		
 		model.addAttribute("applications", applications);
+		model.addAttribute("actionDefinitions", actionDefinitions);
 		return APPLICATION_LIST_SECTION_VIEW_NAME;
 	}
 

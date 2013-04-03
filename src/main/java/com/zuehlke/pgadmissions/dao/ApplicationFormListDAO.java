@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -213,7 +211,7 @@ public class ApplicationFormListDAO {
             newCriterion = Restrictions.lt(field, new Date(submissionDate.getTime() + TimeUnit.DAYS.toMillis(1)));
             break;
         default:
-            throw new RuntimeException("Unexpected predicate for last edited date: " + searchPredicate.displayValue());
+            return null;
         }
         return newCriterion;
     }

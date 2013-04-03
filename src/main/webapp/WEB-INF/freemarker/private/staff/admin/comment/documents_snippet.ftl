@@ -1,5 +1,5 @@
 <div class="row">
-	<label class="plain-label" for="commentDocument">Attach Document</label>
+	<label class="plain-label" for="commentDocument">Attach Document (PDF)</label>
 	<span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
 	<div class="field" id="uploadFields">
         <input id="commentDocument" class="full" data-type="COMMENT" data-reference="Comment" type="file" name="file" value="" />                   

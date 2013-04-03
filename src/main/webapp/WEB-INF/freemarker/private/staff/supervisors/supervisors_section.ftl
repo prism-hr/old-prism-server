@@ -39,7 +39,7 @@
   <!-- Available Supervisor Buttons -->
   <div class="row list-select-buttons">
     <div class="field"> <span>
-      <button class="btn" type="button" id="addSupervisorBtn"><span class="icon-down"></span> Add</button>
+      <button class="btn btn-primary" type="button" id="addSupervisorBtn"><span class="icon-down"></span> Add</button>
       <button type="button" id="removeSupervisorBtn" class="btn btn-danger"><span class="icon-up"></span> Remove</button>
       </span> </div>
   </div>

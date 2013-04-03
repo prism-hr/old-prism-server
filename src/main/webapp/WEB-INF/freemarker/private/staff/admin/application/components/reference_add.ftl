@@ -15,7 +15,7 @@
 
 <div class="row-group">
     <div class="row">
-        <label for="referenceDocument_${encRefereeId}" class="plain-label">Attach Document</label>
+        <label for="referenceDocument_${encRefereeId}" class="plain-label">Attach Document (PDF)</label>
         <span class="hint" data-desc="<@spring.message 'validateApp.document'/>"></span>
         <div class="field <#if refereesAdminEditDTO.referenceDocument??>uploaded</#if>" id="psUploadFields">
             <input id="referenceDocument_${encRefereeId}" type="file" value="" name="file" data-reference="" data-type="COMMENT" class="full">

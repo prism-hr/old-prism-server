@@ -25,11 +25,11 @@
 					<div class="field">	
 						<input type="hidden" id="stage" name="stage" value="${stage}" />
 						<#if stageDurations[stage]?? && stageDurations[stage].duration??>  				
-						<input class="numeric" type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${stageDurations[stage].duration?string("######")}" />
+						<input class="numeric input-small" type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${stageDurations[stage].duration?string("######")}" />
 						<#else>
 						<input class="numeric" type="text" size="4" id="${stage}_duration" name="${stage}_duration"  />
 						</#if>
-						<select name="${stage}_unit" id="${stage}_unit">
+						<select name="${stage}_unit" id="${stage}_unit" class="input-small">
 							<option value="">Select...</option>
 							<#list units as unit>
 								<#if unit != 'MINUTES'&& unit != 'HOURS'>
@@ -65,8 +65,8 @@
 					<span class="hint" data-desc="<@spring.message 'configuration.reminderFrequency'/>"></span>
 					<div class="field">	
 						<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
-						<input class="numeric" type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(reminderInterval.duration?string("######"))!}" />
-						<select name="reminderUnit" id="reminderUnit">
+						<input class="numeric input-small" type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(reminderInterval.duration?string("######"))!}" />
+						<select name="reminderUnit" id="reminderUnit" class="input-small">
 							<option value="">Select...</option>
 						<#list units as unit>
 							<option value="${unit}"
@@ -95,28 +95,31 @@
 				<div class="row">
 					<h3 >Admissions Contacts</h3>
 
-						<table class="table table-striped table-condensed table-bordered table-hover">
-								<colgroup>
-									<col />
-									<col style="width: 30px;" />
-								</colgroup>
-								<tbody>
-								<#list allRegistryUsers! as regUser>
-									<tr>
-										<td>
-											${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
-										</td>
-										<td>
-											<button class="button-delete" type="button" data-desc="Remove">Remove</button>
-											<input type="hidden" name="firstname" value="${regUser.firstname!}" />
-											<input type="hidden" name="lastname" value="${regUser.lastname!}" />
-											<input type="hidden" name="email" value="${regUser.email!}" />
-											<input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
-										</td>
-									</tr>
-								</#list>
-								</tbody>
-							</table>
+
+											<table id="registryUsers" class="table table-striped table-condensed table-bordered table-hover ">
+												<colgroup>
+													<col />
+													<col style="width: 30px;" />
+												</colgroup>
+												<tbody>
+												<#list allRegistryUsers! as regUser>
+													<tr>
+														<td>
+															${regUser.firstname?html} ${regUser.lastname?html} (${regUser.email?html})
+														</td>
+														<td>
+															<button class="button-delete" type="button" data-desc="Remove">Remove</button>
+															<input type="hidden" name="firstname" value="${regUser.firstname!}" />
+															<input type="hidden" name="lastname" value="${regUser.lastname!}" />
+															<input type="hidden" name="email" value="${regUser.email!}" />
+															<input type="hidden" name="id" value="<#if regUser.id??>${encrypter.encrypt(regUser.id)}</#if>" />
+														</td>
+													</tr>
+												</#list>
+												</tbody>
+											</table>
+									
+
 				</div>
 				<!-- Entry form. -->
 				<div class="row">

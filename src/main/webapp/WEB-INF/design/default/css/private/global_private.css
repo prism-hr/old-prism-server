@@ -26,7 +26,7 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 .row { overflow: visible; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */
-#wrapper { background: url(../../images/bg_wrapper.jpg) no-repeat 0 10px; margin: 0 auto; width: 950px; }
+#wrapper { background: url(../../images/bg_login.jpg) no-repeat 0 10px; margin: 0 auto; width: 950px; }
 #beta-badge {
 	background: url(../../images/beta-badge.png) no-repeat;
 	display: block;
@@ -47,18 +47,11 @@ h2 em { color: white; font-size: 14px; padding: 0 2px; }
 
 /* MIDDLE header ------------------------------------------------------------------------------------------ */
 #middle > header {
-  background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,0)), color-stop(100%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* IE10+ */
-  background: linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
-  padding: 25px 30px 0; /*overflow: hidden;*/
+  padding: 20px 30px 0; /*overflow: hidden;*/
 }
 
 #middle > header .logo { float: left; margin-right: 30px; }
-#middle > header .tagline { color: #1E448B; float: left; font-size: 18pt; font-weight: bold; margin-top: 12px; width: 350px; }
+#middle > header .tagline { color: white; float: left; font-size: 18pt; font-weight: bold;  line-height: 26px; margin-top: 5px; width: 350px; }
 
 #middle > header nav { clear: both; height: 36px; line-height: 36px; /*overflow: hidden;*/ padding-top: 15px; }
 /* old nav 
@@ -395,9 +388,9 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 
 
 #programme-details { margin-bottom: 10px; overflow: hidden; min-height: 125px; } 
-#programme-details .row { line-height: 20px; padding: 3px 0; }
+#programme-details .row { line-height: 14px; padding: 3px 0; margin-bottom: 4px; }
 #programme-details .row input { padding: 2px; }
-#programme-details .row label { font-weight: bold; display: inline-block; min-width: 140px; }
+#programme-details .row label { font-weight: bold; display: inline-block; min-width: 140px; line-height: 14px; margin-bottom: 0px; }
 #programme-details .row label.checkbox { margin-left: 1em; min-width: 0; }
 #programme-details .half { width: 50%; float: left; }
 #programme-details .icon, #programme-details .actions { float: right; }
@@ -782,7 +775,7 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 .ui-tooltip .ui-tooltip-tip { margin: 0 auto; overflow: hidden; z-index: 10; }
 .ui-tooltip .ui-tooltip-tip,
 .ui-tooltip .ui-tooltip-tip * { position: absolute; line-height: 0.1px !important; font-size: 0.1px !important; color: #123456; background: transparent; border: 0px dashed transparent; }
-.ui-tooltip .ui-tooltip-tip canvas{ top: 0; left: 0; }
+.ui-tooltip .ui-tooltip-tip canvas{ display: none; }
 
 /*! Add shadows to your tooltips in: FF3+, Chrome 2+, Opera 10.6+, IE6+, Safari 2+ */
 .ui-tooltip-shadow {
@@ -1130,11 +1123,11 @@ a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }*/
   font-size: 15px;
   padding: 6px 14px;
 }
-input[readonly]#fundingAwardDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate {
+input[readonly]#fundingAwardDate, input[readonly]#interviewDate, input[readonly]#position_endDate, input[readonly]#qualificationAwardDate, input[readonly]#position_startDate, input[readonly]#qualificationStartDate, input[readonly]#startDate, input[readonly]#dateOfBirth, input[readonly]#dateOfExamination, input[readonly]#passportIssueDate, input[readonly]#passportExpiryDate {
 	background-color: #FFFFFF;
 	cursor:auto;
 }
-input[readonly][disabled]#fundingAwardDate, input[readonly][disabled]#position_endDate, input[readonly][disabled]#qualificationAwardDate, input[readonly][disabled]#position_startDate, input[readonly][disabled]#qualificationStartDate, input[readonly][disabled]#startDate, input[readonly][disabled]#dateOfBirth, input[readonly][disabled]#dateOfExamination, input[readonly][disabled]#passportIssueDate, input[readonly][disabled]#passportExpiryDate {
+input[readonly][disabled]#fundingAwardDate, input[readonly][disabled]#interviewDate, input[readonly][disabled]#position_endDate, input[readonly][disabled]#qualificationAwardDate, input[readonly][disabled]#position_startDate, input[readonly][disabled]#qualificationStartDate, input[readonly][disabled]#startDate, input[readonly][disabled]#dateOfBirth, input[readonly][disabled]#dateOfExamination, input[readonly][disabled]#passportIssueDate, input[readonly][disabled]#passportExpiryDate {
 	background-color: #EEEEEE;
 	cursor: not-allowed;
 }
@@ -1170,8 +1163,8 @@ span.count {
 }
 .bs-status {
   width: 200px;
-  margin: 15px 0 10px;
-  padding: 4px 6px;
+  margin: 15px 0 5px;
+  padding: 10px 9px 0px;
   background-color: #fff;
   border: 1px solid #ddd;
   -webkit-border-radius: 4px;
@@ -1193,6 +1186,9 @@ span.count {
 .content-box-inner h3{
   margin-bottom: 10px !important;
   line-height: 20px;
+}
+.content-box-inner h3:last-child {
+	margin-bottom: 0px !important;
 }
 .field .alert, .alert-info {
     line-height: 1.4em;
@@ -1235,6 +1231,9 @@ section.form-rows .hint{
   content:"\f059";
   color: #9B9DA0;
   font-size:28px;
+}
+.hint.grey:before{
+	color: #DDE4E2;
 }
 .button-delete:before, .button-edit:before {
   cursor: pointer;
@@ -1346,7 +1345,7 @@ span.icon-status.not-submitted:before {
 
 /* New icons end */
 #registryUsers table {
-  min-width:416px; 
+  /*min-width:416px; */
 }
 #linkAccountsSection table{
   margin-bottom: 0px;
@@ -1425,3 +1424,18 @@ i {
   margin-bottom: 10px !important;
 }
 #appliList.table-bordered th, #appliList.table-bordered td { border-color: #B5B1B3;}
+#createinterviewersection {
+	overflow: visible;
+}
+#section-registryusers .table-bordered th, #section-registryusers .table-bordered td{
+  vertical-align: middle !important;
+}
+form#removeForm {
+	margin: 0px;
+}
+#previewModalContent h1 {
+	float: none !important;
+}
+#edit-throttle-section input[type="radio"], #timelineview input[type="checkbox"] {
+    margin-top: -3px;
+}

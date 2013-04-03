@@ -26,7 +26,7 @@
                 </div>
                 
                 <div class="row">
-                    <label class="plain-label" for="firstName2"></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName2'/>"></span>
+                    <label class="plain-label" for="firstName2"></label> 
                     <div class="field">
                         <input class="full" type="text" id="firstName2" value="${(updatedUser.firstName2?html)!}" />
                         <@spring.bind "updatedUser.firstName2" /> <#list spring.status.errorMessages as error>
@@ -38,7 +38,7 @@
                 </div>
                 
                 <div class="row">
-                    <label class="plain-label" for="firstName3"></label> <span class="hint" data-desc="<@spring.message 'myaccount.firstName3'/>"></span>
+                    <label class="plain-label" for="firstName3"></label> 
                     <div class="field">
                         <input class="full" type="text" id="firstName3" value="${(updatedUser.firstName3?html)!}" />
                             <@spring.bind "updatedUser.firstName3" /> <#list spring.status.errorMessages as error>
@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="row">
-                    <label class="plain-label" for="confirmNewPass">Re-enter new Password<em>*</em></label> 
+                    <label class="plain-label" for="confirmNewPass">Confirm new Password<em>*</em></label> 
                     <span class="hint" data-desc="<@spring.message 'myaccount.confirmPw'/>"></span>
                     <div class="field">
                         <input class="full" id="confirmNewPass" type="password" />
@@ -139,7 +139,7 @@
                         <table class="table table-striped table-condensed table-bordered table-hover">
                             <colgroup>
                                 <col />
-                                <col style="width: 60px;" />
+                                <col style="width: 10px;" />
                             </colgroup>
                             <tbody>
                                 <#list user.allLinkedAccounts as linkedAccount>
@@ -155,7 +155,8 @@
              <div class="row-group">
                 <h3 >Link new account</h3>
                 <div class="row">
-                    <label class="plain-label" for="linkCurrentPassword">Account 1 Email </label> 
+                    <label class="plain-label grey-label" for="linkCurrentPassword">Account 1 Email<em>*</em></label> 
+                    <span class="hint grey"></span>
                     <div class="field">
                         <input class="full" disabled type="text" value="${user.email!}" />
                     </div>

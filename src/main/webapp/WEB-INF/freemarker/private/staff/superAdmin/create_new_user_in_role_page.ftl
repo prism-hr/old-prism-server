@@ -85,13 +85,13 @@
 									
 								</div>
 			
-								<div class="row-group">
+								<div class="row-group" id="editUser">
 								
 									<h3><#if userDTO.newUser>Add New User<#else>Edit User Roles</#if></h3>
 									
 									<div class="row">
 										<label for="firstName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">First Name<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
+										<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.firstName'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.firstName?html)!}" name="firstName" id="firstName" <#if !userDTO.newUser>disabled="disabled"</#if>/>			    
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.firstName?html)!}" name="firstName" /></#if>                              
@@ -104,7 +104,7 @@
 			
 									<div class="row">
 										<label for="lastName" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Last Name<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
+										<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.lastName'/>"></span>
 										<div class="field">
 											<input class="max" type="text" value="${(userDTO.lastName?html)!}"  name="lastName" id="lastName"  <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.lastName?html)!}" name="lastName" /></#if>    
@@ -117,7 +117,7 @@
 				
 									<div class="row">
 										<label for="email" class="plain-label<#if !userDTO.newUser> grey-label</#if>">Email<em>*</em></label>
-										<span class="hint" data-desc="<@spring.message 'manageUsers.email'/>"></span>
+										<span class="hint<#if !userDTO.newUser> grey</#if>" data-desc="<@spring.message 'manageUsers.email'/>"></span>
 										<div class="field">
 											<input class="max" type="email" value="${(userDTO.email?html)!}"  name="email" id="email" <#if !userDTO.newUser>disabled="disabled"</#if>/>
 											<#if !userDTO.newUser><input type="hidden" value="${(userDTO.email?html)!}" name="email" /></#if>    
@@ -146,7 +146,7 @@
 																			
 									<div class="row">
 										<div class="field">
-											<button class="btn" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
+											<button class="btn btn-primary" type="submit"><#if userDTO.newUser>Add<#else>Update</#if></button>
 										</div>
 									</div>
 									

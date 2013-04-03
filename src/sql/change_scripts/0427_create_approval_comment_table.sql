@@ -1,4 +1,4 @@
-CREATE TABLE APPROVAL_COMMENT (
+CREATE TABLE IF NOT EXISTS APPROVAL_COMMENT (
   id INTEGER UNSIGNED NOT NULL,
   project_description_available tinyint(1),
   project_title varchar(100),

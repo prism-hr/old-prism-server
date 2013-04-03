@@ -1,2 +1,2 @@
-INSERT INTO THROTTLE (id, enabled, batch_size) VALUES ('1', '0', '10')
+INSERT IGNORE INTO THROTTLE (id, enabled, batch_size) VALUES ('1', '0', '10')
 ;

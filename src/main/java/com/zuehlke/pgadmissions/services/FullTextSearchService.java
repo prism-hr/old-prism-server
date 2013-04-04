@@ -39,4 +39,14 @@ public class FullTextSearchService {
     public List<RegisteredUser> getMatchingUsersWithFirstnameLike(final String searchTerm) {
         return fullTextSearchDAO.getMatchingUsersWithFirstnameLike(searchTerm);
     }
+
+    public List<RegisteredUser> getMatchingUsersWithLastnameLike(String string) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<RegisteredUser> getMatchingUsersWithEmailLike(String string) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

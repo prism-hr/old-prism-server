@@ -11,10 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 public class RegisteredUserReminderTimerTask extends TimerTask {
     
@@ -32,24 +35,29 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 	
     private final String subjectCode;
 	
-    private final String emailTemplate;
 	
     private final String firstSubjectCode;
 	
-    private final String firstEmailTemplate;
+    
+    private final EmailTemplateService emailTemplateService;
+    
+    private final EmailTemplateName firstEmailTemplateName;
+  
+    private final EmailTemplateName emailTemplateName;
 
 	public RegisteredUserReminderTimerTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, AdminMailSender adminMailSender,
-			NotificationType notificationType, ApplicationFormStatus status, String fisrtSubjectCode, String firstEmailTemplate,
-			String subjectCode, String emailTemplate) {
+			NotificationType notificationType, ApplicationFormStatus status, String fisrtSubjectCode, EmailTemplateName firstEmailTemplateName,
+			String subjectCode, EmailTemplateName emailTemplateName, EmailTemplateService emailTemplateService) {
 				this.sessionFactory = sessionFactory;
 				this.applicationFormDAO = applicationFormDAO;
 				this.adminMailSender = adminMailSender;
 				this.notificationType = notificationType;
 				this.status = status;
 				this.firstSubjectCode = fisrtSubjectCode;
-				this.firstEmailTemplate = firstEmailTemplate;
+				this.firstEmailTemplateName = firstEmailTemplateName;
 				this.subjectCode = subjectCode;
-				this.emailTemplate = emailTemplate;
+				this.emailTemplateName = emailTemplateName;
+				this.emailTemplateService = emailTemplateService;
 	}
 
 	@Override
@@ -57,6 +65,8 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 	    log.info(notificationType +  " Reminder Task Running");
 	    Transaction transaction = null;
 	    try {
+	    	EmailTemplate firstTemplate = emailTemplateService.getActiveEmailTemplate(firstEmailTemplateName);
+	    	EmailTemplate template = emailTemplateService.getActiveEmailTemplate(emailTemplateName);
     		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueUserReminder(notificationType, status);
     		transaction.commit();
@@ -67,14 +77,16 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
     				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
     				
     				String useSubjectCode = subjectCode;
-    				String useEmailTemplate = emailTemplate;
+    				EmailTemplate useEmailTemplate = template;
+    				EmailTemplateName templateName = this.emailTemplateName;
     				if (notificationRecord == null) {
     					notificationRecord = new NotificationRecord(notificationType);
     					application.addNotificationRecord(notificationRecord);
     					useSubjectCode = firstSubjectCode;
-    					useEmailTemplate = firstEmailTemplate;
+    					useEmailTemplate = firstTemplate;
+    					templateName = firstEmailTemplateName;
     				}
-    				adminMailSender.sendMailsForApplication(application, useSubjectCode, useEmailTemplate, notificationType);
+    				adminMailSender.sendMailsForApplication(application, useSubjectCode, templateName, useEmailTemplate.getContent(), notificationType);
     				notificationRecord.setDate(new Date());
     				applicationFormDAO.save(application);
     				transaction.commit();

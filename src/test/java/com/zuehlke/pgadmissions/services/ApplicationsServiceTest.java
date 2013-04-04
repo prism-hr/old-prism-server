@@ -15,12 +15,8 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -30,26 +26,15 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class ApplicationsServiceTest {
 
-	private RegisteredUser user;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationsService applicationsService;
 
 	@Before
 	public void setup() {
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		user = new RegisteredUserBuilder().id(1).username("bob")
-				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
-		authenticationToken.setDetails(user);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		applicationsService = new ApplicationsService(applicationFormDAOMock, null);
 	}
@@ -266,8 +251,4 @@ public class ApplicationsServiceTest {
 		assertSame(newApplicationForm, returnedForm);
 	}
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
 }

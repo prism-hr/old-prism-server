@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.timers;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -20,11 +21,15 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.ApplicantMailSender;
 import com.zuehlke.pgadmissions.mail.StateChangeMailSender;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 public class ApplicantMoveToApprovalNotificationTaskTest {
 
@@ -34,7 +39,9 @@ public class ApplicantMoveToApprovalNotificationTaskTest {
 	private ApplicationFormDAO applicationFormDAOMock;
 	private StateChangeMailSender applicationMailSenderMock;
 	private String subjectMessage;
-	private String emailTemplate;
+	private EmailTemplateName templateName;
+	private EmailTemplate template;
+	private EmailTemplateService templateServiceMock;
 
 
 	@Test
@@ -59,19 +66,19 @@ public class ApplicantMoveToApprovalNotificationTaskTest {
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueMovedToApprovalNotifications()).andReturn(applicationFormList);
 		transactionOne.commit();
 
-		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate, null);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, templateName, template.getContent(), null);
 		applicationFormDAOMock.save(applicationFormOne);
 		transactionTwo.commit();
 
-		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate, null);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, templateName, template.getContent(), null);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
-		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
+		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, templateServiceMock, applicationFormDAOMock);
 
 		notificationTask.run();
 
-		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
+		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, templateServiceMock, applicationFormDAOMock);
 
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
 				DateUtils.truncate(applicationFormOne.getNotificationForType(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION).getDate(), Calendar.DATE));
@@ -100,18 +107,18 @@ public class ApplicantMoveToApprovalNotificationTaskTest {
 				.andReturn(applicationFormList);
 
 		transactionOne.commit();
-		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate, null);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, templateName, template.getContent(), null);
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate, null);
+		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, templateName, template.getContent(), null);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
-		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
+		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, templateServiceMock, applicationFormDAOMock);
 
 		notificationTask.run();
 
-		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
+		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, templateServiceMock, applicationFormDAOMock);
 		assertNull(applicationFormOne.getNotificationForType(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION));
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
 				DateUtils.truncate(applicationFormTwo.getNotificationForType(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION).getDate(), Calendar.DATE));
@@ -123,10 +130,13 @@ public class ApplicantMoveToApprovalNotificationTaskTest {
 		sessionMock = EasyMock.createMock(Session.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		applicationMailSenderMock = EasyMock.createMock(ApplicantMailSender.class);
+		templateServiceMock = EasyMock.createMock(EmailTemplateService.class);
 		subjectMessage = "approved.notification.applicant";
-		emailTemplate = "private/pgStudents/mail/moved_to_approved_notification.ftl";
+		templateName = MOVED_TO_APPROVED_NOTIFICATION;
+		template=new EmailTemplateBuilder().content("template content").active(true).name(templateName).build();
+		EasyMock.expect(templateServiceMock.getActiveEmailTemplate(templateName)).andReturn(template);
 	
-		notificationTask = new ApplicantMoveToApprovalNotificationTask(sessionFactoryMock, applicationFormDAOMock, applicationMailSenderMock, subjectMessage, emailTemplate);
+		notificationTask = new ApplicantMoveToApprovalNotificationTask(sessionFactoryMock, applicationFormDAOMock, applicationMailSenderMock, subjectMessage, templateName, templateServiceMock);
 
 	}
 

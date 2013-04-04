@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
@@ -212,6 +213,12 @@ public class EditApplicationFormAsProgrammeAdminController {
         }
         
         return applicationForm;
+    }
+    
+    @ModelAttribute("actionsDefinition")
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+        ApplicationForm application = getApplicationForm(applicationId);
+        return applicationService.getActionsDefinition(getUser(), application);
     }
 
     @ModelAttribute("user")

@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +23,9 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilterDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -35,6 +42,7 @@ public class UserServiceResetPasswordTest {
 	private JavaMailSender mailsenderMock;
 	private MessageSource msgSourceMock;
 	private EncryptionUtils encryptionUtilsMock;
+	private EmailTemplateService templateServiceMock;
 
 	@Before
 	public void setUp() {
@@ -46,17 +54,18 @@ public class UserServiceResetPasswordTest {
 		RoleDAO roleDAOMock = EasyMock.createMock(RoleDAO.class);
 		applicationsFilterDAOmock = EasyMock.createMock(ApplicationsFilterDAO.class);
 		UserFactory userFactoryMock = EasyMock.createMock(UserFactory.class);
-		msgSourceMock = EasyMock.createMock(MessageSource.class);
+		msgSourceMock = createMock(MessageSource.class);
+		templateServiceMock = createMock(EmailTemplateService.class);
 
-		serviceUT = new UserService(userDAOMock, roleDAOMock, userFactoryMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock, applicationsFilterDAOmock);
+		serviceUT = new UserService(userDAOMock, roleDAOMock, userFactoryMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock, applicationsFilterDAOmock, templateServiceMock);
 	}
 
 	private void replayAllMocks() {
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock);
+		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock, templateServiceMock);
 	}
 
 	private void verifyAllMocks() {
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock);
+		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock, templateServiceMock);
 	}
 
 	@Test
@@ -87,11 +96,16 @@ public class UserServiceResetPasswordTest {
 		expectedMap.put("user", storedUser);
 		expectedMap.put("newPassword", newPassword);
 		expectedMap.put("host", Environment.getInstance().getApplicationHostName());
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("New password confirmation template").name(NEW_PASSWORD_CONFIRMATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(NEW_PASSWORD_CONFIRMATION)).andReturn(template);
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(//
 				EasyMock.eq(toAddress), //
-				EasyMock.eq("subject"), //
-				EasyMock.eq("private/mail/new_password_confirmation.ftl"),//
+				eq("subject"), //
+				eq(NEW_PASSWORD_CONFIRMATION),
+				EasyMock.eq(template.getContent()),//
 				EasyMock.eq(expectedMap), //
 				EasyMock.isNull(InternetAddress.class))).andReturn(preparatorMock);
 		mailsenderMock.send(preparatorMock);
@@ -125,11 +139,16 @@ public class UserServiceResetPasswordTest {
 		expectedMap.put("user", storedUser);
 		expectedMap.put("newPassword", newPassword);
 		expectedMap.put("host", Environment.getInstance().getApplicationHostName());
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("New password confirmation template").name(NEW_PASSWORD_CONFIRMATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(NEW_PASSWORD_CONFIRMATION)).andReturn(template);
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(//
 				EasyMock.eq(toAddress), //
 				EasyMock.eq("subject"), //
-				EasyMock.eq("private/mail/new_password_confirmation.ftl"),//
+				eq(NEW_PASSWORD_CONFIRMATION),
+				EasyMock.eq(template.getContent()),//
 				EasyMock.eq(expectedMap), //
 				EasyMock.isNull(InternetAddress.class))).andReturn(preparatorMock);
 		mailsenderMock.send(preparatorMock);

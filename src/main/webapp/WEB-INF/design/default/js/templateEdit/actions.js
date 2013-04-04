@@ -167,7 +167,8 @@ $(document).ready(function() {
     		data : null,
     		success : function(data) {
     			if (data.error!=null) {
-    				alert(data.error);
+    				$("#errorModalContent").html('<html><h2>'+data.error+'</h2></html>');
+    				$("#errorModal").modal({show: true});
     			}
     			else {
 	    			var optionVal = $('#emailTemplateVersion').val();

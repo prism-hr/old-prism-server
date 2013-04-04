@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.dto.ApplicationActionsDefinition;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
@@ -78,6 +79,12 @@ public class ConfirmSupervisionController {
             throw new ActionNoLongerRequiredException(applicationId);
         }
         return application;
+    }
+    
+    @ModelAttribute("actionsDefinition")
+    public ApplicationActionsDefinition getActionsDefinition(@RequestParam String applicationId){
+        ApplicationForm application = getApplicationForm(applicationId);
+        return applicationsService.getActionsDefinition(getUser(), application);
     }
 
     @ModelAttribute("confirmSupervisionDTO")

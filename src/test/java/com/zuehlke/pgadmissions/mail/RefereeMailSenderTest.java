@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -17,12 +21,15 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class RefereeMailSenderTest {
@@ -30,6 +37,7 @@ public class RefereeMailSenderTest {
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private RefereeMailSender refereeMailSender;
 	private MessageSource msgSourceMock;
+	private EmailTemplateService templateServiceMock;
 
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
@@ -51,7 +59,7 @@ public class RefereeMailSenderTest {
 	@Test
 	public void shouldSendRefereeRemindeForNewReferee() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(Referee referee) {
@@ -65,24 +73,28 @@ public class RefereeMailSenderTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("ref@test.com", "john boggs");
 
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Referee reminder template").name(REFEREE_REMINDER).build();
+		expect(templateServiceMock.getActiveEmailTemplate(REFEREE_REMINDER)).andReturn(template);
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request.reminder"),// 
 				EasyMock.aryEq(new Object[] { "fred", "blabal" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
-						"private/referees/mail/referee_reminder_email.ftl", model, null)).andReturn(preparatorMock);
+						REFEREE_REMINDER, template.getContent(), model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		refereeMailSender.sendRefereeReminder(referee);
 
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);
 	}
 
 	@Test
 	public void shouldSendRefereeReminderUExistingUserReferee() throws UnsupportedEncodingException {
 
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock) {
 			@Override
 			Map<String, Object> createModel(Referee referee) {
 
@@ -97,26 +109,30 @@ public class RefereeMailSenderTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("jboggs@test.com", "Jonathan Boggs");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Referee reminder template").name(REFEREE_REMINDER).build();
+		expect(templateServiceMock.getActiveEmailTemplate(REFEREE_REMINDER)).andReturn(template);
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request.reminder"),// 
 				EasyMock.aryEq(new Object[] { "fred", "sdfl" }), EasyMock.eq((Locale) null))).andReturn("subj");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "subj",//
-						"private/referees/mail/referee_reminder_email.ftl", model, null)).andReturn(preparatorMock);
+						REFEREE_REMINDER, template.getContent(), model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		refereeMailSender.sendRefereeReminder(referee);
 
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);
 
 	}
 
 	@Test
 	public void shouldSendRefereeNotificationForNewReferee() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(Referee referee) {
@@ -132,19 +148,23 @@ public class RefereeMailSenderTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("ref@test.com", "john boggs");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Referee notification template").name(REFEREE_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(REFEREE_NOTIFICATION)).andReturn(template);
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request"),// 
 				EasyMock.aryEq(new Object[] { "fred", "program", "hans", "huber" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",// 
-				"private/referees/mail/referee_notification_email.ftl", model, null)).andReturn(preparatorMock);
+				REFEREE_NOTIFICATION, template.getContent(), model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		refereeMailSender.sendRefereeNotification(referee);
 
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);
 
 	}
 
@@ -152,7 +172,7 @@ public class RefereeMailSenderTest {
 	public void shouldSendRefereeNotificationExistingUserReferee() throws UnsupportedEncodingException {
 
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock) {
 			@Override
 			Map<String, Object> createModel(Referee referee) {
 
@@ -168,25 +188,29 @@ public class RefereeMailSenderTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("jboggs@test.com", "Jonathan Boggs");
 
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Referee notification template").name(REFEREE_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(REFEREE_NOTIFICATION)).andReturn(template);
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request"),// 
 				EasyMock.aryEq(new Object[] { "fred", "program" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
-						"private/referees/mail/referee_notification_email.ftl", model, null)).andReturn(preparatorMock);
+						REFEREE_NOTIFICATION, template.getContent(), model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		refereeMailSender.sendRefereeNotification(referee);
 
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);
 	}
 
 	@Before
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		msgSourceMock = EasyMock.createMock(MessageSource.class);
-
-		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		msgSourceMock = createMock(MessageSource.class);
+		templateServiceMock = createMock(EmailTemplateService.class);
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 	}
 }

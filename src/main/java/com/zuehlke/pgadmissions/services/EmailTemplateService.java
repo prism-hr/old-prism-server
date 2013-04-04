@@ -116,7 +116,7 @@ public class EmailTemplateService {
 			throw new EmailTemplateException("Cannot remove active template!");
 		}
 		if (template.getVersion()==null) {
-			throw new EmailTemplateException("Cannot remove default template!");
+			throw new EmailTemplateException("Cannot remove original template!");
 		}
 		emailTemplateDAO.remove(template);
 	}

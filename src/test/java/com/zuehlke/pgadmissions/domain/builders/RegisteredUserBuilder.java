@@ -110,7 +110,7 @@ public class RegisteredUserBuilder {
         return this;
     }
     
-    public RegisteredUserBuilder applicationsFilters(ApplicationsFilter... applicationsFilter) {
+    public RegisteredUserBuilder applicationsFilters(ApplicationsFilter... applicationsFilters) {
         for (ApplicationsFilter applicationFilter : applicationsFilters) {
             this.applicationsFilters.add(applicationFilter);
         }

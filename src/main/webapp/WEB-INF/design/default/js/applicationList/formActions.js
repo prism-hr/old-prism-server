@@ -5,8 +5,7 @@ $(document).ready(function() {
     // Modal window functionality.
     setupModalBox();
     
-    var hasFilter = $('#hasFilter').val()=="true";
-    populateApplicationList(!hasFilter);
+    populateApplicationList();
     
     // --------------------------------------------------------------------------------
     // TABLE SORTING
@@ -17,31 +16,51 @@ $(document).ready(function() {
     // --------------------------------------------------------------------------------
     // SEARCH / FILTERING
     // --------------------------------------------------------------------------------
-    var searchButtonsClass = hasFilter ? 'enabled' : 'disabled';
-    $('#search-go').addClass(searchButtonsClass).click(function() {
-        if ($('#searchTerm').val().length == 0 || $('#searchCategory').val() == '') {
-            fixedTip($('#search-go'), 'You must specify your filter.');
-            return;
-        }
+    $('#search-go').addClass('enabled').click(function() {
+//        if ($('#searchTerm').val().length == 0 || $('#searchCategory').val() == '') {
+//            fixedTip($('#search-go'), 'You must specify your filter.');
+//            return;
+//        }
         resetPageCount();
-						        populateApplicationList();
+        populateApplicationList();
     });
 
-    $('#search-reset').addClass(searchButtonsClass).click(function() {
-        populateApplicationList(true);
-        $('#search-go, #search-reset').addClass('disabled');
+    $('#storeFiltersBtn').click(function() {
+        filters = getFilters();
+
+        data = {
+            filters : JSON.stringify(filters),
+        };
+        
+        $.ajax({
+            type : 'POST',
+            statusCode : {
+                401 : function() { window.location.reload(); },
+                500 : function() { window.location.href = "/pgadmissions/error"; },
+                404 : function() { window.location.href = "/pgadmissions/404"; },
+                400 : function() { window.location.href = "/pgadmissions/400"; },
+                403 : function() { window.location.href = "/pgadmissions/404"; }
+            },
+            url : "/pgadmissions/applications/saveFilters",
+            data : data,
+            success : function(data) {
+            },
+            complete : function() {
+            }
+        });
+        
     });
 
-    $('#search-box').on('change keypress', '#searchTerm, #searchCategory', function() {
-        var length = $('#searchTerm').val().length;
-        var column = $('#searchCategory').val();
-        $('#search-go').toggleClass('disabled', length == 0 || column == '');
-        $('#search-reset').toggleClass('disabled', length == 0 && column == '');
-
-        if ($('#search-go').not('.disabled')) {
-            $('#search-go').removeData('qtip');
-        }
-    });
+//    $('#search-box').on('change keypress', '#searchTerm, #searchCategory', function() {
+//        var length = $('#searchTerm').val().length;
+//        var column = $('#searchCategory').val();
+//        $('#search-go').toggleClass('disabled', length == 0 || column == '');
+//        $('#search-reset').toggleClass('disabled', length == 0 && column == '');
+//
+//        if ($('#search-go').not('.disabled')) {
+//            $('#search-go').removeData('qtip');
+//        }
+//    });
 
     // ------------------------------------------------------------------------------
     // SELECT ALL/NO APPLICATIONS
@@ -85,21 +104,6 @@ $(document).ready(function() {
         }
     });
     
-    // --------------------------------------------------------------------------------
-    // INFINITE SCROLL
-    // --------------------------------------------------------------------------------
-//    $(window).scroll(function() {
-//        if (loading) {
-//            return;
-//        }
-//        
-//        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-//            $(window).scrollTop($(window).scrollTop() - 80);
-//            increasePageCount();
-//            populateApplicationList();
-//        }
-//    });
-    
     $("#loadMoreApplications").live('click', function() {
         if (loading) {
           return;
@@ -107,6 +111,16 @@ $(document).ready(function() {
         increasePageCount();
         populateApplicationList();
     });
+	
+	// To be extended
+	// Duplicate filters buttons
+	$(".add").live('click',function () {
+		$(this).parent().clone().insertAfter($(this).parent());
+	});
+	// Remover current filter 
+	$(".remove").live('click',function () {
+		$(this).parent().remove();
+	});
 });
 
 function resetPageCount() {
@@ -123,43 +137,24 @@ function increasePageCount() {
     $('#block-index').val(blockIndex.toString());
 }
 
-function decreasePageCount() {
-    var blockIndex = parseInt($('#block-index').val());
-    blockIndex -= 1;
-    $('#block-index').val(blockIndex.toString());
-}
-
-function populateApplicationList(reset) {
+function populateApplicationList() {
     
     loading = true;
     
-    var options = {};
-
-    if (reset) {
-        // Reset search filter.
-    	$('#searchTerm').val('');
-        $('#sort-column').val('APPLICATION_DATE');
-        $('#sort-order').val('DESCENDING');
-        $('#block-index').val("1");
-        $('#searchCategory').val([ '' ]);
-    }
-
+    filters = getFilters();
+    
     options = {
-        searchCategory : $('#searchCategory').val(),
-        searchTerm : $('#searchTerm').val(),
+        filters : JSON.stringify(filters),
         sortCategory : $('#sort-column').val(),
         order : $('#sort-order').val(),
-        blockCount : $('#block-index').val(),
-        clear : reset
+        blockCount : $('#block-index').val()
     };
 
     $('#search-box div.alert-error').remove();
 
     $('div.content-box-inner').append('<div class="ajax" />');
-    //$('.content-box-inner').append('<div class="fetching">Fetching more applications...</div>');
     
     $('#loadMoreApplicationsTable').show();
-    var dataWasEmpty = false;
     
     $.ajax({
         type : 'GET',
@@ -173,29 +168,21 @@ function populateApplicationList(reset) {
         url : "/pgadmissions/applications/section",
         data : options,
         success : function(data) {
-            if (reset || getPageCount() === 1) {
+            if (getPageCount() === 1) {
                 $('#applicationListSection').empty();
             }
             
-            if (data.indexOf("applicationRow") !== -1) {
-                $('#applicationListSection').append(data);
-            } else {
-                dataWasEmpty = true;
-            }
+            $('#applicationListSection').append(data);
         },
         complete : function() {
             $('.content-box-inner div.fetching, .content-box-inner div.ajax').remove();
             addToolTips();
             loading = false;
-            if (dataWasEmpty) {
-                //$('#loadMoreApplicationsTable').hide();
-            }
         }
     });
 }
 
 function sortList(column) {
-    $('#block-index').val("1");
     oldValue = $('#sort-column').val();
     newValue = column.id;
 
@@ -227,4 +214,26 @@ function flipSortOrder() {
     } else {
         $('#sort-order').val("ASCENDING");
     }
+}
+
+function getFilters() {
+    filters = new Array();
+    
+    $filterbox = $(".filter");
+    
+    $.each($filterbox, function() {
+        searchCategory = $(this).find('.selectCategory').val();
+        searchPredicate = $(this).find('.selectPredicate').val();
+        searchTerm = $(this).find('.filterInput').val();
+        
+        if(searchCategory && searchTerm.length > 0){
+            filters.push({
+                searchCategory : searchCategory,
+                searchPredicate : searchPredicate,
+                searchTerm : searchTerm
+            });
+        }
+    });
+
+    return filters;
 }

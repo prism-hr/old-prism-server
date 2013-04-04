@@ -31,6 +31,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.test.utils.MultiPartMimeMessageParser;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -46,7 +47,8 @@ public class MimeMessagePreparatorFactoryTest {
 
 	Map<String, Object> model;
 	private String subject;
-	private String template;
+	private String templateContent;
+	private EmailTemplateName templateName;
 	private InternetAddress[] tos;
 	private InternetAddress replyToAddress;
 
@@ -61,22 +63,20 @@ public class MimeMessagePreparatorFactoryTest {
 		model = new HashMap<String, Object>();
 		model.put("test", "testValue");
 		subject = "subject";
-		template = "template";
+		templateContent = "ladida";
+		templateName= EmailTemplateName.APPLICATION_APPROVAL_REMINDER;
 	}
 	
 	@Test
 	public void shouldPopulatedMimeMessageForSingleRecipientInProduction() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, templateName, templateContent, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
-		EasyMock.replay(freeMarkerConfigMock, configMock);
 		prep.prepare(testMessage);
 
-		EasyMock.verify(freeMarkerConfigMock, configMock);
 		
 		List<String> parsedMessage = MultiPartMimeMessageParser.parseMessage(testMessage);
 
@@ -99,19 +99,15 @@ public class MimeMessagePreparatorFactoryTest {
 
 	@Test
 	public void shouldPopulatedMimeMessageForSingleRecipientWitCCsInProduction() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
-
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
 		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
 		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0],  new InternetAddress[] { cc1, cc2 }, subject, template, model, replyToAddress);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0],  new InternetAddress[] { cc1, cc2 }, subject, templateName, templateContent, model, replyToAddress);
 		
 		MimeMessage testMessage = new TestMessage();
 
-		EasyMock.replay(freeMarkerConfigMock, configMock);
 		prep.prepare(testMessage);
 
-		EasyMock.verify(freeMarkerConfigMock, configMock);
 
 		List<String> parsedMessage = MultiPartMimeMessageParser.parseMessage(testMessage);
 
@@ -136,18 +132,14 @@ public class MimeMessagePreparatorFactoryTest {
 
 	@Test
 	public void shouldPopulatedMimeMessageInProduction() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, template, model, replyToAddress);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, templateName, templateContent, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 		
 
-		EasyMock.replay(freeMarkerConfigMock, configMock);
 		prep.prepare(testMessage);
-
-		EasyMock.verify(freeMarkerConfigMock, configMock);
 
 		List<String> parsedMessage = MultiPartMimeMessageParser.parseMessage(testMessage);
 		
@@ -170,19 +162,15 @@ public class MimeMessagePreparatorFactoryTest {
 	
 	@Test
 	public void shouldPopulatedMimeMessageInProductionWithCCs() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
 		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
 		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, template, model, replyToAddress);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, templateName, templateContent, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 		
-		EasyMock.replay(freeMarkerConfigMock, configMock);
 		prep.prepare(testMessage);
-
-		EasyMock.verify(freeMarkerConfigMock, configMock);
 
 		List<String> parsedMessage = MultiPartMimeMessageParser.parseMessage(testMessage);
 		
@@ -208,18 +196,13 @@ public class MimeMessagePreparatorFactoryTest {
 
 	@Test
 	public void shouldPopulatedMimeMessageInDev() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
-
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, template, model, replyToAddress);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, templateName, templateContent, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
-		EasyMock.replay(freeMarkerConfigMock, configMock);
 		prep.prepare(testMessage);
 
-		EasyMock.verify(freeMarkerConfigMock, configMock);
-		
 		List<String> parsedMessage = MultiPartMimeMessageParser.parseMessage(testMessage);
 
 		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
@@ -243,17 +226,14 @@ public class MimeMessagePreparatorFactoryTest {
 	
 	@Test
 	public void shouldPopulatedMimeMessageForSingleRecipientInDev() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, templateName, templateContent, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
-		EasyMock.replay(freeMarkerConfigMock, configMock);
 		prep.prepare(testMessage);
 
-		EasyMock.verify(freeMarkerConfigMock, configMock);
 		
 		List<String> parsedMessage = MultiPartMimeMessageParser.parseMessage(testMessage);
 
@@ -273,19 +253,14 @@ public class MimeMessagePreparatorFactoryTest {
 	
 	@Test
 	public void shouldPopulatedMimeMessageForSingleRecipientWithCCsInDev() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
-
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
 		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
 		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], new InternetAddress[] { cc1, cc2 }, subject, template, model, replyToAddress);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], new InternetAddress[] { cc1, cc2 }, subject, templateName, templateContent, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
-		EasyMock.replay(freeMarkerConfigMock, configMock);
 		prep.prepare(testMessage);
-
-		EasyMock.verify(freeMarkerConfigMock, configMock);
 
 		List<String> parsedMessage = MultiPartMimeMessageParser.parseMessage(testMessage);
 		
@@ -308,22 +283,17 @@ public class MimeMessagePreparatorFactoryTest {
 	
 	@Test
 	public void shouldPopulatedMimeMessageInDevWithCCs() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
-
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
 		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
 		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
 		
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, template, model, replyToAddress);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, templateName, templateContent, model, replyToAddress);
 		
 		MimeMessage testMessage = new TestMessage();
 
-		EasyMock.replay(freeMarkerConfigMock, configMock);
 
 		prep.prepare(testMessage);
 	
-		EasyMock.verify(freeMarkerConfigMock, configMock);
-
 		List<String> parsedMessage = MultiPartMimeMessageParser.parseMessage(testMessage);
 		
 		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
@@ -347,8 +317,6 @@ public class MimeMessagePreparatorFactoryTest {
 
 	@Test
 	public void shouldCreateMulipartMessageIfAttacmentsProvided() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
-
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
 		PdfAttachmentInputSource attachmentOne = EasyMock.createMock(PdfAttachmentInputSource.class);
 		EasyMock.expect(attachmentOne.getAttachmentFilename()).andReturn("fileOne");
@@ -356,20 +324,16 @@ public class MimeMessagePreparatorFactoryTest {
 		EasyMock.expect(attachmentTwo.getAttachmentFilename()).andReturn("fileTwo");
 		EasyMock.replay(attachmentOne, attachmentTwo);
 		
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress, attachmentOne, attachmentTwo);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, templateName, templateContent, model, replyToAddress, attachmentOne, attachmentTwo);
 		MimeMessage testMessage = new TestMessage();
 
-		EasyMock.replay(freeMarkerConfigMock, configMock);
 		prep.prepare(testMessage);
 
-		EasyMock.verify(freeMarkerConfigMock, configMock);
-		
 		assertTrue(testMessage.getContent() instanceof MimeMultipart);
 	}
 	
 	@Test
 	public void shouldAddAttachemtns() throws Exception {
-		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 		final MimeMessageHelper mimeMessageHelperMock = EasyMock.createNiceMock(MimeMessageHelper.class);
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true){
 			@Override
@@ -384,16 +348,16 @@ public class MimeMessagePreparatorFactoryTest {
 		EasyMock.expect(attachmentTwo.getAttachmentFilename()).andReturn("fileTwo");
 		EasyMock.replay(attachmentOne, attachmentTwo);
 		
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress, attachmentOne, attachmentTwo);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, templateName, templateContent, model, replyToAddress, attachmentOne, attachmentTwo);
 		MimeMessage testMessage = new TestMessage();
 		
 		mimeMessageHelperMock.addAttachment("fileOne", attachmentOne, "application/pdf");
 		mimeMessageHelperMock.addAttachment("fileTwo", attachmentTwo, "application/pdf");
 		
-		EasyMock.replay(freeMarkerConfigMock, configMock, mimeMessageHelperMock);
+		EasyMock.replay(mimeMessageHelperMock);
 		prep.prepare(testMessage);
 
-		EasyMock.verify(freeMarkerConfigMock, configMock, mimeMessageHelperMock);
+		EasyMock.verify(mimeMessageHelperMock);
 	}
 
 	

@@ -52,8 +52,8 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 	    log.info("Applicant Move To Approval Notification Task Running");
 	    Transaction transaction = null;
 	    try {
+	        transaction = sessionFactory.getCurrentSession().beginTransaction();
 	    	EmailTemplate template = emailTemplateService.getActiveEmailTemplate(emailTemplateName);
-    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueMovedToApprovalNotifications();
     		transaction.commit();
     		for (ApplicationForm application : applications) {

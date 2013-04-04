@@ -65,9 +65,9 @@ public class RegisteredUserReminderTimerTask extends TimerTask {
 	    log.info(notificationType +  " Reminder Task Running");
 	    Transaction transaction = null;
 	    try {
+	        transaction = sessionFactory.getCurrentSession().beginTransaction();
 	    	EmailTemplate firstTemplate = emailTemplateService.getActiveEmailTemplate(firstEmailTemplateName);
 	    	EmailTemplate template = emailTemplateService.getActiveEmailTemplate(emailTemplateName);
-    		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueUserReminder(notificationType, status);
     		transaction.commit();
     		for (ApplicationForm application : applications) {

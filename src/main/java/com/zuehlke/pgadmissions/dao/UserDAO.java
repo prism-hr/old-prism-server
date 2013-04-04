@@ -253,12 +253,17 @@ public class UserDAO {
 		return users;
 	}
 	
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
+	public void delete(final RegisteredUser user) {
+	    sessionFactory.getCurrentSession().delete(user);
+	}   
+
+	private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {
             if (entry.getId().equals(user.getId())) {
                 return true;
             }
         }
         return false;
-    }   
+    }
+
 }

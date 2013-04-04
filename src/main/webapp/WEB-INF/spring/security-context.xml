@@ -12,6 +12,8 @@
         <intercept-url pattern="/reportDocumentUploadFailure" access="permitAll" />
         <intercept-url pattern="/resendApplicationToPortico" access="permitAll" />
         
+        <intercept-url pattern="/user/autosuggest/**" access="hasAnyRole('SUPERADMINISTRATOR','ADMINISTRATOR','REVIEWER','APPROVER','INTERVIEWER')" />
+        
         <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/forgotPassword/**" access="permitAll" />
         <intercept-url pattern="/design/**" access="permitAll" />

@@ -27,6 +27,7 @@
 				<prop key="javax.persistence.validation.mode">NONE</prop>
                 <prop key="hibernate.search.default.directory_provider">filesystem</prop>
                 <prop key="hibernate.search.default.indexBase">${hibernate.search.default.indexBase}</prop>
+                <prop key="hibernate.search.autoregister_listeners">false</prop>
 			</props>
 		</property>
 	</bean>

@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -16,15 +19,18 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class NewUserMailSenderTest {
@@ -32,7 +38,7 @@ public class NewUserMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private MessageSource msgSourceMock;
-
+	private EmailTemplateService templateServiceMock;
 	private NewUserMailSender mailSender;
 
 	@Test
@@ -73,7 +79,7 @@ public class NewUserMailSenderTest {
 	public void shouldSendNotificationEmailToUser() throws UnsupportedEncodingException {
 		final Map<String, Object> model = new HashMap<String, Object>();
 		final Program program = new ProgramBuilder().id(1).title("program title").build();
-		mailSender = new NewUserMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		mailSender = new NewUserMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock) {
 
 			@Override
 			public Map<String, Object> createModel(RegisteredUser user) {
@@ -96,8 +102,12 @@ public class NewUserMailSenderTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "Bob Smith");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("New user suggestion template").name(NEW_USER_SUGGESTION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(NEW_USER_SUGGESTION)).andReturn(template);
 
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject", "private/staff/mail/new_user_suggestion.ftl", model, null))
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject", NEW_USER_SUGGESTION, template.getContent(), model, null))
 		.andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
@@ -106,17 +116,17 @@ public class NewUserMailSenderTest {
 				EasyMock.aryEq(new Object[] { }),// 
 				EasyMock.eq((Locale) null))).andReturn("resolved subject");
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		mailSender.sendNewUserNotification(user);
-		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 	}
 	
 	@Test
 	public void shouldSendNotificationEmailWithCorrectSubjectToUserWhenProgramIsNull() throws UnsupportedEncodingException {
 		final Map<String, Object> model = new HashMap<String, Object>();
 
-		mailSender = new NewUserMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		mailSender = new NewUserMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock) {
 
 			@Override
 			public Map<String, Object> createModel(RegisteredUser user) {
@@ -139,8 +149,12 @@ public class NewUserMailSenderTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "Bob Smith");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("New user suggestion template").name(NEW_USER_SUGGESTION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(NEW_USER_SUGGESTION)).andReturn(template);
 
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject", "private/staff/mail/new_user_suggestion.ftl", model, null))
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject", NEW_USER_SUGGESTION, template.getContent(), model, null))
 		.andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
@@ -149,17 +163,17 @@ public class NewUserMailSenderTest {
 				EasyMock.aryEq(new Object[] { "user role"}),// 
 				EasyMock.eq((Locale) null))).andReturn("resolved subject");
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		mailSender.sendNewUserNotification(user);
-		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 	}
 	@Before
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		msgSourceMock = EasyMock.createMock(MessageSource.class);
-
-		mailSender = new NewUserMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		msgSourceMock = createMock(MessageSource.class);
+		templateServiceMock = createMock(EmailTemplateService.class);
+		mailSender = new NewUserMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 	}
 }

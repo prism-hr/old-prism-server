@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REVIEWER_REMINDER;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 import javax.mail.internet.MimeMessage;
 
 import junit.framework.Assert;
@@ -11,9 +16,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
@@ -24,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 public class ReviewerMailSenderWithFreemarkerSupportTest extends BaseEmailTestWithFreemarkerSupport {
 
     private ReviewerMailSender reviewerMailSender;
+    private EmailTemplate template;
     
     @Test
     public void shouldSendCorrectLinks() {
@@ -34,6 +42,11 @@ public class ReviewerMailSenderWithFreemarkerSupportTest extends BaseEmailTestWi
         
         ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().title("prgTitle").administrators(adminOne, adminTwo).code("123").build()).applicant(applicant).applicationNumber("123").build();
         Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).build()).build();
+        
+        template = new EmailTemplateBuilder().active(true)
+				.content("Application approval reminder template - pgadmissions/reviewFeedback?applicationId=123&activationCode=1234 pgadmissions/decline/review?applicationId=123&activationCode=1234").name(REVIEWER_REMINDER).build();
+    	expect(templateServiceMock.getActiveEmailTemplate(REVIEWER_REMINDER)).andReturn(template);
+    	replay(templateServiceMock);
         
         fakeLoggingMailSender.registerListeners(new FakeLoggingMailSenderListener() {
             
@@ -69,10 +82,12 @@ public class ReviewerMailSenderWithFreemarkerSupportTest extends BaseEmailTestWi
         });
         
         reviewerMailSender.sendReviewerReminder(reviewer);
+        
+        verify(templateServiceMock);
     }
     
     @Before
     public void setup() {
-        reviewerMailSender = new ReviewerMailSender(mimeMessagePreparatorFactory, fakeLoggingMailSender, messageSource);
+        reviewerMailSender = new ReviewerMailSender(mimeMessagePreparatorFactory, fakeLoggingMailSender, messageSource, templateServiceMock);
     }
 }

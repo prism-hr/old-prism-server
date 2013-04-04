@@ -2,46 +2,48 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum EmailTemplateName {
 
-	REVIEWER_NOTIFICATION("Reviewer notification"),
-	REVIEWER_ASSIGNED_NOTIFICATION("Reviewer assigned notification"),
-	REVIEWER_REMINDER("Reviewer reminder"),
-	REFEREE_NOTIFICATION("Referee notification"),
-	REFEREE_REMINDER("Rferee reminder"),
-	INTERVIEWER_NOTIFICATION("Interviewer notification"),
-	INTERVIEW_SUBMISSION_NOTIFICATION("Interview submission notification"),
-	INTERVIEWER_REMINDER("Interviewer reminder"),
-	INTERVIEWER_REMINDER_FIRST("Interviewer reminder first"),
-	APPROVAL_NOTIFICATION("Approval notification"),
-	REJECTED_NOTIFICATION("Rejected notification"),
-	REVIEW_SUBMISSION_NOTIFICATION("Review submission notification"),
-	REJECTED_NOTIFICATION_ADMIN("Rejected notification admin"),
-	NEW_PASSWORD_CONFIRMATION("New password confirmation"),
-	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation"),
-	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION("Supervisor confirm supervision notification"),
-	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION_REMINDER("Supervisor confirm supervision notification reminder"),
-	APPLICATION_APPROVAL_REMINDER("Application approval reminder"),
-	APPROVAL_RESTART_REQUEST_REMINDER("Approval restart request reminder"),
-	APPROVED_NOTIFICATION("Approved notification"),
-	APPLICATION_SUBMIT_CONFIRMATION("Application submit confirmation"),
-	APPLICATION_VALIDATION_REMINDER("Application validation reminder"),
-	APPLICATION_UPDATED_CONFIRMATION("Application updated confirmation"),
-	APPLICATION_SUBMIT_CONFIRMATION_ADMIN("Application submit confirmation admin"),
-	REFERENCE_RESPOND_CONFIRMATION("Reference respond confirmation"),
-	REFERENCE_SUBMIT_CONFIRMATION("Reference submit confirmation"),
-	REGISTRY_VALIDATION_REQUEST("Registry vlaidation request"),
-	RESTART_APPROVAL_REQUEST("Restart approval request"),
-	REGISTRATION_CONFIRMATION("Registration confirmation"),
-	MOVED_TO_APPROVAL_NOTIFICATION("Moved to approval notification"),
-	MOVED_TO_APPROVED_NOTIFICATION("Moved to approved notification"),
-	MOVED_TO_INTERVIEW_NOTIFICATION("Moved to interview notification"),
-	MOVED_TO_REVIEW_NOTIFICATION("Moved to review notification"),
-	EXPORT_ERROR("Export error"),
-	IMPORT_ERROR("Import error"),
-	APPLICATION_INTERVIEW_REMINDER_FIRST("Application interview reminder first"),
-	APPLICATION_INTERVIEW_REMINDER("Application interview reminder"),
-	APPLICATION_REVIEW_REMINDER_FIRST("Application review reminder first"),
-	APPLICATION_REVIEW_REMINDER("Application review reminder"),
-	SUPERVISOR_NOTIFICATION("Supervisor notification");
+	REVIEWER_NOTIFICATION("Reviewer notification"),//updated
+	REVIEWER_ASSIGNED_NOTIFICATION("Reviewer assigned notification"),//updated
+	REVIEWER_REMINDER("Reviewer reminder"),//updated
+	REFEREE_NOTIFICATION("Referee notification"),//updated
+	REFEREE_REMINDER("Rferee reminder"),//updated
+	INTERVIEWER_NOTIFICATION("Interviewer notification"),//updated
+	INTERVIEW_SUBMISSION_NOTIFICATION("Interview submission notification"),//update
+	INTERVIEWER_REMINDER("Interviewer reminder"),//updated
+	INTERVIEWER_REMINDER_FIRST("Interviewer reminder first"),//updated
+	APPROVAL_NOTIFICATION("Approval notification"),//updated
+	REJECTED_NOTIFICATION_ADMIN("Rejected notification admin"),//updated
+	REVIEW_SUBMISSION_NOTIFICATION("Review submission notification"),//updated
+	NEW_PASSWORD_CONFIRMATION("New password confirmation"),//updated
+	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION("Supervisor confirm supervision notification"),//updated
+	SUPERVISOR_CONFIRM_SUPERVISION_NOTIFICATION_REMINDER("Supervisor confirm supervision notification reminder"),//updated
+	SUPERVISOR_NOTIFICATION("Supervisor notification"),//updated
+	APPROVED_NOTIFICATION("Approved notification"),//updated
+	APPLICATION_UPDATED_CONFIRMATION("Application updated confirmation"),//updated
+	APPROVAL_RESTART_REQUEST_REMINDER("Approval restart request reminder"),//updated
+	RESTART_APPROVAL_REQUEST("Restart approval request"),//updated
+	REFERENCE_SUBMIT_CONFIRMATION("Reference submit confirmation"),//updated
+	REFERENCE_RESPOND_CONFIRMATION("Reference respond confirmation"),//updated
+	REGISTRY_VALIDATION_REQUEST("Registry vlaidation request"),//updated
+	REGISTRATION_CONFIRMATION("Registration confirmation"),//updated
+	EXPORT_ERROR("Export error"),//updated
+	IMPORT_ERROR("Import error"),//updated
+	REJECTED_NOTIFICATION("Rejected notification"),//updated
+	APPLICATION_APPROVAL_REMINDER("Application approval reminder"),//updated
+	APPLICATION_VALIDATION_REMINDER("Application validation reminder"),//updated
+	MOVED_TO_APPROVED_NOTIFICATION("Moved to approved notification"),//updated
+	MOVED_TO_REVIEW_NOTIFICATION("Moved to review notification"),//updated
+	APPLICATION_SUBMIT_CONFIRMATION("Application submit confirmation"),//updated
+	APPLICATION_SUBMIT_CONFIRMATION_ADMIN("Application submit confirmation admin"),//updated
+	MOVED_TO_APPROVAL_NOTIFICATION("Moved to approval notification"),//updated
+	MOVED_TO_INTERVIEW_NOTIFICATION("Moved to interview notification"),//updated
+	APPLICATION_INTERVIEW_REMINDER_FIRST("Application interview reminder first"),//updated
+	APPLICATION_INTERVIEW_REMINDER("Application interview reminder"),//updated
+	APPLICATION_REVIEW_REMINDER_FIRST("Application review reminder first"),//updated
+	APPLICATION_REVIEW_REMINDER("Application review reminder"),//updated
+	APPLICATION_WITHDRAWN_NOTIFICATION("Application withdrawn notification"), //updated 
+	NEW_USER_SUGGESTION("New user suggestion"), //not found
+	REGISTER_REFEREE_CONFIRMATION("Register referee confirmation");//ok
 	
 	private final String displayValue;
 	

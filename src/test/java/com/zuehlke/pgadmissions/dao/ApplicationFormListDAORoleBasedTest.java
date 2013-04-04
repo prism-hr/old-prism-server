@@ -35,10 +35,8 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
-import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
-public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
+public class ApplicationFormListDAORoleBasedTest extends AutomaticRollbackTestCase {
 
     private ApplicationFormListDAO applicationDAO;
 
@@ -52,9 +50,8 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
     public void setup() {
         applicationDAO = new ApplicationFormListDAO(sessionFactory);
 
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
         program = new ProgramBuilder().code("doesntexist").title("another title").build();
 
@@ -65,16 +62,14 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnAllSubmittedApplicationsForSuperAdmin() {
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).submittedDate(new Date()).build();
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.UNSUBMITTED).submittedDate(new Date()).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
+                .submittedDate(new Date()).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED)
+                .submittedDate(new Date()).build();
         save(applicationFormOne, applicationFormTwo);
         flushAndClearSession();
-        RegisteredUser superAdmin = new RegisteredUserBuilder().role(
-                new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
-        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin, null, null,
-                SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, 25);
+        RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).build()).build();
+        List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin);
         assertTrue(listContainsId(applicationFormOne, applications));
         assertFalse(listContainsId(applicationFormTwo, applications));
     }
@@ -82,13 +77,12 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnOwnApplicationsAndRefereeingApplicationsIfApplicant() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant)
-                .status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION)
+                .build();
 
         save(applicant, applicationFormOne);
         flushAndClearSession();
@@ -98,41 +92,35 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         save(country);
         flushAndClearSession();
 
-        RegisteredUser otherApplicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email2@test.com").username("username3").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser otherApplicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").username("username3")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
-        Referee referee = new RefereeBuilder().user(applicant).email("email3@test.com").firstname("bob")
-                .lastname("smith").addressCountry(country).address1("london").jobEmployer("zuhlke").jobTitle("se")
-                .messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+        Referee referee = new RefereeBuilder().user(applicant).email("email3@test.com").firstname("bob").lastname("smith").addressCountry(country)
+                .address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
 
         save(referee, otherApplicant);
         flushAndClearSession();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).referees(referee)
-                .applicant(otherApplicant).status(ApplicationFormStatus.REVIEW).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).referees(referee).applicant(otherApplicant)
+                .status(ApplicationFormStatus.REVIEW).build();
 
         save(applicationFormTwo);
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicant);
 
-        assertTrue("The application form for which the user is an applicant could not be found.",
-                listContainsId(applicationFormOne, applications));
-        assertTrue("The application form for which the user is a referee could not be found.",
-                listContainsId(applicationFormTwo, applications));
+        assertTrue("The application form for which the user is an applicant could not be found.", listContainsId(applicationFormOne, applications));
+        assertTrue("The application form for which the user is a referee could not be found.", listContainsId(applicationFormTwo, applications));
     }
 
     @Test
     public void shouldNotReturnApplicationsByOtherApplicant() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
 
         save(applicant, applicationFormOne);
         flushAndClearSession();
@@ -144,24 +132,21 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnAllApplicationsRefereeIsAssignedTo() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("applicant").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("applicant")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .role(roleDAO.getRoleByAuthority(Authority.REFEREE)).build();
         save(applicant);
         Country country = new CountryBuilder().name("country").code("ZZ").enabled(true).build();
         save(country);
-        RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .role(roleDAO.getRoleByAuthority(Authority.REFEREE)).build();
         save(refereeUser);
-        Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob")
-                .lastname("smith").addressCountry(country).address1("london").jobEmployer("zuhlke").jobTitle("se")
-                .messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+        Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob").lastname("smith").addressCountry(country)
+                .address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
         save(referee);
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).referees(referee)
-                .applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).referees(referee).applicant(applicant)
+                .status(ApplicationFormStatus.VALIDATION).build();
 
         save(applicationFormOne);
         flushAndClearSession();
@@ -173,24 +158,21 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnAllApplicationsRefereeIsAssignedToAndOfWhichIs() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("applicant").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("applicant")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .role(roleDAO.getRoleByAuthority(Authority.REFEREE)).build();
         save(applicant);
         Country country = new CountryBuilder().name("country").code("ZZ").enabled(true).build();
         save(country);
-        RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .role(roleDAO.getRoleByAuthority(Authority.REFEREE)).build();
         save(refereeUser);
-        Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob")
-                .lastname("smith").addressCountry(country).address1("london").jobEmployer("zuhlke").jobTitle("se")
-                .messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+        Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob").lastname("smith").addressCountry(country)
+                .address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
         save(referee);
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).referees(referee)
-                .applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).referees(referee).applicant(applicant)
+                .status(ApplicationFormStatus.VALIDATION).build();
 
         save(applicationFormOne);
         flushAndClearSession();
@@ -202,24 +184,21 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldNotReturnApplicationsRefereeIsNotAssignedTo() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("applicant").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("applicant")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .role(roleDAO.getRoleByAuthority(Authority.REFEREE)).build();
         save(applicant);
         Country country = new CountryBuilder().name("country").code("ZZ").enabled(true).build();
         save(country);
-        RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .role(roleDAO.getRoleByAuthority(Authority.REFEREE)).build();
         save(refereeUser);
-        Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob")
-                .lastname("smith").addressCountry(country).address1("london").jobEmployer("zuhlke").jobTitle("se")
-                .messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+        Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob").lastname("smith").addressCountry(country)
+                .address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
         save(referee);
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant)
-                .status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION)
+                .build();
 
         save(applicationFormOne);
         flushAndClearSession();
@@ -230,13 +209,10 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnAllSubmittedApplicationsInProgramForAdmin() {
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.UNSUBMITTED).build();
-        RegisteredUser admin = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username2").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
+        RegisteredUser admin = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).build();
 
         save(admin);
 
@@ -253,11 +229,10 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
     public void shouldReturnNotReturnApplicationsSubmittedToOtherProgramsForAdmin() {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
-        RegisteredUser admin = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username2").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.VALIDATION)
+                .build();
+        RegisteredUser admin = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).build();
 
         save(admin);
 
@@ -275,12 +250,10 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.REVIEW).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).build();
 
-        RegisteredUser applicationAdministrator = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser applicationAdministrator = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
         applicationForm.setApplicationAdministrator(applicationAdministrator);
@@ -298,12 +271,10 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.UNSUBMITTED).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
 
-        RegisteredUser applicationAdministrator = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser applicationAdministrator = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
         applicationForm.setApplicationAdministrator(applicationAdministrator);
@@ -321,18 +292,15 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.REVIEW).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).build();
 
-        RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
         Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
 
-        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer)
-                .build();
+        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer).build();
         applicationForm.setLatestReviewRound(reviewRound);
 
         save(applicationForm, reviewerUser, reviewer, reviewRound);
@@ -347,18 +315,15 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.REVIEW).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).build();
 
-        RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
         Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
 
-        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer)
-                .build();
+        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer).build();
         applicationForm.getReviewRounds().add(reviewRound);
 
         save(reviewerUser, applicationForm, reviewerUser, reviewer, reviewRound);
@@ -374,18 +339,15 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.INTERVIEW).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).build();
 
-        RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
         Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
 
-        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer)
-                .build();
+        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer).build();
         applicationForm.setLatestReviewRound(reviewRound);
 
         save(applicationForm, reviewerUser, reviewer, reviewRound);
@@ -401,24 +363,20 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        RegisteredUser reviewerAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser reviewerAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.REVIEW).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).build();
 
         Reviewer reviewer = new ReviewerBuilder().user(reviewerAndAdminUser).build();
 
-        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationFormOne).reviewers(reviewer)
-                .build();
+        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationFormOne).reviewers(reviewer).build();
         applicationFormOne.setLatestReviewRound(reviewRound);
 
         save(reviewerAndAdminUser, applicationFormOne, reviewer, reviewRound);
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
         save(applicationFormTwo);
         flushAndClearSession();
 
@@ -433,13 +391,11 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.INTERVIEW).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).build();
 
         Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).build();
 
@@ -460,13 +416,11 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.INTERVIEW).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).build();
 
         Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).build();
 
@@ -486,13 +440,11 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.REVIEW).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).build();
 
         Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).build();
 
@@ -514,22 +466,17 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        RegisteredUser supervisorUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        RegisteredUser supervisorUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.APPROVED).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.APPROVED).build();
         Supervisor supervisorOne = new SupervisorBuilder().user(supervisorUser).isPrimary(false).build();
         Supervisor supervisorTwo = new SupervisorBuilder().user(supervisorUser).isPrimary(false).build();
 
-        ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().supervisors(supervisorOne)
-                .application(applicationFormOne).build();
-        ApprovalRound approvalRoundTwo = new ApprovalRoundBuilder().supervisors(supervisorTwo)
-                .application(applicationFormTwo).build();
+        ApprovalRound approvalRoundOne = new ApprovalRoundBuilder().supervisors(supervisorOne).application(applicationFormOne).build();
+        ApprovalRound approvalRoundTwo = new ApprovalRoundBuilder().supervisors(supervisorTwo).application(applicationFormTwo).build();
 
         applicationFormOne.setLatestApprovalRound(approvalRoundOne);
         applicationFormTwo.setLatestApprovalRound(approvalRoundTwo);
@@ -549,12 +496,10 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        RegisteredUser supervisorUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        RegisteredUser supervisorUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.REJECTED).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REJECTED).build();
 
         Supervisor supervisor = new SupervisorBuilder().user(supervisorUser).isPrimary(false).build();
 
@@ -576,20 +521,17 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        RegisteredUser interviewerAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser interviewerAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.INTERVIEW).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).build();
         Interviewer interviewer = new InterviewerBuilder().user(interviewerAndAdminUser).build();
         Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).build();
         applicationFormOne.setLatestInterview(interview);
         save(applicationFormOne, interviewerAndAdminUser, interviewer, interview);
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
         save(applicationFormTwo);
         flushAndClearSession();
 
@@ -602,12 +544,11 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnApplicationsInProgramForApprover() {
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
 
-        RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username2").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).build();
+        RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .programsOfWhichApprover(program).build();
 
         save(approver, applicationForm);
         flushAndClearSession();
@@ -619,12 +560,11 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldNotReturnApplicationsInProgramForApproverInNotInApproval() {
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.INTERVIEW).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).build();
 
-        RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username2").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).build();
+        RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .programsOfWhichApprover(program).build();
 
         save(approver, applicationForm);
         flushAndClearSession();
@@ -639,15 +579,12 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        RegisteredUser approverAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser approverAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).programsOfWhichApprover(otherProgram).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.APPROVAL).build();
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
         save(approverAndAdminUser, applicationFormOne, applicationFormTwo);
 
         flushAndClearSession();
@@ -657,26 +594,22 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         assertTrue(listContainsId(applicationFormOne, applications));
         assertTrue(listContainsId(applicationFormTwo, applications));
     }
-    
+
     @Test
     public void shouldReturnAppsForWhichHeIsViewer() {
         Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
         save(otherProgram);
 
-        RegisteredUser viewer = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
-                .email("email@test.com").username("username2").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+        RegisteredUser viewer = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
                 .programsOfWhichAdministrator(program).programsOfWhichViewer(otherProgram).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user)
-                .status(ApplicationFormStatus.APPROVAL).build();
-        
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
-        
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(user)
-                .status(ApplicationFormStatus.UNSUBMITTED).build();
-        
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
+
+        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
+
         save(viewer, applicationFormOne, applicationFormTwo, applicationFormThree);
 
         flushAndClearSession();
@@ -686,7 +619,7 @@ public class ApplicationFormListDAOTest extends AutomaticRollbackTestCase {
         assertTrue(listContainsId(applicationFormOne, applications));
         assertTrue(listContainsId(applicationFormTwo, applications));
     }
-    
+
     private boolean listContainsId(ApplicationForm form, List<ApplicationForm> aplicationForms) {
         for (ApplicationForm entry : aplicationForms) {
             if (form.getId().equals(entry.getId())) {

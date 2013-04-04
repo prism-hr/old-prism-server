@@ -1,5 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_UPDATED_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_WITHDRAWN_NOTIFICATION;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,6 +24,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
@@ -29,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
@@ -50,13 +58,15 @@ public class MailServiceTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private MessageSource msgSourceMock;
+	private EmailTemplateService templateServiceMock;
 	
 	@Before
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		msgSourceMock = EasyMock.createMock(MessageSource.class);
-		mailService = new MailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		msgSourceMock = createMock(MessageSource.class);
+		templateServiceMock = createMock(EmailTemplateService.class);
+		mailService = new MailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -89,33 +99,37 @@ public class MailServiceTest {
 		InternetAddress toAddress3 = new InternetAddress("hh@test.com", "henry harck");
 		InternetAddress toAddress4 = new InternetAddress("jj@test.com", "julia jumper");
 		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Application updated confirmation template").name(APPLICATION_UPDATED_CONFIRMATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPLICATION_UPDATED_CONFIRMATION)).andReturn(template);
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.update"), 
 				EasyMock.aryEq(new Object[] { "xyz", "program title" , "a", "b"}), EasyMock.eq((Locale)null))).andReturn("update subject").anyTimes();
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
-						EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+						eq(APPLICATION_UPDATED_CONFIRMATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
-						EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
+						eq(APPLICATION_UPDATED_CONFIRMATION), EasyMock.eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress3), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
-						EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock3);
+						eq(APPLICATION_UPDATED_CONFIRMATION), EasyMock.eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock3);
 		
 		EasyMock.expect(
 		        mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress4), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
-		                EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock4);
+		        		eq(APPLICATION_UPDATED_CONFIRMATION), EasyMock.eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock4);
 		
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock3);
 		javaMailSenderMock.send(preparatorMock4);
-		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		mailService.sendApplicationUpdatedMailToAdmins(form);
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -145,26 +159,30 @@ public class MailServiceTest {
 		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "henry harck");
 		InternetAddress toAddress3 = new InternetAddress("aa@test.com", "aaa aaa");
 		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Application updated confirmation template").name(APPLICATION_UPDATED_CONFIRMATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPLICATION_UPDATED_CONFIRMATION)).andReturn(template);
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.update"), 
 				EasyMock.aryEq(new Object[] { "xyz", "program title" , "a", "b"}), EasyMock.eq((Locale)null))).andReturn("update subject").anyTimes();
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
-						EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+						eq(APPLICATION_UPDATED_CONFIRMATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
-						EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
+						eq(APPLICATION_UPDATED_CONFIRMATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress3), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("update subject"),
-						EasyMock.eq("private/staff/admin/mail/application_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock3);
+						eq(APPLICATION_UPDATED_CONFIRMATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock3);
 		
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock3);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		mailService.sendApplicationUpdatedMailToAdmins(form);
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -184,21 +202,25 @@ public class MailServiceTest {
 		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
 		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
 		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Application withdrawn notification template").name(APPLICATION_WITHDRAWN_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPLICATION_WITHDRAWN_NOTIFICATION)).andReturn(template).times(2);
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
 				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+						eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
+						eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 		
 		mailService.sendWithdrawMailToReferees(Arrays.asList(referee1, referee2));
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -220,26 +242,30 @@ public class MailServiceTest {
 		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "henry harck");
 		InternetAddress toAddress3 = new InternetAddress("Forse@test.com", "Fred Forse");
 		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Application withdrawn notification template").name(APPLICATION_WITHDRAWN_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPLICATION_WITHDRAWN_NOTIFICATION)).andReturn(template).times(3);
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
 				EasyMock.aryEq(new Object[] { "xyz", "title" ,"a", "b"}), EasyMock.eq((Locale)null))).andReturn("subject").times(3);
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+						eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);		
+						eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress3), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock3);
+						eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock3);
 						
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock3);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 		
 		mailService.sendWithdrawToAdmins(form);
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -265,19 +291,23 @@ public class MailServiceTest {
 		
 		InternetAddress toAddress1 = new InternetAddress("Forse@test.com", "Fred Forse");
 		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Application withdrawn notification template").name(APPLICATION_WITHDRAWN_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPLICATION_WITHDRAWN_NOTIFICATION)).andReturn(template);
+		
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
 				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").anyTimes();
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+						eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 	
 		javaMailSenderMock.send(preparatorMock1);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 		
 		mailService.sendWithdrawToReviewers(form);
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -304,19 +334,23 @@ public class MailServiceTest {
 		
 		InternetAddress toAddress1 = new InternetAddress("Forse@test.com", "Fred Forse");
 		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Application withdrawn notification template").name(APPLICATION_WITHDRAWN_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPLICATION_WITHDRAWN_NOTIFICATION)).andReturn(template);
+		
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
 				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").anyTimes();
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+						eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 	
 		javaMailSenderMock.send(preparatorMock1);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 		
 		mailService.sendWithdrawToInterviewers(form);
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -341,19 +375,23 @@ public class MailServiceTest {
 		
 		InternetAddress toAddress1 = new InternetAddress("Forse@test.com", "Fred Forse");
 		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Application withdrawn notification template").name(APPLICATION_WITHDRAWN_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPLICATION_WITHDRAWN_NOTIFICATION)).andReturn(template);
+		
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
 				EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").anyTimes();
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+						eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
 	
 		javaMailSenderMock.send(preparatorMock1);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 		
 		mailService.sendWithdrawToSupervisors(form);
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);		
 	}
 
     @SuppressWarnings("unchecked")
@@ -375,24 +413,28 @@ public class MailServiceTest {
         InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
         InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
         
+        EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Application withdrawn notification template").name(APPLICATION_WITHDRAWN_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPLICATION_WITHDRAWN_NOTIFICATION)).andReturn(template).times(2);
+        
         EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.withdrawal"), 
                 EasyMock.aryEq(new Object[] { "xyz", "title", "a", "b" }), EasyMock.eq((Locale)null))).andReturn("subject").times(2);
         
         EasyMock.expect(
                 mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-                        EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
+                		eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock1);
         EasyMock.expect(
                 mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-                        EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
+                		eq(APPLICATION_WITHDRAWN_NOTIFICATION), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
         
         javaMailSenderMock.send(preparatorMock1);
         javaMailSenderMock.send(preparatorMock2);
         
         EasyMock.expectLastCall();
         
-        EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+        EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
         
         mailService.sendWithdrawMailToAdminsReviewersInterviewersSupervisors(Arrays.asList(referee1, referee2), form);
-        EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);      
+        EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);      
     }	
 }

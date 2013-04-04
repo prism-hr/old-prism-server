@@ -11,9 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.StateChangeMailSender;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 
@@ -27,18 +30,21 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 	
     private final String messageCode;
 	
-    private final String emailTemplate;
+
+    private final EmailTemplateName emailTemplateName;
+    
+    private final EmailTemplateService emailTemplateService;
 
     public ApplicantMoveToApprovalNotificationTask(SessionFactory sessionFactory,
             ApplicationFormDAO applicationFormDAO, StateChangeMailSender applicantMailSender,
-		String messageCode, String emailTemplate) {
+		String messageCode, EmailTemplateName emailTemplateName, EmailTemplateService emailTemplateService) {
 		this.sessionFactory = sessionFactory;
 		this.applicationFormDAO = applicationFormDAO;
 		this.applicantMailSender = applicantMailSender;
 
 		this.messageCode = messageCode;
-		this.emailTemplate = emailTemplate;
-
+		this.emailTemplateName = emailTemplateName;
+		this.emailTemplateService = emailTemplateService;
 	}
 
 	@Override
@@ -46,6 +52,7 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
 	    log.info("Applicant Move To Approval Notification Task Running");
 	    Transaction transaction = null;
 	    try {
+	    	EmailTemplate template = emailTemplateService.getActiveEmailTemplate(emailTemplateName);
     		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueMovedToApprovalNotifications();
     		transaction.commit();
@@ -53,7 +60,7 @@ public class ApplicantMoveToApprovalNotificationTask extends TimerTask {
     			transaction = sessionFactory.getCurrentSession().beginTransaction();
     			sessionFactory.getCurrentSession().refresh(application);
     			try {
-    				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplate, null);
+    				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplateName, template.getContent(), null);
     				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);
     				if (notificationRecord == null) {
     					notificationRecord = new NotificationRecord(NotificationType.APPLICATION_MOVED_TO_APPROVAL_NOTIFICATION);

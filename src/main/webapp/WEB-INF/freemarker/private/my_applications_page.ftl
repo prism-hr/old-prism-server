@@ -44,7 +44,7 @@
 <!--[if (gte IE 9)|!(IE)]><!-->
 <body>
     <!--<![endif]-->
-	<input type="hidden" id="hasFilter" value="${hasFilter?string('true', 'false')}">
+
     <!-- Wrapper Starts -->
     <div id="wrapper">
 
@@ -99,20 +99,62 @@
                         <div id="table-bar">
                             <!-- Download button. -->
                             <a target="_blank" name="downloadAll" id="downloadAll" data-desc="<@spring.message 'myApps.downloadAll'/>">Download</a>
-
-
-                            <!-- Search/filter box. -->
+                            
+                            <input type="hidden" id="searchPredicatesMap" name="searchPredicatesMap" value="$(searchPredicatesMap)" />
+                            
                             <div id="search-box">
-                                <input type="text" id="searchTerm" name="searchTerm" <#if searchTerm??> value="${searchTerm}" <#else> placeholder="Filter by..." </#if> /> 
-                                <select name="searchCategory" id="searchCategory">
-                                    <option value="">Column...</option>
-                                    <#list searchCategories as category>
-                                    	<option <#if searchCategory?? && searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}
-                                    	</option>
-                                    </#list>
-                                </select>
+                                <#list filters as filter>
+                                    <!-- Search/filter box. -->
+                                    <div class="filter" id="filter_${filter_index}">
+                                        <select class="selectCategory" name="searchCategory" id="searchCategory_${filter_index}">
+                                            <option>Column...</option>
+                                            <#list searchCategories as category>
+                                                <option <#if filter.searchCategory = category>selected="selected"</#if> value="${category}">${category.displayValue()}
+                                                </option>
+                                            </#list>
+                                        </select>
+                                        
+                                        <select class="selectPredicate" name="searchPredicate" id="searchPredicate_${filter_index}">
+                                            <option>Choose...</option>
+                                            <#list filter.searchCategory.availablePredicates as predicate>
+                                                <option <#if filter.searchPredicate = predicate>selected="selected"</#if> value="${predicate}">${predicate.displayValue()}
+                                                </option>
+                                            </#list>
+                                        </select>                                        
+                                        
+                                        <input class="filterInput" type="text" id="searchTerm_${filter_index}" name="searchTerm" value="${filter.searchTerm}" placeholder="Filter by..." /> 
+                                        
+                                        <button class="btn remove">Remove</button>
+                                        <button class="btn add">Add</button>
+                                     </div>
+                                </#list>
+                                
+                                <!-- New search/filter box. -->
+                                <div class="filter" id="filter">
+                                    <select class="selectInput" name="searchCategory" id="searchCategory">
+                                        <option value="">Column...</option>
+                                        <#list searchCategories as category>
+                                            <option value="${category}">${category.displayValue()}
+                                            </option>
+                                        </#list>
+                                    </select>
+                                    
+                                    <select class="selectPredicate" name="searchPredicate" id="searchPredicate_new">
+                                        <option>Choose...</option>
+                                    </select>  
+                                    
+                                    <input class="filterInput" type="text" id="searchTerm_new" name="searchTerm" value="" placeholder="Filter by..." /> 
+                                    <button class="btn remove">Remove</button>
+                                    <button class="btn add">Add</button>
+                                 </div>
+                                
+                                <button class="btn btn-primary" type="button" id="add-active-application-filters">Active applications</button>
                                 <button class="btn btn-primary" type="button" id="search-go">Go</button>
                                 <button class="btn" type="button" id="search-reset">Clear</button>
+                                <button class="btn" id="storeFiltersBtn">Store</button>
+                                
+                                
+                                <a class="btn" href="<@spring.url '/applications?reloadFilters=true'/>">Load</a>
                             </div>
 
                         </div>

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRY_VALIDATION_REQUEST;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -16,11 +18,13 @@ import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 @Component
@@ -31,14 +35,14 @@ public class RegistryMailSender extends MailSender {
 	private final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory;
 
 	public RegistryMailSender() {
-		this(null, null, null, null,  null);
+		this(null, null, null, null,  null, null);
 	}
 
 	@Autowired
     public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender,
-            MessageSource msgSource, PdfDocumentBuilder pdfDocumentBuilder,
+            MessageSource msgSource, PdfDocumentBuilder pdfDocumentBuilder, EmailTemplateService emailTemplateService,
             PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory) {
-		super(mimeMessagePreparatorFactory, mailSender, msgSource);
+		super(mimeMessagePreparatorFactory, mailSender, msgSource, emailTemplateService);
 		this.pdfDocumentBuilder = pdfDocumentBuilder;
 		this.pdfAttachmentInputSourceFactory = pdfAttachmentInputSourceFactory;
 	}
@@ -52,15 +56,15 @@ public class RegistryMailSender extends MailSender {
 		}
 		RegisteredUser currentUser = applicationForm.getAdminRequestedRegistry();
 		InternetAddress ccAdminAddres = createAddress(currentUser);
-
+		EmailTemplate template = getDefaultEmailtemplate(REGISTRY_VALIDATION_REQUEST);
 		String subject = resolveMessage("validation.request.registry.contacts", applicationForm);
-		String templatename = "private/staff/admin/mail/registry_validation_request.ftl";
 
 		MimeMessagePreparator mimeMessagePreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(
 				toAddresses,
 				new InternetAddress[] { ccAdminAddres },
 				subject,
-				templatename,
+				REGISTRY_VALIDATION_REQUEST,
+				template.getContent(),
 				createModel(applicationForm, currentUser, registryContacts),
 				ccAdminAddres,
 				pdfAttachmentInputSourceFactory.getAttachmentDataSource(applicationForm.getApplicationNumber() + ".pdf",

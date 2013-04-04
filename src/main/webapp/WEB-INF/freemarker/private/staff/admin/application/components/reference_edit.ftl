@@ -4,9 +4,10 @@
         <span class="hint" data-desc="<@spring.message 'interviewOutcome.comment'/>"></span>
         <div class="field">
             <textarea name="refereeComment" id="refereeComment_${encRefereeId}" class="max" rows="6" cols="80" >${(referee.reference.comment?html)!}</textarea>
+            
         </div>
     </div>
-    <div class="row"><div id="commentError_${encRefereeId}" class="alert alert-error"> <i class="icon-warning-sign"></i>  </div></div>
+    
 </div>
 
 <div class="row-group">

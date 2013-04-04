@@ -14,7 +14,7 @@
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
-
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/global_public.css' />" />
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
 </head>
@@ -39,13 +39,11 @@
 	<!-- Middle. -->
 	<div id="middle">
 
-		<div id="site-message" class="notice">
-			<div class="header">
-				<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_app.png'/>" alt="" /></div>
-				<div class="tagline">Your Gateway to<br />Research Opportunities</div>
-			</div>
+		<div id="site-message" class="notice" style="height:200px">
+			
 			<div class="content">
-				<p><br>An e-mail with the new password will be sent to ${email} shortly.</p>
+				<p style="margin-top:15px;">An e-mail with the new password will be sent to ${email} shortly.</p>
+                <p class="buttons"><a id="resend" class="btn btn-primary btn-large" href="../login">Login</a></p>
 			</div>
 		</div>
 	

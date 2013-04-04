@@ -159,7 +159,7 @@
     <!-- Main content area. -->
     <article id="content" role="main">
 
-      <!-- FLOATING TOOLBAR -->
+      <!-- FLOATING TOOLBAR
       <ul id="view-toolbar" class="toolbar">
         <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
         <li class="download"><a target="_blank" title="Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download</a></li>
@@ -175,7 +175,7 @@
         <li id="tool-references" class="tool-button"><a href="#referencesSection" title="Back to References">Back to References</a></li>
         <li id="tool-documents" class="tool-button"><a href="#documentSection" title="Back to Documents">Back to Documents</a></li> 
         <li id="tool-information" class="tool-button tool-information"><a href="#additionalInformationSection" title="Back to Additional Information">Back to Additional Information</a></li> 
-      </ul>
+      </ul> -->
 
       <!-- content box -->
       <div class="content-box">
@@ -236,21 +236,18 @@
 		          <!-- Additional Information -->
 		          <section id="additionalInformationSection" class="folding form-rows lightblue <#if additionalInformationError> error</#if>">
 		          </section>
-		
-		          <hr />
 		          
 		          <#if applicationForm.isInState('UNSUBMITTED')>
 			          <!-- Terms -->
 			          <section id="acceptTermsSection" class="folding form-rows lightgrey">
 			          </section>
-			         	<hr />
 		          </#if>  
 		
 		          <div class="buttons">
 		            <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
 		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
 		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-		              <button id="saveAndClose" type="button" class="btn btn-large">Save &amp; Close</button>
+		              <button id="saveAndClose" type="button" class="btn btn-large btn-primary">Save &amp; Close</button>
 		            </form>                                      
 		            <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     
 		            <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
@@ -260,7 +257,7 @@
 		            </form>
 		            <#else>
 		            <form>
-		              <button class="btn btn-large" id="saveAndClose" type="button">Save &amp; Close</a>
+		              <button class="btn btn-large btn-primary" id="saveAndClose" type="button">Save &amp; Close</a>
 		            </form>
 		            </#if>
 		          </div>

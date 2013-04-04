@@ -58,11 +58,9 @@
         <section id="login-box">
         
           <form id="loginForm" method="post" action="/pgadmissions/j_spring_security_check" class="form-horizontal">
-              <div id="legend">
+              <fieldset>
                 <legend class="">Login</legend>
-              </div>
-             
-              <div class="control-group">
+                <div class="control-group">
                 <label class="control-label" for="inputEmail">Email <em>*</em></label>
                 <span class="hint" data-desc="Please enter your e-mail address."></span>
                 <div class="controls">
@@ -100,6 +98,7 @@
                 <a href="/pgadmissions/forgotPassword">Forgot Password</a>
                 </div>
               </div>
+              </fieldset>
         </form>
         </section>
     
@@ -110,10 +109,11 @@
     </div>
     
     <!-- Scripts -->
-    <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
     <script type="text/javascript" src="<@spring.url '/design/default/js/login.js'/>"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/modernizr.js'/>"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
   </body>
 </html>

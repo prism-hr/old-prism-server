@@ -5,7 +5,7 @@ $(document).ready(function() {
     showOrHideQualificationInstitution();
     
     if ($('#qualificationInstitution').val() === "OTHER") {
-        $("#lbl-otherInstitutionProviderName").removeClass("grey-label");
+        $("#lbl-otherInstitutionProviderName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
         $("#otherInstitutionProviderName").removeAttr("readonly", "readonly");
         $("#otherInstitutionProviderName").removeAttr("disabled", "disabled");
     }
@@ -15,21 +15,21 @@ $(document).ready(function() {
     // -------------------------------------------------------------------------------
     function showOrHideQualificationInstitution() {
         $("#qualificationInstitution").attr("disabled", "disabled");
-        $("#lbl-providerName").addClass("grey-label");
+        $("#lbl-providerName").addClass("grey-label").parent().find('.hint').addClass("grey");
         if ($("#institutionCountry").val() != "") {
             $("#qualificationInstitution").removeAttr("disabled", "disabled");
-            $("#lbl-providerName").removeClass("grey-label");
+            $("#lbl-providerName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
         }
     }
 
     $('#qualificationInstitution').change(function() {
         if ($('#qualificationInstitution').val() === "OTHER") {
-            $("#lbl-otherInstitutionProviderName").removeClass("grey-label");
+            $("#lbl-otherInstitutionProviderName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
             $("#otherInstitutionProviderName").removeAttr("readonly", "readonly");
             $("#otherInstitutionProviderName").removeAttr("disabled", "disabled");
         } else {
             $("#otherInstitutionProviderName").val("");
-            $("#lbl-otherInstitutionProviderName").addClass("grey-label");
+            $("#lbl-otherInstitutionProviderName").addClass("grey-label").parent().find('.hint').addClass("grey");
             $("#otherInstitutionProviderName").attr("readonly", "readonly");
             $("#otherInstitutionProviderName").attr("disabled", "disabled");
         }
@@ -45,7 +45,7 @@ $(document).ready(function() {
         if ($('#institutionCountry').val() == "") {
             $("#qualificationInstitution").empty();
             $("#otherInstitutionProviderName").val("");
-            $("#lbl-otherInstitutionProviderName").addClass("grey-label");
+            $("#lbl-otherInstitutionProviderName").addClass("grey-label").parent().find('.hint').addClass("grey");
             $("#otherInstitutionProviderName").attr("readonly", "readonly");
             $("#otherInstitutionProviderName").attr("disabled", "disabled");
             return;
@@ -107,12 +107,10 @@ $(document).ready(function() {
         numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").size();
         if (numberOfSavedPositions >= 6) {
             $("#qualificationsSaveButton").addClass("clear");
-            $("#addQualificationButton").removeClass("blue");
             $('#qualifications-H2').trigger('click');
         } else {
             // enable save
             $("#addQualificationButton").show();
-            $("#qualificationsSaveButton").addClass("blue");
             $("#qualificationsSaveButton").removeClass("clear");
         }
     }
@@ -121,12 +119,10 @@ $(document).ready(function() {
         numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").size();
         if (numberOfSavedPositions >= 6 && $("#qualificationSubject").val() == "") {
             $("#qualificationsSaveButton").addClass("clear");
-            $("#addQualificationButton").removeClass("blue");
             $("#addQualificationButton").attr('disabled', 'true');
         } else {
             $("#addQualificationButton").show();
             $("#addQualificationButton").removeAttr('disabled');
-            $("#qualificationsSaveButton").addClass("blue");
             $("#qualificationsSaveButton").removeClass("clear");
         }
     }
@@ -282,7 +278,7 @@ $(document).ready(function() {
                 }
                 
                 if ($('#qualificationInstitution').val() === "OTHER") {
-                    $("#lbl-otherInstitutionProviderName").removeClass("grey-label");
+                    $("#lbl-otherInstitutionProviderName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
                     $("#otherInstitutionProviderName").removeAttr("readonly", "readonly");
                     $("#otherInstitutionProviderName").removeAttr("disabled", "disabled");
                 }

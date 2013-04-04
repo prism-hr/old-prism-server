@@ -11,11 +11,11 @@
 <div id="refereesTable" class="open">
 <#if hasReferees>
 
-    <#include "/private/staff/admin/application/components/referees_table.ftl"/>
-
-    <div class="alert alert-info"> <i class="icon-info-sign"></i>
-        You may select two completed references to submit for offer processing. You may also enter a reference on behalf of a referee by clicking the provide reference icon.
+	<div class="alert alert-info">
+    <i class="icon-info-sign"></i> You may select two completed references to submit for offer processing. You may also enter a reference on behalf of a referee by clicking the provide reference icon.
     </div>
+
+    <#include "/private/staff/admin/application/components/referees_table.ftl"/>
     
     <#list applicationForm.referees as referee>
         <#assign encRefereeId = encrypter.encrypt(referee.id) />

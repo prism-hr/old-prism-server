@@ -350,42 +350,43 @@ function selectValue(elementName) {
 function disablePassportInformation() {
 	$("#passportNumber").attr("disabled", "disabled");
 	$("#passportNumber").val("");
-	$("#lbl_passportNumber").addClass("grey-label");
+	$("#lbl_passportNumber").addClass("grey-label").parent().find('.hint').addClass("grey");
 	$("#lbl_passportNumber").html("Passport Number");
 	
 	$("#nameOnPassport").attr("disabled", "disabled");
 	$("#nameOnPassport").val("");
-	$("#lbl_nameOnPassport").addClass("grey-label");
+	$("#lbl_nameOnPassport").addClass("grey-label").parent().find('.hint').addClass("grey");
 	$("#lbl_nameOnPassport").html("Name on Passport");
 	
 	$("#passportIssueDate").attr("disabled", "disabled");
 	$("#passportIssueDate").val("");
-	$("#lbl_passportIssueDate").addClass("grey-label");
+	$("#lbl_passportIssueDate").addClass("grey-label").parent().find('.hint').addClass("grey");
 	$("#lbl_passportIssueDate").html("Passport Issue Date");
 	
 	$("#passportExpiryDate").attr("disabled", "disabled");
 	$("#passportExpiryDate").val("");
-	$("#lbl_passportExpiryDate").addClass("grey-label");
+	$("#lbl_passportExpiryDate").addClass("grey-label").parent().find('.hint').addClass("grey");
 	$("#lbl_passportExpiryDate").html("Passport Expiry Date");
+	$("#residenceid div.alert").remove();
 }
 
 function enablePassportInformation() {
 	$("#passportNumber").removeAttr("disabled", "disabled");
 	$("#passportNumber").removeAttr("readonly", "readonly");
-	$("#lbl_passportNumber").removeClass("grey-label");
+	$("#lbl_passportNumber").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	$("#lbl_passportNumber").html("Passport Number<em>*</em>");
 	
 	$("#nameOnPassport").removeAttr("disabled", "disabled");
 	$("#nameOnPassport").removeAttr("readonly", "readonly");
-	$("#lbl_nameOnPassport").removeClass("grey-label");
+	$("#lbl_nameOnPassport").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	$("#lbl_nameOnPassport").html("Name on Passport<em>*</em>");
 	
 	$("#passportIssueDate").removeAttr("disabled", "disabled");
-	$("#lbl_passportIssueDate").removeClass("grey-label");
+	$("#lbl_passportIssueDate").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	$("#lbl_passportIssueDate").html("Passport Issue Date<em>*</em>");
 	
 	$("#passportExpiryDate").removeAttr("disabled", "disabled");
-	$("#lbl_passportExpiryDate").removeClass("grey-label");
+	$("#lbl_passportExpiryDate").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	$("#lbl_passportExpiryDate").html("Passport Expiry Date<em>*</em>");	
 }
 
@@ -399,6 +400,7 @@ function enableLanguageQualifications() {
 	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').removeAttr("readonly", "readonly");
 	
 	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").removeClass("grey-label");
+	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").parent().find('.hint').removeClass("grey");
 	
 	if ($("#languageQualificationsTable tr").length <= 0) {
 	    $("#addLanguageQualificationButton").show();	    
@@ -418,6 +420,7 @@ function disableLanguageQualifications() {
 	$('#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree').attr("readonly", "readonly");
 	
 	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").addClass("grey-label");
+	$("#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications").parent().find('.hint').addClass("grey");
 	
 	$("#addLanguageQualificationButton").hide();
 	$("#updateLanguageQualificationButton").hide();
@@ -443,19 +446,19 @@ function clearLanguageQualification() {
 function disableOtherLanguageQualification() {
 	$('#otherQualificationTypeName').attr("disabled", "disabled");
 	$('#otherQualificationTypeName').attr("readonly", "readonly");
-	$('#lbl-otherQualificationTypeName').addClass("grey-label");
+	$('#lbl-otherQualificationTypeName').addClass("grey-label").parent().find('.hint').addClass("grey");
 }
 
 function enableOtherLanguageQualification() {
 	$('#otherQualificationTypeName').removeAttr("disabled");
 	$('#otherQualificationTypeName').removeAttr("readonly");
-	$('#lbl-otherQualificationTypeName').removeClass("grey-label");
+	$('#lbl-otherQualificationTypeName').removeClass("grey-label").parent().find('.hint').removeClass("grey");
 }
 
 function isEnglishFirstLanguage() {
 	var selected_radio = $("input[name='englishFirstLanguage']:checked").val();
 	if (selected_radio == 'true')   {
-		$("#lbl-languageQualificationAvailable").addClass("grey-label");
+		$("#lbl-languageQualificationAvailable").addClass("grey-label").parent().find('.hint').addClass("grey");
 		$("input[name='languageQualificationAvailable']").attr("disabled", "disabled");
 		$("input[name='languageQualificationAvailable']").prop('checked', false);
 		disableLanguageQualifications();
@@ -463,7 +466,7 @@ function isEnglishFirstLanguage() {
 		$("#languageQualificationsTable").empty();
 		return true;
 	} else if (selected_radio == 'false') {
-	    $("#lbl-languageQualificationAvailable").removeClass("grey-label");
+	    $("#lbl-languageQualificationAvailable").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 		$("input[name='languageQualificationAvailable']").removeAttr("disabled");
 		return false;
 	}
@@ -473,10 +476,10 @@ function isEnglishFirstLanguage() {
 function isRequireVisa() {
 	var selected_radio = $("input[name='requiresVisa']:checked").val();
 	if (selected_radio == 'true')   {
-		$("#lbl-passportAvailable").removeClass("grey-label");
+		$("#lbl-passportAvailable").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 		$("input[name='passportAvailable']").removeAttr("disabled", "disabled");
 	} else {
-		$("#lbl-passportAvailable").addClass("grey-label");
+		$("#lbl-passportAvailable").addClass("grey-label").parent().find('.hint').addClass("grey");
 		$("input[name='passportAvailable']").attr("disabled", "disabled");
 		$("input[name='passportAvailable']").prop('checked', false);
 		disablePassportInformation();

@@ -95,7 +95,7 @@
       <!-- Provider -->
       <div class="row">
         <label id="lbl-providerName" class="plain-label grey-label" for="qualificationInstitution">Institution / Provider Name<em>*</em></label>
-        <span class="hint" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
+        <span class="hint grey" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
         <div class="field"> <select class="full" id="qualificationInstitution" name="qualificationInstitution"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
           <option value="">Select...</option>
           <#list institutions as inst> <option value="${inst.code}" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == inst.code> selected="selected"</#if>>
@@ -115,7 +115,7 @@
       <!-- Other name-->
       <div class="row">
         <label id="lbl-otherInstitutionProviderName" class="plain-label grey-label" for="otherInstitutionProviderName">Please Specify<em>*</em></label>
-        <span class="hint" data-desc="<@spring.message 'education.qualifications.subject'/>"></span>
+        <span class="hint grey" data-desc="<@spring.message 'education.qualifications.subject'/>"></span>
         <div class="field"> <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
           <input readonly disabled="disabled" id="otherInstitutionProviderName" class="full" type="text" value="${(qualification.otherQualificationInstitution?html)!}" />
           <#else>

@@ -14,14 +14,14 @@
 #timeline-statuses { list-style: none; margin: 0; padding: 0; }
 #timeline-statuses ul { list-style: none; margin-left: 90px; }
 
-#timeline-statuses .box { background: #C8C8C8; margin-bottom: 10px; position: relative; }
-
-#timeline-statuses .box .title { background: #999; font-weight: bold; line-height: 24px; overflow: hidden; padding: 5px; }
+#timeline-statuses .box { background: #C8C8C8; margin-bottom: 10px; position: relative; border-radius: 4px;}
+#timeline-statuses>li:last-child {  margin-bottom: -10px;}
+#timeline-statuses .box .title { border-radius: 4px 4px 0 0; background: #999; font-weight: bold; line-height: 24px; overflow: hidden; padding: 5px; }
 #timeline-statuses .box .title .name { margin-left: 4px; }
 #timeline-statuses .box .title .datetime { float: right; margin-right: 5px; }
 #timeline-statuses .box .title em { color: black; font-weight: normal; font-size: 12px; }
 #timeline-statuses .box p { line-height: 1.2; margin: 0; padding: 5px 10px 0 30px; }
-#timeline-statuses .box p.highlight { background-image: url(../../../images/bg_status_default.gif); font-size: 16px; font-weight: bold; margin: 0; padding: 10px 25px 10px 10px; }
+#timeline-statuses .box p.highlight {  border-radius: 0 0 4px 4px; background-image: url(../../../images/bg_status_default.gif); font-size: 16px; font-weight: bold; margin: 0; padding: 10px 25px 10px 10px; }
 #timeline-statuses .box h3 {font-size:13px; line-height: 1.2; margin-bottom: 0; margin-top: .5em; padding: 0 10px; }
 #timeline-statuses .box label { display: inline-block; margin-right: 1em; }
 #timeline-statuses .box label input { vertical-align: middle; }
@@ -177,6 +177,7 @@
 #timelineview ul.tabs {
   margin-top: -43px;
   background: none;
+  margin-bottom: 10px;
 }
 #timelineview ul.tabs li {
   box-shadow: none;
@@ -220,7 +221,7 @@
   margin-top: 0px;
 }
 #timelineview .tab-page {
-  padding-top: 10px;
+  padding-top: 0px;
 }
 #timelineview input[type="radio"],
 #timelineview input[type="checkbox"] {

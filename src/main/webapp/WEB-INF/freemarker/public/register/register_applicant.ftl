@@ -62,9 +62,8 @@
 		    <section id="registration-box">
 		    
 		    	<form method="post" action= "/pgadmissions/register/submit" class="form-horizontal">
-		      		<div id="legend">
+		      		<fieldset>
 		                <legend >Register Today</legend>
-		              </div>
 
 		            <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
 		            <div class="control-group">
@@ -147,6 +146,7 @@
 		                    </#if>
                			 </div>
 		            </div>	
+                    </fieldset>
 		      	</form>
 		      	
 		      	<#if RequestParameters.activationCode?has_content>

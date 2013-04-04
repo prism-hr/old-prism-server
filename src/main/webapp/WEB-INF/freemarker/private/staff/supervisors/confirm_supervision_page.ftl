@@ -56,11 +56,11 @@
                 </ul>
               </div> --> 
   
-  <!-- FLOATING TOOLBAR -->
+  <!-- FLOATING TOOLBAR 
   <ul id="view-toolbar" class="toolbar">
     <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
     <li class="print"><a target="_blank" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Click to Download">Print</a></li>
-  </ul>
+  </ul>-->
   
   <!-- content box -->
   <div class="content-box">

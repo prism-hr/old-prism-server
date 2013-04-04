@@ -20,7 +20,7 @@ table#appliList th.sortable.desc span { background-image: url(../../images/icon_
 
 /* Form fields inside the table. */
 td.applicant-name { white-space: nowrap; } /* name on one line. */
-td.applicant-name .applicant-id { display: block; font-size: smaller; }
+td.applicant-name .applicant-id { display: block; font-size: 10px; }
 td.status { text-align: center !important; }
 
 
@@ -78,6 +78,6 @@ div.fetching { text-align: center; font-weight: bold; padding: 5px; }
 
 /* With bootstrap*/
 
-table#appliList th, table#appliList td { padding: 5px 3px; vertical-align: middle; }
+table#appliList th, table#appliList td { padding: 8px 3px; vertical-align: middle; line-height: 15px; }
 table#appliList select {width: 113px; margin-bottom: 0;}
 table#appliList input[type="checkbox"] { margin-top: 0px;}

@@ -217,20 +217,20 @@ function flipSortOrder() {
 }
 
 function getFilters() {
-    filters = new Array();
+    var filters = new Array();
     
     $filterbox = $(".filter");
     
     $.each($filterbox, function() {
-        searchCategory = $(this).find('.selectCategory').val();
-        searchPredicate = $(this).find('.selectPredicate').val();
-        searchTerm = $(this).find('.filterInput').val();
+        var search_category = $(this).find('.selectCategory').val();
+        var search_predicate = $(this).find('.selectPredicate').val();
+        var search_term = $(this).find('.filterInput').val();
         
-        if(searchCategory && searchTerm.length > 0){
+        if(search_category && search_term.length > 0){
             filters.push({
-                searchCategory : searchCategory,
-                searchPredicate : searchPredicate,
-                searchTerm : searchTerm
+                search_category : search_category,
+                search_predicate : search_predicate,
+                search_term : search_term
             });
         }
     });

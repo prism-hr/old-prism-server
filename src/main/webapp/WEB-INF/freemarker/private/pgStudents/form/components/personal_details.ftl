@@ -299,7 +299,7 @@
         <#include "/private/pgStudents/form/components/personal_details_language_qualifications.ftl" />            
         </div>
 
-        <div class="row-group">
+        <div class="row-group" id="residenceid">
             <h3>Residence</h3>
             <div class="row">
                 <label for="residenceCountry" class="plain-label">Country of Residence<em>*</em></label>
@@ -462,7 +462,7 @@
             
             <div class="row">
                 <label class="plain-label grey-label" for="email">Email</label>
-                <span class="hint" data-desc="<@spring.message 'personalDetails.email'/>"></span> 
+                <span class="hint grey" data-desc="<@spring.message 'personalDetails.email'/>"></span> 
                 <div class="field">
                         <input class="full" readonly type="email" value="${(user.email?html)!}"  
                         name="email" id="email" disabled="disabled"/>             

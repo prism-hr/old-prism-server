@@ -61,13 +61,9 @@
 		    <section id="login-box">
 		    
 		    	<form method="post" action= "/pgadmissions/forgotPassword/resetPassword" class="form-horizontal">
-		    		<div id="legend">
+		    		<fieldset>
 		                <legend>Recover your password</legend>
-		            </div>
-					
-		      		
-
-		      		<div class="control-group">
+		      		    <div class="control-group">
 		           		<label class="control-label" for="email">Email <em>*</em></label>
 		           		<span class="hint" data-desc="Please enter your e-mail address"></span>
 						<div class="controls">
@@ -90,6 +86,7 @@
 				      	<a href="/pgadmissions/login">Back to Login</a>
 				      	</div>
 				    </div>
+                    </fieldset>
 		      	</form>
 		      	
 		    </section>

@@ -37,7 +37,7 @@
       <!-- Programme name (disabled) -->
       <div class="row">
         <label class="plain-label grey-label" for="programmeName">Programme<em class="grey-label">*</em></label>
-        <span class="hint" data-desc="<@spring.message 'programmeDetails.programme'/>"></span>
+        <span class="hint grey" data-desc="<@spring.message 'programmeDetails.programme'/>"></span>
         <div class="field">
           <input class="full" id="programmeName" name="programmeName" type="text" value="${(applicationForm.program.title?html)!}" disabled="disabled" />
           
@@ -91,7 +91,7 @@
       <!-- Project -->
       <div class="row">
         <label class="plain-label grey-label" for="projectName">Project</label>
-        <span class="hint" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
+        <span class="hint grey" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
         <div class="field">
         	<#if applicationForm.projectTitle?has_content>
         		<#assign project = true>
@@ -127,7 +127,7 @@
       <!-- Referrer Free Text-->
       <div class="row">
         <label id="referrer-text-lbl" class="plain-label grey-label" for="referrer_text">Please explain<em>*</em></label>
-        <span class="hint" data-desc="<@spring.message 'programmeDetails.howDidYouFindUsExplain'/>"></span>
+        <span class="hint grey" data-desc="<@spring.message 'programmeDetails.howDidYouFindUsExplain'/>"></span>
         <div class="field">
           <input class="full grey-label" id="referrer_text" name="referrer_text" type="text" value=<#if programmeDetails.sourcesOfInterestText??>"${(programmeDetails.sourcesOfInterestText?html)}"<#else>"Not Required" disabled="disabled"</#if> />
           <@spring.bind "programmeDetails.sourcesOfInterestText" /> 
@@ -141,7 +141,7 @@
     </div><!-- .row-group -->
   <div id="supervisor_div">
     <div class="row-group">
-      <h3>Supervision</h3>
+      <h3>Supervisors</h3>
       <div class="alert alert-info">
           <i class="icon-info-sign"></i> <@spring.message 'programmeDetails.supervisor.supervisor'/>
       </div>
@@ -181,13 +181,13 @@
         </table>
       </div><!-- .row-group -->
       <div class="row-group">
-        <h3>Add Supervisor</h3>
+        <h3>Add a Supervisor</h3>
       <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
       <!-- supervisor rows -->
       <input type="hidden" id="supervisorId" name="supervisorId"/>
       
       <div class="row">
-        <label class="plain-label" for="supervisorFirstname">Supervisor First Name</label>
+        <label class="plain-label" for="supervisorFirstname">Supervisor First Name<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
         <div class="field">
           <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
@@ -195,7 +195,7 @@
       </div>
       
       <div class="row">
-        <label class="plain-label" for="supervisorLastname">Supervisor Last Name</label>
+        <label class="plain-label" for="supervisorLastname">Supervisor Last Name<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
         <div class="field"> 
           <input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
@@ -203,7 +203,7 @@
       </div>
   
       <div class="row">
-        <label class="plain-label" for="supervisorEmail">Supervisor Email</label>
+        <label class="plain-label" for="supervisorEmail">Supervisor Email<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
         <div class="field">
           <input class="full" type="email" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
@@ -211,7 +211,7 @@
       </div>
   
       <div class="row">
-        <label class="plain-label">Is this supervisor aware of your application?</label>
+        <label class="plain-label">Is this supervisor aware of your application?<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
         <div class="field">
           <label for="awareYes"><input id="awareYes" type="radio" name="awareSupervisor" value="YES" /> Yes</label>

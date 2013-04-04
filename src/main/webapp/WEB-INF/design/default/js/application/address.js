@@ -205,14 +205,14 @@ function disableContactAddress() {
 	$("#contactAddress5").attr('disabled','disabled');
 	$("#contactAddressCountry").attr('disabled','disabled');
 	
-	$("#add-two-lb-1").addClass("grey-label");
-	$("#add-two-lb-2").addClass("grey-label");
-	$("#add-two-lb-3").addClass("grey-label");
-	$("#add-two-lb-4").addClass("grey-label");
+	$("#add-two-lb-1").addClass("grey-label").parent().find('.hint').addClass("grey");
+	$("#add-two-lb-2").addClass("grey-label").parent().find('.hint').addClass("grey");
+	$("#add-two-lb-3").addClass("grey-label").parent().find('.hint').addClass("grey");
+	$("#add-two-lb-4").addClass("grey-label").parent().find('.hint').addClass("grey");
 	
-	$("#country-two-lb").addClass("grey-label");
-	$("#add-two-em").addClass("grey-label");
-	$("#country-two-em").addClass("grey-label");
+	$("#country-two-lb").addClass("grey-label").parent().find('.hint').addClass("grey");
+	$("#add-two-em").addClass("grey-label").parent().find('.hint').addClass("grey");
+	$("#country-two-em").addClass("grey-label").parent().find('.hint').addClass("grey");
 }
 
 function enableContactAddress(clear) {
@@ -230,13 +230,13 @@ function enableContactAddress(clear) {
     
 	$("#contactAddressLocation").removeAttr('disabled');
 	$("#contactAddressCountry").removeAttr('disabled');
-	$("#add-two-lb-1").removeClass("grey-label");
-	$("#add-two-lb-2").removeClass("grey-label");
-	$("#add-two-lb-3").removeClass("grey-label");
-	$("#add-two-lb-4").removeClass("grey-label");
-	$("#country-two-lb").removeClass("grey-label");
-	$("#add-two-em").removeClass("grey-label");
-	$("#country-two-em").removeClass("grey-label");
+	$("#add-two-lb-1").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+	$("#add-two-lb-2").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+	$("#add-two-lb-3").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+	$("#add-two-lb-4").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+	$("#country-two-lb").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+	$("#add-two-em").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+	$("#country-two-em").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	
 	$("#contactAddress1").removeAttr('disabled','disabled');
 	$("#contactAddress2").removeAttr('disabled','disabled');

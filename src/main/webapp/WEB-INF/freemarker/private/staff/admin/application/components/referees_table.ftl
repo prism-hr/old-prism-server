@@ -1,17 +1,14 @@
 <table class="existing  table table-striped table-condensed table-bordered table-hover">
     <colgroup>
-        <col style="width: 30px" />
-        <col style="width: 650px" />
-        <col style="width: 90px" />
-        <col style="width: 36px" />
-        <col />
+        <col style="width: 32px" />
+        <col style="width: 680px" />
+        <col style="width: 134px" />
     </colgroup>
     <thead>
         <tr>
-            <th id="primary-header" colspan="2">References</th>
-            <th>Responded</th>
-            <th>&nbsp;</th>
-            <th id="last-col">&nbsp;</th>
+            <th >&nbsp;</th>
+            <th id="primary-header">References</th>
+            <th colspan="2" id="last-col">Responded</th>
         </tr>
     </thead>
     <tbody>
@@ -56,7 +53,6 @@
                                     class="<#if !existingReferee.hasResponded()>button-edit<#else>button-show</#if> button-hint"
                                     data-desc="<#if !existingReferee.hasResponded()>Provide reference<#else>Show</#if>">edit</a>
                                 </td>
-                                <td></td>
                             </tr>
                             </#list>
                         </tbody>

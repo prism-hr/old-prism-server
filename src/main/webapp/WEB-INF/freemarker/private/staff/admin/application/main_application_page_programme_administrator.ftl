@@ -74,7 +74,7 @@
                     </ul>
                 </div>-->
 
-                <!-- FLOATING TOOLBAR -->
+                <!-- FLOATING TOOLBAR
                 <ul id="view-toolbar" class="toolbar">
                     <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
                     <li class="download"><a target="_blank" title="Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download</a></li>
@@ -91,7 +91,7 @@
                     <li id="tool-documents" class="tool-button"><a href="#documentSection" title="Back to Documents">Back to Documents</a></li> 
                     <li id="tool-information" class="tool-button tool-information"><a href="#additionalInformationSection" title="Back to Additional Information">Back to Additional Information</a></li>
                 </ul>
-
+ 				-->
                 <!-- content box -->
                 <div class="content-box">
                     <div class="content-box-inner">
@@ -122,11 +122,10 @@
 
                                 <section id="additionalInformationSection" class="folding form-rows lightblue"><#include "/private/staff/application/components/additional_information.ftl"/></section>
 
-                                <hr />
                                 
                                 <div class="buttons">
                                     <form>
-                                      <button id="saveAndClose" type="button" class="btn btn-large">Save &amp; Close</a>
+                                      <button id="saveAndClose" type="button" class="btn btn-large btn-primary">Save &amp; Close</a>
                                     </form>
                                 </div>
                                 

@@ -68,7 +68,7 @@
     <span class="hint" data-desc="<@spring.message 'addressDetails.house'/>"></span>
     <div class="field">
       <input type="text" class="max" id="address_location1_${encRefereeId}" name="ref_address_location1" value="${(refereesAdminEditDTO.addressLocation.address1?html)!}"/>
-      <input class="max" id="address_location2_${encRefereeId}" name="ref_address_location2" value="${(refereesAdminEditDTO.addressLocation.address2?html)!}"/>
+      <input type="text" class="max" id="address_location2_${encRefereeId}" name="ref_address_location2" value="${(refereesAdminEditDTO.addressLocation.address2?html)!}"/>
       <@spring.bind "refereesAdminEditDTO.addressLocation.address1" />
       <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>

@@ -36,7 +36,7 @@
     		<#elseif application.submittedDate??>
     			${(application.submittedDate?string("dd MMM yyyy"))}
     		<#else>
-    			<a class="proceed-link" href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Proceed &gt;</a>
+    			<a class="btn btn-success" href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Proceed</a>
     		</#if>
     	</td>
     </tr>

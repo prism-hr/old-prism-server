@@ -5,10 +5,10 @@
 function enableOrDisableStartDate() {
 	if ($("#studyOption").val() == "") {
 		$("#startDate").attr("disabled", "disabled");
-		$("#lbl_startDate").addClass("grey-label");
+		$("#lbl_startDate").addClass("grey-label").parent().find('.hint').addClass("grey");
 	} else {
 		$("#startDate").removeAttr("disabled", "disabled");
-		$("#lbl_startDate").removeClass("grey-label");
+		$("#lbl_startDate").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	}
 }
 
@@ -17,7 +17,7 @@ function enableOrDisableReferrerText() {
 	if (selectedText === "Other" || selectedText === "Other Academic Staff" || selectedText === "Other Website" || 
 	        selectedText === "Newspaper/Recruitment guide/Magazine advertisement") {
 		//$("#referrer-text-lbl").text($.trim($("#referrer-text-lbl").text())).append('<em>*</em>');
-		$("#referrer-text-lbl").removeClass("grey-label");
+		$("#referrer-text-lbl").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 		$("#referrer_text").removeClass("grey-label");
 		$("#referrer_text").removeAttr("disabled", "disabled");
 		if ($("#referrer_text").val() === "Not Required") {
@@ -25,7 +25,7 @@ function enableOrDisableReferrerText() {
 		}
 	} else {
 		//$("#referrer-text-lbl em").remove();
-		$("#referrer-text-lbl").addClass("grey-label");
+		$("#referrer-text-lbl").addClass("grey-label").parent().find('.hint').addClass("grey");
 		$("#referrer_text").addClass("grey-label");
 		$("#referrer_text").attr("disabled", "disabled");
 		$("#referrer_text").val("Not Required");

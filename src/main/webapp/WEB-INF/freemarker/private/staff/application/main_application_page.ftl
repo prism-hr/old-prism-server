@@ -75,11 +75,11 @@
     <article id="content" role="main">
     
       
-      <!-- FLOATING TOOLBAR -->
+      <!-- FLOATING TOOLBAR 
       <ul id="view-toolbar" class="toolbar">
         <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
         <li class="download"><a target="_blank" title="Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download</a></li>
-      </ul>
+      </ul>-->
       
       <!-- content box -->
       <div class="content-box">

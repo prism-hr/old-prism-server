@@ -72,23 +72,13 @@
                         <div id="edit-template-section">
                         
 
-						<!-- Preview Modal -->
+						<!-- Modal -->
 						<div id="previewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 						  <div class="modal-header">
+						    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 						    <h3 id="previewModalLabel"></h3>
 						  </div>
 						  <div id="previewModalContent" class="modal-body">
-						  	<!-- Modal content -->
-						    
-						  </div>
-						  <div class="modal-footer">
-						    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-						  </div>
-						</div>
-						
-						<!-- Modal -->
-						<div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-						  <div id="errorModalContent" class="modal-body">
 						  	<!-- Modal content -->
 						    
 						  </div>

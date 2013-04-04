@@ -14,10 +14,11 @@
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
-
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/global_public.css' />" />
 <link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/register.css' />" />
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
+
 
 </head>
 
@@ -42,14 +43,11 @@
 	<div id="middle">
 
 		<div id="site-message" class="success">
-			<div class="header">
-				<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_app.png'/>" alt="" /></div>
-				<div class="tagline">A Spectrum of Postgraduate<br />Research Opportunities</div>
-			</div>
+			
 			<div class="content">
 				<h1>Almost there...</h1>
 				<p>To activate your account please check your emails and click on the activation link.</p>
-				<p class="buttons"><a id="resend" class="button blue" href="/pgadmissions/register/resendConfirmation?activationCode=${pendingUser.activationCode}">Resend email</a></p>
+				<p class="buttons"><a id="resend" class="btn btn-large" href="/pgadmissions/register/resendConfirmation?activationCode=${pendingUser.activationCode}">Resend email</a></p>
 			</div>
 		</div>
 		

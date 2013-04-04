@@ -1,18 +1,22 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -20,6 +24,8 @@ import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testFullTextSearchContext.xml")
+@TransactionConfiguration(defaultRollback = false)
+@Transactional
 public class FullTextSearchServiceTest {
 
     @Autowired
@@ -28,69 +34,61 @@ public class FullTextSearchServiceTest {
     @Autowired
     private SessionFactory sessionFactory;
 
+    @Autowired
+    private UserDAO registeredUserDAO;
+
     private RegisteredUser user1;
 
     private RegisteredUser similiarToUser1;
-
-    private Transaction transaction;
     
+    public static boolean dbInit = false;
+
     @Before
     public void prepare() {
-        transaction = sessionFactory.getCurrentSession().beginTransaction();
-        
-        user1 = new RegisteredUserBuilder().firstName("Tyler").lastName("Durden")
-                .email("tyler@durden.com").username("tyler@durden.com").password("password").accountNonExpired(false)
-                .accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        user1 = new RegisteredUserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
+                .username("tyler@durden.com").password("password").accountNonExpired(false).accountNonLocked(false)
+                .credentialsNonExpired(false).enabled(false).build();
 
         similiarToUser1 = new RegisteredUserBuilder().firstName("Taylor").lastName("Dordeen")
                 .email("taylor@dordeen.com").username("taylor@durden.com").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        save(user1, similiarToUser1);
-        
-        transaction.commit();
+        registeredUserDAO.save(user1);
+        registeredUserDAO.save(similiarToUser1);
+
+        flushIndexes();
     }
-    
+
+    @After
+    public void clean() {
+        registeredUserDAO.delete(user1);
+        registeredUserDAO.delete(similiarToUser1);
+    }
+
     @Test
-    public void shouldReturnAMatchingUserBasedOnHisFirstname() {
-        List<RegisteredUser> matchingUsersWithFirstnameLike = fullTextService.getMatchingUsersWithFirstnameLike("kevin");
+    public void shouldReturnAFuzzyMatchBasedOnAMisspelledFirstname() {
+        List<RegisteredUser> matchingUsersWithFirstnameLike = fullTextService.getMatchingUsersWithFirstnameLike("tayle");
+        assertEquals(2, matchingUsersWithFirstnameLike.size());
         assertTrue(listContainsId(user1, matchingUsersWithFirstnameLike));
         assertTrue(listContainsId(similiarToUser1, matchingUsersWithFirstnameLike));
     }
     
     @Test
-    @Ignore
-    public void shouldReturnAMatchingUserBasedOnHisLastname() {
+    public void shouldReturnAFuzzyMatchBasedOnAMisspelledLastname() {
         List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durden");
+        assertEquals(2, matchingUsersWithLastnameLike.size());
         assertTrue(listContainsId(user1, matchingUsersWithLastnameLike));
         assertTrue(listContainsId(similiarToUser1, matchingUsersWithLastnameLike));
     }
 
     @Test
-    @Ignore
-    public void shouldReturnAMatchingUserBasedOnHisEmail() {
-        List<RegisteredUser> matchingUsersWithEmailLike = fullTextService.getMatchingUsersWithEmailLike("tulo@");
+    public void shouldReturnAFuzzyMatchBasedOnAMisspelledEmail() {
+        List<RegisteredUser> matchingUsersWithEmailLike = fullTextService.getMatchingUsersWithEmailLike("tulor@durden.com");
+        assertEquals(2, matchingUsersWithEmailLike.size());
         assertTrue(listContainsId(user1, matchingUsersWithEmailLike));
         assertTrue(listContainsId(similiarToUser1, matchingUsersWithEmailLike));
     }
     
-    protected void save(List<? extends Object> domainObjects) {
-        for (Object domainObject : domainObjects) {
-            sessionFactory.getCurrentSession().save(domainObject);
-        }
-    }
-    
-    protected void save(Object... domainObjects) {
-        for (Object domainObject : domainObjects) {
-            sessionFactory.getCurrentSession().save(domainObject);
-        }
-    }
-    
-    protected void flushAndClearSession() {
-        sessionFactory.getCurrentSession().flush();
-        sessionFactory.getCurrentSession().clear();
-    }
-
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
         for (RegisteredUser entry : users) {
             if (user.getId().equals(entry.getId())) {
@@ -98,5 +96,10 @@ public class FullTextSearchServiceTest {
             }
         }
         return false;
+    }
+    
+    private void flushIndexes() {
+        FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
+        fullTextSession.flushToIndexes();
     }
 }

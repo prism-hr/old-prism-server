@@ -40,13 +40,13 @@ public class FullTextSearchService {
         return fullTextSearchDAO.getMatchingUsersWithFirstnameLike(searchTerm);
     }
 
-    public List<RegisteredUser> getMatchingUsersWithLastnameLike(String string) {
-        // TODO Auto-generated method stub
-        return null;
+    @Transactional(readOnly = true)
+    public List<RegisteredUser> getMatchingUsersWithLastnameLike(final String searchTerm) {
+        return fullTextSearchDAO.getMatchingUsersWithLastnameLike(searchTerm);
     }
 
-    public List<RegisteredUser> getMatchingUsersWithEmailLike(String string) {
-        // TODO Auto-generated method stub
-        return null;
+    @Transactional(readOnly = true)
+    public List<RegisteredUser> getMatchingUsersWithEmailLike(final String searchTerm) {
+        return fullTextSearchDAO.getMatchingUsersWithEmailLike(searchTerm);
     }
 }

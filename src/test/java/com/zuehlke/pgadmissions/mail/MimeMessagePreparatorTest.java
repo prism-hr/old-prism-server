@@ -2,11 +2,8 @@ package com.zuehlke.pgadmissions.mail;
 
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_APPROVAL_REMINDER;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +14,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.test.utils.MultiPartMimeMessageParser;
 
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 
 public class MimeMessagePreparatorTest {
 
@@ -43,8 +38,6 @@ public class MimeMessagePreparatorTest {
     private Configuration configMock;
 
     private Map<String, Object> model;
-
-    private String template;
 
     private String subject;
     
@@ -64,8 +57,6 @@ public class MimeMessagePreparatorTest {
     	
     	emailTemplateName = APPLICATION_APPROVAL_REMINDER;
     	
-        template = "template";
-
         tos = new InternetAddress[] { new InternetAddress("email@bla.com"), new InternetAddress("dummy@test.com") };
 
         replyToAddress = new InternetAddress("replytome@test.com", "Jane Hurrah");

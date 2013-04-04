@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
@@ -22,9 +25,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -35,6 +41,7 @@ public class DataImportMailSenderTest {
 	private MessageSource msgSourceMock;
 	private UserService userServiceMock;
 	private SessionFactory sessionFactoryMock;
+	private EmailTemplateService templateServiceMock;
 
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
@@ -59,10 +66,12 @@ public class DataImportMailSenderTest {
 		InternetAddress expAddr1 = new InternetAddress("admin@test.com", "bob the builder");
 		InternetAddress expAddr2 = new InternetAddress("bob@test.com", "bob the builder");
 
-		String expTemplate = "private/mail/import_error.ftl";
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Import error template").name(IMPORT_ERROR).build();
+		expect(templateServiceMock.getActiveEmailTemplate(IMPORT_ERROR)).andReturn(template);
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		dataImporterMailSender = new DataImporterMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, userServiceMock, sessionFactoryMock) {
+		dataImporterMailSender = new DataImporterMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, userServiceMock, sessionFactoryMock, templateServiceMock) {
 			@Override
 			Map<String, Object> createModel(RegisteredUser user, String message) {
 				return model;
@@ -82,18 +91,18 @@ public class DataImportMailSenderTest {
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.data.import.error"), EasyMock.aryEq(new Object[] {}), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
 
 		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr1, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr1, "subject", IMPORT_ERROR, template.getContent(), model, null)).andReturn(mimePrepMock);
 		javaMailSenderMock.send(mimePrepMock);
 
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr2, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr2, "subject", IMPORT_ERROR, template.getContent(), model, null)).andReturn(mimePrepMock);
 		javaMailSenderMock.send(mimePrepMock);
 		
 		EasyMock.expectLastCall();
-		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, userServiceMock, sessionFactoryMock, sessionMock, transactionMock);
+		EasyMock.replay(mimePrepMock, javaMailSenderMock, templateServiceMock, mimeMessagePreparatorFactoryMock, msgSourceMock, userServiceMock, sessionFactoryMock, sessionMock, transactionMock);
 
 		dataImporterMailSender.sendErrorMessage("message");
 
-		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, userServiceMock, sessionFactoryMock, sessionMock, transactionMock);
+		EasyMock.verify(mimePrepMock, javaMailSenderMock, templateServiceMock, mimeMessagePreparatorFactoryMock, msgSourceMock, userServiceMock, sessionFactoryMock, sessionMock, transactionMock);
 	}
 
 	@Before
@@ -103,6 +112,7 @@ public class DataImportMailSenderTest {
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		sessionFactoryMock = EasyMock.createMock(SessionFactory.class);
-		dataImporterMailSender = new DataImporterMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, userServiceMock, sessionFactoryMock);
+		templateServiceMock = createMock(EmailTemplateService.class);
+		dataImporterMailSender = new DataImporterMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, userServiceMock, sessionFactoryMock, templateServiceMock);
 	}
 }

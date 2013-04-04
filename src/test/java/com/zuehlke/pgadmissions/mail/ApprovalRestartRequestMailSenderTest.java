@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPROVAL_RESTART_REQUEST_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.RESTART_APPROVAL_REQUEST;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -19,21 +24,23 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RequestRestartComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RequestRestartCommentBuilder;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApprovalRestartRequestMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private MessageSource msgSourceMock;
+	private EmailTemplateService templateServiceMock;
 	private ApprovalRestartRequestMailSender mailSender;
 
 	@Test
@@ -73,23 +80,28 @@ public class ApprovalRestartRequestMailSenderTest {
 		
 		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
 		InternetAddress toAddress2 = new InternetAddress("cc@test.com", "cindy cider");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Restart approval request template").name(RESTART_APPROVAL_REQUEST).build();
+		expect(templateServiceMock.getActiveEmailTemplate(RESTART_APPROVAL_REQUEST)).andReturn(template);
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.request.restart.approval"), 
 				EasyMock.aryEq(new Object[] { "xyz", "title" }), EasyMock.eq((Locale)null))).andReturn("subject");
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/admin/mail/restart_approval_request.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+						eq(RESTART_APPROVAL_REQUEST), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/admin/mail/restart_approval_request.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+						eq(RESTART_APPROVAL_REQUEST), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().times(2);
 		
-		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, templateServiceMock, javaMailSenderMock, msgSourceMock);
 		
 		final Map<String, Object> model = new HashMap<String, Object>();
 		
-		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock){
+		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock){
 			@Override
 			protected Map<String,Object> createModel(ApplicationForm application) {
 			
@@ -99,7 +111,7 @@ public class ApprovalRestartRequestMailSenderTest {
 		
 		mailSender.sendRequestRestartApproval(form);
 		
-		EasyMock.verify( javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify( javaMailSenderMock, mimeMessagePreparatorFactoryMock, templateServiceMock, msgSourceMock);
 			
 	}
 	
@@ -119,20 +131,25 @@ public class ApprovalRestartRequestMailSenderTest {
 		InternetAddress toAddress1 = new InternetAddress("aa@test.com", "arnie adams");
 		InternetAddress toAddress2 = new InternetAddress("bb@test.com", "benny brack");
 		InternetAddress toAddress3 = new InternetAddress("cc@test.com", "cindy cider");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Restart approval request template").name(RESTART_APPROVAL_REQUEST).build();
+		expect(templateServiceMock.getActiveEmailTemplate(RESTART_APPROVAL_REQUEST)).andReturn(template); 
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.request.restart.approval"), 
 				EasyMock.aryEq(new Object[] { "xyz", "title" }), EasyMock.eq((Locale)null))).andReturn("subject");
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.aryEq(new InternetAddress[] {toAddress2, toAddress3}),// 
-						EasyMock.eq("subject"), EasyMock.eq("private/staff/admin/mail/restart_approval_request.ftl"),// 
+						EasyMock.eq("subject"), eq(RESTART_APPROVAL_REQUEST), eq(template.getContent()),// 
 						EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 		
-		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, templateServiceMock, msgSourceMock);
 		
 		final Map<String, Object> model = new HashMap<String, Object>();
 		
-		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock){
+		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock){
 				@Override
 				protected Map<String,Object> createModel(ApplicationForm application) {
 				
@@ -142,7 +159,7 @@ public class ApprovalRestartRequestMailSenderTest {
 		
 			mailSender.sendRequestRestartApproval(form);
 		
-		EasyMock.verify( javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify( javaMailSenderMock, mimeMessagePreparatorFactoryMock, templateServiceMock, msgSourceMock);
 		
 	}
 	
@@ -160,23 +177,28 @@ public class ApprovalRestartRequestMailSenderTest {
 		
 		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
 		InternetAddress toAddress2 = new InternetAddress("cc@test.com", "cindy cider");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Approval restart request reminder template").name(APPROVAL_RESTART_REQUEST_REMINDER).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPROVAL_RESTART_REQUEST_REMINDER)).andReturn(template); 
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.request.restart.approval.reminder"), 
 				EasyMock.aryEq(new Object[] { "xyz", "title" }), EasyMock.eq((Locale)null))).andReturn("subject");
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/admin/mail/approval_restart_request_reminder.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+						eq(APPROVAL_RESTART_REQUEST_REMINDER), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), (InternetAddress[]) EasyMock.isNull(), EasyMock.eq("subject"),
-						EasyMock.eq("private/staff/admin/mail/approval_restart_request_reminder.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
+						eq(APPROVAL_RESTART_REQUEST_REMINDER), eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().times(2);
 		
-		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, templateServiceMock, msgSourceMock);
 		
 		final Map<String, Object> model = new HashMap<String, Object>();
 		
-		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock){
+		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock){
 			@Override
 			protected Map<String,Object> createModel(ApplicationForm application) {
 			
@@ -186,7 +208,7 @@ public class ApprovalRestartRequestMailSenderTest {
 		
 		mailSender.sendRequestRestartApprovalReminder(form);
 		
-		EasyMock.verify( javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify( javaMailSenderMock, mimeMessagePreparatorFactoryMock, templateServiceMock, msgSourceMock);
 			
 	}
 	
@@ -206,20 +228,25 @@ public class ApprovalRestartRequestMailSenderTest {
 		InternetAddress toAddress1 = new InternetAddress("aa@test.com", "arnie adams");
 		InternetAddress toAddress2 = new InternetAddress("bb@test.com", "benny brack");
 		InternetAddress toAddress3 = new InternetAddress("cc@test.com", "cindy cider");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Approval restart request reminder template").name(APPROVAL_RESTART_REQUEST_REMINDER).build();
+		expect(templateServiceMock.getActiveEmailTemplate(APPROVAL_RESTART_REQUEST_REMINDER)).andReturn(template); 
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("application.request.restart.approval.reminder"), 
 				EasyMock.aryEq(new Object[] { "xyz", "title" }), EasyMock.eq((Locale)null))).andReturn("subject");
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.aryEq(new InternetAddress[] {toAddress2, toAddress3}),// 
-						EasyMock.eq("subject"), EasyMock.eq("private/staff/admin/mail/approval_restart_request_reminder.ftl"),// 
+						EasyMock.eq("subject"), eq(APPROVAL_RESTART_REQUEST_REMINDER), eq(template.getContent()),// 
 						EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 		
-		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 		
 		final Map<String, Object> model = new HashMap<String, Object>();
 		
-		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock){
+		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock){
 				@Override
 				protected Map<String,Object> createModel(ApplicationForm application) {
 				
@@ -229,7 +256,7 @@ public class ApprovalRestartRequestMailSenderTest {
 		
 			mailSender.sendRequestRestartApprovalReminder(form);
 		
-		EasyMock.verify( javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify( javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, templateServiceMock);
 		
 	}
 	@Before
@@ -237,7 +264,7 @@ public class ApprovalRestartRequestMailSenderTest {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-		
-		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		templateServiceMock = createMock(EmailTemplateService.class);
+		 mailSender = new ApprovalRestartRequestMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 	}
 }

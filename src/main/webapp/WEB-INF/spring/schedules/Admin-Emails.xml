@@ -10,9 +10,10 @@
         <constructor-arg index="3" value="VALIDATION_REMINDER" />
         <constructor-arg index="4" value="VALIDATION" />
         <constructor-arg index="5" value="validation.request.reminder" />
-        <constructor-arg index="6" value="private/staff/admin/mail/application_validation_reminder.ftl" />
+        <constructor-arg index="6" value="APPLICATION_VALIDATION_REMINDER" />
         <constructor-arg index="7" value="validation.request.reminder" />
-        <constructor-arg index="8" value="private/staff/admin/mail/application_validation_reminder.ftl" />
+        <constructor-arg index="8" value="APPLICATION_VALIDATION_REMINDER" />
+        <constructor-arg index="9" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="adminValidationReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
@@ -53,9 +54,10 @@
         <constructor-arg index="3" value="REVIEW_REMINDER" />
         <constructor-arg index="4" value="REVIEW" />
         <constructor-arg index="5" value="review.evaluation" />
-        <constructor-arg index="6" value="private/staff/admin/mail/application_review_reminder_first.ftl" />
+        <constructor-arg index="6" value="APPLICATION_REVIEW_REMINDER_FIRST" />
         <constructor-arg index="7" value="review.evaluation.reminder" />
-        <constructor-arg index="8" value="private/staff/admin/mail/application_review_reminder.ftl" />
+        <constructor-arg index="8" value="APPLICATION_REVIEW_REMINDER" />
+        <constructor-arg index="9" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="adminReviewReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
@@ -83,9 +85,10 @@
         <constructor-arg index="3" value="INTERVIEW_REMINDER" />
         <constructor-arg index="4" value="INTERVIEW" />
         <constructor-arg index="5" value="interview.feedback.evaluation" />
-        <constructor-arg index="6" value="private/staff/admin/mail/application_interview_reminder_first.ftl" />
+        <constructor-arg index="6" value="APPLICATION_INTERVIEW_REMINDER_FIRST" />
         <constructor-arg index="7" value="interview.feedback.evaluation.reminder" />
-        <constructor-arg index="8" value="private/staff/admin/mail/application_interview_reminder.ftl" />
+        <constructor-arg index="8" value="APPLICATION_INTERVIEW_REMINDER" />
+        <constructor-arg index="9" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="adminInterviewReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
@@ -102,7 +105,8 @@
         <constructor-arg index="3" value="UPDATED_NOTIFICATION" />
         <constructor-arg index="4" value="VALIDATION" />
         <constructor-arg index="5" value="validation.request" />
-        <constructor-arg index="6" value="private/staff/admin/mail/application_submit_confirmation.ftl" />
+        <constructor-arg index="6" value="APPLICATION_SUBMIT_CONFIRMATION_ADMIN" />
+        <constructor-arg index="7" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="adminSubmissionNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">

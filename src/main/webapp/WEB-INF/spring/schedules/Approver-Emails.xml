@@ -36,9 +36,10 @@
 		<constructor-arg index="3" value="APPROVAL_REMINDER" />
 		<constructor-arg index="4" value="APPROVAL" />
 		<constructor-arg index="5" value="approval.request.reminder" />
-		<constructor-arg index="6" value="private/approvers/mail/application_approval_reminder.ftl" />
+		<constructor-arg index="6" value="APPLICATION_APPROVAL_REMINDER" />
 		<constructor-arg index="7" value="approval.request.reminder" />
-		<constructor-arg index="8" value="private/approvers/mail/application_approval_reminder.ftl" />
+		<constructor-arg index="8" value="APPLICATION_APPROVAL_REMINDER" />
+		<constructor-arg index="9" ref="mailEmailTemplateService" />
 	</bean>
 
 	<bean id="approverApprovalReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">

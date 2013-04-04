@@ -11,10 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.StateChangeMailSender;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 
 public class StateChangeNotificationTask extends TimerTask {
     
@@ -26,24 +29,28 @@ public class StateChangeNotificationTask extends TimerTask {
 	
 	private final StateChangeMailSender applicantMailSender;
 	
+	private final EmailTemplateService emailTemplateService;
+	
 	private final String messageCode;
 	
-	private final String emailTemplate;
 	
 	private final NotificationType notificationType;
+	
+	private final EmailTemplateName emailTemplateName;
 	
 	private final ApplicationFormStatus newStatus;
 
     public StateChangeNotificationTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO,
             StateChangeMailSender applicantMailSender, NotificationType notificationType,
-            ApplicationFormStatus newStatus, String messageCode, String emailTemplate) {
+            ApplicationFormStatus newStatus, String messageCode, EmailTemplateName emailTemplateName, EmailTemplateService emailTemplateService) {
 		this.sessionFactory = sessionFactory;
 		this.applicationFormDAO = applicationFormDAO;
 		this.applicantMailSender = applicantMailSender;
 		this.notificationType = notificationType;
 		this.newStatus = newStatus;
 		this.messageCode = messageCode;
-		this.emailTemplate = emailTemplate;
+		this.emailTemplateName = emailTemplateName;
+		this.emailTemplateService = emailTemplateService;
 	}
 
 	@Override
@@ -51,6 +58,7 @@ public class StateChangeNotificationTask extends TimerTask {
 	    log.info(notificationType +  " Notification Task Running");
 	    Transaction transaction = null;
 	    try {
+	    	EmailTemplate template = emailTemplateService.getActiveEmailTemplate(emailTemplateName);
     		transaction = sessionFactory.getCurrentSession().beginTransaction();
     		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus);
     		transaction.commit();
@@ -58,7 +66,7 @@ public class StateChangeNotificationTask extends TimerTask {
     			transaction = sessionFactory.getCurrentSession().beginTransaction();
     			sessionFactory.getCurrentSession().refresh(application);
     			try {
-    				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplate, null);
+    				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplateName, template.getContent(), null);
     				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
     				if (notificationRecord == null) {
     					notificationRecord = new NotificationRecord(notificationType);

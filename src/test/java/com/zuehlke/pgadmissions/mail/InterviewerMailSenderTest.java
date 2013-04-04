@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_REMINDER_FIRST;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -17,19 +22,23 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class InterviewerMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private InterviewerMailSender interviewerMailSender;
+	private EmailTemplateService templateServiceMock;
 	private MessageSource msgSourceMock;
 
 	@Test
@@ -55,7 +64,8 @@ public class InterviewerMailSenderTest {
 	@Test
 	public void shouldSendInterviewerNotificationForInterviewer() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,
+				msgSourceMock, templateServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(Interviewer interviewer) {
@@ -69,24 +79,28 @@ public class InterviewerMailSenderTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Interviewer notification template").name(INTERVIEWER_NOTIFICATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(INTERVIEWER_NOTIFICATION)).andReturn(template);
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("interview.notification.interviewer"),// 
 				EasyMock.aryEq(new Object[] { "fred", "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
-						"private/interviewers/mail/interviewer_notification_email.ftl", model, null)).andReturn(preparatorMock);
+						INTERVIEWER_NOTIFICATION, template.getContent(), model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, templateServiceMock, msgSourceMock);
 
 		interviewerMailSender.sendInterviewerNotification(interviewer);
 
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, templateServiceMock, msgSourceMock);
 	}
 
 	@Test
 	public void shouldSendFirstInterviewerReminderForInterviewer() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(Interviewer interviewer) {
@@ -100,23 +114,28 @@ public class InterviewerMailSenderTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Interviewer reminder first template").name(INTERVIEWER_REMINDER_FIRST).build();
+		expect(templateServiceMock.getActiveEmailTemplate(INTERVIEWER_REMINDER_FIRST)).andReturn(template);
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("interview.feedback.request"),// 
 				EasyMock.aryEq(new Object[] { "fred", "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
-						"private/interviewers/mail/interviewer_reminder_email_first.ftl", model, null)).andReturn(preparatorMock);
+						INTERVIEWER_REMINDER_FIRST, template.getContent(), model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, templateServiceMock, msgSourceMock);
 
 		interviewerMailSender.sendInterviewerReminder(interviewer, true);
 
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, templateServiceMock, msgSourceMock);
 	}
 	@Test
 	public void shouldSendInterviewerReminderForInterviewer() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,
+				msgSourceMock, templateServiceMock) {
 			
 			@Override
 			Map<String, Object> createModel(Interviewer interviewer) {
@@ -131,17 +150,21 @@ public class InterviewerMailSenderTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
 		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Interviewer reminder template").name(INTERVIEWER_REMINDER).build();
+		expect(templateServiceMock.getActiveEmailTemplate(INTERVIEWER_REMINDER)).andReturn(template);
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("interview.feedback.request.reminder"),// 
 				EasyMock.aryEq(new Object[] { "fred", "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
-						"private/interviewers/mail/interviewer_reminder_email.ftl", model, null)).andReturn(preparatorMock);
+						INTERVIEWER_REMINDER, template.getContent(), model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, templateServiceMock, msgSourceMock);
 		
 		interviewerMailSender.sendInterviewerReminder(interviewer, false);
 		
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, templateServiceMock, msgSourceMock);
 	}
 
 	@Before
@@ -149,7 +172,7 @@ public class InterviewerMailSenderTest {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-
-		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		templateServiceMock= createMock(EmailTemplateService.class);
+		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 	}
 }

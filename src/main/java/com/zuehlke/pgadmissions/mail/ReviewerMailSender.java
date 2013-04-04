@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REVIEWER_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REVIEWER_REMINDER;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,14 +13,17 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ReviewerMailSender extends MailSender {
 
-	public ReviewerMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender javaMailSender, MessageSource msgSource) {
-		super(mimeMessagePreparatorFactory, javaMailSender, msgSource);
+	public ReviewerMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender javaMailSender, MessageSource msgSource, EmailTemplateService emailTemplateService) {
+		super(mimeMessagePreparatorFactory, javaMailSender, msgSource, emailTemplateService);
 	}
 
 	Map<String, Object> createModel(Reviewer reviewer) {
@@ -35,17 +41,19 @@ public class ReviewerMailSender extends MailSender {
 	}
 
 	public void sendReviewerNotification(Reviewer reviewer) {
-		internalSendReviewerMail(reviewer, "review.request", "private/reviewers/mail/reviewer_notification_email.ftl");
+		EmailTemplate template = getDefaultEmailtemplate(REVIEWER_NOTIFICATION);
+		internalSendReviewerMail(reviewer, "review.request", REVIEWER_NOTIFICATION, template.getContent());
 	}
 
 	public void sendReviewerReminder(Reviewer reviewer) {
-		internalSendReviewerMail(reviewer, "review.request.reminder", "private/reviewers/mail/reviewer_reminder_email.ftl");
+		EmailTemplate template = getDefaultEmailtemplate(REVIEWER_REMINDER);
+		internalSendReviewerMail(reviewer, "review.request.reminder", REVIEWER_REMINDER, template.getContent());
 	}
 
-	private void internalSendReviewerMail(Reviewer reviewer, String messageCode, String template) {
+	private void internalSendReviewerMail(Reviewer reviewer, String messageCode, EmailTemplateName templateName, String templateContent) {
 		InternetAddress toAddress = createAddress(reviewer.getUser());
 		String subject = resolveMessage(messageCode, reviewer.getReviewRound().getApplication());
 
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, template, createModel(reviewer), null));
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, templateName, templateContent, createModel(reviewer), null));
 	}
 }

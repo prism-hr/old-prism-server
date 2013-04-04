@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -39,32 +42,35 @@ import com.zuehlke.pgadmissions.utils.UserFactory;
 @Transactional
 public class UserService {
 
-    private final UserDAO userDAO;
+	private final Logger log = LoggerFactory.getLogger(UserService.class);
+    
+	private final UserDAO userDAO;
     private final RoleDAO roleDAO;
     private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
     private final JavaMailSender mailsender;
-    private final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserFactory userFactory;
     private final MessageSource msgSource;
     private final EncryptionUtils encryptionUtils;
     private final ApplicationsFilterDAO applicationsFilterDAO;
+    private final EmailTemplateService emailTemplateService;
 
-    public UserService() {
-        this(null, null, null, null, null, null, null, null);
-    }
+	public UserService() {
+		this(null, null, null, null, null, null, null, null, null);
+	}
 
-    @Autowired
-    public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
-            JavaMailSender mailsender, MessageSource msgSource, EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO) {
-        this.userDAO = userDAO;
-        this.roleDAO = roleDAO;
-        this.userFactory = userFactory;
-        this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
-        this.mailsender = mailsender;
-        this.msgSource = msgSource;
-        this.encryptionUtils = encryptionUtils;
-        this.applicationsFilterDAO = applicationsFilterDAO;
-    }
+	@Autowired
+	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
+			JavaMailSender mailsender, MessageSource msgSource, EncryptionUtils encryptionUtils, ApplicationsFilterDAO applicationsFilterDAO, EmailTemplateService emailTemplateService) {
+		this.userDAO = userDAO;
+		this.roleDAO = roleDAO;
+		this.userFactory = userFactory;
+		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
+		this.mailsender = mailsender;
+		this.msgSource = msgSource;
+		this.encryptionUtils = encryptionUtils;
+		this.applicationsFilterDAO=applicationsFilterDAO;
+		this.emailTemplateService = emailTemplateService;
+	}
 
     public RegisteredUser getUser(Integer id) {
         return userDAO.get(id);
@@ -327,9 +333,10 @@ public class UserService {
             model.put("host", Environment.getInstance().getApplicationHostName());
             InternetAddress toAddress = createUserAddress(storedUser);
             String subject = msgSource.getMessage("user.password.reset", null, null);
+            EmailTemplate template = emailTemplateService.getActiveEmailTemplate(NEW_PASSWORD_CONFIRMATION);
 
             mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
-                    "private/mail/new_password_confirmation.ftl", model, null));
+            		NEW_PASSWORD_CONFIRMATION, template.getContent(), model, null));
 
             String hashPassword = encryptionUtils.getMD5Hash(newPassword);
             storedUser.setPassword(hashPassword);

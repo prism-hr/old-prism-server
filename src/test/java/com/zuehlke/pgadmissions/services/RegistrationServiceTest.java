@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -26,6 +30,7 @@ import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -33,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -58,6 +64,7 @@ public class RegistrationServiceTest {
     private RefereeDAO refereeDAOMock;
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
+	private EmailTemplateService templateServiceMock;
 	
 	private MessageSource msgSourceMock;
 
@@ -129,7 +136,7 @@ public class RegistrationServiceTest {
                                 .build()).build();
         registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,
                 mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, interviewerDAOMock,
-                reviewerDAOMock, supervisorDAOMock, refereeDAOMock);
+                reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock);
         registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
         Assert.assertTrue(databaseUser.getPendingRoleNotifications().size() > 0);
         for (PendingRoleNotification roleNotification : databaseUser.getPendingRoleNotifications()) {
@@ -193,7 +200,7 @@ public class RegistrationServiceTest {
 
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").build();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -214,19 +221,23 @@ public class RegistrationServiceTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Registration confirmation template").name(REGISTRATION_CONFIRMATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(REGISTRATION_CONFIRMATION)).andReturn(template);
 
 		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("registration subject");
 
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "registration subject",
-						"private/pgStudents/mail/registration_confirmation.ftl", modelMap, null)).andReturn(preparatorMock);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "registration subject", REGISTRATION_CONFIRMATION,
+						template.getContent(), modelMap, null)).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		registrationService.updateOrSaveUser(expectedRecord, "queryString");
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 		assertEquals(newUser, modelMap.get("user"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), modelMap.get("host"));
 		
@@ -241,7 +252,7 @@ public class RegistrationServiceTest {
 
 		final RegisteredUser suggestedUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).build()).build();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock) {
 
 			@Override
 			public RegisteredUser processPendingSuggestedUser(RegisteredUser pendingSuggestedUser ) {
@@ -262,19 +273,24 @@ public class RegistrationServiceTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
+		
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Registration confirmation template").name(REGISTRATION_CONFIRMATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(REGISTRATION_CONFIRMATION)).andReturn(template);
 
 		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("registration subject");
 
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "registration subject",
-						"private/pgStudents/mail/registration_confirmation.ftl", modelMap, null)).andReturn(preparatorMock);
+						 REGISTRATION_CONFIRMATION,
+							template.getContent(), modelMap, null)).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 		registrationService.updateOrSaveUser(expectedRecord, "queryString");
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 		assertEquals(suggestedUser, modelMap.get("user"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), modelMap.get("host"));
 		assertEquals("complete your application", modelMap.get("action"));
@@ -286,7 +302,7 @@ public class RegistrationServiceTest {
 		expectedRecord.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).build();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -320,7 +336,7 @@ public class RegistrationServiceTest {
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").build();
 
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock,  mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock) {
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock) {
 
 			@Override
 			public RegisteredUser processPendingApplicantUser(RegisteredUser record, String queryString) {
@@ -333,21 +349,26 @@ public class RegistrationServiceTest {
 
 		userDAOMock.save(newUser);
 
+		EmailTemplate template = new EmailTemplateBuilder().active(true)
+				.content("Registration confirmation template").name(REGISTRATION_CONFIRMATION).build();
+		expect(templateServiceMock.getActiveEmailTemplate(REGISTRATION_CONFIRMATION)).andReturn(template);
+		
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("reg subject");
 
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("reg subject"),
-						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull()))
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), eq("reg subject"),
+						eq(REGISTRATION_CONFIRMATION),
+						eq(template.getContent()), EasyMock.isA(Map.class), (InternetAddress) EasyMock.isNull()))
 				.andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 		registrationService.updateOrSaveUser(expectedRecord,  "queryString");
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, templateServiceMock);
 
 	}
 
@@ -391,8 +412,9 @@ public class RegistrationServiceTest {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-
+		templateServiceMock = createMock(EmailTemplateService.class);
+		
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock);
+				javaMailSenderMock, msgSourceMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, templateServiceMock);
 	}
 }

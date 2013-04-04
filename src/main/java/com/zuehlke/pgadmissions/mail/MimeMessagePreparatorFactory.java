@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.mail;
 
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -15,15 +16,18 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.utils.Environment;
 
+import freemarker.template.Template;
+
 public class MimeMessagePreparatorFactory {
-	
-    final Logger log = LoggerFactory.getLogger(MimeMessagePreparatorFactory.class);
+
+	final Logger log = LoggerFactory.getLogger(MimeMessagePreparatorFactory.class);
 
 	final FreeMarkerConfig config;
-	
+
 	final boolean prod;
 
 	MimeMessagePreparatorFactory() {
@@ -35,27 +39,37 @@ public class MimeMessagePreparatorFactory {
 		this.prod = prod;
 	}
 
-	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress toAddress, InternetAddress[] ccAddresses, String subject, String templatename,
-			Map<String, Object> model, InternetAddress replyToAddress, PdfAttachmentInputSource... attachments) {
-		return getMimeMessagePreparator(new InternetAddress[] { toAddress }, ccAddresses, subject, templatename, model, replyToAddress, attachments);
+	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress toAddress, InternetAddress[] ccAddresses,
+			String subject, EmailTemplateName templateName, String templateContent, Map<String, Object> model, InternetAddress replyToAddress,
+			PdfAttachmentInputSource... attachments) {
+		return getMimeMessagePreparator(new InternetAddress[] { toAddress }, ccAddresses, subject, templateName, templateContent,
+				model, replyToAddress, attachments);
 	}
 
-	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress toAddress, String subject, String templatename, Map<String, Object> model,
-			InternetAddress replyToAddress, PdfAttachmentInputSource... attachments) {
-		return getMimeMessagePreparator(new InternetAddress[] { toAddress }, null, subject, templatename, model, replyToAddress, attachments);
+	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress toAddress, String subject,
+			EmailTemplateName templateName, String templateContent, Map<String, Object> model, InternetAddress replyToAddress,
+			PdfAttachmentInputSource... attachments) {
+		return getMimeMessagePreparator(new InternetAddress[] { toAddress }, null, subject, templateName, templateContent, model,
+				replyToAddress, attachments);
 	}
 
-	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress[] toAddresses,//
-			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, PdfAttachmentInputSource... attachments) {
-		return getMimeMessagePreparator(toAddresses, null, subject, templatename, model, replyToAddress, attachments);
+	public MimeMessagePreparator getMimeMessagePreparator(
+			InternetAddress[] toAddresses,//
+			String subject, EmailTemplateName templateName, String templateContent, Map<String, Object> model, InternetAddress replyToAddress,
+			PdfAttachmentInputSource... attachments) {
+		return getMimeMessagePreparator(toAddresses, null, subject, templateName, templateContent, model, replyToAddress, attachments);
 	}
 
-	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
-			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, PdfAttachmentInputSource... attachments) {
+	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress[] toAddresses,
+			InternetAddress[] ccAddresses,//
+			String subject, EmailTemplateName templateName, String templateContent, Map<String, Object> model, InternetAddress replyToAddress,
+			PdfAttachmentInputSource... attachments) {
 		if (prod) {
-			return new ProductionMessagePreparator(toAddresses, ccAddresses, subject, templatename, model, replyToAddress, attachments);
+			return new ProductionMessagePreparator(toAddresses, ccAddresses, subject, templateName, templateContent, model,
+					replyToAddress, attachments);
 		}
-		return new DevelopmentMessagePreparator(toAddresses, ccAddresses, subject, templatename, model, replyToAddress, attachments);
+		return new DevelopmentMessagePreparator(toAddresses, ccAddresses, subject, templateName, templateContent, model,
+				replyToAddress, attachments);
 	}
 
 	MimeMessageHelper getMessageHelper(MimeMessage mimeMessage, boolean isMultipart) throws MessagingException {
@@ -66,27 +80,29 @@ public class MimeMessagePreparatorFactory {
 		protected InternetAddress[] toAddresses;
 		protected InternetAddress[] ccAddresses;
 		private final String subject;
-		private final String templatename;
+		private final String templateContent;
+		private final EmailTemplateName templateName;
 		private final Map<String, Object> model;
 		private final InternetAddress replyToAddress;
 		private final PdfAttachmentInputSource[] attachments;
 
-        public ProductionMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,
-                String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress,
-                PdfAttachmentInputSource... attachments) {
-            this.subject = subject;
-			this.templatename = templatename;
+		public ProductionMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,
+				String subject, EmailTemplateName templateName, String templateContent, Map<String, Object> model, InternetAddress replyToAddress,
+				PdfAttachmentInputSource... attachments) {
+			this.subject = subject;
+			this.templateName = templateName;
+			this.templateContent = templateContent;
 			this.model = model;
 			this.replyToAddress = replyToAddress;
 			this.attachments = attachments;
-			
+
 			if (toAddresses != null) {
-			    this.toAddresses = Arrays.copyOf(toAddresses, toAddresses.length);
+				this.toAddresses = Arrays.copyOf(toAddresses, toAddresses.length);
 			}
-			
-	         if (ccAddresses != null) {
-	                this.ccAddresses = Arrays.copyOf(ccAddresses, ccAddresses.length);
-	         }
+
+			if (ccAddresses != null) {
+				this.ccAddresses = Arrays.copyOf(ccAddresses, ccAddresses.length);
+			}
 		}
 
 		protected String getSubject() {
@@ -106,7 +122,7 @@ public class MimeMessagePreparatorFactory {
 			}
 
 			log.info("Email \"" + getSubject() + "\" will be sent to " + logStringBuilder.toString());
-			
+
 			messageHelper.setTo(toAddresses);
 			if (!ArrayUtils.isEmpty(getCCAddresses())) {
 				messageHelper.setCc(getCCAddresses());
@@ -117,25 +133,29 @@ public class MimeMessagePreparatorFactory {
 			messageHelper.setSubject(getSubject());
 			messageHelper.setFrom(Environment.getInstance().getEmailFromAddress());
 
-			for (PdfAttachmentInputSource attachment : attachments) {	
-				messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");					
+			for (PdfAttachmentInputSource attachment : attachments) {
+				messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
 			}
-			
+
 			HtmlToPlainText htmlFormatter = new HtmlToPlainText();
-			
-			String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(config.getConfiguration().getTemplate(templatename), model);
+
+			Template template = new Template(templateName.displayValue(), new StringReader(templateContent), config.getConfiguration());
+			String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 			String plainText = htmlFormatter.getPlainText(htmlText);
-			plainText = plainText + "\n\nIf the links do not work in your email client copy and paste them into your browser.";
+			plainText = plainText
+					+ "\n\nIf the links do not work in your email client copy and paste them into your browser.";
 			messageHelper.setText(plainText, htmlText);
 		}
 	}
 
 	class DevelopmentMessagePreparator extends ProductionMessagePreparator {
 
-		public DevelopmentMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
-				String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, PdfAttachmentInputSource... attachments) {
-		
-		    super(toAddresses, ccAddresses, subject, templatename, model, replyToAddress, attachments);
+		public DevelopmentMessagePreparator(InternetAddress[] toAddresses,
+				InternetAddress[] ccAddresses,//
+				String subject, EmailTemplateName templateName, String templateContent, Map<String, Object> model, InternetAddress replyToAddress,
+				PdfAttachmentInputSource... attachments) {
+
+			super(toAddresses, ccAddresses, subject, templateName, templateContent, model, replyToAddress, attachments);
 			for (InternetAddress internetAddress : toAddresses) {
 				internetAddress.setAddress(Environment.getInstance().getEmailToAddress());
 			}

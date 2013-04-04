@@ -11,7 +11,8 @@
         <constructor-arg index="3" value="APPLICANT_SUBMISSION_NOTIFICATION" />
         <constructor-arg index="4" value="VALIDATION" />
         <constructor-arg index="5" value="validation.submission.applicant" />
-        <constructor-arg index="6" value="private/pgStudents/mail/application_submit_confirmation.ftl" />
+        <constructor-arg index="6" value="APPLICATION_SUBMIT_CONFIRMATION" />
+        <constructor-arg index="7" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="applicantSubmissionNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
@@ -28,7 +29,8 @@
         <constructor-arg index="3" value="APPLICANT_MOVED_TO_REVIEW_NOTIFICATION" />
         <constructor-arg index="4" value="REVIEW" />
         <constructor-arg index="5" value="review.notification.applicant" />
-        <constructor-arg index="6" value="private/pgStudents/mail/moved_to_review_notification.ftl" />
+        <constructor-arg index="6" value="MOVED_TO_REVIEW_NOTIFICATION" />
+        <constructor-arg index="7" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="moveToReviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
@@ -45,7 +47,8 @@
         <constructor-arg index="3" value="APPLICATION_MOVED_TO_REJECT_NOTIFICATION" />
         <constructor-arg index="4" value="REJECTED" />
         <constructor-arg index="5" value="rejection.notification" />
-        <constructor-arg index="6" value="private/pgStudents/mail/rejected_notification.ftl" />
+        <constructor-arg index="6" value="REJECTED_NOTIFICATION" />
+        <constructor-arg index="7" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="moveToRejectNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
@@ -63,7 +66,8 @@
         <constructor-arg index="3" value="APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION" />
         <constructor-arg index="4" value="INTERVIEW" />
         <constructor-arg index="5" value="interview.notification.applicant" />
-        <constructor-arg index="6" value="private/pgStudents/mail/moved_to_interview_notification.ftl" />
+        <constructor-arg index="6" value="MOVED_TO_INTERVIEW_NOTIFICATION" />
+        <constructor-arg index="7" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="moveToInterviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
@@ -78,7 +82,8 @@
         <constructor-arg index="1" ref="mailApplicationDAO" />
         <constructor-arg index="2" ref="applicantMailSender" />
         <constructor-arg index="3" value="approval.notification.applicant" />
-        <constructor-arg index="4" value="private/pgStudents/mail/moved_to_approval_notification.ftl" />
+        <constructor-arg index="4" value="MOVED_TO_APPROVAL_NOTIFICATION" />
+        <constructor-arg index="5" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="moveToApprovalNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
@@ -95,7 +100,8 @@
         <constructor-arg index="3" value="APPLICATION_MOVED_TO_APPROVED_NOTIFICATION" />
         <constructor-arg index="4" value="APPROVED" />
         <constructor-arg index="5" value="approved.notification.applicant" />
-        <constructor-arg index="6" value="private/pgStudents/mail/moved_to_approved_notification.ftl" />
+        <constructor-arg index="6" value="MOVED_TO_APPROVED_NOTIFICATION" />
+        <constructor-arg index="7" ref="mailEmailTemplateService" />
     </bean>
 
     <bean id="moveToApprovedNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">

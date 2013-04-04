@@ -1,0 +1,83 @@
+
+/* Application list ---------------------------------------------------------------------------------- */
+
+table#appliList thead th {
+	background: rgb(188,188,188);
+	cursor: pointer; 
+	padding:12px 2px;
+}
+table#appliList thead th:nth-child(5) {
+	cursor: auto;
+}
+
+/* Sorting functionality. */
+table#appliList th.sorting {
+	background: #59DAFF; /* Old browsers */ 
+}
+table#appliList th.sortable span { float: right; width: 10px; height: 16px; background:  url(../../images/icon_arrow_sort.png) no-repeat center; margin: 3px 2px 0 3px; }
+table#appliList th.sortable.asc span { background-image: url(../../images/icon_arrow_up.png); }
+table#appliList th.sortable.desc span { background-image: url(../../images/icon_arrow_down.png); }
+
+/* Form fields inside the table. */
+td.applicant-name { white-space: nowrap; } /* name on one line. */
+td.applicant-name .applicant-id { display: block; font-size: smaller; }
+td.status { text-align: center !important; }
+
+
+/* Table bar, containing download button and search bar. --------------------------------------------- */
+#table-bar { margin-bottom: 10px; margin-top: 10px; position: relative;  }
+
+/* Download button. */
+#table-bar #downloadAll {
+	background: #9B9DA0;
+	bottom: 0;
+	cursor: pointer !important;
+	height: 42px;
+	left: 0; 
+	overflow: hidden;
+	position: absolute;
+	text-indent: 50px;
+	white-space: nowrap;
+	width: 46px;
+	border-radius: 4px;
+}
+#table-bar #downloadAll:before { 
+  font-family:FontAwesome;font-weight:normal;
+  font-style:normal;
+  text-decoration:inherit;-webkit-font-smoothing:antialiased;
+  display:inline-block;
+  line-height:normal;
+  vertical-align:baseline;
+  background-image:none;
+  background-position:0 0;
+  background-repeat:repeat;
+  margin-top:0;
+  text-indent: -53px;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer !important;
+  content:"\f019";
+  color: white;
+  font-size:28px;
+  line-height: 39px;
+}
+
+/* Search box. */
+#search-box { background: #FFF; border: 1px solid #AAA; margin-left: 56px; padding: 1px; position: relative; text-align: right; border-radius: 4px; padding-right: 10px; }
+#search-box label { font-weight: bold; }
+#search-box input, #search-box select { border: 1px solid #CCC; margin-left: 1em; }
+#search-box input { padding: 3px; width: 300px; }
+#search-box select { margin: 0 10px; padding: 2px; width: 160px; }
+#search-box button { margin-top: -2px; }
+#search-box .invalid { display: block; margin-left: 147px; margin-top: 5px; padding: 3px; text-align: left; }
+#search-box #searchTerm {margin-bottom: 5px; margin-top: 5px;}
+#search-box #searchCategory {padding: 4px; height: 28px;}
+#search-box #search-go {margin-right: 8px;}
+div.fetching { text-align: center; font-weight: bold; padding: 5px; }
+
+
+/* With bootstrap*/
+
+table#appliList th, table#appliList td { padding: 5px 3px; vertical-align: middle; }
+table#appliList select {width: 113px; margin-bottom: 0;}
+table#appliList input[type="checkbox"] { margin-top: 0px;}

@@ -82,4 +82,41 @@ public class ApplicationsFilter implements Serializable {
     public Integer getId() {
         return id;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((searchCategory == null) ? 0 : searchCategory.hashCode());
+        result = prime * result + ((searchPredicate == null) ? 0 : searchPredicate.hashCode());
+        result = prime * result + ((searchTerm == null) ? 0 : searchTerm.hashCode());
+        result = prime * result + ((user == null) ? 0 : user.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ApplicationsFilter other = (ApplicationsFilter) obj;
+        if (searchCategory != other.searchCategory)
+            return false;
+        if (searchPredicate != other.searchPredicate)
+            return false;
+        if (searchTerm == null) {
+            if (other.searchTerm != null)
+                return false;
+        } else if (!searchTerm.equals(other.searchTerm))
+            return false;
+        if (user == null) {
+            if (other.user != null)
+                return false;
+        } else if (!user.equals(other.user))
+            return false;
+        return true;
+    }
 }
